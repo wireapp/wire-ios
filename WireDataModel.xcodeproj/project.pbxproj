@@ -137,6 +137,8 @@
 		1687ABAE20ECD51E0007C240 /* ZMSearchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ABAD20ECD51E0007C240 /* ZMSearchUser.swift */; };
 		1687C0E22150EE91003099DD /* ZMClientMessageTests+Mentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687C0E12150EE91003099DD /* ZMClientMessageTests+Mentions.swift */; };
 		1689FD462194A63E00A656E2 /* ZMClientMessageTests+Editing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1689FD452194A63E00A656E2 /* ZMClientMessageTests+Editing.swift */; };
+		168D7BFD26F365ED00789960 /* EntityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7BFC26F365ED00789960 /* EntityAction.swift */; };
+		168D7C9626F9ED1E00789960 /* QualifiedID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7C9526F9ED1E00789960 /* QualifiedID.swift */; };
 		168FF330258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168FF32F258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift */; };
 		16925337234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16925336234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift */; };
 		1693155325A30D4E00709F15 /* UserClientTests+ResetSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1693155225A30D4E00709F15 /* UserClientTests+ResetSession.swift */; };
@@ -835,6 +837,8 @@
 		1687ABAD20ECD51E0007C240 /* ZMSearchUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSearchUser.swift; sourceTree = "<group>"; };
 		1687C0E12150EE91003099DD /* ZMClientMessageTests+Mentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Mentions.swift"; sourceTree = "<group>"; };
 		1689FD452194A63E00A656E2 /* ZMClientMessageTests+Editing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Editing.swift"; sourceTree = "<group>"; };
+		168D7BFC26F365ED00789960 /* EntityAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityAction.swift; sourceTree = "<group>"; };
+		168D7C9526F9ED1E00789960 /* QualifiedID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualifiedID.swift; sourceTree = "<group>"; };
 		168E96C4220B445000FC92FA /* zmessaging2.61.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.61.0.xcdatamodel; sourceTree = "<group>"; };
 		168FF32F258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+ResetSession.swift"; sourceTree = "<group>"; };
 		16925336234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationListDirectoryTests+Labels.swift"; sourceTree = "<group>"; };
@@ -1926,6 +1930,8 @@
 				54CD46091DEDA55C00BA3429 /* AddressBookEntry.swift */,
 				87C125F61EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift */,
 				16460A45206544B00096B616 /* PersistentMetadataKeys.swift */,
+				168D7BFC26F365ED00789960 /* EntityAction.swift */,
+				168D7C9526F9ED1E00789960 /* QualifiedID.swift */,
 			);
 			name = Model;
 			path = Source/Model;
@@ -3166,6 +3172,7 @@
 				F1FDF2FE21B1572500E037A1 /* ZMGenericMessageData.swift in Sources */,
 				54CD460A1DEDA55C00BA3429 /* AddressBookEntry.swift in Sources */,
 				BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */,
+				168D7BFD26F365ED00789960 /* EntityAction.swift in Sources */,
 				F1FDF30021B1580400E037A1 /* GenericMessage+Utils.swift in Sources */,
 				F12BD0B01E4DCEC40012ADBA /* ZMMessage+Insert.swift in Sources */,
 				16127CF3220058160020E65C /* InvalidConversationRemoval.swift in Sources */,
@@ -3305,6 +3312,7 @@
 				0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */,
 				F11F3E891FA32463007B6D3D /* InvalidClientsRemoval.swift in Sources */,
 				F9FD75781E2F9A0600B4558B /* SearchUserObserverCenter.swift in Sources */,
+				168D7C9626F9ED1E00789960 /* QualifiedID.swift in Sources */,
 				54F6CEAB1CE2972200A1276D /* ZMAssetClientMessage+Download.swift in Sources */,
 				F9B71F221CB264EF001DB03F /* ZMConversation.m in Sources */,
 				EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */,
