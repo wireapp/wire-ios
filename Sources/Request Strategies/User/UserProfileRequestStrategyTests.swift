@@ -249,7 +249,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest()!
 
             // when
-            let qualifiedID = Payload.QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: "example.com")
             let qualifiedIDs = Payload.QualifiedUserIDList(qualifiedIDs: [qualifiedID])
             request.complete(with: self.successfulResponse(for: qualifiedIDs))
         }

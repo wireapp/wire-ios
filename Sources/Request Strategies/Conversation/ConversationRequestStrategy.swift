@@ -46,7 +46,12 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                                      keysToSync: keysToSync,
                                      managedObjectContext: managedObjectContext)
     }()
+
+    let addParticipantActionHandler: AddParticipantActionHandler
+    let removeParticipantActionHandler: RemoveParticipantActionHandler
+
     let updateSync: KeyPathObjectSync<ConversationRequestStrategy>
+    let actionSync: EntityActionSync
 
     var isFetchingAllConversations: Bool = false
 
@@ -72,6 +77,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     public var useFederationEndpoint: Bool = true {
         didSet {
             conversationByQualifiedIDTranscoder.isAvailable = useFederationEndpoint
+            addParticipantActionHandler.useFederationEndpoint = useFederationEndpoint
+            removeParticipantActionHandler.useFederationEndpoint = useFederationEndpoint
         }
     }
 
@@ -108,6 +115,14 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                                                                   transcoder: conversationByQualifiedIDTranscoder)
 
         self.updateSync = KeyPathObjectSync(entityName: ZMConversation.entityName(), \.needsToBeUpdatedFromBackend)
+
+        self.addParticipantActionHandler = AddParticipantActionHandler(context: managedObjectContext)
+        self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext)
+
+        self.actionSync = EntityActionSync(actionHandlers: [
+            addParticipantActionHandler,
+            removeParticipantActionHandler
+        ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -178,7 +193,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             return [conversationByIDSync,
                     conversationByQualifiedIDSync,
                     insertSync,
-                    modifiedSync]
+                    modifiedSync,
+                    actionSync]
         }
 
     }
@@ -585,7 +601,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
-    public typealias T = Payload.QualifiedID
+    public typealias T = QualifiedID
 
     var fetchLimit: Int = 1
     var isAvailable: Bool = true
@@ -598,7 +614,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         self.context = context
     }
 
-    func request(for identifiers: Set<Payload.QualifiedID>) -> ZMTransportRequest? {
+    func request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
         guard
             let conversationID = identifiers.first.map({ $0.uuid.transportString() }),
             let domain = identifiers.first?.domain
@@ -610,7 +626,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations/\(domain)/\(conversationID)")
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<Payload.QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
 
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
@@ -639,7 +655,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         payload.updateOrCreate(in: context)
     }
 
-    private func deleteConversations(_ conversations: Set<Payload.QualifiedID>) {
+    private func deleteConversations(_ conversations: Set<QualifiedID>) {
         for qualifiedID in conversations {
             guard
                 let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context),
@@ -651,7 +667,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 
-    private func removeSelfUser(_ conversations: Set<Payload.QualifiedID>) {
+    private func removeSelfUser(_ conversations: Set<QualifiedID>) {
         for qualifiedID in conversations {
             guard
                 let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context),
@@ -666,7 +682,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 
-    private func markConversationsAsFetched(_ conversations: Set<Payload.QualifiedID>) {
+    private func markConversationsAsFetched(_ conversations: Set<QualifiedID>) {
         for qualifiedID in conversations {
             guard
                 let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
@@ -727,7 +743,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 
 class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
-    public typealias T = Payload.QualifiedID
+    public typealias T = QualifiedID
 
     var fetchLimit: Int = 100
     var isAvailable: Bool = true
@@ -740,7 +756,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
         self.context = context
     }
 
-    func request(for identifiers: Set<Payload.QualifiedID>) -> ZMTransportRequest? {
+    func request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
         // GET /conversations?ids=?
 
         guard
@@ -753,7 +769,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: "/conversations/list/v2", method: .methodPOST, payload: payloadAsString as ZMTransportData)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<Payload.QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
 
         guard
             let rawData = response.rawData,
@@ -770,7 +786,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     /// Query the backend if a converation is deleted or the self user has been removed
-    private func queryStatusForMissingConversations(_ conversations: [Payload.QualifiedID]) {
+    private func queryStatusForMissingConversations(_ conversations: [QualifiedID]) {
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
             conversation?.needsToBeUpdatedFromBackend = true
@@ -778,7 +794,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     /// Query the backend again if a converation couldn't be fetched
-    private func queryStatusForFailedConversations(_ conversations: [Payload.QualifiedID]) {
+    private func queryStatusForFailedConversations(_ conversations: [QualifiedID]) {
 
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetchOrCreate(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
