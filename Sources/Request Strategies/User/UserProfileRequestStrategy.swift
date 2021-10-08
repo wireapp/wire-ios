@@ -105,7 +105,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
         let connections = managedObjectContext.fetchOrAssert(request: fetchRequest)
 
-        return Set(connections.map(\.to))
+        return Set(connections.compactMap(\.to))
     }
 
     public func didFailToSyncAllObjects() {
