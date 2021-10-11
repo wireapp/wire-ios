@@ -65,17 +65,17 @@ extension ZMConversation {
         }
 
         // Calculate the external participants state
-        let canDisplayGuests = !selfUser.isGuest(in: self)
+        let canDisplayGuests = selfUser.isTeamMember
         let canDisplayExternals = selfUser.teamRole != .partner
         var state = ExternalParticipantsState()
 
         for user in otherUsers {
             if user.isServiceUser {
                 state.insert(.visibleServices)
-            } else if canDisplayGuests && user.isGuest(in: self) {
-                state.insert(.visibleGuests)
             } else if canDisplayExternals && user.isExternalPartner {
                 state.insert(.visibleExternals)
+            } else if canDisplayGuests && !user.isTeamMember {
+                state.insert(.visibleGuests)
             }
 
             // Early exit to avoid going through all users if we can avoid it
