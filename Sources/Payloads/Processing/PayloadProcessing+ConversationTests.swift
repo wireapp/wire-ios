@@ -18,7 +18,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadTests_Conversation: MessagingTestBase {
+class PayloadProcessing_ConversationTests: MessagingTestBase {
 
     // MARK: Group conversations
 

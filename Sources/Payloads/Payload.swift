@@ -238,8 +238,11 @@ enum Payload {
         enum Label: String, Codable {
             case notFound = "not-found"
             case noEndpoint = "no-endpoint"
+            case noIdentity = "no-identity"
             case unknownClient = "unknown-client"
             case missingLegalholdConsent = "missing-legalhold-consent"
+            case notConnected = "not-connected"
+            case connectionLimit = "connection-limit"
             case unknown
 
             init(from decoder: Decoder) throws {

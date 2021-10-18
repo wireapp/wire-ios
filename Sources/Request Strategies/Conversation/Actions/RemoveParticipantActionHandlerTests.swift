@@ -118,7 +118,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             let conversationEvent = conversationEventPayload(from: memberLeave,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
-            let payloadAsString = String(bytes: conversationEvent, encoding: .utf8)!
+            let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil)
@@ -151,7 +151,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 conversationID: self.conversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
                 timestamp: memberLeaveTimestamp)
-            let payloadAsString = String(bytes: conversationEvent, encoding: .utf8)!
+            let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil)
@@ -180,7 +180,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             let conversationEvent = conversationEventPayload(from: memberLeave,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
-            let payloadAsString = String(bytes: conversationEvent, encoding: .utf8)!
+            let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil)

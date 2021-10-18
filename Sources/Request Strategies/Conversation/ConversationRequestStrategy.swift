@@ -196,7 +196,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                     modifiedSync,
                     actionSync]
         }
-
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {

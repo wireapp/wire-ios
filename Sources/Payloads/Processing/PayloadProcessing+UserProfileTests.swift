@@ -18,7 +18,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadTests_UserProfile: MessagingTestBase {
+class PayloadProcessing_UserProfileTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()

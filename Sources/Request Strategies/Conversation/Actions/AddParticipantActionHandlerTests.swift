@@ -124,7 +124,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             let conversationEvent = conversationEventPayload(from: memberJoined,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
-            let payloadAsString = String(bytes: conversationEvent, encoding: .utf8)!
+            let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil)
@@ -188,7 +188,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             let conversationEvent = conversationEventPayload(from: memberJoined,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
-            let payloadAsString = String(bytes: conversationEvent, encoding: .utf8)!
+            let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil)
