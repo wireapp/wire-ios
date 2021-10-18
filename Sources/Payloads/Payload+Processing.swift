@@ -502,12 +502,13 @@ extension Payload.Conversation {
         conversation.remoteIdentifier = conversationID
         conversation.domain = qualifiedID?.domain
         conversation.conversationType = conversationType
-        conversation.needsToBeUpdatedFromBackend = false
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
+
+        conversation.needsToBeUpdatedFromBackend = false
     }
 
     func updateOrCreateSelfConversation(in context: NSManagedObjectContext,
