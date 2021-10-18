@@ -402,7 +402,7 @@
     ConversationListChangeObserver *observer = [[ConversationListChangeObserver alloc] initWithConversationList:normalList managedObjectContext:self.uiMOC];
     
     // when
-    [conversation.connection.to accept];
+    conversation.connection.status = ZMConnectionStatusAccepted;
     XCTAssert([self.uiMOC saveOrRollback]);
     
     // then

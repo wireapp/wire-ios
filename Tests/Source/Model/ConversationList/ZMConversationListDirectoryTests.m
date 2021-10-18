@@ -86,9 +86,9 @@
 
     self.archivedOneToOneConversation = [self createConversation];
     self.archivedOneToOneConversation.conversationType = ZMConversationTypeOneOnOne;
-    self.archivedOneToOneConversation.isArchived = YES;
     self.archivedOneToOneConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.archivedOneToOneConversation.connection.status = ZMConnectionStatusAccepted;
+    self.archivedOneToOneConversation.isArchived = YES;
     self.archivedOneToOneConversation.userDefinedName = @"archivedOneToOneConversation";
 
     self.incomingPendingConnectionConversation = [self createConversation];

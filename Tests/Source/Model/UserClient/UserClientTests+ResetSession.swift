@@ -29,7 +29,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         _ = self.createClient(user: selfUser)
         let otherClient = self.createClient(user: otherUser)
     
-        let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+        let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
         connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
                                                                     sender: otherUser,
@@ -54,7 +54,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         _ = self.createClient(user: selfUser)
         let otherClient = self.createClient(user: otherUser)
         
-        let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+        let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
         connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
                                                                     sender: otherUser,
@@ -81,7 +81,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         let otherUserClient1 = self.createClient(user: otherUser)
         let otherUserClient2 = self.createClient(user: otherUser)
     
-        let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+        let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
         connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
                                                                     sender: otherUser,

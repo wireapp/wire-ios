@@ -661,7 +661,8 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
                                                         conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
                                                         conversation.connection!.status = ZMConnectionStatus.pending
             },
-                                                     expectedChangedField: "connectionStateChanged" ,
+                                                     expectedChangedFields: ["connectionStateChanged",
+                                                                             "nameChanged"],
                                                      expectedChangedKeys: ["relatedConnectionState"])
     }
     
@@ -679,7 +680,8 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in conversation.connection!.status = ZMConnectionStatus.accepted },
-                                                     expectedChangedField: "connectionStateChanged" ,
+                                                     expectedChangedFields: ["connectionStateChanged",
+                                                                             "nameChanged"],
                                                      expectedChangedKeys: ["relatedConnectionState"])
         
     }

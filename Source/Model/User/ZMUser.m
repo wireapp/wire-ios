@@ -280,48 +280,6 @@ static NSString *const DomainKey = @"domain";
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];
 }
 
-- (void)connectWithMessage:(NSString *)message;
-{
-    if(self.connection == nil || self.connection.status == ZMConnectionStatusCancelled) {
-        ZMConversation *existingConversation;
-        if (self.connection.status == ZMConnectionStatusCancelled) {
-            existingConversation = self.connection.conversation;
-            self.connection = nil;
-        }
-        self.connection = [ZMConnection insertNewSentConnectionToUser:self existingConversation:existingConversation];
-        self.connection.message = message;
-    }
-    else {
-        NOT_USED(message);
-        switch (self.connection.status) {
-            case ZMConnectionStatusInvalid:
-                self.connection.lastUpdateDate = [NSDate date];
-                self.connection.status = ZMConnectionStatusSent;
-                break;
-            case ZMConnectionStatusAccepted:
-            case ZMConnectionStatusSent:
-            case ZMConnectionStatusCancelled:
-                // Do nothing
-                break;
-            case ZMConnectionStatusPending:
-                // We should get the real modified date after syncing with the server, using current date until then.
-                self.connection.conversation.lastModifiedDate = [NSDate date];
-            case ZMConnectionStatusIgnored:
-            case ZMConnectionStatusBlocked:
-                self.connection.status = ZMConnectionStatusAccepted;
-                if(self.connection.conversation.conversationType == ZMConversationTypeConnection) {
-                    self.connection.conversation.conversationType = ZMConversationTypeOneOnOne;
-                }
-                break;
-        }
-    }
-}
-
-- (NSString *)connectionRequestMessage;
-{
-    return self.connection.message;
-}
-
 + (NSSet *)keyPathsForValuesAffectingConnectionRequestMessage {
     return [NSSet setWithObject:@"connection.message"];
 }
@@ -906,55 +864,6 @@ static NSString *const DomainKey = @"domain";
 + (NSSet *)keyPathsForValuesAffectingIsPendingApprovalByOtherUser
 {
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];
-}
-
-
-- (void)accept;
-{
-    [self connectWithMessage:@""];
-}
-
-- (void)block;
-{
-    switch (self.connection.status) {
-        case ZMConnectionStatusBlocked:
-        case ZMConnectionStatusInvalid:
-        case ZMConnectionStatusCancelled:
-            // do nothing
-            break;
-            
-        case ZMConnectionStatusIgnored:
-        case ZMConnectionStatusAccepted:
-        case ZMConnectionStatusPending:
-        case ZMConnectionStatusSent:
-            self.connection.status = ZMConnectionStatusBlocked;
-            break;
-    };
-}
-
-- (void)ignore;
-{
-    switch (self.connection.status) {
-        case ZMConnectionStatusInvalid:
-        case ZMConnectionStatusSent:
-        case ZMConnectionStatusIgnored:
-        case ZMConnectionStatusCancelled:
-            // do nothing
-            break;
-        case ZMConnectionStatusBlocked:
-        case ZMConnectionStatusAccepted:
-        case ZMConnectionStatusPending:
-            self.connection.status = ZMConnectionStatusIgnored;
-            break;
-            
-    };
-}
-
-- (void)cancelConnectionRequest
-{
-    if (self.connection.status == ZMConnectionStatusSent) {
-        self.connection.status = ZMConnectionStatusCancelled;
-    }
 }
 
 @end

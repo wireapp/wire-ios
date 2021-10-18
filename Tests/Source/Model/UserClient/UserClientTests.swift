@@ -215,7 +215,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient1.user = otherUser
-            let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+            let connection = ZMConnection.insertNewSentConnection(to: otherUser)
             connection.status = .accepted
             
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
@@ -345,7 +345,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
             
-            let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
+            let connection = ZMConnection.insertNewSentConnection(to: otherUser)
             connection.status = .accepted
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

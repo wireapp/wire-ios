@@ -99,7 +99,7 @@ extension ZMConversation {
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity.
     // After creating a new connection, we should add user to the participants roles, because we do not get it from the backend.
     static func addUserFromTheConnectionToTheParticipantRoles(in moc: NSManagedObjectContext) {
-        guard let allConnections = ZMConnection.connections(inMangedObjectContext: moc) as? [ZMConnection] else { return }
+        guard let allConnections = ZMConnection.connections(inManagedObjectContext: moc) as? [ZMConnection] else { return }
         
         for connection in allConnections {
             guard let conversation = connection.conversation,

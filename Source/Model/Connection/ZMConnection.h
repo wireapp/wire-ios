@@ -33,12 +33,7 @@ typedef NS_ENUM(int16_t, ZMConnectionStatus) {
     ZMConnectionStatusBlockedMissingLegalholdConsent, ///< The user is blocked due to legal hold missing consent
 };
 
-
-
 @interface ZMConnection : ZMManagedObject
-
-+ (instancetype)insertNewSentConnectionToUser:(ZMUser *)user;
-+ (instancetype)insertNewSentConnectionToUser:(ZMUser *)user existingConversation:(ZMConversation *)conversation;
 
 @property (nonatomic) NSDate *lastUpdateDate;
 @property (nonatomic, copy) NSString *message;
@@ -47,6 +42,3 @@ typedef NS_ENUM(int16_t, ZMConnectionStatus) {
 @property (nonatomic,readonly) BOOL hasValidConversation;
 
 @end
-
-
-
