@@ -159,7 +159,7 @@
 - (ZMTransportResponse *)processPostConnection:(ZMTransportRequest *)sessionRequest
 {
     NSString *userID = [[sessionRequest.payload asDictionary] stringForKey:@"user"];
-    NSString *message = [[sessionRequest.payload asDictionary] stringForKey:@"message"];
+    NSString *message = [[sessionRequest.payload asDictionary] optionalStringForKey:@"message"];
     
     MockUser *user = [self fetchUserWithIdentifier:userID];
     MockConnection *connection = [self createConnectionRequestFromUser:self.selfUser toUser:user message:message];
