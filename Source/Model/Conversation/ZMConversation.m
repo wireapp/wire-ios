@@ -292,7 +292,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingRelatedConnectionState
 {
-    return [NSSet setWithObject:@"connection.status"];
+    return [NSSet setWithObjects:@"connection.status", @"connection", nil];
 }
 
 - (NSSet *)ignoredKeys;

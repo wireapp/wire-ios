@@ -20,6 +20,9 @@ import Foundation
 
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
+
+    /// The identifier which uniquely idenitifies the user in its domain
+    var remoteIdentifier: UUID? { get }
     
     /// The domain which the user originates from
     var domain: String? { get }
@@ -240,24 +243,21 @@ public protocol UserConnections {
     /// Whether the user can be connected by the self user.
     var canBeConnected: Bool { get }
     
-    /// Message text if there's a pending connection request
-    var connectionRequestMessage: String? { get }
-    
     /// Sends a connection request to the given user. May be a no-op, eg. if we're already connected.
     /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change
     /// You should stop from observing the searchUser and start observing the user from there on
-    func connect(message: String)
-    
+    func connect(completion: @escaping (Error?) -> Void)
+
     /// Accept a pending connection request from this user
-    func accept()
-    
+    func accept(completion: @escaping (Error?) -> Void)
+
     /// Ignore a pending connection request from this user
-    func ignore()
-    
+    func ignore(completion: @escaping (Error?) -> Void)
+
     /// Block this user from communicating with the self user
-    func block()
-        
+    func block(completion: @escaping (Error?) -> Void)
+
     /// Cancel a pending outgoing connection request to this user
-    func cancelConnectionRequest()
-    
+    func cancelConnectionRequest(completion: @escaping (Error?) -> Void)
+
 }

@@ -446,8 +446,9 @@ public class ZMSearchUser: NSObject, UserType {
         guard let uuidString = payload["id"] as? String,
               let remoteIdentifier = UUID(uuidString: uuidString) else { return nil }
 
+        let domain = payload.optionalDictionary(forKey: "qualified_id")?.string(forKey: "domain")
         let localUser = ZMUser.fetch(with: remoteIdentifier,
-                                     domain: nil,
+                                     domain: domain,
                                      in: contextProvider.viewContext)
         
         if let searchUser = contextProvider.viewContext.zm_searchUserCache?.object(forKey: remoteIdentifier as NSUUID) {
@@ -582,62 +583,53 @@ public class ZMSearchUser: NSObject, UserType {
     public func refreshTeamData() {
         user?.refreshTeamData()
     }
-    
-    public func ignore() {
-        user?.ignore()
-    }
-    
-    public func block() {
-        user?.block()
-    }
-    
-    public func accept() {
-        connect(message: "")
-    }
-    
-    public func connect(message: String) {
-        
-        guard canBeConnected else {
-            return
-        }
-        
-        internalPendingApprovalByOtherUser = true
-        internalConnectionRequestMessage = message
-        
-        if let user = user {
-            user.connect(message: message)
-        } else {
-            guard let remoteIdentifier = remoteIdentifier,
-                  let syncManagedObjectContext = contextProvider?.syncContext,
-                  let managedObjectContext = contextProvider?.viewContext else { return }
-            
-            let name = self.name
-            let accentColorValue = self.accentColorValue
-            
-            syncManagedObjectContext.performGroupedBlock {
-                let user = ZMUser.fetchOrCreate(with: remoteIdentifier, domain: nil, in: syncManagedObjectContext)
-                user.name = name
-                user.accentColorValue = accentColorValue
-                user.needsToBeUpdatedFromBackend = true
-                
-                let connection = ZMConnection.insertNewSentConnection(to: user)
-                connection?.message = message
-                syncManagedObjectContext.saveOrRollback()
-                
-                let objectId = user.objectID
-                
-                managedObjectContext.performGroupedBlock {
-                    self.user = managedObjectContext.object(with: objectId) as? ZMUser
-                    managedObjectContext.searchUserObserverCenter.notifyUpdatedSearchUser(self)
-                }
+
+    public func connect(completion: @escaping (Error?) -> Void) {
+        let selfUser = ZMUser.selfUser(inUserSession: contextProvider!)
+        selfUser.sendConnectionRequest(to: self) { [weak self] result in
+            switch result {
+            case .success:
+                self?.internalPendingApprovalByOtherUser = true
+                self?.updateLocalUser()
+                self?.notifySearchUserChanged()
+                completion(nil)
+            case .failure(let error):
+                completion(error)
             }
         }
     }
-    
-    public func cancelConnectionRequest() {
-        user?.cancelConnectionRequest()
+
+    private func updateLocalUser() {
+        guard
+            let userID = remoteIdentifier,
+            let viewContext = contextProvider?.viewContext
+        else {
+            return
+        }
+
+        user = ZMUser.fetch(with: userID, domain: domain, in: viewContext)
     }
-    
+
+    private func notifySearchUserChanged() {
+        contextProvider?.viewContext.searchUserObserverCenter.notifyUpdatedSearchUser(self)
+    }
+
+    public func accept(completion: @escaping (Error?) -> Void) {
+        user?.accept(completion: completion)
+    }
+
+    public func ignore(completion: @escaping (Error?) -> Void) {
+        user?.ignore(completion: completion)
+    }
+
+    public func block(completion: @escaping (Error?) -> Void) {
+        user?.block(completion: completion)
+    }
+
+    public func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
+        user?.cancelConnectionRequest(completion: completion)
+    }
+        
     @objc
     public var canBeConnected: Bool {
         guard !isServiceUser else { return false }

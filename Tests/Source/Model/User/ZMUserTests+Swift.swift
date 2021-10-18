@@ -325,7 +325,7 @@ extension ZMUser {
         user.name = name
         user.handle = handle
         let connection = ZMConnection.insertNewSentConnection(to: user)
-        connection?.status = connectionStatus
+        connection.status = connectionStatus
 
         return user
     }
@@ -542,7 +542,7 @@ extension ZMUserTests_Swift {
 
         for user in usersToConnect {
             let connection = ZMConnection.insertNewSentConnection(to: user)
-            connection?.status = .accepted
+            connection.status = .accepted
         }
 
         // when
@@ -568,14 +568,14 @@ extension ZMUserTests_Swift {
 
         for user in usersToConnect {
             let connection = ZMConnection.insertNewSentConnection(to: user)
-            connection?.status = .accepted
+            connection.status = .accepted
         }
 
         // other team users with unaccepted connections
         for connectionStatus in [ZMConnectionStatus.pending, .blocked, .cancelled, .ignored, .sent, .invalid] {
             let (user, _) = createUserAndAddMember(to: otherTeam)
             let connection = ZMConnection.insertNewSentConnection(to: user)
-            connection?.status = connectionStatus
+            connection.status = connectionStatus
         }
 
         // when
@@ -633,7 +633,7 @@ extension ZMUserTests_Swift {
 
         for user in usersToConnect {
             let connection = ZMConnection.insertNewSentConnection(to: user)
-            connection?.status = .accepted
+            connection.status = .accepted
         }
 
         createConversation(in: uiMOC, with: [selfUser, selfTeamUser1])
@@ -690,7 +690,7 @@ extension ZMUserTests_Swift {
 
         for user in usersToConnect {
             let connection = ZMConnection.insertNewSentConnection(to: user)
-            connection?.status = .accepted
+            connection.status = .accepted
         }
 
         let allRecipients = [
@@ -936,6 +936,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - Verifying user
+
 extension ZMUserTests_Swift {
     
     func testThatUserIsVerified_WhenSelfUserAndUserIsTrusted() {
@@ -966,6 +967,110 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(user.isTrusted)
         XCTAssertFalse(selfUser.isTrusted)
         XCTAssertFalse(user.isVerified)
+    }
+
+}
+
+// MARK: - Connections
+
+extension ZMUserTests_Swift {
+
+    func testThatConnectSendsAConnectToUserAction() {
+        // given
+        let user = createUser(in: uiMOC)
+
+        // expect
+        expectation(forNotification: ConnectToUserAction.notificationName, object: nil)
+
+        // when
+        user.connect { (_) in }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatAcceptSendsAUpdateConnectionAction() {
+        // given
+        let user = createUser(in: uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: uiMOC)
+
+        // expect
+        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+            guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
+                return false
+            }
+
+            return action.newStatus == .accepted
+        }
+
+        // when
+        user.accept { (_) in }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatBlockSendsAUpdateConnectionAction() {
+        // given
+        let user = createUser(in: uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: uiMOC)
+
+        // expect
+        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+            guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
+                return false
+            }
+
+            return action.newStatus == .blocked
+        }
+
+        // when
+        user.block { (_) in }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatIgnoreSendsAUpdateConnectionAction() {
+        // given
+        let user = createUser(in: uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: uiMOC)
+
+        // expect
+        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+            guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
+                return false
+            }
+
+            return action.newStatus == .ignored
+        }
+
+        // when
+        user.ignore { (_) in }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatCancelConnectionRequestSendsAUpdateConnectionAction() {
+        // given
+        let user = createUser(in: uiMOC)
+        user.connection = ZMConnection.insertNewObject(in: uiMOC)
+
+        // expect
+        expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+            guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
+                return false
+            }
+
+            return action.newStatus == .cancelled
+        }
+
+        // when
+        user.cancelConnectionRequest { (_) in }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
 }

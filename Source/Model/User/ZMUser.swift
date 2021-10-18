@@ -373,3 +373,62 @@ extension ZMUser {
     }
 }
 
+extension ZMUser: UserConnections {
+
+    public func connect(completion: @escaping (Error?) -> Void) {
+        ZMUser.selfUser(in: managedObjectContext!).sendConnectionRequest(to: self) { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+
+    public func accept(completion: @escaping (Error?) -> Void) {
+        connection?.updateStatus(.accepted, completion: { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        })
+    }
+
+    public func ignore(completion: @escaping (Error?) -> Void) {
+        connection?.updateStatus(.ignored, completion: { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        })
+    }
+
+    public func block(completion: @escaping (Error?) -> Void) {
+        connection?.updateStatus(.blocked, completion: { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        })
+    }
+
+    public func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
+        connection?.updateStatus(.cancelled, completion: { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        })
+    }
+
+}
+

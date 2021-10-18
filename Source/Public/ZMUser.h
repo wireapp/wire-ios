@@ -83,10 +83,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 /// This is useful for non-connected user, that we will otherwise never refetch
 - (void)refreshData;
 
-/// Sends a connection request to the given user. May be a no-op, eg. if we're already connected.
-/// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change
-/// You should stop from observing the searchUser and start observing the user from there on
-- (void)connectWithMessage:(NSString * _Nonnull)text NS_SWIFT_NAME(connect(message:));
 
 @end
 
@@ -108,11 +104,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @property (nonatomic, readonly) BOOL isIgnored;
 @property (nonatomic, readonly) BOOL isPendingApprovalBySelfUser;
 @property (nonatomic, readonly) BOOL isPendingApprovalByOtherUser;
-
-- (void)accept;
-- (void)block;
-- (void)ignore;
-- (void)cancelConnectionRequest;
 
 @end
 

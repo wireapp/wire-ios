@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,24 @@
 
 import Foundation
 
-extension ZMConnection {
-    @objc(connectionsInMangedObjectContext:)
-    class func connections(inMangedObjectContext moc: NSManagedObjectContext) -> [NSFetchRequestResult] {
-        
-        let request = sortedFetchRequest()
-        
-        let result = moc.fetchOrAssert(request: request)
-        return result
+class MockActionHandler<T: EntityAction>: EntityActionHandler {
+
+    typealias Action = T
+    typealias Result = Swift.Result<Action.Result, Action.Failure>
+
+    var result: Result
+    var token: Any?
+    var didPerformAction: Bool = false
+
+    init(result: Result, context: NotificationContext) {
+        self.result = result
+        token = Action.registerHandler(self, context: context)
     }
+
+    func performAction(_ action: Action) {
+        var action = action
+        action.notifyResult(result)
+        didPerformAction = true
+    }
+
 }
