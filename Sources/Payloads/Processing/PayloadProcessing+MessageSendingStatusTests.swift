@@ -18,7 +18,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadTests_MessageSendingStatus: MessagingTestBase {
+class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
 
     let domain =  "example.com"
 

@@ -19,7 +19,42 @@
 import Foundation
 @testable import WireRequestStrategy
 
+extension QualifiedID {
+    static func randomID() -> QualifiedID {
+        return QualifiedID(uuid: UUID(), domain: "example.com")
+    }
+}
+
 extension MessagingTestBase {
+
+    func createConnectionPayload(_ connection: ZMConnection,
+                                 status: ZMConnectionStatus = .accepted,
+                                 lastUpdate: Date = Date()) -> Payload.Connection {
+        return Payload.Connection(
+            from: nil,
+            to: connection.to.remoteIdentifier,
+            qualifiedTo: connection.to.qualifiedID,
+            conversationID: connection.conversation.remoteIdentifier,
+            qualifiedConversationID: connection.conversation.qualifiedID,
+            lastUpdate: lastUpdate,
+            status: Payload.ConnectionStatus(status)!)
+    }
+
+    func createConnectionPayload(to qualifiedTo: QualifiedID = .randomID(),
+                                 conversation qualifiedConversation: QualifiedID = .randomID()) -> Payload.Connection {
+        let fromID = UUID()
+        let toID = qualifiedTo.uuid
+        let qualifiedTo = qualifiedTo
+
+        return Payload.Connection(
+            from: fromID,
+            to: toID,
+            qualifiedTo: qualifiedTo,
+            conversationID: qualifiedConversation.uuid,
+            qualifiedConversationID: qualifiedConversation,
+            lastUpdate: Date(),
+            status: .accepted)
+    }
 
     func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "") -> ZMTransportResponse {
         let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message)
@@ -33,6 +68,11 @@ extension MessagingTestBase {
 
     }
 
+    func updateEvent(from data: Data) -> ZMUpdateEvent {
+        let payload = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        return ZMUpdateEvent(fromEventStreamPayload: payload! as ZMTransportData, uuid: UUID())!
+    }
+
     func updateEvent<Event: EventData>(from data: Event,
                                      conversationID: QualifiedID? = nil,
                                      senderID: QualifiedID? = nil,
@@ -43,15 +83,13 @@ extension MessagingTestBase {
                                               senderID: senderID,
                                               timestamp: timestamp)
 
-        let payload = try! JSONSerialization.jsonObject(with: event, options: []) as? [String: Any]
-
-        return ZMUpdateEvent(fromEventStreamPayload: payload! as ZMTransportData, uuid: UUID())!
+        return updateEvent(from: event.payloadData()!)
     }
 
     func conversationEventPayload<Event: EventData>(from data: Event,
                                                     conversationID: QualifiedID? = nil,
                                                     senderID: QualifiedID? = nil,
-                                                    timestamp: Date? = nil) -> Data {
+                                                    timestamp: Date? = nil) -> Payload.ConversationEvent<Event> {
 
         let event = Payload.ConversationEvent<Event>(id: conversationID?.uuid,
                                                      qualifiedID: conversationID,
@@ -60,8 +98,7 @@ extension MessagingTestBase {
                                                      timestamp: timestamp,
                                                      type: ZMUpdateEvent.eventTypeString(for: Event.eventType),
                                                      data: data)
-
-        return event.payloadData()!
+        return event
     }
 
 }
