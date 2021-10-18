@@ -400,9 +400,9 @@
 {
     NSDictionary *data = @{
                            @"email" : [NSNull null],
-                           @"message" : message,
+                           @"message" : @"",
                            @"name" : user.name,
-                           @"recipiend" : user.identifier
+                           @"recipient" : user.identifier
                            };
     return [self eventIfNeededByUser:byUser type:ZMUpdateEventTypeConversationConnectRequest data:data];
 }
