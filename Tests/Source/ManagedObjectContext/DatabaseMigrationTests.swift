@@ -312,7 +312,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let allVersions = ["2-24-1"] +
             [(25...31),
              (39...57),
-             (59...95)].joined().map { "2-\($0)-0" }
+             (59...96)].joined().map { "2-\($0)-0" }
         
         let modelVersion = CoreDataStack.loadMessagingModel().version
         let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
