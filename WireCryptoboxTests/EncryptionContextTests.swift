@@ -213,7 +213,7 @@ extension EncryptionContextTests {
     func testThatItSetsExtendedLoggingOnSessions() {
         
         // GIVEN
-        let identifier = EncryptionSessionIdentifier(userId: "user", clientId: "foo")
+        let identifier = EncryptionSessionIdentifier(domain: "example.com", userId: "user", clientId: "foo")
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
         
@@ -242,7 +242,7 @@ extension EncryptionContextTests {
     func testThatItDoesNotLogEncryptionWhenRemovingExtendedLogging() {
 
         // GIVEN
-        let identifier = EncryptionSessionIdentifier(userId: "user", clientId: "foo")
+        let identifier = EncryptionSessionIdentifier(domain: "example.com", userId: "user", clientId: "foo")
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
         
@@ -259,7 +259,7 @@ extension EncryptionContextTests {
     func testThatItDoesNotLogEncryptionWhenRemovingAllExtendedLogging() {
 
         // GIVEN
-        let identifier = EncryptionSessionIdentifier(userId: "user", clientId: "foo")
+        let identifier = EncryptionSessionIdentifier(domain: "example.com", userId: "user", clientId: "foo")
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
         
