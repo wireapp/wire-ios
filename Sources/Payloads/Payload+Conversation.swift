@@ -47,8 +47,16 @@ extension Payload {
         let conversationRole: String?
 
         init(_ conversation: ZMConversation) {
-            users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
-            qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs.map({ Payload.QualifiedUserIDList(qualifiedIDs: $0) })
+            if let qualifiedUsers = conversation
+                .localParticipantsExcludingSelf
+                .qualifiedUserIDs.map({ Payload.QualifiedUserIDList(qualifiedIDs: $0) }) {
+                self.qualifiedUsers = qualifiedUsers
+                self.users = nil
+            } else {
+                qualifiedUsers = nil
+                users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
+            }
+
             name = conversation.userDefinedName
             access = conversation.accessMode?.stringValue
             accessRole = conversation.accessRole?.rawValue
