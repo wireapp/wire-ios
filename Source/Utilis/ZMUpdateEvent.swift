@@ -46,6 +46,54 @@ extension ZMUpdateEvent {
         return userIds.compactMap({ UUID.init(uuidString: $0)})
     }
 
+    public var qualifiedUserIDs: [QualifiedID]? {
+        guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
+              let userDicts = dataPayload["users"] as? [NSDictionary] else {
+                return nil
+        }
+        
+        let qualifiedIDs: [QualifiedID] = userDicts.compactMap({
+            let qualifiedID = $0.optionalDictionary(forKey: "qualified_id") as NSDictionary?
+
+            guard
+                let uuid = $0.optionalUuid(forKey: "id") ?? qualifiedID?.optionalUuid(forKey: "id"),
+                let domain = qualifiedID?.string(forKey: "domain")
+            else {
+                return nil
+            }
+
+            return QualifiedID(uuid: uuid, domain: domain)
+        })
+
+        if !qualifiedIDs.isEmpty {
+            return qualifiedIDs
+        } else {
+            return nil
+        }
+    }
+
+    public func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
+
+        if let qualifiedUserIDs = qualifiedUserIDs {
+            if createIfNeeded {
+                return qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,
+                                                                   domain: $0.domain,
+                                                                   in: context) }
+            } else {
+                return qualifiedUserIDs.compactMap { ZMUser.fetch(with: $0.uuid,
+                                                                  domain: $0.domain,
+                                                                  in: context) }
+            }
+        } else {
+            if createIfNeeded {
+                return userIDs.map { ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }
+            } else {
+                return userIDs.compactMap { ZMUser.fetch(with: $0, domain: nil, in: context) }
+            }
+
+        }
+    }
+
     public var participantsRemovedReason: ZMParticipantsRemovedReason {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
               let reasonString = dataPayload["reason"] as? String else {
