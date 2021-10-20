@@ -28,10 +28,9 @@
 @property (readonly, nullable) NSDate *timestamp;
 @property (readonly, nullable) NSUUID *senderUUID;
 @property (readonly, nullable) NSString *senderDomain;
+@property (readonly, nullable) NSString *conversationDomain;
 @property (readonly, nullable) NSUUID *conversationUUID;
 @property (readonly, nullable) NSString *senderClientID;
 @property (readonly, nullable) NSString *recipientClientID;
-
-- (nonnull NSMutableSet *)usersFromUserIDsInManagedObjectContext:(nonnull NSManagedObjectContext *)context createIfNeeded:(BOOL)createIfNeeded;
 
 @end

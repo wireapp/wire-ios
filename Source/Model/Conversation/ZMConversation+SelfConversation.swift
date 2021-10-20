@@ -113,7 +113,7 @@ extension ZMConversation {
         guard let conversationID = UUID(uuidString: lastRead.conversationID) else {
             return
         }
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: nil, in: moc)
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: lastRead.qualifiedConversationID.domain, in: moc)
         conversation.updateLastRead(timestamp, synchronize: false)
     }
 
@@ -123,7 +123,7 @@ extension ZMConversation {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return
         }
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: nil, in: moc)
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: cleared.qualifiedConversationID.domain, in: moc)
         conversation.updateCleared(timestamp, synchronize: false)
 
     }

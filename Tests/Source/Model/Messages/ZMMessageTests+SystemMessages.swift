@@ -90,14 +90,38 @@ extension ZMMessageTests_SystemMessages {
                                                        reason: nil)
     }
 
-    private func createSystemMessageFrom(updateEventType: ZMUpdateEventType, in conversation:ZMConversation, with usersIDs:[UUID], senderID: UUID?, reason: ZMParticipantsRemovedReason?) -> ZMSystemMessage? {
+    func testThatItGeneratesTheCorrectSystemMessageTypesFromUpdateEventsWithQualifiedUsers() {
+        // expect a message
+        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberJoin,
+                                                       systemMessageType: .participantsAdded,
+                                                       reason: nil,
+                                                       selfUserDomain: "foo.com",
+                                                       otherUserDomain: "bar.com")
+    }
+
+    private func createSystemMessageFrom(updateEventType: ZMUpdateEventType,
+                                         in conversation:ZMConversation,
+                                         with usersIDs:[UUID],
+                                         senderID: UUID?,
+                                         reason: ZMParticipantsRemovedReason?,
+                                         domain: String? = nil) -> ZMSystemMessage? {
         let updateEventTypeDict: [ZMUpdateEventType : String] = [
             .conversationMemberJoin : "conversation.member-join",
             .conversationMemberLeave : "conversation.member-leave",
             .conversationRename : "conversation.rename"
         ]
 
-        var data = ["user_ids": usersIDs.map { $0.transportString() }] as [String : Any]
+        var data: [String: Any]
+        if let domain = domain {
+            data = ["users": usersIDs.map {
+                ["qualified_id":
+                    ["id": $0.transportString(), "domain": domain]
+                ]
+            } ] as [String : Any]
+        } else {
+            data = ["user_ids": usersIDs.map { $0.transportString() }] as [String : Any]
+        }
+
         if reason != nil {
             data["reason"] = reason?.stringValue
         }
@@ -116,9 +140,12 @@ extension ZMMessageTests_SystemMessages {
 
     private func checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: ZMUpdateEventType,
                                                                 systemMessageType:ZMSystemMessageType,
-                                                                reason: ZMParticipantsRemovedReason?) {
+                                                                reason: ZMParticipantsRemovedReason?,
+                                                                selfUserDomain: String? = nil,
+                                                                otherUserDomain: String? = nil) {
 
         // given
+        ZMUser.selfUser(in: uiMOC).domain = selfUserDomain
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
        conversation.conversationType = updateEventType == .conversationConnectRequest ? .connection : .group
@@ -134,7 +161,8 @@ extension ZMMessageTests_SystemMessages {
                                                    in: conversation,
                                                    with: [userID1, userID2],
                                                    senderID: nil,
-                                                   reason: reason)
+                                                   reason: reason,
+                                                   domain: otherUserDomain)
         }
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -144,17 +172,6 @@ extension ZMMessageTests_SystemMessages {
         XCTAssertEqual(message!.systemMessageType, systemMessageType)
         XCTAssertEqual(message!.participantsRemovedReason, reason ?? .none)
         XCTAssertEqual(message!.users.count, 2)
-
-        let user1 = ZMUser.insertNewObject(in: uiMOC)
-        user1.remoteIdentifier = userID1
-
-        let user2 = ZMUser.insertNewObject(in: uiMOC)
-        user2.remoteIdentifier = userID2
-
-        message!.users = [user1, user2]
-
-        XCTAssertNotNil(user1)
-        XCTAssertNotNil(user2)
         XCTAssertTrue(conversation.lastMessage is ZMSystemMessage)
     }
 
