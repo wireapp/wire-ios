@@ -235,7 +235,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // WHEN
         // THEN
-        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(userId: "aa22", clientId: "8899")))
+        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(domain: "example.com", userId: "aa22", clientId: "8899")))
     }
 }
 
@@ -602,7 +602,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         // set logging for a different identifier
-        let wrongIdentifier = EncryptionSessionIdentifier(userId: "foo", clientId: "bar")
+        let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
         self.recreateAliceStatus(extendedLoggingSession: Set([wrongIdentifier]))
         
         let plainText = "foo".data(using: String.Encoding.utf8)!
@@ -683,7 +683,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         // set logging for a different identifier
-        let wrongIdentifier = EncryptionSessionIdentifier(userId: "foo", clientId: "bar")
+        let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
         self.recreateBobStatus(extendedLoggingSession: Set([wrongIdentifier]))
 
         let plainText = "foo".data(using: String.Encoding.utf8)!
@@ -772,7 +772,7 @@ extension EncryptionSessionsDirectoryTests {
         var identifier : EncryptionSessionIdentifier {
             switch(self) {
             case .Alice:
-                return EncryptionSessionIdentifier(userId: "234ab2e4", clientId: "c45-a11c30")
+                return EncryptionSessionIdentifier(domain: "example.com", userId: "234ab2e4", clientId: "c45-a11c30")
             case .Bob:
                 return EncryptionSessionIdentifier(fromLegacyV1Identifier: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
             }

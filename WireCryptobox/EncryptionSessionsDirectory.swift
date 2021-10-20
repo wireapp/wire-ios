@@ -709,23 +709,30 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
     
     private let userId: String
     private let clientId: String
+    private let domain: String
     
     public var rawValue: String {
         guard !userId.isEmpty else {
             return clientId
         }
-        return "\(userId)_\(clientId)"
+        guard !domain.isEmpty else {
+            return "\(userId)_\(clientId)"
+        }
+
+        return "\(domain)_\(userId)_\(clientId)"
     }
     
-    public init(userId: String, clientId: String) {
+    public init(domain: String? = nil, userId: String, clientId: String) {
         self.userId = userId
         self.clientId = clientId
+        self.domain = domain ?? ""
     }
-    
+
     /// Use when migrating from old session identifier to new session identifier
     init(fromLegacyV1Identifier clientId: String) {
         self.userId = String()
         self.clientId = clientId
+        self.domain = String()
     }
     
     public var hashValue: Int {
@@ -743,6 +750,6 @@ public func ==(lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifie
 
 extension EncryptionSessionIdentifier: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return "<\(userId.readableHash)>_<\(clientId.readableHash)>"
+        return "<\(domain.readableHash)>_<\(userId.readableHash)>_<\(clientId.readableHash)>"
     }
 }
