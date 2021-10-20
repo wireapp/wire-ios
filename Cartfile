@@ -1,4 +1,4 @@
-github "wireapp/wire-ios-cryptobox" ~> 29.0.0
+github "wireapp/wire-ios-cryptobox" ~> 30.0.0
 github "wireapp/wire-ios-protos" ~> 29.0.0
 github "wireapp/wire-ios-images" ~> 39.0.0
 github "wireapp/PINCache" "2.3-xcframework"
