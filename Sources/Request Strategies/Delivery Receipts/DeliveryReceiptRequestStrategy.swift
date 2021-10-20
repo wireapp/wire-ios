@@ -134,17 +134,39 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                 .partition(by: \.senderUUID)
             
             eventsBySender.forEach { (senderID: UUID, events: [ZMUpdateEvent]) in
-                let sender = ZMUser.fetchOrCreate(with: senderID,
-                                                  domain: nil,
-                                                  in: managedObjectContext)
-                let deliveryReceipt = DeliveryReceipt(sender: sender,
-                                                      conversation: conversation,
-                                                      messageIDs: events.compactMap(\.messageNonce))
-                deliveryReceipts.append(deliveryReceipt)
+
+                let eventsByDomain = events.partition(by: \.senderDomain)
+                let eventsWithoutDomain = events.filter({ $0.senderDomain == nil })
+
+                eventsByDomain.forEach { (domain: String, events: [ZMUpdateEvent]) in
+                    deliveryReceipts.append(deliveryReceipt(for: senderID,
+                                                            domain: domain,
+                                                            conversation: conversation,
+                                                            events: events))
+                }
+
+                if !eventsWithoutDomain.isEmpty {
+                    deliveryReceipts.append(deliveryReceipt(for: senderID,
+                                                            domain: nil,
+                                                            conversation: conversation,
+                                                            events: events))
+                }
             }
         }
         
         return deliveryReceipts
+    }
+
+    private func deliveryReceipt(for senderID: UUID,
+                                 domain: String?,
+                                 conversation: ZMConversation,
+                                 events: [ZMUpdateEvent]) -> DeliveryReceipt {
+        let sender = ZMUser.fetchOrCreate(with: senderID,
+                                          domain: domain,
+                                          in: managedObjectContext)
+        return DeliveryReceipt(sender: sender,
+                               conversation: conversation,
+                               messageIDs: events.compactMap(\.messageNonce))
     }
     
 }
