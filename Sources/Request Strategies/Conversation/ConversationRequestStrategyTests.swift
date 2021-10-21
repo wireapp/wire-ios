@@ -104,7 +104,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.path, "/conversations")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertEqual(payload?.name, conversation.userDefinedName)
-            XCTAssertEqual(Set(payload!.qualifiedUsers!.qualifiedIDs), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
+            XCTAssertEqual(Set(payload!.qualifiedUsers!), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
         }
     }
 

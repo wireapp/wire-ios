@@ -37,7 +37,7 @@ extension Payload {
         }
 
         let users: [UUID]?
-        let qualifiedUsers: QualifiedUserIDList?
+        let qualifiedUsers: [QualifiedID]?
         let access: [String]?
         let accessRole: String?
         let name: String?
@@ -47,9 +47,7 @@ extension Payload {
         let conversationRole: String?
 
         init(_ conversation: ZMConversation) {
-            if let qualifiedUsers = conversation
-                .localParticipantsExcludingSelf
-                .qualifiedUserIDs.map({ Payload.QualifiedUserIDList(qualifiedIDs: $0) }) {
+            if let qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs {
                 self.qualifiedUsers = qualifiedUsers
                 self.users = nil
             } else {
