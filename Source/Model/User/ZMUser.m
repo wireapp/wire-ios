@@ -847,8 +847,7 @@ static NSString *const DomainKey = @"domain";
 
 - (BOOL)isPendingApprovalBySelfUser
 {
-    return self.connection != nil && (self.connection.status == ZMConnectionStatusPending ||
-                                      self.connection.status == ZMConnectionStatusIgnored);
+    return self.connection != nil && self.connection.status == ZMConnectionStatusPending;
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsPendingApprovalBySelfUser
