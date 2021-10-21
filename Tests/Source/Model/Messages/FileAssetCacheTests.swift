@@ -245,6 +245,7 @@ extension FileAssetCacheTests {
         XCTAssertFalse(result)
     }
     
+    // @SF.Messages @TSFI.RESTfulAPI
     func testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256() {
         
         // given
@@ -261,6 +262,7 @@ extension FileAssetCacheTests {
         XCTAssertNil(extractedData)
     }
     
+    // @SF.Messages @TSFI.RESTfulAPI
     func testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256() {
         
         // given
