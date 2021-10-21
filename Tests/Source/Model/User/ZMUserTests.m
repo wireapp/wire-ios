@@ -1337,7 +1337,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertFalse(user.isConnected);
     XCTAssertFalse(user.isBlocked);
     XCTAssertFalse(user.isPendingApprovalByOtherUser);
-    XCTAssertTrue(user.isPendingApprovalBySelfUser);
+    XCTAssertFalse(user.isPendingApprovalBySelfUser);
     XCTAssertTrue(user.canBeConnected);
 }
 
