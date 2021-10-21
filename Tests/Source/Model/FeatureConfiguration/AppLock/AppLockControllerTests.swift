@@ -106,6 +106,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(sut.isLocked)
     }
 
+    // @SF.Locking @SF.Storage @TSFI.UserInterface
     func test_ItIsLocked_WhenTimeoutIsExceeded() {
         // Given
         let sut = createSut(timeout: 10)
@@ -323,6 +324,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         try sut.deletePasscode()
     }
 
+    // @SF.Locking @SF.Storage @TSFI.UserInterface
     func test_ItEvaluatesAuthentication_WithInCorrectCustomPasscode() throws {
         // Given
         let sut = createSut()
