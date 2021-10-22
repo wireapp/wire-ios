@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.3
+name: Create bump PR v0.1.4
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-bump-pr:
-    runs-on: macOs-11
+    runs-on: macOs-latest
 
     steps:
       - name: Event Information
