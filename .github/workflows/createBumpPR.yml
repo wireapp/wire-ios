@@ -23,7 +23,8 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
+            echo "BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)" >> $GITHUB_ENV
+            
             git config --global user.email "iosx@wire.com"
             echo "ℹ️ create branch: $BRANCH"
             git branch $BRANCH
