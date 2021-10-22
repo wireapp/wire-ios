@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-bump-pr:
-    runs-on: macos-11
+    runs-on: macOs-11
 
     steps:
       - name: Event Information
@@ -45,9 +45,8 @@ jobs:
             ulimit -t 60; carthage update --no-build
       - name: Create bump PR
         run: |
-            BRANCH = ${{ steps.update.outputs.BRANCH }}
             git add .
             git commit -m"bump components"
-            git push --set-upstream origin $BRANCH
+            git push --set-upstream origin ${{ steps.update.outputs.BRANCH }}
             echo "ℹ️ open bump PR"
             gh pr create --title "chore: bump components" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
