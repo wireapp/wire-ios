@@ -358,7 +358,7 @@
     }];
 }
 
-- (void)testThatItCreatesAUserForNonExistingUUID
+- (void)testThatItCreatesAConversationForNonExistingUUID
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
@@ -369,6 +369,21 @@
         
         // then
         XCTAssertEqualObjects(uuid, found.remoteIdentifier);
+    }];
+}
+
+- (void)testThatItTreatsEmptyDomainAsNil
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSUUID *uuid = NSUUID.createUUID;
+
+        // when
+        ZMConversation *found = [ZMConversation fetchOrCreateWith:uuid domain:@"" in:self.syncMOC];
+
+        // then
+        XCTAssertEqualObjects(uuid, found.remoteIdentifier);
+        XCTAssertEqualObjects(nil, found.domain);
     }];
 }
 
