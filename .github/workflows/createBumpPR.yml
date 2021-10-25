@@ -49,4 +49,5 @@ jobs:
             git commit -m"bump components"
             git push --set-upstream origin ${{ steps.update.outputs.BRANCH }}
             echo "ℹ️ open bump PR"
+            git config --global user.email "iosx@wire.com"
             gh pr create --title "chore: bump components" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
