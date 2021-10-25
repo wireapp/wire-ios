@@ -8,6 +8,8 @@ on:
 jobs:
   create-bump-pr:
     runs-on: macOs-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Event Information
@@ -20,8 +22,6 @@ jobs:
       - name: create branch
         id: update
         continue-on-error: false
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
             echo "::set-output name=BRANCH::$BRANCH"
@@ -44,8 +44,6 @@ jobs:
             ### limit the maximum amount of cpu time to 60 sec to stop the update after timeout
             ulimit -t 60; carthage update --no-build
       - name: Create bump PR
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             git add .
             git commit -m"bump components"
