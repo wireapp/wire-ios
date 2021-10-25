@@ -13,9 +13,9 @@ jobs:
         if: ${{ github.event.comment.body != 'release major' && github.event.comment.body != 'release minor' && github.event.comment.body != 'release patch'}}
         run: exit 1
       - name: guard for admins
-        if: ${{ github.actor != 'billypchan' }}
+        if: ${{ github.actor != 'billypchan' && github.actor != 'marcoconti83' && github.actor != 'typfel' && github.actor != 'johnxnguyen' && github.actor != 'David-Henner' && github.actor != 'KaterinaWire'}}
         run: |
-          echo ${{ github.actor }} is not allowed for create release
+          echo ${{ github.actor }} is not allowed for releasing
           exit 1
       - name: get release type
         id: releaseType
