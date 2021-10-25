@@ -44,10 +44,11 @@ jobs:
             ### limit the maximum amount of cpu time to 60 sec to stop the update after timeout
             ulimit -t 60; carthage update --no-build
       - name: Create bump PR
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             git add .
             git commit -m"bump components"
             git push --set-upstream origin ${{ steps.update.outputs.BRANCH }}
             echo "ℹ️ open bump PR"
-            git config --global user.email "iosx@wire.com"
             gh pr create --title "chore: bump components" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
