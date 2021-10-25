@@ -14,4 +14,4 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 Canvas is a component for painting and composing pictures.
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/wire-ios-sync-engine) for an overview of the architecture. 
+This framework is part of Wire iOS app. Visit [iOS  repository](http://github.com/wireapp/wire-ios) for an overview of the architecture. 
