@@ -24,7 +24,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
-            echo '::set-output name=BRANCH::$(echo $BRANCH)'
+            echo "::set-output name=BRANCH::$BRANCH"
             
             git config --global user.email "iosx@wire.com"
             echo "ℹ️ create branch: $BRANCH"
