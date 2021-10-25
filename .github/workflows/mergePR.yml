@@ -1,7 +1,8 @@
-name: Merge PR v0.1.2
+name: Merge PR v0.1.3
 
 on: 
   issue_comment:
+    types: [created]
 
 jobs:
   create_comment:
@@ -9,14 +10,18 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: guard for magic spell
-        if: ${{ github.event.comment.body != 'release major' && github.event.comment.body != 'release minor' && github.event.comment.body != 'release patch'}}
+      - name: guard for pull requests
+        if: ${{ !github.event.issue.pull_request }}
         run: exit 1
       - name: guard for admins
         if: ${{ github.actor != 'billypchan' && github.actor != 'marcoconti83' && github.actor != 'typfel' && github.actor != 'johnxnguyen' && github.actor != 'David-Henner' && github.actor != 'KaterinaWire'}}
         run: |
           echo ${{ github.actor }} is not allowed for releasing
           exit 1
+      - name: guard for magic spell
+        if: ${{ github.event.comment.body != 'release major' && github.event.comment.body != 'release minor' && github.event.comment.body != 'release patch'}}
+        run: exit 1
+        
       - name: get release type
         id: releaseType
         run: |
@@ -53,7 +58,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ steps.developSha.outputs.SHA }}
-      - name: tag
+      - name: tagging new release version
         run: |
           git status
           git config --global user.name "zenkins"
