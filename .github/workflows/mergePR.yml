@@ -1,4 +1,4 @@
-name: Merge PR v0.1
+name: Merge PR v0.1.1
 
 on: 
   issue_comment:
@@ -24,7 +24,7 @@ jobs:
           body: |
             Hello, @${{ github.actor }}! Merging PR for command **${{ github.event.comment.body}}** for PR #**${{ github.event.issue.number }}**. Will create a **${{ steps.releaseType.outputs.TYPE }}** release after merged
       - name: Merge Pull Request 
-        run: gh pr merge ${{ github.event.issue.html_url }} -s
+        run: gh pr merge ${{ github.event.issue.html_url }} -s --admin
       - name: Get the next version tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.6
