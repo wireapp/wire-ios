@@ -1,4 +1,4 @@
-name: Merge PR v0.1.1
+name: Merge PR v0.1.2
 
 on: 
   issue_comment:
@@ -11,6 +11,11 @@ jobs:
     steps:
       - name: guard for magic spell
         if: ${{ github.event.comment.body != 'release major' && github.event.comment.body != 'release minor' && github.event.comment.body != 'release patch'}}
+        run: exit 1
+      - name: guard for admins
+        if: >
+          ${{ github.actor != 'billypchan'
+          }}
         run: exit 1
       - name: get release type
         id: releaseType
