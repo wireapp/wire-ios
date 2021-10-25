@@ -13,10 +13,10 @@ jobs:
         if: ${{ github.event.comment.body != 'release major' && github.event.comment.body != 'release minor' && github.event.comment.body != 'release patch'}}
         run: exit 1
       - name: guard for admins
-        if: >
-          ${{ github.actor != 'billypchan'
-          }}
-        run: exit 1
+        if: ${{ github.actor != 'billypchan' }}
+        run: |
+          echo ${{ github.actor }} is not allowed for create release
+          exit 1
       - name: get release type
         id: releaseType
         run: |
