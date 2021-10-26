@@ -30,6 +30,14 @@ enum Payload {
     typealias ClientListByQualifiedUserID = [String: ClientListByUserID]
     typealias UserProfiles = [Payload.UserProfile]
 
+    struct EventContainer<T: Codable>: Codable {
+        enum CodingKeys: String, CodingKey {
+            case event
+        }
+
+        let event: T
+    }
+
     struct QualifiedUserIDList: Codable, Hashable {
 
         enum CodingKeys: String, CodingKey {
