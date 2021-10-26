@@ -90,10 +90,19 @@ extension ZMMessageTests_SystemMessages {
                                                        reason: nil)
     }
 
-    func testThatItGeneratesTheCorrectSystemMessageTypesFromUpdateEventsWithQualifiedUsers() {
+    func testThatItGeneratesTheCorrectSystemMessageTypesFromMemberJoinedUpdateEventWithQualifiedUsers() {
         // expect a message
         checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberJoin,
                                                        systemMessageType: .participantsAdded,
+                                                       reason: nil,
+                                                       selfUserDomain: "foo.com",
+                                                       otherUserDomain: "bar.com")
+    }
+
+    func testThatItGeneratesTheCorrectSystemMessageTypesFromMemberLeaveMUpdateEventWithQualifiedUsers() {
+        // expect a message
+        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberLeave,
+                                                       systemMessageType: .participantsRemoved,
                                                        reason: nil,
                                                        selfUserDomain: "foo.com",
                                                        otherUserDomain: "bar.com")
@@ -113,11 +122,17 @@ extension ZMMessageTests_SystemMessages {
 
         var data: [String: Any]
         if let domain = domain {
-            data = ["users": usersIDs.map {
-                ["qualified_id":
+            if updateEventType == .conversationMemberJoin {
+                data = ["users": usersIDs.map {
+                    ["qualified_id":
+                        ["id": $0.transportString(), "domain": domain]
+                    ]
+                } ] as [String : Any]
+            } else {
+                data = ["qualified_user_ids": usersIDs.map {
                     ["id": $0.transportString(), "domain": domain]
-                ]
-            } ] as [String : Any]
+                } ] as [String : Any]
+            }
         } else {
             data = ["user_ids": usersIDs.map { $0.transportString() }] as [String : Any]
         }
