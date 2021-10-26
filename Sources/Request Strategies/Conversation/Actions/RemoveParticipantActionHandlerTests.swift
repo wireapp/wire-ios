@@ -22,6 +22,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
     var sut: RemoveParticipantActionHandler!
     var user: ZMUser!
+    var service: ZMUser!
     var conversation: ZMConversation!
 
     override func setUp() {
@@ -33,6 +34,15 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             user.remoteIdentifier = userID
             user.domain = self.owningDomain
             self.user = user
+
+            let service = ZMUser.insertNewObject(in: self.syncMOC)
+            let serviceID = UUID()
+            service.providerIdentifier = "providerIdentifier"
+            service.serviceIdentifier = "serviceIdentifier"
+            service.remoteIdentifier = serviceID
+            service.domain = self.owningDomain
+
+            self.service = service
 
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [])!
             let conversationID = UUID()
@@ -119,6 +129,31 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
+            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
+                                               httpStatus: 200,
+                                               transportSessionError: nil)
+
+            // when
+            self.sut.handleResponse(response, action: action)
+
+            // then
+            XCTAssertFalse(conversation.localParticipants.contains(user))
+        }
+    }
+
+    func testThatItProcessMemberLeaveEventInTheResponse_Bots() throws {
+        syncMOC.performGroupedAndWait { [self] syncMOC in
+            // given
+            conversation.addParticipantAndUpdateConversationState(user: self.service, role: nil)
+
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let action = RemoveParticipantAction(user: service, conversation: conversation)
+            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [service.remoteIdentifier!], qualifiedUserIDs: [user.qualifiedID!])
+            let conversationEvent = conversationEventPayload(from: memberLeave,
+                                                             conversationID: conversation.qualifiedID,
+                                                             senderID: selfUser.qualifiedID)
+            let container = Payload.EventContainer<Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>>(event: conversationEvent)
+            let payloadAsString = String(bytes: container.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil)

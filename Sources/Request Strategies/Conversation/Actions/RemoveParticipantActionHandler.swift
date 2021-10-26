@@ -90,12 +90,13 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction>, Fe
                 let payload = response.payload,
                 let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
                 let rawData = response.rawData,
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(rawData, decoder: .defaultDecoder)
+                let conversationEvent = decodeResponse(for: user, rawResponse: rawData)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 action.notifyResult(.failure(.unknown))
                 return
             }
+
 
             // TODO jacob this logic should be moved to data model
             // Update cleared timestamp if self user left and deleted history
@@ -111,6 +112,15 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction>, Fe
             action.notifyResult(.success(Void()))
         default:
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))
+        }
+    }
+
+    private func decodeResponse(for user: ZMUser, rawResponse: Data) -> Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>? {
+        if user.isServiceUser {
+            let container = Payload.EventContainer<Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>>(rawResponse, decoder: .defaultDecoder)
+            return container?.event
+        } else {
+            return Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(rawResponse, decoder: .defaultDecoder)
         }
     }
 
