@@ -237,7 +237,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
                 handler()
             }
         }
-        
+
         // No need to keep any activities after finishing
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
@@ -254,6 +254,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
         } else {
             zmLog.safePublic("Finishing background task: no current background task")
         }
+        stopTimer()
     }
 
 }
