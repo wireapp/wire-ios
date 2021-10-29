@@ -123,7 +123,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertEqual(activityManager.numberOfTasks, 0)
     }
     
-    func testItNotifiesThatAllBackgroundActivititesEnded_WhenTaskExpires() {
+    func testItNotifiesThatAllBackgroundActivitiesEnded_WhenTaskExpires() {
         // GIVEN
         let endHandlerExpectation = expectation(description: "The end handler is called.")
         let activity = factory.startBackgroundActivity(withName: "Activity 1") {}
@@ -143,7 +143,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertEqual(activityManager.numberOfTasks, 0)
     }
     
-    func testItNotifiesThatAllBackgroundActivititesEnded_WhenTaskEnds() throws {
+    func testItNotifiesThatAllBackgroundActivitiesEnded_WhenTaskEnds() throws {
         // GIVEN
         let endHandlerExpectation = expectation(description: "The end handler is called.")
         let activity = try XCTUnwrap(factory.startBackgroundActivity(withName: "Activity 1") {})
@@ -162,7 +162,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertEqual(activityManager.numberOfTasks, 0)
     }
     
-    func testItDoesntNotifyThatAllBackgroundActivititesEnded_WhenTaskEndsIfThereAreMoreTasks() throws {
+    func testItDoesntNotifyThatAllBackgroundActivitiesEnded_WhenTaskEndsIfThereAreMoreTasks() throws {
         // GIVEN
         let activity1 = try XCTUnwrap(factory.startBackgroundActivity(withName: "Activity 1") {})
         _ = try XCTUnwrap(factory.startBackgroundActivity(withName: "Activity 2") {})
@@ -180,7 +180,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertEqual(activityManager.numberOfTasks, 1)
     }
 
-    func testItEndsActivitites_WhenTheCustomTimeoutHasExpiredInTheBackground() {
+    func testItEndsActivities_WhenTheCustomTimeoutHasExpiredInTheBackground() {
         // GIVEN
         let _ = factory.startBackgroundActivity(withName: "Activity 1")!
         let expirationExpectation = expectation(description: "The expiration handler is called.")
@@ -198,7 +198,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertEqual(activityManager.numberOfTasks, 0)
     }
 
-    func testItDoesNotEndActivitites_WhenApplicationComesToTheForeground() {
+    func testItDoesNotEndActivities_WhenApplicationComesToTheForeground() {
         // GIVEN
         let _ = factory.startBackgroundActivity(withName: "Activity 1")!
         factory.notifyWhenAllBackgroundActivitiesEnd {
@@ -217,6 +217,22 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertFalse(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 1)
     }
+
+    func testItEndsBackgroundTaskTimer_WhenAllBackgroundActivitiesAreEnded() {
+        // GIVEN
+        let activity = factory.startBackgroundActivity(withName: "Activity 1")!
+
+        // WHEN
+        simulateApplicationDidEnterBackground()
+        factory.endBackgroundActivity(activity)
+
+        // THEN
+        XCTAssertNil(factory.backgroundTaskTimer)
+        XCTAssertFalse(factory.isActive)
+        XCTAssertTrue(factory.activities.isEmpty)
+        XCTAssertEqual(activityManager.numberOfTasks, 0)
+    }
+
 }
 
 // MARK: - Helpers
