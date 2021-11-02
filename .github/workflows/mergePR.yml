@@ -1,4 +1,4 @@
-name: Merge PR v0.1.4
+name: Merge PR v0.1.5
 
 on: 
   issue_comment:
@@ -42,7 +42,25 @@ jobs:
           body: |
             Hello, @${{ github.actor }}! Merging PR for command **${{ github.event.comment.body}}** for PR #**${{ github.event.issue.number }}**. Will create a **${{ steps.releaseType.outputs.TYPE }}** release after merged
       - name: Merge Pull Request 
-        run: gh pr merge ${{ github.event.issue.html_url }} -s --admin
+        id: mergePullRequest
+        run: |
+          if gh pr merge ${{ github.event.issue.html_url }} -s --admin; then
+            echo merged!
+            echo "::set-output name=mergeResult::1"
+          else
+            echo "::set-output name=mergeResult::0"
+          fi
+      - uses: actions-ecosystem/action-create-comment@v1
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
+        with:
+          github_token: ${{ secrets.github_token }}
+          body: |
+            Merging Failed
+      - name: Merge Pull Request exit
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
+        run: |
+          echo exit for merger fail
+          exit 1
       - name: Get the next version tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.6
