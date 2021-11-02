@@ -32,7 +32,7 @@ jobs:
             fi
           done
           
-          if [$adminFound=0]; then
+          if [ $adminFound = 0 ]; then
             echo ${{ github.actor }} is not allowed for releasing
             exit 1
           fi
