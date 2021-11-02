@@ -28,7 +28,7 @@ jobs:
           do
             if [[ "$admin" == "${{ github.actor }}" ]]; then
               echo ${{ github.actor }} is allowed for releasing
-            $adminFound=1
+              adminFound=1
             fi
           done
           
