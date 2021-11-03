@@ -1,7 +1,8 @@
-name: Merge PR v0.1.3
+name: Merge PR v0.1.5
 
 on: 
   issue_comment:
+    types: [created]
 
 jobs:
   create_comment:
@@ -10,6 +11,12 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire')
     steps:
+      - name: get release type
+        id: releaseType
+        run: |
+          TYPE=`echo ${{ github.event.comment.body }} | cut -d " " -f 2`
+          echo $TYPE
+          echo "::set-output name=TYPE::$TYPE"
       - name: guard for magic spell
         if: ${{ github.event.comment.body != 'release major' && github.event.comment.body != 'release minor' && github.event.comment.body != 'release patch'}}
         run: exit 1
@@ -21,27 +28,39 @@ jobs:
           do
             if [[ "$admin" == "${{ github.actor }}" ]]; then
               echo ${{ github.actor }} is allowed for releasing
-            $adminFound=1
+              adminFound=1
             fi
           done
           
-          if [$adminFound=0]; then
+          if [ $adminFound = 0 ]; then
             echo ${{ github.actor }} is not allowed for releasing
             exit 1
           fi
-      - name: get release type
-        id: releaseType
-        run: |
-          TYPE=`echo ${{ github.event.comment.body }} | cut -d " " -f 2`
-          echo $TYPE
-          echo "::set-output name=TYPE::$TYPE"
       - uses: actions-ecosystem/action-create-comment@v1
         with:
           github_token: ${{ secrets.github_token }}
           body: |
             Hello, @${{ github.actor }}! Merging PR for command **${{ github.event.comment.body}}** for PR #**${{ github.event.issue.number }}**. Will create a **${{ steps.releaseType.outputs.TYPE }}** release after merged
       - name: Merge Pull Request 
-        run: gh pr merge ${{ github.event.issue.html_url }} -s --admin
+        id: mergePullRequest
+        run: |
+          if gh pr merge ${{ github.event.issue.html_url }} -s --admin; then
+            echo merged!
+            echo "::set-output name=mergeResult::1"
+          else
+            echo "::set-output name=mergeResult::0"
+          fi
+      - uses: actions-ecosystem/action-create-comment@v1
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
+        with:
+          github_token: ${{ secrets.github_token }}
+          body: |
+            Merging Failed. Please check the action log.
+      - name: Merge Pull Request exit
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
+        run: |
+          echo exit for merger fail
+          exit 1
       - name: Get the next version tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.6
@@ -65,7 +84,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ steps.developSha.outputs.SHA }}
-      - name: tag
+      - name: tagging new release version
         run: |
           git status
           git config --global user.name "zenkins"
