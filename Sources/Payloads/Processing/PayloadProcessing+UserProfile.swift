@@ -31,7 +31,9 @@ extension Payload.UserProfile {
     ///                            the entity.
     func updateUserProfile(for user: ZMUser, authoritative: Bool = true) {
 
-        if let qualifiedID = qualifiedID {
+        let isFederationEnabled = user.managedObjectContext?.zm_isFederationEnabled == true
+
+        if let qualifiedID = qualifiedID, isFederationEnabled {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
             precondition(user.domain == nil || user.domain == qualifiedID.domain)
 

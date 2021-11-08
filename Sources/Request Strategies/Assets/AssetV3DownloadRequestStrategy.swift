@@ -151,7 +151,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     private func storeAndDecryptImage(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
         precondition(asset.original.hasRasterImage, "Should only be called for assets with image")
 
-        let cache = managedObjectContext.zm_fileAssetCache
+        let cache = managedObjectContext.zm_fileAssetCache!
         cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
         let success = cache.decryptImageIfItMatchesDigest(message, format: .medium, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
         if !success {
@@ -163,7 +163,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     private func storeAndDecryptFile(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
         precondition(!asset.original.hasRasterImage, "Should not be called for assets with image")
 
-        let cache = managedObjectContext.zm_fileAssetCache
+        let cache = managedObjectContext.zm_fileAssetCache!
         cache.storeAssetData(message, encrypted: true, data: data)
         let success = cache.decryptFileIfItMatchesDigest(message, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
         if !success {

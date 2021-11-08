@@ -77,7 +77,7 @@ import Foundation
     
     func handleResponse(_ response: ZMTransportResponse!, forMessage message: ZMClientMessage) {
         guard response.result == .success else { return }
-        let cache = managedObjectContext.zm_fileAssetCache
+        let cache = managedObjectContext.zm_fileAssetCache!
         
         let linkPreview = message.underlyingMessage?.linkPreviews.first
         guard
