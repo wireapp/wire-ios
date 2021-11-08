@@ -19,6 +19,6 @@ The wire-ios-transport framework abstracts the network communication with our ba
 
 ### How to build
 
-This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
+This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, run `carthage bootstrap --platform ios --use-xcframeworks`.
 
 You can now open the Xcode project and build.
