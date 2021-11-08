@@ -847,7 +847,7 @@ extension ZMAssetClientMessageTests {
     }
 
     func createV2AssetClientMessageWithSampleImageAndEncryptionKeys(_ storeOriginal: Bool, storeEncrypted: Bool, storeProcessed: Bool, imageData: Data? = nil) -> ZMAssetClientMessage {
-        let directory = self.uiMOC.zm_fileAssetCache
+        let directory = self.uiMOC.zm_fileAssetCache!
         let nonce = UUID.create()
         let imageData = imageData ?? sampleImageData()
         var genericMessage : [ZMImageFormat : GenericMessage] = [:]

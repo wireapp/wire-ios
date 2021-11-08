@@ -67,7 +67,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         let sut = try! conversation.appendImage(from: mediumJPEGData(), nonce: .create()) as! ZMAssetClientMessage
         
-        let cache = uiMOC.zm_fileAssetCache
+        let cache = uiMOC.zm_fileAssetCache!
         cache.storeAssetData(sut, format: .preview, encrypted: false, data: verySmallJPEGData())
         cache.storeAssetData(sut, format: .medium, encrypted: false, data: mediumJPEGData())
         cache.storeAssetData(sut, format: .original, encrypted: false, data: mediumJPEGData())
@@ -111,7 +111,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let fileMetaData = ZMFileMetadata(fileURL: url, thumbnail: verySmallJPEGData())
         let sut = try! conversation.appendFile(with: fileMetaData, nonce: .create())  as! ZMAssetClientMessage
 
-        let cache = uiMOC.zm_fileAssetCache
+        let cache = uiMOC.zm_fileAssetCache!
         
         cache.storeAssetData(sut, format: .original, encrypted: true, data: verySmallJPEGData())
         cache.storeAssetData(sut, encrypted: true, data: mediumJPEGData())
@@ -215,7 +215,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         sut.visibleInConversation = conversation
         sut.sender = selfUser
         
-        let cache = uiMOC.zm_fileAssetCache
+        let cache = uiMOC.zm_fileAssetCache!
         cache.storeAssetData(sut, format: .preview, encrypted: false, data: verySmallJPEGData())
         cache.storeAssetData(sut, format: .medium, encrypted: false, data: mediumJPEGData())
         cache.storeAssetData(sut, format: .original, encrypted: false, data: mediumJPEGData())
@@ -584,7 +584,7 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertNil(assetMessage.underlyingMessage, line: line)
             XCTAssertEqual(assetMessage.size, 0, line: line)
 
-            let cache = uiMOC.zm_fileAssetCache
+            let cache = uiMOC.zm_fileAssetCache!
             XCTAssertNil(cache.assetData(message, format: .original, encrypted: false))
             XCTAssertNil(cache.assetData(message, format: .medium, encrypted: false))
             XCTAssertNil(cache.assetData(message, format: .preview, encrypted: false))

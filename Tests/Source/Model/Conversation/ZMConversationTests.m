@@ -365,10 +365,10 @@
         NSUUID *uuid = NSUUID.createUUID;
         
         // when
-        ZMConversation *found = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
+        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
         
         // then
-        XCTAssertEqualObjects(uuid, found.remoteIdentifier);
+        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
     }];
 }
 
@@ -379,14 +379,48 @@
         NSUUID *uuid = NSUUID.createUUID;
 
         // when
-        ZMConversation *found = [ZMConversation fetchOrCreateWith:uuid domain:@"" in:self.syncMOC];
+        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:@"" in:self.syncMOC];
 
         // then
-        XCTAssertEqualObjects(uuid, found.remoteIdentifier);
-        XCTAssertEqualObjects(nil, found.domain);
+        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
+        XCTAssertEqualObjects(nil, created.domain);
     }];
 }
 
+- (void)testThatItIgnoresDomainWhenFederationIsDisabled
+{
+    // given
+    NSUUID *uuid = [NSUUID createUUID];
+
+    [self.syncMOC performBlockAndWait:^{
+        // when
+        self.syncMOC.zm_isFederationEnabled = NO;
+        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:@"a.com" in:self.syncMOC];
+
+        // then
+        XCTAssertNotNil(created);
+        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
+        XCTAssertEqualObjects(nil, created.domain);
+    }];
+}
+
+- (void)testThatItAssignsDomainWhenFederationIsEnabled
+{
+    // given
+    NSUUID *uuid = [NSUUID createUUID];
+    NSString *domain = @"a.com";
+
+    [self.syncMOC performBlockAndWait:^{
+        // when
+        self.syncMOC.zm_isFederationEnabled = YES;
+        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:domain in:self.syncMOC];
+
+        // then
+        XCTAssertNotNil(created);
+        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
+        XCTAssertEqualObjects(domain, created.domain);
+    }];
+}
 
 - (void)testThatConversationsDoNotGetInsertedUpstreamUnlessTheyAreGroupConversations;
 {

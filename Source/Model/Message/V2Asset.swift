@@ -34,7 +34,7 @@ public class V2Asset: NSObject, ZMImageMessageData {
         let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
         
         queue.async {
-            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)
+            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache?.assetData($0) }).first)
         }
     }
     

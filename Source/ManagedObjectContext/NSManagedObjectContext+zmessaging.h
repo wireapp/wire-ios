@@ -29,6 +29,7 @@ extern NSString * _Nonnull const IsUserInterfaceContextKey;
 extern NSString * _Nonnull const IsSyncContextKey;
 extern NSString * _Nonnull const IsSearchContextKey;
 extern NSString * _Nonnull const IsEventContextKey;
+extern NSString * _Nonnull const IsFederationEnabledKey;
 
 @interface NSManagedObjectContext (zmessaging)
 
@@ -50,6 +51,9 @@ extern NSString * _Nonnull const IsEventContextKey;
 
 /// Returns @c YES if the context is still valid, false if it has been torn down
 @property (readonly) BOOL zm_isValidContext;
+
+/// Returns @c YES if federation is enabled
+@property (nonatomic) BOOL zm_isFederationEnabled;
 
 /// Returns @c self in case this is a sync context, or attached sync context, if present
 @property (nonatomic, null_unspecified) NSManagedObjectContext* zm_syncContext;

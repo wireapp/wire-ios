@@ -55,6 +55,8 @@ extension ZMConversation {
         // having two duplicates of that user, and we'd have a really hard time recovering from that.
         require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
 
+        let domain: String? = context.zm_isFederationEnabled ? domain : nil
+
         if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {
             return conversation
         } else {
