@@ -120,10 +120,13 @@ fileprivate struct StorableQuote: Codable {
     public var draftMessage: DraftMessage? {
         set {
             if let value = newValue {
-                guard let encodedData = try? JSONEncoder().encode(value.storable) else { return }
+                guard
+                    let encodedData = try? JSONEncoder().encode(value.storable),
+                    let context = managedObjectContext
+                else { return }
                 
                 do {
-                    let (data, nonce) = try encryptDataIfNeeded(data: encodedData, in: managedObjectContext!)
+                    let (data, nonce) = try encryptDataIfNeeded(data: encodedData, in: context)
                     
                     draftMessageData = data
                     draftMessageNonce = nonce
