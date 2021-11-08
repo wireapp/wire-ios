@@ -20,15 +20,7 @@ import XCTest
 import FBSnapshotTestCase
 @testable import WireCanvas
 
-class CanvasTests: FBSnapshotTestCase {
-    
-    override func setUp() {
-        super.setUp()
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
+final class CanvasTests: FBSnapshotTestCase {
     
     func testTrimmedImage_isClippedToViewport() {
         // given
