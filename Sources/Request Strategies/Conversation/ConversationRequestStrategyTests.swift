@@ -821,7 +821,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // THEN
             guard let participant = self.groupConversation.participantRoles
-                    .first(where: {$0.user.remoteIdentifier == userId}) else {
+                    .first(where: {$0.user?.remoteIdentifier == userId}) else {
                 return XCTFail("No user in convo")
             }
             XCTAssertEqual(participant.role?.name, "new")

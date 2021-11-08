@@ -45,6 +45,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
     func testUpdateUserProfile_UpdatesQualifiedUserID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.syncMOC.zm_isFederationEnabled = true
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
 
@@ -54,6 +55,22 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             // then
             XCTAssertEqual(self.otherUser.remoteIdentifier, qualifiedID.uuid)
             XCTAssertEqual(self.otherUser.domain, qualifiedID.domain)
+        }
+    }
+
+    func testUpdateUserProfile_DoesntUpdatesQualifiedUserID_WhenFederationIsDisabled() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.syncMOC.zm_isFederationEnabled = false
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
+            let userProfile = Payload.UserProfile(id: qualifiedID.uuid, qualifiedID: qualifiedID)
+
+            // when
+            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+
+            // then
+            XCTAssertEqual(self.otherUser.remoteIdentifier, qualifiedID.uuid)
+            XCTAssertNil(self.otherUser.domain)
         }
     }
 

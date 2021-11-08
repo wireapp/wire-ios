@@ -77,7 +77,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         guard assetClientMessage.visibleInConversation != nil else { return }
 
         let remote = asset.preview.remote
-        let cache = managedObjectContext.zm_fileAssetCache
+        let cache = managedObjectContext.zm_fileAssetCache!
         cache.storeAssetData(assetClientMessage, format: .medium, encrypted: true, data: response.rawData!)
 
         // Decrypt the preview image file

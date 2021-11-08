@@ -107,7 +107,7 @@ import WireTransport
             }
             
             // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
-            let fileCache = self.managedObjectContext.zm_fileAssetCache
+            let fileCache = self.managedObjectContext.zm_fileAssetCache!
             fileCache.storeAssetData(assetClientMessage, encrypted: true, data: response.rawData!)
 
             downloadSuccess = fileCache.decryptFileIfItMatchesDigest(
