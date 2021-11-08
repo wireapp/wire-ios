@@ -196,9 +196,13 @@ public extension ZMUser {
                 return conversation.teamRemoteIdentifier != nil
             }
         } else {
+            guard let context = managedObjectContext else {
+                return false
+            }
+
             return !isServiceUser // Bots are never guests
                 && !isFederated // Federated uesrs are never guests
-                && ZMUser.selfUser(in: managedObjectContext!).hasTeam // There can't be guests in a team that doesn't exist
+                && ZMUser.selfUser(in: context).hasTeam // There can't be guests in a team that doesn't exist
                 && conversation.localParticipantsContain(user: self)
                 && membership == nil
         }
