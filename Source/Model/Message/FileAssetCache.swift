@@ -25,9 +25,9 @@ private var zmLog = ZMSLog(tag: "assets")
 
 extension NSManagedObjectContext
 {
-    @objc public var zm_fileAssetCache : FileAssetCache {
+    @objc public var zm_fileAssetCache : FileAssetCache! {
         get {
-            return self.userInfo[NSManagedObjectContextFileAssetCacheKey] as! FileAssetCache
+            return self.userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
         }
         
         set {

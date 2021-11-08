@@ -23,7 +23,7 @@ extension ZMConversation {
     open override func prepareForDeletion() {
         super.prepareForDeletion()
         
-        allMessages.forEach({ managedObjectContext?.zm_fileAssetCache.deleteAssetData($0)} )
+        allMessages.forEach({ managedObjectContext?.zm_fileAssetCache?.deleteAssetData($0)} )
     }
     
 }
