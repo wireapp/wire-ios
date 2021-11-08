@@ -266,6 +266,6 @@ extension ZMConversation {
     }
     
     fileprivate func participantForUser(id: UUID) -> ParticipantRole? {
-        return self.participantRoles.first(where: { $0.user.remoteIdentifier == id })
+        return self.participantRoles.first(where: { $0.user?.remoteIdentifier == id })
     }
 }

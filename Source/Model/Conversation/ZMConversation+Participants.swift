@@ -85,7 +85,7 @@ extension ZMConversation {
     @objc
     public var isSelfAnActiveMember: Bool {
         return self.participantRoles.contains(where: { (role) -> Bool in
-            role.user.isSelfUser == true
+            role.user?.isSelfUser == true
         })
     }
     // MARK: - keyPathsForValuesAffecting
@@ -182,7 +182,7 @@ extension ZMConversation {
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipants: Set<ZMUser> {
-        return Set(localParticipantRoles.map { $0.user })
+        return Set(localParticipantRoles.compactMap { $0.user })
     }
     
     /// Participants that are in the conversation, according to the local state
@@ -256,7 +256,7 @@ extension ZMConversation {
             return (result == .created) ? pr : nil
         }
         
-        let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: {$0.user.isSelfUser})
+        let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: {$0.user?.isSelfUser == true})
         if addedSelfUser {
             self.markToDownloadRolesIfNeeded()
             self.needsToBeUpdatedFromBackend = true
@@ -264,7 +264,7 @@ extension ZMConversation {
         
         if !addedRoles.isEmpty {
             self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
-            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.map { $0.user}),  addedSelfUser: addedSelfUser)
+            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }),  addedSelfUser: addedSelfUser)
         }
     }
 
@@ -331,7 +331,7 @@ extension ZMConversation {
         
         guard let moc = self.managedObjectContext else { return }
         let existingUsers = Set(self.participantRoles.map { $0.user })
-        
+
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
             
             guard existingUsers.contains(user),
