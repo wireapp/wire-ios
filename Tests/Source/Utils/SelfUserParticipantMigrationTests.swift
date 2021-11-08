@@ -37,7 +37,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         
         // Then
         let hasSelfUser = conversation.participantRoles.contains(where: { (role) -> Bool in
-            role.user.isSelfUser == true
+            role.user?.isSelfUser == true
         })
         XCTAssertTrue(hasSelfUser)
     }

@@ -24,7 +24,7 @@ let ZMParticipantRoleRoleValueKey           = #keyPath(ParticipantRole.role)
 final public class ParticipantRole: ZMManagedObject {
     
     @NSManaged public var conversation: ZMConversation?
-    @NSManaged public var user: ZMUser
+    @NSManaged public var user: ZMUser?
     @NSManaged public var role: Role?
 
     public override static func entityName() -> String {
