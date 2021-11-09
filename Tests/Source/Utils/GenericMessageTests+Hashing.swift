@@ -134,7 +134,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForEphemeral() {
         // given
-        let ephemeralTextMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"), expiresAfter: 100)
+        let ephemeralTextMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"), expiresAfter: .tenSeconds)
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
