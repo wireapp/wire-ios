@@ -130,7 +130,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
         let asset = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
-        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when
         sut.updateUploaded(assetId: assetId, token: token)
@@ -189,7 +189,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         var sut = GenericMessage(
             content: WireProtos.Asset(original: nil, preview: previewAsset),
             nonce: UUID.create(),
-            expiresAfter: 15
+            expiresAfter: .tenSeconds
         )
 
         // when
@@ -243,7 +243,7 @@ extension ProtobufUtilitiesTests {
         // given
         let (assetId, token) = ("id", "token")
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
-        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         XCTAssertNotEqual(sut.ephemeral.asset.uploaded.assetID, assetId)
@@ -303,7 +303,7 @@ extension ProtobufUtilitiesTests {
         }
         
         let (assetId, token) = ("id", "token")
-        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         XCTAssertNotEqual(sut.ephemeral.asset.preview.remote.assetID, assetId)
