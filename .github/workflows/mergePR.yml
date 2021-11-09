@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire')
+      ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'zenkins')
     steps:
       - name: get release type
         id: releaseType
