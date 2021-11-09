@@ -49,13 +49,13 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
-            conversation.messageDestructionTimeout = .local(.tenSeconds)
+            conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
         }
         let message = try! conversation.appendText(content: text) as! ZMClientMessage
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
-            let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfter: 10)
+            let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfterTimeInterval: 10)
             do {
                 try message.setUnderlyingMessage(genericMessage)
             } catch {
@@ -106,7 +106,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
             $0.mentions = []
             $0.linkPreview = [linkPreview]
         }
-        let genericMessage = GenericMessage(content: text, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
+        let genericMessage = GenericMessage(content: text, nonce: message.nonce!, expiresAfterTimeInterval: message.deletionTimeout)
         do {
             try message.setUnderlyingMessage(genericMessage)
         } catch {
