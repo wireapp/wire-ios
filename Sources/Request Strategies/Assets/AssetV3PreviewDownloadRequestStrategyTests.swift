@@ -63,7 +63,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
+        var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.activeMessageDestructionTimeoutValue)
         uploaded.updateUploaded(assetId: assetId, token: token)
 
         do {

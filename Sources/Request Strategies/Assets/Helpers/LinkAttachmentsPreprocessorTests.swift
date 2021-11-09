@@ -61,7 +61,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
-            conversation.messageDestructionTimeout = .local(.tenSeconds)
+            conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
         }
         let message = try! conversation.appendText(content: text, mentions: mentions) as! ZMClientMessage
         message.needsLinkAttachmentsUpdate = needsUpdate
