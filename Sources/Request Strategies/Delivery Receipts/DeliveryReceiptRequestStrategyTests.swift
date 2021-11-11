@@ -36,6 +36,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
                                              applicationStatus: mockApplicationStatus,
                                              clientRegistrationDelegate: mockClientRegistrationStatus)
+        sut.useFederationEndpoint = true
         
         syncMOC.performGroupedBlockAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)

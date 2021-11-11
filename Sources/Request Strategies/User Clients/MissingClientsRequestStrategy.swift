@@ -23,7 +23,7 @@ import Foundation
 @objc
 public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUpstreamTranscoder, ZMContextChangeTrackerSource, FederationAware {
 
-    var isFederationEndpointAvailable: Bool = true
+    var isFederationEndpointAvailable: Bool = false
     fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
     public var requestsFactory = MissingClientsRequestFactory()
 

@@ -35,6 +35,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         sut = ResetSessionRequestStrategy(managedObjectContext: self.syncMOC,
                                     applicationStatus: mockApplicationStatus,
                                     clientRegistrationDelegate: mockApplicationStatus.clientRegistrationDelegate)
+        sut.useFederationEndpoint = true
     }
     
     override func tearDown() {

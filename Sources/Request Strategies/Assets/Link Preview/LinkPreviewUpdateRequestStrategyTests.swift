@@ -31,6 +31,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
             self.sut = LinkPreviewUpdateRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
+            self.sut.useFederationEndpoint = true
         }
     }
 
