@@ -32,6 +32,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         sut = ProteusMessageSync<MockOTREntity>(context: syncMOC, applicationStatus: mockApplicationStatus)
+        sut.isFederationEndpointAvailable = true
 
         syncMOC.performGroupedBlockAndWait { [self] in
             otherUser.domain = domain
