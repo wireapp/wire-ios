@@ -308,6 +308,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
             FeatureService(context: context).createDefaultConfigsIfNeeded()
+            context.saveOrRollback()
         }
 
         // this will be done async, not to block the UI thread, but
