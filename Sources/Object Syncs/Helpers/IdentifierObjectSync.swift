@@ -20,7 +20,7 @@ import Foundation
 
 /// Delegate protocol which the user of the IdentifierObjectSync class should implement.
 
-public protocol IdentifierObjectSyncTranscoder: class {
+public protocol IdentifierObjectSyncTranscoder: AnyObject {
     associatedtype T: Hashable
     
     var fetchLimit: Int { get }
@@ -33,7 +33,7 @@ public protocol IdentifierObjectSyncTranscoder: class {
     
 }
 
-public protocol IdentifierObjectSyncDelegate: class {
+public protocol IdentifierObjectSyncDelegate: AnyObject {
 
     func didFinishSyncingAllObjects()
     func didFailToSyncAllObjects()

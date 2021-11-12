@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public protocol DependencyEntity: class {
+@objc public protocol DependencyEntity: AnyObject {
     @objc var dependentObjectNeedingUpdateBeforeProcessing : NSObject? { get }
     @objc var isExpired: Bool { get }
     @objc func expire()

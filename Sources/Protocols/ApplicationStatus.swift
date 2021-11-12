@@ -34,7 +34,7 @@ public enum OperationState : UInt {
 }
 
 @objc(ZMApplicationStatus)
-public protocol ApplicationStatus : class {
+public protocol ApplicationStatus : AnyObject {
     var synchronizationState : SynchronizationState { get }
     var operationState : OperationState { get }    
     var clientRegistrationDelegate : ClientRegistrationDelegate { get }
