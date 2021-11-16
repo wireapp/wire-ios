@@ -158,7 +158,12 @@ public class Feature: ZMManagedObject {
                 feature.hasInitialDefault = true
             }
 
-            context.saveOrRollback()
+            do {
+                try context.save()
+            } catch {
+                zmLog.safePublic("Failed to create feature: \(name.rawValue), reason: \(error.localizedDescription)")
+                fatal("Can't create feature " + name.rawValue)
+            }
         }
     }
 
@@ -213,4 +218,12 @@ public class Feature: ZMManagedObject {
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
         }
     }
+}
+
+extension String: SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        return self
+    }
+
 }

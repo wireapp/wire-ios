@@ -18,6 +18,8 @@
 
 import Foundation
 
+private let zmLog = ZMSLog(tag: "Core Data")
+
 enum InvalidConversationRemoval {
     
     /// We had a situation where we were creating invalid conversations in response an event. After fixing this issue
@@ -26,6 +28,7 @@ enum InvalidConversationRemoval {
         do {
             try moc.batchDeleteEntities(named: ZMConversation.entityName(), matching: NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.invalid.rawValue)"))
         } catch {
+            zmLog.safePublic("Failed to batch delete entities: \(error.localizedDescription)")
             fatalError("Failed to perform batch update: \(error)")
         }
     }
