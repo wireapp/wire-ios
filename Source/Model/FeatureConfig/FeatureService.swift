@@ -44,15 +44,12 @@ public class FeatureService {
     // MARK: - Accessors
 
     public func fetchAppLock() -> Feature.AppLock {
-        var result: Feature.AppLock!
-
-        context.performGroupedAndWait {
-            let feature = Feature.fetch(name: .appLock, context: $0)!
-            let config = try! JSONDecoder().decode(Feature.AppLock.Config.self, from: feature.config!)
-            result = .init(status: feature.status, config: config)
-        }
-
-        return result
+        guard let feature = Feature.fetch(name: .appLock, context: context),
+              let featureConfig = feature.config else {
+                  return .init()
+              }
+        let config = try! JSONDecoder().decode(Feature.AppLock.Config.self, from: featureConfig)
+        return.init(status: feature.status, config: config)
     }
 
     public func storeAppLock(_ appLock: Feature.AppLock) {
@@ -65,14 +62,10 @@ public class FeatureService {
     }
 
     public func fetchConferenceCalling() -> Feature.ConferenceCalling {
-        var result: Feature.ConferenceCalling!
-
-        context.performGroupedAndWait {
-            let feature = Feature.fetch(name: .conferenceCalling, context: $0)!
-            result = .init(status: feature.status)
+        guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
+            return .init()
         }
-
-        return result
+        return .init(status: feature.status)
     }
 
     public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
@@ -91,14 +84,11 @@ public class FeatureService {
     }
 
     public func fetchFileSharing() -> Feature.FileSharing {
-        var result: Feature.FileSharing!
-
-        context.performGroupedAndWait {
-            let feature = Feature.fetch(name: .fileSharing, context: $0)!
-            result = .init(status: feature.status)
+        guard let feature = Feature.fetch(name: .fileSharing, context: context) else {
+            return .init()
         }
 
-        return result
+        return .init(status: feature.status)
     }
 
     public func storeFileSharing(_ fileSharing: Feature.FileSharing) {
@@ -118,8 +108,11 @@ public class FeatureService {
     }
 
     public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
-        let feature = Feature.fetch(name: .selfDeletingMessages, context: context)!
-        let config = try! JSONDecoder().decode(Feature.SelfDeletingMessages.Config.self, from: feature.config!)
+        guard let feature = Feature.fetch(name: .selfDeletingMessages, context: context),
+              let featureConfig = feature.config else {
+                  return .init()
+              }
+        let config = try! JSONDecoder().decode(Feature.SelfDeletingMessages.Config.self, from: featureConfig)
         return .init(status: feature.status, config: config)
     }
 
