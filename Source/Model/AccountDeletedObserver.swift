@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol AccountDeletedObserver: class {
+public protocol AccountDeletedObserver: AnyObject {
     func accountDeleted(accountId : UUID)
 }
 
