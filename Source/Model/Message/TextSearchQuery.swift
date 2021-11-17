@@ -121,7 +121,7 @@ public struct TextSearchQueryFetchConfiguration {
 }
 
 
-public protocol TextSearchQueryDelegate: class {
+public protocol TextSearchQueryDelegate: AnyObject {
     func textSearchQueryDidReceive(result: TextQueryResult)
 }
 

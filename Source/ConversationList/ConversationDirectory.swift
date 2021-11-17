@@ -36,7 +36,7 @@ public struct ConversationDirectoryChangeInfo {
     
 }
 
-public protocol ConversationDirectoryObserver: class {
+public protocol ConversationDirectoryObserver: AnyObject {
     
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
 

@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public protocol ServiceUser: class, UserType {
+@objc public protocol ServiceUser: AnyObject, UserType {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }

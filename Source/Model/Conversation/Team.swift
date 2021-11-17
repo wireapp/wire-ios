@@ -20,7 +20,7 @@ public extension NSNotification.Name {
     static let teamDidRequestAsset = Notification.Name("TeamDidRequestAsset")
 }
 
-public protocol TeamType: class {
+public protocol TeamType: AnyObject {
 
     var conversations: Set<ZMConversation> { get }
     var name: String? { get }
