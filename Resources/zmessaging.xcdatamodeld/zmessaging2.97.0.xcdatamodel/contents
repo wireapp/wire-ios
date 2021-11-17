@@ -91,7 +91,7 @@
         <relationship name="labels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Label" inverseName="conversations" inverseEntity="Label" syncable="YES"/>
         <relationship name="lastServerSyncedActiveParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="lastServerSyncedActiveConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="nonTeamRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="conversation" inverseEntity="Role" syncable="YES"/>
-        <relationship name="participantRoles" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole" syncable="YES"/>
+        <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team" syncable="YES"/>
         <compoundIndexes>
             <compoundIndex>
@@ -299,7 +299,7 @@
         <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team" syncable="YES"/>
         <relationship name="lastServerSyncedActiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="lastServerSyncedActiveParticipants" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Member" inverseName="user" inverseEntity="Member" syncable="YES"/>
-        <relationship name="participantRoles" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="user" inverseEntity="ParticipantRole" syncable="YES"/>
+        <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="user" inverseEntity="ParticipantRole" syncable="YES"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Reaction" inverseName="users" inverseEntity="Reaction" syncable="YES"/>
         <relationship name="showingUserAdded" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="addedUsers" inverseEntity="SystemMessage" syncable="YES"/>
         <relationship name="showingUserRemoved" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="removedUsers" inverseEntity="SystemMessage" syncable="YES"/>
@@ -358,7 +358,7 @@
         <element name="Member" positionX="18" positionY="162" width="128" height="165"/>
         <element name="Message" positionX="0" positionY="0" width="128" height="433"/>
         <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="105"/>
-        <element name="ParticipantRole" positionX="-207" positionY="54" width="128" height="103"/>
+        <element name="ParticipantRole" positionX="-207" positionY="54" width="128" height="89"/>
         <element name="Reaction" positionX="18" positionY="162" width="128" height="103"/>
         <element name="Role" positionX="-198" positionY="63" width="128" height="120"/>
         <element name="Session" positionX="9" positionY="153" width="128" height="60"/>
