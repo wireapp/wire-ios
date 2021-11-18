@@ -149,7 +149,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             XCTAssertTrue(message.isEphemeral)
             
@@ -173,7 +173,7 @@ extension ClientMessageTests_OTR {
         var syncMessage: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             //given
-            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             syncMessage = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             syncMessage.sender = self.syncUser1
             XCTAssertTrue(syncMessage.isEphemeral)
@@ -210,7 +210,7 @@ extension ClientMessageTests_OTR {
         var syncMessage: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             //given
-            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             syncMessage = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             syncMessage.sender = self.syncUser1
             XCTAssertTrue(syncMessage.isEphemeral)
