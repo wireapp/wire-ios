@@ -507,7 +507,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatItHandlesMessageTimerUpdateEvent_Value() {
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
+            XCTAssertNil(self.groupConversation.messageDestructionTimeout)
 
             // GIVEN
             let event = self.updateEvent(type: "conversation.message-timer-update",
@@ -520,8 +520,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31536000))
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            XCTAssertEqual(self.groupConversation?.messageDestructionTimeout!, MessageDestructionTimeout.synced(31536000))
             guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
         }
@@ -529,9 +528,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatItHandlesMessageTimerUpdateEvent_NoValue() {
         syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.init(rawValue: 300), for: .groupConversation)
-            XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutValue!, .fiveMinutes)
-            XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutType!, .groupConversation)
+            self.groupConversation.messageDestructionTimeout = .synced(300)
+            XCTAssertEqual(self.groupConversation.messageDestructionTimeout!, MessageDestructionTimeout.synced(.fiveMinutes))
 
             // Given
             let event = self.updateEvent(type: "conversation.message-timer-update",
@@ -544,7 +542,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
+            XCTAssertNil(self.groupConversation.messageDestructionTimeout)
             guard let message = self.groupConversation.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
         }
@@ -553,15 +551,15 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatItGeneratesCorrectSystemMessageWhenSyncedTimeoutTurnedOff() {
         // GIVEN: local & synced timeouts exist
         syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
+            self.groupConversation.messageDestructionTimeout = .local(.fiveMinutes)
         }
 
         syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.oneHour, for: .groupConversation)
+            self.groupConversation.messageDestructionTimeout = .synced(.oneHour)
         }
 
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertNotNil(self.groupConversation.activeMessageDestructionTimeoutValue)
+            XCTAssertNotNil(self.groupConversation.messageDestructionTimeout)
 
             // "turn off" synced timeout
             let event = self.updateEvent(type: "conversation.message-timer-update",
@@ -574,8 +572,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN: the local timeout still exists
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .fiveMinutes)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .selfUser)
+            XCTAssertEqual(self.groupConversation?.messageDestructionTimeout!, MessageDestructionTimeout.local(.fiveMinutes))
             guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
 
@@ -587,7 +584,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatItDiscardsDoubleSystemMessageWhenSyncedTimeoutChanges_Value() {
 
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
+            XCTAssertNil(self.groupConversation.messageDestructionTimeout)
 
             // Given
             let messageTimerMillis = 31536000000
@@ -604,16 +601,14 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             // WHEN
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) //First event
 
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            XCTAssertEqual(self.groupConversation?.messageDestructionTimeout!, MessageDestructionTimeout.synced(messageTimer))
             guard let firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(firstMessage.systemMessageType, .messageTimerUpdate)
 
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) //Second duplicated event
 
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            XCTAssertEqual(self.groupConversation?.messageDestructionTimeout!, MessageDestructionTimeout.synced(messageTimer))
             guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(firstMessage, secondMessage) //Check that no other messages are appended in the conversation
         }
@@ -622,7 +617,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatItDiscardsDoubleSystemMessageWhenSyncedTimeoutChanges_NoValue() {
 
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
+            XCTAssertNil(self.groupConversation.messageDestructionTimeout)
 
             // Given
             let valuedMessageTimerMillis = 31536000000
@@ -647,12 +642,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             //First event with valued timer
             self.sut?.processEvents([valuedEvent], liveEvents: true, prefetchResult: nil)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, valuedMessageTimer)
+            XCTAssertEqual(self.groupConversation?.messageDestructionTimeout!, MessageDestructionTimeout.synced(valuedMessageTimer))
 
             //Second event with timer = nil
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
-            XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
+            XCTAssertNil(self.groupConversation?.messageDestructionTimeout)
 
             guard let firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(firstMessage.systemMessageType, .messageTimerUpdate)
@@ -661,7 +655,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
+            XCTAssertNil(self.groupConversation?.messageDestructionTimeout)
             guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(firstMessage, secondMessage) //Check that no other messages are appended in the conversation
         }

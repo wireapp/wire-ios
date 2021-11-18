@@ -137,14 +137,14 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let previewMessage = GenericMessage(
                 content: WireProtos.Asset(original: nil, preview: previewAsset),
                 nonce: message.nonce!,
-                expiresAfter: targetConversation.activeMessageDestructionTimeoutValue
+                expiresAfter: targetConversation.messageDestructionTimeoutValue
             )
 
             XCTAssertNoThrow(try message.setUnderlyingMessage(previewMessage))
 
             XCTAssertTrue(message.underlyingMessage!.assetData!.hasPreview, line: line)
             XCTAssertEqual(message.underlyingMessage!.assetData!.preview.remote.hasAssetID, previewAssetId, line: line)
-            XCTAssertEqual(message.isEphemeral, targetConversation.activeMessageDestructionTimeoutValue != nil, line: line)
+            XCTAssertEqual(message.isEphemeral, targetConversation.messageDestructionTimeoutValue != 0, line: line)
         }
 
         if uploaded {
@@ -152,7 +152,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             var uploaded = GenericMessage(
                 content: WireProtos.Asset(withUploadedOTRKey: otr, sha256: sha),
                 nonce: message.nonce!,
-                expiresAfter: targetConversation.activeMessageDestructionTimeoutValue
+                expiresAfter: targetConversation.messageDestructionTimeoutValue
             )
             if assetId {
                 uploaded.updateUploaded(assetId: UUID.create().transportString(), token: nil)
@@ -162,7 +162,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             message.updateTransferState(.uploaded, synchronize: true)
             XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded, line: line)
-            XCTAssertEqual(message.isEphemeral, self.groupConversation.activeMessageDestructionTimeoutValue != nil, line: line)
+            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeoutValue != 0, line: line)
         } else  {
             message.updateTransferState(transferState, synchronize: true) // TODO jacob
         }
@@ -260,7 +260,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItCreatesARequestForAnUploadedImageMessage_Ephemeral() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.groupConversation.setMessageDestructionTimeoutValue(.custom(15), for: .selfUser)
+            self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 15))
             self.createMessage(uploaded: true, assetId: true)
 
             // WHEN
@@ -510,7 +510,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.setMessageDestructionTimeoutValue(.custom(15), for: .selfUser)
+            self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 15))
             message = self.createMessage(uploaded: true, assetId: true)
         }
         

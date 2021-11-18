@@ -231,8 +231,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             conversationPayload.updateOrCreate(in: self.syncMOC)
 
             // then
-            XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutValue, messageTimer)
-            XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutType, .groupConversation)
+            XCTAssertEqual(self.groupConversation.messageDestructionTimeout, .synced(messageTimer))
         }
     }
 

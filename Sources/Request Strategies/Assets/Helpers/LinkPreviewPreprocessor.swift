@@ -57,7 +57,7 @@ import WireUtilities
         if let preview = linkPreviews.first, let messageText = message.textMessageData?.messageText, let mentions = message.textMessageData?.mentions, !message.isObfuscated {
 
             let updatedText = Text(content: messageText, mentions: mentions, linkPreviews: [preview], replyingTo: nil)
-            let updatedMessage = GenericMessage(content: updatedText, nonce: message.nonce!, expiresAfterTimeInterval: message.deletionTimeout)
+            let updatedMessage = GenericMessage(content: updatedText, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
 
             do {
                 try message.setUnderlyingMessage(updatedMessage)

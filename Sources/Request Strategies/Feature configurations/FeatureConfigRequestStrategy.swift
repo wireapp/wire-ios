@@ -22,6 +22,10 @@ private let zmLog = ZMSLog(tag: "feature configurations")
 
 public extension Notification.Name {
     static let fetchAllConfigsTriggerNotification = Notification.Name("fetchAllConfigsTriggerNotification")
+
+    /// Notification to be fired when the feature configuration is changed.
+    /// When firing this notification the event has to be included as object in the notification.
+    static let featureConfigDidChangeNotification = Notification.Name("featureConfigDidChangeNotification")
 }
 
 @objcMembers
@@ -118,19 +122,16 @@ extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
 
             switch feature.name {
             case .appLock:
-                let config = try decoder.decode(ConfigResponse<Feature.AppLock.Config>.self, from: responseData)
+                let config = try decoder.decode(DynamicConfigResponse<Feature.AppLock.Config>.self, from: responseData)
                 feature.status = config.status
                 feature.config = try encoder.encode(config.config)
             case .fileSharing, .conferenceCalling:
-                let config = try decoder.decode(SimpleConfigResponse.self, from: responseData)
+                let config = try decoder.decode(ConfigResponse.self, from: responseData)
                 feature.status = config.status
-            case .selfDeletingMessages:
-                let config = try decoder.decode(ConfigResponse<Feature.SelfDeletingMessages.Config>.self, from: responseData)
-                feature.status = config.status
-                feature.config = try encoder.encode(config.config)
             }
 
             feature.needsToBeUpdatedFromBackend = false
+
         } catch {
             zmLog.error("Failed to process feature config response: \(error.localizedDescription)")
         }
@@ -169,7 +170,8 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
             let allConfigs = try JSONDecoder().decode(AllConfigsResponse.self, from: responseData)
 
             let featureService = FeatureService(context: managedObjectContext)
-            featureService.storeAppLock(.init(status: allConfigs.applock.status, config: allConfigs.applock.config))
+            featureService.storeAppLock(.init(configResponse: allConfigs.applock))
+
         } catch {
             zmLog.error("Failed to decode feature config response: \(error)")
         }
@@ -181,48 +183,87 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
 extension FeatureConfigRequestStrategy: ZMEventConsumer {
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        events.forEach(processEvent)
+        events.forEach(process)
     }
 
-    private func processEvent(_ event: ZMUpdateEvent) {
-        guard
-            event.type == .featureConfigUpdate,
-            let name = event.payload["name"] as? String,
-            let featureName = Feature.Name(rawValue: name),
-            let data = event.payload["data"]
-        else {
+    private func process(_ event: ZMUpdateEvent) {
+        switch event.type {
+        case .featureConfigUpdate:
+            guard let jsonPayload = try? JSONSerialization.data(withJSONObject: event.payload, options: []),
+                  let featurePayload = FeatureUpdateEventPayload(jsonPayload) else {
+                return
+            }
+
+            Feature.updateOrCreate(havingName: featurePayload.name, in: managedObjectContext) { feature in
+                feature.status = featurePayload.status
+                feature.config = featurePayload.config
+                self.managedObjectContext.saveOrRollback()
+                NotificationCenter.default.post(name: .featureConfigDidChangeNotification, object: featurePayload)
+            }
+
+        default: break
+        }
+    }
+}
+
+// MARK: - Update event models
+
+public struct FeatureUpdateEventPayload: Decodable {
+    public var name: Feature.Name
+    public var status: Feature.Status
+    public var config: Data?
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let nestedContainer = try container.nestedContainer(keyedBy: ConfigKeys.self, forKey: .data)
+
+        name = try container.decode(Feature.Name.self, forKey: .name)
+        status = try nestedContainer.decode(Feature.Status.self, forKey: .status)
+        switch name {
+        case .appLock:
+            config = try nestedContainer.decodeIfPresent(Feature.AppLock.Config.self, forKey: .config).payloadData()
+        default:
             return
         }
-
-        do {
-            let payload = try JSONSerialization.data(withJSONObject: data, options: [])
-        } catch {
-            zmLog.error("Failed to process feature config update event: \(error.localizedDescription)")
-        }
     }
 
+    enum CodingKeys: String, CodingKey {
+        case name
+        case data
+    }
+
+    enum ConfigKeys: String, CodingKey {
+        case status
+        case config
+    }
 }
 
 // MARK: - Response models
 
 private struct AllConfigsResponse: Decodable {
 
-    let applock: ConfigResponse<Feature.AppLock.Config>
-    let fileSharing: SimpleConfigResponse
-    let selfDeletingMessages: ConfigResponse<Feature.SelfDeletingMessages.Config>
+    var applock: DynamicConfigResponse<Feature.AppLock.Config>
 
 }
 
-private struct SimpleConfigResponse: Decodable {
+private struct ConfigResponse: Decodable {
 
     let status: Feature.Status
 
 }
 
-private struct ConfigResponse<T: Decodable>: Decodable {
+private struct DynamicConfigResponse<Config: Decodable>: Decodable {
 
     let status: Feature.Status
-    let config: T
+    let config: Config
+
+}
+
+private extension Feature.AppLock {
+
+    init(configResponse: DynamicConfigResponse<Config>) {
+        self.init(status: configResponse.status, config: configResponse.config)
+    }
 
 }
 
@@ -242,9 +283,6 @@ private extension Feature {
             
         case .fileSharing:
             return "fileSharing"
-
-        case .selfDeletingMessages:
-            return "selfDeletingMessages"
         }
     }
 

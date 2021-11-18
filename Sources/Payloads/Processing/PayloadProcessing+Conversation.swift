@@ -420,13 +420,14 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationMessage
         }
 
         let timeoutValue = (data.messageTimer ?? 0) / 1000
-        let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
-        let currentTimeout = conversation.activeMessageDestructionTimeoutValue ?? .init(rawValue: 0)
+        let timeout: MessageDestructionTimeout = .synced((.init(rawValue: timeoutValue)))
+        let currentTimeout = conversation.messageDestructionTimeout ?? .synced(0)
 
         if let timestamp = timestamp, currentTimeout != timeout {
             conversation.appendMessageTimerUpdateMessage(fromUser: sender, timer: timeoutValue, timestamp: timestamp)
         }
-        conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeoutValue), for: .groupConversation)
+
+        conversation.messageDestructionTimeout = timeout
     }
 
 }

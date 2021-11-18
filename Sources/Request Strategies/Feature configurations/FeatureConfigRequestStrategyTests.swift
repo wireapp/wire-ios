@@ -23,7 +23,6 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
     var mockApplicationStatus: MockApplicationStatus!
     var sut: FeatureConfigRequestStrategy!
-    var featureService: FeatureService!
     
     override func setUp() {
         super.setUp()
@@ -32,14 +31,11 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         sut = FeatureConfigRequestStrategy(withManagedObjectContext: syncMOC,
                                            applicationStatus: mockApplicationStatus)
-
-        featureService = .init(context: syncMOC)
     }
     
     override func tearDown() {
         mockApplicationStatus = nil
         sut = nil
-        featureService = nil
         super.tearDown()
     }
 
@@ -151,108 +147,63 @@ extension FeatureConfigRequestStrategyTests {
 
     func testThatItUpdatesApplockFeature_FromUpdateEvent() {
         syncMOC.performGroupedAndWait { moc in
-            // Given
-            let appLock = Feature.AppLock(status: .disabled, config: .init(enforceAppLock: false, inactivityTimeoutSecs: 10))
-            self.featureService.storeAppLock(appLock)
-
-            let data: NSDictionary = [
-                "status": "enabled",
+            // given
+            FeatureService(context: moc).storeFileSharing(.init())
+            let dict: NSDictionary = [
+                "status": "disabled",
                 "config": [
-                    "enforceAppLock": true,
-                    "inactivityTimeoutSecs": 60
+                    "enforceAppLock": false,
+                    "inactivityTimeoutSecs": 50
                   ]
             ]
             let payload: NSDictionary = [
                 "type": "feature-config.update",
-                "data": data,
+                "data": dict,
                 "name": "appLock"
             ]
-
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
-            // When
+            // when
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
+        // then
         syncMOC.performGroupedAndWait { moc in
-            let appLock = self.featureService.fetchAppLock()
-            XCTAssertEqual(appLock.status, .enabled)
-            XCTAssertEqual(appLock.config.enforceAppLock, true)
-            XCTAssertEqual(appLock.config.inactivityTimeoutSecs, 60)
+            let existingFeature = Feature.fetch(name: .appLock, context: moc)
+            XCTAssertNotNil(existingFeature)
+            XCTAssertEqual(existingFeature?.status, .disabled)
+            let config = try? JSONDecoder().decode(Feature.AppLock.Config.self, from: (existingFeature?.config)!)
+            XCTAssertEqual(config?.inactivityTimeoutSecs, 50)
+            XCTAssertEqual(config?.enforceAppLock, false)
         }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatItUpdatesFileSharingFeature_FromUpdateEvent() {
         syncMOC.performGroupedAndWait { moc in
-            // Given
-            self.featureService.storeFileSharing(.init(status: .disabled))
-
-            let data: NSDictionary = [
-                "status": "enabled"
+            // given
+            FeatureService(context: moc).storeFileSharing(.init())
+            let dict: NSDictionary = [
+                "status": "disabled"
             ]
             let payload: NSDictionary = [
                 "type": "feature-config.update",
-                "data": data,
+                "data": dict,
                 "name": "fileSharing"
             ]
-
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
-            // When
+            // when
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
+        // then
         syncMOC.performGroupedAndWait { moc in
-            let fileSharing = self.featureService.fetchFileSharing()
-            XCTAssertEqual(fileSharing.status, .enabled)
+            let existingFeature = Feature.fetch(name: .fileSharing, context: moc)
+            XCTAssertNotNil(existingFeature)
+            XCTAssertEqual(existingFeature?.status, .disabled)
         }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    func testThatItUpdatesSelfDeletingMessagesFeature_FromUpdateEvent() {
-        syncMOC.performGroupedAndWait { moc in
-            // Given
-            let selfDeletingMessages = Feature.SelfDeletingMessages(status: .disabled, config: .init(enforcedTimeoutSeconds: 0))
-            self.featureService.storeSelfDeletingMessages(selfDeletingMessages)
-
-            let data: NSDictionary = [
-                "status": "enabled",
-                "config": [
-                    "enforcedTimeoutSeconds": 60
-                ]
-            ]
-
-            let payload: NSDictionary = [
-                "type": "feature-config.update",
-                "data": data,
-                "name": "selfDeletingMessages"
-            ]
-
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
-
-            // When
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        syncMOC.performGroupedAndWait { _ in
-            let selfDeletingMessages = self.featureService.fetchSelfDeletingMesssages()
-            XCTAssertEqual(selfDeletingMessages.status, .enabled)
-            XCTAssertEqual(selfDeletingMessages.config.enforcedTimeoutSeconds, 60)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatItUpdatesConferenceCallingFeature_FromUpdateEvent() {
