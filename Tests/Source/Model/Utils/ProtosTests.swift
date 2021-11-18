@@ -162,7 +162,7 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanBuildAnEphemeralMessage() {
         let nonce = UUID.create()
-        let message = GenericMessage(content: Knock(), nonce: nonce, expiresAfter: .tenSeconds)
+        let message = GenericMessage(content: Knock(), nonce: nonce, expiresAfter: 1)
         
         XCTAssertNotNil(message)
         XCTAssertEqual(message.messageID, nonce.transportString())
@@ -170,7 +170,7 @@ class ProtosTests: XCTestCase {
             return XCTFail()
         }
         XCTAssertTrue(message.ephemeral.hasKnock)
-        XCTAssertEqual(message.ephemeral.expireAfterMillis, 10000);
+        XCTAssertEqual(message.ephemeral.expireAfterMillis, 1000);
     }
     
 }

@@ -28,14 +28,14 @@ import Foundation
     internal convenience init(asset: WireProtos.Asset,
                               nonce: UUID,
                               managedObjectContext: NSManagedObjectContext,
-                              expiresAfter timeout: TimeInterval?) throws {
+                              expiresAfter timeout: TimeInterval = 0) throws {
 
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
         
         transferState = .uploading
         version = 3
         
-        let genericMessage = GenericMessage(content: asset, nonce: nonce, expiresAfterTimeInterval: timeout)
+        let genericMessage = GenericMessage(content: asset, nonce: nonce, expiresAfter: timeout)
         try mergeWithExistingData(message: genericMessage)
     }
     

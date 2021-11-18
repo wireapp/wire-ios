@@ -95,7 +95,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
         // given
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
-        var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
+        var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 15)
 
         // when
         XCTAssertEqual(genericMessage.ephemeral.legalHoldStatus, .unknown)

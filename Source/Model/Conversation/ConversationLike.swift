@@ -55,6 +55,8 @@ public protocol SwiftConversationLike {
 
     var teamType: TeamType? { get }
 
+    var messageDestructionTimeout: WireDataModel.MessageDestructionTimeout? { get }
+
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
     var sortedServiceUsers: [UserType] { get }

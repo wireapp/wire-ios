@@ -58,7 +58,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItInsertsAnEphemeralMessageForAssets(){
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         let fileMetadata = createFileMetadata()
         
         // when
@@ -100,7 +100,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatWhenUpdatingTheThumbnailAssetIDWeReplaceAnEphemeralMessageWithAnEphemeral(){
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         let fileMetadata = createFileMetadata()
         
         // when
@@ -119,7 +119,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItStartsTheTimerForMultipartMessagesWhenTheAssetIsUploaded(){
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let fileMetadata = self.createFileMetadata()
             let message = try! self.syncConversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
             
@@ -139,7 +139,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         // given
         self.syncMOC.performGroupedBlockAndWait {
             // set timeout
-            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             
             // send file
             let fileMetadata = self.createFileMetadata()
@@ -170,7 +170,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         // given
         self.syncMOC.performGroupedBlockAndWait {
             // set timeout
-            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             
             // send file
             let fileMetadata = self.createFileMetadata()
@@ -203,7 +203,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItStartsATimerForImageAssetMessagesIfTheMessageIsAMessageOfTheOtherUser() throws {
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -224,7 +224,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser() throws {
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -235,11 +235,11 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.visibleInConversation = conversation
         
         let imageData = verySmallJPEGData()
-        let assetMessage = GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)), nonce: nonce, expiresAfter: .tenSeconds)
+        let assetMessage = GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)), nonce: nonce, expiresAfter: 10)
         try message.setUnderlyingMessage(assetMessage)
         
         
-        let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: conversation.activeMessageDestructionTimeoutValue)
+        let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
         try message.setUnderlyingMessage(uploaded)
         
         // when
@@ -275,7 +275,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItDoesNotStartsATimerIfTheMessageIsAMessageOfTheOtherUser_NoMediumImage(){
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -293,7 +293,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItDoesNotStartATimerIfTheMessageIsAMessageOfTheOtherUser_NotUploadedYet(){
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -313,7 +313,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser_UploadCancelled() throws{
         // given
-        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -334,7 +334,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItDoesNotStartATimerForAMessageOfTheSelfuser() throws {
         // given
-        conversation.setMessageDestructionTimeoutValue(.custom(0.1), for: .selfUser)
+        let timeout : TimeInterval = 0.1
+        conversation.messageDestructionTimeout =  .local(MessageDestructionTimeoutValue(rawValue: timeout))
         let fileMetadata = self.createFileMetadata()
         let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))
@@ -349,7 +350,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItCreatesADeleteForAllMessageWhenTheTimerFires() throws {
         // given
-        conversation.setMessageDestructionTimeoutValue(.custom(0.1), for: .selfUser)
+        let timeout : TimeInterval = 0.1
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         
         let fileMetadata = self.createFileMetadata()
         let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
@@ -385,7 +387,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         var message: ZMAssetClientMessage!
         
         // given
-        self.conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         
         // send file
         let fileMetadata = self.createFileMetadata()
@@ -417,7 +419,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         var message: ZMAssetClientMessage!
         
         // given
-        self.conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         
         // send file
         let fileMetadata = self.createFileMetadata()

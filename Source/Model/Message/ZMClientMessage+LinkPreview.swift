@@ -100,8 +100,8 @@ extension ZMClientMessage {
             return
         }
         
-        let timeout = deletionTimeout > 0 ? deletionTimeout : nil
-        let message = GenericMessage(content: originalText.updateLinkPreview(from: updatedText), nonce: nonce, expiresAfterTimeInterval: timeout)
+        let expiresAfter = deletionTimeout > 0 ? deletionTimeout : nil
+        let message = GenericMessage(content: originalText.updateLinkPreview(from: updatedText), nonce: nonce, expiresAfter: expiresAfter)
 
         do {
             try setUnderlyingMessage(message)

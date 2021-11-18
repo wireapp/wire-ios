@@ -451,7 +451,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let locationData = self.locationData()
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
+        conversation.messageDestructionTimeout = .local(.fiveMinutes)
         conversation.remoteIdentifier = UUID()
         // when
         let message = try conversation.appendLocation(with: locationData) as! ZMClientMessage

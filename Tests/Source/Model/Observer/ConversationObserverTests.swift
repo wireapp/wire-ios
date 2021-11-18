@@ -595,7 +595,7 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.setMessageDestructionTimeoutValue(.custom(1000), for: .groupConversation) },
+                                                     modifier: { conversation, _ in conversation.syncedMessageDestructionTimeout = 1000 },
                                                      expectedChangedField: "destructionTimeoutChanged",
                                                      expectedChangedKeys: [#keyPath(ZMConversation.syncedMessageDestructionTimeout)])
     }
@@ -616,7 +616,7 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.setMessageDestructionTimeoutValue(.custom(1000), for: .selfUser) },
+                                                     modifier: { conversation, _ in conversation.localMessageDestructionTimeout = 1000 },
                                                      expectedChangedField: "destructionTimeoutChanged",
                                                      expectedChangedKeys: [#keyPath(ZMConversation.localMessageDestructionTimeout)])
     }
