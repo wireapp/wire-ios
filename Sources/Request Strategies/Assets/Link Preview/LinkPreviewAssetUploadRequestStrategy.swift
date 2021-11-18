@@ -153,7 +153,7 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
                 $0.linkPreview = [linkPreview]
             }
 
-            let genericMessage = GenericMessage(content: updatedText, nonce: message.nonce!, expiresAfterTimeInterval: message.deletionTimeout)
+            let genericMessage = GenericMessage(content: updatedText, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
 
             do {
                 try message.setUnderlyingMessage(genericMessage)

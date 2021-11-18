@@ -140,7 +140,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             let nonce = UUID.create()
             var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
             text.linkPreview.append(linkPreview)
-            let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfterTimeInterval: 20)
+            let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: 20)
             let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
