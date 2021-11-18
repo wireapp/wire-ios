@@ -47,6 +47,11 @@
                BlueprintName = "WireRequestStrategyTests"
                ReferencedContainer = "container:WireRequestStrategy.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "FeatureConfigRequestStrategyTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
