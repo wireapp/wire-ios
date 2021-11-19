@@ -55,6 +55,24 @@ jobs:
           github_token: ${{ secrets.github_token }}
           body: |
             Next version is ${{ steps.tag_version.outputs.new_tag }}
+      - name: Checkout current
+        uses: actions/checkout@v2
+      - name: update version.xcconfig
+        run: |
+          echo "new tag: '${{steps.dry_run.outputs.new_tag}}'"
+          echo "tag: '${{steps.dry_run.outputs.tag}}'"
+          # process version.xcconfig
+          curl --silent https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Scripts/updateVersionXcconfig.swift --output updateVersionXcconfig.swift
+          chmod +x updateVersionXcconfig.swift
+          swift updateVersionXcconfig.swift ./Resources/Configurations/version.xcconfig ${{ steps.tag_version.outputs.new_tag }}
+          rm updateVersionXcconfig.swift
+
+          git config --global user.email "iosx@wire.com"
+          git config --global user.name "zenkins"
+          git add .
+          git commit -m"update version.xcconfig for '${{ steps.tag_version.outputs.new_tag }}'" || true
+          git push
+      
 #       - name: Merge Pull Request 
 #         id: mergePullRequest
 #         run: |
