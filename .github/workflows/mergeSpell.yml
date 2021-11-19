@@ -78,39 +78,39 @@ jobs:
           git commit -m"update version.xcconfig for '${{ steps.tag_version.outputs.new_tag }}'" || true
           git push
       
-#       - name: Merge Pull Request 
-#         id: mergePullRequest
-#         run: |
-#           if gh pr merge ${{ github.event.issue.html_url }} -s --admin; then
-#             echo merged!
-#             echo "::set-output name=mergeResult::1"
-#           else
-#             echo "::set-output name=mergeResult::0"
-#           fi
-#       - uses: actions-ecosystem/action-create-comment@v1
-#         if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
-#         with:
-#           github_token: ${{ secrets.github_token }}
-#           body: |
-#             Merging Failed. Please check the action log.
-#       - name: Merge Pull Request exit
-#         if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
-#         run: |
-#           echo exit for merger fail
-#           exit 1
-#       - name: get the latest develop SHA
-#         id: developSha
-#         run: |
-#           SHA=`git ls-remote ${{ github.event.repository.html_url}} develop | cut -f 1`
-#           echo "::set-output name=SHA::$SHA"
-#       - name: checkout
-#         uses: actions/checkout@v2
-#         with:
-#           ref: ${{ steps.developSha.outputs.SHA }}
-#       - name: tagging new release version
-#         run: |
-#           git status
-#           git config --global user.name "zenkins"
-#           git config --global user.email "iosx@wire.com"
-#           git tag -a ${{ steps.tag_version.outputs.new_tag }} ${{ steps.developSha.outputs.SHA }} -m"tagged by github action"
-#           git push origin ${{ steps.tag_version.outputs.new_tag }}
+      - name: Merge Pull Request 
+        id: mergePullRequest
+        run: |
+          if gh pr merge ${{ github.event.issue.html_url }} -s --admin; then
+            echo merged!
+            echo "::set-output name=mergeResult::1"
+          else
+            echo "::set-output name=mergeResult::0"
+          fi
+      - uses: actions-ecosystem/action-create-comment@v1
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
+        with:
+          github_token: ${{ secrets.github_token }}
+          body: |
+            Merging Failed. Please check the action log.
+      - name: Merge Pull Request exit
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
+        run: |
+          echo exit for merger fail
+          exit 1
+      - name: get the latest develop SHA
+        id: developSha
+        run: |
+          SHA=`git ls-remote ${{ github.event.repository.html_url}} develop | cut -f 1`
+          echo "::set-output name=SHA::$SHA"
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.developSha.outputs.SHA }}
+      - name: tagging new release version
+        run: |
+          git status
+          git config --global user.name "zenkins"
+          git config --global user.email "iosx@wire.com"
+          git tag -a ${{ steps.tag_version.outputs.new_tag }} ${{ steps.developSha.outputs.SHA }} -m"tagged by github action"
+          git push origin ${{ steps.tag_version.outputs.new_tag }}
