@@ -55,6 +55,8 @@ jobs:
           github_token: ${{ secrets.github_token }}
           body: |
             Next version is ${{ steps.tag_version.outputs.new_tag }}
+      - name: checkout
+        uses: actions/checkout@v2
       - name: Checkout Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
