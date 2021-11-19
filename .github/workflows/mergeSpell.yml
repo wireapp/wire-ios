@@ -55,8 +55,14 @@ jobs:
           github_token: ${{ secrets.github_token }}
           body: |
             Next version is ${{ steps.tag_version.outputs.new_tag }}
-      - name: Checkout current
-        uses: actions/checkout@v2
+      - name: Checkout Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_URL="${{ github.event.issue.pull_request.url }}"
+          PR_NUM=${PR_URL##*/}
+          echo "Checking out from PR #$PR_NUM based on URL: $PR_URL"
+          hub pr checkout $PR_NUM
       - name: update version.xcconfig
         run: |
           echo "new tag: '${{steps.dry_run.outputs.new_tag}}'"
