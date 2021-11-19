@@ -59,10 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_URL="${{ github.event.issue.pull_request.url }}"
-          PR_NUM=${PR_URL##*/}
-          echo "Checking out from PR #$PR_NUM based on URL: $PR_URL"
-          hub pr checkout $PR_NUM
+          hub pr checkout ${{ github.event.issue.number }}
       - name: update version.xcconfig
         run: |
           echo "new tag: '${{steps.dry_run.outputs.new_tag}}'"
