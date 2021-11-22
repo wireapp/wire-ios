@@ -3,7 +3,10 @@ name: "Semantic Commit Linting of PR titles"
 on:
   pull_request:
     types: [ opened, edited, synchronize ]
-
+    paths-ignore:
+      - 'Carfile'
+      - 'Cartfile.resolved'
+      - 'version.xcconfig'
 jobs:
   semantic-commit-pr-title-lint:
     runs-on: ubuntu-latest
