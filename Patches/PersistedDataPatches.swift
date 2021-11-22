@@ -39,7 +39,11 @@ public struct PersistedDataPatch {
     public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil) {
         zmLog.safePublic("Beginning patches...")
 
-        guard let currentVersion = Bundle(for: BundleAnchor.self).infoDictionary!["CFBundleShortVersionString"] as? String else {
+        guard let bundle = Bundle(identifier: "com.wire.WireDataModel") else {
+            return zmLog.safePublic("Can't retrieve bundle for data model, skipping patches..")
+        }
+
+        guard let currentVersion = bundle.infoDictionary!["CFBundleShortVersionString"] as? String else {
             return zmLog.safePublic("Can't retrieve CFBundleShortVersionString for data model, skipping patches..")
         }
 
@@ -70,8 +74,6 @@ public struct PersistedDataPatch {
         zmLog.safePublic("Previous version: \(previousPatchVersion.version)")
     }
 }
-
-private class BundleAnchor {}
 
 private extension NSManagedObjectContext {
 
