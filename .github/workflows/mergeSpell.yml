@@ -5,7 +5,5 @@ on:
     types: [created]
 
 jobs:
-  create_comment:
-    runs-on: ubuntu-latest
   call-workflow:
     uses: wireapp/wire-ios-shared-resources/.github/workflows/mergePR.yml@master
