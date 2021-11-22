@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.3
+name: Create bump PR v0.1.4
 
 on:
   workflow_dispatch:
@@ -41,7 +41,7 @@ jobs:
             # Create bump PR
             
             git add .
-            git commit -m"bump components"
+            git commit -m"chore: bump components"
             git push --set-upstream origin $BRANCH
             echo "ℹ️ open bump PR"
             gh pr create --title "chore: bump components" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
