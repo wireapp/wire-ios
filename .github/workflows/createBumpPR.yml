@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.4
+name: Create bump PR v0.1.5
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
 
       - name: create branch
         env:
-            GITHUB_TOKEN: ${{ secrets.DISPATCH_SECRET }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
             git config --global user.email "iosx@wire.com"
@@ -44,4 +44,9 @@ jobs:
             git commit -m"chore: bump components"
             git push --set-upstream origin $BRANCH
             echo "ℹ️ open bump PR"
+
+      - name: create pull request
+        env:
+            GITHUB_TOKEN: ${{ secrets.DISPATCH_SECRET }}
+        run: |
             gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
