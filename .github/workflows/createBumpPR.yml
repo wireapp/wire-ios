@@ -47,6 +47,6 @@ jobs:
 
       - name: create pull request
         env:
-            GITHUB_TOKEN: ${{ secrets.DISPATCH_SECRET }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
