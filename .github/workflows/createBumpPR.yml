@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-bump-pr:
-    runs-on: macos-10.15
+    runs-on: macos-11
 
     steps:
       - name: Event Information
@@ -19,7 +19,7 @@ jobs:
 
       - name: create branch
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.DISPATCH_SECRET }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
             git config --global user.email "iosx@wire.com"
@@ -44,4 +44,4 @@ jobs:
             git commit -m"chore: bump components"
             git push --set-upstream origin $BRANCH
             echo "ℹ️ open bump PR"
-            gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version for:\n${{ github.event.client_payload.repository }}"
+            gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
