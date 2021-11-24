@@ -251,7 +251,7 @@
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "ZMLOG_TAGS"
-            value = "Network,Authentication,Performance,event-processing,Message Processing,Core Data,Patches"
+            value = "Network,Authentication,Performance,event-processing,Message Processing"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
