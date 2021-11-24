@@ -83,9 +83,6 @@
                   Identifier = "ConversationVideoMessageCellTests/testUploadedCell_fromOtherUser()">
                </Test>
                <Test
-                  Identifier = "DeveloperOptionsControllerSnapshotTests">
-               </Test>
-               <Test
                   Identifier = "ImageMessageViewTests/testThatItRendersPortraitImage()">
                </Test>
                <Test
