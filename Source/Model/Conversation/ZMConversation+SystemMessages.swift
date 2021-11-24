@@ -20,7 +20,7 @@
 import Foundation
 
 extension ZMConversation {
-    
+
     public func appendSessionResetSystemMessage(user: ZMUser, client: UserClient, at timestamp: Date) {
         appendSystemMessage(type: .sessionReset,
                             sender: user,
@@ -68,6 +68,15 @@ extension ZMConversation {
         if hasReadReceiptsEnabled {
             appendMessageReceiptModeIsOnMessage(timestamp: timestamp.nextNearestTimestamp)
         }
+    }
+
+    public func appendMessageTimerUpdateSystemMessage(fromUser user: ZMUser, timer: Double, timestamp: Date) {
+        appendSystemMessage(type: .messageTimerUpdate,
+                            sender: user,
+                            users: [user],
+                            clients: nil,
+                            timestamp: timestamp,
+                            messageTimer: timer)
     }
     
 }

@@ -93,7 +93,7 @@ extension ZMConversation {
 
     public func updateMessageDestructionTimeout(timeout: TimeInterval) {
         // Backend is sending the miliseconds, we need to convert to seconds.
-        syncedMessageDestructionTimeout = timeout / 1000
+        setMessageDestructionTimeoutValue(.init(rawValue: timeout / 1000), for: .groupConversation)
     }
 
     public func updateAccessStatus(accessModes: [String], role: String) {

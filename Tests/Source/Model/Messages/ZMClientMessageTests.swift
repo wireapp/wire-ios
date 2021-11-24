@@ -691,7 +691,7 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
         
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: 3600)
+        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: .oneHour)
         do {
             try existingMessage.setUnderlyingMessage(message)
         } catch {
@@ -712,7 +712,7 @@ extension ClientMessageTests {
             $0.mentions = []
             $0.linkPreview = [linkPreview]
         }
-        let modifiedMessage = GenericMessage(content: messageText, nonce: nonce, expiresAfter: 3600)
+        let modifiedMessage = GenericMessage(content: messageText, nonce: nonce, expiresAfter: .oneHour)
 
         
         let contentData = try? modifiedMessage.serializedData()

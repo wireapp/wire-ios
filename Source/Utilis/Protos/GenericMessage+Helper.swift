@@ -31,8 +31,12 @@ public extension GenericMessage {
         else { return nil }
         self = message
     }
+
+    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: MessageDestructionTimeoutValue? = nil) {
+        self.init(content: content, nonce: nonce, expiresAfterTimeInterval: timeout?.rawValue)
+    }
     
-    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: TimeInterval? = nil) {
+    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
         self = GenericMessage.with() {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable

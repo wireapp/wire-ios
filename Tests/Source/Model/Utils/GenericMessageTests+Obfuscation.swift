@@ -46,7 +46,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesEmojis(){
         // given
         let text = "📲"
-        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: 1.0)
+        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -65,7 +65,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesCyrillic(){
         // given
         let text = "привет мир!"
-        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: 1.0)
+        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -85,7 +85,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesTextMessages(){
         // given
         let text = "foo"
-        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: 1.0)
+        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -105,7 +105,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesTextMessageDifferentlyEachTime() {
         // given
         let text = "foo"
-        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: 1.0)
+        let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscatedMessage1 = message.obfuscatedMessage()
@@ -151,7 +151,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.content = text
             $0.linkPreview = [linkPreview]
         }
-        let genericMessage = GenericMessage(content: messageText, nonce: UUID.create(), expiresAfter: 20.0)
+        let genericMessage = GenericMessage(content: messageText, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -199,7 +199,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.linkPreview = [linkPreview]
         }
         
-        let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: 20.0)
+        let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -244,7 +244,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.content = text
             $0.linkPreview = [linkPreview]
         }
-        let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: 20.0)
+        let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -264,7 +264,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesAssetsImageContent(){
         // given
         let asset  = assetWithImage()
-        let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 20.0)
+        let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -299,7 +299,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         })
         
         let asset  = WireProtos.Asset(original: original, preview: nil)
-        let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 20.0)
+        let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -332,7 +332,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         })
  
         let asset  = WireProtos.Asset(original: original, preview: nil)
-        let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 20.0)
+        let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -354,7 +354,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesLocationMessages() {
         // given
         let location  = Location(latitude: 2.0, longitude: 3.0)
-        let message = GenericMessage(content: location, nonce: UUID.create(), expiresAfter: 20.0)
+        let message = GenericMessage(content: location, nonce: UUID.create(), expiresAfter: .tenSeconds)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()

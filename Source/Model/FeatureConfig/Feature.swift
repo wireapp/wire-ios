@@ -18,10 +18,6 @@
 
 import Foundation
 
-extension Notification.Name {
-    public static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
-}
-
 private let zmLog = ZMSLog(tag: "Feature")
 
 @objcMembers
@@ -38,6 +34,7 @@ public class Feature: ZMManagedObject {
         case appLock
         case conferenceCalling
         case fileSharing
+        case selfDeletingMessages
     }
 
     public enum Status: String, Codable {
@@ -63,7 +60,6 @@ public class Feature: ZMManagedObject {
                 updateNeedsToNotifyUser(oldData: configData, newData: newValue)
             }
             configData = newValue
-            hasInitialDefault = false
         }
     }
     
@@ -95,10 +91,6 @@ public class Feature: ZMManagedObject {
                 updateNeedsToNotifyUser(oldStatus: status, newStatus: newValue)
             }
             statusValue = newValue.rawValue
-            if needsToNotifyUser {
-                NotificationCenter.default.post(name: .featureDidChangeNotification, object: change(from: self))
-            }
-            hasInitialDefault = false
         }
     }
 
@@ -155,9 +147,10 @@ public class Feature: ZMManagedObject {
         // on a single context to avoid race conditions.
         assert(context.zm_isSyncContext, "Modifications of `Feature` can only occur on the sync context")
 
-        context.performGroupedBlock{
+        context.performGroupedAndWait { context in
             if let existing = fetch(name: name, context: context) {
                 changes(existing)
+                existing.hasInitialDefault = false
             } else {
                 let feature = Feature.insertNewObject(in: context)
                 feature.name = name
@@ -170,9 +163,14 @@ public class Feature: ZMManagedObject {
     }
 
     private func updateNeedsToNotifyUser(oldStatus: Status, newStatus: Status) {
+        let hasStatusChanged = oldStatus != newStatus
+
         switch name {
         case .conferenceCalling:
-            needsToNotifyUser = (oldStatus != newStatus) && newStatus == .enabled
+            needsToNotifyUser = hasStatusChanged && newStatus == .enabled
+
+        case .fileSharing, .selfDeletingMessages:
+            needsToNotifyUser = hasStatusChanged
 
         default:
             break
@@ -198,24 +196,21 @@ public class Feature: ZMManagedObject {
 
         case .conferenceCalling, .fileSharing:
             return
+
+        case .selfDeletingMessages:
+            let decoder = JSONDecoder()
+
+            guard
+                !needsToNotifyUser,
+                let oldValue = oldData,
+                let newValue = newData,
+                let oldConfig = try? decoder.decode(Feature.SelfDeletingMessages.Config.self, from: oldValue),
+                let newConfig = try? decoder.decode(Feature.SelfDeletingMessages.Config.self, from: newValue)
+            else {
+                return
+            }
+
+            needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
         }
     }
-}
-
-extension Feature {
-
-    public enum FeatureChange {
-        case conferenceCallingIsAvailable
-    }
-
-    private func change(from feature: Feature) -> FeatureChange? {
-        switch feature.name {
-        case .conferenceCalling where feature.status == .enabled:
-            return .conferenceCallingIsAvailable
-
-        default:
-            return nil
-        }
-    }
-
 }

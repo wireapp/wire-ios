@@ -118,7 +118,7 @@ class FrameworkVersionTests: XCTestCase  {
 // MARK: - Test patches
 class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
     
-    func disabled_testThatItApplyPatchesWhenNoVersion() {
+    func testThatItApplyPatchesWhenNoVersion() {
         
         // GIVEN
         var patchApplied = false
@@ -136,7 +136,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(patchApplied)
     }
     
-    func disabled_testThatItApplyPatchesWhenPreviousVersionIsLesser() {
+    func testThatItApplyPatchesWhenPreviousVersionIsLesser() {
         
         // GIVEN
         var patchApplied = false
@@ -158,7 +158,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(patchApplied)
     }
     
-    func disabled_testThatItDoesNotApplyPatchesWhenPreviousVersionIsGreater() {
+    func testThatItDoesNotApplyPatchesWhenPreviousVersionIsGreater() {
         
         // GIVEN
         var patchApplied = false
@@ -180,7 +180,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
     }
     
-    func disabled_testThatItMigratesClientsSessionIdentifiers() {
+    func testThatItMigratesClientsSessionIdentifiers() {
 
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -219,7 +219,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
     }
     
-    func disabled_testThatItMigratesDegradedConversationsWithSecureWithIgnored() {
+    func testThatItMigratesDegradedConversationsWithSecureWithIgnored() {
         // GIVEN
         syncMOC.performGroupedBlockAndWait {
             let notSecureConversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -245,7 +245,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
     }
 
-    func disabled_testThatItDeletesLocalTeamsAndMembers() {
+    func testThatItDeletesLocalTeamsAndMembers() {
         syncMOC.performGroupedBlockAndWait {
             // given
             let moc = self.syncMOC
@@ -271,7 +271,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
     }
 
-    func disabled_testThatItMigratesUserRemoteIdentifiersToTheirMembers() {
+    func testThatItMigratesUserRemoteIdentifiersToTheirMembers() {
         syncMOC.performGroupedBlockAndWait {
             // given
             let moc = self.syncMOC
