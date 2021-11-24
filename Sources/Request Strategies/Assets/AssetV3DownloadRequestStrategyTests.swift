@@ -69,14 +69,15 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     }
     
     fileprivate func createFileMessageWithAssetId(
-        in aConversation: ZMConversation,
+        in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
         sha: Data  = Data.randomEncryptionKey()
         ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
 
-        let message = try! aConversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: aConversation.messageDestructionTimeoutValue)
+        let content = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
+        var uploaded = GenericMessage(content: content, nonce: message.nonce!, expiresAfter: conversation.activeMessageDestructionTimeoutValue)
 
         uploaded.updateUploaded(assetId: assetId, token: token)
         message.updateTransferState(.uploaded, synchronize: false)
@@ -176,7 +177,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             
             // Given
-            self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 5))
+            self.conversation.setMessageDestructionTimeoutValue(.custom(5), for: .selfUser)
             guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
             
