@@ -16,12 +16,17 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    - name: get latest release version
+      id: latestVersion
+      run: |
+        LATEST_VERSION=$(curl --silent "https://api.github.com/repos/wireapp/wire-ios-sync-engine/releases/latest" | jq -r .tag_name) || true
+        echo $LATEST_VERSION
+        echo "::set-output name=LATEST_VERSION::$LATEST_VERSION"
     - name: Bump release version
       id: bump_version
       uses: christian-draeger/increment-semantic-version@1.0.2
       with:
-        current-version: '2.11.7-alpha3'
+        current-version: ${{ steps.latestVersion.outputs.LATEST_VERSION }}
         version-fragment: 'feature'
     - name: Do something with your bumped release version
       run: echo ${{ steps.bump_version.outputs.next-version }}
-      # will print 2.12.0
