@@ -28,3 +28,8 @@ jobs:
         uses: "WyriHaximus/github-action-next-semvers@v1"
         with:
           version: ${{ steps.previoustag.outputs.tag }}
+      - name: 'print version'
+        run: |
+          echo ${{ steps.semvers.outputs.patch }}
+          echo ${{ steps.semvers.outputs.minor }}
+          echo ${{ steps.semvers.outputs.major }}
