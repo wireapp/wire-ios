@@ -33,11 +33,12 @@ extension ModelObjectsTests {
         return (member.team!, member)
     }
     
-    @discardableResult func createUserAndAddMember(to team: Team) -> (ZMUser, Member) {
+    @discardableResult func createUserAndAddMember(to team: Team, with domain: String? = nil) -> (ZMUser, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.user = .insertNewObject(in: uiMOC)
         member.user?.remoteIdentifier = .create()
         member.user?.teamIdentifier = team.remoteIdentifier
+        member.user?.domain = domain
         member.team = team
         return (member.user!, member)
     }
