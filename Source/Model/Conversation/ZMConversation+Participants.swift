@@ -389,18 +389,14 @@ extension ZMConversation {
     
     /// Check if roles are missing, and mark them to download if needed
     @objc public func markToDownloadRolesIfNeeded() {
-        guard self.conversationType == .group else { return }
-        
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        let notInMyTeam = self.teamRemoteIdentifier == nil ||
-            selfUser.team?.remoteIdentifier != self.teamRemoteIdentifier
-        
-        guard notInMyTeam else { return }
-        
-        if self.nonTeamRoles.isEmpty ||
-            self.nonTeamRoles.first(where: {!$0.actions.isEmpty}) == nil // there are no roles with actions
-        {
-            self.needsToDownloadRoles = true
+        guard
+            conversationType == .group,
+            !isTeamConversation
+        else { return }
+
+        // if there are no roles with actions
+        if nonTeamRoles.isEmpty || !nonTeamRoles.contains(where: { !$0.actions.isEmpty }) {
+            needsToDownloadRoles = true
         }
     }
     
