@@ -276,6 +276,8 @@
 		63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63370CF72431F5DE0072C37F /* BaseCompositeMessageTests.swift */; };
 		63495DF023F6BD2A002A7C59 /* GenericMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63495DEF23F6BD2A002A7C59 /* GenericMessageTests.swift */; };
 		63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */; };
+		6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */; };
+		6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */; };
 		6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */; };
 		638805652410FE920043B641 /* ButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638805642410FE920043B641 /* ButtonState.swift */; };
 		63AFE2D6244F49A90003F619 /* GenericMessage+MessageCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */; };
@@ -288,6 +290,7 @@
 		63D41E6D245733AC0076826F /* ZMMessageTests+Removal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E6C245733AC0076826F /* ZMMessageTests+Removal.swift */; };
 		63D41E6F24573F420076826F /* ZMConversationTests+SelfConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E6E24573F420076826F /* ZMConversationTests+SelfConversation.swift */; };
 		63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E7024597E420076826F /* GenericMessage+Flags.swift */; };
+		63E313D3274D5F57002EAF1D /* ZMConversationTests+Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E313D2274D5F57002EAF1D /* ZMConversationTests+Team.swift */; };
 		63F65F01246B073900534A69 /* GenericMessage+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F65F00246B073900534A69 /* GenericMessage+Content.swift */; };
 		7C88C5352182FBD90037DD03 /* ZMClientMessageTests+Replies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C88C5312182F6150037DD03 /* ZMClientMessageTests+Replies.swift */; };
 		7C8BFFDF22FC5E1600B3C8A5 /* ZMUser+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BFFDE22FC5E1600B3C8A5 /* ZMUser+Validation.swift */; };
@@ -1009,6 +1012,8 @@
 		63370CF72431F5DE0072C37F /* BaseCompositeMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCompositeMessageTests.swift; sourceTree = "<group>"; };
 		63495DEF23F6BD2A002A7C59 /* GenericMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericMessageTests.swift; sourceTree = "<group>"; };
 		63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Protobuf.swift"; sourceTree = "<group>"; };
+		6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Federation.swift"; sourceTree = "<group>"; };
+		6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Federation.swift"; sourceTree = "<group>"; };
 		63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Composite.swift"; sourceTree = "<group>"; };
 		63880556240FFE7A0043B641 /* zmessaging2.80.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.80.0.xcdatamodel; sourceTree = "<group>"; };
 		638805642410FE920043B641 /* ButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonState.swift; sourceTree = "<group>"; };
@@ -1022,6 +1027,7 @@
 		63D41E6C245733AC0076826F /* ZMMessageTests+Removal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessageTests+Removal.swift"; sourceTree = "<group>"; };
 		63D41E6E24573F420076826F /* ZMConversationTests+SelfConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+SelfConversation.swift"; sourceTree = "<group>"; };
 		63D41E7024597E420076826F /* GenericMessage+Flags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Flags.swift"; sourceTree = "<group>"; };
+		63E313D2274D5F57002EAF1D /* ZMConversationTests+Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Team.swift"; sourceTree = "<group>"; };
 		63F65F00246B073900534A69 /* GenericMessage+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Content.swift"; sourceTree = "<group>"; };
 		7C2E467721072A31007E2566 /* zmessaging2.50.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.50.0.xcdatamodel; sourceTree = "<group>"; };
 		7C88C5312182F6150037DD03 /* ZMClientMessageTests+Replies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Replies.swift"; sourceTree = "<group>"; };
@@ -2047,6 +2053,7 @@
 				EEFC3EE62208311200D3091A /* ZMConversation+HasMessages.swift */,
 				1670D0162317F92B003A143B /* ZMConversation+Team.swift */,
 				5E39FC66225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift */,
+				6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */,
 			);
 			path = Conversation;
 			sourceTree = "<group>";
@@ -2436,6 +2443,8 @@
 				874D9797211064D300B07674 /* ZMConversationLastMessagesTest.swift */,
 				5E39FC68225F2DC000C682B8 /* ZMConversationExternalParticipantsStateTests.swift */,
 				A927F52623A029250058D744 /* ParticipantRoleTests.swift */,
+				6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */,
+				63E313D2274D5F57002EAF1D /* ZMConversationTests+Team.swift */,
 			);
 			name = Conversation;
 			path = Tests/Source/Model/Conversation;
@@ -3175,6 +3184,7 @@
 				EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */,
 				161E056A2667C4D100DADC3D /* AccountDeletedObserver.swift in Sources */,
 				F9A706B61CAEE01D00C2F5FE /* UserClientChangeInfo.swift in Sources */,
+				6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */,
 				BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */,
 				066328602428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift in Sources */,
 				5E36B45E21CA5BBA00B7063B /* UnverifiedCredentials.swift in Sources */,
@@ -3565,6 +3575,7 @@
 				06D33FCD2524F65D004B9BC1 /* ZMConversationTests+UnreadMessages.swift in Sources */,
 				F9DBA5271E28EEBD00BE23C0 /* UserObserverTests.swift in Sources */,
 				1611CF59203AE6A0004D807B /* FileAssetCacheTests.swift in Sources */,
+				6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */,
 				5EFE9C0D2126CB7D007932A6 /* UnregisteredUserTests.swift in Sources */,
 				A9536FD323ACD23100CFD528 /* ConversationTests+gapsAndWindows.swift in Sources */,
 				A93724A226983100005FD532 /* ZMMessageTests.swift in Sources */,
@@ -3621,6 +3632,7 @@
 				F9A708601CAEEF4700C2F5FE /* MessagingTest+EventFactory.m in Sources */,
 				F9DBA5291E29162A00BE23C0 /* MessageObserverTests.swift in Sources */,
 				BF1B980D1EC3410000DE033B /* PermissionsTests.swift in Sources */,
+				63E313D3274D5F57002EAF1D /* ZMConversationTests+Team.swift in Sources */,
 				63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */,
 				546D3DE91CE5D24C00A6047F /* RichAssetFileTypeTests.swift in Sources */,
 				065D7501239FAB1200275114 /* SelfUserParticipantMigrationTests.swift in Sources */,

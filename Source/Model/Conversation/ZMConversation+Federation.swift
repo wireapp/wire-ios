@@ -19,16 +19,14 @@
 import Foundation
 
 extension ZMConversation {
-    
-    /// Returns true if this conversation was created within the same team as the self user
-    public var isTeamConversation: Bool {        
-        guard
-            let teamRemoteIdentifier = teamRemoteIdentifier,
-            let managedObjectContext = managedObjectContext
-        else { return false }
-        
-        let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
-        return teamRemoteIdentifier == selfUser.team?.remoteIdentifier && !isFederating(with: selfUser)
+    func isFederating(with user: UserType) -> Bool {
+        guard
+            let domain = domain,
+            let userDomain = user.domain
+        else { return false }
+
+        return domain != userDomain
     }
+
 }
