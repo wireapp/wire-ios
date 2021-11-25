@@ -258,6 +258,26 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         XCTAssertFalse(user1CanSeeUser2)
         XCTAssertFalse(user2CanSeeUser1)
     }
+
+    func testThatItDoesNotAllowSeeingCompanyInformationBetweenUsers_WhenTeamIsTheSame_AndDomainIsDifferent() {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+
+        // we add actual team members as well
+        let (user1, _) = createUserAndAddMember(to: team)
+        let (user2, _) = createUserAndAddMember(to: team)
+
+        user1.domain = "wire.com"
+        user2.domain = "not-wire.com"
+
+        // when
+        let user1CanSeeUser2 = user1.canAccessCompanyInformation(of: user2)
+        let user2CanSeeUser1 = user2.canAccessCompanyInformation(of: user1)
+
+        // then
+        XCTAssertFalse(user1CanSeeUser2)
+        XCTAssertFalse(user2CanSeeUser1)
+    }
     
     // MARK: Notifications Setting
     

@@ -169,11 +169,11 @@ public extension ZMUser {
             let otherUser = user as? ZMUser,
             let otherUserTeamID = otherUser.team?.remoteIdentifier,
             let selfUserTeamID = self.team?.remoteIdentifier
-            else {
-                return false
+        else {
+            return false
         }
-        
-        return selfUserTeamID == otherUserTeamID
+
+        return selfUserTeamID == otherUserTeamID && !isFederating(with: otherUser)
     }
     
     @objc func _isGuest(in conversation: ConversationLike) -> Bool {
