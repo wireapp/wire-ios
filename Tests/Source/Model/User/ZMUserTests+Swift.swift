@@ -611,7 +611,7 @@ extension ZMUserTests_Swift {
         XCTAssertEqual(knownTeamMembers, Set([selfTeamUser1, selfTeamUser2]))
     }
 
-    func testThatReturnsExpectedRecipientsForBroadcast() {
+    func testThatReturnsExpectedRecipientsForBroadcast_WhenFederationIsDisabled() {
         // given
         let selfUserTeam = createTeam(in: uiMOC)
         createMembership(in: uiMOC, user: selfUser, team: selfUserTeam)
@@ -646,6 +646,46 @@ extension ZMUserTests_Swift {
 
         // then
         XCTAssertEqual(recipients, Set([selfUser, selfTeamUser1, selfTeamUser2, connectedTeamUser1, connectedTeamUser2]))
+    }
+    
+    func testThatReturnsExpectedRecipientsForBroadcast_WhenFederationIsEnabled() {
+        // given
+        let selfUserFederatedTeam = createTeam(in: uiMOC)
+        createMembership(in: uiMOC, user: selfUser, team: selfUserFederatedTeam)
+
+        let selfDomain = UUID().uuidString
+        selfUser.domain = selfDomain
+        let (selfTeamUser1, _) = createUserAndAddMember(to: selfUserFederatedTeam, with: selfDomain)
+        let (selfTeamUser2, _) = createUserAndAddMember(to: selfUserFederatedTeam, with: selfDomain)
+        let (selfTeamUser3, _) = createUserAndAddMember(to: selfUserFederatedTeam, with: selfDomain)
+
+        let otherFederatedTeam = createTeam(in: uiMOC)
+        let otherDomain = UUID().uuidString
+
+        // unconnected other team users
+        createUserAndAddMember(to: otherFederatedTeam, with: otherDomain)
+        createUserAndAddMember(to: otherFederatedTeam, with: otherDomain)
+
+        let (connectedTeamUser1, _) = createUserAndAddMember(to: otherFederatedTeam, with: otherDomain)
+        let (connectedTeamUser2, _) = createUserAndAddMember(to: otherFederatedTeam, with: otherDomain)
+
+        let usersToConnect = [connectedTeamUser1, connectedTeamUser2]
+
+        for user in usersToConnect {
+            let connection = ZMConnection.insertNewSentConnection(to: user)
+            connection.status = .accepted
+        }
+
+        createConversation(in: uiMOC, with: [selfUser, selfTeamUser1])
+        createConversation(in: uiMOC, with: [selfUser, selfTeamUser2])
+        createConversation(in: uiMOC, with: [selfTeamUser2, selfTeamUser3])
+        createConversation(in: uiMOC, with: [selfUser, connectedTeamUser1])
+
+        // when
+        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: uiMOC, maxCount: 50)
+
+        // then
+        XCTAssertEqual(recipients, Set([selfUser, selfTeamUser1, selfTeamUser2]))
     }
 
     func testThatItReturnsRecipientsForBroadcastUpToAMaximumCount() {

@@ -91,6 +91,8 @@ extension ZMUser {
             .prefix(remainingSlots)
 
         recipients.formUnion(teamUsers)
+        
+        recipients = recipients.filter { !$0.isFederated }
 
         return recipients
     }
