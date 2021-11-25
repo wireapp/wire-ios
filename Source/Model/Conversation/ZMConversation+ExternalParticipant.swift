@@ -36,6 +36,9 @@ extension ZMConversation {
         /// The conversation contains external partners that we should warn the self user about.
         public static let visibleExternals = ExternalParticipantsState(rawValue: 1 << 2)
 
+        /// The conversation contains federated remote users that we should warn the self user about.
+        public static let visibleRemotes = ExternalParticipantsState(rawValue: 1 << 3)
+
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -70,7 +73,9 @@ extension ZMConversation {
         var state = ExternalParticipantsState()
 
         for user in otherUsers {
-            if user.isServiceUser {
+            if canDisplayGuests && user.isFederated {
+                state.insert(.visibleRemotes)
+            } else if user.isServiceUser {
                 state.insert(.visibleServices)
             } else if canDisplayExternals && user.isExternalPartner {
                 state.insert(.visibleExternals)
@@ -79,7 +84,10 @@ extension ZMConversation {
             }
 
             // Early exit to avoid going through all users if we can avoid it
-            if state.contains(.visibleServices) && (state.contains(.visibleGuests) || !canDisplayGuests) && (state.contains(.visibleExternals) || !canDisplayExternals) {
+            if state.contains(.visibleServices) &&
+               (state.contains(.visibleGuests) || !canDisplayGuests) &&
+               (state.contains(.visibleExternals) || !canDisplayExternals) &&
+               (state.contains(.visibleRemotes) || !canDisplayGuests) {
                 break
             }
         }
@@ -95,6 +103,11 @@ extension ZMConversation {
     /// Returns whether guests are present, regardless of the display rules.
     public var areGuestsPresent: Bool {
         return localParticipants.any { $0.isGuest(in: self) }
+    }
+
+    /// Returns whether federated remote users are present, regardless of the display rules.
+    public var areRemotesPresent: Bool {
+        return localParticipants.any(\.isFederated)
     }
 
 }
