@@ -599,6 +599,15 @@ public extension WireDataModel.Mention {
             $0.start = Int32(range.location)
             $0.length = Int32(range.length)
             $0.userID = userID
+            
+            
+            
+            guard let domain = user.domain else { return }
+            
+            $0.qualifiedUserID =  WireProtos.QualifiedUserId.with{
+                $0.id = userID
+                $0.domain = domain
+            }
         }
     }
 }
