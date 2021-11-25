@@ -19,15 +19,15 @@
 import Foundation
 
 public class AvailabilityRequestStrategy: AbstractRequestStrategy {
-    
+
     var modifiedSync: ZMUpstreamModifiedObjectSync!
 
     private let maximumBroadcastRecipients = 500
-    
+
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-        
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
         self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self,
                                                          entityName: ZMUser.entityName(),
                                                          update: nil,
@@ -39,7 +39,7 @@ public class AvailabilityRequestStrategy: AbstractRequestStrategy {
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return modifiedSync.nextRequest()
     }
-    
+
 }
 
 extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
@@ -63,44 +63,44 @@ extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
                                          binaryData: dataAndMissingClientStrategy.data,
                                          type: protobufContentType,
                                          contentDisposition: nil)
-        
+
         return ZMUpstreamRequest(keys: keys, transportRequest: request)
     }
-    
+
     public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
         return dependentObjectNeedingUpdateBeforeProcessing
     }
-    
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable : Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+
+    public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
         guard let clientRegistrationDelegate = applicationStatus?.clientRegistrationDelegate else { return false }
-        
+
         _ = parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
-        
+
         return false
     }
-    
+
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
         guard let clientRegistrationDelegate = applicationStatus?.clientRegistrationDelegate else { return false }
-        
+
         return parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate).contains(.missing)
     }
-    
+
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
         return false
     }
-    
+
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
         return nil // we will never insert objects
     }
-    
+
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
         // we will never insert objects
     }
-    
+
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
     }
-    
+
 }
 
 extension AvailabilityRequestStrategy: OTREntity {
@@ -108,15 +108,15 @@ extension AvailabilityRequestStrategy: OTREntity {
     public var context: NSManagedObjectContext {
         return managedObjectContext
     }
-    
+
     public var conversation: ZMConversation? {
         return nil
     }
-    
+
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // BE notified us about a new client. A session will be established and then we'll try again
     }
-    
+
     public func detectedRedundantUsers(_ users: [ZMUser]) {
         // We were sending a message to clients which should not receive it. To recover
         // from this we must restart the slow sync.
@@ -126,12 +126,12 @@ extension AvailabilityRequestStrategy: OTREntity {
     public func delivered(with response: ZMTransportResponse) {
         // no-op
     }
-        
+
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: recipients)
     }
-    
+
     public var isExpired: Bool {
         return false
     }
@@ -139,23 +139,23 @@ extension AvailabilityRequestStrategy: OTREntity {
     public var expirationDate: Date? {
         return nil
     }
-    
+
     public func expire() {
         // nop
     }
-    
+
 }
 
 extension AvailabilityRequestStrategy: ZMContextChangeTrackerSource {
-    
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [modifiedSync]
     }
-    
+
 }
 
 extension AvailabilityRequestStrategy: ZMEventConsumer {
-    
+
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard
@@ -169,5 +169,5 @@ extension AvailabilityRequestStrategy: ZMEventConsumer {
             user?.updateAvailability(from: message)
         }
     }
-    
+
 }

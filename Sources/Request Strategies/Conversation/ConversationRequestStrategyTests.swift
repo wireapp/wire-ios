@@ -415,7 +415,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
-
     func testThatItUpdatesHasReadReceiptsEnabled_WhenReceivingReceiptModeUpdateEvent() {
         self.syncMOC.performAndWait {
             // GIVEN
@@ -602,20 +601,20 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                                          dataPayload: ["message_timer": messageTimerMillis])
 
             // WHEN
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) //First event
+            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) // First event
 
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
             guard let firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(firstMessage.systemMessageType, .messageTimerUpdate)
 
-            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) //Second duplicated event
+            self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil) // Second duplicated event
 
             // THEN
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
             guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
-            XCTAssertEqual(firstMessage, secondMessage) //Check that no other messages are appended in the conversation
+            XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
         }
     }
 
@@ -645,25 +644,25 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // WHEN
 
-            //First event with valued timer
+            // First event with valued timer
             self.sut?.processEvents([valuedEvent], liveEvents: true, prefetchResult: nil)
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, valuedMessageTimer)
 
-            //Second event with timer = nil
+            // Second event with timer = nil
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
             XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
 
             guard let firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             XCTAssertEqual(firstMessage.systemMessageType, .messageTimerUpdate)
 
-            //Third event with timer = nil
+            // Third event with timer = nil
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN
             XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
             guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
-            XCTAssertEqual(firstMessage, secondMessage) //Check that no other messages are appended in the conversation
+            XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
         }
     }
 
@@ -678,7 +677,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                                          senderID: self.otherUser.remoteIdentifier!,
                                          conversationID: self.groupConversation.remoteIdentifier!,
                                          timestamp: Date(),
-                                         dataPayload:  [
+                                         dataPayload: [
                                             "user_ids": [self.thirdUser.remoteIdentifier!.transportString()]
                                          ])
 
@@ -704,7 +703,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                                          senderID: self.otherUser.remoteIdentifier!,
                                          conversationID: self.groupConversation.remoteIdentifier!,
                                          timestamp: Date(),
-                                         dataPayload:  [
+                                         dataPayload: [
                                             "user_ids": [user2.remoteIdentifier!.transportString()],
                                             "users": [[
                                                 "id": user2.remoteIdentifier!.transportString(),
@@ -750,7 +749,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    // MARK:  Member leave
+    // MARK: Member leave
 
     func testThatItCreatesAndNotifiesSystemMessagesFromAMemberLeaveEvent() {
 
@@ -820,7 +819,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                                             "target": userId.transportString(),
                                             "conversation_role": "new"
                                          ])
-
 
             // WHEN
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
@@ -919,7 +917,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-
     // MARK: - Helpers
 
     func qualifiedID(for conversation: ZMConversation) -> QualifiedID {
@@ -964,7 +961,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-    
 
     func fetchConversationListDuringSlowSyncWithEmptyResponse() {
         syncMOC.performGroupedBlockAndWait {
@@ -1020,7 +1016,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func successfulResponse(request: Payload.QualifiedUserIDList,
                             notFound: [QualifiedID],
                             failed: [QualifiedID]) -> ZMTransportResponse {
-
 
         let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain)})
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)

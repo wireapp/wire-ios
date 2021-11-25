@@ -69,7 +69,7 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {
-        messageSync.sync(object) { (result, _) in
+        messageSync.sync(object) { (_, _) in
             object.linkPreviewState = .done
             completion()
         }

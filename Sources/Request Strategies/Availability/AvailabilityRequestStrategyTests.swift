@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import XCTest
 import WireRequestStrategy
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
-    
+
     var applicationStatus: MockApplicationStatus!
-    var sut : AvailabilityRequestStrategy!
-    
+    var sut: AvailabilityRequestStrategy!
+
     override func setUp() {
         super.setUp()
 
@@ -34,14 +33,14 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             self.sut = AvailabilityRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
         }
     }
-    
+
     override func tearDown() {
         sut = nil
         applicationStatus = nil
-        
+
         super.tearDown()
     }
-    
+
     func testThatItGeneratesARequestWhenAvailabilityIsModified() {
         self.syncMOC.performGroupedAndWait { moc in
 
@@ -54,38 +53,37 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             // when
             let request = self.sut.nextRequest()
 
+            // then
+            XCTAssertNotNil(request)
+        }
+    }
+
+    func testThatItGeneratesARequestWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
+        self.syncMOC.performGroupedAndWait { moc in
+
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+            selfUser.needsToBeUpdatedFromBackend = false
+            selfUser.setLocallyModifiedKeys(Set(arrayLiteral: AvailabilityKey))
+
+            let team = Team.insertNewObject(in: moc)
+
+            let membership = Member.insertNewObject(in: moc)
+            membership.user = selfUser
+            membership.team = team
+
+            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+
+            // when
+            let request = self.sut.nextRequest()
 
             // then
             XCTAssertNotNil(request)
         }
     }
-    
-    func testThatItGeneratesARequestWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
-        self.syncMOC.performGroupedAndWait { moc in
-            
-            // given
-            let selfUser = ZMUser.selfUser(in: moc)
-            selfUser.needsToBeUpdatedFromBackend = false
-            selfUser.setLocallyModifiedKeys(Set(arrayLiteral: AvailabilityKey))
-            
-            let team = Team.insertNewObject(in: moc)
-          
-            let membership = Member.insertNewObject(in: moc)
-            membership.user = selfUser
-            membership.team = team
-            
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
-            
-            // when
-            let request = self.sut.nextRequest()
-            
-            // then
-            XCTAssertNotNil(request)
-        }
-    }
-    
+
     func testThatItDoesntGenerateARequestWhenAvailabilityIsModifiedForOtherUsers() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait { _ in
             // given
             self.otherUser.needsToBeUpdatedFromBackend = false
             self.otherUser.modifiedKeys = Set(arrayLiteral: AvailabilityKey)
@@ -98,7 +96,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             XCTAssertNil(request)
         }
     }
-    
+
     func testThatItUpdatesAvailabilityFromUpdateEvent() {
         self.syncMOC.performGroupedAndWait { moc in
 
@@ -114,10 +112,10 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
 
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
-                "data":dict,
-                "from" : selfUser.remoteIdentifier!,
-                "conversation":ZMConversation.selfConversation(in: moc).remoteIdentifier!.transportString(),
-                "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)!
+                "data": dict,
+                "from": selfUser.remoteIdentifier!,
+                "conversation": ZMConversation.selfConversation(in: moc).remoteIdentifier!.transportString(),
+                "time": Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)!
 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
@@ -126,12 +124,12 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(selfUser.availability, .away)
         }
     }
-    
+
     func testThatItRequestSlowSyncIfWeAreSendingToRedudantClients() {
         self.syncMOC.performGroupedAndWait { moc in
             // given
             let redundantUser = ZMUser.fetchOrCreate(with: UUID(), domain: nil, in: moc)
-            
+
             // when
             self.sut.detectedRedundantUsers([redundantUser])
 
@@ -139,5 +137,5 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(self.applicationStatus.slowSyncWasRequested)
         }
     }
-    
+
 }

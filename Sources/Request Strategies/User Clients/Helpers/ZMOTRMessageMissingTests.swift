@@ -21,43 +21,42 @@ import XCTest
 import WireTesting
 import WireDataModel
 
-
 class ZMOTRMessageMissingTests: MessagingTestBase {
 
     var message: ZMOTRMessage!
-    
+
     override func setUp() {
-        
+
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
             self.message = try! self.groupConversation.appendText(content: "Test message") as! ZMClientMessage
             self.syncMOC.saveOrRollback()
         }
     }
-    
+
     override func tearDown() {
         self.message =  nil
         super.tearDown()
     }
-    
+
     func testThatItInsertsMissingClientsFromUploadResponse() {
-        
+
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
             let missingClientIdentifiers = ["aabbccdd", "ddeeff22"]
             let payload = [
-                "missing" : [
-                    self.otherUser.remoteIdentifier!.transportString() : missingClientIdentifiers
+                "missing": [
+                    self.otherUser.remoteIdentifier!.transportString(): missingClientIdentifiers
                 ],
-                "deleted" : [:],
-                "redundant" : [:]
+                "deleted": [:],
+                "redundant": [:]
             ]
-            
+
             // WHEN
             _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
             self.syncMOC.saveOrRollback()
-            
+
             // THEN
             let allExistingClients = Set(self.otherUser.clients.map { $0.remoteIdentifier! })
             missingClientIdentifiers.forEach {
@@ -65,10 +64,10 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             }
         }
     }
-    
+
     func testThatItDeletesClientsFromUploadResponse() {
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             let client1 = UserClient.insertNewObject(in: self.syncMOC)
             client1.remoteIdentifier = "aabbccdd"
@@ -81,20 +80,20 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             client3.user = self.otherUser
             self.syncMOC.saveOrRollback()
             XCTAssertEqual(self.otherUser.clients.count, 4)
-            
+
             let deletedClientsIdentifier = [client1.remoteIdentifier!, client2.remoteIdentifier!]
             let payload = [
-                "missing" : [:],
-                "deleted" : [
-                    self.otherUser.remoteIdentifier!.transportString() : deletedClientsIdentifier
+                "missing": [:],
+                "deleted": [
+                    self.otherUser.remoteIdentifier!.transportString(): deletedClientsIdentifier
                 ],
-                "redundant" : [:]
+                "redundant": [:]
             ]
-            
+
             // WHEN
             _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
             self.syncMOC.saveOrRollback()
-            
+
             // THEN
             let allExistingClients = Set(self.otherUser.clients.map { $0.remoteIdentifier! })
             deletedClientsIdentifier.forEach {
@@ -103,16 +102,16 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             XCTAssertTrue(allExistingClients.contains(client3.remoteIdentifier!))
         }
     }
-    
+
     func testThatItMarksConversationToDownloadFromRedundantUploadResponse() {
         // GIVEN
         self.syncMOC.performGroupedAndWait { moc in
             XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
             let payload = [
-                "missing" : [:],
-                "deleted" : [:],
-                "redundant" : [
-                    self.otherUser.remoteIdentifier!.transportString() : "aabbccdd"
+                "missing": [:],
+                "deleted": [:],
+                "redundant": [
+                    self.otherUser.remoteIdentifier!.transportString(): "aabbccdd"
                 ]
             ]
 
@@ -124,5 +123,5 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
         }
     }
-    
+
 }

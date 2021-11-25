@@ -37,7 +37,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForUpdatingConnection_NonFederated() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = self.oneToOneConversation.connection!.to.remoteIdentifier!
             let action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
@@ -55,7 +55,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForUpdatingConnection_Federated() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             self.sut.useFederationEndpoint = true
             let userID = self.oneToOneConversation.connection!.to.qualifiedID!
@@ -90,7 +90,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessConnectionEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             let newStatus: ZMConnectionStatus = .blocked
             let action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
@@ -111,7 +111,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
                                                 newStatus: .blocked)
@@ -138,7 +138,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
                                                 newStatus: .blocked)

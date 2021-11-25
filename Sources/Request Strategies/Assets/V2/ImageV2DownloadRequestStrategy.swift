@@ -18,25 +18,25 @@
 
 import Foundation
 
-public final class ImageV2DownloadRequestStrategy : AbstractRequestStrategy {
-    
-    fileprivate var downstreamSync : ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let requestFactory : ClientMessageRequestFactory = ClientMessageRequestFactory()
-    private var token: Any? = nil
+public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
+
+    fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
+    fileprivate let requestFactory: ClientMessageRequestFactory = ClientMessageRequestFactory()
+    private var token: Any?
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
         let downloadPredicate = NSPredicate { (object, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version < 3 else { return false }
-            
+
             let missingMediumImage = message.imageMessageData != nil && !message.hasDownloadedFile && message.assetId != nil
             let missingVideoThumbnail = message.fileMessageData != nil && !message.hasDownloadedPreview && message.fileMessageData?.thumbnailAssetID != nil
-            
+
             return (missingMediumImage || missingVideoThumbnail) && message.hasEncryptedAsset
         }
-        
+
         downstreamSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
                                                              entityName: ZMAssetClientMessage.entityName(),
                                                              predicateForObjectsToDownload: downloadPredicate,
@@ -44,17 +44,16 @@ public final class ImageV2DownloadRequestStrategy : AbstractRequestStrategy {
 
         registerForWhitelistingNotification()
     }
-    
+
     func registerForWhitelistingNotification() {
         self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                           context: self.managedObjectContext.notificationContext,
-                                          object: nil)
-        { [weak self] note in
+                                          object: nil) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadImage(objectID)
         }
     }
-    
+
     func didRequestToDownloadImage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
@@ -64,18 +63,18 @@ public final class ImageV2DownloadRequestStrategy : AbstractRequestStrategy {
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
-    
+
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return downstreamSync.nextRequest()
     }
 
 }
 
-extension ImageV2DownloadRequestStrategy : ZMDownstreamTranscoder {
-    
+extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
+
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         guard let message = object as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
-        
+
         if let existingData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) {
             updateMediumImage(forMessage: message, imageData: existingData)
             managedObjectContext.enqueueDelayedSave()
@@ -84,34 +83,34 @@ extension ImageV2DownloadRequestStrategy : ZMDownstreamTranscoder {
             if message.imageMessageData != nil {
                 guard let assetId = message.assetId?.transportString() else { return nil }
                 return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!)
-            } else if (message.fileMessageData != nil) {
+            } else if message.fileMessageData != nil {
                 guard let assetId = message.fileMessageData?.thumbnailAssetID else { return nil }
                 return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!)
             }
         }
-        
+
         return nil
     }
-    
+
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard let message = object as? ZMAssetClientMessage else { return }
         updateMediumImage(forMessage: message, imageData: response.rawData!)
     }
-    
+
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard let message = object as? ZMAssetClientMessage else { return }
         message.managedObjectContext?.delete(message)
     }
-    
+
     fileprivate func updateMediumImage(forMessage message: ZMAssetClientMessage, imageData: Data) {
         storeMediumImage(forMessage: message, imageData: imageData)
-        
+
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
                                                         changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
                                                         uiContext: uiMOC)
     }
-    
+
     fileprivate func storeMediumImage(forMessage message: ZMAssetClientMessage, imageData: Data) {
         managedObjectContext.zm_fileAssetCache.storeAssetData(message,
                                                               format: .medium,
@@ -120,7 +119,7 @@ extension ImageV2DownloadRequestStrategy : ZMDownstreamTranscoder {
         if message.hasEncryptedAsset {
             let otrKey: Data?
             let sha256: Data?
-            
+
             if message.fileMessageData != nil {
                 let remote = message.underlyingMessage?.assetData?.preview.remote
                 otrKey = remote?.otrKey
@@ -133,7 +132,7 @@ extension ImageV2DownloadRequestStrategy : ZMDownstreamTranscoder {
                 otrKey = nil
                 sha256 = nil
             }
-            
+
             var decrypted = false
             if let otrKey = otrKey, let sha256 = sha256 {
                 decrypted = managedObjectContext.zm_fileAssetCache.decryptImageIfItMatchesDigest(message,
@@ -141,11 +140,11 @@ extension ImageV2DownloadRequestStrategy : ZMDownstreamTranscoder {
                                                                                                  encryptionKey: otrKey,
                                                                                                  sha256Digest: sha256)
             }
-            
+
             if !decrypted && message.imageMessageData != nil {
                 managedObjectContext.delete(message)
             }
         }
     }
-    
+
 }

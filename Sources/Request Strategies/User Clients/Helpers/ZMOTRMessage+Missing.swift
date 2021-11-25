@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireDataModel
 
 @objc public protocol SelfClientDeletionDelegate {
-    
+
     /// Invoked when the self client needs to be deleted
     func deleteSelfClient()
 }
 
-
-/// MARK: - Missing and deleted clients
+// MARK: - Missing and deleted clients
 public extension ZMOTRMessage {
 
     @objc func parseMissingClientsResponse(_ response: ZMTransportResponse, clientRegistrationDelegate: ClientRegistrationDelegate) -> Bool {

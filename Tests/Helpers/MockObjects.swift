@@ -16,80 +16,77 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireRequestStrategy
 import WireDataModel
 
-public class MockApplicationStatus : NSObject, ApplicationStatus {
+public class MockApplicationStatus: NSObject, ApplicationStatus {
 
-    public var requestCancellation : ZMRequestCancellation {
+    public var requestCancellation: ZMRequestCancellation {
         return self.mockTaskCancellationDelegate
     }
-    
-    public var clientRegistrationDelegate : ClientRegistrationDelegate {
+
+    public var clientRegistrationDelegate: ClientRegistrationDelegate {
         return self.mockClientRegistrationStatus
     }
 
-    public var mockSynchronizationState : SynchronizationState = .unauthenticated
+    public var mockSynchronizationState: SynchronizationState = .unauthenticated
     public let mockTaskCancellationDelegate = MockTaskCancellationDelegate()
     public var mockClientRegistrationStatus = MockClientRegistrationStatus()
-    
+
     public var synchronizationState: SynchronizationState {
         return mockSynchronizationState
     }
-    
-    public var mockOperationState : OperationState = .foreground
-    
+
+    public var mockOperationState: OperationState = .foreground
+
     public var operationState: OperationState {
         return mockOperationState
     }
-        
-    public var cancelledIdentifiers : [ZMTaskIdentifier] {
+
+    public var cancelledIdentifiers: [ZMTaskIdentifier] {
         return mockTaskCancellationDelegate.cancelledIdentifiers
     }
-    
-    public var deletionCalls : Int {
+
+    public var deletionCalls: Int {
         return mockClientRegistrationStatus.deletionCalls
     }
-        
+
     public var slowSyncWasRequested = false
     public func requestSlowSync() {
         slowSyncWasRequested = true
     }
-    
-}
 
+}
 
 public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {
     public var cancelledIdentifiers = [ZMTaskIdentifier]()
-    
+
     public func cancelTask(with identifier: ZMTaskIdentifier) {
         cancelledIdentifiers.append(identifier)
     }
 }
 
-
 public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-    
-    public var deletionCalls : Int = 0
-    
+
+    public var deletionCalls: Int = 0
+
     /// Notify that the current client was deleted remotely
     public func didDetectCurrentClientDeletion() {
         deletionCalls = deletionCalls+1
     }
-    
+
     public var clientIsReadyForRequests: Bool {
         return true
     }
 }
 
 class MockPushMessageHandler: NSObject, PushMessageHandler {
-    
+
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
     }
-        
+
     fileprivate(set) var failedToSend: [ZMMessage] = []
 }
 

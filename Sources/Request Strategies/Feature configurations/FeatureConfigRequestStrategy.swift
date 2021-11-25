@@ -56,7 +56,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
                          applicationStatus: ApplicationStatus) {
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
         configuration = [
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
@@ -186,7 +186,7 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
     }
 }
 
-//MARK: - ZMEventConsumer
+// MARK: - ZMEventConsumer
 
 extension FeatureConfigRequestStrategy: ZMEventConsumer {
 
@@ -250,7 +250,7 @@ private extension Feature {
 
         case .conferenceCalling:
             return "conferenceCalling"
-            
+
         case .fileSharing:
             return "fileSharing"
 

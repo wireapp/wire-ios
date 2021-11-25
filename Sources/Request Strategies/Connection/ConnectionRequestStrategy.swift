@@ -43,7 +43,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, FederationAware
     let updateConnectionActionHandler: UpdateConnectionActionHandler
     let actionSync: EntityActionSync
 
-
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncProgress: SyncProgress) {
@@ -146,7 +145,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, FederationAware
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [updateSync]
     }
-    
+
 }
 
 extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
@@ -290,4 +289,3 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
 }
-

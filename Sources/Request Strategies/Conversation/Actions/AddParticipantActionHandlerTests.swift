@@ -54,7 +54,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForAddingAParticipant_NonFederated() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = self.user.remoteIdentifier!
             let conversationID = self.conversation.remoteIdentifier!
@@ -71,7 +71,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForAddingAParticipant_Federated() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             self.sut.useFederationEndpoint = true
             let conversationID = self.conversation.remoteIdentifier!
@@ -87,7 +87,6 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
         }
     }
 
-
     // MARK: - Request Processing
 
     func testThatItParsesAllKnownAddParticipantErrorResponses() {
@@ -97,7 +96,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             (ConversationAddParticipantsError.accessDenied, ZMTransportResponse(payload: ["label": "access-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)),
             (ConversationAddParticipantsError.notConnectedToUser, ZMTransportResponse(payload: ["label": "not-connected"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)),
             (ConversationAddParticipantsError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)),
-            (ConversationAddParticipantsError.missingLegalHoldConsent, ZMTransportResponse(payload: ["label": "missing-legalhold-consent"] as ZMTransportData, httpStatus: 412, transportSessionError: nil)),
+            (ConversationAddParticipantsError.missingLegalHoldConsent, ZMTransportResponse(payload: ["label": "missing-legalhold-consent"] as ZMTransportData, httpStatus: 412, transportSessionError: nil))
         ]
 
         for (expectedError, response) in errorResponses {
@@ -202,7 +201,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On204() {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
@@ -225,7 +224,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
