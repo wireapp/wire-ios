@@ -358,7 +358,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                                                 expiresAt: nil,
                                                 legalholdStatus: nil))
 
-
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
@@ -458,7 +457,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     }
 
 }
-
 
 extension Decodable {
 

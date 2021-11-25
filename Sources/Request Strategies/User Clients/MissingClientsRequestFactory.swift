@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 
-
 extension Collection where Element == UserClient {
 
     var clientListByUserID: Payload.ClientListByUserID {
@@ -55,8 +54,8 @@ extension Collection where Element == UserClient {
 }
 
 public final class MissingClientsRequestFactory {
-    
-    let pageSize : Int
+
+    let pageSize: Int
     let defaultEncoder = JSONEncoder.defaultEncoder
 
     public init(pageSize: Int = 128) {
@@ -94,7 +93,7 @@ public final class MissingClientsRequestFactory {
                                  transportRequest: request,
                                  userInfo: nil)
     }
-    
+
 }
 
 public func identity<T>(value: T) -> T {

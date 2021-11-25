@@ -24,7 +24,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var sut: FeatureConfigRequestStrategy!
     var featureService: FeatureService!
-    
+
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
@@ -35,7 +35,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         featureService = .init(context: syncMOC)
     }
-    
+
     override func tearDown() {
         mockApplicationStatus = nil
         sut = nil
@@ -47,7 +47,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
         let team = self.createTeam(for: .selfUser(in: context))
         return team.remoteIdentifier!
     }
-    
+
     // MARK: Single configuration
 
     func test_ItGeneratesARequest_ToFetchASingleConfig() {
@@ -68,7 +68,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
     func test_ItDoesNotGenerateARequest_ToFetchASingleConfig_WhenNotNeeded() {
         syncMOC.performGroupedAndWait { context -> Void in
             // Given
-            let _ = self.setUpTeam(in: context)
+            _ = self.setUpTeam(in: context)
 
             guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
             feature.needsToBeUpdatedFromBackend = false
@@ -150,7 +150,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 extension FeatureConfigRequestStrategyTests {
 
     func testThatItUpdatesApplockFeature_FromUpdateEvent() {
-        syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait { _ in
             // Given
             let appLock = Feature.AppLock(status: .disabled, config: .init(enforceAppLock: false, inactivityTimeoutSecs: 10))
             self.featureService.storeAppLock(appLock)
@@ -177,7 +177,7 @@ extension FeatureConfigRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait { _ in
             let appLock = self.featureService.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
             XCTAssertEqual(appLock.config.enforceAppLock, true)
@@ -188,7 +188,7 @@ extension FeatureConfigRequestStrategyTests {
     }
 
     func testThatItUpdatesFileSharingFeature_FromUpdateEvent() {
-        syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait { _ in
             // Given
             self.featureService.storeFileSharing(.init(status: .disabled))
 
@@ -210,7 +210,7 @@ extension FeatureConfigRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait { _ in
             let fileSharing = self.featureService.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
         }
@@ -219,7 +219,7 @@ extension FeatureConfigRequestStrategyTests {
     }
 
     func testThatItUpdatesSelfDeletingMessagesFeature_FromUpdateEvent() {
-        syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait { _ in
             // Given
             let selfDeletingMessages = Feature.SelfDeletingMessages(status: .disabled, config: .init(enforcedTimeoutSeconds: 0))
             self.featureService.storeSelfDeletingMessages(selfDeletingMessages)

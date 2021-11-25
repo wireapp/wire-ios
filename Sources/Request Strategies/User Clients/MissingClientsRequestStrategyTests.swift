@@ -26,12 +26,12 @@ import WireRequestStrategy
 class MissingClientsRequestStrategyTests: MessagingTestBase {
 
     var sut: MissingClientsRequestStrategy!
-    var mockApplicationStatus : MockApplicationStatus!
-    
+    var mockApplicationStatus: MockApplicationStatus!
+
     var validPrekey: String {
         return try! self.selfClient.keysStore.lastPreKey()
     }
-        
+
     override func setUp() {
         super.setUp()
 
@@ -42,7 +42,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             self.sut.isFederationEndpointAvailable = false
         }
     }
-    
+
     override func tearDown() {
         mockApplicationStatus = nil
         sut = nil
@@ -50,9 +50,9 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     // MARK: Request generation
-    
+
     func testThatItCreatesMissingClientsRequest() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
 
             // GIVEN
             let missingUser = self.createUser()
@@ -81,7 +81,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItCreatesMissingClientsRequest_WhenFederationEndpointIsAvailable() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.sut.isFederationEndpointAvailable = true
 
@@ -112,7 +112,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestToFetchMissedKeys_WhenClientHasMissingClientsAndMissingKeyIsModified() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
 
             self.selfClient.missesClient(self.otherClient)
@@ -129,7 +129,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestToFetchMissedKeys_WhenFederationEndpointIsAvailable() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.sut.isFederationEndpointAvailable = true
             self.selfClient.missesClient(self.otherClient)
@@ -146,7 +146,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientHasMissingClientsAndMissingKeyIsNotModified() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.mutableSetValue(forKey: ZMUserClientMissingKey).add(self.otherClient!)
             self.sut.notifyChangeTrackers(self.selfClient)
@@ -160,7 +160,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsNotModified() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.missingClients = nil
             self.sut.notifyChangeTrackers(self.selfClient)
@@ -174,7 +174,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsModified() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.missingClients = nil
             self.selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
@@ -192,7 +192,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         var user: ZMUser!
         var firstEntry: (key: String, value: [String])!
         var otherClient2: UserClient!
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             self.sut.requestsFactory = MissingClientsRequestFactory(pageSize: 1)
 
             // GIVEN
@@ -223,7 +223,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
 
         var secondEntry: (key: String, value: [String])!
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // and when
             guard let secondRequest = self.sut.nextRequest(),
                   let payloadData = (secondRequest.payload as? String)?.data(using: .utf8),
@@ -242,7 +242,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             secondRequest.complete(with: self.successfulResponse(for: secondPayload))
         }
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // and when
             let thirdRequest = self.sut.nextRequest()
 
@@ -267,7 +267,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         var user: ZMUser!
         var firstEntry: (key: String, value: [String])!
         var otherClient2: UserClient!
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             self.sut.isFederationEndpointAvailable = true
             self.sut.requestsFactory = MissingClientsRequestFactory(pageSize: 1)
 
@@ -299,7 +299,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
 
         var secondEntry: (key: String, value: [String])!
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // and when
             guard let secondRequest = self.sut.nextRequest(),
                   let payloadData = (secondRequest.payload as? String)?.data(using: .utf8),
@@ -318,7 +318,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             secondRequest.complete(with: self.successfulFederatedResponse(for: secondPayload))
         }
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // and when
             let thirdRequest = self.sut.nextRequest()
 
@@ -342,12 +342,12 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     // MARK: Response processing
 
     func testThatItRemovesMissingClient_WhenResponseContainsItsKey() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let request = self.missingClientsRequest(missingClients: [self.otherClient])
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: request.userInfo,
                                                  response: self.response(forMissing: [self.otherClient]),
                                                  keysToParse: request.keys)
@@ -358,21 +358,20 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItRemovesOtherMissingClientsEvenIfOneOfThemHasANilValue() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
-            let payload : [ String : [String : Any]] = [
-                self.otherClient.user!.remoteIdentifier!.transportString() :
-                    [
+            let payload : [ String: [String: Any]] = [
+                self.otherClient.user!.remoteIdentifier!.transportString(): [
                         self.otherClient.remoteIdentifier!: [
                             "id": 3, "key": self.validPrekey
                         ],
-                        "2360fe0d2adc69e8" : NSNull()
+                        "2360fe0d2adc69e8": NSNull()
                 ]
             ]
             let request = self.missingClientsRequest(missingClients: [self.otherClient])
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: request.userInfo,
                                                  response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
                                                  keysToParse: request.keys)
@@ -381,12 +380,12 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(self.selfClient.missingClients!.count, 0)
         }
     }
-    
+
     func testThatItRemovesMissingClientsIfTheRequestForThoseClientsDidNotGiveUsAnyPrekey() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let otherClient2 = self.createClient(user: self.otherUser)
-            let payload : [ String : [String : AnyObject]] = [
+            let payload : [ String: [String: AnyObject]] = [
                 self.otherUser.remoteIdentifier!.transportString(): [
                     self.otherClient.remoteIdentifier!: NSNull(),
                     otherClient2.remoteIdentifier!: NSNull()]
@@ -394,7 +393,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             let request = self.missingClientsRequest(missingClients: [self.otherClient, otherClient2])
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: request.userInfo,
                                                  response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
                                                  keysToParse: request.keys)
@@ -405,11 +404,11 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItAddsMissingClientToCorruptedClientsStoreIfTheRequestForTheClientDidNotGiveUsAnyPrekey() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let payload = [self.otherUser.remoteIdentifier!.transportString(): [
                             self.otherClient.remoteIdentifier!: NSNull()]
-            ] as [String: [String : Any]]
+            ] as [String: [String: Any]]
             let request = self.missingClientsRequest(missingClients: [self.otherClient])
 
             // WHEN
@@ -425,10 +424,9 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(self.otherClient.failedToEstablishSession)
         }
     }
-    
 
     func testThatItDoesNotRemovesMissingClientsIfTheRequestForThoseClientsGivesUsAtLeastOneNewPrekey() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let response = self.response(forMissing: [self.otherClient])
             let otherClient2 = self.createClient(user: self.otherUser)
@@ -436,7 +434,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
 
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: request.userInfo,
                                                  response: response,
                                                  keysToParse: request.keys)
@@ -444,17 +442,17 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             // THEN
             XCTAssertEqual(self.selfClient.missingClients, Set([otherClient2]))
         }
-        
+
     }
 
     func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
             let request = self.missingClientsRequest(missingClients: [self.otherClient])
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: request.userInfo,
                                                  response: self.response(forMissing: [self.otherClient]),
                                                  keysToParse: request.keys)
@@ -466,15 +464,15 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotExpireMessageWhenEstablishedSessionWithClient() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
             let request = self.missingClientsRequest(missingClients: [self.otherClient])
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: request.userInfo,
-                                                 response:  self.response(forMissing: [self.otherClient]),
+                                                 response: self.response(forMissing: [self.otherClient]),
                                                  keysToParse: request.keys)
 
             // THEN
@@ -483,7 +481,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItSetsFailedToEstablishSessionOnAMessagesWhenFailedtoEstablishSessionWithClient() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
 
@@ -492,7 +490,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             self.performIgnoringZMLogError {
-                let _ = self.sut.updateUpdatedObject(self.selfClient,
+                _ = self.sut.updateUpdatedObject(self.selfClient,
                                                      requestUserInfo: request.userInfo,
                                                      response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
                                                      keysToParse: request.keys)
@@ -502,9 +500,9 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(self.otherClient.failedToEstablishSession)
         }
     }
-    
+
     func testThatItRemovesMessagesMissingClientWhenFailedToEstablishSessionWithClient() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
 
@@ -513,7 +511,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             self.performIgnoringZMLogError {
-                let _ = self.sut.updateUpdatedObject(self.selfClient,
+                _ = self.sut.updateUpdatedObject(self.selfClient,
                                                      requestUserInfo: request.userInfo,
                                                      response: ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil),
                                                      keysToParse: request.keys)
@@ -525,7 +523,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItRemovesMessagesMissingClientWhenClientHasNoKey() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
             let payload: Payload.PrekeyByUserID = [
@@ -537,7 +535,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             let response = ZMTransportResponse(payload: responseString! as ZMTransportData, httpStatus: 200, transportSessionError: nil)
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: nil,
                                                  response: response,
                                                  keysToParse: Set(arrayLiteral: ZMUserClientMissingKey))
@@ -546,9 +544,9 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(message.missingRecipients.count, 0)
         }
     }
-    
+
     func testThatItDoesSetFailedToEstablishSessionOnAMessageWhenClientHasNoKey() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
             let payload: Payload.PrekeyByUserID = [
@@ -560,7 +558,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             let response = ZMTransportResponse(payload: responseString! as ZMTransportData, httpStatus: 200, transportSessionError: nil)
 
             // WHEN
-            let _ = self.sut.updateUpdatedObject(self.selfClient,
+            _ = self.sut.updateUpdatedObject(self.selfClient,
                                                  requestUserInfo: nil,
                                                  response: response,
                                                  keysToParse: Set(arrayLiteral: ZMUserClientMissingKey))
@@ -586,7 +584,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             syncMOC.saveOrRollback()
         }
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             self.sut.notifyChangeTrackers(self.selfClient)
 
             // WHEN
@@ -604,8 +602,8 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItResetsKeyForMissingClientIfThereIsNoMissingClient(){
-        self.syncMOC.performGroupedAndWait { syncMOC in
+    func testThatItResetsKeyForMissingClientIfThereIsNoMissingClient() {
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
             XCTAssertTrue(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
@@ -621,8 +619,8 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItDoesNotResetKeyForMissingClientIfThereIsAMissingClient(){
-        self.syncMOC.performGroupedAndWait { syncMOC in
+    func testThatItDoesNotResetKeyForMissingClientIfThereIsAMissingClient() {
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.missesClient(self.otherClient)
             self.selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
@@ -642,7 +640,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     // MARK: - Fallback behaviour when federation endpoint is not available
 
     func testThatFallbacksToLegacyEndpoint_WhenFederationEndpointIsNotAvailable() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.sut.isFederationEndpointAvailable = true
             self.selfClient.missesClient(self.otherClient)
@@ -655,7 +653,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        self.syncMOC.performGroupedAndWait { _ in
             // THEN
             guard let request = self.sut.nextRequest() else { XCTFail(); return }
             XCTAssertEqual(request.path, "/users/prekeys")
@@ -664,7 +662,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 }
 
 extension MissingClientsRequestStrategyTests {
-    
+
     func checkRequestForClientsPrekeys(_ request: ZMTransportRequest,
                                        expectedClients: [UserClient],
                                        file: StaticString = #file,
@@ -755,32 +753,31 @@ extension MissingClientsRequestStrategyTests {
 
         return response
     }
-    
+
     /// Returns response for missing clients
     func response(forMissing clients: [UserClient]) -> ZMTransportResponse {
-        var payload : [String: [String: Any]] = [:]
+        var payload: [String: [String: Any]] = [:]
         for missingClient in clients {
             let key = missingClient.user!.remoteIdentifier!.transportString()
             var prevValue = payload[key] ?? [:]
             prevValue[missingClient.remoteIdentifier!] = [
-                "id" : 12,
-                "key" : self.validPrekey
+                "id": 12,
+                "key": self.validPrekey
             ]
             payload[key] = prevValue
         }
         return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
     }
-    
+
     /// Returns missing client request
-    func missingClientsRequest(missingClients: [UserClient]) -> ZMUpstreamRequest
-    {
+    func missingClientsRequest(missingClients: [UserClient]) -> ZMUpstreamRequest {
         // make sure that we are missing those clients
         for missingClient in missingClients {
             self.selfClient.missesClient(missingClient)
         }
         return sut.requestsFactory.fetchPrekeys(for: selfClient.missingClients!)!
     }
-    
+
     /// Creates a message missing a client
     func message(missingRecipient: UserClient) -> ZMClientMessage {
         let message = try! self.groupConversation.appendText(content: "Test message with missing") as! ZMClientMessage

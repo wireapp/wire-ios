@@ -19,7 +19,7 @@
 import Foundation
 
 public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, FederationAware {
-    
+
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
     fileprivate let messageSync: ProteusMessageSync<GenericMessageEntity>
 
@@ -35,21 +35,21 @@ public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChan
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 clientRegistrationDelegate: ClientRegistrationDelegate) {
-        
+
         self.keyPathSync = KeyPathObjectSync(entityName: UserClient.entityName(), \.needsToNotifyOtherUserAboutSessionReset)
         self.messageSync = ProteusMessageSync(context: managedObjectContext,
                                               applicationStatus: applicationStatus)
 
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
-        
+
         keyPathSync.transcoder = self
     }
-    
+
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return messageSync.nextRequest()
     }
-    
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [keyPathSync] + messageSync.contextChangeTrackers
     }
@@ -59,22 +59,22 @@ public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChan
 extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     typealias T = UserClient
-            
+
     func synchronize(_ userClient: UserClient, completion: @escaping () -> Void) {
-                
+
         guard let conversation = userClient.user?.oneToOneConversation else {
             return
         }
 
         let message = GenericMessageEntity(conversation: conversation,
                                            message: GenericMessage(clientAction: .resetSession),
-                                           completionHandler:nil)
+                                           completionHandler: nil)
 
         messageSync.sync(message) { (result, _) in
             switch result {
-            case .success(()):
+            case .success():
                 userClient.resolveDecryptionFailedSystemMessages()
-            case .failure(_):
+            case .failure:
                 break
             }
 
@@ -83,7 +83,7 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
     }
 
     func cancel(_ object: UserClient) {
-        
+
     }
-    
+
 }

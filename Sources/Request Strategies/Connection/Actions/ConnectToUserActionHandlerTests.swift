@@ -37,7 +37,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForConnectingToUser_NonFederated() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -55,7 +55,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForConnectingToUser_Federated() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             self.sut.useFederationEndpoint = true
             let userID = UUID()
@@ -107,7 +107,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -134,7 +134,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait { [self] _ in
             // given
             let userID = UUID()
             let domain = self.owningDomain

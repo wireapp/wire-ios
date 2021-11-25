@@ -20,9 +20,8 @@ import WireDataModel
 @testable import WireRequestStrategy
 import XCTest
 
-
 @objcMembers class MockOTREntity: OTREntity, Hashable {
-    
+
     var context: NSManagedObjectContext
     public var expirationDate: Date?
     public var isExpired: Bool = false
@@ -30,28 +29,26 @@ import XCTest
         isExpired = true
     }
 
-
-    
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
     }
     public var conversation: ZMConversation?
-    
+
     var isMissingClients = false
     var didCallHandleClientUpdates = false
     var isDelivered = false
-    
+
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
-    
+
     init(conversation: ZMConversation, context: NSManagedObjectContext) {
         self.conversation = conversation
         self.context = context
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(self.conversation!)
     }
-    
+
     func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }
@@ -59,7 +56,7 @@ import XCTest
     func delivered(with response: ZMTransportResponse) {
         isDelivered = true
     }
-        
+
 }
 
 extension MockOTREntity: ProteusMessage {
@@ -81,12 +78,12 @@ func ==(lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
     return lhs === rhs
 }
 
-class OTREntityTranscoderTests : MessagingTestBase {
-    
+class OTREntityTranscoderTests: MessagingTestBase {
+
     let mockClientRegistrationStatus = MockClientRegistrationStatus()
-    var mockEntity : MockOTREntity!
-    var sut : OTREntityTranscoder<MockOTREntity>!
-    
+    var mockEntity: MockOTREntity!
+    var sut: OTREntityTranscoder<MockOTREntity>!
+
     override func setUp() {
         super.setUp()
 
@@ -95,18 +92,18 @@ class OTREntityTranscoderTests : MessagingTestBase {
             self.sut = OTREntityTranscoder(context: moc, clientRegistrationDelegate: self.mockClientRegistrationStatus)
         }
     }
-    
+
     override func tearDown() {
         self.mockEntity = nil
         self.sut = nil
         super.tearDown()
     }
-    
+
     func testThatItHandlesDeletionOfSelfClient() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let payload = [
-                "label" : "unknown-client"
+                "label": "unknown-client"
             ]
 
             let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 403, transportSessionError: nil)
@@ -118,12 +115,12 @@ class OTREntityTranscoderTests : MessagingTestBase {
             XCTAssertEqual(self.mockClientRegistrationStatus.deletionCalls, 1)
         }
     }
-    
+
     func testThatItHandlesDeletionOfClient() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let payload = [
-                "deleted" : ["\(self.otherUser.remoteIdentifier!)" : [self.otherClient.remoteIdentifier!] ]
+                "deleted": ["\(self.otherUser.remoteIdentifier!)": [self.otherClient.remoteIdentifier!] ]
             ]
             let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
 
@@ -134,7 +131,7 @@ class OTREntityTranscoderTests : MessagingTestBase {
             XCTAssertTrue(self.otherClient.isDeleted)
         }
     }
-    
+
     func testThatItHandlesMissingClient_addsClientToListOfMissingClients() {
         self.syncMOC.performGroupedAndWait { moc in
             // GIVEN
@@ -143,7 +140,7 @@ class OTREntityTranscoderTests : MessagingTestBase {
             let clientId = "ajsd9898u13a"
 
             let payload = [
-                "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
+                "missing": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
             let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
 
@@ -155,30 +152,30 @@ class OTREntityTranscoderTests : MessagingTestBase {
             XCTAssertEqual(self.selfClient.missingClients!.first!.remoteIdentifier, clientId)
         }
     }
-    
+
     func testThatItHandlesMissingClient_ignoresClientIfItAlreadyHasAnEstablishedSession() {
         self.syncMOC.performGroupedAndWait { moc in
             // GIVEN
             let user = ZMUser.insertNewObject(in: moc)
             user.remoteIdentifier = UUID.create()
-            
+
             let clientId = "ajsd9898u13a"
             let userClient = UserClient.fetchUserClient(withRemoteId: clientId, forUser: user, createIfNeeded: true)!
             self.establishSessionFromSelf(to: userClient)
-            
+
             let payload = [
-                "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
+                "missing": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
             let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
-            
+
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
-            
+
             // THEN
             XCTAssertEqual(self.selfClient.missingClients!.count, 0)
         }
     }
-    
+
     func testThatItHandlesMissingClient_MarkAsNeedsToDownloadNotAlreadyThere() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
@@ -186,7 +183,7 @@ class OTREntityTranscoderTests : MessagingTestBase {
             let clientId = "ajsd9898u13a"
 
             let payload = [
-                "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
+                "missing": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
             let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
 
@@ -197,7 +194,7 @@ class OTREntityTranscoderTests : MessagingTestBase {
             XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
         }
     }
-    
+
     func testThatItHandlesRedundantClient_MarkUserAsNeedsToBeUpdatedFromBackend() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
@@ -205,16 +202,16 @@ class OTREntityTranscoderTests : MessagingTestBase {
             user.needsToBeUpdatedFromBackend = false
             let clientId = "ajsd9898u13a"
             let payload = [
-                "redundant" : ["\(user.remoteIdentifier!)" : [clientId] ]
+                "redundant": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
             let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
-            
+
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
-            
+
             // THEN
             XCTAssertTrue(user.needsToBeUpdatedFromBackend)
         }
     }
-    
+
 }

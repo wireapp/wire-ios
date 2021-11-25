@@ -21,7 +21,7 @@ import WireTesting
 import WireCryptobox
 
 class MessagingTestBase: ZMTBaseTest {
-    
+
     fileprivate(set) var groupConversation: ZMConversation!
     fileprivate(set) var oneToOneConversation: ZMConversation!
     fileprivate(set) var selfClient: UserClient!
@@ -37,11 +37,11 @@ class MessagingTestBase: ZMTBaseTest {
     var useInMemoryStore: Bool {
         true
     }
-    
+
     var syncMOC: NSManagedObjectContext! {
         return self.coreDataStack.syncContext
     }
-    
+
     var uiMOC: NSManagedObjectContext! {
         return self.coreDataStack.viewContext
     }
@@ -50,7 +50,7 @@ class MessagingTestBase: ZMTBaseTest {
         super.setUp()
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
         BackgroundActivityFactory.shared.resume()
-        
+
         self.deleteAllOtherEncryptionContexts()
         self.deleteAllFilesInCache()
         self.accountIdentifier = UUID()
@@ -58,17 +58,17 @@ class MessagingTestBase: ZMTBaseTest {
                                                  inMemoryStore: useInMemoryStore)
         setupCaches(in: coreDataStack)
         setupTimers()
-        
+
         self.syncMOC.performGroupedBlockAndWait {
             self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
-            
+
             self.setupUsersAndClients()
             self.groupConversation = self.createGroupConversation(with: self.otherUser)
             self.oneToOneConversation = self.setupOneToOneConversation(with: self.otherUser)
             self.syncMOC.saveOrRollback()
         }
     }
-    
+
     override func tearDown() {
         BackgroundActivityFactory.shared.activityManager = nil
 
@@ -96,17 +96,17 @@ class MessagingTestBase: ZMTBaseTest {
 
 // MARK: - Messages 
 extension MessagingTestBase {
-    
+
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     func decryptedUpdateEventFromOtherClient(text: String,
                                              conversation: ZMConversation? = nil,
                                              source: ZMUpdateEventSource = .pushNotification
         ) -> ZMUpdateEvent {
-        
+
         let message = GenericMessage(content: Text(content: text))
         return self.decryptedUpdateEventFromOtherClient(message: message, conversation: conversation, source: source)
     }
-    
+
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     func decryptedUpdateEventFromOtherClient(message: GenericMessage,
                                              conversation: ZMConversation? = nil,
@@ -123,7 +123,7 @@ extension MessagingTestBase {
                                                         type: "conversation.otr-message-add"
         )
     }
-    
+
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     func decryptedAssetUpdateEventFromOtherClient(message: GenericMessage,
                                              conversation: ZMConversation? = nil,
@@ -141,7 +141,7 @@ extension MessagingTestBase {
                                                         type: "conversation.otr-asset-add"
                             )
     }
-    
+
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     private func decryptedUpdateEventFromOtherClient(innerPayload: [String: Any],
                                                   conversation: ZMConversation?,
@@ -159,16 +159,16 @@ extension MessagingTestBase {
             "id": UUID.create().transportString(),
             "payload": [payload]
             ] as [String: Any]
-        
+
         let event = ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: source)!.first!
-        
+
         var decryptedEvent: ZMUpdateEvent?
         self.selfClient.keysStore.encryptionContext.perform { session in
             decryptedEvent = session.decryptAndAddClient(event, in: self.syncMOC)
         }
         return decryptedEvent!
     }
-    
+
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
     func outgoingMessageWrapper(from request: ZMTransportRequest,
                                 file: StaticString = #file,
@@ -179,19 +179,19 @@ extension MessagingTestBase {
         }
         return try? Proteus_NewOtrMessage(serializedData: data)
     }
-    
+
     /// Extract encrypted payload from a request
     func outgoingEncryptedMessage(from request: ZMTransportRequest,
                                   for client: UserClient,
                                   line: UInt = #line,
                                   file: StaticString = #file
         ) -> GenericMessage? {
-        
+
         guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
             return nil
         }
-       
+
         let userEntries = protobuf.recipients.compactMap { $0 }
         guard let userEntry = userEntries.first(where: { $0.user == client.user?.userId }) else {
             XCTFail("User not found", file: file, line: line)
@@ -202,21 +202,21 @@ extension MessagingTestBase {
             XCTFail("Client not found", file: file, line: line)
             return nil
         }
-        
+
         // text content
         guard let plaintext = self.decryptMessageFromSelf(cypherText: clientEntry.text, to: self.otherClient) else {
             XCTFail("failed to decrypt", file: file, line: line)
             return nil
         }
 
-        let receivedMessage = try? GenericMessage.init(serializedData: plaintext) 
+        let receivedMessage = try? GenericMessage.init(serializedData: plaintext)
         return receivedMessage
     }
 }
 
 // MARK: - Internal data provisioning
 extension MessagingTestBase {
-    
+
     func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.domain = owningDomain
@@ -229,7 +229,7 @@ extension MessagingTestBase {
         self.syncMOC.saveOrRollback()
         return conversation
     }
-    
+
     /// Creates a user and a client
     func createUser(alsoCreateClient: Bool = false) -> ZMUser {
         let user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -240,7 +240,7 @@ extension MessagingTestBase {
         }
         return user
     }
-    
+
     /// Creates a new client for a user
     func createClient(user: ZMUser) -> UserClient {
         let client = UserClient.insertNewObject(in: self.syncMOC)
@@ -249,7 +249,7 @@ extension MessagingTestBase {
         self.syncMOC.saveOrRollback()
         return client
     }
-    
+
     /// Creates a group conversation with a user
     func createGroupConversation(with user: ZMUser) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -261,30 +261,30 @@ extension MessagingTestBase {
         conversation.needsToBeUpdatedFromBackend = false
         return conversation
     }
-    
+
     /// Creates an encryption context in a temp folder and creates keys
     fileprivate func setupUsersAndClients() {
-        
+
         self.otherUser = self.createUser(alsoCreateClient: true)
         self.otherClient = self.otherUser.clients.first!
         self.thirdUser = self.createUser(alsoCreateClient: true)
         self.selfClient = self.createSelfClient()
-        
+
         self.syncMOC.saveOrRollback()
-        
+
         self.establishSessionFromSelf(to: self.otherClient)
     }
-    
+
     /// Creates self client and user
     fileprivate func createSelfClient() -> UserClient {
         let user = ZMUser.selfUser(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
         user.domain = owningDomain
-        
+
         let selfClient = UserClient.insertNewObject(in: self.syncMOC)
         selfClient.remoteIdentifier = "baddeed"
         selfClient.user = user
-        
+
         self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: "PersistedClientId")
         selfClient.type = .permanent
         self.syncMOC.saveOrRollback()
@@ -294,20 +294,20 @@ extension MessagingTestBase {
 
 // MARK: - Internal helpers
 extension MessagingTestBase {
-    
+
     func setupTimers() {
-        syncMOC.performGroupedAndWait() {
+        syncMOC.performGroupedAndWait {
             $0.zm_createMessageObfuscationTimer()
         }
         uiMOC.zm_createMessageDeletionTimer()
     }
-    
+
     func stopEphemeralMessageTimers() {
         self.syncMOC.performGroupedBlockAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         self.uiMOC.performGroupedBlockAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
@@ -323,10 +323,9 @@ extension MessagingTestBase {
     }
 }
 
-
 // MARK: - Cache cleaning
 extension MessagingTestBase {
-    
+
     private var cacheFolder: URL {
         return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }

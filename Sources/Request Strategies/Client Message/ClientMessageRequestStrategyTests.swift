@@ -23,7 +23,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!
-    var mockApplicationStatus : MockApplicationStatus!
+    var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
 
     override func setUp() {
@@ -368,7 +368,7 @@ extension ClientMessageRequestStrategyTests {
 
         // GIVEN
         var confirmationMessage: ZMMessage!
-        var token: Any? = nil
+        var token: Any?
         self.syncMOC.performGroupedBlockAndWait {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
@@ -390,7 +390,7 @@ extension ClientMessageRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        withExtendedLifetime(token) { () -> () in
+        withExtendedLifetime(token) { () -> Void in
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -447,4 +447,3 @@ extension ClientMessageRequestStrategyTests {
     }
 
 }
-

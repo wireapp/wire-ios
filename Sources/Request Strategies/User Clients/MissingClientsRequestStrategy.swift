@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 /// Register new client, update it with new keys, deletes clients.
@@ -35,54 +34,53 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
             isFederationEndpointAvailable
         }
     }
-    
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
         self.configuration =  [
             .allowsRequestsWhileOnline,
             .allowsRequestsWhileInBackground,
             .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket,
+            .allowsRequestsWhileWaitingForWebsocket
         ]
         self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), update: modifiedPredicate(), filter: nil, keysToSync: [ZMUserClientMissingKey], managedObjectContext: managedObjectContext)
     }
-    
+
     func modifiedPredicate() -> NSPredicate {
         guard let baseModifiedPredicate = UserClient.predicateForObjectsThatNeedToBeUpdatedUpstream() else {
             fatal("predicateForObjectsThatNeedToBeUpdatedUpstream is nil!")
         }
         let missingClientsPredicate = NSPredicate(format: "\(ZMUserClientMissingKey).@count > 0")
-        
-        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:[
+
+        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             baseModifiedPredicate,
-            missingClientsPredicate,
+            missingClientsPredicate
             ])
         return modifiedPredicate
     }
-    
+
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return modifiedSync.nextRequest()
     }
-    
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [modifiedSync]
     }
-    
-    public var hasOutstandingItems : Bool {
+
+    public var hasOutstandingItems: Bool {
         return modifiedSync.hasOutstandingItems
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
         return false
     }
-    
+
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
-        
+
         var keysToSync = keys
         if keys.contains(ZMUserClientMissingKey),
-            let client = managedObject as? UserClient , (client.missingClients == nil || client.missingClients?.count == 0)
-        {
+            let client = managedObject as? UserClient, (client.missingClients == nil || client.missingClients?.count == 0) {
             keysToSync.remove(ZMUserClientMissingKey)
             client.resetLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
             modifiedSync.objectsDidChange(Set(arrayLiteral: client))
@@ -102,14 +100,14 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
 
         return false
     }
-    
+
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let client = managedObject as? UserClient
         else { fatal("Called requestForUpdatingObject() on \(managedObject) to sync keys: \(keys)") }
-        
+
         guard keys.contains(ZMUserClientMissingKey)
         else { fatal("Unknown keys to sync (\(keys))") }
-        
+
         guard let missing = client.missingClients, missing.count > 0
         else { fatal("no missing clients found") }
 
@@ -123,13 +121,13 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         request?.transportRequest.forceToVoipSession()
         return request
     }
-    
+
     /// Returns whether synchronization of this object needs additional requests
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
                                     requestUserInfo: [AnyHashable: Any]?,
                                     response: ZMTransportResponse,
                                     keysToParse: Set<String>) -> Bool {
-        
+
         if keysToParse.contains(ZMUserClientMissingKey) {
             if isFederationEndpointAvailable {
                 guard let rawData = response.rawData,
@@ -155,9 +153,8 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         }
     }
 
-    // MARK - Unused functions
-    
-    
+    // MARK: - Unused functions
+
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
         return nil
     }
@@ -165,16 +162,16 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
         // no op
     }
-    
+
     // Should return the objects that need to be refetched from the BE in case of upload error
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
     }
-    
+
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        //no op
+        // no op
     }
-    
+
     public var requestGenerators: [ZMRequestGenerator] {
         return []
     }

@@ -19,9 +19,9 @@
 import Foundation
 
 extension ZMUpdateEvent {
-    
+
     private static let deliveryConfirmationDayThreshold = 7
-        
+
     func needsDeliveryConfirmation(_ currentDate: Date = Date(),
                                    managedObjectContext: NSManagedObjectContext) -> Bool {
 
@@ -38,14 +38,14 @@ extension ZMUpdateEvent {
         else {
             return false
         }
-        
+
         return daysElapsed <= ZMUpdateEvent.deliveryConfirmationDayThreshold
     }
 }
 
 @objcMembers
 public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy, FederationAware {
-    
+
     private let messageSync: ProteusMessageSync<GenericMessageEntity>
 
     public var useFederationEndpoint: Bool {
@@ -56,9 +56,9 @@ public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy, Fede
             messageSync.isFederationEndpointAvailable
         }
     }
-    
+
     // MARK: - Init
-    
+
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 clientRegistrationDelegate: ClientRegistrationDelegate) {
@@ -67,48 +67,47 @@ public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy, Fede
                                               applicationStatus: applicationStatus)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
         self.configuration = [.allowsRequestsWhileInBackground,
                               .allowsRequestsWhileOnline,
                               .allowsRequestsWhileWaitingForWebsocket]
     }
-    
+
     // MARK: - Methods
-    
+
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return messageSync.nextRequest()
     }
 }
 
-
 // MARK: - Context Change Tracker
 
 extension DeliveryReceiptRequestStrategy: ZMContextChangeTrackerSource {
-    
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return messageSync.contextChangeTrackers
     }
-    
+
 }
 
 // MARK: - Event Consumer
 
 extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
-    
+
     struct DeliveryReceipt {
         let sender: ZMUser
         let conversation: ZMConversation
         let messageIDs: [UUID]
     }
-    
+
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        
+
     }
-    
+
     public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
         deliveryReceipts(for: events).forEach(sendDeliveryReceipt)
     }
-        
+
     func sendDeliveryReceipt(_ deliveryReceipt: DeliveryReceipt) {
         guard let confirmation = Confirmation.init(messageIds: deliveryReceipt.messageIDs,
                                                    type: .delivered) else { return }
@@ -116,23 +115,23 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         messageSync.sync(GenericMessageEntity(conversation: deliveryReceipt.conversation,
                                               message: GenericMessage(content: confirmation),
                                               targetRecipients: .users(Set(arrayLiteral: deliveryReceipt.sender)),
-                                              completionHandler:nil),
-                         completion: {_,_ in })
+                                              completionHandler: nil),
+                         completion: {_, _ in })
     }
-    
+
     func deliveryReceipts(for events: [ZMUpdateEvent]) -> [DeliveryReceipt] {
         let eventsByConversation = events.partition(by: \.conversationUUID)
 
         var deliveryReceipts: [DeliveryReceipt] = []
-        
+
         eventsByConversation.forEach { (conversationID: UUID, events: [ZMUpdateEvent]) in
             guard let conversation = ZMConversation.fetch(with: conversationID,
                                                           in: managedObjectContext) else { return }
-            
+
             let eventsBySender = events
                 .filter({ $0.needsDeliveryConfirmation(managedObjectContext: managedObjectContext) })
                 .partition(by: \.senderUUID)
-            
+
             eventsBySender.forEach { (senderID: UUID, events: [ZMUpdateEvent]) in
 
                 let eventsByDomain = events.partition(by: \.senderDomain)
@@ -153,7 +152,7 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                 }
             }
         }
-        
+
         return deliveryReceipts
     }
 
@@ -168,7 +167,7 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                                conversation: conversation,
                                messageIDs: events.compactMap(\.messageNonce))
     }
-    
+
 }
 
 private extension GenericMessage {

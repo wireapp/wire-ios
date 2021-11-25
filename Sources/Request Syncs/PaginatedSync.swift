@@ -46,7 +46,7 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
     let pageSize: Int
     let method: PaginationMehod
     var status: Status = .done
-    var request: ZMTransportRequest? = nil
+    var request: ZMTransportRequest?
     var completionHandler: CompletionHandler?
 
     init(basePath: String, pageSize: Int, method: PaginationMehod = .get, context: NSManagedObjectContext) {

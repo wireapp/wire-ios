@@ -201,7 +201,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [updateSync, insertSync, modifiedSync]
     }
-    
+
 }
 
 extension ConversationRequestStrategy: ZMEventConsumer {
@@ -392,7 +392,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
-                                    requestUserInfo: [AnyHashable : Any]? = nil,
+                                    requestUserInfo: [AnyHashable: Any]? = nil,
                                     response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
 
         guard
@@ -461,7 +461,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             }
 
             let request: ZMTransportRequest
-            if (useFederationEndpoint) {
+            if useFederationEndpoint {
                 guard let domain = conversation.domain else {
                     return nil
                 }
@@ -547,7 +547,6 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             markConversationsAsFetched(identifiers)
             return
         }
-        
 
         guard
             let rawData = response.rawData,
@@ -641,7 +640,6 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             }
             return
         }
-
 
         guard
             let rawData = response.rawData,
