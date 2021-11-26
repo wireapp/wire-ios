@@ -21,6 +21,7 @@
 @import WireDataModel;
 
 #import "NSManagedObjectContext+TestHelpers.h"
+#import "ZMUser.h"
 
 
 @class NSManagedObjectContext;

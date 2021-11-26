@@ -24,6 +24,7 @@
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
+#import "ZMUser+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "WireDataModelTests-Swift.h"
 

@@ -19,6 +19,7 @@
 
 #import "ModelObjectsTests.h"
 #import "ZMManagedObject+Internal.h"
+#import "ZMUser+Internal.h"
 #import "MockEntity.h"
 #import "MockEntity2.h"
 #import "MockModelObjectContextFactory.h"

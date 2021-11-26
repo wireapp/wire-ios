@@ -63,7 +63,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
         let selfClient = UserClient.insertNewObject(in: moc)
         selfClient.remoteIdentifier = UUID.create().uuidString
         selfClient.user = selfUser
-        moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMUserKeys.ZMPersistedClientIdKey)
+        moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
         moc.saveOrRollback()
         return selfClient
     }
