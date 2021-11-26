@@ -946,7 +946,7 @@ extension ZMUserTests_Swift {
         uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(sut.modifiedKeys, Set([ReadReceiptsEnabledKey]))
+        XCTAssertEqual(sut.modifiedKeys, Set([ZMUserKeys.readReceiptsEnabledKey]))
     }
     
     func testThatItDoesNotSetModifiedKeysForEnableReadReceipts() {
@@ -1113,4 +1113,155 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+}
+
+
+// MARK: - Validation
+
+extension ZMUserTests_Swift {
+    
+    private var validPhoneNumbers: [String] {
+        ["+491621312533", "+4901756698655", "+49 152 22824948", "+49 157 71898972", "+49 176 35791100", "+49 1721496444", "+79263387698", "+79160546401", "+7(927)674-59-42", "+71231234567", "+491234567890123456", "+49123456789012345678901", "+49123456"]
+    }
+    
+    private var shortPhoneNumbers: [String] {
+        ["+", "4", "+4", "+49", "+491", "+4912", "+49123", "+491234", "+491235"]
+    }
+    
+    private var longPhoneNumbers: [String] {
+        ["+491234567890123456789015", "+4912345678901234567890156"]
+    }
+    
+    func testThatItStaticallyDoesNotValidateAShortCode() {
+        // given
+        var code: String? = "1"
+        
+        // then
+        XCTAssertThrowsError(try ZMUser.validate(phoneVerificationCode: &code))
+    }
+    
+    func testThatItStaticallyDoesNotValidateALongCode() {
+        // given
+        var code: String? = "123456789012345678901234567890"
+        
+        // then
+        XCTAssertThrowsError(try ZMUser.validate(phoneVerificationCode: &code))
+    }
+    
+    func testThatItStaticallyValidatesACodeOfTheRightLength() {
+        // given
+        var code: String? = "123456";
+        
+        // when
+        let result = try? ZMUser.validate(phoneVerificationCode: &code)
+        
+        // then
+        XCTAssertTrue(result ?? false)
+    }
+
+    func testThatItStaticallyDoesNotValidateAnEmptyOrNilCode() {
+        // given
+        var code: String? = ""
+        
+        // then
+        XCTAssertThrowsError(try ZMUser.validate(phoneVerificationCode: &code))
+
+        // given
+        code = nil
+        
+        // then
+        XCTAssertThrowsError(try ZMUser.validate(phoneVerificationCode: &code))
+    }
+
+    func testThatItStaticallyDoesNotValidateEmptyOrNilPhoneNumber() {
+        // given
+        var phoneNumber: String? = ""
+        
+        // when
+        var result = try? ZMUser.validate(phoneNumber: &phoneNumber)
+        
+        // then
+        XCTAssertFalse(result ?? true)
+
+        // given
+        phoneNumber = nil
+        
+        // when
+        result = try? ZMUser.validate(phoneNumber: &phoneNumber)
+        
+        // then
+        XCTAssertFalse(result ?? true)
+    }
+
+    func testThatItStaticallyDoesValidateValidPhoneNumbers() {
+        validPhoneNumbers.forEach {
+            // given
+            var phoneNumber: String? = $0
+            
+            // when
+            let result = try? ZMUser.validate(phoneNumber: &phoneNumber)
+            
+            // then
+            XCTAssertTrue(result ?? false)
+        }
+    }
+
+    func testThatItStaticallyDoesNotValidatePhoneNumberWithInvalidChars() throws {
+        // given
+        let invalidCharacters = ["*", ";", "#", "[", "]", "~"]
+        
+        try invalidCharacters.forEach {
+            var phoneNumber: String? = validPhoneNumbers[0] + $0
+            
+            // then
+            XCTAssertThrowsError(try ZMUser.validate(phoneNumber: &phoneNumber))
+        }
+    }
+
+    func testThatItStaticallyDoesNotValidateShortPhoneNumbers() throws {
+        try shortPhoneNumbers.forEach {
+            // given
+            var phoneNumber: String? = $0
+            
+            // then
+            XCTAssertThrowsError(try ZMUser.validate(phoneNumber: &phoneNumber))
+        }
+    }
+
+    func testThatItStaticallyDoesNotValidateLongPhoneNumbers() throws {
+        try longPhoneNumbers.forEach {
+            // given
+            var phoneNumber: String? = $0
+            
+            // then
+            XCTAssertThrowsError(try ZMUser.validate(phoneNumber: &phoneNumber))
+        }
+    }
+
+    func testThatItDoesNotValidateAShortPassword() {
+        // given
+        var password: String? = "pa"
+        
+        // then
+        XCTAssertThrowsError(try ZMUser.validate(password: &password))
+    }
+
+    func testThatItDoesNotValidateLongPassword() {
+        // given
+        var password: String? = "ppppppppppppaaaaaaaaaaassssssssswwwwwwwwwwoooooooooooorrrrrrrrrdddddddddddddddppppppppppppaaaaaaaaaaassssssssswwwwwwwwwwoooooooooooorrrrrrrrrdddddddddddddddppppppppppppaaaaaaaaaaassssssssswwwwwwwwwwoooooooooooorrrrrrrrrdddddddddddddddppppppppppppaaaaaaaaaaassssssssswwwwwwwwwwoooooooooooorrrrrrrrrddddddddddddddd"
+        
+        // then
+        XCTAssertThrowsError(try ZMUser.validate(password: &password))
+    }
+
+    func testThatItValidatesAValidPassword() {
+        // given
+        var password: String? = "pA$$W0Rd"
+        
+        // when
+        let result = try? ZMUser.validate(password: &password)
+        
+        // then
+        XCTAssertTrue(result ?? false)
+    }
 }

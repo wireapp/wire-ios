@@ -247,7 +247,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             
             let allClients = users.flatMap {
-                $0.clients
+                Array($0.clients)
             }
             
             // when

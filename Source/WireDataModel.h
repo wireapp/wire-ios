@@ -30,9 +30,6 @@
 #import <WireDataModel/NSManagedObjectContext+zmessaging.h>
 #import <WireDataModel/NSManagedObjectContext+tests.h>
 
-#import <WireDataModel/ZMUser.h>
-#import <WireDataModel/ZMUser+Internal.h>
-#import <WireDataModel/ZMUser+OneOnOne.h>
 #import <WireDataModel/UserClientTypes.h>
 
 #import <WireDataModel/ZMConversation.h>

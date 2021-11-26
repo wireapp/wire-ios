@@ -26,7 +26,6 @@
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "MockModelObjectContextFactory.h"
 
-#import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMConversation+UnreadCount.h"
@@ -221,7 +220,7 @@
     selfClient.remoteIdentifier = [NSString createAlphanumericalString];
     selfClient.user = selfUser;
     
-    [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];
+    [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMUserKeys.ZMPersistedClientIdKey];
     
     [self performPretendingUiMocIsSyncMoc:^{
         NSDictionary *payload = @{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]};

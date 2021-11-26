@@ -68,7 +68,7 @@ public class RemoveParticipantAction: EntityAction {
 extension ZMConversation {
 
     func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
-        let nameDescriptor = NSSortDescriptor(key: "normalizedName", ascending: true)
+        let nameDescriptor = NSSortDescriptor(key: #keyPath(ZMUser.normalizedName), ascending: true)
         let sortedUser = (users as NSSet?)?.sortedArray(using: [nameDescriptor]) as? [ZMUser]
 
         return sortedUser ?? []
@@ -308,7 +308,7 @@ extension ZMConversation {
     }
     
     private func checkIfVerificationLevelChanged(addedUsers: Set<ZMUser>, addedSelfUser: Bool) {
-        let clients = Set(addedUsers.flatMap { $0.clients })
+        let clients = Set(addedUsers.flatMap { Array($0.clients) })
         self.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: addedUsers)
 
         if addedSelfUser {
