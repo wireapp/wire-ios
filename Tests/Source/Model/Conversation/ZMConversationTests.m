@@ -20,6 +20,7 @@
 @import WireTransport;
 
 #import "ZMConversationTests.h"
+#import "ZMUser.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMConversationList+Internal.h"

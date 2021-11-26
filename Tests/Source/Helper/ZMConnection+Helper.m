@@ -17,6 +17,7 @@
 //
 
 #import "ZMConnection+Helper.h"
+#import "ZMUser+Internal.h"
 
 @implementation ZMConnection (Helper)
 

@@ -20,6 +20,7 @@
 
 #import "ModelObjectsTests.h"
 
+#import "ZMUser+Internal.h"
 #import "ZMConnection+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMManagedObject+Internal.h"

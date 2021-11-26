@@ -509,7 +509,7 @@ extension DatabaseBaseTest {
         selfClient.remoteIdentifier = NSString.createAlphanumerical()
         selfClient.user = selfUser
         
-        moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMUserKeys.ZMPersistedClientIdKey)
+        moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
         
         let payload = ["id": selfClient.remoteIdentifier!,
                        "type": "permanent",

@@ -21,6 +21,7 @@
 #import "ZMUserTests.h"
 #import "ModelObjectsTests.h"
 
+#import "ZMUser+Internal.h"
 #import "ZMManagedObject+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
@@ -1947,6 +1948,118 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
         XCTAssertEqualObjects(user.phoneNumber, @" tester\t  BLA \\\"");
     }];
 }
+
+- (void)testThatItStaticallyDoesNotValidateAShortCode
+{
+    // given
+    NSString *code = ShortPhoneCode;
+    
+    // when
+    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&code error:nil]);
+}
+
+- (void)testThatItStaticallyDoesNotValidateALongCode
+{
+    // given
+    NSString *code = LongPhoneCode;
+    
+    // when
+    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&code error:nil]);
+}
+
+- (void)testThatItStaticallyValidatesACodeOfTheRightLength
+{
+    // given
+    NSString *phone = ValidPhoneCode;
+    
+    // when
+    XCTAssertTrue([ZMUser validatePhoneVerificationCode:&phone error:nil]);
+}
+
+- (void)testThatItStaticallyDoesNotValidateAnEmptyOrNilCode
+{
+    // given
+    NSString *phone = @"";
+    // when
+    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&phone error:nil]);
+    
+    phone = nil;
+    XCTAssertFalse([ZMUser validatePhoneVerificationCode:&phone error:nil]);
+}
+
+- (void)testThatItStaticallyDoesNotValidateEmptyOrNilPhoneNumber
+{
+    //given
+    NSString *phoneNumber = @"";
+    
+    //when
+    XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil]);
+    
+    phoneNumber = nil;
+    XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil]);
+}
+
+- (void)testThatItStaticallyDoesValidateValidPhoneNumbers
+{
+    //given
+    for (NSString *number in self.validPhoneNumbers) {
+        NSString *phoneNumber = number;
+        XCTAssertTrue([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be valid", phoneNumber);
+    }
+}
+
+- (void)testThatItStaticallyDoesNotValidatePhoneNumberWithInvalidChars
+{
+    NSArray *invalidCharactes = @[@"*", @";", @"#", @"[", @"]", @"~"];
+    for (NSString *invalidChar in invalidCharactes) {
+        NSString *phoneNumber = [ValidPhoneNumber stringByAppendingString:invalidChar];
+        XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be invalid", phoneNumber);
+    }
+}
+
+- (void)testThatItStaticallyDoesNotValidateShortPhoneNumbers
+{
+    for (NSString *number in self.shortPhoneNumbers) {
+        NSString *phoneNumber = number;
+        XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be invalid", phoneNumber);
+    }
+}
+
+- (void)testThatItStaticallyDoesNotValidateLongPhoneNumbers
+{
+    for (NSString *number in self.longPhoneNumbers) {
+        NSString *phoneNumber = number;
+        XCTAssertFalse([ZMUser validatePhoneNumber:&phoneNumber error:nil], @"Phone number %@ should be invalid", phoneNumber);
+    }
+}
+
+- (void)testThatItDoesNotValidateAShortPassword
+{
+    // given
+    NSString *password = ShortPassword;
+    
+    // when
+    XCTAssertFalse([ZMUser validatePassword:&password error:nil]);
+}
+
+- (void)testThatItDoesNotValidateLongPassword
+{
+    // given
+    NSString *password = LongPassword;
+    
+    // when
+    XCTAssertFalse([ZMUser validatePassword:&password error:nil]);
+}
+
+- (void)testThatItValidatesAValidPassword
+{
+    // given
+    NSString *password = ValidPassword;
+    
+    // when
+    XCTAssertTrue([ZMUser validatePassword:&password error:nil]);
+}
+
 
 @end
 

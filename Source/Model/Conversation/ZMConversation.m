@@ -29,6 +29,8 @@
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 
+#import "ZMUser+Internal.h"
+
 #import "ZMMessage+Internal.h"
 
 #import "NSManagedObjectContext+zmessaging.h"
