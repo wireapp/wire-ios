@@ -21,7 +21,6 @@
 @import WireTransport;
 
 #import "ZMConnection+Internal.h"
-#import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import <WireDataModel/WireDataModel-Swift.h>

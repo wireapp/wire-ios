@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 
-#import "ZMUser.h"
-
-@class Team;
-
-
-@interface ZMUser (OneOnOne)
-
-@property (nonatomic, nullable) ZMConversation *oneToOneConversation;
-
-@end
+@objcMembers
+final class ZMSession: ZMManagedObject {
+    @NSManaged var selfUser: ZMUser
+    
+    override public static func defaultSortDescriptors() -> [NSSortDescriptor]? {
+        nil
+    }
+    
+    public override static func entityName() -> String {
+        "Session"
+    }
+    
+    override static func isTrackingLocalModifications() -> Bool {
+        false
+    }
+}

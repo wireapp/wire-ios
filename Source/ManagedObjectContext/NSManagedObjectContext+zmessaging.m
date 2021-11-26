@@ -23,7 +23,6 @@
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "NSManagedObjectContext+tests.h"
 #import "ZMManagedObject.h"
-#import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
 
 #import <objc/runtime.h>

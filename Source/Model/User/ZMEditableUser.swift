@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,14 @@
 
 import Foundation
 
-extension NSManagedObjectContext {
-    
-    /// Prepare a backed up database for being imported, deleting self client, push token etc.
-    func prepareToImportBackup() {
-        setPersistentStoreMetadata(nil as Data?, key: ZMUserKeys.ZMPersistedClientIdKey)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.pushToken.rawValue)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.pushKitToken.rawValue)
-        setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.lastUpdateEventID.rawValue)
-        _ = makeMetadataPersistent()
-    }
-    
+@objc
+public protocol ZMEditableUser: NSObjectProtocol {
+    var name: String? { get set }
+    var accentColorValue: ZMAccentColor { get set }
+    var emailAddress: String? { get }
+    var phoneNumber: String? { get }
+    var readReceiptsEnabled: Bool { get set }
+    var needsRichProfileUpdate: Bool { get set }
 }
+
+extension ZMUser: ZMEditableUser {}

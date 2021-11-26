@@ -22,7 +22,6 @@
 #import "NSManagedObjectContext+zmessaging.h"
 
 #import "ZMManagedObject+Internal.h"
-#import "ZMUser+Internal.h"
 
 
 

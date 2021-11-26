@@ -26,7 +26,7 @@ extension NSManagedObjectContext {
 
         guard let session = fetchOrAssert(request: request).first as? ZMSession else { return }
 
-        userInfo[SessionObjectIDKey] = session.objectID
+        userInfo[ZMUserKeys.sessionObjectIDKey] = session.objectID
         ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)
     }
     

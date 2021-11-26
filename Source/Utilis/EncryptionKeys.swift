@@ -269,9 +269,9 @@ public struct EncryptionKeys {
           ]
         ]
         
-        var error: Unmanaged<CFError>?
-        guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            let error = accessError!.takeRetainedValue() as Error
+        var createError: Unmanaged<CFError>?
+        guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &createError) else {
+            let error = createError!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         }
         

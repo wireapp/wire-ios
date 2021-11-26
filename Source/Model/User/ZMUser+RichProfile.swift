@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ZMUserKeys {
+@objc public class ZMUserKeys: NSObject {
     public static let RichProfile = "richProfile"
 }
 

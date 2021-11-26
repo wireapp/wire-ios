@@ -243,7 +243,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         
         // Set metadata on DB which we expect to be cleared when importing from a backup
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
+        directory.viewContext.setPersistentStoreMetadata("1234567890", key: ZMUserKeys.ZMPersistedClientIdKey)
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
@@ -260,7 +260,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         let importedDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
         
         // then
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
+        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: ZMUserKeys.ZMPersistedClientIdKey))
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue))
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue))
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))

@@ -24,7 +24,6 @@
 #import "ZMConversation+UnreadCount.h"
 
 #import "ZMMessage+Internal.h"
-#import "ZMUser+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
