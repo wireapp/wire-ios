@@ -21,7 +21,7 @@ import XCTest
 import WireProtos
 
 @testable import WireDataModel
-
+// swiftlint:disable line_length
 class ProtosTests: XCTestCase {
     
     func testTextMessageEncodingPerformance() {
