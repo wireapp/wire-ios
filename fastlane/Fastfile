@@ -276,7 +276,7 @@ platform :ios do
         end
 
         
-        sh "SHA of IPA is:"
+        sh "echo SHA of IPA is:"
         sh "shasum -a 256 #{build.artifact_path(with_filename: true)}.ipa"
 
         appcenter_upload(
