@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireLinkPreview
 import WireDataModel
 import WireUtilities
 
-public final class LinkAttachmentDetectorHelper : NSObject {
-    fileprivate static var _test_debug_linkAttachmentDetector : LinkAttachmentDetectorType? = nil
+public final class LinkAttachmentDetectorHelper: NSObject {
+    fileprivate static var _test_debug_linkAttachmentDetector: LinkAttachmentDetectorType?
 
     public class func defaultDetector() -> LinkAttachmentDetectorType {
         return test_debug_linkAttachmentDetector() ?? LinkAttachmentDetector()
@@ -43,7 +42,7 @@ public final class LinkAttachmentDetectorHelper : NSObject {
 
 }
 
-@objcMembers public final class LinkAttachmentsPreprocessor : LinkPreprocessor<LinkAttachment> {
+@objcMembers public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
 
     fileprivate let linkAttachmentDetector: LinkAttachmentDetectorType
 

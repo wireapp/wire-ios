@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public extension Array where Element == ZMRequestGenerator {
 
     func nextRequest() -> ZMTransportRequest? {

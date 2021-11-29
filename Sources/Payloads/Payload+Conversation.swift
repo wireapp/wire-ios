@@ -185,7 +185,6 @@ extension Payload {
         let hasMore: Bool
     }
 
-
     struct Service: Codable {
         let id: UUID
         let provider: UUID

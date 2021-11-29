@@ -16,15 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-
-@objc public protocol ClientRegistrationDelegate: NSObjectProtocol  {
+@objc public protocol ClientRegistrationDelegate: NSObjectProtocol {
 
     /// Returns true if the client is registered
-    var clientIsReadyForRequests : Bool { get }
-    
+    var clientIsReadyForRequests: Bool { get }
+
     /// Notify that the current client was deleted remotely
     func didDetectCurrentClientDeletion()
 
@@ -38,6 +36,3 @@ import Foundation
     var useFederationEndpoint: Bool { get set }
 
 }
-
-
-

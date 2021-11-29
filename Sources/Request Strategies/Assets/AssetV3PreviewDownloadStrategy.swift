@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireImages
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
-
 @objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    private var token: Any? = nil
-    
+    private var token: Any?
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -48,11 +46,10 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     }
 
     func registerForWhitelistingNotification() {
-        
+
         self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                                        context: self.managedObjectContext.notificationContext,
-                                                       object: nil)
-        { [weak self] note in
+                                                       object: nil) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadImage(objectID)
         }

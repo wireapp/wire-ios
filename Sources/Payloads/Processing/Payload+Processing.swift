@@ -37,7 +37,7 @@ extension Payload.UserClient {
 
         return client
     }
-    
+
 }
 
 extension Array where Array.Element == Payload.UserClient {
@@ -92,7 +92,6 @@ extension Payload.PrekeyByUserID {
                 } else {
                     missingClient.markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: selfClient)
                 }
-
 
             }
         }
@@ -196,7 +195,7 @@ extension Payload.ClientListByQualifiedUserID {
             }
         }.flatMap { $0 }
 
-        return Dictionary<ZMUser, [UserClient]>(userClientsByUserTuples, uniquingKeysWith: +)
+        return [ZMUser: [UserClient]](userClientsByUserTuples, uniquingKeysWith: +)
     }
 
     func fetchOrCreateClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
@@ -225,7 +224,7 @@ extension Payload.ClientListByQualifiedUserID {
             }
         }.flatMap { $0 }
 
-        return Dictionary<ZMUser, [UserClient]>(userClientsByUserTuples, uniquingKeysWith: +)
+        return [ZMUser: [UserClient]](userClientsByUserTuples, uniquingKeysWith: +)
     }
 
 }

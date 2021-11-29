@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public enum SyncPhase : Int, CustomStringConvertible, CaseIterable {
+@objc public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
 
     case fetchingLastUpdateEventID
     case fetchingTeams
@@ -34,11 +34,11 @@ import Foundation
     case fetchingMissedEvents
     case done
 
-    public var isLastSlowSyncPhase : Bool {
+    public var isLastSlowSyncPhase: Bool {
         return self == Self.lastSlowSyncPhase
     }
 
-    public var isSyncing : Bool {
+    public var isSyncing: Bool {
         return self != .done
     }
 
@@ -87,7 +87,7 @@ public protocol SyncProgress {
 
     var currentSyncPhase: SyncPhase { get }
 
-    func finishCurrentSyncPhase(phase : SyncPhase)
-    func failCurrentSyncPhase(phase : SyncPhase)
+    func finishCurrentSyncPhase(phase: SyncPhase)
+    func failCurrentSyncPhase(phase: SyncPhase)
 
 }

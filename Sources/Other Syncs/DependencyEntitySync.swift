@@ -19,7 +19,7 @@
 import Foundation
 
 @objc public protocol DependencyEntity: AnyObject {
-    @objc var dependentObjectNeedingUpdateBeforeProcessing : NSObject? { get }
+    @objc var dependentObjectNeedingUpdateBeforeProcessing: NSObject? { get }
     @objc var isExpired: Bool { get }
     @objc func expire()
     @objc var expirationDate: Date? { get }
@@ -32,25 +32,25 @@ public enum EntitySyncError: Error {
 
 public typealias EntitySyncHandler = (_ result: Swift.Result<Void, EntitySyncError>, _ response: ZMTransportResponse) -> Void
 
-class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity : DependencyEntity {
+class DependencyEntitySync<Transcoder : EntityTranscoder>: NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity: DependencyEntity {
 
-    private var entitiesWithDependencies : DependentObjects<Transcoder.Entity, NSObject> = DependentObjects()
-    private var entitiesWithoutDependencies : [Transcoder.Entity] = []
+    private var entitiesWithDependencies: DependentObjects<Transcoder.Entity, NSObject> = DependentObjects()
+    private var entitiesWithoutDependencies: [Transcoder.Entity] = []
     private var completionHandlers: [Transcoder.Entity: EntitySyncHandler] = [:]
-    private weak var transcoder : Transcoder?
-    private var context : NSManagedObjectContext
-    
-    public init(transcoder: Transcoder, context : NSManagedObjectContext) {
+    private weak var transcoder: Transcoder?
+    private var context: NSManagedObjectContext
+
+    public init(transcoder: Transcoder, context: NSManagedObjectContext) {
         self.transcoder = transcoder
         self.context = context
     }
-    
+
     public func expireEntities(withDependency dependency: NSObject) {
         for entity in entitiesWithDependencies.dependents(on: dependency) {
             entity.expire()
         }
     }
-    
+
     public func synchronize(entity: Transcoder.Entity, completion: EntitySyncHandler? = nil) {
         completionHandlers[entity] = completion
 
@@ -60,12 +60,12 @@ class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextC
             entitiesWithoutDependencies.append(entity)
         }
     }
-    
+
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
         for object in objects {
             for entity in entitiesWithDependencies.dependents(on: object) {
                 let newDependency = entity.dependentObjectNeedingUpdateBeforeProcessing
-                
+
                 if let newDependency = newDependency, newDependency != object {
                     entitiesWithDependencies.add(dependency: newDependency, for: entity)
                 } else if newDependency == nil {
@@ -75,16 +75,16 @@ class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextC
             }
         }
     }
-    
+
     public func nextRequest() -> ZMTransportRequest? {
         guard let entity = entitiesWithoutDependencies.first else { return nil }
-        
+
         entitiesWithoutDependencies.removeFirst()
 
         let completionHandler = completionHandlers.removeValue(forKey: entity)
 
         if !entity.isExpired, let request = transcoder?.request(forEntity: entity) {
-            
+
             request.add(ZMCompletionHandler(on: context, block: { [weak self] (response) in
                 guard
                     let `self` = self,
@@ -106,19 +106,19 @@ class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextC
                     }
                 }
             }))
-            
+
             return request
         } else {
             return nil
         }
     }
-    
+
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         return nil
     }
-    
+
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        
+
     }
-    
+
 }

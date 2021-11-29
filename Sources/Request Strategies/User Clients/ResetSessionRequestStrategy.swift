@@ -72,7 +72,7 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
 
         messageSync.sync(message) { (result, _) in
             switch result {
-            case .success():
+            case .success:
                 userClient.resolveDecryptionFailedSystemMessages()
             case .failure:
                 break

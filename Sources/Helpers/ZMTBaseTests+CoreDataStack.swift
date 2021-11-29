@@ -24,7 +24,7 @@ extension ZMTBaseTest {
     var sharedContainerURL: URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
-    
+
     @objc
     func createCoreDataStack(userIdentifier: UUID = UUID(),
                              inMemoryStore: Bool = true) -> CoreDataStack {

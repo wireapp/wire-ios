@@ -52,7 +52,6 @@ extension JSONEncoder {
 
 extension Decodable {
 
-
     /// Initialize object from JSON Data or log an error if fails
     ///
     /// - parameter payloadData: JSON data as raw bytes

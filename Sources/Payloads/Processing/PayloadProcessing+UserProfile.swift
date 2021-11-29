@@ -50,7 +50,7 @@ extension Payload.UserProfile {
             user.providerIdentifier = serviceID.provider.transportString()
         }
 
-        if (updatedKeys.contains(.teamID) || authoritative) {
+        if updatedKeys.contains(.teamID) || authoritative {
             user.teamIdentifier = teamID
             user.createOrDeleteMembershipIfBelongingToTeam()
         }
@@ -79,7 +79,7 @@ extension Payload.UserProfile {
             user.handle = handle
         }
 
-        if (managedBy != nil || authoritative) {
+        if managedBy != nil || authoritative {
              user.managedBy = managedBy
         }
 
@@ -122,7 +122,6 @@ extension Payload.UserProfile {
 }
 
 extension Payload.UserProfiles {
-
 
     /// Update all user entities with the data from the user profiles.
     ///

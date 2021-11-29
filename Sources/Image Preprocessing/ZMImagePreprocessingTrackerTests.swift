@@ -26,7 +26,7 @@ extension ZMImagePreprocessingTrackerTests {
     linkPreviewMessage3 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
     linkPreviewMessageExcludedByPredicate = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
     }
-    
+
     @objc
     func setupSut() {
         sut = ZMImagePreprocessingTracker(
@@ -37,7 +37,7 @@ extension ZMImagePreprocessingTrackerTests {
             entityClass: ZMClientMessage.self,
             preprocessor: (preprocessor as! ZMAssetsPreprocessor))
     }
-    
+
     func testThatItReturnsTheCorrectFetchRequest() {
         // when
         let request = sut.fetchRequestForTrackedObjects()
@@ -46,7 +46,7 @@ extension ZMImagePreprocessingTrackerTests {
         let expectedRequest = ZMClientMessage.sortedFetchRequest(with: fetchPredicate)
         XCTAssertEqual(request, expectedRequest)
     }
-    
+
     @objc
     func assertHasOutstandingItems() {
         XCTAssertFalse(
@@ -54,7 +54,7 @@ extension ZMImagePreprocessingTrackerTests {
             "\(sut.imageOwnersThatNeedPreprocessing.description) / \(sut.imageOwnersBeingPreprocessed.description)")
 
     }
-    
+
     func testThatItHasNoOutstandingItems() {
         assertHasOutstandingItems()
     }

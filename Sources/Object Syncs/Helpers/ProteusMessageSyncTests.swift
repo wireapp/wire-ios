@@ -65,7 +65,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
             // expect
             let expectation = self.expectation(description: "completion is called")
             sut.sync(message) { (result, _) in
-                if case .success(()) = result {
+                if case .success() = result {
                     expectation.fulfill()
                 }
             }
@@ -130,7 +130,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait { [self] in
             // given
             let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
-            sut.sync(message) { (result, _) in }
+            sut.sync(message) { (_, _) in }
 
             // when
             let payload = Payload.ResponseFailure(code: 404, label: .noEndpoint, message: "")
@@ -149,7 +149,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait { [self] in
             // given
             let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
-            sut.sync(message) { (result, _) in }
+            sut.sync(message) { (_, _) in }
 
             // when
             sut.nextRequest()?.complete(with: ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError()))
@@ -166,7 +166,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait { [self] in
             // given
             let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
-            sut.sync(message) { (result, _) in }
+            sut.sync(message) { (_, _) in }
 
             // when
             let clientID = UUID().transportString()
@@ -194,7 +194,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
             syncMOC.performGroupedBlockAndWait { [self] in
                 // given
                 let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
-                sut.sync(message) { (result, _) in }
+                sut.sync(message) { (_, _) in }
 
                 // when
                 let payload = Payload.ResponseFailure(code: 403, label: .unknownClient, message: "")
@@ -215,7 +215,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
             let expirationDate = Date(timeIntervalSinceNow: 100)
             let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             message.expirationDate = expirationDate
-            sut.sync(message) { (result, _) in }
+            sut.sync(message) { (_, _) in }
 
             // when
             let request = sut.nextRequest()
