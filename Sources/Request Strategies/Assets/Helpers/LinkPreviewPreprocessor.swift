@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireLinkPreview
 import WireDataModel
 import WireUtilities
 
-@objcMembers public final class LinkPreviewPreprocessor : LinkPreprocessor<LinkMetadata> {
-        
+@objcMembers public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
+
     fileprivate let linkPreviewDetector: LinkPreviewDetectorType
 
     public init(linkPreviewDetector: LinkPreviewDetectorType, managedObjectContext: NSManagedObjectContext) {

@@ -428,7 +428,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationMessage
         }
         conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeoutValue), for: .groupConversation)
     }
-  
+
 }
 
 extension Payload.ConversationEvent where T == Payload.UpdateConversationReceiptMode {

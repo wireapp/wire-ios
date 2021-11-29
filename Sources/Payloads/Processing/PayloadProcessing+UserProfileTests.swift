@@ -118,7 +118,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             XCTAssertEqual(self.otherUser.membership?.team, team)
         }
     }
-    
+
     func testUpdateUserProfile_UpdatesServiceID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -321,7 +321,6 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let assets = [previewAsset, completeAsset]
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, assets: assets)
 
-
             // when
             userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
 
@@ -347,7 +346,6 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let completeAsset = Payload.Asset(key: "2", size: .complete, type: .image)
             let assets = [previewAsset, completeAsset]
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, assets: assets)
-
 
             // when
             userProfile.updateUserProfile(for: selfUser, authoritative: true)

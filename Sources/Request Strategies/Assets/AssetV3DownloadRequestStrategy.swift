@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireImages
 import WireTransport
 
-fileprivate let zmLog = ZMSLog(tag: "Asset V3")
-
+private let zmLog = ZMSLog(tag: "Asset V3")
 
 @objcMembers public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
 
@@ -29,7 +27,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     private var notificationTokens: [Any] = []
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
-    
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -38,40 +36,38 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         let downloadPredicate = NSPredicate { (object, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version == 3 else { return false }
-            
+
             return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message.underlyingMessage?.assetData?.hasUploaded == true
         }
-        
+
         assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
                                                                         entityName: ZMAssetClientMessage.entityName(),
                                                                         predicateForObjectsToDownload: downloadPredicate,
                                                                         managedObjectContext: managedObjectContext)
-        
+
         registerForCancellationNotification()
         registerForWhitelistingNotification()
     }
-    
+
     func registerForCancellationNotification() {
         notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
                                                                     context: self.managedObjectContext.notificationContext,
-                                                                    object: nil)
-        {
+                                                                    object: nil) {
             [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.cancelOngoingRequestForAssetClientMessage(objectID)
         })
     }
-    
+
     func registerForWhitelistingNotification() {
         notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
                                                                     context: self.managedObjectContext.notificationContext,
-                                                                    object: nil)
-        { [weak self] note in
+                                                                    object: nil) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadAsset(objectID)
         })
     }
-    
+
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
@@ -101,9 +97,9 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         var decryptSuccess = false
-        
+
         assetClientMessage.isDownloading = false
-        
+
         if response.result == .success {
             decryptSuccess = storeAndDecrypt(data: response.rawData!, for: assetClientMessage)
         }
@@ -123,10 +119,10 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
             zmLog.debug("asset unavailable to decrypt, deleting")
             managedObjectContext.delete(assetClientMessage)
         }
-        
+
         // we've just downloaded some data, we need to refresh the category of the message.
         assetClientMessage.updateCategoryCache()
-        
+
         if decryptSuccess {
             NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
                                                             changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
@@ -182,7 +178,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage {
-            
+
             let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                 assetClientMessage.associatedTaskIdentifier = taskIdentifier
             }

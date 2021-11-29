@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireDataModel
 
@@ -32,11 +31,11 @@ extension ZMOTRMessage: OTREntity {
     /// Which object this message depends on when sending
     @objc public override var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation = conversation else { return nil }
-        
+
         let dependent = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
-    
+
     public func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }
@@ -44,30 +43,30 @@ extension ZMOTRMessage: OTREntity {
     public func delivered(with response: ZMTransportResponse) {
         update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: nil)
     }
-    
+
 }
 
 /// Message that can block following messages
 @objc private protocol BlockingMessage {
-    
+
     /// If true, no other messages should be sent until this message is sent
-    var shouldBlockFurtherMessages : Bool { get }
+    var shouldBlockFurtherMessages: Bool { get }
 }
 
 extension ZMMessage {
-    
+
     /// Which object this message depends on when sending
     @objc public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        
+
         // conversation not created yet on the BE?
         guard let conversation = self.conversation else { return nil }
-        
+
         if conversation.remoteIdentifier == nil {
             zmLog.debug("conversation has no remote identifier")
             return conversation
 
         }
-        
+
         // Messages should time out within 1 minute. But image messages never time out. In case there is a bug
         // and one image message gets stuck in a non-sent state (but not expired), that message will block any future
         // message in that conversation forver. This happened with some buggy builds (ie.g. internal 2838).
@@ -81,8 +80,8 @@ extension ZMMessage {
         // but this is quite an edge case.
         let MaxDelayToConsiderForBlockingObject = Double(3 * 60); // 3 minutes
 
-        var blockingMessage : ZMMessage?
-        
+        var blockingMessage: ZMMessage?
+
         // we don't want following messages to block this one, only previous ones.
         // so we iterate backwards and we ignore everything until we find this one
         var selfMessageFound = false
@@ -90,19 +89,19 @@ extension ZMMessage {
         for previousMessage in conversation.lastMessages() {
             if let currentTimestamp = self.serverTimestamp,
                 let previousTimestamp = previousMessage.serverTimestamp {
-                
+
                 // to old?
                 let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
                 if tooOld {
                     break
                 }
             }
-            
+
             let sameMessage = previousMessage === self || previousMessage.nonce == self.nonce
             if sameMessage {
                 selfMessageFound = true
             }
-            
+
             if selfMessageFound && !sameMessage && previousMessage.shouldBlockFurtherMessages {
                 blockingMessage = previousMessage
                 break
@@ -110,12 +109,12 @@ extension ZMMessage {
         }
         return blockingMessage
     }
-    
+
 }
 
-extension ZMMessage : BlockingMessage {
-    
-    var shouldBlockFurtherMessages : Bool {
+extension ZMMessage: BlockingMessage {
+
+    var shouldBlockFurtherMessages: Bool {
         return self.deliveryState == .pending && !self.isExpired
     }
 }

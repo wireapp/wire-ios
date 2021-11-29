@@ -23,20 +23,20 @@ import WireProtos
 import WireCryptobox
 
 class CryptoboxUpdateEventsTests: MessagingTestBase {
-    
+
     func testThatItCanDecryptOTRMessageAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
             let generic = GenericMessage(content: Text(content: text))
-            
+
             // WHEN
             let decryptedEvent = self.decryptedUpdateEventFromOtherClient(message: generic)
-            
+
             // THEN
             XCTAssertEqual(decryptedEvent.senderUUID, self.otherUser.remoteIdentifier!)
             XCTAssertEqual(decryptedEvent.recipientClientID, self.selfClient.remoteIdentifier!)
-            
+
             guard let decryptedMessage = ZMClientMessage.createOrUpdate(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
                 return XCTFail()
             }
@@ -44,7 +44,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             XCTAssertEqual(decryptedMessage.textMessageData?.messageText, text)
         }
     }
-    
+
     func testThatItCanDecryptOTRAssetAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -53,19 +53,19 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
             let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), sha256: image.zmSHA256Digest())
             let generic = GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium))
-            
+
             // WHEN
             let decryptedEvent = self.decryptedAssetUpdateEventFromOtherClient(message: generic)
-            
+
             // THEN
             guard let decryptedMessage = ZMAssetClientMessage.createOrUpdate(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
                 return XCTFail()
             }
-            
+
             XCTAssertEqual(decryptedMessage.nonce?.transportString(), generic.messageID)
         }
     }
-    
+
     func testThatItInsertsAUnableToDecryptMessageIfItCanNotEstablishASession() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -74,7 +74,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
                                 "id": UUID.create().transportString(),
                                 "key": "bah".data(using: .utf8)!.base64String()
             ]
-            
+
             let payload = [
                 "type": "conversation.otr-message-add",
                 "from": self.otherUser.remoteIdentifier!.transportString(),
@@ -86,16 +86,16 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
                 "id": UUID.create().transportString(),
                 "payload": [payload]
                 ] as [String: Any]
-            
+
             let event = ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: .download)!.first!
-            
+
             // WHEN
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
                     _ = session.decryptAndAddClient(event, in: self.syncMOC)
                 }
             }
-            
+
             // THEN
             guard let lastMessage = self.groupConversation.lastMessage as? ZMSystemMessage else {
                 return XCTFail()
@@ -184,4 +184,3 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
         }
     }
 }
-

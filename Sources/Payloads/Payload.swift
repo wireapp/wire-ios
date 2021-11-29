@@ -51,20 +51,20 @@ enum Payload {
         let key: String
         let id: Int?
     }
-            
+
     struct Location: Codable {
-        
+
         enum CodingKeys: String, CodingKey {
             case longitude = "lon"
             case latitide = "lat"
         }
-        
+
         let longitude: Double
         let latitide: Double
     }
-    
+
     struct UserClient: Codable {
-        
+
         enum CodingKeys: String, CodingKey {
             case id
             case type
@@ -74,7 +74,7 @@ enum Payload {
             case deviceClass = "class"
             case deviceModel = "model"
         }
-        
+
         let id: String
         let type: String?
         let creationDate: Date?
@@ -98,7 +98,7 @@ enum Payload {
             self.deviceClass = deviceClass
             self.deviceModel = deviceModel
         }
-        
+
     }
 
     struct Asset: Codable {
@@ -316,4 +316,3 @@ enum Payload {
     }
 
 }
-

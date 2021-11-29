@@ -22,26 +22,26 @@ import WireTransport
 private let zmLog = ZMSLog(tag: "Dependencies")
 
 @objc public protocol OTREntity: DependencyEntity {
-    
+
     /// NSManagedObjectContext which the OTR entity is associated with.
     var context: NSManagedObjectContext { get }
-    
+
     /// Conversation in which the OTR entity is sent. If the OTR entity is not associated with
     /// any conversation this property should return nil.
     var conversation: ZMConversation? { get }
-    
+
     /// Add clients as missing recipients for this entity. If we want to resend
     /// the entity, we need to make sure those missing recipients are fetched
     /// or sending the entity will fail again.
     func missesRecipients(_ recipients: Set<WireDataModel.UserClient>!)
-    
+
     /// if the BE tells us that these users are not in the
     /// conversation anymore, it means that we are out of sync
     /// with the list of participants
     func detectedRedundantUsers(_ users: [ZMUser])
 
     func delivered(with response: ZMTransportResponse)
-    
+
 }
 
 /// HTTP status of a request that has
@@ -62,12 +62,11 @@ private let UnknownClientLabel = "unknown-client"
 /// Error label
 private let ErrorLabel = "label"
 
-
 extension OTREntity {
-    
+
     /// Which object this message depends on when sending
-    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation : ZMConversation) -> ZMManagedObject? {
-                
+    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation: ZMConversation) -> ZMManagedObject? {
+
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
         // Otherwise we end up in an endless loop receiving missing clients error
@@ -75,41 +74,40 @@ extension OTREntity {
             zmLog.debug("conversation needs to be update from backend")
             return conversation
         }
-        
+
         if (conversation.conversationType == .oneOnOne || conversation.conversationType == .connection)
             && conversation.connection?.needsToBeUpdatedFromBackend == true {
             zmLog.debug("connection needs to be update from backend")
             return conversation.connection
         }
-        
+
         // If the conversation is degraded we shouldn't send the message until the conversation
         // is marked as not secure or it's verified again
         if conversation.securityLevel == .secureWithIgnored {
             zmLog.debug("conversations has security level ignored")
             return conversation
         }
-    
+
         return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: conversation.localParticipants)
     }
-    
+
     /// Which objects this message depends on when sending it to a list recipients
-    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients : Set<ZMUser>) -> ZMManagedObject? {
+    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: Set<ZMUser>) -> ZMManagedObject? {
         let recipientClients = recipients.flatMap {
             return Array($0.clients)
         }
-        
+
         // If we discovered a new client we need fetch the client details before retrying
         if let newClient = recipientClients.first(where: { $0.needsToBeUpdatedFromBackend }) {
             return newClient
         }
-        
+
         // If we are missing clients, we need to refetch the clients before retrying
         if let selfClient = ZMUser.selfUser(in: context).selfClient(),
-           let missingClients = selfClient.missingClients , missingClients.count > 0
-        {
+           let missingClients = selfClient.missingClients, missingClients.count > 0 {
             // Don't block sending of messages if they are not affected by the missing clients
             if !missingClients.intersection(recipientClients).isEmpty {
-                
+
                 // make sure that we fetch those clients, even if we somehow gave up on fetching them
                 if !(selfClient.modifiedKeys?.contains(ZMUserClientMissingKey) ?? false) {
                     selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
@@ -118,7 +116,7 @@ extension OTREntity {
                 return selfClient
             }
         }
-        
+
         return nil
     }
 
@@ -129,15 +127,15 @@ extension OTREntity {
         }
 
         // 1) Parse the payload
-        guard let payload = response.payload as? [String:AnyObject] else { return [] }
+        guard let payload = response.payload as? [String: AnyObject] else { return [] }
         guard let missingMap = payload[MissingLabel] as? [String: [String]] else { return [] }
 
         var changes: ZMConversationRemoteClientChangeSet = []
         var allMissingClients: Set<UserClient> = []
         var redundantUsers = conversation.localParticipants
-        
+
         redundantUsers.remove(ZMUser.selfUser(in: context))
-        
+
         for (userID, remoteClientIdentifiers) in missingMap {
             guard let userID = UUID(uuidString: userID) else { continue }
 
@@ -147,7 +145,7 @@ extension OTREntity {
             }
 
             redundantUsers.remove(user)
-            
+
             let remoteIdentifiers = Set(remoteClientIdentifiers)
             let localIdentifiers = Set(user.clients.compactMap(\.remoteIdentifier))
 
@@ -176,7 +174,7 @@ extension OTREntity {
                 allMissingClients.formUnion(userMissingClients)
             }
         }
-        
+
         for redundantUser in redundantUsers {
             // Users no longer present in the list of missing clients are either no longer in the group
             // or have deleted all their clients. Both cases are edges cases which should only happen
@@ -185,7 +183,7 @@ extension OTREntity {
         }
 
         registersNewMissingClients(allMissingClients)
-        
+
         return changes
     }
 
@@ -197,22 +195,22 @@ extension OTREntity {
         }
 
         var changes: ZMConversationRemoteClientChangeSet = []
-        
-        guard let payload = response.payload as? [String:AnyObject] else { return changes }
-        
-        if let deletedMap = payload[DeletedLabel] as? [String:AnyObject] {
+
+        guard let payload = response.payload as? [String: AnyObject] else { return changes }
+
+        if let deletedMap = payload[DeletedLabel] as? [String: AnyObject] {
             if self.processDeletedClients(deletedMap) {
                 changes.insert(.deleted)
             }
         }
-        
-        if let redundantMap = payload[RedundantLabel] as? [String:AnyObject] {
+
+        if let redundantMap = payload[RedundantLabel] as? [String: AnyObject] {
             if processRedundantClients(redundantMap) {
                 changes.insert(.redundant)
             }
         }
-        
-        if let missingMap = payload[MissingLabel] as? [String:AnyObject] {
+
+        if let missingMap = payload[MissingLabel] as? [String: AnyObject] {
             if self.processMissingClients(missingMap) {
                 changes.insert(.missing)
             }
@@ -226,7 +224,7 @@ extension OTREntity {
         // If we for some reason miss the push the BE will repond with a 403 and 'unknown-client' label to our
         // next sending attempt and we will logout and delete the current selfClient then
         if response.httpStatus == ClientNotAuthorizedResponseStatus,
-            let payload = response.payload as? [String:AnyObject],
+            let payload = response.payload as? [String: AnyObject],
             let label = payload[ErrorLabel] as? String,
             label == UnknownClientLabel {
             return true
@@ -234,18 +232,18 @@ extension OTREntity {
             return false
         }
     }
-    
+
     /// Parses the "deleted" clients and removes them
     ///
     /// - returns: **True** if there were any deleted users
-    fileprivate func processDeletedClients(_ deletedMap: [String:AnyObject]) -> Bool {
-        
+    fileprivate func processDeletedClients(_ deletedMap: [String: AnyObject]) -> Bool {
+
         let allDeletedClients = Set(deletedMap.flatMap { pair -> [UserClient] in
-            
+
             // user
             guard let userID = UUID(uuidString: pair.0) else { return [] }
             guard let user = ZMUser.fetch(with: userID, domain: nil, in: self.context) else { return [] }
-            
+
             // clients
             guard let clientIDs = pair.1 as? [String] else { fatal("Deleted client ID is not parsed properly") }
             let clientIDsSet = Set(clientIDs)
@@ -258,14 +256,14 @@ extension OTREntity {
         guard !allDeletedClients.isEmpty else {
             return false
         }
-        
+
         allDeletedClients.forEach {
             $0.deleteClientAndEndSession()
         }
 
         return true
     }
-    
+
     /// Parses the "redundant" clients and reports any redundants users.
     ///
     /// - returns: **True** if there were any redundant users
@@ -275,35 +273,34 @@ extension OTREntity {
             let user = ZMUser.fetch(with: userID, domain: nil, in: self.context)!
             return user
         }
-        
+
         if !redundantUsers.isEmpty {
             // if the BE tells us that these users are not in the
             // conversation anymore, it means that we are out of sync
             // with the list of participants
             conversation?.needsToBeUpdatedFromBackend = true
-            
+
             // The missing users might have been deleted so we need re-fetch their profiles
             // to verify if that's the case.
             redundantUsers.forEach({ $0.needsToBeUpdatedFromBackend = true })
-            
-            
+
             detectedRedundantUsers(redundantUsers)
         }
-        
+
         return !redundantUsers.isEmpty
     }
 
     /// Parses the "missing" clients and creates the corresponding UserClients, then set them as missing
     ///
     /// - returns: **True** if there were any missing clients
-    fileprivate func processMissingClients(_ missingMap: [String:AnyObject]) -> Bool {
-        
+    fileprivate func processMissingClients(_ missingMap: [String: AnyObject]) -> Bool {
+
         let allMissingClients = Set(missingMap.flatMap { pair -> [UserClient] in
-            
+
             // user
             guard let userID = UUID(uuidString: pair.0) else { return [] }
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.context)
-            
+
             // client
             guard let clientIDs = pair.1 as? [String] else { fatal("Missing client ID is not parsed properly") }
             let clients: [UserClient] = clientIDs.compactMap {
@@ -313,31 +310,31 @@ extension OTREntity {
                 else {
                     return nil
                 }
-                
+
                 client.discoveredByMessage = self as? ZMOTRMessage
                 return client
             }
-            
+
             // is this user not there?
             conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
-            
+
             return clients
         })
-        
+
         self.registersNewMissingClients(allMissingClients)
         return allMissingClients.count > 0
     }
-    
+
     /// Adds clients to those missing for this message
     func registersNewMissingClients(_ missingClients: Set<UserClient>) {
         guard missingClients.count > 0 else { return }
-        
+
         let selfClient = ZMUser.selfUser(in: self.context).selfClient()!
         selfClient.missesClients(missingClients)
         self.missesRecipients(missingClients)
-        
+
         selfClient.addNewClientsToIgnored(missingClients)
-        
+
     }
-    
+
 }

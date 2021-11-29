@@ -23,10 +23,10 @@ import WireTesting
 class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
 
     typealias T = MockEntity
-    
+
     var objectsAskedToBeSynchronized: Set<MockEntity> = Set()
     var objectsAskedToBeCancelled: Set<MockEntity> = Set()
-    
+
     var completionBlock: (() -> Void)?
     func synchronize(_ object: MockEntity, completion: @escaping () -> Void) {
         objectsAskedToBeSynchronized.insert(object)
@@ -36,12 +36,12 @@ class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
     func cancel(_ object: MockEntity) {
         objectsAskedToBeCancelled.insert(object)
     }
-    
+
     func completeSynchronization() {
         completionBlock?()
         completionBlock = nil
     }
-    
+
 }
 
 class KeyPathObjectSyncTests: ZMTBaseTest {
@@ -49,12 +49,12 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     var moc: NSManagedObjectContext!
     var transcoder: MockKeyPathObjectSyncTranscoder!
     var sut: KeyPathObjectSync<MockKeyPathObjectSyncTranscoder>!
-    
+
     // MARK: - Life Cycle
 
     override func setUp() {
         super.setUp()
-    
+
         moc = MockModelObjectContextFactory.testContext()
         transcoder = MockKeyPathObjectSyncTranscoder()
         sut = KeyPathObjectSync(entityName: MockEntity.entityName(), \.needsToBeUpdatedFromBackend)
@@ -64,38 +64,38 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     override func tearDown() {
         transcoder = nil
         sut = nil
-        
+
         super.tearDown()
     }
-    
+
     // MARK: - Tests
-    
+
     func testSyncAsksToSynchronizeObject_WhenKeyPathEvalutesToTrue() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
-        
+
         // when
         mockEntity.needsToBeUpdatedFromBackend = true
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
-        
+
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
     }
-    
+
     func testSyncAsksToSynchronizeObject_WhenPreviousSynchronizationIsCompleted() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
         mockEntity.needsToBeUpdatedFromBackend = true
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
-        
+
         mockEntity.needsToBeUpdatedFromBackend = false
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
         transcoder.objectsAskedToBeSynchronized.removeAll()
-        
+
         // when
         mockEntity.needsToBeUpdatedFromBackend = true
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
-        
+
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
     }
@@ -113,45 +113,44 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeCancelled.contains(mockEntity))
     }
-    
+
     func testSyncDoesNotAsksoSynchronizeObject_WhenSynchronizationIsAlreadyInProgress() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
         mockEntity.needsToBeUpdatedFromBackend = true
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
         transcoder.objectsAskedToBeSynchronized.removeAll()
-        
+
         // when
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
-        
+
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.isEmpty)
     }
-    
+
     func testSyncSetsKeyPathToFalse_WhenSynchronizationCompletes() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
         mockEntity.needsToBeUpdatedFromBackend = true
         sut.objectsDidChange(Set(arrayLiteral: mockEntity))
-        
+
         // when
         transcoder.completeSynchronization()
-        
+
         // then
         XCTAssertFalse(mockEntity.needsToBeUpdatedFromBackend)
     }
-    
+
     func testFetchRequestForTrackedObjects() throws {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
         mockEntity.needsToBeUpdatedFromBackend = true
-        
+
         // when
         let fetchRequest = try XCTUnwrap(sut.fetchRequestForTrackedObjects())
-        
+
         // then
         XCTAssertTrue(fetchRequest.predicate!.evaluate(with: mockEntity))
     }
-    
 
 }

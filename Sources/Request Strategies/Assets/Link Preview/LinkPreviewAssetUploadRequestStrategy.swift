@@ -16,37 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireLinkPreview
 
-public final class LinkPreviewDetectorHelper : NSObject {
-    fileprivate static var _test_debug_linkPreviewDetector : LinkPreviewDetectorType? = nil
-    
+public final class LinkPreviewDetectorHelper: NSObject {
+    fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
+
     public class func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType? {
         return _test_debug_linkPreviewDetector
     }
-    
+
     public class func setTest_debug_linkPreviewDetector(_ detectorType: LinkPreviewDetectorType?) {
         _test_debug_linkPreviewDetector = detectorType
     }
-    
+
     public class func tearDown() {
         _test_debug_linkPreviewDetector = nil
     }
-    
+
 }
 
 private let zmLog = ZMSLog(tag: "link previews")
 
 extension ZMImagePreprocessingTracker {
     static func createPreviewImagePreprocessingTracker(managedObjectContext: NSManagedObjectContext) -> ZMImagePreprocessingTracker! {
-        let imageFetchPredicate = NSPredicate(format: "%K == %d",ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.downloaded.rawValue)
+        let imageFetchPredicate = NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.downloaded.rawValue)
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
             return managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message, format: .original, encrypted: false)
         }
-        
+
         let previewImagePreprocessor = ZMImagePreprocessingTracker(
             managedObjectContext: managedObjectContext,
             imageProcessingQueue: OperationQueue(),
@@ -58,30 +57,29 @@ extension ZMImagePreprocessingTracker {
     }
 }
 
+public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
-public final class LinkPreviewAssetUploadRequestStrategy : AbstractRequestStrategy, ZMContextChangeTrackerSource {
-    
     let requestFactory = AssetRequestFactory()
-    
+
     /// Processors
-    fileprivate let linkPreviewPreprocessor : LinkPreviewPreprocessor
-    fileprivate let previewImagePreprocessor : ZMImagePreprocessingTracker // TODO replace with AssetPreprocessor
-    
+    fileprivate let linkPreviewPreprocessor: LinkPreviewPreprocessor
+    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO replace with AssetPreprocessor
+
     /// Upstream sync
-    fileprivate var assetUpstreamSync : ZMUpstreamModifiedObjectSync!
-    
+    fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
+
     @available(*, unavailable)
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
-    
+
     public init(managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, linkPreviewPreprocessor: LinkPreviewPreprocessor?, previewImagePreprocessor: ZMImagePreprocessingTracker?) {
         if nil == LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() {
             LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector())
         }
         self.linkPreviewPreprocessor = linkPreviewPreprocessor ?? LinkPreviewPreprocessor(linkPreviewDetector: LinkPreviewDetectorHelper.test_debug_linkPreviewDetector()!, managedObjectContext: managedObjectContext)
         self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker.createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
-        
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.assetUpstreamSync = ZMUpstreamModifiedObjectSync(
@@ -93,53 +91,53 @@ public final class LinkPreviewAssetUploadRequestStrategy : AbstractRequestStrate
             managedObjectContext: managedObjectContext)
     }
 
-    var predicateForAssetUpload : NSPredicate {
+    var predicateForAssetUpload: NSPredicate {
         return NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.processed.rawValue)
     }
-    
+
     var filterForAssetUpload: NSPredicate {
         return NSPredicate { [unowned self] object, _ in
             guard let message = object as? ZMClientMessage else { return false }
             return nil != self.managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true)
         }
     }
-    
-    public var contextChangeTrackers : [ZMContextChangeTracker] {
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
     }
-    
+
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return self.assetUpstreamSync.nextRequest()
     }
 }
 
-extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
+extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMClientMessage else { return nil }
         guard keys.contains(ZMClientMessage.linkPreviewStateKey) else { return nil }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
         guard let imageData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true) else { return nil }
-        
+
         return ZMUpstreamRequest(keys: [ZMClientMessage.linkPreviewStateKey], transportRequest: requestFactory.upstreamRequestForAsset(withData: imageData, retention: retention))
     }
-    
+
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
         return nil
     }
-    
+
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
         return false
     }
-    
+
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
     }
-    
+
     public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]?, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
         guard let message = managedObject as? ZMClientMessage else { return false }
         guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
         guard let payload = response.payload?.asDictionary(), let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload") }
-        
+
         if
             var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
             let messageText = message.textMessageData?.messageText,
@@ -173,9 +171,9 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
             return false
         }
     }
-    
+
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
         // nop
     }
-    
+
 }

@@ -18,33 +18,33 @@
 
 import Foundation
 
-public final class AssetRequestFactory : NSObject {
-    
-    public enum Retention : String {
+public final class AssetRequestFactory: NSObject {
+
+    public enum Retention: String {
         /// The asset will be automatically removed from the backend
         /// storage after a short-ish amount of time.
         case volatile = "volatile"
-        
+
         /// The asset will be automatically removed from the backend storage
         /// after a certain, long-ish amount of time.
         case expiring = "expiring"
-        
+
         /// The asset will never be removed from the backend storage unless the
         /// user requests the deletion explicitly. Used for profile pictures.
         case eternal = "eternal"
-        
+
         /// The same as eternal, however this is cost-optimized
         /// on the backend for infrequent access. Used for team conversations.
         case eternalInfrequentAccess = "eternal-infrequent_access"
     }
-    
+
     private enum Constant {
         static let path = "/assets/v3"
         static let md5 = "Content-MD5"
         static let accessLevel = "public"
         static let retention = "retention"
         static let boundary = "frontier"
-        
+
         enum ContentType {
             static let json = "application/json"
             static let octetStream = "application/octet-stream"
@@ -64,13 +64,13 @@ public final class AssetRequestFactory : NSObject {
         return ZMTransportRequest(path: Constant.path, method: .methodPOST, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil)
     }
 
-    func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention : Retention) throws -> Data {
+    func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {
         let fileDataHeader = [Constant.md5: (data as NSData).zmMD5Digest().base64String()]
         let metaData = try JSONSerialization.data(withJSONObject: [Constant.accessLevel: shareable, Constant.retention: retention.rawValue], options: [])
 
         return NSData.multipartData(withItems: [
             ZMMultipartBodyItem(data: metaData, contentType: Constant.ContentType.json, headers: nil),
-            ZMMultipartBodyItem(data: data, contentType: Constant.ContentType.octetStream, headers: fileDataHeader),
+            ZMMultipartBodyItem(data: data, contentType: Constant.ContentType.octetStream, headers: fileDataHeader)
             ], boundary: Constant.boundary)
     }
 
@@ -78,7 +78,7 @@ public final class AssetRequestFactory : NSObject {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
         return moc.zm_fileAssetCache.storeRequestData(message, data: multipartData)
     }
-    
+
 }
 
 public extension AssetRequestFactory.Retention {
@@ -95,7 +95,7 @@ extension ZMConversation {
     var containsTeamUser: Bool {
         return localParticipants.any { $0.hasTeam }
     }
-    
+
     var hasTeam: Bool {
         return nil != team
     }
