@@ -50,6 +50,7 @@ public protocol SelfLegalHoldSubject {
  * Describes the status of legal hold for the user.
  */
 
+@frozen
 public enum UserLegalHoldStatus: Equatable {
     /// Legal hold is enabled for the user.
     case enabled
