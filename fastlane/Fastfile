@@ -278,8 +278,7 @@ platform :ios do
         
         sh "echo SHA of IPA is:"
         sh "pwd"
-        sh "ls"
-        sh "shasum -a 256 ./#{build.artifact_path(with_filename: true)}.ipa || true"
+        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
 
         appcenter_upload(
           api_token: ENV["APPCENTER_API_TOKEN"],
