@@ -9,4 +9,4 @@ jobs:
   call-workflow:
     uses: wireapp/wire-ios-shared-resources/.github/workflows/createBumpPR.yml@master
     secrets:
-      token: ${{ secrets.DISPATCH_SECRET }}
+      envPAT: ${{ secrets.DISPATCH_SECRET }}
