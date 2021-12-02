@@ -15,7 +15,7 @@ jobs:
         if: ${{ !github.event.issue.pull_request }}
         run: exit 1
 
-- name: guard for magic spell
+      - name: guard for magic spell
         if: ${{ github.event.comment.body != '@zenkins review' }}
         run: exit 1
 
