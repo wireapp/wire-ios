@@ -16,4 +16,6 @@ jobs:
 
       - name: Review bump components PR
         run: |
+          git config --global user.email "iosx@wire.com"
+          git config --global user.name "zenkins"
           gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
