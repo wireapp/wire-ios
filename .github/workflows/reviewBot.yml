@@ -14,9 +14,8 @@ jobs:
         if: ${{ github.event.comment.body != '@zenkins review' }}
         run: exit 1
 
-      - name: Review bump components PR
-        run: |
-          echo ${{ secrets.DISPATCH_TOKEN }} > .githubtoken
-          gh auth login --with-token < .githubtoken
-          gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
-          rm .githubtoken
+      - name: Approve Pull Request
+        uses: juliangruber/approve-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.issue.number }}
