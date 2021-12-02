@@ -11,14 +11,18 @@ jobs:
       ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'sb88k' 'agisilaos')
 
     steps:
-      - name: guard for magic spell
+      - name: guard for pull requests
+        if: ${{ !github.event.issue.pull_request }}
+        run: exit 1
+
+- name: guard for magic spell
         if: ${{ github.event.comment.body != '@zenkins review' }}
         run: exit 1
 
       - name: guard for title
-        if: ${{ !(startsWith(github.event.pull_request.title, 'chore') && endsWith(github.event.pull_request.title, 'bump components SQPIT-776')) }}
+        if: ${{ !(startsWith(github.event.issue.title, 'chore') && endsWith(github.event.issue.title, 'bump components SQPIT-776')) }}
         run: |
-          echo "title not match. Exit. Title is ${{ github.event.pull_request.title }}"
+          echo "title not match. Exit. Title is ${{ github.event.issue.title }}"
           exit 1
 
       - name: guard for admins
