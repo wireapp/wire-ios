@@ -16,7 +16,7 @@ jobs:
         run: exit 1
 
       - name: guard for title
-        if: ${{ github.event.pull_request.title != 'chore: bump components SQPIT-776' }}
+        if: ${{ startsWith(github.event.pull_request.title, 'chore') && endsWith(github.event.pull_request.title, ' bump components SQPIT-776')}}
         run: |
           echo "title not match. Exit"
           exit 1
