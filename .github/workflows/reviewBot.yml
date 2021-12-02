@@ -7,7 +7,7 @@ jobs:
   review:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
 
     steps:
       - name: guard for magic spell
@@ -16,5 +16,4 @@ jobs:
 
       - name: Review bump components PR
         run: |
-          gh auth login --with-token ${{ secrets.DISPATCH_TOKEN }}
           gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
