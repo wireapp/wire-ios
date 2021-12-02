@@ -1,0 +1,46 @@
+name: review PR by Zenkins v0.1.1
+
+on: 
+  issue_comment:
+    types: [created]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    env:
+      ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'sb88k' 'agisilaos')
+
+    steps:
+      - name: guard for magic spell
+        if: ${{ github.event.comment.body != '@zenkins review' }}
+        run: exit 1
+
+      - name: guard for title
+        if: ${{ github.event.pull_request.title != 'chore: bump components SQPIT-776' }}
+        run: |
+          echo "title not match. Exit"
+          exit 1
+
+      - name: guard for admins
+        run: |
+          admins=${{ env.ADMINS }}
+          adminFound=0
+          for admin in ${admins[*]}
+          do
+            if [[ "$admin" == "${{ github.actor }}" ]]; then
+              echo ${{ github.actor }} is allowed for releasing
+              adminFound=1
+            fi
+          done
+          if [ $adminFound = 0 ]; then
+            echo ${{ github.actor }} is not allowed for releasing
+            exit 1
+          fi
+
+      - name: Review bump components PR
+        run: |
+          # auth with zenkins to prevent self approval not allowed issue
+          echo ${{ secrets.ZENKINS_TOKEN }} > .githubtoken
+          gh auth login --with-token < .githubtoken
+          gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
+          rm .githubtoken
