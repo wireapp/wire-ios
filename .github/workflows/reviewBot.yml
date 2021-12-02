@@ -1,4 +1,4 @@
-name: review PR by Zenkins
+name: review PR by Zenkins v0.1
 
 on: 
   issue_comment:
@@ -16,5 +16,5 @@ jobs:
 
       - name: Review bump components PR
         run: |
-          gh auth login --with-token < echo ${{ secrets.DISPATCH_TOKEN }}
+          gh auth login --with-token < `echo ${{ secrets.DISPATCH_TOKEN }}`
           gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
