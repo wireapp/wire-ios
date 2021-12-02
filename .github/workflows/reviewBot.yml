@@ -17,5 +17,5 @@ jobs:
       - name: Approve Pull Request
         uses: juliangruber/approve-pull-request-action@v1
         with:
-          github-token: ${{ secrets.DISPATCH_TOKEN }}
+          github-token: ${{ secrets.ZENKINS_TOKEN }}
           number: ${{ github.event.issue.number }}
