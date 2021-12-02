@@ -6,8 +6,6 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
-#     env:
-#       GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
 
     steps:
       - name: guard for magic spell
@@ -16,6 +14,7 @@ jobs:
 
       - name: Review bump components PR
         run: |
+          # auth with zenkins to prevent self approval not allowed issue
           echo ${{ secrets.ZENKINS_TOKEN }} > .githubtoken
           gh auth login --with-token < .githubtoken
           gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
