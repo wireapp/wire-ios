@@ -16,7 +16,7 @@ jobs:
         run: exit 1
 
       - name: guard for title
-        if: ${{ startsWith(github.event.pull_request.title, 'chore') && endsWith(github.event.pull_request.title, ' bump components SQPIT-776')}}
+        if: ${{ !(startsWith(github.event.pull_request.title, 'chore') && endsWith(github.event.pull_request.title, ' bump components SQPIT-776')) }}
         run: |
           echo "title not match. Exit"
           exit 1
@@ -42,5 +42,5 @@ jobs:
           # auth with zenkins to prevent self approval not allowed issue
           echo ${{ secrets.ZENKINS_TOKEN }} > .githubtoken
           gh auth login --with-token < .githubtoken
-          gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
+          gh pr review ${{ github.event.issue.number }} --approve -R wire-ios-request-strategy
           rm .githubtoken
