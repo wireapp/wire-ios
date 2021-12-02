@@ -22,6 +22,7 @@ jobs:
       - name: guard for title
         if: ${{ !(startsWith(github.event.issue.title, 'chore') && endsWith(github.event.issue.title, 'bump components SQPIT-776')) }}
         run: |
+          echo "github: ${{ github }}"
           echo "title not match. Exit. Title is ${{ github.event.issue.title }}"
           exit 1
 
