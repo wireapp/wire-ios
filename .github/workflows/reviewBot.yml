@@ -47,5 +47,5 @@ jobs:
           # auth with zenkins to prevent self approval not allowed issue
           echo ${{ secrets.ZENKINS_TOKEN }} > .githubtoken
           gh auth login --with-token < .githubtoken
-          gh pr review ${{ github.event.issue.number }} --approve -R wire-ios-request-strategy
+          gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-request-strategy
           rm .githubtoken
