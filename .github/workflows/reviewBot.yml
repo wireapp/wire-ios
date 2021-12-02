@@ -16,9 +16,9 @@ jobs:
         run: exit 1
 
       - name: guard for title
-        if: ${{ !(startsWith(github.event.pull_request.title, 'chore') && endsWith(github.event.pull_request.title, ' bump components SQPIT-776')) }}
+        if: ${{ !(startsWith(github.event.pull_request.title, 'chore') && endsWith(github.event.pull_request.title, 'bump components SQPIT-776')) }}
         run: |
-          echo "title not match. Exit"
+          echo "title not match. Exit. Title is ${{ github.event.pull_request.title }}"
           exit 1
 
       - name: guard for admins
