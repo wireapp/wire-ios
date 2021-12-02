@@ -16,5 +16,7 @@ jobs:
 
       - name: Review bump components PR
         run: |
-          gh auth login --with-token < `echo ${{ secrets.DISPATCH_TOKEN }}`
+          echo "$GITHUB_TOKEN" > .githubtoken
+          gh auth login --with-token < .githubtoken
           gh pr review ${{ github.event.issue.number }} --approve -R wireapp/wire-ios-mocktransport
+          rm .githubtoken
