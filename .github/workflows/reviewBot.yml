@@ -46,7 +46,7 @@ jobs:
         id: filesExporter
         uses: umani/changed-files@v3.3.0
         with:
-          repo-token: ${{ secrets.ZENKINS_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           pattern: '^Cartfile*$'
 
       - name: Changed Files Exporter
