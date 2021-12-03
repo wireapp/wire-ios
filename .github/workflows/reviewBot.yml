@@ -1,4 +1,4 @@
-name: review PR by Zenkins v0.1.2
+name: review PR by Zenkins v0.1.3
 
 on: 
   issue_comment:
@@ -52,6 +52,6 @@ jobs:
           # TODO: guard for Cartfile is not empty
           echo ${{ secrets.ZENKINS_TOKEN }} > .githubtoken
           gh auth login --with-token < .githubtoken
-          gh pr review ${{ github.event.pull_request.number }} --approve -R wireapp/wire-ios-share-engine
+          gh pr review ${{ github.event.pull_request.number }} --approve -R wireapp/${{ github.event.repository.name }}
 
           rm .githubtoken
