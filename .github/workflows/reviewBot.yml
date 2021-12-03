@@ -42,15 +42,16 @@ jobs:
             exit 1
           fi
           
-      - id: files
-        uses: jitterbit/get-changed-files@v1
-      - run: |
-          for changed_file in ${{ steps.files.outputs.all }}; do
-            echo "changed file: ${changed_file}."
-            if [ ${changed_file} == 'Cartfile ' ]; then
-              echo 'file matched'
-            fi
-          done
+      - name: Changed Files Exporter
+        id: filesExporter
+        uses: umani/changed-files@v3.3.0
+        with:
+          repo-token: ${{ secrets.ZENKINS_TOKEN }}
+          pattern: '^Cartfile*$'
+
+      - name: Changed Files Exporter
+        run: | 
+          echo ${{ steps.filesExporter.outputs.files_updated }}
     
       - name: Review bump components PR
         run: |
