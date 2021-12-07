@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 import WireProtos
 
 @testable import WireDataModel
 // swiftlint:disable line_length
 class ProtosTests: XCTestCase {
-    
+
     func testTextMessageEncodingPerformance() {
         measure { () -> Void in
             for _ in 0..<1000 {
@@ -33,20 +32,20 @@ class ProtosTests: XCTestCase {
             }
         }
     }
-    
+
     func testTextMessageDecodingPerformance() {
         let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
         var message = GenericMessage(content: text, nonce: UUID.create())
-        
+
         measure { () -> Void in
             for _ in 0..<1000 {
                 try? message.merge(serializedData: message.serializedData())
             }
         }
     }
-    
+
     func testThatItCreatesGenericMessageForUnencryptedImage() {
-        //given
+        // given
         let nonce = UUID()
         let format = ZMImageFormat.preview
 
@@ -60,7 +59,7 @@ class ProtosTests: XCTestCase {
                        encryptionKeys: nil,
                        format: format), nonce: nonce)
 
-        //then
+        // then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
         XCTAssertEqual(message.image.height, Int32(processedProperties.size.height))
         XCTAssertEqual(message.image.originalWidth, Int32(mediumProperties.size.width))
@@ -75,8 +74,8 @@ class ProtosTests: XCTestCase {
     }
 
     func testThatItCreatesGenericMessageForEncryptedImage() {
-        //given
-        let nonce = UUID();
+        // given
+        let nonce = UUID()
         let otrKey = "OTR KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let macKey = "MAC KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let mac = "MAC".data(using: String.Encoding.utf8, allowLossyConversion: true)!
@@ -93,7 +92,7 @@ class ProtosTests: XCTestCase {
                        processedProperties: processedProperties,
                        encryptionKeys: keys, format: format), nonce: nonce)
 
-        //then
+        // then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
         XCTAssertEqual(message.image.height, Int32(processedProperties.size.height))
         XCTAssertEqual(message.image.originalWidth, Int32(mediumProperties.size.width))
@@ -106,7 +105,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.image.mac, Data())
         XCTAssertEqual(message.image.macKey, Data())
     }
-    
+
     func testThatItCanCreateKnock() {
         let nonce = UUID()
         let message = GenericMessage(content: Knock(), nonce: nonce)
@@ -116,7 +115,6 @@ class ProtosTests: XCTestCase {
         XCTAssertFalse(message.knock.hotKnock)
         XCTAssertEqual(message.messageID, nonce.uuidString.lowercased())
     }
-
 
     func testThatItCanCreateLastRead() {
         let conversationID = UUID.create()
@@ -132,8 +130,7 @@ class ProtosTests: XCTestCase {
         let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp/1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
-    
-    
+
     func testThatItCanCreateCleared() {
         let conversationID = UUID.create()
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
@@ -148,7 +145,7 @@ class ProtosTests: XCTestCase {
         let storedDate = NSDate(timeIntervalSince1970: Double(message.cleared.clearedTimestamp/1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
-    
+
     func testThatItCanCreateSessionReset() {
         let nonce = UUID.create()
         let message = GenericMessage(clientAction: .resetSession, nonce: nonce)
@@ -159,19 +156,18 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.messageID, nonce.transportString())
 
     }
-    
+
     func testThatItCanBuildAnEphemeralMessage() {
         let nonce = UUID.create()
         let message = GenericMessage(content: Knock(), nonce: nonce, expiresAfter: .tenSeconds)
-        
+
         XCTAssertNotNil(message)
         XCTAssertEqual(message.messageID, nonce.transportString())
         guard case .ephemeral? = message.content else {
             return XCTFail()
         }
         XCTAssertTrue(message.ephemeral.hasKnock)
-        XCTAssertEqual(message.ephemeral.expireAfterMillis, 10000);
+        XCTAssertEqual(message.ephemeral.expireAfterMillis, 10000)
     }
-    
-}
 
+}

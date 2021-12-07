@@ -21,9 +21,9 @@ import XCTest
 @testable import WireDataModel
 
 class SelfUserParticipantMigrationTests: DiskDatabaseTest {
-    
+
     func testMigrationIsSelfAnActiveMemberToTheParticipantRoles() {
-        
+
         // Given
         let oldKey = "isSelfAnActiveMember"
         let conversation = createConversation()
@@ -31,17 +31,17 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         conversation.setPrimitiveValue(NSNumber(value: true), forKey: oldKey)
         conversation.didAccessValue(forKey: oldKey)
         self.moc.saveOrRollback()
-        
+
         // When
         WireDataModel.ZMConversation.migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
-        
+
         // Then
         let hasSelfUser = conversation.participantRoles.contains(where: { (role) -> Bool in
             role.user?.isSelfUser == true
         })
         XCTAssertTrue(hasSelfUser)
     }
-    
+
     func testMigrationDoesntCreateDuplicateTeamRoles() {
         // Given
         let oldKey = "isSelfAnActiveMember"
@@ -50,7 +50,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         _ = createMembership(user: selfUser, team: team)
         let conversation1 = createConversation()
         let conversation2 = createConversation()
-        
+
         [conversation1, conversation2].forEach { conversation in
             conversation.team = team
             conversation.willAccessValue(forKey: oldKey)
@@ -59,24 +59,24 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         }
 
         self.moc.saveOrRollback()
-        
+
         // When
         WireDataModel.ZMConversation.migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
-        
+
         // Then
         XCTAssertEqual(team.roles.count, 1)
     }
-    
+
     func testAddUserFromTheConnectionToTheParticipantRoles() {
         // Given
         let conversation = createConversation()
         let newUser = ZMUser.insertNewObject(in: moc)
         newUser.remoteIdentifier = UUID.create()
-        let _ = createConnection(to: newUser, conversation: conversation)
-        
+        _ = createConnection(to: newUser, conversation: conversation)
+
         // When
         WireDataModel.ZMConversation.addUserFromTheConnectionToTheParticipantRoles(in: moc)
-        
+
         // Then
         XCTAssertEqual(conversation.participantRoles.count, 1)
     }

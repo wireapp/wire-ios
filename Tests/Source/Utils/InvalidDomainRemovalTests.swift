@@ -29,7 +29,7 @@ class InvalidDomainRemovalTests: DiskDatabaseTest {
             let userUUID = UUID()
 
             ZMUser.selfUser(in: context).domain = selfDomain
-            
+
             let user1 = ZMUser.insertNewObject(in: context)
             user1.remoteIdentifier = userUUID
             user1.domain = selfDomain

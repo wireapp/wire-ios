@@ -16,50 +16,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 import WireTesting
 
 @testable import WireDataModel
 
 class ProtobufUtilitiesTests: BaseZMClientMessageTests {
-    
+
     func testThatItSetsAndReadsTheLoudness() {
-        
+
         // given
-        let loudness : [Float] = [0.8, 0.3, 1.0, 0.0, 0.001]
+        let loudness: [Float] = [0.8, 0.3, 1.0, 0.0, 0.001]
         let sut = WireProtos.Asset.Original(withSize: 200, mimeType: "audio/m4a", name: "foo.m4a", audioDurationInMillis: 1000, normalizedLoudness: loudness)
 
         // when
         let extractedLoudness = sut.audio.normalizedLoudness
-        
+
         // then
         XCTAssertTrue(sut.audio.hasNormalizedLoudness)
         XCTAssertEqual(extractedLoudness.count, loudness.count)
-        XCTAssertEqual(loudness.map { Float(UInt8(roundf($0*255)))/255.0 } , sut.normalizedLoudnessLevels)
+        XCTAssertEqual(loudness.map { Float(UInt8(roundf($0*255)))/255.0 }, sut.normalizedLoudnessLevels)
     }
-    
+
     func testThatItDoesNotReturnTheLoudnessIfEmpty() {
-        
+
         // given
         let sut = WireProtos.Asset.Original(withSize: 234, mimeType: "foo/bar", name: "boo.bar")
-        
+
         // then
         XCTAssertEqual(sut.normalizedLoudnessLevels, [])
     }
-    
+
     func testThatItUpdatesTheLinkPreviewWithOTRKeyAndSha() {
         // given
         var preview = createLinkPreview()
         XCTAssertFalse(preview.article.image.hasUploaded)
         XCTAssertFalse(preview.image.hasUploaded)
-        
+
         // when
         let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let metadata = WireProtos.Asset.ImageMetaData(width: 42, height: 12)
         let original = WireProtos.Asset.Original(withSize: 256, mimeType: "image/jpeg", name: nil, imageMetaData: metadata)
         preview.update(withOtrKey: otrKey, sha256: sha256, original: original)
-        
+
         // then
         XCTAssertTrue(preview.image.hasUploaded)
         XCTAssertEqual(preview.image.uploaded.otrKey, otrKey)
@@ -70,18 +69,18 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(preview.image.original.image.width, 42)
         XCTAssertFalse(preview.image.original.hasName)
     }
-    
+
     func testThatItUpdatesTheLinkPreviewWithAssetIDAndToken() {
         // given
         var preview = createLinkPreview()
         preview.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
         XCTAssertTrue(preview.image.hasUploaded)
         XCTAssertFalse(preview.image.uploaded.hasAssetID)
-        
+
         // when
         let (assetKey, token) = ("key", "token")
         preview.update(withAssetKey: assetKey, assetToken: token)
-        
+
         // then
         XCTAssertTrue(preview.image.uploaded.hasAssetID)
         XCTAssertEqual(preview.image.uploaded.assetID, assetKey)
@@ -115,7 +114,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         sut.updateUploaded(assetId: assetId, token: token)
 
         // then
-        if case .ephemeral? = sut.content  {
+        if case .ephemeral? = sut.content {
             return XCTFail()
         }
         XCTAssert(sut.hasAsset)
@@ -165,7 +164,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         sut.updatePreview(assetId: assetId, token: token)
 
         // then
-        if case .ephemeral? = sut.content  {
+        if case .ephemeral? = sut.content {
             return XCTFail()
         }
         XCTAssert(sut.hasAsset)
@@ -184,7 +183,6 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         mimeType: "image/jpg",
         remoteData: WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
         imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420))
-
 
         var sut = GenericMessage(
             content: WireProtos.Asset(original: nil, preview: previewAsset),
@@ -205,9 +203,9 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.otrKey, otr)
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.sha256, sha)
     }
-    
-    // MARK:- Helper
-    
+
+    // MARK: - Helper
+
     func createLinkPreview() -> LinkPreview {
         return LinkPreview.with {
             $0.url = "www.example.com/original"
@@ -219,37 +217,37 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     }
 }
 
-// MARK:-  Using Swift protobuf API, Update assets
+// MARK: - Using Swift protobuf API, Update assets
 
 extension ProtobufUtilitiesTests {
-    
+
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken_SwiftProtobufAPI() {
         // given
         let (assetId, token) = ("id", "token")
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
         var sut = GenericMessage(content: asset, nonce: UUID.create())
-        
+
         // when
         XCTAssertNotEqual(sut.asset.uploaded.assetID, assetId)
         XCTAssertNotEqual(sut.asset.uploaded.assetToken, token)
         sut.updateUploaded(assetId: assetId, token: token)
-        
+
         // then
         XCTAssertEqual(sut.asset.uploaded.assetID, assetId)
         XCTAssertEqual(sut.asset.uploaded.assetToken, token)
     }
-    
+
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken_Ephemeral_SwiftProtobufAP() {
         // given
         let (assetId, token) = ("id", "token")
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
         var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         XCTAssertNotEqual(sut.ephemeral.asset.uploaded.assetID, assetId)
         XCTAssertNotEqual(sut.ephemeral.asset.uploaded.assetToken, token)
         sut.updateUploaded(assetId: assetId, token: token)
-        
+
         // then
         XCTAssertEqual(sut.ephemeral.asset.uploaded.assetID, assetId)
         XCTAssertEqual(sut.ephemeral.asset.uploaded.assetToken, token)
@@ -270,22 +268,22 @@ extension ProtobufUtilitiesTests {
         let asset = WireProtos.Asset.with {
             $0.preview = previewAsset
         }
-        
+
         let (assetId, token) = ("id", "token")
         var sut = GenericMessage(content: asset, nonce: UUID.create())
-    
+
         // when
         XCTAssertNotEqual(sut.asset.preview.remote.assetID, assetId)
         XCTAssertNotEqual(sut.asset.preview.remote.assetToken, token)
         sut.updatePreview(assetId: assetId, token: token)
-    
+
         // then
         XCTAssertEqual(sut.asset.preview.remote.assetID, assetId)
         XCTAssertEqual(sut.asset.preview.remote.assetToken, token)
         XCTAssertEqual(sut.asset.preview.remote.otrKey, otr)
         XCTAssertEqual(sut.asset.preview.remote.sha256, sha)
     }
-    
+
     func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_Ephemeral_SwiftProtobufAP() {
         // given
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
@@ -301,15 +299,15 @@ extension ProtobufUtilitiesTests {
         let asset = WireProtos.Asset.with {
             $0.preview = previewAsset
         }
-        
+
         let (assetId, token) = ("id", "token")
         var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         XCTAssertNotEqual(sut.ephemeral.asset.preview.remote.assetID, assetId)
         XCTAssertNotEqual(sut.ephemeral.asset.preview.remote.assetToken, token)
         sut.updatePreview(assetId: assetId, token: token)
-        
+
         // then
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.assetID, assetId)
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.assetToken, token)

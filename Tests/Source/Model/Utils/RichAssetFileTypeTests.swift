@@ -39,13 +39,13 @@ class RichAssetFileTypeTests: XCTestCase {
         assertFileType("video/webm", nil)
         assertFileType("video/mpeg", nil) // mpeg files are not supported on iPhone
     }
-    
+
     func testThatItParsesAudioMimeTypeCorrectly_Positive() {
         assertFileType("audio/mp4", .audio)
         assertFileType("audio/mpeg", .audio)
         assertFileType("audio/x-m4a", .audio)
     }
-    
+
     func testThatItParsesAudioMimeTypeCorrectly_Negative() {
         assertFileType("foo", nil)
         assertFileType("", nil)

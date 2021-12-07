@@ -26,7 +26,7 @@ extension ZMBaseManagedObjectTest {
         FileManager.default.urls(for: .documentDirectory,
                                  in: .userDomainMask).first!
     }
-    
+
     func createClientTextMessage() -> ZMClientMessage? {
         return createClientTextMessage(withText: self.name)
     }

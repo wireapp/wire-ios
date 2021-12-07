@@ -28,7 +28,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         let otherUser = self.createUser()
         _ = self.createClient(user: selfUser)
         let otherClient = self.createClient(user: otherUser)
-    
+
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
         connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
@@ -38,7 +38,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         let systemMessage: ZMSystemMessage = (connection.conversation.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // when
         otherClient.resolveDecryptionFailedSystemMessages()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -46,14 +46,14 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         // then
         XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageType.decryptionFailedResolved)
     }
-    
+
     func testThatDecryptionFailedSystemMessageIsNotUpdated_WhenOfTypeIdentityChanged() throws {
         // given
         let selfUser = ZMUser.selfUser(in: moc)
         let otherUser = self.createUser()
         _ = self.createClient(user: selfUser)
         let otherClient = self.createClient(user: otherUser)
-        
+
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
         connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
@@ -63,24 +63,24 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         let systemMessage: ZMSystemMessage = (connection.conversation.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // when
         otherClient.resolveDecryptionFailedSystemMessages()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // then
         XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged)
     }
-    
+
     func testThatDecryptionFailedSystemMessageIsNotUpdated_WhenUnrelatedSessionIsReset() throws {
         // given
         let selfUser = ZMUser.selfUser(in: moc)
         let otherUser = self.createUser()
-        
+
         _ = self.createClient(user: selfUser)
         let otherUserClient1 = self.createClient(user: otherUser)
         let otherUserClient2 = self.createClient(user: otherUser)
-    
+
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
         connection.conversation.appendDecryptionFailedSystemMessage(at: Date(),
@@ -90,7 +90,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         let systemMessage: ZMSystemMessage = (connection.conversation.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // when
         otherUserClient2.resolveDecryptionFailedSystemMessages()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

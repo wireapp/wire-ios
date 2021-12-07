@@ -19,7 +19,7 @@
 import Foundation
 
 class ZMSearchUserTests_TeamUser: ModelObjectsTests {
-    
+
     func testThatSearchUserIsRecognizedAsTeamMember_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
@@ -30,12 +30,12 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
                                       accentColor: .brightOrange,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: team.remoteIdentifier)
-        
+
         // then
         XCTAssertTrue(searchUser.isTeamMember)
         XCTAssertTrue(searchUser.isConnected)
     }
-    
+
     func testThatSearchUserIsNotRecognizedAsTeamMember_WhenNotBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
@@ -46,12 +46,12 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
                                       accentColor: .brightOrange,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: UUID())
-        
+
         // then
         XCTAssertFalse(searchUser.isTeamMember)
         XCTAssertFalse(searchUser.isConnected)
     }
-    
+
     func testThatOneToOneConversationIsCreated_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
@@ -63,11 +63,11 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: team.remoteIdentifier)
         uiMOC.saveOrRollback()
-        
+
         // then
         XCTAssertNotNil(searchUser.oneToOneConversation)
     }
-    
+
     func testThatOneToOneConversationIsNotCreated_WhenNotBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
@@ -79,11 +79,11 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: UUID())
         uiMOC.saveOrRollback()
-        
+
         // then
         XCTAssertNil(searchUser.oneToOneConversation)
     }
-    
+
     func testThatSearchUserCanBeUpdatedTeamMembershipDetails() {
         // given
         let creator = UUID()
@@ -95,13 +95,13 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
                                       accentColor: .brightOrange,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: team.remoteIdentifier)
-        
+
         // when
         searchUser.updateWithTeamMembership(permissions: .partner, createdBy: creator)
-        
+
         // then
         XCTAssertEqual(searchUser.teamRole, .partner)
         XCTAssertEqual(searchUser.teamCreatedBy, creator)
     }
-        
+
 }

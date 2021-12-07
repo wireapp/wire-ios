@@ -21,79 +21,79 @@ import XCTest
 @testable import WireDataModel
 
 // MARK: - Framework comparison
-class FrameworkVersionTests: XCTestCase  {
-    
+class FrameworkVersionTests: XCTestCase {
+
     func testThatCorrectVersionsAreParsed() {
-        
+
         // GIVEN
         let version = FrameworkVersion("13.5.3")
-        
+
         // THEN
         XCTAssertEqual(version?.major, 13)
         XCTAssertEqual(version?.minor, 5)
         XCTAssertEqual(version?.patch, 3)
     }
-    
+
     func testThatCorrectVersionsAreParsedWithZero() {
-        
+
         // GIVEN
         let version = FrameworkVersion("0.5.0")
-        
+
         // THEN
         XCTAssertEqual(version?.major, 0)
         XCTAssertEqual(version?.minor, 5)
         XCTAssertEqual(version?.patch, 0)
     }
-    
+
     func testThatVersionsWithNoPatchAreParsed() {
-        
+
         // GIVEN
         let version = FrameworkVersion("2.5")
-        
+
         // THEN
         XCTAssertEqual(version?.major, 2)
         XCTAssertEqual(version?.minor, 5)
         XCTAssertEqual(version?.patch, 0)
     }
-    
+
     func testThatVersionsWithNoMinorAreParsed() {
-        
+
         // GIVEN
         let version = FrameworkVersion("2")
-        
+
         // THEN
         XCTAssertEqual(version?.major, 2)
         XCTAssertEqual(version?.minor, 0)
         XCTAssertEqual(version?.patch, 0)
     }
-    
+
     func testThatEmptyVersionIsNotParsed() {
-        
+
         // GIVEN
         let version = FrameworkVersion("")
-        
+
         // THEN
         XCTAssertNil(version)
     }
-    
+
     func testThatVersionWithTooManyIsNotParsed() {
-        
+
         // GIVEN
         let version = FrameworkVersion("3.4.5.2")
-        
+
         // THEN
         XCTAssertNil(version)
     }
-    
+
     func testThatVersionWithTextIsNotParsed() {
-        
+
         // GIVEN
         let version = FrameworkVersion("3.4.0-alpha")
-        
+
         // THEN
         XCTAssertNil(version)
     }
-    
+
     func testEquality() {
         XCTAssertEqual(FrameworkVersion("0.2.3"), FrameworkVersion("0.2.3"))
         XCTAssertEqual(FrameworkVersion("0.2.0"), FrameworkVersion("0.2"))
@@ -102,7 +102,7 @@ class FrameworkVersionTests: XCTestCase  {
         XCTAssertNotEqual(FrameworkVersion("0.2.3"), FrameworkVersion("0.3.3"))
         XCTAssertNotEqual(FrameworkVersion("0.2.3"), FrameworkVersion("0.2.34"))
     }
-    
+
     func testComparison() {
         XCTAssertGreaterThan(FrameworkVersion("3.2.1")!, FrameworkVersion("3.2.0")!)
         XCTAssertLessThan(FrameworkVersion("3.2.0")!, FrameworkVersion("3.2.1")!)
@@ -117,27 +117,27 @@ class FrameworkVersionTests: XCTestCase  {
 
 // MARK: - Test patches
 class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
-    
+
     func testThatItApplyPatchesWhenNoVersion() {
-        
+
         // GIVEN
         var patchApplied = false
         let patch = PersistedDataPatch(version: "9999.32.32") { (moc) in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
-        
+
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
             PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
-        
+
         // THEN
         XCTAssertTrue(patchApplied)
     }
-    
+
     func testThatItApplyPatchesWhenPreviousVersionIsLesser() {
-        
+
         // GIVEN
         var patchApplied = false
         let patch = PersistedDataPatch(version: "10000000.32.32") { (moc) in
@@ -148,21 +148,21 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait {
             PersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
-        
+
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
             PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
-        
+
         // THEN
         XCTAssertTrue(patchApplied)
     }
-    
+
     func testThatItDoesNotApplyPatchesWhenPreviousVersionIsGreater() {
-        
+
         // GIVEN
         var patchApplied = false
-        let patch = PersistedDataPatch(version: "0.0.1") { (moc) in
+        let patch = PersistedDataPatch(version: "0.0.1") { (_) in
             XCTFail()
             patchApplied = true
         }
@@ -170,16 +170,16 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait {
             PersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
-        
+
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
             PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
-        
+
         // THEN
         XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
     }
-    
+
     func testThatItMigratesClientsSessionIdentifiers() {
 
         syncMOC.performGroupedBlockAndWait {
@@ -195,30 +195,30 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             let otrURL = selfClient.keysStore.cryptoboxDirectory
             XCTAssertTrue(selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey))
             self.syncMOC.saveOrRollback()
-            
+
             let sessionsURL = otrURL.appendingPathComponent("sessions")
             let oldSession = sessionsURL.appendingPathComponent(newClient.remoteIdentifier!)
             let newSession = sessionsURL.appendingPathComponent(newClient.sessionIdentifier!.rawValue)
 
             XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
             let previousData = try! Data(contentsOf: newSession)
-            
+
             // move to fake old session
             try! FileManager.default.moveItem(at: newSession, to: oldSession)
             XCTAssertFalse(FileManager.default.fileExists(atPath: newSession.path))
             XCTAssertTrue(FileManager.default.fileExists(atPath: oldSession.path))
-             
+
             // WHEN
             PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
-            
+
             // THEN
             let readData = try! Data(contentsOf: newSession)
-            XCTAssertEqual(readData, previousData);
+            XCTAssertEqual(readData, previousData)
             XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
             XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
         }
     }
-    
+
     func testThatItMigratesDegradedConversationsWithSecureWithIgnored() {
         // GIVEN
         syncMOC.performGroupedBlockAndWait {
@@ -231,9 +231,9 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             let secureWithIgnoredConversation = ZMConversation.insertNewObject(in: self.syncMOC)
             secureWithIgnoredConversation.securityLevel = .secureWithIgnored
             secureWithIgnoredConversation.conversationType = .oneOnOne
-            
+
             self.syncMOC.saveOrRollback()
-            
+
             // WHEN
             PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
             self.syncMOC.saveOrRollback()
