@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 class EncryptionKeysTests: XCTestCase {
-    
+
     var account: Account!
 
     override func setUpWithError() throws {
@@ -31,24 +31,24 @@ class EncryptionKeysTests: XCTestCase {
         try EncryptionKeys.deleteKeys(for: account)
         account = nil
     }
-    
+
     // @SF.Storage @TSFI.UserInterface
     func testThatEncryptionKeysThrowsIfKeysDontExist() {
         XCTAssertThrowsError(try EncryptionKeys(account: account))
     }
-    
+
     // @SF.Storage @TSFI.UserInterface
     func testThatPublicAccountKeyThrowsIfItDoesNotExist() throws {
         XCTAssertThrowsError(try EncryptionKeys.publicKey(for: account))
     }
-    
+
     func testThatPublicAccountKeyIsReturnedIfItExists() throws {
         // given
         _ = try EncryptionKeys.createKeys(for: account)
-        
+
         // when
         let publicKey = try EncryptionKeys.publicKey(for: account)
-        
+
         // then
         XCTAssertNotNil(publicKey)
     }
@@ -57,53 +57,53 @@ class EncryptionKeysTests: XCTestCase {
     func testThatEncryptionKeysAreSuccessfullyCreated() throws {
         // when
         let encryptionkeys = try EncryptionKeys.createKeys(for: account)
-        
+
         // then
         XCTAssertEqual(encryptionkeys.databaseKey._storage.count, 32)
     }
-    
+
     func testThatEncryptionKeysAreSuccessfullyFetched() throws {
         // given
         _ = try EncryptionKeys.createKeys(for: account)
-        
+
         // then
         let encryptionKeys = try EncryptionKeys(account: account)
-        
+
         // then
         XCTAssertEqual(encryptionKeys.databaseKey._storage.count, 32)
     }
-    
+
     // @SF.Storage @TSFI.UserInterface
     func testThatEncryptionKeysAreSuccessfullyDeleted() throws {
         // given
         _ = try EncryptionKeys.createKeys(for: account)
-        
+
         // when
         try EncryptionKeys.deleteKeys(for: account)
-        
+
         // then
         XCTAssertThrowsError(try EncryptionKeys(account: account))
     }
-    
+
     // @SF.Storage @TSFI.UserInterface
     func testThatAsymmetricKeysWorksWithExpectedAlgorithm() throws {
         // given
         let data = "Hello world".data(using: .utf8)!
         let encryptionkeys = try EncryptionKeys.createKeys(for: account)
-        
+
         // when
         let encryptedData = SecKeyCreateEncryptedData(encryptionkeys.publicKey,
                                                       .eciesEncryptionCofactorX963SHA256AESGCM,
                                                       data as CFData,
                                                       nil)!
-        
+
         let decryptedData = SecKeyCreateDecryptedData(encryptionkeys.privateKey,
                                                       .eciesEncryptionCofactorX963SHA256AESGCM,
                                                       encryptedData,
                                                       nil)!
-        
+
         // then
         XCTAssertEqual(decryptedData as Data, data)
     }
-    
+
 }

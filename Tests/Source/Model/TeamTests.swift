@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireTesting
 @testable import WireDataModel
 
@@ -77,14 +76,14 @@ final class TeamTests: ZMConversationTestsBase {
         XCTAssertTrue(guest.isGuest(in: conversation))
         XCTAssertFalse(guest.isTeamMember)
     }
-    
+
     func testThatItDoesNotReturnABotAsGuestOfATeam() throws {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-        
+
         // we add an actual team member as well
         createUserAndAddMember(to: team)
-        
+
         // when
         let guest = ZMUser.insertNewObject(in: uiMOC)
         let bot = ZMUser.insertNewObject(in: uiMOC)
@@ -92,7 +91,7 @@ final class TeamTests: ZMConversationTestsBase {
         bot.providerIdentifier = UUID.create().transportString()
         XCTAssert(bot.isServiceUser)
         guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [guest, bot], team: team) else { XCTFail(); return }
-        
+
         // then
         XCTAssert(guest.isGuest(in: conversation))
         XCTAssertFalse(bot.isGuest(in: conversation))
@@ -139,76 +138,76 @@ final class TeamTests: ZMConversationTestsBase {
         XCTAssertFalse(guest.isTeamMember)
         XCTAssertFalse(guest.isTeamMember)
     }
-    
+
     func testThatMembersMatchingQueryReturnsMembersSortedAlphabeticallyByName() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-        
+
         // we add actual team members as well
         let (user1, member1) = createUserAndAddMember(to: team)
         let (user2, member2) = createUserAndAddMember(to: team)
-        
+
         user1.name = "Abacus Allison"
         user2.name = "Zygfried Watson"
-        
+
         // when
         let result = team.members(matchingQuery: "")
-        
+
         // then
         XCTAssertEqual(result, [member1, member2])
     }
-    
+
     func testThatMembersMatchingQueryReturnCorrectMember() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-        
+
         // we add actual team members as well
         let (user1, membership) = createUserAndAddMember(to: team)
         let (user2, _) = createUserAndAddMember(to: team)
-        
+
         user1.name = "UserA"
         user2.name = "UserB"
-        
+
         // when
         let result = team.members(matchingQuery: "userA")
-        
+
         // then
         XCTAssertEqual(result, [membership])
     }
-    
+
     func testThatMembersMatchingHandleReturnCorrectMember() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-        
+
         // we add actual team members as well
         let (user1, membership) = createUserAndAddMember(to: team)
         let (user2, _) = createUserAndAddMember(to: team)
-        
+
         user1.name = "UserA"
         user1.handle = "098"
         user2.name = "UserB"
         user2.handle = "another"
-        
+
         // when
         let result = team.members(matchingQuery: "098")
-        
+
         // then
         XCTAssertEqual(result, [membership])
     }
-    
+
     func testThatMembersMatchingQueryDoesNotReturnSelfUser() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
-        
+
         // we add actual team members as well"
         let (user1, membership) = createUserAndAddMember(to: team)
-        
+
         user1.name = "UserA"
         selfUser.name = "UserB"
-        
+
         // when
         let result = team.members(matchingQuery: "user")
-        
+
         // then
         XCTAssertEqual(result, [membership])
     }

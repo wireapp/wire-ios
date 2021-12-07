@@ -33,7 +33,7 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
         super.tearDown()
     }
 
-    // MARK - Fetch using remote identifier and domain
+    // MARK: - Fetch using remote identifier and domain
 
     func testItFetchesEntityByRemoteIdentifier_WhenObjectIsRegisteredInContext() throws {
         // given
@@ -89,7 +89,7 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
         XCTAssertNil(fetched)
     }
 
-    // MARK - Fetch using remote identifier and domain
+    // MARK: - Fetch using remote identifier and domain
 
     func testThatItFetchesEntityByDomain_WhenObjectIsRegisteredInContext() throws {
         // given

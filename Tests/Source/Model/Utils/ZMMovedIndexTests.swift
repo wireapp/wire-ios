@@ -28,7 +28,7 @@ class ZMMovedIndexTests: XCTestCase {
         // THEN
         XCTAssertEqual(hash, 0)
     }
-    
+
     func testThatItGeneratesSameHashForSameObject() {
         // GIVEN
         let index = ZMMovedIndex(from: 10, to: 7)
@@ -36,7 +36,7 @@ class ZMMovedIndexTests: XCTestCase {
         // WHEN & THEN
         XCTAssertEqual(index.hash, index2.hash)
     }
-    
+
     func testThatItGeneratesDistinctHash() {
         // GIVEN
         let index = ZMMovedIndex(from: 10, to: 7)

@@ -20,7 +20,7 @@ import Foundation
 @testable import WireDataModel
 
 class InvalidConnectionRemovalTests: DiskDatabaseTest {
-    
+
     func testThatItOnlyRemovesConnectionsToTheSelfUser() throws {
         // Given
         let selfUser = ZMUser.selfUser(in: moc)
@@ -29,19 +29,19 @@ class InvalidConnectionRemovalTests: DiskDatabaseTest {
         connectionToSelfUser.to = selfUser
         let connectionToOtherUser = ZMConnection.insertNewObject(in: self.moc)
         connectionToOtherUser.to = otherUser
-        
+
         try self.moc.save()
-        
+
         // When
         WireDataModel.InvalidConnectionRemoval.removeInvalid(in: self.moc)
-        
+
         // Then - invalid connection is deleted
         XCTAssertTrue(connectionToSelfUser.isDeleted)
         XCTAssertTrue(connectionToSelfUser.isZombieObject)
-        
+
         // but all other connections are still there
         XCTAssertFalse(connectionToOtherUser.isDeleted)
         XCTAssertFalse(connectionToOtherUser.isZombieObject)
     }
-    
+
 }

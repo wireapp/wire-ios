@@ -33,7 +33,7 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         super.tearDown()
     }
 
-    // MARK - Fetch using remote identifier
+    // MARK: - Fetch using remote identifier
 
     func testItFetchesEntityByRemoteIdentifier() throws {
         // given
@@ -67,7 +67,7 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         XCTAssertNil(fetched)
     }
 
-    // MARK - Fetch using remote identifier and domain
+    // MARK: - Fetch using remote identifier and domain
 
     func testThatItFetchesEntityByDomain() throws {
         // given
@@ -89,7 +89,7 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         // then
         XCTAssertEqual(connection.objectID, fetched?.objectID)
     }
-    
+
     func testEntityFetching_WhenSearchingForLocalEntity() {
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
@@ -186,6 +186,5 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         mocs.viewContext.delete(user)
         mocs.viewContext.delete(connection)
     }
-
 
 }

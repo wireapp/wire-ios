@@ -19,7 +19,6 @@
 import XCTest
 @testable import WireDataModel
 
-
 class ZMUserTests_AnalyticsIdentifier: ModelObjectsTests {
 
     func testTheAnalyticsIdentifierIsAutomaticallyGenerated() {

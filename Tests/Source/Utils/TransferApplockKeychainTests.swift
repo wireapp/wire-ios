@@ -30,34 +30,34 @@ class TransferAppLockKeychainTests: DiskDatabaseTest {
         let config = AppLockController.LegacyConfig(isForced: false, timeout: 900, requireCustomPasscode: false)
         appLock = AppLockController(userId: selfUser.remoteIdentifier!, selfUser: selfUser, legacyConfig: config)
     }
-    
+
     override func tearDown() {
         appLock = nil
         super.tearDown()
     }
-    
+
     func testItMigratesIsActiveStateFromTheKeychainToTheMOC() {
         // Given
         XCTAssertFalse(appLock.isActive)
-        
+
         // When
         let data = "YES".data(using: .utf8)!
         ZMKeychain.setData(data, forAccount: "lockApp")
 
         TransferApplockKeychain.migrateIsAppLockActiveState(in: moc)
-        
+
         // Then
         XCTAssertTrue(appLock.isActive)
     }
-    
+
     func testItDoesNotMigrateIsActiveStateFromTheKeychainToTheMOC_IfKeychainIsEmpty() {
         // Given
         XCTAssertFalse(appLock.isActive)
-        
+
         // When
         ZMKeychain.deleteAllKeychainItems(withAccountName: "lockApp")
         TransferApplockKeychain.migrateIsAppLockActiveState(in: moc)
-        
+
         // Then
         XCTAssertFalse(appLock.isActive)
     }

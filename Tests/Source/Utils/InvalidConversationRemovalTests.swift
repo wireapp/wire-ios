@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 class InvalidConversationRemovalTests: DiskDatabaseTest {
-    
+
     func testThatItOnlyRemovesInvalidConversations() throws {
         // Given
         let user = createUser()
@@ -35,17 +35,17 @@ class InvalidConversationRemovalTests: DiskDatabaseTest {
 
         // When
         WireDataModel.InvalidConversationRemoval.removeInvalid(in: self.moc)
-        
+
         // Then - invalid conversation is deleted
         let invalidConversation = conversations[0]
         XCTAssertTrue(invalidConversation.isDeleted)
         XCTAssertTrue(invalidConversation.isZombieObject)
-        
+
         // but all other conversations are still there
         for conversation in conversations.suffix(from: 1) {
             XCTAssertFalse(conversation.isDeleted)
             XCTAssertFalse(conversation.isZombieObject)
         }
     }
-    
+
 }

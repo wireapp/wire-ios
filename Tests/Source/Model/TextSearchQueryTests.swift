@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireTesting
 @testable import WireDataModel
 
-
-fileprivate class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
+private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 
     var fetchedResults = [TextQueryResult]()
 
@@ -29,7 +27,6 @@ fileprivate class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
         fetchedResults.append(result)
     }
 }
-
 
 class TextSearchQueryTests: BaseZMClientMessageTests {
 
@@ -101,18 +98,18 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(match, firstMessage)
         verifyAllMessagesAreIndexed(in: conversation)
     }
-    
+
     func testThatItDoesntPopulateTheNormalizedTextField_WhenEncryptMessagesAtRestIsEnabled() {
         uiMOC.encryptMessagesAtRest = true
         uiMOC.encryptionKeys = validEncryptionKeys
-        
+
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
-        
+
         // When
         let message = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
         XCTAssert(uiMOC.saveOrRollback())
-        
+
         // Then
         XCTAssertEqual(message.normalizedText, "")
     }
@@ -197,7 +194,6 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results.first?.matches.count, 0)
     }
-
 
     func testThatItReturnsMatchesWhenAllMessagesAreIndexed() {
         // Given
@@ -444,7 +440,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = .create()
         conversation.conversationType = .group
         conversation.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
-        
+
         let message = try! conversation.appendText(content: "This is a regular message in the conversation") as! ZMMessage
         let otherMessage = try! conversation.appendText(content: "This is the another message in the conversation") as! ZMMessage
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)

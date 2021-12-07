@@ -21,7 +21,7 @@ import WireTesting
 @testable import WireDataModel
 
 class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
-    
+
     func testThatItCreatesAValidLinkPreview_ArticleMetadata() {
         // given
         let article = ArticleMetadata(
@@ -32,10 +32,10 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        
+
         // when
         let linkPreview = LinkPreview(articleMetadata: article)
-        
+
         // then
         XCTAssertEqual(linkPreview.title, "title")
         XCTAssertEqual(linkPreview.summary, "summary")
@@ -43,7 +43,7 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         XCTAssertEqual(linkPreview.url, "www.example.com/original")
         XCTAssertEqual(linkPreview.urlOffset, 42)
     }
-    
+
     func testThatItCreatesAValidLinkPreview_TwitterStatusMetadata() {
         // given
         let twitterStatus = TwitterStatusMetadata(
@@ -55,10 +55,10 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         twitterStatus.message = "message"
         twitterStatus.author = "author"
         twitterStatus.username = "username"
-        
+
         // when
         let linkPreview = LinkPreview(twitterMetadata: twitterStatus)
-        
+
         // then
         XCTAssertEqual(linkPreview.title, "message")
         XCTAssertEqual(linkPreview.permanentURL, "www.example.com/permanent")
@@ -67,20 +67,19 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         XCTAssertEqual(linkPreview.tweet.author, "author")
         XCTAssertEqual(linkPreview.tweet.username, "username")
     }
-    
+
     func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage_TwitterStatus() {
         // given
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        
-        
+
         let preview = TwitterStatusMetadata(
             originalURLString: "example.com/article/original",
             permanentURLString: "http://www.example.com/article/1",
             resolvedURLString: "http://www.example.com/article/1",
             offset: 42
         )
-        
+
         preview.author = "Author"
         preview.message = name
         let text = Text(content: "Text", mentions: [], linkPreviews: [preview], replyingTo: nil)
@@ -90,20 +89,20 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         } catch {
             XCTFail()
         }
-        
+
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
-        
+
         // then
         XCTAssertFalse(willHaveAnImage)
     }
-    
+
     func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage_Article() {
-        
+
         // given
         let nonce = UUID()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        
+
         let article = ArticleMetadata(
             originalURLString: "example.com/article/original",
             permanentURLString: "http://www.example.com/article/1",
@@ -112,7 +111,7 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        
+
         let text = Text(content: "sample text", mentions: [], linkPreviews: [article], replyingTo: nil)
         let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: nil)
         do {
@@ -120,10 +119,10 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         } catch {
             XCTFail()
         }
-        
+
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
-        
+
         // then
         XCTAssertFalse(willHaveAnImage)
     }

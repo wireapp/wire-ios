@@ -19,8 +19,8 @@
 import Foundation
 @testable import WireDataModel
 
-class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
-    
+class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
+
     func assetWithImage() -> WireProtos.Asset {
         let original = WireProtos.Asset.Original.with({
             $0.size = 1000
@@ -42,15 +42,15 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let asset  = WireProtos.Asset(original: original, preview: preview)
         return asset
     }
-    
-    func testThatItObfuscatesEmojis(){
+
+    func testThatItObfuscatesEmojis() {
         // given
         let text = "📲"
         let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
-        
+
         // then
         XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
         guard let content = obfuscatedMessage?.content else { return }
@@ -61,18 +61,18 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             break
         }
     }
-    
-    func testThatItObfuscatesCyrillic(){
+
+    func testThatItObfuscatesCyrillic() {
         // given
         let text = "привет мир!"
         let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
-        
+
         // then
         XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
-        
+
         guard let content = obfuscatedMessage?.content else { return }
         switch content {
         case .text:
@@ -81,18 +81,18 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             break
         }
     }
-    
-    func testThatItObfuscatesTextMessages(){
+
+    func testThatItObfuscatesTextMessages() {
         // given
         let text = "foo"
         let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
-        
+
         // then
         XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
-        
+
         guard let content = obfuscatedMessage?.content else { return }
         switch content {
         case .text:
@@ -101,16 +101,16 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             break
         }
     }
-    
+
     func testThatItObfuscatesTextMessageDifferentlyEachTime() {
         // given
         let text = "foo"
         let message = GenericMessage(content: Text(content: text), nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscatedMessage1 = message.obfuscatedMessage()
         let obfuscatedMessage2 = message.obfuscatedMessage()
-        
+
         // then
         XCTAssertNotNil(obfuscatedMessage1?.text)
         XCTAssertNotNil(obfuscatedMessage2?.text)
@@ -118,28 +118,28 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertNotEqual(obfuscatedMessage2?.text.content, text)
         XCTAssertNotEqual(obfuscatedMessage1?.text.content, obfuscatedMessage2?.text.content)
     }
-    
-    func testThatItDoesNotObfuscateNonEphemeralTextMessages(){
+
+    func testThatItDoesNotObfuscateNonEphemeralTextMessages() {
         // given
         let text = "foo"
         let message = GenericMessage(content: Text(content: text), nonce: UUID.create())
-        
+
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
-        
+
         // then
         XCTAssertNil(obfuscatedMessage)
     }
-    
-    func testThatItObfuscatesLinkPreviews(){
+
+    func testThatItObfuscatesLinkPreviews() {
         // given
         let title = "title"
         let summary = "summary"
         let permURL = "www.example.com/permanent"
         let origURL = "www.example.com/original"
         let text = "foo www.example.com/original"
-        let offset : Int32 = 4
-        
+        let offset: Int32 = 4
+
         let linkPreview = LinkPreview.with {
             $0.url = origURL
             $0.permanentURL = permURL
@@ -152,20 +152,20 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.linkPreview = [linkPreview]
         }
         let genericMessage = GenericMessage(content: messageText, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
-        
+
         // then
         guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail()}
-        
+
         // then
         let obfText = obfuscated!.text.content
-        let obfOrgURL = String(obfText[obfText.index(obfText.startIndex, offsetBy:4)...])
+        let obfOrgURL = String(obfText[obfText.index(obfText.startIndex, offsetBy: 4)...])
         XCTAssertNotEqual(obfuscatedLinkPreview.url, origURL)
         XCTAssertEqual(obfuscatedLinkPreview.url, obfOrgURL)
         XCTAssertEqual(obfuscatedLinkPreview.urlOffset, offset)
-        
+
         XCTAssertNotNil(obfuscatedLinkPreview.article)
         XCTAssertNotEqual(obfuscatedLinkPreview.article.permanentURL, permURL)
         XCTAssertNotEqual(obfuscatedLinkPreview.article.permanentURL.count, 0)
@@ -174,8 +174,8 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertNotEqual(obfuscatedLinkPreview.article.summary, summary)
         XCTAssertNotEqual(obfuscatedLinkPreview.article.summary.count, 0)
     }
-    
-    func testThatItObfuscatesLinkPreviews_Images(){
+
+    func testThatItObfuscatesLinkPreviews_Images() {
         // given
         let title = "title"
         let summary = "summary"
@@ -183,7 +183,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let origURL = "www.example.com/original"
         let text = "foo www.example.com/original"
         let image = assetWithImage()
-        let offset : Int32 = 4
+        let offset: Int32 = 4
 
         let linkPreview = LinkPreview.with {
             $0.url = origURL
@@ -193,17 +193,17 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.summary = summary
             $0.image = image
         }
-        
+
         let obfuscatedText = Text.with {
             $0.content = text
             $0.linkPreview = [linkPreview]
         }
-        
+
         let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
-        
+
         // then
         guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail()}
         let obfuscatedAsset = obfuscatedLinkPreview.image
@@ -217,8 +217,8 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertEqual(obfuscatedAsset.preview.image.tag, "bar")
         XCTAssertFalse(obfuscatedAsset.preview.hasRemote)
     }
-    
-    func testThatItObfuscatesLinkPreviews_Tweets(){
+
+    func testThatItObfuscatesLinkPreviews_Tweets() {
         // given
         let title = "title"
         let summary = "summary"
@@ -229,8 +229,8 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.author = "author"
             $0.username = "username"
         })
-        let offset : Int32 = 4
-        
+        let offset: Int32 = 4
+
         let linkPreview = LinkPreview.with {
             $0.url = origURL
             $0.permanentURL = permURL
@@ -239,19 +239,19 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
             $0.summary = summary
             $0.tweet = tweet
         }
-        
+
         let obfuscatedText = Text.with {
             $0.content = text
             $0.linkPreview = [linkPreview]
         }
         let genericMessage = GenericMessage(content: obfuscatedText, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
-        
+
         // then
         guard let obfuscatedLinkPreview = obfuscated?.linkPreviews.first else { return XCTFail()}
-        
+
         // then
         let obfuscatedTweet = obfuscatedLinkPreview.tweet
         XCTAssertNotEqual(obfuscatedTweet.author, "author")
@@ -260,18 +260,18 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertNotEqual(obfuscatedTweet.username, "username")
         XCTAssertEqual(obfuscatedTweet.username.count, "username".count)
     }
-    
-    func testThatItObfuscatesAssetsImageContent(){
+
+    func testThatItObfuscatesAssetsImageContent() {
         // given
         let asset  = assetWithImage()
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
-        
+
         // then
         guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail()}
-        
+
         // then
         XCTAssertTrue(obfuscatedAsset.hasOriginal)
         XCTAssertEqual(obfuscatedAsset.original.size, 10)
@@ -283,10 +283,10 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertEqual(obfuscatedAsset.preview.image.tag, "bar")
         XCTAssertFalse(obfuscatedAsset.preview.hasRemote)
     }
-    
+
     func testThatItObfuscatesAssetsVideoContent() {
         // given
-        
+
         let original = WireProtos.Asset.Original.with({
             $0.size = 200
             $0.mimeType = "video"
@@ -297,16 +297,16 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
                 $0.height = 200
             })
         })
-        
+
         let asset  = WireProtos.Asset(original: original, preview: nil)
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
-        
+
         // then
         guard let obfuscatedAsset = obfuscated?.asset else { return XCTFail()}
-        
+
         // then
         XCTAssertTrue(obfuscatedAsset.hasOriginal)
         XCTAssertEqual(obfuscatedAsset.original.size, 10)
@@ -318,7 +318,7 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertFalse(obfuscatedAsset.original.video.hasHeight)
         XCTAssertFalse(obfuscatedAsset.original.video.hasDurationInMillis)
     }
-    
+
     func testCheckThatItObfuscatesAudioMessages() {
         // given
         let original = WireProtos.Asset.Original.with({
@@ -330,10 +330,10 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
                 $0.normalizedLoudness = NSData(bytes: [2.9], length: [2.9].count) as Data
             })
         })
- 
+
         let asset  = WireProtos.Asset(original: original, preview: nil)
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
 
@@ -350,19 +350,19 @@ class GenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertFalse(obfuscatedAsset.original.audio.hasDurationInMillis)
         XCTAssertFalse(obfuscatedAsset.original.audio.hasNormalizedLoudness)
     }
-    
+
     func testThatItObfuscatesLocationMessages() {
         // given
         let location  = Location(latitude: 2.0, longitude: 3.0)
         let message = GenericMessage(content: location, nonce: UUID.create(), expiresAfter: .tenSeconds)
-        
+
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
-        
+
         // then
         XCTAssertNotNil(obfuscatedMessage?.locationData)
         XCTAssertEqual(obfuscatedMessage?.location.longitude, 0.0)
         XCTAssertEqual(obfuscatedMessage?.location.latitude, 0.0)
     }
-    
+
 }

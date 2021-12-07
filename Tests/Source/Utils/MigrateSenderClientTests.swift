@@ -30,13 +30,13 @@ class MigrateSenderClientTests: DiskDatabaseTest {
         systemMessage.systemMessageType = .decryptionFailed
         systemMessage.clients = Set(arrayLiteral: userClient)
         coreDataStack.viewContext.saveOrRollback()
-        
+
         // when
         MigrateSenderClient.migrateSenderClientID(in: coreDataStack.viewContext)
-        
+
         // then
         XCTAssertEqual(systemMessage.senderClientID, clientID)
-        
+
     }
 
 }

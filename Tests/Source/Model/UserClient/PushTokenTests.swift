@@ -22,13 +22,13 @@ import XCTest
 final class PushTokenTests: XCTestCase {
 
     var sut: PushToken!
-    
+
     override func setUp() {
         sut = PushToken(deviceToken: Data([0x01, 0x02, 0x03]), appIdentifier: "some", transportType: "some", isRegistered: true)
 
         super.setUp()
     }
-    
+
     override func tearDown() {
         sut = nil
         super.tearDown()

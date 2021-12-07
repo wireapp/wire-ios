@@ -20,20 +20,20 @@ import Foundation
 @testable import WireDataModel
 
 class UserTypeTests_Materialize: ModelObjectsTests {
-    
+
     func testThatWeCanMaterializeSearchUsers() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
         let searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0) }) as [UserType]
-        
+
         // when
         let materializedUsers = searchUsers.materialize(in: uiMOC)
-        
+
         // then
         XCTAssertEqual(materializedUsers.count, 3)
         XCTAssertEqual(materializedUsers.map(\.remoteIdentifier), userIDs)
     }
-    
+
     func testThatMaterializedTeamUserHasMembership_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
@@ -45,14 +45,14 @@ class UserTypeTests_Materialize: ModelObjectsTests {
                                           remoteIdentifier: UUID(),
                                           teamIdentifier: team.remoteIdentifier)
         uiMOC.saveOrRollback()
-        
+
         // when
         let materializedUser = teamSearchUser.materialize(in: uiMOC)!
-        
+
         // then
         XCTAssertTrue(materializedUser.isTeamMember)
     }
-    
+
     func testThatSearchUserWithoutRemoteIdentifierIsIgnored() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
@@ -63,15 +63,15 @@ class UserTypeTests_Materialize: ModelObjectsTests {
                                                 remoteIdentifier: nil)
         var searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0) }) as [UserType]
         searchUsers.append(incompleteSearchUser)
-        
+
         // when
         let materializedUsers = searchUsers.materialize(in: uiMOC)
-        
+
         // then
         XCTAssertEqual(materializedUsers.count, 3)
         XCTAssertEqual(materializedUsers.map(\.remoteIdentifier), userIDs)
     }
-    
+
     func testThatAlreadyMaterializedUsersAreUntouched() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
@@ -80,17 +80,16 @@ class UserTypeTests_Materialize: ModelObjectsTests {
             user.remoteIdentifier = $0
             return user
         }) as [ZMUser]
-        
+
         // when
         let materializedUsers = (concreteUsers as [UserType]).materialize(in: uiMOC)
-        
+
         // then
         XCTAssertEqual(materializedUsers, concreteUsers)
     }
-    
-    
+
     // MARK: - Helpers
-    
+
     func createSearchUser(name: String, remoteIdentifier: UUID = UUID()) -> ZMSearchUser {
         return ZMSearchUser(contextProvider: self.coreDataStack,
                             name: name.capitalized,
@@ -98,5 +97,5 @@ class UserTypeTests_Materialize: ModelObjectsTests {
                             accentColor: .brightOrange,
                             remoteIdentifier: remoteIdentifier)
     }
-    
+
 }

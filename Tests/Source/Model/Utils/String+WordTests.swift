@@ -20,26 +20,26 @@ import XCTest
 @testable import WireDataModel
 
 final class StringWordsTests: XCTestCase {
-    
+
     func testThatSentenceIsSplitted() {
-        //given
+        // given
         let sut = "once upon a time"
-        
-        //when
+
+        // when
         let words = sut.words
-        
-        //then
+
+        // then
         XCTAssertEqual(words, ["once", "upon", "a", "time"])
     }
-    
+
     func testThatSingleSymbolIsSplittedAsAWord() {
-        //given
+        // given
         let sut = "@"
-        
-        //when
+
+        // when
         let words = sut.words
-        
-        //then
+
+        // then
         XCTAssertEqual(words, ["@"])
     }
 }

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 import WireDataModel
 import WireLinkPreview
@@ -37,16 +36,16 @@ class LinkPreview_ProtobufTests: XCTestCase {
                 $0.permanentURL = "www.example.com/permanent"
             }
         }
-        
+
         // when
         let preview = ArticleMetadata(protocolBuffer: protos)
-        
+
         // then
         XCTAssertEqual(preview.permanentURL?.absoluteString, "www.example.com/permanent")
         XCTAssertEqual(preview.originalURLString, "www.example.com/original")
         XCTAssertEqual(preview.characterOffsetInText, 42)
     }
-    
+
     func testThatItCreatesAValidArticle_NewStyleProtos() {
         // given
         let protos = LinkPreview.with {
@@ -56,16 +55,16 @@ class LinkPreview_ProtobufTests: XCTestCase {
             $0.title = "title"
             $0.summary = "summary"
         }
-        
+
         // when
         let preview = ArticleMetadata(protocolBuffer: protos)
-        
+
         // then
         XCTAssertEqual(preview.permanentURL?.absoluteString, "www.example.com/permanent")
         XCTAssertEqual(preview.originalURLString, "www.example.com/original")
         XCTAssertEqual(preview.characterOffsetInText, 42)
     }
-    
+
     func testThatItCreatesAValidArticleWithTweet_NewStyle() {
         // given
         let protos = LinkPreview.with {
@@ -78,14 +77,14 @@ class LinkPreview_ProtobufTests: XCTestCase {
                 $0.username = "username"
             }
         }
-        
+
         // when
         let preview = TwitterStatusMetadata(protocolBuffer: protos)
-        
+
         // then
         XCTAssertEqual(preview.permanentURL?.absoluteString, "www.example.com/permanent")
         XCTAssertEqual(preview.originalURLString, "www.example.com/original")
         XCTAssertEqual(preview.characterOffsetInText, 42)
     }
-    
+
 }

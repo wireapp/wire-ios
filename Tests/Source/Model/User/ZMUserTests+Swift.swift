@@ -24,7 +24,7 @@ final class ZMUserTests_Swift: ModelObjectsTests {
     func testThatSettingUserProfileAssetIdentifiersDirectlyDoesNotMarkAsModified() {
         // GIVEN
         let user = ZMUser.selfUser(in: uiMOC)
-        
+
         // WHEN
         user.previewProfileAssetIdentifier = "foo"
         user.completeProfileAssetIdentifier = "bar"
@@ -34,19 +34,18 @@ final class ZMUserTests_Swift: ModelObjectsTests {
         XCTAssertFalse(user.hasLocalModifications(forKey: #keyPath(ZMUser.completeProfileAssetIdentifier)))
     }
 
-    
     func testThatSettingUserProfileAssetIdentifiersMarksKeysAsModified() {
         // GIVEN
         let user = ZMUser.selfUser(in: uiMOC)
-        
+
         // WHEN
         user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: "foo", completeIdentifier: "bar")
-        
+
         // THEN
         XCTAssert(user.hasLocalModifications(forKey: #keyPath(ZMUser.previewProfileAssetIdentifier)))
         XCTAssert(user.hasLocalModifications(forKey: #keyPath(ZMUser.completeProfileAssetIdentifier)))
     }
-    
+
     func testThatSettingUserProfileAssetIdentifiersDoNothingForNonSelfUsers() {
         // GIVEN
         let initialPreview = "123456"
@@ -54,28 +53,28 @@ final class ZMUserTests_Swift: ModelObjectsTests {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.previewProfileAssetIdentifier = initialPreview
         user.completeProfileAssetIdentifier = initialComplete
-        
+
         // WHEN
         user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: "foo", completeIdentifier: "bar")
-        
+
         // THEN
         XCTAssertEqual(user.previewProfileAssetIdentifier, initialPreview)
         XCTAssertEqual(user.completeProfileAssetIdentifier, initialComplete)
     }
-    
+
 }
 
 // MARK: - AssetV3 response parsing
 
 extension ZMUserTests_Swift {
-    
-    func assetPayload(previewId: String , completeId: String) -> NSArray {
+
+    func assetPayload(previewId: String, completeId: String) -> NSArray {
         return [
-            ["size" : "preview", "type" : "image", "key" : previewId],
-            ["size" : "complete", "type" : "image", "key" : completeId],
+            ["size": "preview", "type": "image", "key": previewId],
+            ["size": "complete", "type": "image", "key": completeId]
         ] as NSArray
     }
-    
+
     func testThatItDoesNotUpdateAssetsWhenThereAreLocalModifications() {
         syncMOC.performGroupedBlockAndWait {
 
@@ -84,52 +83,52 @@ extension ZMUserTests_Swift {
             let previewId = "some"
             let completeId = "other"
             let payload = self.assetPayload(previewId: "foo", completeId: "bar")
-            
+
             // WHEN
             user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: previewId, completeIdentifier: completeId)
             user.updateAssetData(with: payload, authoritative: true)
-            
+
             // THEN
             XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
             XCTAssertEqual(user.completeProfileAssetIdentifier, completeId)
         }
     }
-    
+
     func testThatItIgnoreAssetsWithIllegalCharacters() {
         syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             let user = ZMUser.selfUser(in: self.syncMOC)
             let previewId = "some"
             let completeId = "other"
             let payload = self.assetPayload(previewId: "Aa\\u0000\r\n", completeId: "Aa\\u0000\r\n")
-            
+
             // WHEN
             user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: previewId, completeIdentifier: completeId)
             user.updateAssetData(with: payload, authoritative: true)
-            
+
             // THEN
             XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
             XCTAssertEqual(user.completeProfileAssetIdentifier, completeId)
         }
     }
-    
+
     func testThatItRemovesRemoteIdentifiersWhenWeGetEmptyAssets() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "some"
             user.completeProfileAssetIdentifier = "other"
-            
+
             // WHEN
             user.updateAssetData(with: NSArray(), authoritative: true)
-            
+
             // THEN
             XCTAssertNil(user.previewProfileAssetIdentifier)
             XCTAssertNil(user.completeProfileAssetIdentifier)
         }
     }
-    
+
     func testThatItUpdatesIdentifiersAndRemovesCachedImagesWhenWeGetRemoteIdentifiers() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -143,10 +142,10 @@ extension ZMUserTests_Swift {
             let previewId = "some"
             let completeId = "other"
             let payload = self.assetPayload(previewId: previewId, completeId: completeId)
-            
+
             // WHEN
             user.updateAssetData(with: payload, authoritative: true)
-            
+
             // THEN
             XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
             XCTAssertNil(user.imageData(for: .preview))
@@ -154,7 +153,7 @@ extension ZMUserTests_Swift {
             XCTAssertNil(user.imageData(for: .complete))
         }
     }
-    
+
     func testThatItDoesNotRemoveLocalImagesIfRemoteIdentifiersHaveNotChanged() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -170,10 +169,10 @@ extension ZMUserTests_Swift {
             XCTAssertNotNil(user.imageData(for: .preview))
             XCTAssertNotNil(user.imageData(for: .complete))
             let payload = self.assetPayload(previewId: previewId, completeId: completeId)
-            
+
             // WHEN
             user.updateAssetData(with: payload, authoritative: true)
-            
+
             // THEN
             XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
             XCTAssertEqual(user.completeProfileAssetIdentifier, completeId)
@@ -192,12 +191,12 @@ extension ZMUserTests_Swift {
             let predicate = ZMUser.previewImageDownloadFilter
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "some-identifier"
-            
+
             // THEN
             XCTAssert(predicate.evaluate(with: user))
         }
     }
-    
+
     func testThatCompleteImageDownloadFilterPicksUpUser() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -205,12 +204,12 @@ extension ZMUserTests_Swift {
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.completeProfileAssetIdentifier = "some-identifier"
             user.setImage(data: nil, size: .complete)
-            
+
             // THEN
             XCTAssert(predicate.evaluate(with: user))
         }
     }
-    
+
     func testThatCompleteImageDownloadFilterDoesNotPickUpUsersWithoutAssetId() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -218,7 +217,7 @@ extension ZMUserTests_Swift {
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.completeProfileAssetIdentifier = nil
             user.setImage(data: "foo".data(using: .utf8), size: .complete)
-            
+
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
         }
@@ -236,7 +235,7 @@ extension ZMUserTests_Swift {
             XCTAssertFalse(predicate.evaluate(with: user))
         }
     }
-    
+
     func testThatPreviewImageDownloadFilterDoesNotPickUpUsersWithCachedImages() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -244,12 +243,12 @@ extension ZMUserTests_Swift {
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.previewProfileAssetIdentifier = "1234"
             user.setImage(data: "foo".data(using: .utf8), size: .preview)
-            
+
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
         }
     }
-    
+
     func testThatCompleteImageDownloadFilterDoesNotPickUpUsersWithCachedImages() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -257,7 +256,7 @@ extension ZMUserTests_Swift {
             let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
             user.completeProfileAssetIdentifier = "1234"
             user.setImage(data: "foo".data(using: .utf8), size: .complete)
-            
+
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
         }
@@ -266,14 +265,13 @@ extension ZMUserTests_Swift {
 
 // MARK: - AssetV3 request notifications
 extension ZMUserTests_Swift {
-    
+
     func testThatItPostsPreviewRequestNotifications() {
         let noteExpectation = expectation(description: "PreviewAssetFetchNotification should be fired")
-        var userObjectId: NSManagedObjectID? = nil
-        
+        var userObjectId: NSManagedObjectID?
+
         let token = ManagedObjectObserverToken(name: .userDidRequestPreviewAsset,
-                                               managedObjectContext: self.uiMOC)
-        { note in
+                                               managedObjectContext: self.uiMOC) { note in
             let objectId = note.object as? NSManagedObjectID
             XCTAssertNotNil(objectId)
             XCTAssertEqual(objectId, userObjectId)
@@ -284,32 +282,31 @@ extension ZMUserTests_Swift {
         user.remoteIdentifier = UUID.create()
         userObjectId = user.objectID
         user.requestPreviewProfileImage()
-        
-        withExtendedLifetime(token) { () -> () in
+
+        withExtendedLifetime(token) { () -> Void in
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-    
+
     func testThatItPostsCompleteRequestNotifications() {
         let noteExpectation = expectation(description: "CompleteAssetFetchNotification should be fired")
-        var userObjectId: NSManagedObjectID? = nil
-        
+        var userObjectId: NSManagedObjectID?
+
         let token = ManagedObjectObserverToken(name: .userDidRequestCompleteAsset,
-                                               managedObjectContext: self.uiMOC)
-        { note in
+                                               managedObjectContext: self.uiMOC) { note in
             let objectId = note.object as? NSManagedObjectID
             XCTAssertNotNil(objectId)
             XCTAssertEqual(objectId, userObjectId)
             noteExpectation.fulfill()
         }
-        
+
         let user =  ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
         userObjectId = user.objectID
         user.requestCompleteProfileImage()
-        
-        withExtendedLifetime(token) { () -> () in
+
+        withExtendedLifetime(token) { () -> Void in
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
@@ -333,17 +330,17 @@ extension ZMUser {
 
 // MARK: - Predicates
 extension ZMUserTests_Swift {
-    
+
     func testPredicateFilteringConnectedUsersByHandle() {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "yyy", connectionStatus: .accepted)
         let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
-        
+
         let all = NSArray(array: [user1, user2])
-        
+
         // When
         let users = all.filtered(using: ZMUser.predicateForConnectedUsers(withSearch: "yyy")) as! [ZMUser]
-        
+
         // Then
         XCTAssertEqual(users.count, 1)
         XCTAssertEqual(users, [user1])
@@ -353,12 +350,12 @@ extension ZMUserTests_Swift {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
         let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
-        
+
         let all = NSArray(array: [user1, user2])
-        
+
         // When
         let users = all.filtered(using: ZMUser.predicateForConnectedUsers(withSearch: "@ab")) as! [ZMUser]
-        
+
         // Then
         XCTAssertEqual(users.count, 1)
         XCTAssertEqual(users, [user1])
@@ -368,32 +365,32 @@ extension ZMUserTests_Swift {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "alonghandle", connectionStatus: .accepted)
         let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
-        
+
         let all = NSArray(array: [user1, user2])
-        
+
         // When
         let users = all.filtered(using: ZMUser.predicateForConnectedUsers(withSearch: "alo")) as! [ZMUser]
-        
+
         // Then
         XCTAssertEqual(users.count, 1)
         XCTAssertEqual(users, [user1])
     }
-    
+
     func testPredicateFilteringConnectedUsersStripsDiactricMarks() {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Šőmė body", handle: "hand", connectionStatus: .accepted)
         let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
-        
+
         let all = NSArray(array: [user1, user2])
-        
+
         // When
         let users = all.filtered(using: ZMUser.predicateForConnectedUsers(withSearch: "some")) as! [ZMUser]
-        
+
         // Then
         XCTAssertEqual(users.count, 1)
         XCTAssertEqual(users, [user1])
     }
-    
+
     func testPredicateFilteringForAllUsers() {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
@@ -401,20 +398,20 @@ extension ZMUserTests_Swift {
         let user3 = ZMUser.insert(in: self.uiMOC, name: "Yes body", handle: "yes-b", connectionStatus: .pending)
 
         let all = NSArray(array: [user1, user2, user3])
-        
+
         // When
         let users = all.filtered(using: ZMUser.predicateForAllUsers(withSearch: "body")) as! [ZMUser]
-        
+
         // Then
         XCTAssertEqual(users.count, 3)
         XCTAssertEqual(users, [user1, user2, user3])
     }
-    
+
 }
 
 // MARK: - Filename
 extension ZMUserTests_Swift {
-    
+
     /// check the generated filename matches several critirias and a regex pattern
     ///
     /// - Parameters:
@@ -427,17 +424,17 @@ extension ZMUserTests_Swift {
 
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
         let matches = regexp.matches(in: filename as String, options: [], range: NSMakeRange(0, filename.count))
-        
+
         XCTAssertTrue(matches.count > 0)
     }
-    
+
     func testFilenameForUser() throws {
         // Given
         let user = ZMUser.insert(in: self.uiMOC, name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge")
-        
+
         // When
         let filename = user.filename()
-        
+
         // Then
         /// check ends with a date stamp, e.g. -2017-10-24-11.05.43
         let pattern = "^.*[0-9-.]{20,20}$"
@@ -447,11 +444,11 @@ extension ZMUserTests_Swift {
     func testFilenameWithSuffixForUser() throws {
         // Given
         let user = ZMUser.insert(in: self.uiMOC, name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge")
-        
+
         // When
         let suffix: String = "-Jellyfish"
         let filename = user.filename(suffix: suffix)
-        
+
         // Then
         /// check ends with a date stamp and a suffix, e.g. -2017-10-24-11.05.43-Jellyfish
         let pattern = "^.*[0-9-.]{20,20}\(suffix)$"
@@ -461,7 +458,7 @@ extension ZMUserTests_Swift {
 
 // MARK: - Availability
 extension ZMUserTests_Swift {
-    
+
     func testThatWeCanUpdateAvailabilityFromGenericMessage() {
         // given
         let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
@@ -469,30 +466,30 @@ extension ZMUserTests_Swift {
         let availability = Availability(.away)
         // when
         user.updateAvailability(from: GenericMessage(content: availability))
-        
+
         // then
         XCTAssertEqual(user.availability, .away)
     }
-    
+
     func testThatWeAllowModifyingAvailabilityOnTheSelfUser() {
         // given
         XCTAssertEqual(selfUser.availability, .none)
-        
+
         // when
         selfUser.availability = .away
-        
+
         // then
         XCTAssertEqual(selfUser.availability, .away)
     }
-    
+
     func testThatWeDontAllowModifyingAvailabilityOnOtherUsers() {
         // given
         let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
         XCTAssertEqual(user.availability, .none)
-        
+
         // when
         user.availability = .away
-        
+
         // then
         XCTAssertEqual(user.availability, .none)
     }
@@ -500,15 +497,15 @@ extension ZMUserTests_Swift {
     func testThatNeedsToNotifyAvailabilityBehaviourChangeDefaultsToNothing() {
         XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, [])
     }
-    
+
     func testThatNeedsToNotifyAvailabilityBehaviourChangeCanBeUpdated() {
         // given
         selfUser.needsToNotifyAvailabilityBehaviourChange = .alert
-        
+
         // then
         XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, .alert)
     }
-        
+
 }
 
 // MARK: - Broadcast Recipients
@@ -551,7 +548,6 @@ extension ZMUserTests_Swift {
         // then
         XCTAssertEqual(knownTeamUsers, Set([connectedTeamUser1, connectedTeamUser2]))
     }
-
 
     func testThatItReturnsOnlyKnownTeamUsersWithAcceptedConnections() {
         // given
@@ -647,7 +643,7 @@ extension ZMUserTests_Swift {
         // then
         XCTAssertEqual(recipients, Set([selfUser, selfTeamUser1, selfTeamUser2, connectedTeamUser1, connectedTeamUser2]))
     }
-    
+
     func testThatReturnsExpectedRecipientsForBroadcast_WhenFederationIsEnabled() {
         // given
         let selfUserFederatedTeam = createTeam(in: uiMOC)
@@ -805,7 +801,7 @@ extension ZMUserTests_Swift {
         XCTAssertFalse(sut.isExpired)
         XCTAssertEqual(sut.expiresAfter, 0)
     }
-    
+
     func testIsWirelessUserCalculation_true_not_expired() {
         // given
         let sut = ZMUser.insertNewObject(in: self.uiMOC)
@@ -815,7 +811,7 @@ extension ZMUserTests_Swift {
         XCTAssertFalse(sut.isExpired)
         XCTAssertEqual(round(sut.expiresAfter), 1)
     }
-    
+
     func testIsWirelessUserCalculation_true_expired() {
         // given
         let sut = ZMUser.insertNewObject(in: self.uiMOC)
@@ -830,67 +826,67 @@ extension ZMUserTests_Swift {
 // MARK: - Account deletion
 
 extension ZMUserTests_Swift {
-    
+
     func testThatUserIsRemovedFromAllConversationsWhenAccountIsDeleted() {
         // given
         let sut = createUser(in: uiMOC)
         let conversation1 = createConversation(in: uiMOC)
         conversation1.conversationType = .group
         conversation1.addParticipantAndUpdateConversationState(user: sut, role: nil)
-        
+
         let conversation2 = createConversation(in: uiMOC)
         conversation2.conversationType = .group
         conversation2.addParticipantAndUpdateConversationState(user: sut, role: nil)
-        
+
         // when
         sut.markAccountAsDeleted(at: Date())
-        
+
         // then
-        XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) //FIXME -> It was XCTAssertNotNil
-        XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) //FIXME -> It was XCTAssertNotNil
+        XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) // FIXME -> It was XCTAssertNotNil
+        XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) // FIXME -> It was XCTAssertNotNil
     }
-    
+
     func testThatUserIsNotRemovedFromTeamOneToOneConversationsWhenAccountIsDeleted() {
         // given
         let team = createTeam(in: uiMOC)
         let sut = createTeamMember(in: uiMOC, for: team)
         let teamOneToOneConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: uiMOC, participant: sut, team: team)!
         teamOneToOneConversation.teamRemoteIdentifier = team.remoteIdentifier
-        
+
         // when
         sut.markAccountAsDeleted(at: Date())
-        
+
         // then
         XCTAssertTrue(teamOneToOneConversation.localParticipants.contains(sut))
     }
-    
+
 }
 
 // MARK: - Active conversations
 
 extension ZMUserTests_Swift {
-    
+
     func testActiveConversationsForSelfUser() {
         // given
         let sut = ZMUser.selfUser(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
         let selfConversation = ZMConversation.fetch(with: self.selfUser.remoteIdentifier, in: uiMOC)
-        
+
         // then
         XCTAssertEqual(sut.activeConversations, [conversation, selfConversation])
     }
-    
+
     func testActiveConversationsForOtherUser() {
         // given
         let sut = ZMUser.insertNewObject(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
-        
+
         // then
         XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))
     }
-    
+
 }
 
 // MARK: - Self user tests
@@ -903,7 +899,7 @@ extension ZMUserTests_Swift {
         // THEN
         XCTAssertEqual(sut.readReceiptsEnabled, true)
     }
-    
+
     func testThatItIsPossibleToSetReadReceiptsEnabled_andReset() {
         // GIVEN
         let sut = ZMUser.selfUser(in: uiMOC)
@@ -916,45 +912,45 @@ extension ZMUserTests_Swift {
         // THEN
         XCTAssertEqual(sut.readReceiptsEnabled, false)
     }
-    
+
     func testThatItUpdatesOtherContextForEnableReadReceipts() {
         // GIVEN
         let sut = ZMUser.selfUser(in: uiMOC)
         // WHEN
         sut.readReceiptsEnabled = true
         self.uiMOC.saveOrRollback()
-        
+
         // THEN
-        
+
         self.syncMOC.performGroupedBlock {
             let syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
 
             XCTAssertEqual(syncSelfUser.readReceiptsEnabled, true)
         }
-        
+
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-    
+
     func testThatItSetsModifiedKeysForEnableReadReceipts() {
         // GIVEN
         let sut = ZMUser.selfUser(in: uiMOC)
         sut.resetLocallyModifiedKeys(Set())
-        
+
         // WHEN
         sut.readReceiptsEnabled = true
-        
+
         uiMOC.saveOrRollback()
 
         // THEN
         XCTAssertEqual(sut.modifiedKeys, Set([ReadReceiptsEnabledKey]))
     }
-    
+
     func testThatItDoesNotSetModifiedKeysForEnableReadReceipts() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let sut = ZMUser.selfUser(in: self.syncMOC)
             sut.resetLocallyModifiedKeys(Set())
-            
+
             // WHEN
             sut.readReceiptsEnabled = true
             self.syncMOC.saveOrRollback()
@@ -963,7 +959,7 @@ extension ZMUserTests_Swift {
             XCTAssertEqual(sut.modifiedKeys, nil)
         }
     }
-    
+
     func testThatItSavesValueOfReadReceiptsEnabled() {
         // GIVEN
         let user = ZMUser.selfUser(in: uiMOC)
@@ -978,31 +974,31 @@ extension ZMUserTests_Swift {
 // MARK: - Verifying user
 
 extension ZMUserTests_Swift {
-    
+
     func testThatUserIsVerified_WhenSelfUserAndUserIsTrusted() {
         // GIVEN
         let user: ZMUser = self.userWithClients(count: 2, trusted: true)
         let selfUser = ZMUser.selfUser(in: uiMOC)
-        
+
         // WHEN
         XCTAssertTrue(user.isTrusted)
         XCTAssertTrue(selfUser.isTrusted)
-        
+
         // THEN
         XCTAssertTrue(user.isVerified)
     }
-    
+
     func testThatUserIsNotVerified_WhenSelfUserIsNotTrustedButUserIsTrusted() {
         // GIVEN
         let user: ZMUser = self.userWithClients(count: 2, trusted: true)
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let selfClient: UserClient? = selfUser.selfClient()
-        
+
         // WHEN
         let newClient: UserClient = UserClient.insertNewObject(in: self.uiMOC)
         newClient.user = selfUser
         selfClient?.ignoreClient(newClient)
-        
+
         // THEN
         XCTAssertTrue(user.isTrusted)
         XCTAssertFalse(selfUser.isTrusted)

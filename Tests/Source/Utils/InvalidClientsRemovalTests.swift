@@ -80,7 +80,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
 
             let otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
-            let otherUser = ZMUser.insertNewObject(in:syncMOC)
+            let otherUser = ZMUser.insertNewObject(in: syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
 
@@ -90,14 +90,13 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
 
             guard let preKey = preKeys.first else { XCTFail("could not generate prekeys"); return }
 
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey:preKey.prekey))
+            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             let clientId = otherClient.sessionIdentifier!
             syncMOC.saveOrRollback()
-            
+
             // when
             WireDataModel.InvalidClientsRemoval.removeInvalid(in: syncMOC)
-
 
             // then
             selfClient.keysStore.encryptionContext.perform {

@@ -28,30 +28,30 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         // THEN
         XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
     }
-    
+
     func testThatLegalHoldStatusIsDisabled_AfterCancelingRequest() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let request = LegalHoldRequest.mockRequest(for: selfUser)
         selfUser.userDidReceiveLegalHoldRequest(request)
-        
+
         // WHEN
         selfUser.legalHoldRequestWasCancelled()
-        
+
         // THEN
         XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
         XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
-    
+
     func testThatLegalHoldStatusIsDisabled_AfterReceivingRequestTargetingAnotherUser() {
         // GIVEN
         let otherUser = createUser(in: uiMOC)
         let selfUser = ZMUser.selfUser(in: uiMOC)
-        
+
         // WHEN
         let request = LegalHoldRequest.mockRequest(for: otherUser)
         selfUser.userDidReceiveLegalHoldRequest(request)
-        
+
         // THEN
         XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
         XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
@@ -158,7 +158,6 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
     }
 
 }
-
 
 extension LegalHoldRequest {
 
