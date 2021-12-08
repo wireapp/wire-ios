@@ -26,21 +26,21 @@ class ZMMessage_DataRetentionTests: BaseZMMessageTests {
         let now = Date(timeIntervalSinceNow: 0)
         let past = Date(timeIntervalSinceNow: -100)
         let future = Date(timeIntervalSinceNow: 100)
-        
+
         let messages: [ZMMessage] = [now, past, future].map { timestamp in
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
             message.serverTimestamp = timestamp
             return message
         }
-        
+
         // when
         let matches = messages.filter({ ZMMessage.predicateForMessagesOlderThan(now).evaluate(with: $0) })
-        
+
         // then
         XCTAssertEqual(matches.count, 1)
         XCTAssertEqual(matches.first?.serverTimestamp, past)
     }
-    
+
     func testThatCachedAssetsAreDeleted_WhenMessagesAreDeleted() throws {
         // GIVEN
         let sut = createConversation(in: uiMOC)
@@ -49,10 +49,10 @@ class ZMMessage_DataRetentionTests: BaseZMMessageTests {
         let cacheKey = FileAssetCache.cacheKeyForAsset(message)!
         self.uiMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data.secureRandomData(ofLength: 100))
         XCTAssertNotNil(uiMOC.zm_fileAssetCache.assetData(cacheKey))
-        
+
         // WHEN
         try ZMMessage.deleteMessagesOlderThan(Date(), context: uiMOC)
-        
+
         // THEN
         XCTAssertNil(uiMOC.zm_fileAssetCache.assetData(cacheKey))
     }

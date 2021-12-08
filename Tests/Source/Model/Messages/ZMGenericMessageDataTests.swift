@@ -25,12 +25,12 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
     override func setUp() {
         super.setUp()
-        
+
         createSelfClient(onMOC: uiMOC)
         uiMOC.encryptMessagesAtRest = false
         uiMOC.encryptionKeys = nil
     }
-    
+
     // MARK: - Positive Tests
 
     func test_ItDoesNotEncryptProtobufData_IfEncryptionAtRest_IsDisabled() throws {

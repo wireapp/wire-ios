@@ -19,37 +19,36 @@
 import XCTest
 @testable import WireDataModel
 
-class ChangedIndexesTests : ZMBaseManagedObjectTest {
-    
+class ChangedIndexesTests: ZMBaseManagedObjectTest {
+
     // MARK: CollectionView
 
-    func testThatItCalculatesInsertsAndDeletesBetweenSets(){
+    func testThatItCalculatesInsertsAndDeletesBetweenSets() {
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = WireDataModel.OrderedSetState(array:["A", "F", "E", "C", "D"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array: ["A", "F", "E", "C", "D"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
-        
+
         // then
         XCTAssertEqual(sut.deletedIndexes, [1])
         XCTAssertEqual(sut.insertedIndexes, [1])
     }
-    
-    
-    func testThatItCalculatesMovesCorrectly(){
-        
+
+    func testThatItCalculatesMovesCorrectly() {
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = WireDataModel.OrderedSetState(array:["A", "F", "D", "C", "E"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array: ["A", "F", "D", "C", "E"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
-        
+
         // then
         // [A,B,C,D,E] -> [A,F,C,D,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes{ (from, to) in
+        sut.enumerateMovedIndexes { (from, to) in
             if callCount == 0 {
                 // D: [3->2]
                 XCTAssertEqual(from, 3)
@@ -58,10 +57,10 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
             callCount = callCount+1
         }
         XCTAssertEqual(callCount, 1)
-        
-        var result = ["A","B", "C", "D", "E"]
-        sut.deletedIndexes.forEach{result.remove(at: $0)}
-        sut.insertedIndexes.forEach{result.insert(endState.array[$0], at: $0)}
+
+        var result = ["A", "B", "C", "D", "E"]
+        sut.deletedIndexes.forEach {result.remove(at: $0)}
+        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
@@ -69,21 +68,20 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         }
         XCTAssertEqual(result, ["A", "F", "D", "C", "E"])
     }
-    
-    
-    func testThatItCalculatesMovesCorrectly_2(){
-        
+
+    func testThatItCalculatesMovesCorrectly_2() {
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = WireDataModel.OrderedSetState(array:["A", "D", "E", "F", "C"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array: ["A", "D", "E", "F", "C"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
-        
+
         // then
         // [A,B,C,D,E] -> [A,C,D,F,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes{ (from, to) in
+        sut.enumerateMovedIndexes { (from, to) in
             if callCount == 0 {
                 // ACDFE
                 // E: [3->1] -> ADCFE
@@ -105,10 +103,10 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
             callCount = callCount+1
         }
         XCTAssertEqual(callCount, 3)
-        
-        var result = ["A","B", "C", "D", "E"]
-        sut.deletedIndexes.forEach{result.remove(at: $0)}
-        sut.insertedIndexes.forEach{result.insert(endState.array[$0], at: $0)}
+
+        var result = ["A", "B", "C", "D", "E"]
+        sut.deletedIndexes.forEach {result.remove(at: $0)}
+        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
@@ -116,36 +114,36 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         }
         XCTAssertEqual(result, ["A", "D", "E", "F", "C"])
     }
-    
+
     func testThatItCalculatesMovedIndexesForSwappedIndexesCorrectly() {
         // If you move an item from 0->1 another item has to move to index 0
-        
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
-        let endState = WireDataModel.OrderedSetState(array:["C", "B", "A"])
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C"])
+        let endState = WireDataModel.OrderedSetState(array: ["C", "B", "A"])
 
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set())
-        
+
         // then
         XCTAssertEqual(sut.deletedIndexes, IndexSet())
         XCTAssertEqual(sut.insertedIndexes, IndexSet())
 
         // then
         var callCount = 0
-        sut.enumerateMovedIndexes{ (from, to) in
-            if (callCount == 0) {
+        sut.enumerateMovedIndexes { (from, to) in
+            if callCount == 0 {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 0)
             }
-            if (callCount == 1) {
+            if callCount == 1 {
                 XCTAssertEqual(from, 1)
                 XCTAssertEqual(to, 1)
             }
             callCount = callCount+1
         }
         XCTAssertEqual(callCount, 2)
-        
+
         var result = ["A", "B", "C"]
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
@@ -154,39 +152,36 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         }
         XCTAssertEqual(result, ["C", "B", "A"])
     }
-    
-    func testThatItCalculatesUpdatesCorrectly(){
+
+    func testThatItCalculatesUpdatesCorrectly() {
         // Updated indexes refer to the indexes after the update
-        
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
-        let endState = WireDataModel.OrderedSetState(array:["C", "D", "B", "A"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C"])
+        let endState = WireDataModel.OrderedSetState(array: ["C", "D", "B", "A"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(["B"]))
-        
+
         // then
         XCTAssertEqual(sut.updatedIndexes, IndexSet([2]))
     }
-    
-    
-    
-    
+
     // MARK: TableView
-    
-    func testThatItCalculatesMovesCorrectly_tableView(){
-        
+
+    func testThatItCalculatesMovesCorrectly_tableView() {
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = WireDataModel.OrderedSetState(array:["A", "F", "D", "C", "E"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array: ["A", "F", "D", "C", "E"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
-        
+
         // then
         // [A,B,C,D,E] -> [A,F,C,D,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes{ (from, to) in
+        sut.enumerateMovedIndexes { (from, to) in
             if callCount == 0 {
                 // D: [3->2]
                 XCTAssertEqual(from, 3)
@@ -195,31 +190,30 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
             callCount = callCount+1
         }
         XCTAssertEqual(callCount, 1)
-        
-        var result = ["A","B", "C", "D", "E"]
-        sut.deletedIndexes.forEach{result.remove(at: $0)}
-        sut.insertedIndexes.forEach{result.insert(endState.array[$0], at: $0)}
+
+        var result = ["A", "B", "C", "D", "E"]
+        sut.deletedIndexes.forEach {result.remove(at: $0)}
+        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
         sut.enumerateMovedIndexes { (from, to) in
             let item = result.remove(at: from)
             result.insert(item, at: to)
         }
         XCTAssertEqual(result, ["A", "F", "D", "C", "E"])
     }
-    
-    
-    func testThatItCalculatesMovesCorrectly_2_tableView(){
-        
+
+    func testThatItCalculatesMovesCorrectly_2_tableView() {
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C", "D", "E"])
-        let endState = WireDataModel.OrderedSetState(array:["A", "D", "E", "F", "C"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
+        let endState = WireDataModel.OrderedSetState(array: ["A", "D", "E", "F", "C"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
-        
+
         // then
         // [A,B,C,D,E] -> [A,C,D,F,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes{ (from, to) in
+        sut.enumerateMovedIndexes { (from, to) in
             if callCount == 0 {
                 // ACDFE
                 // E: [3->1] -> ADCFE
@@ -241,46 +235,46 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
             callCount = callCount+1
         }
         XCTAssertEqual(callCount, 3)
-        
-        var result = ["A","B", "C", "D", "E"]
-        sut.deletedIndexes.forEach{result.remove(at: $0)}
-        sut.insertedIndexes.forEach{result.insert(endState.array[$0], at: $0)}
+
+        var result = ["A", "B", "C", "D", "E"]
+        sut.deletedIndexes.forEach {result.remove(at: $0)}
+        sut.insertedIndexes.forEach {result.insert(endState.array[$0], at: $0)}
         sut.enumerateMovedIndexes { (from, to) in
             let item = result.remove(at: from)
             result.insert(item, at: to)
         }
         XCTAssertEqual(result, ["A", "D", "E", "F", "C"])
     }
-    
+
     func testThatItCalculatesMovedIndexesForSwappedIndexesCorrectly_tableView() {
         // If you move an item from 0->1 the item at index 1 moves implicitly to 0, its move do not need to be defined
-        
+
         // given
-        let startState = WireDataModel.OrderedSetState(array:["A","B", "C"])
-        let endState = WireDataModel.OrderedSetState(array:["C", "B", "A"])
-        
+        let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C"])
+        let endState = WireDataModel.OrderedSetState(array: ["C", "B", "A"])
+
         // when
         let sut = WireDataModel.ChangedIndexes(start: startState, end: endState, updated: Set(), moveType: .uiTableView)
-        
+
         // then
         XCTAssertEqual(sut.deletedIndexes, IndexSet())
         XCTAssertEqual(sut.insertedIndexes, IndexSet())
-        
+
         // then
         var callCount = 0
-        sut.enumerateMovedIndexes{ (from, to) in
-            if (callCount == 0) {
+        sut.enumerateMovedIndexes { (from, to) in
+            if callCount == 0 {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 0)
             }
-            if (callCount == 1) {
+            if callCount == 1 {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 1)
             }
             callCount = callCount+1
         }
         XCTAssertEqual(callCount, 2)
-        
+
         var result = ["A", "B", "C"]
         sut.enumerateMovedIndexes { (from, to) in
             let item = result.remove(at: from)

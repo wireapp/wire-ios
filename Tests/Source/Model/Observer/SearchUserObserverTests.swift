@@ -19,90 +19,90 @@
 import Foundation
 @testable import WireDataModel
 
-class SearchUserObserverTests : NotificationDispatcherTestBase {
-    
-    class TestSearchUserObserver : NSObject, ZMUserObserver {
-        
-        var receivedChangeInfo : [UserChangeInfo] = []
-        
+class SearchUserObserverTests: NotificationDispatcherTestBase {
+
+    class TestSearchUserObserver: NSObject, ZMUserObserver {
+
+        var receivedChangeInfo: [UserChangeInfo] = []
+
         func userDidChange(_ changeInfo: UserChangeInfo) {
             receivedChangeInfo.append(changeInfo)
         }
     }
-        
-    var testObserver : TestSearchUserObserver!
-    
+
+    var testObserver: TestSearchUserObserver!
+
     override func setUp() {
         super.setUp()
         testObserver = TestSearchUserObserver()
     }
-    
+
     override func tearDown() {
         testObserver = nil
         uiMOC.searchUserObserverCenter.reset()
         super.tearDown()
     }
-    
+
     func testThatItNotifiesTheObserverOfASmallProfilePictureChange() {
-        
+
         // given
         let remoteID = UUID.create()
         let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
-        
+
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
-        
+
         // when
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
-        
+
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
         if let note = testObserver.receivedChangeInfo.first {
             XCTAssertTrue(note.imageSmallProfileDataChanged)
         }
     }
-    
+
     func testThatItNotifiesTheObserverOfASmallProfilePictureChangeIfTheInternalUserUpdates() {
-        
+
         // given
-        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
         let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
-        
+
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for:searchUser, in: self.uiMOC)
-        
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
+
         // when
         user.previewProfileAssetIdentifier = UUID.create().transportString()
         user.setImage(data: verySmallJPEGData(), size: .preview)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5)) 
-        
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
         if let note = testObserver.receivedChangeInfo.first {
             XCTAssertTrue(note.imageSmallProfileDataChanged)
         }
     }
-    
+
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
-        
+
         // given
         let remoteID = UUID.create()
         let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
-        
+
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
-        
+
         // when
         self.token = nil
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
-        
+
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 0)
     }
 
-    func testThatItNotifiesObserversWhenConnectingToASearchUserThatHasNoLocalUser(){
+    func testThatItNotifiesObserversWhenConnectingToASearchUserThatHasNoLocalUser() {
 
         // given
         let remoteID = UUID.create()

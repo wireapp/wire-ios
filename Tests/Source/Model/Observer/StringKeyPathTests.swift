@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 class StringKeyPathTests: ZMBaseManagedObjectTest {
@@ -34,7 +33,7 @@ class StringKeyPathTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(sut.count, 2)
         XCTAssertTrue(sut.isPath)
     }
-    
+
     func testThatItDecomposesSimpleKeys() {
         let sut = StringKeyPath.keyPathForString("name")
         if let (a, b) = sut.decompose {
@@ -44,7 +43,7 @@ class StringKeyPathTests: ZMBaseManagedObjectTest {
             XCTFail("Did not decompose")
         }
     }
-    
+
     func testThatItDecomposesKeyPaths() {
         let sut = StringKeyPath.keyPathForString("foo.name")
         if let (a, b) = sut.decompose {

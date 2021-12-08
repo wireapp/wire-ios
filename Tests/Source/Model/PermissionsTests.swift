@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireTesting
 @testable import WireDataModel
-
 
 class PermissionsTests: BaseZMClientMessageTests {
 
@@ -137,25 +135,25 @@ class PermissionsTests: BaseZMClientMessageTests {
         XCTAssertFalse(TeamRole.none.isA(role: .member))
         XCTAssertFalse(TeamRole.none.isA(role: .admin))
         XCTAssertFalse(TeamRole.none.isA(role: .owner))
-        
+
         XCTAssert(TeamRole.partner.isA(role: .none))
         XCTAssert(TeamRole.partner.isA(role: .partner))
         XCTAssertFalse(TeamRole.partner.isA(role: .member))
         XCTAssertFalse(TeamRole.partner.isA(role: .admin))
         XCTAssertFalse(TeamRole.partner.isA(role: .owner))
-        
+
         XCTAssert(TeamRole.member.isA(role: .none))
         XCTAssert(TeamRole.member.isA(role: .partner))
         XCTAssert(TeamRole.member.isA(role: .member))
         XCTAssertFalse(TeamRole.member.isA(role: .admin))
         XCTAssertFalse(TeamRole.member.isA(role: .owner))
-        
+
         XCTAssert(TeamRole.admin.isA(role: .none))
         XCTAssert(TeamRole.admin.isA(role: .partner))
         XCTAssert(TeamRole.admin.isA(role: .member))
         XCTAssert(TeamRole.admin.isA(role: .admin))
         XCTAssertFalse(TeamRole.admin.isA(role: .owner))
-        
+
         XCTAssert(TeamRole.owner.isA(role: .none))
         XCTAssert(TeamRole.owner.isA(role: .partner))
         XCTAssert(TeamRole.owner.isA(role: .member))

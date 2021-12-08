@@ -139,5 +139,4 @@ final class PotentialChangeDetectorTests: BaseZMMessageTests {
         XCTAssertTrue(changes[0].object === object)
     }
 
-
 }

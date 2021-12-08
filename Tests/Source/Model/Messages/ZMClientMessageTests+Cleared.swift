@@ -20,19 +20,18 @@ import Foundation
 @testable import WireDataModel
 
 final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
-    
-    
+
     func testThatItCreatesPayloadForZMClearedMessages() {
-        
+
         self.syncMOC.performGroupedBlockAndWait {
             // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
             guard let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
-            
+
             // when
             guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
-            
+
             // then
             switch payloadAndStrategy.strategy {
             case .doNotIgnoreAnyMissingClient:
@@ -42,7 +41,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
             }
         }
     }
-    
+
     func testThatLastClearedUpdatesInSelfConversationDontExpire() {
 
         self.syncMOC.performGroupedBlockAndWait {

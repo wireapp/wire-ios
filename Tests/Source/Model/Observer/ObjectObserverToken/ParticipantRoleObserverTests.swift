@@ -16,57 +16,56 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import XCTest
 @testable import WireDataModel
 
-final class TestParticipantRoleObserver : NSObject, ParticipantRoleObserver {
-    
+final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
+
     var notifications = [ParticipantRoleChangeInfo]()
-    
-    func clearNotifications(){
+
+    func clearNotifications() {
         notifications = []
     }
-    
+
     func participantRoleDidChange(_ changeInfo: ParticipantRoleChangeInfo) {
         notifications.append(changeInfo)
     }
 }
 
 final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
-    
-    var observer : TestParticipantRoleObserver!
-    
+
+    var observer: TestParticipantRoleObserver!
+
     override func setUp() {
         super.setUp()
         observer = TestParticipantRoleObserver()
     }
-    
+
     override func tearDown() {
         observer = nil
         super.tearDown()
     }
-    
-    var userInfoKeys : Set<String> {
+
+    var userInfoKeys: Set<String> {
         return [
             #keyPath(ParticipantRoleChangeInfo.roleChanged)
         ]
     }
-    
-    func checkThatItNotifiesTheObserverOfAChange(_ participantRole : ParticipantRole, modifier: (ParticipantRole) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil,
+
+    func checkThatItNotifiesTheObserverOfAChange(_ participantRole: ParticipantRole, modifier: (ParticipantRole) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil,
                                                  file: StaticString = #file,
                                                  line: UInt = #line) {
-        
+
         // given
         uiMOC.saveOrRollback()
-        
+
         self.token = ParticipantRoleChangeInfo.add(observer: observer, for: participantRole, managedObjectContext: self.uiMOC)
-        
+
         // when
         modifier(participantRole)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         self.uiMOC.saveOrRollback()
-        
+
         // then
         let changeCount = observer.notifications.count
         if !expectedChangedFields.isEmpty {
@@ -77,10 +76,10 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
 
         // and when
         self.uiMOC.saveOrRollback()
-        
+
         // then
         XCTAssertEqual(observer.notifications.count, changeCount, "Should not have changed further once")
-        
+
         guard let changes = observer.notifications.first else { return }
         changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
                                              expectedChangedFields: expectedChangedFields,
@@ -88,4 +87,3 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
                                              line: line)
     }
 }
-
