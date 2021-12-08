@@ -26,17 +26,17 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
         let event = createUpdateEvent(UUID(),
                                       conversationID: UUID(),
                                       genericMessage: .init(content: Text(content: "Hello World")))
-        
+
         // when
         var message: ZMOTRMessage?
         performPretendingUiMocIsSyncMoc {
             message = ZMOTRMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: prefetchResults)
         }
-        
+
         // then
         XCTAssertNotNil(message)
     }
-    
+
     func testThatMessageIsUpdated_WhenIncludedInPrefetchResults() throws {
         // given
         let senderClientID = "sender123"
@@ -48,17 +48,17 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
                                       conversationID: UUID(),
                                       genericMessage: .init(content: Text(content: "Hello World"), nonce: existingMessage.nonce!),
                                       senderClientID: senderClientID)
-        
+
         // when
         var message: ZMOTRMessage?
         performPretendingUiMocIsSyncMoc {
             message = ZMOTRMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: prefetchResults)
         }
-        
+
         // then
         XCTAssertTrue(existingMessage === message)
     }
-        
+
     func testThatMessageIsUpdated_WhenNotIncludedInPrefetchResults_ButWasProcessedInTheSameBatch() throws {
         // given
         let prefetchResults = ZMFetchRequestBatchResult()
@@ -68,12 +68,12 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
                                       conversationID: UUID(),
                                       genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
                                       senderClientID: senderClientID)
-        
+
         let event2 = createUpdateEvent(UUID(),
         conversationID: UUID(),
         genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
         senderClientID: senderClientID)
-        
+
         // when
         var message1: ZMOTRMessage?
         var message2: ZMOTRMessage?
@@ -81,7 +81,7 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
             message1 = ZMOTRMessage.createOrUpdate(from: event1, in: self.uiMOC, prefetchResult: prefetchResults)
             message2 = ZMOTRMessage.createOrUpdate(from: event2, in: self.uiMOC, prefetchResult: prefetchResults)
         }
-        
+
         // then
         XCTAssertTrue(message1 === message2)
     }

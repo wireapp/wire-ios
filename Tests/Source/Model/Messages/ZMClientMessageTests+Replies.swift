@@ -20,15 +20,15 @@ import XCTest
 @testable import WireDataModel
 
 class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
-    
+
     func testQuoteRelationshipIsEstablishedWhenSendingMessage() {
         let quotedMessage = try! conversation.appendText(content: "I have a proposal", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID()) as! ZMClientMessage
-        
+
         let message = try! conversation.appendText(content: "That's fine", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID()) as! ZMTextMessageData
-        
+
         XCTAssertEqual(message.quoteMessage as! ZMMessage, quotedMessage)
     }
-    
+
     func testQuoteRelationshipIsEstablishedWhenReceivingMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
@@ -37,18 +37,18 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         let data = ["sender": NSString.createAlphanumerical(), "text": try? replyMessage.serializedData().base64EncodedString()]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
-        
+
         // when
         var sut: ZMClientMessage! = nil
         performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
-        
+
         // then
-        XCTAssertNotNil(sut);
+        XCTAssertNotNil(sut)
         XCTAssertEqual(sut.quote, quotedMessage)
     }
-    
+
     func testQuoteRelationshipIsEstablishedWhenReceivingEphemeralMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
@@ -57,15 +57,15 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         let data = ["sender": NSString.createAlphanumerical(), "text": try? replyMessage.serializedData().base64EncodedString()]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
-        
+
         // when
         var sut: ZMClientMessage! = nil
         performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
-        
+
         // then
-        XCTAssertNotNil(sut);
+        XCTAssertNotNil(sut)
         XCTAssertEqual(sut.quote, quotedMessage)
     }
 }

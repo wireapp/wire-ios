@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 class ZMClientMessagesTests_ResetSession: BaseZMClientMessageTests {
-        
+
     func testSessionResetSystemMessageIsInserted_WhenReceivingMessage() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()

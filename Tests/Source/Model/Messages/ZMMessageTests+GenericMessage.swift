@@ -21,7 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
-    
+
    func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() {
         self.syncMOC.performGroupedAndWait {_ in
             // given
@@ -62,7 +62,7 @@ class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 // MARK: - KnockMessage
 
 extension ZMMessageTests_GenericMessage {
-    
+
     func testThatItCreatesOtrKnockMessageFromAnUpdateEvent() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

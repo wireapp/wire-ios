@@ -20,23 +20,23 @@ import XCTest
 @testable import WireDataModel
 
 class ZMMessage_Reaction: BaseZMClientMessageTests {
-    
+
     func testThatAddingAReactionAddsAReactionGenericMessage_fromUI() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        
+
         let message = try! conversation.appendText(content: self.name) as! ZMMessage
         message.markAsSent()
         self.uiMOC.saveOrRollback()
-        
+
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
-        
+
         // when
         // this is the UI facing call to add reaction
         ZMMessage.addReaction(MessageReaction.like, toMessage: message)
         self.uiMOC.saveOrRollback()
-        
-        //then
+
+        // then
         XCTAssertEqual(conversation.hiddenMessages.count, 1)
         let reactionMessage = conversation.hiddenMessages.first as! ZMClientMessage
         XCTAssertNotNil(reactionMessage)

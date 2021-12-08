@@ -41,20 +41,20 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
             CBOX_INIT_ERROR,
             CBOX_DEGENERATED_KEY
         ]
-        
+
         let recoverableEncryptionErrors = [
             CBOX_TOO_DISTANT_FUTURE,
             CBOX_DEGENERATED_KEY,
             CBOX_PREKEY_NOT_FOUND
         ]
-        
+
         for encryptionError in allEncryptionErrors {
             assertDecryptionErrorIsReportedAsRecoverable(
                 encryptionError,
                 recoverable: recoverableEncryptionErrors.contains(encryptionError))
         }
     }
-    
+
     private func assertDecryptionErrorIsReportedAsRecoverable(_ decryptionError: CBoxResult,
                                                               recoverable: Bool,
                                                               file: StaticString = #file,
@@ -63,7 +63,7 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .decryptionFailed
         systemMessage.decryptionErrorCode = NSNumber(value: decryptionError.rawValue)
-        
+
         // then
         XCTAssertEqual(systemMessage.isDecryptionErrorRecoverable, recoverable, file: file, line: line)
     }
@@ -109,15 +109,15 @@ extension ZMMessageTests_SystemMessages {
     }
 
     private func createSystemMessageFrom(updateEventType: ZMUpdateEventType,
-                                         in conversation:ZMConversation,
-                                         with usersIDs:[UUID],
+                                         in conversation: ZMConversation,
+                                         with usersIDs: [UUID],
                                          senderID: UUID?,
                                          reason: ZMParticipantsRemovedReason?,
                                          domain: String? = nil) -> ZMSystemMessage? {
-        let updateEventTypeDict: [ZMUpdateEventType : String] = [
-            .conversationMemberJoin : "conversation.member-join",
-            .conversationMemberLeave : "conversation.member-leave",
-            .conversationRename : "conversation.rename"
+        let updateEventTypeDict: [ZMUpdateEventType: String] = [
+            .conversationMemberJoin: "conversation.member-join",
+            .conversationMemberLeave: "conversation.member-leave",
+            .conversationRename: "conversation.rename"
         ]
 
         var data: [String: Any]
@@ -127,14 +127,14 @@ extension ZMMessageTests_SystemMessages {
                     ["qualified_id":
                         ["id": $0.transportString(), "domain": domain]
                     ]
-                } ] as [String : Any]
+                } ] as [String: Any]
             } else {
                 data = ["qualified_user_ids": usersIDs.map {
                     ["id": $0.transportString(), "domain": domain]
-                } ] as [String : Any]
+                } ] as [String: Any]
             }
         } else {
-            data = ["user_ids": usersIDs.map { $0.transportString() }] as [String : Any]
+            data = ["user_ids": usersIDs.map { $0.transportString() }] as [String: Any]
         }
 
         if reason != nil {
@@ -147,14 +147,14 @@ extension ZMMessageTests_SystemMessages {
         )
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
         var result: ZMSystemMessage?
-        self.performPretendingUiMocIsSyncMoc() {
+        self.performPretendingUiMocIsSyncMoc {
             result = ZMSystemMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         return result
     }
 
     private func checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: ZMUpdateEventType,
-                                                                systemMessageType:ZMSystemMessageType,
+                                                                systemMessageType: ZMSystemMessageType,
                                                                 reason: ZMParticipantsRemovedReason?,
                                                                 selfUserDomain: String? = nil,
                                                                 otherUserDomain: String? = nil) {

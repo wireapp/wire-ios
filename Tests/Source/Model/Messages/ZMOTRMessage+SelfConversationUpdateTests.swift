@@ -20,10 +20,9 @@ import XCTest
 @testable import WireDataModel
 
 class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
-    
-    
+
     func testThatWeIgnoreClearedEventNotSentFromSelfUser() {
-        
+
         syncMOC.performGroupedBlockAndWait {
             // given
             let nonce = UUID()
@@ -31,18 +30,18 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
             let message = GenericMessage(content: Cleared(timestamp: clearedDate, conversationID: self.syncConversation.remoteIdentifier!), nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
-            
+
             // when
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
-            
+
             // then
             XCTAssertNil(self.syncConversation.clearedTimeStamp)
         }
-        
+
     }
-    
+
     func testThatWeIgnoreLastReadEventNotSentFromSelfUser() {
-        
+
         syncMOC.performGroupedBlockAndWait {
             // given
             let nonce = UUID()
@@ -51,18 +50,18 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let message = GenericMessage(content: LastRead(conversationID: self.syncConversation.remoteIdentifier!, lastReadTimestamp: lastReadDate), nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             self.syncConversation.lastReadServerTimeStamp = nil
-            
+
             // when
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
-            
+
             // then
             XCTAssertNil(self.syncConversation.lastReadServerTimeStamp)
         }
-        
+
     }
-    
+
     func testThatWeIgnoreHideMessageEventNotSentFromSelfUser() {
-        
+
         syncMOC.performGroupedBlockAndWait {
             // given
             let nonce = UUID()
@@ -71,14 +70,14 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let hideMessage = MessageHide(conversationId: self.syncConversation.remoteIdentifier!, messageId: toBehiddenMessage.nonce!)
             let message = GenericMessage(content: hideMessage, nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
-            
+
             // when
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
-            
+
             // then
             XCTAssertFalse(toBehiddenMessage.hasBeenDeleted)
         }
-        
+
     }
 
     // MARK: - Analytics Data Transfer
@@ -164,5 +163,5 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             eventSource: ZMUpdateEventSource.download
         )
     }
-    
+
 }
