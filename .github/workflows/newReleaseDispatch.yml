@@ -10,12 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: gh auth
+        run: |
+          # auth with user PAT, them the user creates the PR instead of bot
+          echo ${{ secrets.ZENKINS_WORKFLOW_PAT }} > .githubtoken
+          gh auth login --with-token < .githubtoken
+          rm .githubtoken
+          
       - name: tell downstream(s) repo this repo published a new release
         run: |
-          curl -X POST https://api.github.com/repos/wireapp/wire-ios-data-model/dispatches \
-          -H "Accept: application/vnd.github.v3+json" \
-          -u ${{ secrets.DISPATCH_SECRET }} \
-          --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+          gh api repos/wireapp/wire-ios-data-model/dispatches \
+          -X POST search/issues \
+          -F event_type='newRelease' \
+          -F client_payload='"$GITHUB_REPOSITORY"'
 
           curl -X POST https://api.github.com/repos/wireapp/wire-ios-mocktransport/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
