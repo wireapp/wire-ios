@@ -375,7 +375,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = com.wire;
 				TargetAttributes = {
 					5470D3E71D76E1B000FDE440 = {
@@ -521,6 +521,7 @@
 			baseConfigurationReference = 5470D4111D76E2A400FDE440 /* project-debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -531,6 +532,7 @@
 			baseConfigurationReference = 5470D4121D76E2A400FDE440 /* project.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
