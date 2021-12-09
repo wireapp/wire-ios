@@ -20,9 +20,9 @@ jobs:
       - name: tell downstream(s) repo this repo published a new release
         run: |
           gh api repos/wireapp/wire-ios-data-model/dispatches \
-          -X POST search/issues \
+          -X POST \
           -F event_type='newRelease'
 
           gh api repos/wireapp/wire-ios-mocktransport/dispatches \
-          -X POST search/issues \
+          -X POST \
           -F event_type='newRelease'
