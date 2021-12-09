@@ -32,4 +32,31 @@ enum InvalidFeatureRemoval {
         allInstances.forEach(moc.delete)
     }
 
+    /// The issue:
+    ///
+    /// On-premise backends that don't support the conference calling config endpoint
+    /// will never be able to deliver a config to the client. The client however, will
+    /// then use the default config, which effectively disables conference calling.
+    /// Thus, on-prem customers erroneously lose conference calling.
+    ///
+    /// The fix:
+    ///
+    /// 1. Delete the local conference calling config from the database (via this patch).
+    /// 2. Change the default value to enable conference calling.
+    /// 3. Reinsert the config with the new default value.
+    /// 4. When the user is started, it will fetch the remote config value and update the local value.
+    ///
+    /// This means that for on-prem backends that don't support the conference calling feature
+    /// config endpoint, we will use the new 'enabled' default. For all backends that do support
+    /// the endpoint, their clients will just refetch the remote value.
+
+    static func restoreDefaultConferenceCallingConfig(in moc: NSManagedObjectContext) {
+        if let existingInstance = Feature.fetch(name: .conferenceCalling, context: moc) {
+            moc.delete(existingInstance)
+        }
+
+        let featureService = FeatureService(context: moc)
+        featureService.storeConferenceCalling(.init())
+    }
+
 }

@@ -40,6 +40,24 @@ class InvalidFeatureRemovalTests: DiskDatabaseTest {
         }
     }
 
+    func testRestoreNewDefaultConferenceCallingConfig() throws {
+        coreDataStack.syncContext.performGroupedAndWait { context in
+            // Given
+            self.fetchInstances(in: context).forEach(context.delete)
+
+            Feature.insert(name: .conferenceCalling, status: .disabled, config: nil, context: context)
+            XCTAssertEqual(self.fetchInstances(in: context).count, 1)
+
+            // When
+            InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig(in: context)
+
+            // Then
+            let instances = self.fetchInstances(in: context)
+            XCTAssertEqual(instances.count, 1)
+            XCTAssertEqual(instances[0].status, .enabled)
+        }
+    }
+
     private func fetchInstances(in context: NSManagedObjectContext) -> [Feature] {
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         return context.fetchOrAssert(request: fetchRequest)

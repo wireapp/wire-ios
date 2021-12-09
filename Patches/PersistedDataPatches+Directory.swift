@@ -39,6 +39,7 @@ extension PersistedDataPatch {
         PersistedDataPatch(version: "236.0.0", block: MigrateSenderClient.migrateSenderClientID),
         PersistedDataPatch(version: "243.0.0", block: InvalidFeatureRemoval.removeInvalid),
         PersistedDataPatch(version: "273.2.0", block: InvalidDomainRemoval.removeDuplicatedEntitiesWithInvalidDomain),
+        PersistedDataPatch(version: "279.0.4", block: InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig),
     ]
 
 }
