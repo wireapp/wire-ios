@@ -40,7 +40,7 @@ public struct PersistedDataPatch {
     {
 
         /// Normally we fetch the short version from the framework bundle, but it's not working so we hardcode the version.
-        let currentVersion = "278.0.0"
+        let currentVersion = "279.0.4"
         defer {
             moc.setPersistentStoreMetadata(currentVersion, key: lastDataModelPatchedVersionKey)
             moc.saveOrRollback()

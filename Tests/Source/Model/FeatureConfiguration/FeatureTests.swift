@@ -135,6 +135,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         // Given
         syncMOC.performGroupedAndWait { context in
             let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.syncMOC)
+            defaultConferenceCalling?.status = .disabled
             defaultConferenceCalling?.hasInitialDefault = false
             XCTAssertNotNil(defaultConferenceCalling)
         }
