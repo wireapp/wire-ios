@@ -14,10 +14,10 @@ jobs:
         run: |
           curl -X POST https://api.github.com/repos/wireapp/wire-ios-data-model/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
-          -u ${{ secrets.IOS_RELEASE_DISPATCH_SECRET }} \
+          -H "Authorization: token ${{ secrets.ZENKINS_WORKFLOW_PAT }}" \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
 
           curl -X POST https://api.github.com/repos/wireapp/wire-ios-mocktransport/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
-          -u ${{ secrets.IOS_RELEASE_DISPATCH_SECRET }} \
+          -H "Authorization: token ${{ secrets.ZENKINS_WORKFLOW_PAT }}" \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
