@@ -21,10 +21,8 @@ jobs:
         run: |
           gh api repos/wireapp/wire-ios-data-model/dispatches \
           -X POST search/issues \
-          -F event_type='newRelease' \
-          -F client_payload='"$GITHUB_REPOSITORY"'
+          -F event_type='newRelease'
 
-          curl -X POST https://api.github.com/repos/wireapp/wire-ios-mocktransport/dispatches \
-          -H "Accept: application/vnd.github.v3+json" \
-          -u ${{ secrets.DISPATCH_SECRET }} \
-          --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+          gh api repos/wireapp/wire-ios-mocktransport/dispatches \
+          -X POST search/issues \
+          -F event_type='newRelease'
