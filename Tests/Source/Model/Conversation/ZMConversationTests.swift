@@ -42,8 +42,8 @@ extension ZMConversationTests {
         // then
         XCTAssertEqual(conversation.lastReadServerTimeStamp, clearedTimeStamp)
     }
-    
-    //MARK: - SendOnlyEncryptedMessages
+
+    // MARK: - SendOnlyEncryptedMessages
 
     func testThatItInsertsEncryptedKnockMessages() {
         // given
@@ -59,7 +59,7 @@ extension ZMConversationTests {
         XCTAssertEqual(result.count, 1)
         XCTAssertTrue((result.first is ZMClientMessage))
     }
-    
+
     func testThatItInsertsEncryptedTextMessages() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -74,7 +74,7 @@ extension ZMConversationTests {
         XCTAssertEqual(result.count, 1)
         XCTAssertTrue((result.first is ZMClientMessage))
     }
-    
+
     func testThatItInsertsEncryptedImageMessages() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -87,7 +87,7 @@ extension ZMConversationTests {
         let result = uiMOC.executeFetchRequestOrAssert(request)
 
         XCTAssertEqual(result.count, 1)
-        ///TODO
+        /// TODO
         XCTAssertTrue((result.first is ZMAssetClientMessage))
     }
 }

@@ -24,10 +24,10 @@ class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
     func testThatItCalculatesLastUnreadMessages() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
-            
+
            let knock = GenericMessage(content: Knock.with { $0.hotKnock = false })
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             do {
@@ -38,14 +38,14 @@ class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
             message.serverTimestamp = Date()
             message.visibleInConversation = conversation
             conversation.updateTimestampsAfterUpdatingMessage(message)
-            
+
             XCTAssertTrue(conversation.needsToCalculateUnreadMessages)
             XCTAssertEqual(conversation.estimatedUnreadCount, 0)
-            
+
             // when
             ZMConversation.calculateLastUnreadMessages(in: self.syncMOC)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
-            
+
             // then
             XCTAssertEqual(conversation.estimatedUnreadCount, 1)
             XCTAssertFalse(conversation.needsToCalculateUnreadMessages)

@@ -26,42 +26,42 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = nonce
         conversation.lastReadServerTimeStamp = Date(timeIntervalSince1970: 0)
-        
+
         let timeinterval: Int64 = 10000
         let lastRead = LastRead.with {
             $0.conversationID = nonce.transportString()
             $0.lastReadTimestamp = timeinterval
         }
-        
+
         // WHEN
         performPretendingUiMocIsSyncMoc {
             ZMConversation.updateConversation(withLastReadFromSelfConversation: lastRead, inContext: self.uiMOC)
         }
         uiMOC.saveOrRollback()
-        
+
         // THEN
         XCTAssertEqual(conversation.lastReadServerTimeStamp, Date(timeIntervalSince1970: Double(integerLiteral: timeinterval) / 1000))
     }
-    
+
     func testThatItUpdatesClearedTimestamp() {
         // GIVEN
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = nonce
         conversation.clearedTimeStamp = Date(timeIntervalSince1970: 0)
-        
+
         let timeinterval: Int64 = 10000
         let cleared = Cleared.with {
             $0.conversationID = nonce.transportString()
             $0.clearedTimestamp = timeinterval
         }
-        
+
         // WHEN
         performPretendingUiMocIsSyncMoc {
             ZMConversation.updateConversation(withClearedFromSelfConversation: cleared, inContext: self.uiMOC)
         }
         uiMOC.saveOrRollback()
-        
+
         // THEN
         XCTAssertEqual(conversation.clearedTimeStamp, Date(timeIntervalSince1970: Double(integerLiteral: timeinterval) / 1000))
     }

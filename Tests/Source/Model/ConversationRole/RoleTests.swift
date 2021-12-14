@@ -20,9 +20,9 @@ import XCTest
 @testable import WireDataModel
 
 final class RoleTests: ZMBaseManagedObjectTest {
-    
-    let payload: [String : Any] = [
-        "actions" : [
+
+    let payload: [String: Any] = [
+        "actions": [
             "add_conversation_member",
             "remove_conversation_member",
             "modify_conversation_name",
@@ -33,14 +33,14 @@ final class RoleTests: ZMBaseManagedObjectTest {
             "leave_conversation",
             "delete_conversation"
         ],
-        "conversation_role" : "wire_admin"
+        "conversation_role": "wire_admin"
     ]
 
     var mockConversation: ZMConversation!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         mockConversation = ZMConversation.insertNewObject(in: uiMOC)
     }
 
@@ -55,26 +55,26 @@ final class RoleTests: ZMBaseManagedObjectTest {
                                              Role.conversationKey,
                                              Role.actionsKey,
                                              Role.participantRolesKey)
-        
+
         let role = Role.insertNewObject(in: uiMOC)
-        
+
         XCTAssertEqual(role.keysTrackedForLocalModifications(), expectedKeys)
     }
-    
+
     func testThatActionsAreCreatedFromPayload() {
         // given & when
         let sut = Role.createOrUpdate(with: payload,
                                       teamOrConversation: .conversation(mockConversation),
                                       context: uiMOC)!
-        
+
         // then
         XCTAssertEqual(sut.actions.count, 9)
         XCTAssertEqual(sut.name, "wire_admin")
-        
+
         let action = sut.actions.sorted(by: { $0.name < $1.name }).first!
         XCTAssertEqual(action.name, "add_conversation_member")
     }
-    
+
     func testThatCreateOrUpdate_FetchesAnExistingRole() {
         // given
         let role = Role.createOrUpdate(with: payload,

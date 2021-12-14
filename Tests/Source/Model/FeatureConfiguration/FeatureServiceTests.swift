@@ -33,7 +33,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait { _ in
             sut.storeAppLock(appLock)
         }
 
@@ -58,7 +58,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait { _ in
             sut.createDefaultConfigsIfNeeded()
         }
 
@@ -78,7 +78,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait { _ in
             sut.enqueueBackendRefresh(for: .appLock)
         }
 

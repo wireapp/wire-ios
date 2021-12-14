@@ -30,7 +30,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         selfUser.remoteIdentifier = .create()
         selfUser.isAppLockActive = true
     }
-    
+
     override func tearDown() {
         selfUser = nil
         super.tearDown()
@@ -45,11 +45,11 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
         // When
         sut.isActive = false
-        
+
         // Then
         XCTAssertTrue(sut.isActive)
     }
-    
+
     func test_ItCanBeTurnedOff_WhenItIsNotForced() {
         // Given
         let sut = createSut(forceAppLock: false)
@@ -221,7 +221,6 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertFalse(delegate.didCallAppLockDidOpen)
     }
-    
 
     // MARK: - Evaluate Authentication
 
@@ -399,7 +398,7 @@ extension AppLockControllerTests {
 
     typealias Input = (passcodePreference: AppLockPasscodePreference, canEvaluate: Bool, biometricsChanged: Bool)
     typealias Output = AppLockAuthenticationResult
-    
+
     private func assert(input: Input, output: Output, file: StaticString = #file, line: UInt = #line) {
         let sut = createSut()
 
@@ -418,13 +417,13 @@ extension AppLockControllerTests {
                 XCTAssertTrue(sut.isLocked, "isLocked should be true", file: file, line: line)
             }
         }
-        
+
         sut.evaluateAuthentication(passcodePreference: input.passcodePreference,
                                    description: "",
                                    context: context,
                                    callback: assertion)
     }
-    
+
     private func createSut(legacyConfig: AppLockController.LegacyConfig? = nil) -> AppLockController {
         return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: legacyConfig)
     }
@@ -448,4 +447,3 @@ extension AppLockControllerTests {
     }
 
 }
-

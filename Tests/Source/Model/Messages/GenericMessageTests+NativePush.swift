@@ -62,7 +62,5 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
     }
-    
+
 }
-
-

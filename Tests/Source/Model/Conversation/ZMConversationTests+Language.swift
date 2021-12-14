@@ -19,9 +19,9 @@
 import Foundation
 @testable import WireDataModel
 
-class ZMConversationTests_Language : BaseZMMessageTests {
+class ZMConversationTests_Language: BaseZMMessageTests {
 
-    func testThatItAllowsSettingLanguageOnConversation(){
+    func testThatItAllowsSettingLanguageOnConversation() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let germanLanguage = "de-DE"
@@ -32,7 +32,6 @@ class ZMConversationTests_Language : BaseZMMessageTests {
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-
 
         // when
         let conversationFetched = ZMConversation.fetch(with: uuid, in: uiMOC)

@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireTesting
 @testable import WireDataModel
-
 
 class MemberTests: ZMConversationTestsBase {
 
@@ -112,7 +110,7 @@ class MemberTests: ZMConversationTestsBase {
         let user = ZMUser.insertNewObject(in: uiMOC)
         let (team, existingMember) = createTeamAndMember(for: user)
         var member: Member!
-        
+
         self.performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
@@ -127,7 +125,7 @@ class MemberTests: ZMConversationTestsBase {
         let user = ZMUser.insertNewObject(in: uiMOC)
         let team = Team.insertNewObject(in: uiMOC)
         var member: Member!
-        
+
         self.performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
@@ -138,19 +136,19 @@ class MemberTests: ZMConversationTestsBase {
         XCTAssertEqual(member.user, user)
         XCTAssertEqual(member.team, team)
     }
-    
+
     func testThatItSetsTheUsersRemoteIDAsMemberRemoteId() {
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID()
         let team = Team.insertNewObject(in: uiMOC)
         var member: Member!
-        
+
         self.performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
         }
-        
+
         // then
         XCTAssertNotNil(member.remoteIdentifier)
         XCTAssertEqual(member.remoteIdentifier, user.remoteIdentifier)
@@ -158,9 +156,7 @@ class MemberTests: ZMConversationTestsBase {
 
 }
 
-
 // MARK: - Transport
-
 
 extension MemberTests {
 
@@ -218,5 +214,5 @@ extension MemberTests {
             XCTAssertEqual(member.createdBy?.remoteIdentifier, createdByUUID)
         }
     }
-    
+
 }

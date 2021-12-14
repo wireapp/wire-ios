@@ -74,7 +74,7 @@ class ConversationTests_Team: ZMConversationTestsBase {
 
         sut.domain = UUID().transportString()
         selfUser.domain = UUID().transportString()
-        
+
         // When / Then
         XCTAssertFalse(sut.isTeamConversation)
     }

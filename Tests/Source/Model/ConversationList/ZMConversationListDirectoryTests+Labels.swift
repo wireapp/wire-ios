@@ -25,15 +25,15 @@ class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
         let sut = uiMOC.conversationListDirectory()
         XCTAssertEqual(sut.allFolders.count, 0)
         let folder = sut.createFolder("Folder A")!
-        
+
         // when
         sut.refetchAllLists(in: uiMOC)
-        
+
         // then
         XCTAssertEqual(sut.allFolders.count, 1)
         XCTAssertEqual(sut.allFolders.first as? Label, folder as? Label)
     }
-    
+
     func testThatItRefetchesFoldersLists() {
         // given
         let conversation = createConversation(in: uiMOC)
@@ -41,10 +41,10 @@ class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
         let folder = sut.createFolder("Folder A")!
         conversation.moveToFolder(folder)
         XCTAssertEqual(sut.conversations(by: .folder(folder)).count, 0)
-        
+
         // when
         sut.refetchAllLists(in: uiMOC)
-        
+
         // then
         XCTAssertEqual(sut.conversations(by: .folder(folder)), [conversation])
     }

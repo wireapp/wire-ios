@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 @testable import WireDataModel
 
@@ -28,18 +27,17 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
         // WHEN
         let compositeMessage = message.underlyingMessage?.composite
-        
+
         // THEN
         XCTAssertEqual(compositeMessage, expectedCompositeMessage)
         XCTAssertEqual(compositeMessage?.items, expectedCompositeMessage.items)
     }
-    
+
     func testThatItCreatesButtonStateIfNeeded_WhenReceivingButtonActionConfirmation() {
         // GIVEN
         let nonce = UUID()
         let message = compositeMessage(with: compositeProto(items: compositeItemButton()), nonce: nonce)
         let conversation = self.conversation(withMessage: message)
-        
 
         let confirmation = ButtonActionConfirmation.with {
             $0.referenceMessageID = nonce.transportString()
@@ -51,12 +49,12 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
             ZMClientMessage.updateButtonStates(withConfirmation: confirmation, forConversation: conversation, inContext: uiMOC)
             uiMOC.saveOrRollback()
         }
-        
+
         // THEN
         let buttonState = message.buttonStates?.first
         XCTAssertEqual(buttonState?.remoteIdentifier, "1")
     }
-    
+
     func testThatItUpdatesButtonStates_WhenReceivingButtonActionConfirmation() {
         // GIVEN
         let nonce = UUID()
@@ -66,13 +64,13 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
             compositeItemButton(buttonID: "3"),
             compositeItemButton(buttonID: "4")
         ]
-        
+
         let message = compositeMessage(with: compositeProto(items: buttonItems[0], buttonItems[1], buttonItems[2], buttonItems[3]), nonce: nonce)
-        
+
         let conversation = self.conversation(withMessage: message)
 
         var buttonStates: [WireDataModel.ButtonState]!
-        
+
         uiMOC.performAndWait { [uiMOC] in
             buttonStates = buttonItems.map { buttonItem in
                 return WireDataModel.ButtonState.insert(with: buttonItem.button.id, message: message, inContext: uiMOC)
@@ -85,44 +83,44 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
             uiMOC.saveOrRollback()
         }
-        
+
         let confirmation = ButtonActionConfirmation.with {
             $0.referenceMessageID = nonce.transportString()
             $0.buttonID = "1"
         }
-        
+
         // WHEN
         uiMOC.performAndWait { [uiMOC] in
             ZMClientMessage.updateButtonStates(withConfirmation: confirmation, forConversation: conversation, inContext: uiMOC)
             uiMOC.saveOrRollback()
         }
-        
+
         // THEN
         XCTAssertEqual(buttonStates[0].state, WireDataModel.ButtonState.State.confirmed)
         for buttonState in buttonStates[1...3] {
             XCTAssertEqual(buttonState.state, WireDataModel.ButtonState.State.unselected)
         }
     }
-    
+
     func testThatItSetsIsExpiredAndUnselectsButtonState_WhenButtonActionMessageExpires() {
         // GIVEN
         let nonce = UUID()
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(buttonID: "1")), nonce: nonce)
         let conversation = self.conversation(withMessage: message)
-        
-        var buttonState:  WireDataModel.ButtonState!
+
+        var buttonState: WireDataModel.ButtonState!
         uiMOC.performAndWait { [uiMOC] in
             buttonState = WireDataModel.ButtonState.insert(with: "1", message: message, inContext: uiMOC)
             buttonState.state = .selected
             uiMOC.saveOrRollback()
         }
-                
+
         let buttonAction = ButtonAction(buttonId: "1", referenceMessageId: nonce)
-        
+
         // WHEN
         ZMClientMessage.expireButtonState(forButtonAction: buttonAction, forConversation: conversation, inContext: uiMOC)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-        
+
         // THEN
         XCTAssertEqual(buttonState.isExpired, true)
         XCTAssertEqual(buttonState.state, WireDataModel.ButtonState.State.unselected)

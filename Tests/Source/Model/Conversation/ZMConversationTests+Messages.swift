@@ -21,20 +21,20 @@ import WireImages
 @testable import WireDataModel
 
 class ZMConversationMessagesTests: ZMConversationTestsBase {
-    
+
     func testThatWeCanInsertATextMessage() {
-        
+
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID()
-    
+
             // when
             let messageText = "foo"
             let message = try! conversation.appendText(content: messageText) as! ZMMessage
-    
+
             // then
             XCTAssertEqual(message.textMessageData?.messageText, messageText)
             XCTAssertEqual(message.conversation, conversation)
@@ -43,26 +43,23 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         }
     }
 
-    
-    func testThatItUpdatesTheLastModificationDateWhenInsertingMessagesIntoAnEmptyConversation()
-    {
+    func testThatItUpdatesTheLastModificationDateWhenInsertingMessagesIntoAnEmptyConversation() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.lastModifiedDate = Date(timeIntervalSinceNow: -90000)
-        
+
         // when
         guard let msg = try? conversation.appendText(content: "Foo") as? ZMMessage else {
             XCTFail()
             return
         }
-    
+
         // then
         XCTAssertNotNil(msg.serverTimestamp)
         XCTAssertEqual(conversation.lastModifiedDate, msg.serverTimestamp)
     }
-    
-    func testThatItUpdatesTheLastModificationDateWhenInsertingMessages()
-    {
+
+    func testThatItUpdatesTheLastModificationDateWhenInsertingMessages() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         guard let msg1 = try? conversation.appendText(content: "Foo") as? ZMMessage else {
@@ -71,20 +68,19 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         }
         msg1.serverTimestamp = Date(timeIntervalSinceNow: -90000)
         conversation.lastModifiedDate = msg1.serverTimestamp
-    
+
         // when
         guard let msg2 = try? conversation.appendImage(from: self.verySmallJPEGData()) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
-    
+
         // then
         XCTAssertNotNil(msg2.serverTimestamp)
         XCTAssertEqual(conversation.lastModifiedDate, msg2.serverTimestamp)
     }
-    
-    func testThatItDoesNotUpdateTheLastModifiedDateForRenameAndLeaveSystemMessages()
-    {
+
+    func testThatItDoesNotUpdateTheLastModifiedDateForRenameAndLeaveSystemMessages() {
         let types = [
             ZMSystemMessageType.teamMemberLeave,
             ZMSystemMessageType.conversationNameChanged,
@@ -96,46 +92,44 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
             let lastModified = Date(timeIntervalSince1970: 10)
             conversation.lastModifiedDate = lastModified
-    
+
             let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
             systemMessage.systemMessageType = type
             systemMessage.serverTimestamp = lastModified.addingTimeInterval(100)
-    
+
             // when
             conversation.append(systemMessage)
-    
+
             // then
             XCTAssertEqual(conversation.lastModifiedDate, lastModified)
         }
     }
-    
-    func testThatItIsSafeToPassInAMutableStringWhenCreatingATextMessage()
-    {
+
+    func testThatItIsSafeToPassInAMutableStringWhenCreatingATextMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-    
+
         // when
-        let originalText = "foo";
+        let originalText = "foo"
         var messageText = originalText
         let message = try! conversation.appendText(content: messageText)
-    
+
         // then
         messageText.append("1234")
         XCTAssertEqual(message.textMessageData?.messageText, originalText)
     }
-        
-    func testThatWeCanInsertAnImageMessageFromAFileURL()
-    {
+
+    func testThatWeCanInsertAnImageMessageFromAFileURL() {
         // given
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         let imageFileURL = self.fileURL(forResource: "1900x1500", extension: "jpg")!
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-    
+
         // when
         let message = try! conversation.appendImage(at: imageFileURL) as! ZMAssetClientMessage
-    
+
         // then
         XCTAssertNotNil(message)
         XCTAssertNotNil(message.nonce)
@@ -143,23 +137,22 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(message.conversation, conversation)
         XCTAssertEqual(conversation.lastMessage as! ZMMessage, message)
         XCTAssertNotNil(message.nonce)
-        
+
         let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
         XCTAssertNotNil(expectedData)
         XCTAssertEqual(message.imageMessageData?.imageData, expectedData)
         XCTAssertEqual(selfUser, message.sender)
     }
-    
-    func testThatNoMessageIsInsertedWhenTheImageFileURLIsPointingToSomethingThatIsNotAnImage()
-    {
+
+    func testThatNoMessageIsInsertedWhenTheImageFileURLIsPointingToSomethingThatIsNotAnImage() {
         // given
         let imageFileURL = self.fileURL(forResource: "1900x1500", extension: "jpg")!
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-    
+
         // when
         let message = try! conversation.appendImage(at: imageFileURL) as! ZMAssetClientMessage
-    
+
         // then
         XCTAssertNotNil(message)
         XCTAssertNotNil(message.nonce)
@@ -167,65 +160,62 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(message.conversation, conversation)
         XCTAssertEqual(conversation.lastMessage as! ZMMessage, message)
         XCTAssertNotNil(message.nonce)
-        
+
         let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
         XCTAssertNotNil(expectedData)
         XCTAssertEqual(message.imageMessageData?.imageData, expectedData)
     }
 
-    func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotAFileURL()
-    {
+    func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotAFileURL() {
         // given
-        let imageURL = URL(string:"http://www.placehold.it/350x150")!
+        let imageURL = URL(string: "http://www.placehold.it/350x150")!
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
         let start = self.uiMOC.insertedObjects
-    
+
         // when
-        var message: Any? = nil
+        var message: Any?
         self.performIgnoringZMLogError {
             message = try? conversation.appendImage(at: imageURL)
         }
-    
+
         // then
         XCTAssertNil(message)
         XCTAssertEqual(start, self.uiMOC.insertedObjects)
     }
 
-    func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotPointingToAFile()
-    {
+    func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotPointingToAFile() {
         // given
         let textFileURL = self.fileURL(forResource: "Lorem Ipsum", extension: "txt")!
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
         let start = self.uiMOC.insertedObjects
-    
+
         // when
-        var message: Any? = nil
+        var message: Any?
         self.performIgnoringZMLogError {
             message = try? conversation.appendImage(at: textFileURL)
         }
-    
+
         // then
         XCTAssertNil(message)
-        XCTAssertEqual(start, self.uiMOC.insertedObjects);
+        XCTAssertEqual(start, self.uiMOC.insertedObjects)
     }
 
-    //TODO: check why fail on XCode11
-    func disable_testThatWeCanInsertAnImageMessageFromImageData()
-    {
+    // TODO: check why fail on XCode11
+    func disable_testThatWeCanInsertAnImageMessageFromImageData() {
         // given
         let imageData = try! self.data(forResource: "1900x1500", extension: "jpg").wr_removingImageMetadata()
         XCTAssertNotNil(imageData)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-    
+
         // when
         guard let message = try? conversation.appendImage(from: imageData) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
-    
+
         // then
         XCTAssertNotNil(message)
         XCTAssertNotNil(message.nonce)
@@ -236,36 +226,34 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(message.imageMessageData?.imageData?.count, imageData.count)
     }
 
-    //TODO: check why fail on XCode11
-    func disable_testThatItIsSafeToPassInMutableDataWhenCreatingAnImageMessage()
-    {
+    // TODO: check why fail on XCode11
+    func disable_testThatItIsSafeToPassInMutableDataWhenCreatingAnImageMessage() {
         // given
         let originalImageData = try! self.data(forResource: "1900x1500", extension: "jpg").wr_removingImageMetadata()
         var imageData = originalImageData
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-    
+
         // when
         guard let message = try? conversation.appendImage(from: imageData) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
-        
+
         // then
-        imageData.append(contentsOf: [1,2])
+        imageData.append(contentsOf: [1, 2])
         XCTAssertEqual(message.imageMessageData?.imageData?.count, originalImageData.count)
     }
-    
-    func testThatNoMessageIsInsertedWhenTheImageDataIsNotAnImage()
-    {
+
+    func testThatNoMessageIsInsertedWhenTheImageDataIsNotAnImage() {
         // given
         let textData = self.data(forResource: "Lorem Ipsum", extension: "txt")!
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
         let start = self.uiMOC.insertedObjects
-    
+
         // when
-        var message: ZMConversationMessage? = nil
+        var message: ZMConversationMessage?
         self.performIgnoringZMLogError {
             message = try? conversation.appendImage(from: textData)
         }
@@ -275,27 +263,25 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(start, self.uiMOC.insertedObjects)
     }
 
-    func testThatLastReadUpdatesInSelfConversationDontExpire()
-    {
+    func testThatLastReadUpdatesInSelfConversationDontExpire() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID()
             conversation.lastReadServerTimeStamp = Date()
-            
+
             // when
             guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: conversation) else {
                 XCTFail()
                 return
             }
-            
+
             // then
             XCTAssertNil(message.expirationDate)
         }
     }
-    
-    func testThatWeCanInsertAFileMessage()
-    {
+
+    func testThatWeCanInsertAFileMessage() {
         // given
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent("secret_file.txt")
@@ -308,10 +294,10 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         // when
         let fileMetaData = ZMFileMetadata(fileURL: fileURL)
         let fileMessage = try! conversation.appendFile(with: fileMetaData) as! ZMAssetClientMessage
-    
+
         // then
         XCTAssertEqual(conversation.lastMessage as! ZMMessage, fileMessage)
-    
+
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
         XCTAssertNotNil(fileMessage.fileMessageData)
@@ -327,8 +313,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertFalse(fileMessage.fileMessageData!.isAudio)
     }
 
-    func testThatWeCanNotInsertAFileMessage_WhenFileSharingIsDisabled()
-    {
+    func testThatWeCanNotInsertAFileMessage_WhenFileSharingIsDisabled() {
         // given
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent("secret_file.txt")
@@ -337,33 +322,32 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
 
-
         // when
         let fileSharingFeature = Feature.fetch(name: .fileSharing, context: uiMOC)
         fileSharingFeature?.status = .disabled
         let fileMetaData = ZMFileMetadata(fileURL: fileURL)
 
         do {
-            let _ = try conversation.appendFile(with: fileMetaData) as! ZMAssetClientMessage
+            _ = try conversation.appendFile(with: fileMetaData) as! ZMAssetClientMessage
         } catch let error as NSError {
             // then
             XCTAssertEqual(error as! ZMConversation.AppendMessageError, .fileSharingIsRestricted)
         }
      }
-    
+
     func testThatWeCanInsertATextMessageWithImageQuote() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
         let imageMessage = try? conversation.appendImage(from: verySmallJPEGData())
-        
+
         // when
         let textMessage = try? conversation.appendText(content: "Hello World", replyingTo: imageMessage)
-        
+
         // then
         XCTAssertNotNil(textMessage?.textMessageData?.quoteMessage)
         XCTAssertEqual(textMessage?.textMessageData?.quoteMessage?.nonce, imageMessage?.nonce)
-        
+
     }
 
     func testThatWeCanInsertAPassFileMessage() {
@@ -412,16 +396,15 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
 
         return locationData
     }
-    
-    func testThatWeCanInsertALocationMessage()
-    {
+
+    func testThatWeCanInsertALocationMessage() {
         // given
         let latitude = Float(48.53775)
         let longitude = Float(9.041169)
         let zoomLevel = Int32(16)
         let name = "天津市 နေပြည်တော် Test"
         let locationData = self.locationData()
-        
+
         // when
         self.syncMOC.performGroupedBlockAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -432,9 +415,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
                 return
             }
 
-        
             XCTAssertEqual(conversation.lastMessage as! ZMMessage, message)
-    
+
             guard let locationMessageData = message.locationMessageData else {
                 XCTFail()
                 return
@@ -445,7 +427,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             XCTAssertEqual(locationMessageData.name, name)
         }
     }
-    
+
     func testThatLocationMessageHasNoImage() throws {
         // given
         let locationData = self.locationData()
@@ -455,15 +437,14 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         conversation.remoteIdentifier = UUID()
         // when
         let message = try conversation.appendLocation(with: locationData) as! ZMClientMessage
-        
+
         // then
         XCTAssertNil(message.underlyingMessage?.imageAssetData)
         XCTAssertNotNil(message.underlyingMessage?.locationData)
         XCTAssertNotNil(message.expirationDate)
     }
-    
-    func testThatWeCanInsertAVideoMessage()
-    {
+
+    func testThatWeCanInsertAVideoMessage() {
         // given
         let fileName = "video.mp4"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
@@ -473,7 +454,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let duration = 12333
         let dimensions = CGSize(width: 1900, height: 800)
         try! videoData.write(to: fileURL)
-    
+
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
 
@@ -482,15 +463,15 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
                                             duration: TimeInterval(duration),
                                             dimensions: dimensions,
                                             thumbnail: thumbnailData)
-        
+
         guard let fileMessage = try? conversation.appendFile(with: videoMetadata) as? ZMAssetClientMessage else {
             XCTFail()
             return
         }
-    
+
         // then
         XCTAssertEqual(conversation.lastMessage as! ZMMessage, fileMessage)
-    
+
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
         XCTAssertNotNil(fileMessage.fileMessageData)
@@ -514,7 +495,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
     }
 
     func testThatWeCanInsertAnAudioMessage() {
-        
+
         // given
         let fileName = "audio.m4a"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
@@ -523,21 +504,21 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let thumbnailData = Data.secureRandomData(length: 250)
         let duration = 12333
         try! videoData.write(to: fileURL)
-        
+
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-        
+
         // when
         let audioMetadata = ZMAudioMetadata(fileURL: fileURL,
                                             duration: TimeInterval(duration),
                                             normalizedLoudness: [],
                                             thumbnail: thumbnailData)
-        
+
         let fileMessage = try! conversation.appendFile(with: audioMetadata) as! ZMAssetClientMessage
-        
+
         // then
         XCTAssertEqual(conversation.lastMessage as! ZMMessage, fileMessage)
-        
+
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
         XCTAssertNotNil(fileMessage.fileMessageData)
@@ -556,65 +537,65 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertFalse(fileMessageData.isVideo)
         XCTAssertTrue(fileMessageData.isAudio)
     }
-    
+
     func testThatItDoesNotFetchMessageWhenMissing() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-        
+
         // WHEN
         let lastMessage = conversation.lastMessageSent(by: selfUser)
-        
+
         // THEN
         XCTAssertEqual(lastMessage, nil)
     }
-    
+
     func testThatItFetchesMessageForUser() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-        
+
         let message = try! conversation.appendText(content: "Test Message") as! ZMMessage
-        
+
         // WHEN
         let lastMessage = conversation.lastMessageSent(by: selfUser)
-        
+
         // THEN
         XCTAssertEqual(lastMessage, message)
     }
-    
+
     func testThatItFetchesLastMessageForUser() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-        
-        let _ = try! conversation.appendText(content: "Test Message") as! ZMMessage
+
+        _ = try! conversation.appendText(content: "Test Message") as! ZMMessage
         let message2 = try! conversation.appendText(content: "Test Message 2") as! ZMMessage
-        
+
         // WHEN
         let lastMessage = conversation.lastMessageSent(by: selfUser)
-        
+
         // THEN
         XCTAssertEqual(lastMessage, message2)
     }
-    
+
     func testThatItIgnoreMessagesFromOtherUsers() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
-        
+
         let message1 = try! conversation.appendText(content: "Test Message") as! ZMMessage
         message1.sender = self.createUser()
-        
+
         self.uiMOC.processPendingChanges()
-        
+
         // WHEN
         let lastMessage = conversation.lastMessageSent(by: selfUser)
-        
+
         // THEN
         XCTAssertEqual(lastMessage, nil)
     }
-    
+
     func testThatWeCanInsertAButtonActionMessage() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -628,7 +609,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         // THEN
         let expectedMessage = conversation.hiddenMessages.first
         XCTAssertEqual(message, expectedMessage)
-        XCTAssertEqual(message?.underlyingMessage?.buttonAction.buttonID , buttonId)
+        XCTAssertEqual(message?.underlyingMessage?.buttonAction.buttonID, buttonId)
         XCTAssertEqual(message?.underlyingMessage?.buttonAction.referenceMessageID, messageId.transportString())
     }
 }

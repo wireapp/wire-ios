@@ -19,110 +19,110 @@
 import Foundation
 
 class ZMConversationTests_Labels: ZMConversationTestsBase {
-    
+
     func createFolder(name: String) -> Label {
         var created: Bool = false
         let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: uiMOC, created: &created)!
         XCTAssertTrue(created)
-        
+
         label.kind = .folder
         label.name = name
-        
+
         return label
     }
-    
+
     // MARK: Favorites
-    
+
     func testThatConversationCanBeAddedToFavorites() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
-        
+
         // WHEN
         sut.isFavorite = true
 
         // THEN
         XCTAssertTrue(sut.isFavorite)
     }
-    
+
     func testThatConversationCanBeRemovedFromFavorites() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         sut.isFavorite = true
-        
+
         // WHEN
         sut.isFavorite = false
-        
+
         // THEN
         XCTAssertFalse(sut.isFavorite)
     }
-    
+
     // MARK: Folders
-    
+
     func testThatConversationCanBeMovedToFolder() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let folder = createFolder(name: "folder1")
-        
+
         // WHEN
         sut.moveToFolder(folder)
 
         // THEN
         XCTAssertEqual(sut.labels, Set(arrayLiteral: folder))
     }
-    
+
     func testThatConversationIsRemovedFromPreviousFolder_WhenMovedToFolder() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let folder1 = createFolder(name: "folder1")
         let folder2 = createFolder(name: "folder2")
         sut.moveToFolder(folder1)
-        
+
         // WHEN
         sut.moveToFolder(folder2)
-        
+
         // THEN
         XCTAssertEqual(sut.labels, Set(arrayLiteral: folder2))
     }
-    
+
     func testThatConversationIsNotRemovedFromFavorites_WhenMovedToFolder() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let folder = createFolder(name: "folder1")
         sut.isFavorite = true
-        
+
         // WHEN
         sut.moveToFolder(folder)
-        
+
         // THEN
         XCTAssertTrue(sut.isFavorite)
     }
-    
+
     func testThatConversationCanBeRemovedFromFolder() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let folder = createFolder(name: "folder1")
         sut.moveToFolder(folder)
-        
+
         // WHEN
         sut.removeFromFolder()
-        
+
         // THEN
         XCTAssertTrue(sut.labels.isEmpty)
     }
-    
+
     func testThatFolderIsMarkedForDeletion_WhenLastConversationIsRemoved() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let folder = createFolder(name: "folder1")
         sut.moveToFolder(folder)
-        
+
         // WHEN
         sut.removeFromFolder()
-        
+
         // THEN
         XCTAssertTrue(folder.markedForDeletion)
     }
-    
+
     func testThatFolderIsNotMarkedForDeletion_WhenSecondToLastConversationIsRemoved() {
         // GIVEN
         let conversation1 = createConversation(in: uiMOC)
@@ -130,12 +130,12 @@ class ZMConversationTests_Labels: ZMConversationTestsBase {
         let folder = createFolder(name: "folder1")
         conversation1.moveToFolder(folder)
         conversation2.moveToFolder(folder)
-        
+
         // WHEN
         conversation1.removeFromFolder()
-        
+
         // THEN
         XCTAssertFalse(folder.markedForDeletion)
     }
-    
+
 }

@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireDataModel
 
-final class ZMConversationTests_Services : BaseZMMessageTests {
+final class ZMConversationTests_Services: BaseZMMessageTests {
 
     var team: Team!
     var service: ServiceUser!
@@ -111,7 +111,6 @@ final class ZMConversationTests_Services : BaseZMMessageTests {
         // then
         XCTAssertNil(conversation)
     }
-
 
     func testThatItFindsConversationWithCorrectService() {
         // given

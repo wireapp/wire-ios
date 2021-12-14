@@ -20,58 +20,58 @@ import Foundation
 @testable import WireDataModel
 
 class LabelTests: ZMBaseManagedObjectTest {
-    
+
     func testThatFetchOrCreateFavoriteLabel_ReturnsLabelOfKindFavorite() {
         // given
         let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true)
-        
+
         // then
         XCTAssertEqual(favoriteLabel.kind, .favorite)
     }
-    
+
     func testThatFetchOrCreateFavoriteLabel_ReturnsTheSameObject_WhenCalledTwice() {
         // given
         let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true)
-        
+
         // then
         XCTAssertEqual(Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true), favoriteLabel)
     }
-    
+
     func testThatFetchOrCreate_ReturnsANewLabel_WhenCreateIsTrue() {
         // given
         var created = false
-        
+
         // when
         let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: uiMOC, created: &created)
-        
+
         // then
         XCTAssertTrue(created)
         XCTAssertNotNil(label)
     }
-    
+
     func testThatFetchOrCreate_ReturnsNil_WhenCreateIsFalse() {
         // given
         var created = false
-        
+
         // when
         let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: false, in: uiMOC, created: &created)
-        
+
         // then
         XCTAssertFalse(created)
         XCTAssertNil(label)
     }
-    
+
     func testThatFetchOrCreate_FetchesAnExistingLabel() {
         // given
         var created = false
         let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: uiMOC, created: &created)
-        
+
         // when
         let fetchedLabel = Label.fetchOrCreate(remoteIdentifier: label!.remoteIdentifier!, create: false, in: uiMOC, created: &created)
-        
+
         // then
         XCTAssertFalse(created)
         XCTAssertEqual(label, fetchedLabel)
     }
-    
+
 }

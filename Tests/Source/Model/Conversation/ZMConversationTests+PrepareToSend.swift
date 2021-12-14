@@ -19,18 +19,17 @@
 import Foundation
 @testable import WireDataModel
 
+class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
-class ZMConversationPrepareToSendTests : ZMConversationTestsBase {
-    
     func testThatMessagesAddedToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.securityLevel = .secureWithIgnored
-        
+
         // WHEN
         let message = try! conversation.appendText(content: "Foo") as! ZMMessage
         self.uiMOC.saveOrRollback()
-        
+
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
             let message = self.syncMOC.object(with: message.objectID) as! ZMMessage
@@ -38,7 +37,7 @@ class ZMConversationPrepareToSendTests : ZMConversationTestsBase {
             XCTAssertTrue(message.causedSecurityLevelDegradation)
         }
     }
-    
+
     func testThatMessagesResentToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
