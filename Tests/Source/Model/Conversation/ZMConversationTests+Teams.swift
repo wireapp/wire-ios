@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireTesting
 @testable import WireDataModel
-
 
 final class ConversationTests_Teams: ZMConversationTestsBase {
 
@@ -77,7 +75,7 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
     func testThatItReturnsAnExistingOneOnOneConversationIfThereAlreadyIsOneInATeam() {
         // given
         let conversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-        
+
         // when
         let newConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
@@ -197,7 +195,6 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         XCTAssertNotNil(conversation)
     }
 
-
     func testThatItCreatesAConversationWithAnotherMember() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
@@ -228,13 +225,13 @@ extension ConversationTests_Teams {
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [otherUser], team: team)!
         let previousLastModifiedDate = conversation.lastModifiedDate!
         let timestamp = Date(timeIntervalSinceNow: 100)
-        
+
         // when
         conversation.appendTeamMemberRemovedSystemMessage(user: otherUser, at: timestamp)
-        
+
         // then
         guard let message = conversation.lastMessage as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
-        
+
         XCTAssertEqual(message.systemMessageType, .teamMemberLeave)
         XCTAssertEqual(message.sender, otherUser)
         XCTAssertEqual(message.users, [otherUser])
@@ -243,4 +240,3 @@ extension ConversationTests_Teams {
         XCTAssertEqual(conversation.lastModifiedDate, previousLastModifiedDate, "Message should not change lastModifiedDate")
     }
 }
-

@@ -24,7 +24,6 @@ class MockBiometricsState: BiometricsStateProtocol {
     var _biometricsChanged = false
     var didCallPersistState = false
 
-
     func biometricsChanged(in context: LAContextProtocol) -> Bool {
         return _biometricsChanged
     }

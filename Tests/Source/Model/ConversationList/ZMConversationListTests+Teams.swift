@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 @testable import WireDataModel
-
 
 final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
@@ -363,7 +361,6 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
 }
 
-
 fileprivate extension ZMConversationList {
 
     var setValue: Set<ZMConversation> {
@@ -373,5 +370,5 @@ fileprivate extension ZMConversationList {
     var arrayValue: [ZMConversation] {
         return self as! [ZMConversation]
     }
-    
+
 }

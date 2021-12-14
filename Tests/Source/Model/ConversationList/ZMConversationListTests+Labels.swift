@@ -19,22 +19,21 @@
 import Foundation
 @testable import WireDataModel
 
-
 final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
-    
+
     var dispatcher: NotificationDispatcher!
-    
+
     override func setUp() {
         super.setUp()
         dispatcher = NotificationDispatcher(managedObjectContext: uiMOC)
     }
-    
+
     override func tearDown() {
         dispatcher.tearDown()
         dispatcher = nil
         super.tearDown()
     }
-    
+
     func testThatAddingAConversationToFavoritesMovesItToFavoriteConversationList() {
         // given
         let favoriteList = uiMOC.conversationListDirectory().favoriteConversations
@@ -43,15 +42,15 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         conversation.lastModifiedDate = Date()
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertEqual(favoriteList.count, 0)
-        
+
         // when
         conversation.isFavorite = true
         XCTAssertTrue(uiMOC.saveOrRollback())
-        
+
         // then
         XCTAssertEqual(favoriteList.count, 1)
     }
-    
+
     func testThatRemovingAConversationFromFavoritesRemovesItFromFavoriteConversationList() {
         // given
         let favoriteList = uiMOC.conversationListDirectory().favoriteConversations
@@ -61,15 +60,15 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         conversation.isFavorite = true
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertEqual(favoriteList.count, 1)
-        
+
         // when
         conversation.isFavorite = false
         XCTAssertTrue(uiMOC.saveOrRollback())
-        
+
         // then
         XCTAssertEqual(favoriteList.count, 0)
     }
-    
+
     func testThatAddingAConversationToFolderMovesItToFolderConversationList() {
         // given
         let folder = uiMOC.conversationListDirectory().createFolder("folder 1")!
@@ -78,15 +77,15 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         conversation.lastModifiedDate = Date()
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertEqual(uiMOC.conversationListDirectory().conversations(by: .folder(folder)).count, 0)
-        
+
         // when
         conversation.moveToFolder(folder)
         XCTAssertTrue(uiMOC.saveOrRollback())
-        
+
         // then
         XCTAssertEqual(uiMOC.conversationListDirectory().conversations(by: .folder(folder)).count, 1)
     }
-    
+
     func testThatRemovingAConversationFromAFolderRemovesItFromTheFolderConversationList() {
         // given
         let folder = uiMOC.conversationListDirectory().createFolder("folder 1")!
@@ -96,11 +95,11 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         conversation.moveToFolder(folder)
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertEqual(uiMOC.conversationListDirectory().conversations(by: .folder(folder)).count, 1)
-        
+
         // when
         conversation.removeFromFolder()
         XCTAssertTrue(uiMOC.saveOrRollback())
-        
+
         // then
         XCTAssertEqual(uiMOC.conversationListDirectory().conversations(by: .folder(folder)).count, 0)
     }

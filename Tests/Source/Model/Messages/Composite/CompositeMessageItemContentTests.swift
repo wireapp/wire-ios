@@ -19,23 +19,23 @@
 import Foundation
 @testable import WireDataModel
 
-class CompositeMessageItemContentTests: BaseCompositeMessageTests {    
-    
+class CompositeMessageItemContentTests: BaseCompositeMessageTests {
+
     func testThatButtonTouchActionInsertsMessageInConversationIfNoneIsSelected() {
         // GIVEN
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(), compositeItemText()))
         guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
         let conversation = self.conversation(withMessage: message)
-        
+
         // WHEN
         button.touchAction()
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-        
+
         // THEN
         let hiddenMessage = conversation.hiddenMessages.first as? ZMClientMessage
         guard case .some(.buttonAction) = hiddenMessage?.underlyingMessage?.content else { return XCTFail() }
     }
-    
+
     func testThatButtonTouchActionDoesNotInsertMessageInConversationIfAButtonIsSelected() {
         // GIVEN
         let buttonItem = compositeItemButton()
@@ -47,16 +47,16 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
             let buttonState = WireDataModel.ButtonState.insert(with: buttonItem.button.id, message: message, inContext: self.uiMOC)
             buttonState.state = .selected
             self.uiMOC.saveOrRollback()
-            
+
             // WHEN
             button.touchAction()
-            
+
             // THEN
             let lastmessage = conversation.hiddenMessages.first as? ZMClientMessage
             if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content { XCTFail() }
         }
     }
-    
+
     func testThatButtonTouchActionCreatesButtonStateIfNeeded() {
         // GIVEN
         let id = "123"
@@ -68,13 +68,13 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         // WHEN
         button.touchAction()
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-        
+
         // THEN
         let buttonState = message.buttonStates?.first(where: {$0.remoteIdentifier == id})
         XCTAssertNotNil(buttonState)
         XCTAssertEqual(WireDataModel.ButtonState.State.selected, buttonState?.state)
     }
-    
+
     func testThatButtonTouchActionExpiresButtonStateAndDoesntInsertMessage_WhenSenderIsNotInConversation() {
         // GIVEN
         let id = "123"
@@ -82,7 +82,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let message = compositeMessage(with: compositeProto(items: buttonItem))
         guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
         let conversation = self.conversation(withMessage: message, addSender: false)
-        
+
         // WHEN
         button.touchAction()
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)

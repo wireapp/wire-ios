@@ -23,20 +23,20 @@ final class ActionTests: ZMBaseManagedObjectTest {
     func testThatItTracksCorrectKeys() {
         let expectedKeys = Set(arrayLiteral: Action.nameKey,
                                              Action.roleKey)
-        
+
         let sut = Action.insertNewObject(in: uiMOC)
-        
+
         XCTAssertEqual(sut.keysTrackedForLocalModifications(), expectedKeys)
     }
-    
+
     func testThatFetchOrCreate_FetchesAnExistingAction() {
         let name = "dummy action"
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let role = Role.create(managedObjectContext: uiMOC, name: "DUMMY", conversation: conversation)
-        
+
         // given
         var created = false
-        let action = Action.fetchOrCreate(with: name, role:role, in: uiMOC, created: &created)
+        let action = Action.fetchOrCreate(with: name, role: role, in: uiMOC, created: &created)
         XCTAssert(created)
 
         // when

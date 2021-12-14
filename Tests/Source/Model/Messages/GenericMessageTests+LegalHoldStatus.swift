@@ -23,31 +23,31 @@ import WireTesting
 class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
     func testThatItUpdatesLegalHoldStatusFlagForTextMessage() {
-        
+
         // given
         var genericMessage = GenericMessage(content: Text(content: "foo"), nonce: UUID.create())
-        
+
         // when
         XCTAssertEqual(genericMessage.text.legalHoldStatus, .unknown)
         genericMessage.setLegalHoldStatus(.disabled)
-        
+
         // then
         XCTAssertEqual(genericMessage.text.legalHoldStatus, .disabled)
     }
-    
+
     func testThatItUpdatesLegalHoldStatusFlagForReaction() {
-        
+
         // given
         var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "🤠", messageID: UUID.create()))
-        
+
         // when
         XCTAssertEqual(genericMessage.reaction.legalHoldStatus, .unknown)
         genericMessage.setLegalHoldStatus(.enabled)
-        
+
         // then
         XCTAssertEqual(genericMessage.reaction.legalHoldStatus, .enabled)
     }
-    
+
     func testThatItUpdatesLegalHoldStatusFlagForKnock() {
 
         // given

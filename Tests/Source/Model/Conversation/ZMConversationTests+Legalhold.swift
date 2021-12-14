@@ -20,9 +20,9 @@ import XCTest
 @testable import WireDataModel
 
 class ZMConversationTests_Legalhold: ZMConversationTestsBase {
-    
-    // MARK - Update legal hold on client changes
-    
+
+    // MARK: - Update legal hold on client changes
+
     func testThatLegalholdIsActivatedForUser_WhenLegalholdClientIsDiscovered() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -36,7 +36,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertTrue(user.isUnderLegalHold)
         }
     }
-    
+
     func testThatLegalholdIsDeactivatedForUser_WhenLegalholdClientIsDeleted() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -75,7 +75,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
         }
     }
-    
+
     func testThatLegalholdIsDeactivatedInConversation_OnlyWhenTheLastLegalholdClientIsDeleted() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -99,9 +99,9 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }
     }
-    
-    // MARK - Update legal hold on participant changes
-    
+
+    // MARK: - Update legal hold on participant changes
+
     func testThatLegalholdIsInConversation_WhenParticipantIsAdded() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -125,7 +125,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
         }
     }
-    
+
     func testThatLegalholdIsDeactivatedInConversation_WhenTheLastLegalholdParticipantIsRemoved() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -145,13 +145,13 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
 
             // WHEN
-            conversation.removeParticipantAndUpdateConversationState(user: otherUser, initiatingUser:  selfUser)
+            conversation.removeParticipantAndUpdateConversationState(user: otherUser, initiatingUser: selfUser)
 
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }
     }
-    
+
     func testThatLegalholdIsNotDeactivatedInConversation_WhenParticipantIsRemoved() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -171,27 +171,27 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
 
             // WHEN
-            conversation.removeParticipantAndUpdateConversationState(user: otherUserB, initiatingUser:  selfUser)
+            conversation.removeParticipantAndUpdateConversationState(user: otherUserB, initiatingUser: selfUser)
 
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
         }
     }
-    
-    // MARK - Verify legal hold
-    
+
+    // MARK: - Verify legal hold
+
     func testThatLegalholdIsActivatedIfFalselyDeactivated_WhenVerifyingLegalHold() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
             self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
             self.createClient(ofType: .permanent, class: .phone, for: otherUserB)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser, otherUserB]), role: nil)
@@ -200,90 +200,90 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             // WHEN
             let noChanges: ZMConversationRemoteClientChangeSet = []
             conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
         }
     }
-    
+
     func testThatLegalholdIsDeactivatedIfFalselyActivated_WhenVerifyingLegalHold() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
             self.createClient(ofType: .permanent, class: .phone, for: otherUserB)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser, otherUserB]), role: nil)
             conversation.legalHoldStatus = .enabled
-            
+
             // WHEN
             let noChanges: ZMConversationRemoteClientChangeSet = []
             conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }
     }
-    
+
     func testThatLegalholdStaysActivatedIfCorrectlyActivated_WhenVerifyingLegalHold() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
             self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
             self.createClient(ofType: .permanent, class: .phone, for: otherUserB)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser, otherUserB]), role: nil)
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
-            
+
             // WHEN
             let noChanges: ZMConversationRemoteClientChangeSet = []
             conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
         }
     }
-    
+
     func testThatLegalholdStaysDeactivatedIfCorrectlyDeactivated_WhenVerifyingLegalHold() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
             self.createClient(ofType: .permanent, class: .phone, for: otherUserB)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser, otherUserB]), role: nil)
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
-            
+
             // WHEN
             let noChanges: ZMConversationRemoteClientChangeSet = []
             conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }
     }
-    
-    // MARK - System messages
-    
+
+    // MARK: - System messages
+
     func testThatLegalholdSystemMessageIsInserted_WhenUserIsDiscoveredToBeUnderLegalhold() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -402,7 +402,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
 
             // WHEN
-            conversation.removeParticipantAndUpdateConversationState(user: otherUser, initiatingUser:  selfUser)
+            conversation.removeParticipantAndUpdateConversationState(user: otherUser, initiatingUser: selfUser)
 
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
@@ -440,9 +440,8 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         }
     }
 
+    // MARK: - Discovering legal hold
 
-    // MARK - Discovering legal hold
-    
     func testThatItExpiresAllPendingMessages_WhenLegalholdIsDiscovered() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -473,41 +472,41 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.messagesThatCausedSecurityLevelDegradation, [message])
         }
     }
-    
+
     func testThatItExpiresPendingMesssageEdit_WhenLegalholdIsDiscovered() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]), role: nil)
-            
+
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
-            
+
             // WHEN
             let message = try! conversation.appendText(content: "Legal hold is coming to town") as! ZMOTRMessage
             message.delivered = true
             message.serverTimestamp = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime() * 2)
             message.textMessageData?.editText("Legal hold is leaving", mentions: [], fetchLinkPreview: false)
             Thread.sleep(forTimeInterval: 0.05)
-            
+
             let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
             conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: message)
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
-            
+
             XCTAssertTrue(message.isExpired)
             XCTAssertTrue(message.causedSecurityLevelDegradation)
             XCTAssertEqual(conversation.messagesThatCausedSecurityLevelDegradation, [message])
         }
     }
-    
+
     func testItResendsAllPreviouslyExpiredMessages_WhenConfirmingLegalholdPresence() {
         syncMOC.performGroupedBlock {
             // GIVEN
@@ -534,7 +533,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             self.performPretendingSyncMocIsUiMoc {
                 conversation.acknowledgePrivacyWarning(withResendIntent: true)
             }
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .enabled)
 
@@ -543,65 +542,65 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertTrue(conversation.messagesThatCausedSecurityLevelDegradation.isEmpty)
         }
     }
-    
+
     func testItUpdatesNeedsToVerifyLegalHold_WhenCallingVerifyLegalHoldSubjects() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let conversation = self.createConversation(in: self.syncMOC)
-            
+
             // WHEN
             conversation.verifyLegalHoldSubjects()
-            
+
             // THEN
             XCTAssertTrue(conversation.needsToVerifyLegalHold)
         }
     }
-    
+
     func testThatItDoesntUpdateLegalHoldStatus_WhenNeedsToVerifyLegalHoldStatusIsTrue() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]), role: nil)
             conversation.needsToVerifyLegalHold = true
-            
+
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
-            
+
             // WHEN
             let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
             conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [otherUser])
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }
     }
-    
+
     func testThatItDoesntUpdateLegalHoldStatus_WhenAnyClientStillNeedsToBeFetchedFromTheBackend() {
         syncMOC.performGroupedBlock {
             // GIVEN
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            
+
             self.createSelfClient(onMOC: self.syncMOC)
             self.createClient(ofType: .permanent, class: .phone, for: otherUser)
-            
+
             let conversation = self.createConversation(in: self.syncMOC)
             conversation.conversationType = .group
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]), role: nil)
-            
+
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
-            
+
             // WHEN
             let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
             legalHoldClient.needsToBeUpdatedFromBackend = true
             conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [otherUser])
-            
+
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }
@@ -622,7 +621,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
     }
 
     func testThatItUpdatesFromMessageHint_DisabledToEnabled() {
-        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .enabled, expectedStatus: .pendingApproval, expectSystemMessage: true,expectLegalHoldVerification: true, messageContent: {
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .enabled, expectedStatus: .pendingApproval, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
             Text(content: "🙈🙉🙊")
         })
     }
@@ -650,7 +649,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             Text(content: "I know nothing")
         })
     }
-    
+
     // MARK: - Helpers
 
     @discardableResult
@@ -701,7 +700,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
                 "time": Date(),
                 "type": "conversation.otr-message-add",
                 "data": [
-                    "text": genericMessageData?.base64String(),
+                    "text": genericMessageData?.base64String()
                 ]
             ]
 

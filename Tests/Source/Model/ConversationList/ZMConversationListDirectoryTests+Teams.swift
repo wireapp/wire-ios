@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
 
     var team: Team!
@@ -119,7 +118,6 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
     }
 
 }
-
 
 fileprivate extension ZMConversationList {
 

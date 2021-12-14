@@ -22,7 +22,7 @@ import XCTest
 final class SignatureStatusTests: ZMBaseManagedObjectTest {
     var status: SignatureStatus!
     var asset: WireProtos.Asset?
-    
+
     override func setUp() {
         super.setUp()
         asset = createAsset()
@@ -30,48 +30,48 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
                                  data: Data(),
                                  managedObjectContext: syncMOC)
     }
-    
+
     override func tearDown() {
         asset = nil
         status = nil
         super.tearDown()
     }
-    
+
     func testThatItChangesStatusAfterTriggerASignDocumentMethod() {
         // given
         XCTAssertEqual(status.state, .initial)
-        
+
         // when
         status.signDocument()
-        
+
         // then
         XCTAssertEqual(status.state, .waitingForConsentURL)
     }
-    
+
     func testThatItChangesStatusAfterTriggerARetrieveSignatureMethod() {
         // given
         status.state = .waitingForCodeVerification
-        
+
         // when
         status.retrieveSignature()
-        
+
         // then
         XCTAssertEqual(status.state, .waitingForSignature)
     }
-    
+
     func testThatItTakesRequiredAssetAttributesForTheRequest() {
         XCTAssertEqual(asset?.uploaded.assetID, "id")
         XCTAssertEqual(asset?.preview.remote.assetID, "")
-        
+
         XCTAssertEqual(status.documentID, asset?.uploaded.assetID)
         XCTAssertEqual(status.fileName, asset?.original.name)
     }
-    
+
     private func createAsset() -> WireProtos.Asset {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
         let original = WireProtos.Asset.Original(withSize: 200, mimeType: "application/pdf", name: "PDF test")
-        
+
         let remoteData = WireProtos.Asset.RemoteData(withOTRKey: otrKey,
                                                      sha256: sha,
                                                      assetId: assetId,
@@ -81,7 +81,7 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
             $0.uploaded = remoteData
         }
         let sut = GenericMessage(content: asset, nonce: UUID.create())
-        
+
         return sut.asset
     }
 }

@@ -41,23 +41,23 @@ extension ZMConversationTestsBase {
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
     func testThatItCanInsertAKnock() {
         syncMOC.performGroupedBlockAndWait({ [self] in
-    
+
             // given
             let conversation = self.createConversationWithMessages()
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-    
+
             // when
             let knock = try? conversation?.appendKnock()
             let msg = conversation?.lastMessage as! ZMMessage
-    
+
             // then
             XCTAssertEqual(knock as? ZMMessage, msg)
             XCTAssertNotNil(knock?.knockMessageData)
             XCTAssert(knock!.isUserSender(selfUser))
         })
-    
+
     }
-    
+
     private func createConversationWithMessages() -> ZMConversation? {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = NSUUID.create()

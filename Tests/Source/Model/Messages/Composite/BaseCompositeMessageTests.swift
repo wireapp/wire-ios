@@ -26,15 +26,15 @@ class BaseCompositeMessageTests: BaseZMMessageTests {
             $0.id = buttonID
             }}
     }
-    
+
     func compositeItemText() -> Composite.Item {
         return Composite.Item.with { $0.text = Text.with { $0.content = "Text" } }
     }
-    
+
     func compositeProto(items: Composite.Item...) -> Composite {
         return Composite.with { $0.items = items }
     }
-    
+
     func compositeMessage(with proto: Composite, nonce: UUID = UUID()) -> ZMClientMessage {
         let genericMessage = GenericMessage.with {
             $0.composite = proto
@@ -50,21 +50,21 @@ class BaseCompositeMessageTests: BaseZMMessageTests {
 
         return message
     }
-    
+
     func conversation(withMessage message: ZMClientMessage, addSender: Bool = true) -> ZMConversation {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID()
         message.sender = user
-        
+
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.append(message)
-        
+
         guard addSender else { return conversation }
 
         let participantRole = ParticipantRole.insertNewObject(in: uiMOC)
         participantRole.user = user
         conversation.participantRoles = Set([participantRole])
-        
+
         return conversation
     }
 }

@@ -47,7 +47,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             XCTAssertEqual(updatedAppLock?.status, .disabled)
         }
     }
-    
+
     func testThatItFetchesFeature() {
         syncMOC.performGroupedAndWait { context in
             // when
@@ -93,7 +93,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(feature.needsToNotifyUser)
         }
     }
-    
+
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameNonForced() {
         // given
         syncMOC.performGroupedAndWait { context in
@@ -141,7 +141,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait { _ in
             Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
                 feature.needsToNotifyUser = false
                 feature.status = .enabled
@@ -168,7 +168,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait { _ in
             Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
                 feature.status = .enabled
             }
