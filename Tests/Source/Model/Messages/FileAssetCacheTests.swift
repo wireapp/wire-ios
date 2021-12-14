@@ -242,8 +242,8 @@ extension FileAssetCacheTests {
         // then
         XCTAssertFalse(result)
     }
-
-    // @SF.Messages @TSFI.RESTfulAPI
+    
+    // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
     func testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256() {
 
         // given
@@ -259,8 +259,8 @@ extension FileAssetCacheTests {
         let extractedData = sut.assetData(message, encrypted: true)
         XCTAssertNil(extractedData)
     }
-
-    // @SF.Messages @TSFI.RESTfulAPI
+    
+    // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
     func testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256() {
 
         // given

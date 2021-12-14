@@ -21,7 +21,7 @@ import XCTest
 
 class CoreDataStackTests_EncryptionAtRest: DatabaseBaseTest {
 
-    // @SF.Storage @TSFI.UserInterface
+    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatItStoresAndClearsDatabaseKeyOnAllContexts() {
         // Given
         let sut = createStorageStackAndWaitForCompletion()
