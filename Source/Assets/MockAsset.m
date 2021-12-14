@@ -27,16 +27,22 @@
 @dynamic contentType;
 @dynamic conversation;
 @dynamic token;
+@dynamic domain;
 
 + (MockAsset *)assetInContext:(NSManagedObjectContext *)managedObjectContext forID:(NSString *)identifier
 {
+    return [MockAsset assetInContext:managedObjectContext forID:identifier domain:NULL];
+}
+
++ (MockAsset *)assetInContext:(NSManagedObjectContext *)managedObjectContext forID:(NSString *)identifier domain:(NSString *)domain
+{
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Asset"];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
-    
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND domain == %@", identifier, domain];
+
     NSArray *result = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
     NSAssert(result != nil, @"Something wrong in fetching asset");
     NSAssert(result.count < 2, @"Too many assets with same id");
-    
+
     return result.firstObject;
 }
 

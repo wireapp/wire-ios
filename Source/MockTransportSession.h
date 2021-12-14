@@ -148,6 +148,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
 
+- (MockAsset *)insertAssetWithID:(NSUUID *)assetID domain:(nullable NSString *)domain assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
+
 - (void)simulatePushChannelClosed;
 - (void)simulatePushChannelOpened;
 

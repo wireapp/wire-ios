@@ -28,8 +28,11 @@
 @property (nonatomic, retain, nonnull) NSString  * contentType;
 @property (nonatomic, retain, nonnull) NSString  * conversation;
 @property (nonatomic, retain, nonnull) NSString  * token;
+@property (nonatomic, retain, nullable) NSString * domain;
 
 + (nullable MockAsset *)assetInContext:(nonnull NSManagedObjectContext *)moc forID:(nonnull NSString *)identifier;
++ (nullable MockAsset *)assetInContext:(nonnull NSManagedObjectContext *)managedObjectContext forID:(nonnull NSString *)identifier domain:(nullable NSString *)domain;
+
 + (nonnull instancetype)insertIntoManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 @end

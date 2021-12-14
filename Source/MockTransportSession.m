@@ -446,6 +446,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/login/send", @"processLoginCodeRequest:"],
              @[@"/login", @"processLoginRequest:"],
              @[@"/self", @"processSelfUserRequest:"],
+             @[@"/assets/v4", @"processAssetV4Request:"],
              @[@"/assets/v3", @"processAssetV3Request:"],
              @[@"/assets", @"processAssetRequest:"],
              @[@"/search/contacts", @"processSearchRequest:"],
@@ -700,6 +701,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
 {
+    return [self insertAssetWithID:assetID domain:NULL assetToken:assetToken assetData:assetData contentType:contentType];
+}
+
+- (MockAsset *)insertAssetWithID:(NSUUID *)assetID domain:(NSString *)domain assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType
+{
     Require(assetID != nil);
     Require(assetData != nil);
     Require(contentType != nil);
@@ -709,6 +715,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     asset.token = assetToken.transportString ?: @"";
     asset.data = assetData;
     asset.contentType = contentType;
+    asset.domain = domain;
     return asset;
 }
 
