@@ -19,9 +19,67 @@
 import Foundation
 
 extension MockTransportSession {
+
+    // V3
+
     @objc(processAssetV3DeleteWithKey:)
     public func processAssetV3Delete(withKey key: String) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key) {
+            managedObjectContext.delete(asset)
+            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+        } else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+    }
+
+    // V4
+
+    @objc(processAssetV4PostWithDomain:multipart:)
+    public func processAssetV4Post(with domain: String, multipart: [ZMMultipartBodyItem]) -> ZMTransportResponse {
+        guard
+            multipart.count == 2,
+            let jsonObject = multipart.first,
+            let json = (try? JSONSerialization.jsonObject(with: jsonObject.data, options: .allowFragments)) as? [String: Any] ,
+            let imageData = multipart.last,
+            let mimeType = imageData.contentType
+        else {
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        }
+
+        let asset = MockAsset.insert(into: managedObjectContext)
+        asset.data = imageData.data
+        asset.contentType = mimeType
+        asset.identifier = UUID.create().transportString()
+        asset.domain = domain
+
+        if json["public"] as? Bool == false {
+            asset.token = UUID.create().transportString()
+        }
+
+        let payload = [
+            "key": asset.identifier,
+            "domain": domain,
+            "token": asset.token
+        ].compactMapValues { $0 } as ZMTransportData
+
+        let location = String(format: "/asset/v4/%@", arguments: [asset.identifier])
+        return ZMTransportResponse(payload: payload,
+                                   httpStatus: 201,
+                                   transportSessionError: nil,
+                                   headers: ["Location": location])
+    }
+
+    @objc(processAssetV4GetWithDomain:key:)
+    public func processAssetV4Get(with domain: String, key: String) -> ZMTransportResponse {
+        if let asset = MockAsset(in: managedObjectContext, forID: key, domain: domain) {
+            return ZMTransportResponse(imageData: asset.data, httpStatus: 200, transportSessionError: nil, headers: nil)
+        }
+        return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+    }
+
+    @objc(processAssetV4DeleteWithDomain:key:)
+    public func processAssetV4Delete(with domain: String, key: String) -> ZMTransportResponse {
+        if let asset = MockAsset(in: managedObjectContext, forID: key, domain: domain) {
             managedObjectContext.delete(asset)
             return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
         } else {

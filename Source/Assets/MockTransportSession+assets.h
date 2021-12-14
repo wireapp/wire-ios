@@ -25,4 +25,6 @@
 - (ZMTransportResponse *)processAssetRequest:(ZMTransportRequest *)sessionRequest;
 - (ZMTransportResponse *)processAssetV3Request:(ZMTransportRequest *)sessionRequest;
 
+- (ZMTransportResponse *)processAssetV4Request:(ZMTransportRequest *)sessionRequest;
+
 @end

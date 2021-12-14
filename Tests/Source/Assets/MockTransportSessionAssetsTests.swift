@@ -26,11 +26,12 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         let token = UUID.create()
         let data = self.verySmallJPEGData()
         let contentType = "application/octet-stream"
+        let domain = UUID.create().transportString()
         
         // when
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: id, assetToken: token, assetData: data, contentType: contentType)
+            asset = session.insertAsset(with: id, domain: domain, assetToken: token, assetData: data, contentType: contentType)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -39,9 +40,10 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertEqual(asset?.token, token.transportString())
         XCTAssertEqual(asset?.data, data)
         XCTAssertEqual(asset?.contentType, contentType)
+        XCTAssertEqual(asset?.domain, domain)
     }
     
-    func testUploadingAssetRequest() {
+    func testUploadingAssetRequestV3() {
         // given
         let data = self.verySmallJPEGData()
         
@@ -61,7 +63,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertEqual(asset?.token, token)
     }
     
-    func testDownloadingNonexistingAssetRequest() {
+    func testDownloadingNonexistingAssetRequestV3() {
         // when
         let response = self.response(forPayload: nil, path: "/assets/v3/12345", method: .methodGET)
         
@@ -70,7 +72,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertEqual(response?.httpStatus, 404)
     }
     
-    func testDownloadingExistingAssetRequest() {
+    func testDownloadingExistingAssetRequestV3() {
         // given
         let data = self.verySmallJPEGData()
         let contentType = "application/octet-stream"
@@ -89,7 +91,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertEqual(response?.rawData, data)
     }
     
-    func testDeletingNonexistingAssetRequest() {
+    func testDeletingNonexistingAssetRequestV3() {
         // when
         let response = self.response(forPayload: nil, path: "/assets/v3/12345", method: .methodDELETE)
         
@@ -98,7 +100,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertEqual(response?.httpStatus, 404)
     }
     
-    func testDeletingExistingAssetRequest() {
+    func testDeletingExistingAssetRequestV3() {
         // given
         let contentType = "application/octet-stream"
         var asset: MockAsset?
@@ -110,6 +112,88 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         
         // when
         let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .methodDELETE)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+
+        // then
+        XCTAssertNil(MockAsset(in: sut.managedObjectContext, forID: asset!.identifier))
+    }
+
+    func testUploadingAssetRequestV4() {
+        // given
+        let data = self.verySmallJPEGData()
+
+        // when
+        let domain = UUID.create().transportString()
+        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v4/\(domain)")
+        XCTAssertNotNil(response)
+
+        // then
+        let payload = response?.payload?.asDictionary()
+        let key = payload?["key"] as? String
+        let responseDomain = payload?["domain"] as? String
+        let token = payload?["token"] as? String
+        XCTAssertNotNil(key)
+        XCTAssertNotNil(payload)
+
+        let asset = MockAsset(in: sut.managedObjectContext, forID: key!, domain: responseDomain!)
+        XCTAssertNotNil(asset)
+        XCTAssertEqual(asset?.token, token)
+    }
+
+    func testDownloadingNonexistingAssetRequestV4() {
+        // when
+        let key = UUID.create().transportString()
+        let domain = UUID.create().transportString()
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .methodGET)
+
+        // then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 404)
+    }
+
+    func testDownloadingExistingAssetRequestV4() {
+        // given
+        let data = self.verySmallJPEGData()
+        let contentType = "application/octet-stream"
+        var asset: MockAsset?
+        sut.performRemoteChanges { session in
+            asset = session.insertAsset(with: NSUUID.create(), domain: UUID.create().transportString(), assetToken: NSUUID.create(), assetData: data, contentType: contentType)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertNotNil(asset)
+
+        // when
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .methodGET)
+
+        // then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.rawData, data)
+    }
+
+    func testDeletingNonexistingAssetRequestV4() {
+        // when
+        let key = UUID.create().transportString()
+        let domain = UUID.create().transportString()
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .methodDELETE)
+
+        // then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 404)
+    }
+
+    func testDeletingExistingAssetRequestV4() {
+        // given
+        let contentType = "application/octet-stream"
+        var asset: MockAsset?
+        sut.performRemoteChanges { session in
+            asset = session.insertAsset(with: NSUUID.create(), domain: UUID.create().transportString(), assetToken: NSUUID.create(), assetData: "data".data(using: .utf8)!, contentType: contentType)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertNotNil(asset)
+
+        // when
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .methodDELETE)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
 

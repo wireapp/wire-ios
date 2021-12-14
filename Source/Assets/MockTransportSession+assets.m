@@ -119,4 +119,18 @@
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
 
+#pragma mark - Asset v4
+
+- (ZMTransportResponse *)processAssetV4Request:(ZMTransportRequest *)request
+{
+    if ([request matchesWithPath:@"/assets/v4/*" method:ZMMethodPOST]) {
+        return [self processAssetV4PostWithDomain:[request RESTComponentAtIndex:2] multipart:[request multipartBodyItemsFromRequestOrFile]];
+    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodGET]) {
+        return [self processAssetV4GetWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3]];
+    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodDELETE]) {
+        return [self processAssetV4DeleteWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3]];
+    }
+    return nil;
+}
+
 @end
