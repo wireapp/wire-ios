@@ -120,7 +120,7 @@ public struct EncryptionKeys {
         case failedToDeleteItemFromKeychain(OSStatus)
         case failedToGenerateDatabaseKey(OSStatus)
         case failedToCopyPublicAccountKey
-        case failedToGenerateAccountKey(underlyingError: Error)
+        case failedToGenerateAccountKey(underlyingError: Error?)
         case failedToEncryptDatabaseKey(underlyingError: Error)
         case failedToDecryptDatabaseKey(underlyingError: Error)
     }
@@ -271,7 +271,8 @@ public struct EncryptionKeys {
         
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            let error = accessError!.takeRetainedValue() as Error
+            //Notice: accessError is nil when test with iOS 15 simulator. ref:https://wearezeta.atlassian.net/browse/SQCORE-1188
+            let error = accessError?.takeRetainedValue()
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         }
         
