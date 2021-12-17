@@ -144,7 +144,7 @@ extension PushNotificationStrategy {
         return events.compactMap { event in
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
-                conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: moc)
+                conversation = ZMConversation.fetch(with: conversationID, in: moc)
             }
             return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: moc)
         }
