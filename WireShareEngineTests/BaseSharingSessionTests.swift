@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import XCTest
 import WireDataModel
 import WireMockTransport
@@ -51,7 +50,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
         coreDataStack.loadStores { error in
             XCTAssertNil(error)
         }
-        
+
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         let transportSession = mockTransport.mockedTransportSession()
 
@@ -95,11 +94,11 @@ class BaseSharingSessionTests: ZMTBaseTest {
         )
 
         moc = sharingSession.userInterfaceContext
-        
+
         setupSelfUser()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-    
+
     func setupSelfUser() {
         ZMUser.selfUser(in: sharingSession.userInterfaceContext).remoteIdentifier = accountIdentifier
         sharingSession.userInterfaceContext.saveOrRollback()

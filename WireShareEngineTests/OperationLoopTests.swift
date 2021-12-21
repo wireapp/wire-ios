@@ -23,10 +23,10 @@ import WireDataModel
 import WireRequestStrategy
 @testable import WireShareEngine
 
-class OperationLoopTests :  ZMTBaseTest {
+class OperationLoopTests: ZMTBaseTest {
 
     var coreDataStack: CoreDataStack! = nil
-    var sut : OperationLoop! = nil
+    var sut: OperationLoop! = nil
 
     var uiMoc: NSManagedObjectContext {
         return coreDataStack.viewContext
@@ -35,7 +35,7 @@ class OperationLoopTests :  ZMTBaseTest {
     var syncMoc: NSManagedObjectContext {
         return coreDataStack.syncContext
     }
-    
+
     override func setUp() {
         super.setUp()
         let accountId = UUID()
@@ -54,7 +54,7 @@ class OperationLoopTests :  ZMTBaseTest {
         self.sut = OperationLoop(userContext: coreDataStack.viewContext,
                                  syncContext: coreDataStack.syncContext, callBackQueue: OperationQueue())
     }
-    
+
     override func tearDown() {
         sut = nil
         coreDataStack = nil
@@ -62,23 +62,22 @@ class OperationLoopTests :  ZMTBaseTest {
     }
 }
 
-
 extension OperationLoopTests {
-    
+
     func testThatItMergesUiContextInSyncContext() {
-        
+
         let userID = UUID()
-        
-        var syncUser : ZMUser! = nil
+
+        var syncUser: ZMUser! = nil
         syncMoc.performGroupedBlock { [unowned self] in
             syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
             self.syncMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
-        
+
         uiMoc.performGroupedBlock {
             let uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             uiUser.name = "Jean Claude YouKnowWho"
@@ -86,53 +85,50 @@ extension OperationLoopTests {
             self.uiMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         XCTAssertEqual(syncUser.name, "Jean Claude YouKnowWho")
     }
-    
+
     func testThatItMergesSyncContextInUIContext() {
         let userID = UUID()
-        
-        var syncUser : ZMUser! = nil
+
+        var syncUser: ZMUser! = nil
         coreDataStack.syncContext.performGroupedBlock { [unowned self] in
             syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
             self.syncMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
-        
-        var uiUser : ZMUser! = nil
+
+        var uiUser: ZMUser! = nil
         uiMoc.performGroupedBlock {
             uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             XCTAssertNotNil(uiUser)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         syncMoc.performGroupedBlockAndWait {
             syncUser.name = "Jean Claude YouKnowWho"
             self.syncMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         XCTAssertEqual(uiUser.name, syncUser.name)
     }
-    
+
     func testThatItGeneratesTheExpectedRequest() {
         var count = 0
         sut.requestAvailableClosure = {
             count += 1
         }
         XCTAssertEqual(count, 0)
-        
+
         sut.newRequestsAvailable()
         XCTAssertEqual(count, 1)
-        
+
         sut.newRequestsAvailable()
         XCTAssertEqual(count, 2)
     }
 }
-
-
-

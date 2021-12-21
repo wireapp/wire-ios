@@ -27,21 +27,21 @@ public protocol SharingSessionEncryptionAtRestInterface {
 }
 
 extension SharingSession: SharingSessionEncryptionAtRestInterface {
-    
+
     public var encryptMessagesAtRest: Bool {
         return userInterfaceContext.encryptMessagesAtRest
     }
-    
+
     public var isDatabaseLocked: Bool {
         userInterfaceContext.encryptMessagesAtRest && userInterfaceContext.encryptionKeys == nil
     }
-    
+
     public func unlockDatabase(with context: LAContext) throws {
         let userIdentifier = ZMUser.selfUser(in: userInterfaceContext).remoteIdentifier!
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let keys = try EncryptionKeys.init(account: account, context: context)
-        
+
         coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
     }
-    
+
 }

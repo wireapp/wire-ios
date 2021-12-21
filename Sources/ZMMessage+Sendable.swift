@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireDataModel
-
-
 
 private extension ZMMessage {
 
@@ -32,7 +29,7 @@ private extension ZMMessage {
 
 extension ZMMessage: Sendable {
 
-    public var blockedBecauseOfMissingClients : Bool {
+    public var blockedBecauseOfMissingClients: Bool {
         guard let message = self as? ZMOTRMessage else {
             return false
         }
@@ -45,25 +42,25 @@ extension ZMMessage: Sendable {
                 return false
             }
         }
-        
+
         return delivered
     }
-    
+
     public var deliveryProgress: Float? {
         if let asset = self as? ZMAssetClientMessage, reportsProgress {
             return asset.progress
         }
-        
+
         return nil
     }
-        
+
     public func cancel() {
-        
+
         if let asset = self.fileMessageData {
             asset.cancelTransfer()
             return
         }
         self.expire()
     }
-    
+
 }

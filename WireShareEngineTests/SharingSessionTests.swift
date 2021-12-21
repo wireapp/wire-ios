@@ -21,7 +21,7 @@ import WireDataModel
 import WireTesting
 
 class SharingSessionTests: BaseSharingSessionTests {
-    
+
     func createConversation(type: ZMConversationType, archived: Bool) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: moc), role: nil)
@@ -29,7 +29,7 @@ class SharingSessionTests: BaseSharingSessionTests {
         conversation.isArchived = archived
         return conversation
     }
-    
+
     var activeConversation1: ZMConversation!
     var activeConversation2: ZMConversation!
     var activeConnection: ZMConversation!
@@ -44,7 +44,7 @@ class SharingSessionTests: BaseSharingSessionTests {
         archivedConversation = createConversation(type: .group, archived: true)
         archivedConnection = createConversation(type: .connection, archived: true)
     }
-    
+
     override func tearDown() {
         activeConversation1 = nil
         activeConversation2 = nil
