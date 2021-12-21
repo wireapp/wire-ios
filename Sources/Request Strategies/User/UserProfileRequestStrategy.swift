@@ -35,17 +35,17 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
 
     public var useFederationEndpoint: Bool {
-        set {
-            userProfileByQualifiedIDTranscoder.isAvailable = newValue
-        }
         get {
             userProfileByQualifiedIDTranscoder.isAvailable
+        }
+        set {
+            userProfileByQualifiedIDTranscoder.isAvailable = newValue
         }
     }
 
     public init(managedObjectContext: NSManagedObjectContext,
-         applicationStatus: ApplicationStatus,
-         syncProgress: SyncProgress) {
+                applicationStatus: ApplicationStatus,
+                syncProgress: SyncProgress) {
 
         self.syncProgress = syncProgress
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)

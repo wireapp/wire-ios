@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol InsertedObjectSyncTranscoder: class {
+protocol InsertedObjectSyncTranscoder: AnyObject {
 
     associatedtype Object: ZMManagedObject
 

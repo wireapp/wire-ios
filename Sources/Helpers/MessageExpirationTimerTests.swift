@@ -17,10 +17,9 @@
 //
 
 import Foundation
-import WireRequestStrategy
+import XCTest
 import WireRequestStrategy
 import WireDataModel
-import XCTest
 
 class MessageExpirationTimerTests: MessagingTestBase {
 

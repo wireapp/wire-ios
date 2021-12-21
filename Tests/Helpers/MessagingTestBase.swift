@@ -126,8 +126,8 @@ extension MessagingTestBase {
 
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     func decryptedAssetUpdateEventFromOtherClient(message: GenericMessage,
-                                             conversation: ZMConversation? = nil,
-                                             source: ZMUpdateEventSource = .pushNotification
+                                                  conversation: ZMConversation? = nil,
+                                                  source: ZMUpdateEventSource = .pushNotification
         ) -> ZMUpdateEvent {
         let cyphertext = self.encryptedMessageToSelf(message: message, from: self.otherClient)
         let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
@@ -144,9 +144,9 @@ extension MessagingTestBase {
 
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     private func decryptedUpdateEventFromOtherClient(innerPayload: [String: Any],
-                                                  conversation: ZMConversation?,
-                                                  source: ZMUpdateEventSource,
-                                                  type: String
+                                                     conversation: ZMConversation?,
+                                                     source: ZMUpdateEventSource,
+                                                     type: String
         ) -> ZMUpdateEvent {
         let payload = [
             "type": type,

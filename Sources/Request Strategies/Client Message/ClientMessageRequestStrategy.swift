@@ -27,11 +27,11 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
     let localNotificationDispatcher: PushMessageHandler
 
     public var useFederationEndpoint: Bool {
-        set {
-            messageSync.isFederationEndpointAvailable = newValue
-        }
         get {
             messageSync.isFederationEndpointAvailable
+        }
+        set {
+            messageSync.isFederationEndpointAvailable = newValue
         }
     }
 

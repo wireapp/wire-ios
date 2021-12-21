@@ -65,7 +65,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
             // expect
             let expectation = self.expectation(description: "completion is called")
             sut.sync(message) { (result, _) in
-                if case .success() = result {
+                if case .success = result {
                     expectation.fulfill()
                 }
             }

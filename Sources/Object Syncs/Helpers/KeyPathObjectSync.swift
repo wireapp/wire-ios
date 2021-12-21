@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol KeyPathObjectSyncTranscoder: class {
+protocol KeyPathObjectSyncTranscoder: AnyObject {
 
     associatedtype T: Hashable
 
