@@ -22,63 +22,63 @@ import WireDataModel
 @testable import WireShareEngine
 
 class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
-    
+
     // MARK: - Life Cycle
-    
+
     override func tearDown() {
         // Delete keychain items
         let account = Account(userName: "", userIdentifier: accountIdentifier)
         try! EncryptionKeys.deleteKeys(for: account)
-        
+
         super.tearDown()
     }
 
     // MARK: - Database locking/unlocking
-    
+
     func testThatDatabaseIsUnlocked_WhenEncryptionAtRestIsDisabled() {
         // given
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // then
         XCTAssertFalse(sharingSession.isDatabaseLocked)
     }
-    
+
     func testThatDatabaseIsLocked_BeforeUnlockingDatabase() throws {
         // given
         enableEncryptionAtRest()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
-                
+
         // then
         XCTAssertTrue(sharingSession.isDatabaseLocked)
     }
-            
+
     func testThatDatabaseIsUnlocked_AfterUnlockingDatabase() throws {
         // given
         enableEncryptionAtRest()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-                
+
         // when
         let context = LAContext()
         try sharingSession.unlockDatabase(with: context)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         // then
         XCTAssertFalse(sharingSession.isDatabaseLocked)
     }
-    
+
     // MARK: - Helpers
-    
+
     func enableEncryptionAtRest() {
         let account = Account(userName: "", userIdentifier: accountIdentifier)
-        
+
         try! EncryptionKeys.deleteKeys(for: account)
         sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
-        
+
         let encryptionKeys = try! EncryptionKeys.createKeys(for: account)
         try! sharingSession.userInterfaceContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
-        
+
         sharingSession.userInterfaceContext.saveOrRollback()
     }
-        
+
 }

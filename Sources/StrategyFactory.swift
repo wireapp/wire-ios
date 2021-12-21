@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
@@ -57,7 +56,7 @@ class StrategyFactory {
             createMissingClientsStrategy(),
             createFetchingClientsStrategy(),
             createVerifyLegalHoldStrategy(),
-            
+
             // Client Messages
             createClientMessageRequestStrategy(),
 
@@ -70,11 +69,11 @@ class StrategyFactory {
             createAssetV3UploadRequestStrategy()
         ]
     }
-    
+
     private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
         return VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
-    
+
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
         return FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
@@ -94,7 +93,7 @@ class StrategyFactory {
     // MARK: – Link Previews
 
     private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> LinkPreviewAssetUploadRequestStrategy {
-        
+
         return LinkPreviewAssetUploadRequestStrategy(
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,

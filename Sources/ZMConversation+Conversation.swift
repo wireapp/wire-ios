@@ -16,19 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireDataModel
 import WireRequestStrategy
 import WireUtilities
-
 
 extension ZMConversation: Conversation {
 
     private static let logger = ZMSLog(tag: "Message Processing")
 
     public var name: String { return displayName }
-        
+
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
         do {
             return try appendText(content: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
@@ -37,7 +35,7 @@ extension ZMConversation: Conversation {
             return nil
         }
     }
-    
+
     public func appendImage(_ data: Data) -> Sendable? {
         do {
             return try appendImage(from: data) as? Sendable
@@ -46,7 +44,7 @@ extension ZMConversation: Conversation {
             return nil
         }
     }
-    
+
     public func appendFile(_ metadata: ZMFileMetadata) -> Sendable? {
         do {
             return try appendFile(with: metadata) as? Sendable
@@ -55,7 +53,7 @@ extension ZMConversation: Conversation {
             return nil
         }
     }
-    
+
     public func appendLocation(_ location: LocationData) -> Sendable? {
         do {
             return try appendLocation(with: location) as? Sendable
@@ -64,31 +62,31 @@ extension ZMConversation: Conversation {
             return nil
         }
     }
-    
+
     /// Adds an observer for when the conversation verification status degrades
-    public func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo)->()) -> TearDownCapable {
+    public func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable {
         return DegradationObserver(conversation: self, callback: conversationVerificationDegradedObserver)
     }
 }
 
 public struct ConversationDegradationInfo {
-    
-    public let conversation : Conversation
-    public let users : Set<ZMUser>
-    
+
+    public let conversation: Conversation
+    public let users: Set<ZMUser>
+
     public init(conversation: Conversation, users: Set<ZMUser>) {
         self.users = users
         self.conversation = conversation
     }
 }
 
-final class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
-    
-    let callback : (ConversationDegradationInfo)->()
-    let conversation : ZMConversation
-    private var observer : Any? = nil
-    
-    init(conversation: ZMConversation, callback: @escaping (ConversationDegradationInfo)->()) {
+final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapable {
+
+    let callback: (ConversationDegradationInfo) -> Void
+    let conversation: ZMConversation
+    private var observer: Any?
+
+    init(conversation: ZMConversation, callback: @escaping (ConversationDegradationInfo) -> Void) {
         self.callback = callback
         self.conversation = conversation
         super.init()
@@ -98,30 +96,30 @@ final class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapa
                                                 }
         }
     }
-    
+
     deinit {
         tearDown()
     }
-    
+
     func tearDown() {
         if let observer = self.observer {
             NotificationCenter.default.removeObserver(observer)
             self.observer = nil
         }
     }
-    
+
     private func processSaveNotification() {
         if !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
             let untrustedUsers = self.conversation.localParticipants.filter {
                 $0.clients.first { !$0.verified } != nil
             }
-            
+
             self.callback(ConversationDegradationInfo(conversation: self.conversation,
                                                       users: untrustedUsers)
             )
         }
     }
-    
+
     func conversationDidChange(_ note: ConversationChangeInfo) {
         if note.causedByConversationPrivacyChange {
             self.callback(ConversationDegradationInfo(conversation: note.conversation,
