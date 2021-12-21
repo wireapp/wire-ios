@@ -18,9 +18,7 @@
 
 import Foundation
 import WireRequestStrategy
-@testable import WireRequestStrategy
 import XCTest
-import WireRequestStrategy
 import WireDataModel
 
 fileprivate extension AssetClientMessageRequestStrategy {

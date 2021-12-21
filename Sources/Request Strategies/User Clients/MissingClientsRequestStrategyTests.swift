@@ -17,11 +17,10 @@
 //
 
 import XCTest
-@testable import WireRequestStrategy
 import WireUtilities
 import WireTesting
 import WireDataModel
-import WireRequestStrategy
+@testable import WireRequestStrategy
 
 class MissingClientsRequestStrategyTests: MessagingTestBase {
 

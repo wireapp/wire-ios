@@ -72,7 +72,7 @@ import Foundation
     }
 }
 
-public func ==(lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
+public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
     return lhs === rhs
 }
 

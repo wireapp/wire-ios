@@ -32,7 +32,7 @@ public enum EntitySyncError: Error {
 
 public typealias EntitySyncHandler = (_ result: Swift.Result<Void, EntitySyncError>, _ response: ZMTransportResponse) -> Void
 
-class DependencyEntitySync<Transcoder : EntityTranscoder>: NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity: DependencyEntity {
+class DependencyEntitySync<Transcoder: EntityTranscoder>: NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity: DependencyEntity {
 
     private var entitiesWithDependencies: DependentObjects<Transcoder.Entity, NSObject> = DependentObjects()
     private var entitiesWithoutDependencies: [Transcoder.Entity] = []

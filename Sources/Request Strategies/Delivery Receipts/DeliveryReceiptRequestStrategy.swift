@@ -49,11 +49,11 @@ public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy, Fede
     private let messageSync: ProteusMessageSync<GenericMessageEntity>
 
     public var useFederationEndpoint: Bool {
-        set {
-            messageSync.isFederationEndpointAvailable = newValue
-        }
         get {
             messageSync.isFederationEndpointAvailable
+        }
+        set {
+            messageSync.isFederationEndpointAvailable = newValue
         }
     }
 

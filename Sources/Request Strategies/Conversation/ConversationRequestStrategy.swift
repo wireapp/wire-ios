@@ -83,8 +83,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-         applicationStatus: ApplicationStatus,
-         syncProgress: SyncProgress) {
+                applicationStatus: ApplicationStatus,
+                syncProgress: SyncProgress) {
 
         self.syncProgress = syncProgress
         self.conversationIDsSync =

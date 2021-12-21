@@ -74,9 +74,9 @@ extension MessagingTestBase {
     }
 
     func updateEvent<Event: EventData>(from data: Event,
-                                     conversationID: QualifiedID? = nil,
-                                     senderID: QualifiedID? = nil,
-                                     timestamp: Date? = nil) -> ZMUpdateEvent {
+                                       conversationID: QualifiedID? = nil,
+                                       senderID: QualifiedID? = nil,
+                                       timestamp: Date? = nil) -> ZMUpdateEvent {
 
         let event  = conversationEventPayload(from: data,
                                               conversationID: conversationID,

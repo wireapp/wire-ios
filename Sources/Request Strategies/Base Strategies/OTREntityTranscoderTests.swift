@@ -74,7 +74,7 @@ extension MockOTREntity: ProteusMessage {
 
 }
 
-func ==(lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
+func == (lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
     return lhs === rhs
 }
 

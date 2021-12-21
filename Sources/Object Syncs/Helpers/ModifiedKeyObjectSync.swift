@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol ModifiedKeyObjectSyncTranscoder: class {
+protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
 
     associatedtype Object: ZMManagedObject
 

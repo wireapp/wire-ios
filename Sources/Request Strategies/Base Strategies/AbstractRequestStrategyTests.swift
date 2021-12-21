@@ -21,7 +21,7 @@ import XCTest
 
 @testable import WireRequestStrategy
 
-protocol TestableAbstractRequestStrategy: class {
+protocol TestableAbstractRequestStrategy: AnyObject {
 
     var mutableConfiguration: ZMStrategyConfigurationOption { get set }
 
@@ -36,9 +36,7 @@ class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractReques
     }
 
     override var configuration: ZMStrategyConfigurationOption {
-        get {
-            return mutableConfiguration
-        }
+        return mutableConfiguration
     }
 
 }

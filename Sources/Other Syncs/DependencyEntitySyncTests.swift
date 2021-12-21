@@ -37,7 +37,7 @@ class MockDependencyEntity: DependencyEntity, Hashable {
     }
 }
 
-func ==(lhs: MockDependencyEntity, rhs: MockDependencyEntity) -> Bool {
+func == (lhs: MockDependencyEntity, rhs: MockDependencyEntity) -> Bool {
     return lhs === rhs
 }
 

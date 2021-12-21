@@ -27,11 +27,11 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
     public var requestsFactory = MissingClientsRequestFactory()
 
     public var useFederationEndpoint: Bool {
-        set {
-            isFederationEndpointAvailable = newValue
-        }
         get {
             isFederationEndpointAvailable
+        }
+        set {
+            isFederationEndpointAvailable = newValue
         }
     }
 

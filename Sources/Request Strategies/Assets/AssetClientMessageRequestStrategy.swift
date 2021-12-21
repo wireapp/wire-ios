@@ -29,11 +29,11 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
     let messageSync: ProteusMessageSync<ZMAssetClientMessage>
 
     public var useFederationEndpoint: Bool {
-        set {
-            messageSync.isFederationEndpointAvailable = newValue
-        }
         get {
             messageSync.isFederationEndpointAvailable
+        }
+        set {
+            messageSync.isFederationEndpointAvailable = newValue
         }
     }
 
