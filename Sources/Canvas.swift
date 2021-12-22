@@ -25,7 +25,7 @@ public enum EditingMode {
     case edit
 }
 
-protocol Renderable : class {
+protocol Renderable : AnyObject {
     
     var bounds : CGRect { get }
     
