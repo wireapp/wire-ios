@@ -19,73 +19,70 @@
 import UIKit
 import QuartzCore
 
-
 public enum EditingMode {
     case draw
     case edit
 }
 
-protocol Renderable : AnyObject {
-    
-    var bounds : CGRect { get }
-    
-    func draw(context : CGContext)
-    
+protocol Renderable: AnyObject {
+
+    var bounds: CGRect { get }
+
+    func draw(context: CGContext)
+
 }
 
-protocol Editable : Renderable {
-    
-    var selected : Bool { get set }
-    var selectedView : UIView { get }
-    var selectable : Bool { get }
-    var transform : CGAffineTransform { get }
-    var size : CGSize  { get }
-    var scale : CGFloat { get set }
-    var position : CGPoint { get set }
-    var rotation : CGFloat { get set }
+protocol Editable: Renderable {
+
+    var selected: Bool { get set }
+    var selectedView: UIView { get }
+    var selectable: Bool { get }
+    var transform: CGAffineTransform { get }
+    var size: CGSize { get }
+    var scale: CGFloat { get set }
+    var position: CGPoint { get set }
+    var rotation: CGFloat { get set }
 }
 
 struct Orientation {
-    
-    var scale : CGFloat
-    var position : CGPoint
-    var rotation : CGFloat
-    
-    static var standard : Orientation {
-        get {
-            return Orientation(scale: 1, position: CGPoint.zero, rotation: 0)
-        }
+
+    var scale: CGFloat
+    var position: CGPoint
+    var rotation: CGFloat
+
+    static var standard: Orientation {
+        return Orientation(scale: 1, position: CGPoint.zero, rotation: 0)
     }
 }
 
 public protocol CanvasDelegate {
-    
-    func canvasDidChange(_ canvas : Canvas)
-    
+
+    func canvasDidChange(_ canvas: Canvas)
+
 }
 
 public class Canvas: UIView {
-    
-    fileprivate let minimumScale : CGFloat = 0.5
-    fileprivate let maximumScale : CGFloat = 10.0
-    
-    public var delegate : CanvasDelegate? = nil
-    
+
+    fileprivate let minimumScale: CGFloat = 0.5
+    fileprivate let maximumScale: CGFloat = 10.0
+
+    public var delegate: CanvasDelegate?
+
     /// Defines the apperance of the brush strokes when drawing
     public var brush = Brush(size: 2, color: .black)
-    
+
     /// Active mode of the canvas. See `EditingMode` for possible values.
-    public var mode : EditingMode = .draw {
+    public var mode: EditingMode = .draw {
         didSet {
             selection = nil
             gestureRecognizers?.forEach({ $0.isEnabled = mode == .edit })
             setNeedsDisplay()
         }
     }
-    
+
     /// An image on which you can draw on top.
-    public var referenceImage : UIImage? {
-        
+    public var referenceImage: UIImage? {
+
         didSet {
             if let referenceImage = referenceImage, let cgImage = referenceImage.cgImage {
                 let retinaImage = UIImage(cgImage: cgImage, scale: 2, orientation: referenceImage.imageOrientation)
@@ -100,137 +97,137 @@ public class Canvas: UIView {
             }
         }
     }
-    
+
     /// hasChanges is true if the canvas has changes which can be un done. See undo()
-    public var hasChanges : Bool {
+    public var hasChanges: Bool {
         return sceneExcludingReferenceObject.count > 0
     }
-    
-    private var scene : [Renderable] = []
-    private var bufferImage : UIImage?
-    private var selectionView : UIView?
-    private var stroke : Stroke?
-    private var referenceObject : Image?
-    private var flattenIndex : Int = 0
-    
-    fileprivate var sceneExcludingReferenceObject : [Renderable] {
+
+    private var scene: [Renderable] = []
+    private var bufferImage: UIImage?
+    private var selectionView: UIView?
+    private var stroke: Stroke?
+    private var referenceObject: Image?
+    private var flattenIndex: Int = 0
+
+    fileprivate var sceneExcludingReferenceObject: [Renderable] {
         return scene.filter({ $0 !== referenceObject })
     }
-    
-    fileprivate var selection : Editable? {
+
+    fileprivate var selection: Editable? {
         didSet {
             guard selection !== oldValue else { return }
-            
+
             selectionView?.removeFromSuperview()
             selectionView = selection?.selectedView
-            
+
             if let selectedView = selectionView {
                 addSubview(selectedView)
             }
-            
+
             oldValue?.selected = false
             selection?.selected = true
-            
+
             if let oldSelection = oldValue {
                 setNeedsDisplay(oldSelection.bounds)
             }
-            
+
             if let newSelection = selection {
                 setNeedsDisplay(newSelection.bounds)
             }
         }
     }
-    
-    fileprivate var initialOrienation : Orientation = Orientation.standard
-    
+
+    fileprivate var initialOrienation: Orientation = Orientation.standard
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         configureGestureRecognizers()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
+
         layer.drawsAsynchronously = true
-        
+
         configureGestureRecognizers()
     }
-    
+
     override public func layoutSubviews() {
         super.layoutSubviews()
-        
+
         if let referenceObject = referenceObject {
             referenceObject.sizeToFit(inRect: bounds)
         }
     }
-    
+
     override public func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
-        
-        if (flattenIndex == 0 && referenceObject != nil) {
+
+        if flattenIndex == 0 && referenceObject != nil {
             flatten(upTo: 1)
         }
-        
+
         if let bufferImage = bufferImage {
             bufferImage.draw(at: CGPoint.zero)
         }
-        
+
         for renderable in scene.suffix(from: flattenIndex) {
             renderable.draw(context: context)
         }
     }
-    
+
     public func insert(image: UIImage, at position: CGPoint) {
         let image = Image(image: image, at: position)
-        
+
         scene.append(image)
         selection = image
         setNeedsDisplay()
         delegate?.canvasDidChange(self)
     }
-    
+
     func insert(brush: Brush, at position: CGPoint) -> Stroke {
         let stroke = Stroke(at: position, brush: brush)
         scene.append(stroke)
         delegate?.canvasDidChange(self)
         return stroke
     }
-    
+
     @objc public func undo() {
         guard !sceneExcludingReferenceObject.isEmpty else { return }
-        
+
         if flattenIndex == scene.count {
             unflatten()
-        } 
-        
+        }
+
         if selection === scene.removeLast() {
             selection = nil
         }
-        
+
         setNeedsDisplay()
         delegate?.canvasDidChange(self)
     }
-    
+
     @discardableResult fileprivate func selectObject(at position: CGPoint) -> Editable? {
         let previousSelection = selection
-        
+
         selection = pickObject(at: position)
-        
+
         guard let newSelection = selection, selection !== previousSelection else {
             return selection
         }
-        
+
         // move object to top
         if let index = scene.firstIndex(where: { $0 === newSelection }) {
             scene.remove(at: index)
             scene.append(newSelection)
             unflatten()
         }
-        
+
         return selection
     }
-    
+
     private func pickObject(at position: CGPoint) -> Editable? {
         let editables = scene.compactMap({ $0 as? Editable })
         return editables.reversed().first(where: { editable in
@@ -240,142 +237,138 @@ public class Canvas: UIView {
             return bounds.contains(position)
         })
     }
-    
+
     private func unflatten() {
         flattenIndex = 0
         bufferImage = nil
     }
-    
+
     private func flatten() {
         flatten(upTo: scene.count)
     }
-    
+
     private func flatten(upTo: Int) {
         let renderables = scene.prefix(upTo: upTo).suffix(from: flattenIndex)
-        
+
         guard renderables.count > 0 else { return }
-        
+
         selection?.selected = false
         defer {
             selection?.selected = true
         }
-        
+
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
         bufferImage?.draw(at: CGPoint.zero)
-        
+
         if let context = UIGraphicsGetCurrentContext() {
             for renderable in renderables {
                 renderable.draw(context: context)
             }
         }
-        
+
         bufferImage =  UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         flattenIndex = upTo
     }
-    
-    private var drawBounds : CGRect {
-        get {
+
+    private var drawBounds: CGRect {
             var bounds = scene.first?.bounds ?? CGRect.zero
-            
+
             for renderable in scene.suffix(from: 1) {
                 bounds = bounds.union(renderable.bounds)
             }
-            
+
             return bounds
-        }
     }
-    
+
     /// Return an image of the canvas content.
-    public var trimmedImage : UIImage? {
-        get{
-            let scaleFactor : CGFloat = 2.0 // We want to render with 2x scale factor also on non-retina devices
-            var image : UIImage? = nil
+    public var trimmedImage: UIImage? {
+            let scaleFactor: CGFloat = 2.0 // We want to render with 2x scale factor also on non-retina devices
+            var image: UIImage?
             selection?.selected = false
             defer {
                 selection?.selected = true
             }
-            
+
             if let referenceObject = referenceObject {
 
                 let drawBounds = self.bounds.intersection(self.drawBounds)
                 let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
                 let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale * scaleFactor, y: renderScale * scaleFactor))
                 let renderBounds = CGRect(origin: CGPoint.zero, size: renderSize).integral.applying(CGAffineTransform(scaleX: 1 / scaleFactor, y: 1 / scaleFactor))
-                
+
                 UIGraphicsBeginImageContextWithOptions(renderBounds.size, true, scaleFactor)
-                
+
                 if let context = UIGraphicsGetCurrentContext() {
                     context.scaleBy(x: renderScale, y: renderScale)
                     context.translateBy(x: -drawBounds.origin.x, y: -drawBounds.origin.y)
-                    
+
                     UIColor.white.setFill()
                     context.fill(CGRect(origin: drawBounds.origin, size: renderBounds.size))
-                    
+
                     for renderable in scene {
                         renderable.draw(context: context)
                     }
                 }
-                
+
                 image =  UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
             } else {
                 let drawBounds = self.bounds.intersection(self.drawBounds).integral
- 
+
                 UIGraphicsBeginImageContextWithOptions(drawBounds.size, true, scaleFactor)
-                
+
                 if let context = UIGraphicsGetCurrentContext() {
                     context.translateBy(x: -drawBounds.origin.x, y: -drawBounds.origin.y)
-                    
+
                     UIColor.white.setFill()
                     context.fill(drawBounds)
-                    
+
                     for renderable in scene {
                         renderable.draw(context: context)
                     }
                 }
-                
+
                 image =  UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
             }
-            
+
             return image
-        }
     }
-    
+
     public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizers?.contains(gestureRecognizer) ?? false
     }
-    
-    // MARK - Touch handling
-    
+
+    // MARK: - Touch handling
+
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        
+
         guard mode == .draw else { return }
-        
+
         if let location = touches.first?.location(in: self) {
             let stroke = insert(brush: brush, at: location)
             setNeedsDisplay(stroke.bounds)
             self.stroke = stroke
         }
     }
-    
+
     override public func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
-        
+
         guard mode == .draw else { return }
-        
+
         if let location = touches.first?.location(in: self), let stroke = stroke {
             setNeedsDisplay(stroke.move(to: location))
         }
     }
-    
+
     override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        
+
         guard mode == .draw else { return }
-        
+
         stroke?.end()
         flatten()
         setNeedsDisplay()
@@ -383,30 +376,30 @@ public class Canvas: UIView {
 
 }
 
-extension Canvas : UIGestureRecognizerDelegate {
-    
+extension Canvas: UIGestureRecognizerDelegate {
+
     func configureGestureRecognizers() {
         let tapGestureReconizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
         addGestureRecognizer(tapGestureReconizer)
-        
+
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         addGestureRecognizer(panGestureRecognizer)
-        
+
         let pinchGestureRecognizer =  UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture))
         addGestureRecognizer(pinchGestureRecognizer)
         pinchGestureRecognizer.delegate = self
-        
+
         let rotateGestureRecognzier = UIRotationGestureRecognizer(target: self, action: #selector(handleRotateGesture))
         rotateGestureRecognzier.delegate = self
         addGestureRecognizer(rotateGestureRecognzier)
-        
+
         gestureRecognizers?.forEach({ $0.isEnabled = mode == .edit })
     }
-    
+
     @objc public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
+
     @objc func handleTapGesture(gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .began && selection == nil {
             selectObject(at: gestureRecognizer.location(in: self))
@@ -414,7 +407,7 @@ extension Canvas : UIGestureRecognizerDelegate {
             selectObject(at: gestureRecognizer.location(in: self))
         }
     }
-    
+
     @objc func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
@@ -428,7 +421,7 @@ extension Canvas : UIGestureRecognizerDelegate {
             break
         }
     }
-    
+
     @objc func handlePinchGesture(gestureRecognizer: UIPinchGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
@@ -441,7 +434,7 @@ extension Canvas : UIGestureRecognizerDelegate {
             break
         }
     }
-    
+
     @objc func handleRotateGesture(gestureRecognizer: UIRotationGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
@@ -454,5 +447,5 @@ extension Canvas : UIGestureRecognizerDelegate {
             break
         }
     }
-    
+
 }

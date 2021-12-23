@@ -21,35 +21,35 @@ import FBSnapshotTestCase
 @testable import WireCanvas
 
 final class CanvasTests: FBSnapshotTestCase {
-    
+
     func testTrimmedImage_isClippedToViewport() {
         // given
         let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: 375, height: 667))
         let canvas = Canvas(frame: frame)
         let image = UIImage(testImageNamed: "unsplash_small.jpg")!
-        
+
         // when placing image half way outside the viewport
         canvas.insert(image: image, at: CGPoint(x: -image.size.width / 2, y: frame.midY))
-        
+
         // then it should be clipped by the viewport
         let imageView = UIImageView(image: canvas.trimmedImage)
         FBSnapshotVerifyView(imageView)
     }
-    
+
     func testTrimmedImage_isClippedToViewport_withReferenceImage() {
         // given
         let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: 375, height: 667))
         let canvas = Canvas(frame: frame)
-        
+
         canvas.referenceImage = UIImage(testImageNamed: "unsplash_matterhorn.jpg")!
         let image = UIImage(testImageNamed: "unsplash_small.jpg")!
-        
+
         // when placing image half way outside the viewport
         canvas.insert(image: image, at: CGPoint(x: -image.size.width / 2, y: frame.midY - image.size.height / 2))
-        
+
         // then it should be clipped by the viewport
         let imageView = UIImageView(image: canvas.trimmedImage)
         FBSnapshotVerifyView(imageView)
     }
-    
+
 }
