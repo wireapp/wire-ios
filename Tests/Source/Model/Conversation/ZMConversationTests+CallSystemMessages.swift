@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 @testable import WireDataModel
-
 
 class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
 
@@ -75,7 +73,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             XCTAssertNil(second.visibleInConversation)
             XCTAssertEqual(second.hiddenInConversation, conversation)
         }
-        
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
 
@@ -129,7 +127,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             // then
             let lastMessages = conversation.lastMessages()
             XCTAssertEqual(lastMessages.count, 3)
-            XCTAssertEqual(lastMessages[2] as? ZMSystemMessage , first)
+            XCTAssertEqual(lastMessages[2] as? ZMSystemMessage, first)
             XCTAssertEqual(lastMessages[1], intermediate)
             XCTAssertEqual(lastMessages[0] as? ZMSystemMessage, second)
         }
@@ -151,7 +149,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             // then
             let lastMessages = conversation.lastMessages()
             XCTAssertEqual(lastMessages.count, 2)
-            XCTAssertEqual(lastMessages[1] as? ZMSystemMessage , first)
+            XCTAssertEqual(lastMessages[1] as? ZMSystemMessage, first)
             XCTAssertEqual(lastMessages[0] as? ZMSystemMessage, second)
         }
 
@@ -219,7 +217,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         // then
         let lastMessages = conversation.lastMessages()
         XCTAssertEqual(lastMessages.count, 3)
-        XCTAssertEqual(lastMessages[2] as? ZMSystemMessage , first)
+        XCTAssertEqual(lastMessages[2] as? ZMSystemMessage, first)
         XCTAssertEqual(lastMessages[1], intermediate)
         XCTAssertEqual(lastMessages[0] as? ZMSystemMessage, second)
     }
@@ -236,7 +234,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         // then
         let lastMessages = conversation.lastMessages()
         XCTAssertEqual(lastMessages.count, 2)
-        XCTAssertEqual(lastMessages[1] as? ZMSystemMessage , first)
+        XCTAssertEqual(lastMessages[1] as? ZMSystemMessage, first)
         XCTAssertEqual(lastMessages[0] as? ZMSystemMessage, second)
     }
 

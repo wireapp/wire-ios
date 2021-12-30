@@ -20,64 +20,64 @@ import XCTest
 @testable import WireDataModel
 
 class ZMConversationTests_HasMessages: ZMConversationTestsBase {
-    
+
     func testThatItHasMessages_ReadButNotCleared() {
         // Given
         let sut = ZMConversation.insertNewObject(in: uiMOC)
         sut.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -10)
-        
+
         XCTAssertNotNil(sut.lastReadServerTimeStamp)
         XCTAssertNil(sut.clearedTimeStamp)
-        
+
         // Then
         XCTAssertTrue(sut.estimatedHasMessages)
     }
-    
+
     func testThatItHasMessages_ReadAfterCleared() {
         // Given
         let sut = ZMConversation.insertNewObject(in: uiMOC)
         sut.clearedTimeStamp = Date(timeIntervalSinceNow: -15)
         sut.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -10)
-        
+
         XCTAssertNotNil(sut.clearedTimeStamp)
         XCTAssertNotNil(sut.lastReadServerTimeStamp)
-        
+
         // Then
         XCTAssertTrue(sut.estimatedHasMessages)
     }
-    
+
     func testThatItHasNoMessages_NotRead() {
         // Given
         let sut = ZMConversation.insertNewObject(in: uiMOC)
-        
+
         XCTAssertNil(sut.lastReadServerTimeStamp)
-        
+
         // Then
         XCTAssertFalse(sut.estimatedHasMessages)
     }
-    
+
     func testThatItHasNoMessages_ReadAndCleared() {
         // Given
         let sut = ZMConversation.insertNewObject(in: uiMOC)
         sut.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -10)
         sut.clearedTimeStamp = Date(timeIntervalSinceNow: -10)
-        
+
         XCTAssertNotNil(sut.lastReadServerTimeStamp)
         XCTAssertNotNil(sut.clearedTimeStamp)
-        
+
         // Then
         XCTAssertFalse(sut.estimatedHasMessages)
     }
-    
+
     func testThatItHasNoMessages_ReadThenCleared() {
         // Given
         let sut = ZMConversation.insertNewObject(in: uiMOC)
         sut.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -10)
         sut.clearedTimeStamp = Date(timeIntervalSinceNow: -5)
-        
+
         XCTAssertNotNil(sut.lastReadServerTimeStamp)
         XCTAssertNotNil(sut.clearedTimeStamp)
-        
+
         // Then
         XCTAssertFalse(sut.estimatedHasMessages)
     }

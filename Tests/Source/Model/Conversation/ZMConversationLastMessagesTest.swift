@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import XCTest
 import WireTesting
@@ -30,29 +29,29 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         conversation.conversationType = .group
         return conversation
     }
-    
+
     func testThatItFetchesLastMessage() throws {
         // GIVEN
         let conversation = createConversation()
-        
+
         // WHEN
         (0...40).forEach { i in
             try! conversation.appendText(content: "\(i)")
         }
-        
+
         // THEN
         XCTAssertEqual(conversation.lastMessage?.textMessageData?.messageText, "40")
     }
-    
+
     func testThatItFetchesLastMessagesWithLimit() throws {
         // GIVEN
         let conversation = createConversation()
-        
+
         // WHEN
         (0...40).forEach { i in
             try! conversation.appendText(content: "\(i)")
         }
-        
+
         // THEN
         let lastMessages = conversation.lastMessages(limit: 10)
         XCTAssertEqual(lastMessages.count, 10)
@@ -99,17 +98,17 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         XCTAssertEqual(otherLastMessages.last?.textMessageData?.messageText, "Other 1")
 
     }
-    
+
     func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        
+
         // when
         let message = try! conversation.appendText(content: "Test Message") as! ZMMessage
         message.sender = ZMUser.selfUser(in: self.uiMOC)
         message.markAsSent()
         message.textMessageData?.editText("Edited Test Message", mentions: [], fetchLinkPreview: true)
-        
+
         // then
         XCTAssertEqual(conversation.lastEditableMessage, message)
     }

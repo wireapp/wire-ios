@@ -75,7 +75,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
 
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [], name: name, team: nil)
             let nameMessage = conversation?.lastMessage as? ZMSystemMessage
-            
+
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage?.systemMessageType, .newConversation)
             XCTAssertEqual(nameMessage?.text, name)
@@ -84,7 +84,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
-    
+
     func testThatItDoesNotSetAllTeamUsersAddedWhenItIsNotTheCaseForTeamUser() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -93,14 +93,14 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
-            
+
             let user1 = self.createTeamMember(in: self.syncMOC, for: team)
             self.createTeamMember(in: self.syncMOC, for: team)
-            
+
             // when
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user1], name: self.name, team: team)
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
-            
+
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
             XCTAssertEqual(nameMessage.text, self.name)
@@ -109,7 +109,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             XCTAssertEqual(nameMessage.numberOfGuestsAdded, 0)
         }
     }
-    
+
     func testThatItDoesSetAllTeamUsersAddedWhenItIsTheCaseForTeamUser() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -117,14 +117,14 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
-            
+
             let user1 = self.createTeamMember(in: self.syncMOC, for: team)
             let user2 = self.createTeamMember(in: self.syncMOC, for: team)
-            
+
             // when
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user1, user2], name: self.name, team: team)
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
-            
+
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
             XCTAssertEqual(nameMessage.text, self.name)
@@ -133,7 +133,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             XCTAssertEqual(nameMessage.numberOfGuestsAdded, 0)
         }
     }
-    
+
     func testThatItIncludesNumberOfGuestsAddedInNewConversationSystemMessageWithAllTeamUsers() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -141,12 +141,12 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
-            
+
             let user1 = self.createTeamMember(in: self.syncMOC, for: team)
             let user2 = self.createTeamMember(in: self.syncMOC, for: team)
             let guest1 = self.createUser(onMoc: self.syncMOC)
             let guest2 = self.createUser(onMoc: self.syncMOC)
-            
+
             // when
             let conversation = ZMConversation.insertGroupConversation(
                 moc: self.syncMOC,
@@ -154,7 +154,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
                 name: self.name,
                 team: team)
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
-            
+
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
             XCTAssertEqual(nameMessage.text, self.name)
@@ -163,7 +163,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             XCTAssertEqual(nameMessage.numberOfGuestsAdded, 2)
         }
     }
-    
+
     func testThatItIncludesNumberOfGuestsAddedInNewConversationSystemMessageWithoutAllTeamUsers() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -171,16 +171,16 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
-            
+
             let user1 = self.createTeamMember(in: self.syncMOC, for: team)
             self.createTeamMember(in: self.syncMOC, for: team)
             let guest1 = self.createUser(onMoc: self.syncMOC)
             let guest2 = self.createUser(onMoc: self.syncMOC)
-            
+
             // when
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user1, guest1, guest2], name: self.name, team: team)
             guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
-            
+
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
             XCTAssertEqual(nameMessage.text, self.name)

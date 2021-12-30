@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
-
 
 final class AccountManagerTests: ZMConversationTestsBase {
 
@@ -142,7 +140,7 @@ final class AccountManagerTests: ZMConversationTestsBase {
             XCTAssertEqual(manager.accounts, [])
         }
     }
-    
+
     func testThatItRemovesTheSelectedAccountWhenItIsRemoved() {
         // given
         let manager = AccountManager(sharedDirectory: url)
@@ -163,18 +161,18 @@ final class AccountManagerTests: ZMConversationTestsBase {
         XCTAssertNil(manager.selectedAccount)
         XCTAssertEqual(manager.accounts, [])
     }
-    
+
     func testThatItUpdatesExisitingAccountPropertiesFromStore() {
         // given
         let manager = AccountManager(sharedDirectory: url)
         let accountID = UUID.create()
         manager.addAndSelect(Account(userName: "Jacob", userIdentifier: accountID))
         let account = manager.selectedAccount!
-        
+
         // when
         let updatedAccount = Account(userName: "Vytis", userIdentifier: accountID, teamName: "Wire")
         manager.addAndSelect(updatedAccount)
-        
+
         // then
         XCTAssertTrue(manager.selectedAccount === account)
         XCTAssertEqual(account.userIdentifier, accountID)

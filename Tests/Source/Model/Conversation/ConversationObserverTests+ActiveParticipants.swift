@@ -18,27 +18,26 @@
 
 @testable import WireDataModel
 
-
 // MARK: - Participants
 extension ConversationObserverTests {
-    
+
     func testThatItRecalculatesActiveParticipantsWhenIsSelfActiveUserKeyChanges() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.add(user: ZMUser.selfUser(in: uiMOC), isFromLocal: true)
-        
+
         let user1 = ZMUser.insertNewObject(in: uiMOC)
         let user2 = ZMUser.insertNewObject(in: uiMOC)
-        
+
         conversation.internalAddParticipants([user1, user2])
-        
+
         XCTAssert(conversation.isSelfAnActiveMember)
         XCTAssertEqual(conversation.participantRoles.count, 3)
         XCTAssertEqual(conversation.activeParticipants.count, 3)
-        
+
         // when
-        
+
         checkThatItNotifiesTheObserverOfAChange(conversation,
                                                 modifier: { conversation, _ in
                                                     conversation.minus(user: ZMUser.selfUser(in: uiMOC), isFromLocal: true)},
@@ -48,7 +47,6 @@ extension ConversationObserverTests {
                                                 expectedChangedKeys: ["localParticipantRoles", "displayName", "activeParticipants"]
         )
 
-        
         // then
         XCTAssertFalse(conversation.isSelfAnActiveMember)
         XCTAssertEqual(conversation.participantRoles.count, 2)
@@ -60,17 +58,17 @@ extension ConversationObserverTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.add(user: ZMUser.selfUser(in: uiMOC), isFromLocal: true)
-        
+
         let user1 = ZMUser.insertNewObject(in: uiMOC)
         let user2 = ZMUser.insertNewObject(in: uiMOC)
         conversation.internalAddParticipants([user1, user2])
-        
+
         XCTAssert(conversation.isSelfAnActiveMember)
         XCTAssertEqual(conversation.participantRoles.count, 3)
         XCTAssertEqual(conversation.activeParticipants.count, 3)
-        
+
         // when
-        
+
         checkThatItNotifiesTheObserverOfAChange(conversation,
                                                 modifier: { conversation, _ in
                                                     conversation.internalRemoveParticipants([user2],

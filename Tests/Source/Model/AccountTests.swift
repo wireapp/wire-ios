@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 @testable import WireDataModel
-
 
 final class AccountTests: ZMConversationTestsBase {
 
@@ -107,7 +105,6 @@ final class AccountTests: ZMConversationTestsBase {
         XCTAssertEqual(account.unreadConversationCount, count)
         XCTAssertEqual(account.loginCredentials, credentials)
     }
-
 
     func testThatAccountsAreEqualWhenNotImportantPropertiesAreDifferent() {
         // given

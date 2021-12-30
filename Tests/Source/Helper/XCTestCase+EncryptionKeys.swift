@@ -20,30 +20,30 @@ import Foundation
 @testable import WireDataModel
 
 extension XCTestCase {
-    
+
     private func generatePublicPrivateKey() -> (SecKey, SecKey) {
         var publicKeySec, privateKeySec: SecKey?
         let keyattribute = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecAttrKeySizeInBits as String : 256
+            kSecAttrKeySizeInBits as String: 256
             ] as CFDictionary
         SecKeyGeneratePair(keyattribute, &publicKeySec, &privateKeySec)
-        
+
         return (publicKeySec!, privateKeySec!)
     }
-    
+
     var validEncryptionKeys: EncryptionKeys {
         let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
         let databaseKey = Data.zmRandomSHA256Key()
-        
+
         return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey)
     }
-    
+
     var malformedEncryptionKeys: EncryptionKeys {
         let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
         let databaseKey = Data.zmRandomSHA256Key()
-        
+
         return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey.dropFirst())
     }
-    
+
 }
