@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 @testable import WireDataModel
-
 
 fileprivate extension Notification {
 
@@ -31,7 +29,6 @@ fileprivate extension Notification {
     }
 
 }
-
 
 class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
@@ -125,7 +122,6 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
 }
 
-
 class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
 
     var sut: ShareExtensionAnalyticsPersistence!
@@ -176,38 +172,38 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
 
 class ShareObjectStoreTests: ZMTBaseTest {
     var sut: SharedObjectStore<WireDataModel.SharedObjectTestClass>!
-    
+
     override func setUp() {
         super.setUp()
         sut = createStore()
     }
-    
+
     override func tearDown() {
         sut.clear()
         sut = nil
         super.tearDown()
     }
-    
+
     func createStore() -> SharedObjectStore<WireDataModel.SharedObjectTestClass> {
         let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return SharedObjectStore(accountContainer: url, fileName: "store")
     }
-    
+
     func testThatItCanDecodeClassSavedBeforeProjectRename() {
         // Given
-        
+
         // Module prefix before project rename
         NSKeyedArchiver.setClassName("ZMCDataModel.SharedObjectTestClass", for: WireDataModel.SharedObjectTestClass.self)
         let item = WireDataModel.SharedObjectTestClass()
         item.flag = true
-        
+
         // When
         sut.store(item)
         sut = createStore()
-        
+
         // Then
         let items = sut.load()
         XCTAssertEqual(items.first?.flag, item.flag)
     }
-    
+
 }

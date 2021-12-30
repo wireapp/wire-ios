@@ -21,18 +21,18 @@ import Foundation
 @testable import WireDataModel
 
 class ParticipantRoleTests: ZMBaseManagedObjectTest {
-    
+
     var user: ZMUser!
     var conversation: ZMConversation!
     var role: Role!
-    
+
     override func setUp() {
         super.setUp()
         self.user = ZMUser.insertNewObject(in: self.uiMOC)
         self.conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         self.role = Role.insertNewObject(in: self.uiMOC)
     }
-    
+
     private func createParticipantRole() -> ParticipantRole {
         let pr = ParticipantRole.insertNewObject(in: self.uiMOC)
         pr.user = user
@@ -40,25 +40,25 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
         pr.role = role
         return pr
     }
-    
+
     func testThatServicesBelongToOneToOneConversations() {
-        
+
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         let service = createService(in: uiMOC, named: "Bob the Robot")
-        
+
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
-        
+
         let team = Team.insertNewObject(in: self.uiMOC)
         team.remoteIdentifier = UUID.create()
         conversation.team = team
-        
+
         // WHEN
         conversation.addParticipantAndUpdateConversationState(user: service as! ZMUser, role: nil)
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-        
+
         // THEN
         XCTAssertTrue(ZMConversation.predicateForOneToOneConversations().evaluate(with: conversation))
     }

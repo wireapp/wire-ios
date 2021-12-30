@@ -21,9 +21,9 @@ import WireTesting
 @testable import WireDataModel
 
 @objcMembers public class DatabaseBaseTest: ZMTBaseTest {
-    
-    var accountID : UUID = UUID.create()
-    
+
+    var accountID: UUID = UUID.create()
+
     public var applicationContainer: URL {
         return FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)
@@ -36,7 +36,7 @@ import WireTesting
         self.clearStorageFolder()
         try! FileManager.default.createDirectory(at: self.applicationContainer, withIntermediateDirectories: true)
     }
-    
+
     override public func tearDown() {
         self.clearStorageFolder()
         super.tearDown()
@@ -56,7 +56,7 @@ import WireTesting
 
         return stack
     }
-    
+
     /// Create a session in the keystore directory for the given account
     public func createSessionInKeyStore(accountDirectory: URL, applicationContainer: URL, sessionId: EncryptionSessionIdentifier) {
         let preKey = "pQABAQICoQBYICHHDV4Zh6yJzJSPhQmtxah8N4kVE+XSCmTVfIsvgm5UA6EAoQBYIJeiWi5TfAWBrYSOtM5nKk5isfRYX5pFqRk13jVenPz6BPY="
@@ -65,26 +65,26 @@ import WireTesting
             try! sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
         }
     }
-    
+
     /// Returns true if the given session exists in the keystore for the given account
     public func doesSessionExistInKeyStore(accountDirectory: URL, applicationContainer: URL, sessionId: EncryptionSessionIdentifier) -> Bool {
-        
+
         var hasSession = false
-        
+
         let keyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
         keyStore.encryptionContext.perform { sessionsDirectory in
             hasSession = sessionsDirectory.hasSession(for: sessionId)
         }
-        
+
         return hasSession
     }
-    
+
     /// Clears the current storage folder and the legacy locations
     public func clearStorageFolder() {
         let url = self.applicationContainer
         try? FileManager.default.removeItem(at: url)
     }
-    
+
     /// Creates some dummy Core Data store support file
     func createDummyExternalSupportFileForDatabase(storeFile: URL) {
         let storeName = storeFile.deletingPathExtension().lastPathComponent
@@ -92,5 +92,5 @@ import WireTesting
         try! FileManager.default.createDirectory(at: supportPath, withIntermediateDirectories: true)
         try! self.mediumJPEGData().write(to: supportPath.appendingPathComponent("image.dat"))
     }
-    
+
 }

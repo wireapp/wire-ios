@@ -56,7 +56,7 @@ extension ZMBaseManagedObjectTest {
 
     @discardableResult func createTeamMember(in moc: NSManagedObjectContext, for team: Team) -> ZMUser {
         let user = createUser(in: moc)
-        createMembership(in:moc, user: user, team: team)
+        createMembership(in: moc, user: user, team: team)
         return user
     }
 
@@ -70,7 +70,7 @@ extension ZMBaseManagedObjectTest {
 
     func createExternal(in moc: NSManagedObjectContext) -> ZMUser {
         let externalUser = createUser(in: moc)
-        createMembership(in:moc, user: externalUser, team: nil, with: .partner)
+        createMembership(in: moc, user: externalUser, team: nil, with: .partner)
         return externalUser
     }
 }

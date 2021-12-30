@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
-
 class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
 
     private typealias MigrationError = NSManagedObjectContext.MigrationError
@@ -30,7 +29,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
         createSelfClient(onMOC: uiMOC)
     }
 
-    private func fetchObjects<T: ZMManagedObject>() throws -> [T]{
+    private func fetchObjects<T: ZMManagedObject>() throws -> [T] {
         let request = NSFetchRequest<T>(entityName: T.entityName())
         request.returnsObjectsAsFaults = false
         return try request.execute()
@@ -73,7 +72,6 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
         // Given
         let validEncryptionKeys = self.validEncryptionKeys
         try uiMOC.enableEncryptionAtRest(encryptionKeys: validEncryptionKeys, skipMigration: true)
-        
 
         let conversation = createConversation(in: uiMOC)
         try conversation.appendText(content: "Beep bloop")

@@ -64,10 +64,9 @@ class CoreDataStackTests_EncryptionAtRest: DatabaseBaseTest {
         sut.searchContext.performGroupedBlockAndWait {
             XCTAssertNil(sut.searchContext.encryptionKeys)
         }
-        
+
         // Clean up
         try! EncryptionKeys.deleteKeys(for: account)
     }
 
 }
-

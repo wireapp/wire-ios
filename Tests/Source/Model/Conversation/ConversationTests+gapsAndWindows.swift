@@ -20,14 +20,14 @@ import Foundation
 @testable import WireDataModel
 
 final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
-    
+
     func testThatItInsertsANewConversation() {
         // given
         let user1 = createUser()
         let user2 = createUser()
         let user3 = createUser()
         let selfUser = ZMUser.selfUser(in: uiMOC)
-        
+
         // when
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC,
                                                                   participants: [user1, user2, user3],
@@ -36,46 +36,45 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
                                                                   allowGuests: true,
                                                                   readReceipts: false,
                                                                   participantsRole: nil)
-        
+
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
-        
+
         XCTAssertEqual(conversations.count, 1)
         let fetchedConversation = conversations[0] as? ZMConversation
         XCTAssertEqual(fetchedConversation?.conversationType, .group)
         XCTAssertEqual(conversation?.objectID, fetchedConversation?.objectID)
-        
+
         let expectedParticipants = Set<AnyHashable>([user1, user2, user3, selfUser])
         XCTAssertEqual(expectedParticipants, conversation?.localParticipants)
     }
 
     func testThatItInsertsANewConversationInUIContext() {
         // given
-        
+
         let user1 = ZMUser.insertNewObject(in: uiMOC)
         let user2 = ZMUser.insertNewObject(in: uiMOC)
         let user3 = ZMUser.insertNewObject(in: uiMOC)
         let selfUser = ZMUser.selfUser(in: uiMOC)
-        
+
         // when
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [user1, user2, user3], name: nil, team: nil, allowGuests: true, readReceipts: false, participantsRole: nil)
-        
+
         try! uiMOC.save()
 
-        
         // then
         XCTAssertNotNil(conversation)
-        
+
         let fetchRequest = ZMConversation.sortedFetchRequest()
         let conversations = uiMOC.executeFetchRequestOrAssert(fetchRequest)
-        
+
         XCTAssertEqual(conversations.count, 1)
         let fetchedConversation = conversations[0] as? ZMConversation
         XCTAssertEqual(conversation?.objectID, fetchedConversation?.objectID)
-        
+
         let expectedParticipants = Set<AnyHashable>([user1, user2, user3, selfUser])
         XCTAssertEqual(expectedParticipants, conversation?.localParticipants)
-        
+
     }
 
 }

@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-
-class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
-
+class ManagedObjectContextChangeObserverTests: ZMBaseManagedObjectTest {
 
     func testThatItCallsTheCallbackWhenObjectsAreInserted() {
         // given

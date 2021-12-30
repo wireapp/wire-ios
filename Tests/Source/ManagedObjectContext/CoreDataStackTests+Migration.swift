@@ -18,7 +18,7 @@
 import XCTest
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
-    
+
     enum TestError: Error {
         case somethingWentWrong
     }
@@ -29,7 +29,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
         super.tearDown()
     }
-    
+
     func performMigration(accountIdentifier: UUID,
                           migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void>? {
         var result: Result<Void>?
@@ -39,10 +39,10 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
                                           migration: migration,
                                           completion: { result = $0 })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         return result
     }
-    
+
     // MARK: - Migration tests
 
     func testThatLocalStoreMigration_CanAlterTheDatabase() throws {
@@ -56,15 +56,15 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let result = performMigration(accountIdentifier: uuid) { (context) in
             context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
         }
-        
+
         // then
-        guard case .success() = result else { return XCTFail() }
+        guard case .success = result else { return XCTFail() }
 
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
         XCTAssertEqual(storedValue, metadataValue)
     }
-    
+
     func testThatLocalStoreMigration_DoesNotAlterTheDatabase_WhenMigrationFails() throws {
         // given
         let metadataValue = 242
@@ -72,7 +72,6 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let uuid = UUID()
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
-        
         // when
         var result: Result<Void>?
         performIgnoringZMLogError {
@@ -85,12 +84,12 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         // then
         guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
-        
+
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
         XCTAssertNil(storedValue)
     }
-    
+
     func testThatLocalStoreMigration_FailWhenLocalStoreDoesNotExist() throws {
         // given
         let uuid = UUID()
@@ -98,27 +97,27 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         // when
         var result: Result<Void>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (context) in }
+            result = self.performMigration(accountIdentifier: uuid) { (_) in }
         }
-        
+
         // then
         guard case .failure(CoreDataStack.MigrationError.missingLocalStore) = result else { return XCTFail() }
     }
-    
+
     func testThatLocalStoreMigration_DeletesTemporaryStore_OnSuccess() throws {
         // given
         let uuid = UUID()
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { (context) in }
-        
+        let result = performMigration(accountIdentifier: uuid) { (_) in }
+
         // then
-        guard case .success() = result else { return XCTFail() }
-        
+        guard case .success = result else { return XCTFail() }
+
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
-    
+
     func testThatLocalStoreMigration_DeletesTemporaryStore_OnFailure() throws {
         // given
         let uuid = UUID()
@@ -127,14 +126,14 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         // when
         var result: Result<Void>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (context) in
+            result = self.performMigration(accountIdentifier: uuid) { (_) in
                 throw TestError.somethingWentWrong
             }
         }
-        
+
         // then
         guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
-        
+
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
 
