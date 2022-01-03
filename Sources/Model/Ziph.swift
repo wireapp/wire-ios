@@ -43,7 +43,6 @@ public struct Ziph: Codable {
         return nil
     }
 
-
     public var description: String {
         return "identifier: \(self.identifier)\n" +
         "title: \(self.title ?? "nil")\n" +

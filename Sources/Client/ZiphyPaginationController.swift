@@ -46,14 +46,14 @@ class ZiphyPaginationController {
 
     // MARK: - Updating the Data
 
-    private func fetchNewPage(_ offset:Int) -> CancelableTask? {
+    private func fetchNewPage(_ offset: Int) -> CancelableTask? {
         guard !isAtEnd else {
             return nil
         }
 
         return self.fetchBlock?(offset)
     }
-    
+
     func updatePagination(_ result: ZiphyResult<[Ziph]>, filter: ((Ziph) -> Bool)?) {
         switch result {
         case .success(let insertedZiphs):

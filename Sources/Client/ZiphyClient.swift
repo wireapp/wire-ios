@@ -74,7 +74,7 @@ extension ZiphyClient {
 
     @discardableResult
     public func fetchTrending(resultsLimit: Int = 25, offset: Int, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-        
+
         let request = requestGenerator.makeTrendingImagesRequest(resultsLimit: resultsLimit, offset: offset)
         return performPotentialZiphListRequest(request, onCompletion: onCompletion)
     }
@@ -92,11 +92,11 @@ extension ZiphyClient {
 
     @discardableResult
     public func search(term: String, resultsLimit: Int = 25, offset: Int = 0, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-        
+
         let request = requestGenerator.makeSearchRequest(term: term, resultsLimit: resultsLimit, offset: offset)
         return performPotentialZiphListRequest(request, onCompletion: onCompletion)
     }
-    
+
     private func performPotentialZiphListRequest(_ potentialRequest: ZiphyResult<URLRequest>, isPaginated: Bool = true, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
 
         let completionHandler = makeCompletionHandler(onCompletion)
@@ -212,7 +212,7 @@ extension ZiphyClient {
     }
 
     /// Creates and schedules a request for the given URL request and returns the promise to its reponse.
-    fileprivate func performDataTask(_ request:URLRequest, requester:ZiphyURLRequester) -> URLRequestPromise {
+    fileprivate func performDataTask(_ request: URLRequest, requester: ZiphyURLRequester) -> URLRequestPromise {
         let promise = URLRequestPromise(requester: requester)
         let requestIdentifier = requester.performZiphyRequest(request, completionHandler: promise.resolve)
 

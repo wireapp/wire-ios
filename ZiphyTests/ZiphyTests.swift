@@ -20,19 +20,17 @@ import XCTest
 @testable import Ziphy
 
 final class ZiphTests: XCTestCase {
-    
+
     var sut: Ziph!
-    
+
     override func setUp() {
         super.setUp()
     }
-    
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
-
-
 
     /// Example checker method which can be reused in different tests
     fileprivate func checkerExample(file: StaticString = #file, line: UInt = #line) {
@@ -58,7 +56,7 @@ final class ZiphTests: XCTestCase {
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
             .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
             .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000),
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
             ]
 
         sut = ZiphHelper.createZiph(id: id, url: url, imagesList: imagesList)

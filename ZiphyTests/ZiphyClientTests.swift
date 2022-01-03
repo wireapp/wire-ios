@@ -42,7 +42,7 @@ class ZiphyClientTests: XCTestCase {
 
         // WHEN
         let fetchExpectation = expectation(description: "The resource can be fetched and decoded.")
-        var result: ZiphyResult<Ziph>? = nil
+        var result: ZiphyResult<Ziph>?
 
         client.fetchRandomPost {
             result = $0
@@ -75,7 +75,7 @@ class ZiphyClientTests: XCTestCase {
 
         // WHEN
         let fetchExpectation = expectation(description: "The resource can be fetched and decoded.")
-        var result: ZiphyResult<[Ziph]>? = nil
+        var result: ZiphyResult<[Ziph]>?
 
         client.search(term: "judge judy") {
             result = $0
@@ -106,7 +106,7 @@ class ZiphyClientTests: XCTestCase {
 
         // WHEN
         let fetchExpectation = expectation(description: "The resource can be fetched and decoded.")
-        var result: ZiphyResult<[Ziph]>? = nil
+        var result: ZiphyResult<[Ziph]>?
 
         client.search(term: "judge judy") {
             result = $0

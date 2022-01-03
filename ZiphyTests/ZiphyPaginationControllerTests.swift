@@ -22,12 +22,12 @@ import XCTest
 class ZiphyPaginationControllerTests: XCTestCase {
 
     var paginationController: ZiphyPaginationController!
-    
+
     override func setUp() {
         super.setUp()
         paginationController = ZiphyPaginationController()
     }
-    
+
     override func tearDown() {
         paginationController = nil
         super.tearDown()

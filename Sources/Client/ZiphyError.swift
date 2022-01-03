@@ -37,5 +37,5 @@ public enum ZiphyError: Error {
     init(_ error: Error) {
         self = (error as? ZiphyError) ?? .unknownError(error)
     }
-    
+
 }

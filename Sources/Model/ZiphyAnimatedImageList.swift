@@ -58,7 +58,7 @@ public struct ZiphyAnimatedImageList: Codable {
 
 extension ZiphyAnimatedImageList: Sequence {
 
-    public typealias RawValue = Dictionary<ZiphyImageType, ZiphyAnimatedImage>
+    public typealias RawValue = [ZiphyImageType: ZiphyAnimatedImage]
 
     /// Returns the image for the specified type.
     public subscript(type: ZiphyImageType) -> ZiphyAnimatedImage? {
