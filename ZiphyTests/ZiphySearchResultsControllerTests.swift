@@ -162,7 +162,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         // WHEN
         let fetchExpectation = expectation(description: "Initial trending images are fetched.")
 
-        _ = searchController.trending { result in
+        _ = searchController.trending { _ in
             fetchExpectation.fulfill()
         }
 

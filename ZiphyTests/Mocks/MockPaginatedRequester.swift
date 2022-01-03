@@ -32,7 +32,7 @@ class MockPaginatedRequester: ZiphyURLRequester {
 
     private var offset: Int = 0
     private var limit: Int = 0
-    private var url: URL? = nil
+    private var url: URL?
 
     var response: MockPaginatedResponse?
 
