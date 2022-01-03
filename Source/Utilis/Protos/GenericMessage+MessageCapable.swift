@@ -42,7 +42,7 @@ extension Location: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.location = self
     }
-    
+
     public func setContent(on message: inout GenericMessage) {
         message.location = self
     }
@@ -52,7 +52,7 @@ extension Knock: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.knock = self
     }
-    
+
     public func setContent(on message: inout GenericMessage) {
         message.knock = self
     }
@@ -62,18 +62,17 @@ extension Text: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.text = self
     }
-    
+
     public func setContent(on message: inout GenericMessage) {
         message.text = self
     }
 }
 
-
 extension WireProtos.Asset: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.asset = self
     }
-    
+
     public func setContent(on message: inout GenericMessage) {
         message.asset = self
     }
@@ -166,7 +165,6 @@ extension WireProtos.Confirmation: MessageCapable {
     }
 }
 
-
 extension External: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.external = self
@@ -206,7 +204,7 @@ extension Ephemeral: MessageCapable {
             }
         }
     }
-    
+
     public func setContent(on message: inout GenericMessage) {
         message.ephemeral = self
     }

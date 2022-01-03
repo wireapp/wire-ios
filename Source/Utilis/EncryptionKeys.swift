@@ -24,20 +24,20 @@ import LocalAuthentication
 /// which are used for supporting encryption at rest
 ///
 public struct EncryptionKeys {
-    
+
     enum KeychainItem {
         case privateKey(_ account: Account, _ context: LAContext?, _ prompt: String?)
         case publicKey(Account)
         case databaseKey(Account)
-        
+
         var tag: Data {
             uniqueIdentifier.data(using: .utf8)!
         }
-        
+
         var uniqueIdentifier: String {
             "com.wire.ear.\(label).\(accountIdentifier)"
         }
-        
+
         var accountIdentifier: String {
             switch self {
             case .privateKey(let account, _, _):
@@ -48,7 +48,7 @@ public struct EncryptionKeys {
                 return account.userIdentifier.transportString()
             }
         }
-        
+
         var label: String {
             switch self {
             case .privateKey:
@@ -59,10 +59,10 @@ public struct EncryptionKeys {
                 return "database"
             }
         }
-        
+
         var getQuery: [CFString: Any] {
             var query: [CFString: Any]
-            
+
             switch self {
             case .publicKey:
                 query = [kSecClass: kSecClassKey,
@@ -76,13 +76,13 @@ public struct EncryptionKeys {
                 query = [kSecClass: kSecClassKey,
                          kSecAttrKeyClass: kSecAttrKeyClassPrivate,
                          kSecAttrLabel: tag,
-                         kSecReturnRef: true,
+                         kSecReturnRef: true
                 ]
-                
+
                 #if targetEnvironment(simulator)
                 context = nil // kSecUseAuthenticationContext doesn't work on simulator
                 #endif
-                
+
                 if let context = context {
                     query[kSecUseAuthenticationContext] = context
                     query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
@@ -90,13 +90,13 @@ public struct EncryptionKeys {
                     query[kSecUseOperationPrompt] = prompt
                 }
             }
-            
+
             return query
         }
-        
+
         func setQuery<T>(value: T) -> [CFString: Any] {
             var query: [CFString: Any]
-            
+
             switch self {
             case .publicKey:
                 query = [kSecClass: kSecClassKey,
@@ -109,11 +109,11 @@ public struct EncryptionKeys {
             case .privateKey:
                 query = [:]
             }
-            
+
             return query
         }
     }
-    
+
     public enum EncryptionKeysError: Error {
         case failedToStoreItemInKeychain(OSStatus)
         case failedToFetchItemFromKeychain(OSStatus)
@@ -124,28 +124,28 @@ public struct EncryptionKeys {
         case failedToEncryptDatabaseKey(underlyingError: Error)
         case failedToDecryptDatabaseKey(underlyingError: Error)
     }
-    
+
     /// Public key associated with an account.
     ///
     /// This key is used when sensitive information
     /// needs to be stored while the application operates in the background.
     public let publicKey: SecKey
-    
+
     /// Private key associated with an account.
     ///
     /// This key is used by when the app runs in
     /// the foreground to decrypt data which was previously stored while the app running
     /// in the background.
     public let privateKey: SecKey
-    
+
     /// Database key associated with an account.
     ///
     /// This key is used to encrypt/decrypt
     /// messages in the database.
     public let databaseKey: VolatileData
-    
+
     private static let databaseKeyAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
-    
+
     /// Initialise EncryptionKeys for an account.
     ///
     /// The encryption keys can only be retrieved if the user is authenticated, this can be done
@@ -165,15 +165,15 @@ public struct EncryptionKeys {
         self.privateKey = try Self.fetchItem(.privateKey(account, context, authenticationMessage))
         self.databaseKey = try VolatileData(from: Self.decryptDatabaseKey(Self.fetchItem(.databaseKey(account)), privateKey: privateKey))
     }
-    
+
     init(publicKey: SecKey, privateKey: SecKey, databaseKey: Data) {
         self.publicKey = publicKey
         self.privateKey = privateKey
         self.databaseKey = VolatileData(from: databaseKey)
     }
-    
+
     // MARK: Create & Destroy keys
-    
+
     /// Create all encryption keys and store them in the keychain.
     ///
     /// - Parameters:
@@ -181,13 +181,13 @@ public struct EncryptionKeys {
     public static func createKeys(for account: Account) throws -> EncryptionKeys {
         let (privateKey, publicKey) = try generateAccountKey(identifier: .privateKey(account, nil, nil))
         let databaseKey = try generateDatabaseKey()
-        
+
         try storeItem(.publicKey(account), value: publicKey)
         try storeItem(.databaseKey(account), value: encryptDatabaseKey(databaseKey, publicKey: publicKey))
-        
+
         return EncryptionKeys(publicKey: publicKey, privateKey: privateKey, databaseKey: databaseKey)
     }
-    
+
     /// Delete all encryption keys and from the keychain.
     ///
     /// - Parameters:
@@ -197,14 +197,14 @@ public struct EncryptionKeys {
         try deleteItem(.privateKey(account, nil, nil))
         try deleteItem(.databaseKey(account))
     }
-    
+
     // MARK: Account key
-    
+
     /// Fetch the public key associated with an account
     public static func publicKey(for account: Account) throws -> SecKey {
         try fetchItem(.publicKey(account))
     }
-    
+
     private static func generateAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
         #if targetEnvironment(simulator)
             return try generateSimulatorAccountKey(identifier: identifier)
@@ -212,7 +212,7 @@ public struct EncryptionKeys {
             return try generateSecureEnclaveAccountKey(identifier: identifier)
         #endif
     }
-    
+
     private static func generateSecureEnclaveAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
         var accessError: Unmanaged<CFError>?
         guard let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
@@ -223,31 +223,31 @@ public struct EncryptionKeys {
                 let error = accessError!.takeRetainedValue() as Error
                 throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         }
-        
-        let attributes: [CFString : Any] = [
-          kSecAttrKeyType:            kSecAttrKeyTypeECSECPrimeRandom,
-          kSecAttrKeySizeInBits:      256,
-          kSecAttrTokenID:            kSecAttrTokenIDSecureEnclave,
+
+        let attributes: [CFString: Any] = [
+          kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
+          kSecAttrKeySizeInBits: 256,
+          kSecAttrTokenID: kSecAttrTokenIDSecureEnclave,
           kSecPrivateKeyAttrs: [
-            kSecAttrIsPermanent:      true,
-            kSecAttrAccessControl:    access,
-            kSecAttrLabel:            identifier.tag,
+            kSecAttrIsPermanent: true,
+            kSecAttrAccessControl: access,
+            kSecAttrLabel: identifier.tag
           ]
         ]
-        
+
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
             let error = error!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         }
-        
+
         guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
             throw EncryptionKeysError.failedToCopyPublicAccountKey
         }
-        
+
         return (privateKey, publicKey)
     }
-    
+
     private static func generateSimulatorAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
         var accessError: Unmanaged<CFError>?
         guard let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
@@ -258,44 +258,44 @@ public struct EncryptionKeys {
                 let error = accessError!.takeRetainedValue() as Error
                 throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         }
-        
-        let attributes: [CFString : Any] = [
-          kSecAttrKeyType:            kSecAttrKeyTypeECSECPrimeRandom,
-          kSecAttrKeySizeInBits:      256,
+
+        let attributes: [CFString: Any] = [
+          kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
+          kSecAttrKeySizeInBits: 256,
           kSecPrivateKeyAttrs: [
-            kSecAttrIsPermanent:      true,
-            kSecAttrAccessControl:    access,
-            kSecAttrLabel:            identifier.tag,
+            kSecAttrIsPermanent: true,
+            kSecAttrAccessControl: access,
+            kSecAttrLabel: identifier.tag
           ]
         ]
-        
+
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            //Notice: accessError is nil when test with iOS 15 simulator. ref:https://wearezeta.atlassian.net/browse/SQCORE-1188
+            // Notice: accessError is nil when test with iOS 15 simulator. ref:https://wearezeta.atlassian.net/browse/SQCORE-1188
             let error = accessError?.takeRetainedValue()
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         }
-        
+
         guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
             throw EncryptionKeysError.failedToCopyPublicAccountKey
         }
-        
+
         return (privateKey, publicKey)
     }
-    
+
     // MARK: - Database key
-    
+
     private static func generateDatabaseKey() throws -> Data {
         var databaseKey = [UInt8](repeating: 0, count: 32)
         let status = SecRandomCopyBytes(kSecRandomDefault, databaseKey.count, &databaseKey)
-        
+
         guard status == errSecSuccess else {
             throw EncryptionKeysError.failedToGenerateDatabaseKey(status)
         }
-        
+
         return Data(databaseKey)
     }
-    
+
     private static func encryptDatabaseKey(_ databaseKey: Data, publicKey: SecKey) throws -> Data {
         var error: Unmanaged<CFError>?
         guard let wrappedDatabaseKey = SecKeyCreateEncryptedData(publicKey,
@@ -304,10 +304,10 @@ public struct EncryptionKeys {
             let error = error!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToEncryptDatabaseKey(underlyingError: error)
         }
-        
+
         return wrappedDatabaseKey as Data
     }
-    
+
     private static func decryptDatabaseKey(_ wrappedDatabaseKey: Data, privateKey: SecKey) throws -> Data {
         var error: Unmanaged<CFError>?
         guard let decryptedDatabaseKey = SecKeyCreateDecryptedData(privateKey,
@@ -318,39 +318,39 @@ public struct EncryptionKeys {
                 let error = error!.takeRetainedValue() as Error
                 throw EncryptionKeysError.failedToDecryptDatabaseKey(underlyingError: error)
         }
-        
+
         return decryptedDatabaseKey as Data
     }
-    
+
     // MARK: - Keychain access
-        
+
     private static func storeItem<T>(_ item: KeychainItem, value: T) throws {
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
-        
+
         guard status == errSecSuccess else {
             throw EncryptionKeysError.failedToStoreItemInKeychain(status)
         }
     }
-    
+
     private static func fetchItem<T>(_ item: KeychainItem) throws -> T {
-        var value: CFTypeRef? = nil
+        var value: CFTypeRef?
         let status = SecItemCopyMatching(item.getQuery as CFDictionary, &value)
-        
+
         guard status == errSecSuccess else {
             throw EncryptionKeysError.failedToFetchItemFromKeychain(status)
         }
-                
+
         return value as! T
     }
-    
+
     private static func deleteItem(_ item: KeychainItem) throws {
         let status = SecItemDelete(item.getQuery as CFDictionary)
-        
+
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw EncryptionKeysError.failedToDeleteItemFromKeychain(status)
         }
     }
-    
+
 }
 
 // MARK: - Equatable

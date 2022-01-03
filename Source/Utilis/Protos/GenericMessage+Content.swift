@@ -24,59 +24,59 @@ public extension GenericMessage {
     var hasText: Bool {
         return messageData is Text
     }
-    
+
     var hasConfirmation: Bool {
         return messageData is Confirmation
     }
-    
+
     var hasReaction: Bool {
         return messageData is WireProtos.Reaction
     }
-    
+
     var hasAsset: Bool {
         return messageData is WireProtos.Asset
     }
-    
+
     var hasClientAction: Bool {
         return messageData is ClientAction
     }
-    
+
     var hasCleared: Bool {
         return messageData is Cleared
     }
-    
+
     var hasLastRead: Bool {
         return messageData is LastRead
     }
-    
+
     var hasKnock: Bool {
         return messageData is Knock
     }
-    
+
     var hasExternal: Bool {
         return messageData is External
     }
-    
+
     var hasAvailability: Bool {
         return messageData is WireProtos.Availability
     }
-    
+
     var hasEdited: Bool {
         return messageData is MessageEdit
     }
-    
+
     var hasDeleted: Bool {
         return messageData is MessageDelete
     }
-    
+
     var hasCalling: Bool {
         return messageData is Calling
     }
-    
+
     var hasHidden: Bool {
         return messageData is MessageHide
     }
-    
+
     var hasLocation: Bool {
         return messageData is Location
     }
@@ -92,7 +92,7 @@ public extension Ephemeral {
     var hasAsset: Bool {
         return messageData is WireProtos.Asset
     }
-    
+
     var hasKnock: Bool {
         return messageData is Knock
     }
@@ -100,7 +100,7 @@ public extension Ephemeral {
     var hasLocation: Bool {
         return messageData is Location
     }
-    
+
     var hasText: Bool {
         return messageData is Text
     }

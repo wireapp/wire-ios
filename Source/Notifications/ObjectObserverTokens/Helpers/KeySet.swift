@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireUtilities
 
-public enum AffectedKeys : Equatable {
+public enum AffectedKeys: Equatable {
     case some(KeySet)
     case all
-    
+
     func combinedWith(_ other: AffectedKeys) -> AffectedKeys {
         switch (self, other) {
         case let (.some(k1), .some(k2)):
@@ -32,9 +31,9 @@ public enum AffectedKeys : Equatable {
             return .all
         }
     }
-    
+
     func containsKey(_ key: StringKeyPath) -> Bool {
-        switch(self) {
+        switch self {
         case let .some(keySet):
             return keySet.contains(key)
         case .all:
@@ -54,16 +53,16 @@ public func ==(lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
     }
 }
 
-public struct KeySet : Sequence {
+public struct KeySet: Sequence {
     public typealias Key = StringKeyPath
     public typealias Iterator = Set<StringKeyPath>.Iterator
     fileprivate let backing: Set<StringKeyPath>
-    
+
     public init() {
         backing = Set()
     }
-    
-    public init(_ set : NSSet) {
+
+    public init(_ set: NSSet) {
         var a: [StringKeyPath] = []
         for s in set {
             if let ss = s as? String {
@@ -74,15 +73,15 @@ public struct KeySet : Sequence {
         }
         backing = Set(a)
     }
-    public init (_ set : Set<Key>) {
+    public init (_ set: Set<Key>) {
         backing = set
     }
-    
-    public init (_ keys : Set<String>) {
+
+    public init (_ keys: Set<String>) {
         self.init(Array(keys))
     }
-    
-    public init(_ a : [String]) {
+
+    public init(_ a: [String]) {
         var aa: [StringKeyPath] = []
         for s in a {
             aa.append(StringKeyPath.keyPathForString(s))
@@ -101,25 +100,25 @@ public struct KeySet : Sequence {
     public init(arrayLiteral elements: String...) {
         self.init(elements)
     }
-    init<S : Sequence>(_ seq: S) where S.Iterator.Element == Key {
+    init<S: Sequence>(_ seq: S) where S.Iterator.Element == Key {
         backing = Set<Key>(seq)
     }
-    public func contains(_ i : StringKeyPath) -> Bool {
+    public func contains(_ i: StringKeyPath) -> Bool {
         return backing.contains(i)
     }
-    public func contains(_ i : String) -> Bool {
+    public func contains(_ i: String) -> Bool {
         return backing.contains(StringKeyPath.keyPathForString(i))
     }
     public func makeIterator() -> Set<StringKeyPath>.Iterator {
         return backing.makeIterator()
     }
-    
-    public var count : Int {
+
+    public var count: Int {
         return backing.count
     }
 }
 
-extension KeySet : Hashable {
+extension KeySet: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(backing.hashValue)
     }
@@ -128,7 +127,6 @@ extension KeySet : Hashable {
 public func ==(lhs: KeySet, rhs: KeySet) -> Bool {
     return lhs.backing == rhs.backing
 }
-
 
 extension KeySet {
     func union(_ set: KeySet) -> KeySet {
@@ -145,10 +143,10 @@ extension KeySet {
     }
 }
 
-extension KeySet : CustomDebugStringConvertible {
+extension KeySet: CustomDebugStringConvertible {
     public var description: String {
-        let a = Array<StringKeyPath>(backing)
-        let ss = a.map { $0.rawValue }.sorted() {
+        let a = [StringKeyPath](backing)
+        let ss = a.map { $0.rawValue }.sorted {
             (lhs, rhs) in lhs < rhs
         }
         return "KeySet {" + ss.joined(separator: " ") + "}"

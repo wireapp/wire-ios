@@ -19,7 +19,6 @@
 import Foundation
 import CoreData
 
-
 /// The `NotificationDispatcher` listens for changes to observable entities (e.g message, users, and conversations),
 /// extracts information about those changes (e.g which properties changed), and posts notifications about those
 /// changes.
@@ -74,7 +73,7 @@ import CoreData
     private var changeInfoConsumers = [UnownedNSObject]()
 
     private var allChangeInfoConsumers: [ChangeInfoConsumer] {
-        var consumers = changeInfoConsumers.compactMap{$0.unbox as? ChangeInfoConsumer}
+        var consumers = changeInfoConsumers.compactMap {$0.unbox as? ChangeInfoConsumer}
         consumers.append(searchUserObserverCenter)
         consumers.append(conversationListObserverCenter)
         return consumers
@@ -94,9 +93,8 @@ import CoreData
 
     private var unreadMessages = UnreadMessages()
 
-
     // MARK: - Life cycle
-    
+
     public init(managedObjectContext: NSManagedObjectContext) {
         assert(
             managedObjectContext.zm_isUserInterfaceContext,
@@ -143,14 +141,14 @@ import CoreData
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(NotificationDispatcher.objectsDidChange),
-            name:.NSManagedObjectContextObjectsDidChange,
+            name: .NSManagedObjectContextObjectsDidChange,
             object: managedObjectContext
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(NotificationDispatcher.contextDidSave),
-            name:.NSManagedObjectContextDidSave,
+            name: .NSManagedObjectContextDidSave,
             object: managedObjectContext
         )
 
@@ -179,28 +177,28 @@ import CoreData
 
     /// Call this when the application enters the background to stop sending notifications and clear current changes.
 
-    @objc func applicationDidEnterBackground() {
+    func applicationDidEnterBackground() {
         isEnabled = false
     }
-    
+
     /// Call this when the application will enter the foreground to start sending notifications again.
 
-    @objc func applicationWillEnterForeground() {
+    func applicationWillEnterForeground() {
         isEnabled = true
     }
 
     // Called when objects in the context change, it may be called several times between saves.
 
-    @objc func objectsDidChange(_ note: Notification) {
+    func objectsDidChange(_ note: Notification) {
         guard isEnabled else { return }
         process(note: note)
     }
 
-    @objc func contextDidSave(_ note: Notification) {
+    func contextDidSave(_ note: Notification) {
         guard isEnabled else { return }
         fireAllNotificationsIfAllowed()
     }
-    
+
     /// This will be called if a change to an object does not cause a change in Core Data,
     /// e.g. downloading the asset and adding it to the cache.
 
@@ -229,7 +227,7 @@ import CoreData
 
     /// Add the given consumer to receive forwarded `ChangeInfo`s.
 
-    @objc public func addChangeInfoConsumer(_ consumer: ChangeInfoConsumer) {
+    public func addChangeInfoConsumer(_ consumer: ChangeInfoConsumer) {
         let boxed = UnownedNSObject(consumer as! NSObject)
         changeInfoConsumers.append(boxed)
     }
@@ -290,7 +288,7 @@ import CoreData
         conversationListObserverCenter.conversationsChanges(inserted: insertedConversations, deleted: deletedConversations)
     }
 
-    private func checkForUnreadMessages(insertedObjects: Set<ZMManagedObject>, updatedObjects: Set<ZMManagedObject>){
+    private func checkForUnreadMessages(insertedObjects: Set<ZMManagedObject>, updatedObjects: Set<ZMManagedObject>) {
         let unreadUnsent = updatedObjects.lazy
             .compactMap { $0 as? ZMMessage }
             .filter { $0.deliveryState == .failedToSend }
@@ -354,7 +352,7 @@ import CoreData
             postNotification(name: $0, changeInfo: $1)
         }
     }
-    
+
     private func forwardNotificationToObserverCenters(changeInfos: [ClassIdentifier: [ObjectChangeInfo]]) {
         allChangeInfoConsumers.forEach {
             $0.objectsDidChange(changes: changeInfos)
@@ -375,7 +373,6 @@ import CoreData
     }
 
 }
-
 
 // MARK: - Helper extensions
 

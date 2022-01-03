@@ -20,29 +20,29 @@ import Foundation
 import WireUtilities
 
 struct Snapshot {
-    let attributes : [String : NSObject?]
-    let toManyRelationships : [String : Int]
-    let toOneRelationships : [String : NSManagedObjectID]
+    let attributes: [String: NSObject?]
+    let toManyRelationships: [String: Int]
+    let toOneRelationships: [String: NSManagedObjectID]
 }
 
 protocol Countable {
-    var count : Int { get }
+    var count: Int { get }
 }
 
-extension NSOrderedSet : Countable {}
-extension NSSet : Countable {}
+extension NSOrderedSet: Countable {}
+extension NSSet: Countable {}
 
 public class SnapshotCenter {
-    
+
     private unowned var managedObjectContext: NSManagedObjectContext
-    internal var snapshots : [NSManagedObjectID : Snapshot] = [:]
-    
+    internal var snapshots: [NSManagedObjectID: Snapshot] = [:]
+
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
     }
 
     func createSnapshots(for insertedObjects: Set<NSManagedObject>) {
-        insertedObjects.forEach{
+        insertedObjects.forEach {
             if $0.objectID.isTemporaryID {
                 try? managedObjectContext.obtainPermanentIDs(for: [$0])
             }
@@ -50,22 +50,22 @@ public class SnapshotCenter {
             snapshots[$0.objectID] = newSnapshot
         }
     }
-    
-    func updateSnapshot(for object: NSManagedObject){
+
+    func updateSnapshot(for object: NSManagedObject) {
         snapshots[object.objectID] = createSnapshot(for: object)
     }
-    
+
     func createSnapshot(for object: NSManagedObject) -> Snapshot {
         let attributes = Array(object.entity.attributesByName.keys)
         let relationships = object.entity.relationshipsByName
-        
-        let attributesDict = attributes.mapToDictionaryWithOptionalValue{object.primitiveValue(forKey: $0) as? NSObject}
-        let toManyRelationshipsDict : [String : Int] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
+
+        let attributesDict = attributes.mapToDictionaryWithOptionalValue {object.primitiveValue(forKey: $0) as? NSObject}
+        let toManyRelationshipsDict: [String: Int] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
             guard relationShipDescription.isToMany else { return nil }
             return (object.primitiveValue(forKey: key) as? Countable)?.count
         })
 
-        let toOneRelationshipsDict : [String : NSManagedObjectID] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationshipDescription) in
+        let toOneRelationshipsDict: [String: NSManagedObjectID] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationshipDescription) in
             guard !relationshipDescription.isToMany else { return nil }
             return (object.primitiveValue(forKey: key) as? NSManagedObject)?.objectID
         })
@@ -76,7 +76,7 @@ public class SnapshotCenter {
             toOneRelationships: toOneRelationshipsDict
         )
     }
-    
+
     /// Before merging the sync into the ui context, we create a snapshot of all changed objects
     /// This function compares the snapshot values to the current ones and returns all keys and new values where the value changed due to the merge
     func extractChangedKeysFromSnapshot(for object: ZMManagedObject) -> Set<String> {
@@ -92,11 +92,11 @@ public class SnapshotCenter {
                 .union(newSnapshot.toManyRelationships.keys)
                 .union(newSnapshot.toOneRelationships.keys)
         }
-        
+
         var changedKeys = Set<String>()
-        snapshot.attributes.forEach{
+        snapshot.attributes.forEach {
             let currentValue = object.primitiveValue(forKey: $0) as? NSObject
-            if currentValue != $1  {
+            if currentValue != $1 {
                 changedKeys.insert($0)
             }
         }
@@ -114,9 +114,9 @@ public class SnapshotCenter {
         }
         return changedKeys
     }
-    
-    func clearAllSnapshots(){
+
+    func clearAllSnapshots() {
         snapshots = [:]
     }
-    
+
 }

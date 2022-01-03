@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
-
 /// A key path (as in key-value-coding).
-public final class StringKeyPath : Hashable {
-    
+public final class StringKeyPath: Hashable {
+
     public let rawValue: String
     public let count: Int
 
-    static private var KeyPathCache : [String : StringKeyPath] = [:]
-    
+    static private var KeyPathCache: [String: StringKeyPath] = [:]
+
     public class func keyPathForString(_ string: String) -> StringKeyPath {
-        
+
         if let keyPath = KeyPathCache[string] {
             return keyPath
         }
@@ -39,7 +37,7 @@ public final class StringKeyPath : Hashable {
             return instance
         }
     }
-    
+
     private init(_ s: String) {
         rawValue = s
         count = rawValue.filter {
@@ -51,7 +49,6 @@ public final class StringKeyPath : Hashable {
         hasher.combine(rawValue.hashValue)
     }
 
-    
     public var isPath: Bool {
         return 1 < count
     }
@@ -60,7 +57,7 @@ public final class StringKeyPath : Hashable {
         if 1 <= self.count {
             if let i = self.rawValue.firstIndex(of: ".") {
                 let head = self.rawValue[..<i]
-                var tail : StringKeyPath?
+                var tail: StringKeyPath?
                 if i != self.rawValue.endIndex {
                     let nextIndex = self.rawValue.index(after: i)
                     let result = self.rawValue[nextIndex...]
@@ -74,14 +71,14 @@ public final class StringKeyPath : Hashable {
     }()
 }
 
-extension StringKeyPath : Equatable {
+extension StringKeyPath: Equatable {
 }
 public func ==(lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
     return (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
 }
 
-extension StringKeyPath : CustomDebugStringConvertible {
+extension StringKeyPath: CustomDebugStringConvertible {
     public var description: String {
         return rawValue
     }

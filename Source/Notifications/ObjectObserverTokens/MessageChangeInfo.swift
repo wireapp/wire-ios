@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 private var zmLog = ZMSLog(tag: "MessageChangeInfo")
@@ -30,20 +29,20 @@ enum MessageKey: String {
     case underlyingMessage = "underlyingMessage"
 }
 
-extension ZMMessage : ObjectInSnapshot {
-    
-    @objc public class var observableKeys : Set<String> {
+extension ZMMessage: ObjectInSnapshot {
+
+    @objc public class var observableKeys: Set<String> {
         return [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated)]
     }
-    
-    public var notificationName : Notification.Name {
+
+    public var notificationName: Notification.Name {
         return .MessageChange
     }
 }
 
 extension ZMAssetClientMessage {
 
-    public class override var observableKeys : Set<String> {
+    public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.transferState),
                               MessageKey.previewGenericMessage.rawValue,
@@ -59,8 +58,8 @@ extension ZMAssetClientMessage {
 }
 
 extension ZMClientMessage {
-    
-    public class override var observableKeys : Set<String> {
+
+    public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedPreview),
                               #keyPath(ZMClientMessage.linkPreviewState),
@@ -76,8 +75,8 @@ extension ZMClientMessage {
 }
 
 extension ZMImageMessage {
-    
-    public class override var observableKeys : Set<String> {
+
+    public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMImageMessage.mediumData),
                               #keyPath(ZMImageMessage.mediumRemoteIdentifier),
@@ -88,7 +87,7 @@ extension ZMImageMessage {
 
 extension ZMSystemMessage {
 
-    public class override var observableKeys : Set<String> {
+    public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMSystemMessage.childMessages),
                               #keyPath(ZMSystemMessage.systemMessageType)]
@@ -97,22 +96,21 @@ extension ZMSystemMessage {
 
 }
 
-@objcMembers final public class MessageChangeInfo : ObjectChangeInfo {
-    
+@objcMembers final public class MessageChangeInfo: ObjectChangeInfo {
+
     static let UserChangeInfoKey = "userChanges"
     static let ReactionChangeInfoKey = "reactionChanges"
     static let ButtonStateChangeInfoKey = "buttonStateChanges"
-    
+
     static func changeInfo(for message: ZMMessage, changes: Changes) -> MessageChangeInfo? {
         return MessageChangeInfo(object: message, changes: changes)
     }
-    
-    
+
     public required init(object: NSObject) {
         self.message = object as! ZMMessage
         super.init(object: object)
     }
-    
+
     public override var debugDescription: String {
         return ["deliveryStateChanged: \(deliveryStateChanged)",
                 "reactionsChanged: \(reactionsChanged)",
@@ -131,34 +129,34 @@ extension ZMSystemMessage {
                 "buttonStatesChanged: \(buttonStatesChanged)"
                 ].joined(separator: ", ")
     }
-    
-    public var deliveryStateChanged : Bool {
+
+    public var deliveryStateChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.deliveryState))
     }
-    
-    public var reactionsChanged : Bool {
+
+    public var reactionsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.reactions)) ||
                changeInfos[MessageChangeInfo.ReactionChangeInfoKey] != nil
     }
 
-    public var confirmationsChanged : Bool {
+    public var confirmationsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.confirmations))
     }
-    
-    public var underlyingMessageChanged : Bool {
+
+    public var underlyingMessageChanged: Bool {
         return changedKeysContain(keys: MessageKey.underlyingMessage.rawValue)
     }
-    
-    public var childMessagesChanged : Bool {
+
+    public var childMessagesChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMSystemMessage.childMessages))
     }
-    
+
     public var quoteChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMClientMessage.quote))
     }
 
     /// Whether the image data on disk changed
-    public var imageChanged : Bool {
+    public var imageChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMImageMessage.mediumData),
                                   #keyPath(ZMImageMessage.mediumRemoteIdentifier),
                                   #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
@@ -166,16 +164,16 @@ extension ZMSystemMessage {
                                   MessageKey.previewGenericMessage.rawValue,
                                   MessageKey.mediumGenericMessage.rawValue)
     }
-    
+
     /// Whether the file on disk changed
     public var fileAvailabilityChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMAssetClientMessage.hasDownloadedFile))
     }
 
-    public var usersChanged : Bool {
+    public var usersChanged: Bool {
         return userChangeInfo != nil
     }
-    
+
     public var linkPreviewChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMClientMessage.linkPreviewState), MessageKey.linkPreview.rawValue)
     }
@@ -184,41 +182,39 @@ extension ZMSystemMessage {
         return changedKeysContain(keys: #keyPath(ZMAssetClientMessage.transferState))
     }
 
-    public var senderChanged : Bool {
-        if self.usersChanged && (self.userChangeInfo?.user as? ZMUser ==  self.message.sender){
+    public var senderChanged: Bool {
+        if self.usersChanged && (self.userChangeInfo?.user as? ZMUser ==  self.message.sender) {
             return true
         }
         return false
     }
-    
-    public var isObfuscatedChanged : Bool {
+
+    public var isObfuscatedChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.isObfuscated))
     }
 
     public var linkAttachmentsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.linkAttachments))
     }
-    
+
     public var buttonStatesChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMClientMessage.buttonStates)) || changeInfos[MessageChangeInfo.ButtonStateChangeInfoKey] != nil
     }
-    
-    public var userChangeInfo : UserChangeInfo? {
+
+    public var userChangeInfo: UserChangeInfo? {
         return changeInfos[MessageChangeInfo.UserChangeInfoKey] as? UserChangeInfo
     }
-    
-    public let message : ZMMessage
-    
+
+    public let message: ZMMessage
+
 }
 
-
-
-@objc public protocol ZMMessageObserver : NSObjectProtocol {
+@objc public protocol ZMMessageObserver: NSObjectProtocol {
     func messageDidChange(_ changeInfo: MessageChangeInfo)
 }
 
 extension MessageChangeInfo {
-    
+
     /// Adds a ZMMessageObserver to the specified message
     /// To observe messages and their users (senders, systemMessage users), observe the conversation window instead
     /// Messages observed with this call will not contain information about user changes
@@ -229,13 +225,12 @@ extension MessageChangeInfo {
                            managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .MessageChange,
                                           managedObjectContext: managedObjectContext,
-                                          object: message)
-        { [weak observer] (note) in
+                                          object: message) { [weak observer] (note) in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? MessageChangeInfo
                 else { return }
-            
+
             observer.messageDidChange(changeInfo)
-        } 
+        }
     }
 }

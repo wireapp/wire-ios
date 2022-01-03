@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
-public struct AnyClassTuple<T : Hashable> : Hashable {
-    
-    public let classOfObject : AnyClass
-    public let secondElement : T
+public struct AnyClassTuple<T : Hashable>: Hashable {
+
+    public let classOfObject: AnyClass
+    public let secondElement: T
 
     public init(classOfObject: AnyClass, secondElement: T) {
         self.classOfObject = classOfObject

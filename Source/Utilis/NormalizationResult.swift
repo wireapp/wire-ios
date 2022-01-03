@@ -50,7 +50,7 @@ public enum NormalizationResult<Value> {
 
 extension NormalizationResult where Value: NSObjectProtocol {
 
-    public init(_ result: ZMPropertyNormalizationResult<Value>)  {
+    public init(_ result: ZMPropertyNormalizationResult<Value>) {
         if result.isValid {
             guard let normalizedValue = result.normalizedValue else {
                 self = .unknownError
@@ -90,76 +90,76 @@ extension NormalizationResult where Value == String {
 
 }
 
-public extension ZMUser  {
-    
+public extension ZMUser {
+
     @objc static func normalizeName(_ name: String) -> ZMPropertyNormalizationResult<NSString> {
         var name: String? = name
-        var outError: Error? = nil
+        var outError: Error?
         var result: Bool = false
-        
+
         do {
             result = try ZMUser.validate(name: &name)
         } catch let error {
             outError = error
         }
-        
+
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: name as NSString? ?? "", validationError: outError)
     }
-    
+
     @objc static func normalizeEmailAddress(_ emailAddress: String) -> ZMPropertyNormalizationResult<NSString> {
         var emailAddress: String? = emailAddress
-        var outError: Error? = nil
+        var outError: Error?
         var result: Bool = false
-        
+
         do {
             result = try ZMUser.validate(emailAddress: &emailAddress)
         } catch let error {
             outError = error
         }
-        
+
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: emailAddress as NSString? ?? "", validationError: outError)
     }
-    
+
     @objc static func normalizePassword(_ password: String) -> ZMPropertyNormalizationResult<NSString> {
         var password: String? = password
-        var outError: Error? = nil
+        var outError: Error?
         var result: Bool = false
-        
+
         do {
             result = try ZMUser.validate(password: &password)
         } catch let error {
             outError = error
         }
-        
+
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: password as NSString? ?? "", validationError: outError)
     }
- 
+
     @objc static func normalizeVerificationCode(_ verificationCode: String) -> ZMPropertyNormalizationResult<NSString> {
         var verificationCode: String? = verificationCode
-        var outError: Error? = nil
+        var outError: Error?
         var result: Bool = false
-        
+
         do {
             result = try ZMUser.validate(phoneVerificationCode: &verificationCode)
         } catch let error {
             outError = error
         }
-        
+
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: verificationCode as NSString? ?? "", validationError: outError)
     }
-    
+
     @objc static func normalizePhoneNumber(_ phoneNumber: String) -> ZMPropertyNormalizationResult<NSString> {
         var phoneNumber: String? = phoneNumber
-        var outError: Error? = nil
+        var outError: Error?
         var result: Bool = false
-        
+
         do {
             result = try ZMUser.validate(phoneNumber: &phoneNumber)
         } catch let error {
             outError = error
         }
-        
+
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: phoneNumber as NSString? ?? "", validationError: outError)
     }
-    
+
 }

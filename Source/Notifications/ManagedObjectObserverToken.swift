@@ -19,7 +19,6 @@
 import Foundation
 import CoreData
 
-
 /// A helper class to automatically register and unregister an observer for a notification with
 /// the notification center.
 ///

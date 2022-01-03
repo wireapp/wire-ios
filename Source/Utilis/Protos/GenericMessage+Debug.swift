@@ -20,7 +20,7 @@ import Foundation
 import WireProtos
 import SwiftProtobuf
 
-fileprivate let redactedValue = "<redacted>"
+private let redactedValue = "<redacted>"
 
 // MARK: - Text
 
