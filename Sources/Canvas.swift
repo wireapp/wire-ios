@@ -55,7 +55,7 @@ struct Orientation {
     }
 }
 
-public protocol CanvasDelegate {
+public protocol CanvasDelegate: AnyObject {
 
     func canvasDidChange(_ canvas: Canvas)
 
@@ -66,7 +66,7 @@ public class Canvas: UIView {
     fileprivate let minimumScale: CGFloat = 0.5
     fileprivate let maximumScale: CGFloat = 10.0
 
-    public var delegate: CanvasDelegate?
+    public weak var delegate: CanvasDelegate?
 
     /// Defines the apperance of the brush strokes when drawing
     public var brush = Brush(size: 2, color: .black)
