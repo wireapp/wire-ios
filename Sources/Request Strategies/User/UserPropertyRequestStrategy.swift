@@ -94,12 +94,10 @@ extension UserProperty {
             let intValue: Int
             if let numberValue = value as? Int {
                 intValue = numberValue
-            }
-            else if let stringValue = value as? String,
+            } else if let stringValue = value as? String,
                  let numberValue = Int(stringValue) {
                 intValue = numberValue
-            }
-            else {
+            } else {
                 return
             }
 
@@ -156,8 +154,7 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
         if ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate {
             downstreamSync.readyForNextRequestIfNotBusy()
             return downstreamSync.nextRequest()
-        }
-        else {
+        } else {
             return modifiedSync.nextRequest()
         }
     }
@@ -290,8 +287,7 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
             property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
                                  updateType: (.slowSync, .delete),
                                  payload: nil)
-        }
-        else if response.result == .success, let payload = response.payload {
+        } else if response.result == .success, let payload = response.payload {
             property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
                                  updateType: (.slowSync, .set),
                                  payload: payload)

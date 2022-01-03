@@ -52,8 +52,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     func registerForCancellationNotification() {
         notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
                                                                     context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) {
-            [weak self] note in
+                                                                    object: nil) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.cancelOngoingRequestForAssetClientMessage(objectID)
         })

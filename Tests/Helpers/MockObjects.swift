@@ -73,7 +73,7 @@ public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate 
 
     /// Notify that the current client was deleted remotely
     public func didDetectCurrentClientDeletion() {
-        deletionCalls = deletionCalls+1
+        deletionCalls += 1
     }
 
     public var clientIsReadyForRequests: Bool {
