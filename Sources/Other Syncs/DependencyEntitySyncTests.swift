@@ -137,12 +137,13 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
         // given
         let entity = MockDependencyEntity()
+        let dependencySet: Set<NSManagedObject> = [dependency]
         entity.dependentObjectNeedingUpdateBeforeProcessing = dependency
         sut.synchronize(entity: entity)
 
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = anotherDependency
-        sut.objectsDidChange(Set(arrayLiteral: dependency))
+        sut.objectsDidChange(dependencySet)
         _ = sut.nextRequest()
 
         // then
@@ -167,12 +168,13 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
         // given
         let entity = MockDependencyEntity()
+        let dependencySet: Set<NSManagedObject> = [dependency]
         entity.dependentObjectNeedingUpdateBeforeProcessing = dependency
         sut.synchronize(entity: entity)
 
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = nil
-        sut.objectsDidChange(Set(arrayLiteral: dependency))
+        sut.objectsDidChange(dependencySet)
         _ = sut.nextRequest()
 
         // then
@@ -183,15 +185,17 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
         // given
         let entity = MockDependencyEntity()
+        let dependencySet: Set<NSManagedObject> = [dependency]
+        let dependencyAndAnotherDependencySet: Set<NSManagedObject> = [dependency, anotherDependency]
         entity.dependentObjectNeedingUpdateBeforeProcessing = dependency
         sut.synchronize(entity: entity)
 
         entity.dependentObjectNeedingUpdateBeforeProcessing = anotherDependency
-        sut.objectsDidChange(Set(arrayLiteral: dependency))
+        sut.objectsDidChange(dependencySet)
 
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = nil
-        sut.objectsDidChange(Set(arrayLiteral: dependency, anotherDependency))
+        sut.objectsDidChange(dependencyAndAnotherDependencySet)
         _ = sut.nextRequest()
         _ = sut.nextRequest()
 

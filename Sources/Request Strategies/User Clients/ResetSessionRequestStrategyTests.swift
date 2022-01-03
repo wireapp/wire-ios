@@ -58,7 +58,8 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(Set(arrayLiteral: otherClient))
+                let otherClientSet: Set<NSManagedObject> = [otherClient]
+                $0.objectsDidChange(otherClientSet)
             }
 
             // THEN
@@ -78,7 +79,8 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
 
             self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(Set(arrayLiteral: otherClient))
+                let otherClientSet: Set<NSManagedObject> = [otherClient]
+                $0.objectsDidChange(otherClientSet)
             }
             let request = self.sut.nextRequest()
 

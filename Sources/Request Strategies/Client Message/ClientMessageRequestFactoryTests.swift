@@ -118,9 +118,10 @@ extension ClientMessageRequestFactoryTests {
 
             // GIVEN
             let text = "Antani"
+            let otherClientSet: Set<UserClient> = [self.otherClient]
             let entity = GenericMessageEntity(conversation: self.groupConversation,
                                               message: GenericMessage(content: Text(content: text)),
-                                              targetRecipients: .clients([self.otherUser: Set(arrayLiteral: self.otherClient)]),
+                                              targetRecipients: .clients([self.otherUser: otherClientSet]),
                                               completionHandler: nil)
 
             // WHEN

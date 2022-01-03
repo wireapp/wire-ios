@@ -101,7 +101,7 @@ extension Payload.UserProfile {
     }
 
     func updateAssets(for user: ZMUser, authoritative: Bool = true) {
-        let assetKeys = Set(arrayLiteral: ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey)
+        let assetKeys: Set<String> = [ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey]
         guard !user.hasLocalModifications(forKeys: assetKeys) else {
             return
         }

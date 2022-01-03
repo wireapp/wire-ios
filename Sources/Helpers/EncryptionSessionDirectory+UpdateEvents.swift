@@ -68,9 +68,10 @@ extension EncryptionSessionsDirectory {
 
         // new client discovered?
         if createdNewSession {
+            let senderClientSet: Set<UserClient> = [senderClient]
             selfUser.selfClient()?.decrementNumberOfRemainingKeys()
             selfUser.selfClient()?.addNewClientToIgnored(senderClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set(arrayLiteral: senderClient))
+            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(senderClientSet)
         }
 
         return decryptedEvent

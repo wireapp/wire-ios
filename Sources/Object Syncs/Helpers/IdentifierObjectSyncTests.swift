@@ -104,7 +104,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
         // given
         let uuid1 = UUID()
         let uuid2 = UUID()
-
+        let uiidSet: Set<UUID> = [uuid1, uuid2]
         transcoder.fetchLimit = 2
 
         // when
@@ -114,7 +114,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(transcoder.lastRequestedIdentifiers.count, 2)
-        XCTAssertEqual(transcoder.lastRequestedIdentifiers, Set(arrayLiteral: uuid1, uuid2))
+        XCTAssertEqual(transcoder.lastRequestedIdentifiers, uiidSet)
     }
 
     func testThatItForwardsIdentifiersTogetherWithTheResponse() {
@@ -129,7 +129,8 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // then
         XCTAssertNotNil(transcoder.lastReceivedResponse)
-        XCTAssertEqual(transcoder.lastReceivedResponse?.identifiers, Set(arrayLiteral: uuid))
+        let uiidSet: Set<UUID> =  [uuid]
+        XCTAssertEqual(transcoder.lastReceivedResponse?.identifiers, uiidSet)
     }
 
     func testThatItRetriesToSyncIdentifierstOnFailure() {

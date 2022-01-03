@@ -82,7 +82,8 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
         moc.saveOrRollback()
 
         // when
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
@@ -95,7 +96,8 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
         moc.saveOrRollback()
 
         // when
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.isEmpty)
@@ -104,13 +106,14 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
     func testThatItDoesNotAskToSynchronizeObject_WhenSynchronizationIsInProgress() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.field = 1
         moc.saveOrRollback()
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
         transcoder.objectsAskedToBeSynchronized.removeAll()
 
         // when
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.isEmpty)
@@ -124,7 +127,8 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
         moc.saveOrRollback()
 
         // when
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.isEmpty)
@@ -133,16 +137,17 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
     func testThatAsksToSynchronizeObject_WhenTrackedFieldHasBeenModifiedAgain() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.field = 1
         moc.saveOrRollback()
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
         transcoder.completePendingModifiations()
         transcoder.objectsAskedToBeSynchronized.removeAll()
 
         // when
         mockEntity.field = 2
         moc.saveOrRollback()
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))

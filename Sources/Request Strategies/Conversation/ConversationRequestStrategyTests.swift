@@ -112,7 +112,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.userDefinedName = "Hello World"
-            self.groupConversation.setLocallyModifiedKeys(Set(arrayLiteral: ZMConversationUserDefinedNameKey))
+            let conversationUserDefinedNameKeySet: Set<AnyHashable> = [ZMConversationUserDefinedNameKey]
+            self.groupConversation.setLocallyModifiedKeys(conversationUserDefinedNameKeySet)
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
@@ -132,7 +133,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.isArchived = true
-            self.groupConversation.setLocallyModifiedKeys(Set(arrayLiteral: ZMConversationArchivedChangedTimeStampKey))
+            let conversationArchivedChangedTimeStampKeySet: Set<AnyHashable> = [ZMConversationArchivedChangedTimeStampKey]
+            self.groupConversation.setLocallyModifiedKeys(conversationArchivedChangedTimeStampKeySet)
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
@@ -152,7 +154,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.mutedMessageTypes = .all
-            self.groupConversation.setLocallyModifiedKeys(Set(arrayLiteral: ZMConversationSilencedChangedTimeStampKey))
+            let conversationSilencedChangedTimeStampKeySet: Set<AnyHashable> = [ZMConversationSilencedChangedTimeStampKey]
+            self.groupConversation.setLocallyModifiedKeys(conversationSilencedChangedTimeStampKeySet)
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when

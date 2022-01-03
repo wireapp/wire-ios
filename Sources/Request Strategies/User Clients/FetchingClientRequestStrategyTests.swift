@@ -61,10 +61,11 @@ extension FetchClientRequestStrategyTests {
             self.otherUser.domain = nil
             let clientUUID = UUID()
             let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> = [client]
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
 
             // THEN
             XCTAssertEqual(self.sut.nextRequest()?.path, "/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
@@ -81,11 +82,12 @@ extension FetchClientRequestStrategyTests {
                     "id": clientUUID.transportString(),
                     "class": "phone"
                 ]
+            let clientSet: Set<NSManagedObject> = [client]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
             let request = self.sut.nextRequest()
             request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil))
         }
@@ -103,11 +105,12 @@ extension FetchClientRequestStrategyTests {
             // GIVEN
             self.otherUser.domain = nil
             let clientUUID = UUID()
+            let clientSet: Set<NSManagedObject> =  [client]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
             let request = self.sut.nextRequest()
             request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil))
         }
@@ -130,11 +133,12 @@ extension FetchClientRequestStrategyTests {
             // GIVEN
             let clientUUID = UUID()
             let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> = [client]
             self.otherUser.domain = "example.com"
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
 
             // THEN
             XCTAssertEqual(self.sut.nextRequest()?.path, "/users/list-clients")
@@ -153,13 +157,14 @@ extension FetchClientRequestStrategyTests {
                     ]]
             ]
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
+            let clientSet: Set<NSManagedObject> = [client]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             self.otherUser.domain = "example.com"
             self.syncMOC.saveOrRollback()
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
             let request = self.sut.nextRequest()
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
@@ -180,6 +185,7 @@ extension FetchClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let clientUUID = UUID()
+            let clientSet: Set<NSManagedObject> = [client]
             let userID = self.otherUser.remoteIdentifier.transportString()
             let payload: Payload.UserClientByDomain = [
                 "example.com": [userID: []]
@@ -190,7 +196,7 @@ extension FetchClientRequestStrategyTests {
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
             let request = self.sut.nextRequest()
             request?.complete(with: ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                         httpStatus: 200,
@@ -219,11 +225,12 @@ extension FetchClientRequestStrategyTests {
             ]
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             existingClient = UserClient.fetchUserClient(withRemoteId: UUID().transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let existingClientSet: Set<NSManagedObject> = [existingClient]
             self.otherUser.domain = "example.com"
 
             // WHEN
             existingClient.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: existingClient))
+            self.sut.objectsDidChange(existingClientSet)
             let request = self.sut.nextRequest()
             request?.complete(with: ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                         httpStatus: 200,
@@ -248,11 +255,12 @@ extension FetchClientRequestStrategyTests {
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(),
                                                 forUser: self.otherUser,
                                                 createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> = [client]
             self.otherUser.domain = "example.com"
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            self.sut.objectsDidChange(clientSet)
             let request = self.sut.nextRequest()
             let response = ZMTransportResponse(payload: nil,
                                                httpStatus: 404,

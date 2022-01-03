@@ -76,10 +76,11 @@ class InsertedObjectSyncTests: ZMTBaseTest {
     func testThatItAsksToInsertObject_WhenAddingTrackedObjects() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
 
         // when
         mockEntity.remoteIdentifier = nil
-        sut.addTrackedObjects(Set(arrayLiteral: mockEntity))
+        sut.addTrackedObjects(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeInserted.contains(mockEntity))
@@ -88,10 +89,11 @@ class InsertedObjectSyncTests: ZMTBaseTest {
     func testThatItAsksToInsertObject_WhenInsertPredicateEvalutesToTrue() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
 
         // when
         mockEntity.remoteIdentifier = nil
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeInserted.contains(mockEntity))
@@ -100,14 +102,15 @@ class InsertedObjectSyncTests: ZMTBaseTest {
     func testThatItAsksToInsertObject_WhenInsertPredicateEvaluatesToTrueAfterBeingFalse() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.remoteIdentifier = nil
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
         mockEntity.remoteIdentifier = UUID()
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // when
         mockEntity.remoteIdentifier = nil
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertEqual(transcoder.objectsAskedToBeInserted, [mockEntity, mockEntity])
@@ -116,10 +119,11 @@ class InsertedObjectSyncTests: ZMTBaseTest {
     func testItDoesNotAskToInsertObject_WhenInsertPredicateEvaluatesToFalse() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
 
         // when
         mockEntity.remoteIdentifier = UUID()
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeInserted.isEmpty)
@@ -128,12 +132,13 @@ class InsertedObjectSyncTests: ZMTBaseTest {
     func testItDoesNotAskToInsertObject_WhenInsertionIsPending() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.remoteIdentifier = nil
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
         transcoder.objectsAskedToBeInserted.removeAll()
 
         // when
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeInserted.isEmpty)

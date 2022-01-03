@@ -73,10 +73,11 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     func testSyncAsksToSynchronizeObject_WhenKeyPathEvalutesToTrue() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
 
         // when
         mockEntity.needsToBeUpdatedFromBackend = true
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
@@ -85,16 +86,18 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     func testSyncAsksToSynchronizeObject_WhenPreviousSynchronizationIsCompleted() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
+
         mockEntity.needsToBeUpdatedFromBackend = true
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         mockEntity.needsToBeUpdatedFromBackend = false
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
         transcoder.objectsAskedToBeSynchronized.removeAll()
 
         // when
         mockEntity.needsToBeUpdatedFromBackend = true
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
@@ -103,12 +106,13 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     func testSyncAsksToCancelObject_WhenObjectNoLongerMatchesKeyPath() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.needsToBeUpdatedFromBackend = true
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // when
         mockEntity.needsToBeUpdatedFromBackend = false
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeCancelled.contains(mockEntity))
@@ -117,12 +121,13 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     func testSyncDoesNotAsksoSynchronizeObject_WhenSynchronizationIsAlreadyInProgress() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.needsToBeUpdatedFromBackend = true
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
         transcoder.objectsAskedToBeSynchronized.removeAll()
 
         // when
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.isEmpty)
@@ -131,8 +136,9 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
     func testSyncSetsKeyPathToFalse_WhenSynchronizationCompletes() {
         // given
         let mockEntity = MockEntity.insertNewObject(in: moc)
+        let mockEntitySet: Set<NSManagedObject> = [mockEntity]
         mockEntity.needsToBeUpdatedFromBackend = true
-        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+        sut.objectsDidChange(mockEntitySet)
 
         // when
         transcoder.completeSynchronization()

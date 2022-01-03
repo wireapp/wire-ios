@@ -110,7 +110,8 @@ extension OTREntity {
 
                 // make sure that we fetch those clients, even if we somehow gave up on fetching them
                 if !(selfClient.modifiedKeys?.contains(ZMUserClientMissingKey) ?? false) {
-                    selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+                    let userClientMissingKeySet: Set<AnyHashable> = [ZMUserClientMissingKey]
+                    selfClient.setLocallyModifiedKeys(userClientMissingKeySet)
                     context.enqueueDelayedSave()
                 }
                 return selfClient
