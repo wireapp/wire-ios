@@ -111,10 +111,11 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     func sendDeliveryReceipt(_ deliveryReceipt: DeliveryReceipt) {
         guard let confirmation = Confirmation.init(messageIds: deliveryReceipt.messageIDs,
                                                    type: .delivered) else { return }
+        let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
         messageSync.sync(GenericMessageEntity(conversation: deliveryReceipt.conversation,
                                               message: GenericMessage(content: confirmation),
-                                              targetRecipients: .users(Set(arrayLiteral: deliveryReceipt.sender)),
+                                              targetRecipients: .users(senderUserSet),
                                               completionHandler: nil),
                          completion: {_, _ in })
     }

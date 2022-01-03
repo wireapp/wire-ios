@@ -45,9 +45,10 @@ extension MessageExpirationTimerTests {
     func testThatItExpireAMessageImmediately() {
         // GIVEN
         let message = self.clientMessage(expirationTime: -2)
+        let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
 
         // THEN
         self.checkExpiration(of: message)
@@ -56,9 +57,10 @@ extension MessageExpirationTimerTests {
     func testThatItExpiresAMessageWhenItsTimeRunsOut() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.1)
+        let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         self.waitForExpiration(of: message)
 
         // THEN
@@ -68,9 +70,10 @@ extension MessageExpirationTimerTests {
     func testThatItNotifiesTheLocalNotificaitonDispatcherWhenItsTimeRunsOut() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.1)
+        let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         self.waitForExpiration(of: message)
 
         // THEN
@@ -80,10 +83,11 @@ extension MessageExpirationTimerTests {
     func testThatItDoesNotExpireAMessageWhenDeliveredIsSetToTrue() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.1)
+        let messageSet: Set<NSManagedObject> = [message]
         message.delivered = true
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         self.spinMainQueue(withTimeout: 0.4)
 
         // THEN
@@ -93,10 +97,11 @@ extension MessageExpirationTimerTests {
     func testThatItExpiresAMessageWhenDeliveredIsNotTrue() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.1)
+        let messageSet: Set<NSManagedObject> = [message]
         message.delivered = false
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         self.spinMainQueue(withTimeout: 0.4)
 
         // THEN
@@ -106,7 +111,8 @@ extension MessageExpirationTimerTests {
     func testThatItDoesNotExpireAMessageForWhichTheTimerWasStopped() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.2)
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        let messageSet: Set<NSManagedObject> = [message]
+        self.sut.objectsDidChange(messageSet)
 
         // WHEN
         self.sut.stop(for: message)
@@ -120,10 +126,11 @@ extension MessageExpirationTimerTests {
     func testThatItDoesNotExpireAMessageThatHasNoExpirationDate() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.1)
+        let messageSet: Set<NSManagedObject> = [message]
         message.removeExpirationDate()
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         self.spinMainQueue(withTimeout: 0.4)
 
         // THEN
@@ -150,9 +157,10 @@ extension MessageExpirationTimerTests {
     func testThatItDoesNotHaveMessageTimersRunningWhenThereIsNoMessageBecauseTheyAreExpired() {
         // GIVEN
         let message = self.clientMessage(expirationTime: -2)
+        let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         self.waitForExpiration(of: message)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -163,9 +171,10 @@ extension MessageExpirationTimerTests {
     func testThatItHasMessageTimersRunningWhenThereIsAMessage() {
         // GIVEN
         let message = self.clientMessage(expirationTime: 0.5)
+        let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(Set(arrayLiteral: message))
+        self.sut.objectsDidChange(messageSet)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -194,7 +203,8 @@ extension MessageExpirationTimerTests {
         XCTAssertFalse(self.sut.hasMessageTimersRunning)
 
         // WHEN
-        self.sut.addTrackedObjects(Set(arrayLiteral: message, anotherMessage))
+        let messageAndAnotherMessageSet: Set<NSManagedObject> = [message, anotherMessage]
+        self.sut.addTrackedObjects(messageAndAnotherMessageSet)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN

@@ -179,7 +179,8 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             conversationPayload.updateOrCreate(in: self.syncMOC)
 
             // then
-            XCTAssertEqual(self.groupConversation.localParticipants, Set(arrayLiteral: self.otherUser, selfUser))
+            let otherUserSet: Set<ZMUser?> = [self.otherUser, selfUser]
+            XCTAssertEqual(self.groupConversation.localParticipants, otherUserSet)
         }
     }
 
@@ -294,6 +295,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
+            let otherUserSet: Set<ZMUser> = [selfUser, self.otherUser]
 
             // when
             conversationPayload.updateOrCreate(in: self.syncMOC)
@@ -302,7 +304,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
             XCTAssertEqual(self.otherUser.connection?.conversation?.domain, self.owningDomain)
             XCTAssertEqual(self.otherUser.connection?.conversation?.conversationType, .oneOnOne)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.localParticipants, Set(arrayLiteral: selfUser, self.otherUser))
+            XCTAssertEqual(self.otherUser.connection?.conversation?.localParticipants, otherUserSet)
         }
     }
 

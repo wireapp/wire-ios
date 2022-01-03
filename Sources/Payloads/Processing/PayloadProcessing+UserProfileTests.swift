@@ -92,7 +92,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: Set(arrayLiteral: .teamID))
+            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: [.teamID])
 
             // when
             userProfile.updateUserProfile(for: self.otherUser, authoritative: false)
@@ -235,7 +235,8 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: Set(arrayLiteral: .phone))
+            let updatedKeysSet: Set<Payload.UserProfile.CodingKeys> = [.phone]
+            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: updatedKeysSet)
             self.otherUser.phoneNumber = "+123456789"
 
             // when
@@ -283,7 +284,8 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: Set(arrayLiteral: .email))
+            let updatedKeysSet: Set<Payload.UserProfile.CodingKeys> = [.email]
+            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: updatedKeysSet)
             self.otherUser.emailAddress = "john.doe@example.com"
 
             // when

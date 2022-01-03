@@ -76,7 +76,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                     let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                     self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
                 } else {
-                    self.userClientsByUserID.sync(identifiers: Set(arrayLiteral: userID))
+                    let userIdSet: Set<UserClientByUserIDTranscoder.T> = [userID]
+                    self.userClientsByUserID.sync(identifiers: userIdSet)
                 }
 
                 RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -188,7 +189,8 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
                   let payload = Payload.UserClient(rawData, decoder: decoder) {
             payload.update(client)
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            selfClient?.updateSecurityLevelAfterDiscovering(Set(arrayLiteral: client))
+            let clientSet: Set<UserClient> = [client]
+            selfClient?.updateSecurityLevelAfterDiscovering(clientSet)
         }
     }
 }

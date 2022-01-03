@@ -272,18 +272,22 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         if conversationByQualifiedIDSync.isAvailable, let identifiers = object.qualifiedID {
-            conversationByQualifiedIDSync.sync(identifiers: Set(arrayLiteral: identifiers))
+            let conversationByQualifiedIdIdentifiersSet: Set<ConversationByQualifiedIDTranscoder.T> = [identifiers]
+            conversationByQualifiedIDSync.sync(identifiers: conversationByQualifiedIdIdentifiersSet)
         } else if let identifier = object.remoteIdentifier {
-            conversationByIDSync.sync(identifiers: Set(arrayLiteral: identifier))
+            let conversationByIdIdentfiersSet: Set<ConversationByIDTranscoder.T> = [identifier]
+            conversationByIDSync.sync(identifiers: conversationByIdIdentfiersSet)
         }
     }
 
     func cancel(_ object: ZMConversation) {
         if let identifier = object.qualifiedID {
-            conversationByQualifiedIDSync.cancel(identifiers: Set(arrayLiteral: identifier))
+            let conversationByQualifiedIdIdentifiersSet: Set<ConversationByQualifiedIDTranscoder.T> = [identifier]
+            conversationByQualifiedIDSync.cancel(identifiers: conversationByQualifiedIdIdentifiersSet)
         }
         if let identifier = object.remoteIdentifier {
-            conversationByIDSync.cancel(identifiers: Set(arrayLiteral: identifier))
+            let conversationByIdIdentfiersSet: Set<ConversationByIDTranscoder.T> = [identifier]
+            conversationByIDSync.cancel(identifiers: conversationByIdIdentfiersSet)
         }
     }
 
@@ -335,12 +339,14 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         var remainingKeys = keys
 
         if keys.contains(ZMConversationUserDefinedNameKey) && conversation.userDefinedName == nil {
-            conversation.resetLocallyModifiedKeys(Set(arrayLiteral: ZMConversationUserDefinedNameKey))
+            let conversationUserDefinedNameKeySet: Set<AnyHashable> = [ZMConversationUserDefinedNameKey]
+            conversation.resetLocallyModifiedKeys(conversationUserDefinedNameKeySet)
             remainingKeys.remove(ZMConversationUserDefinedNameKey)
         }
 
         if remainingKeys.count < keys.count {
-            contextChangeTrackers.forEach({ $0.objectsDidChange(Set(arrayLiteral: conversation)) })
+            let conversationSet: Set<NSManagedObject> = [conversation]
+            contextChangeTrackers.forEach({ $0.objectsDidChange(conversationSet) })
             managedObjectContext.enqueueDelayedSave()
         }
 
@@ -445,7 +451,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              payload: payloadAsString as ZMTransportData?)
             }
 
-            return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMConversationUserDefinedNameKey),
+            let conversationUserDefinedNameKey: Set<String> = [ZMConversationUserDefinedNameKey]
+            return ZMUpstreamRequest(keys: conversationUserDefinedNameKey,
                                      transportRequest: request)
         }
 

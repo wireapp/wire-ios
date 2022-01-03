@@ -96,7 +96,8 @@ import Foundation
         processingGroup.notify(on: .global()) { [weak self] in
             self?.managedObjectContext.performGroupedBlock {
                 self?.objectsBeingProcessed.remove(message)
-                message.setLocallyModifiedKeys(Set(arrayLiteral: #keyPath(ZMAssetClientMessage.transferState))) // TODO jacob hacky
+                let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
+                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO jacob hacky
                 message.managedObjectContext?.saveOrRollback()
                 self?.managedObjectContext.leaveAllGroups(self?.managedObjectContext.allGroups())
             }

@@ -155,11 +155,13 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
         if useFederationEndpoint {
             if let qualifiedID = object.to.qualifiedID {
-                connectionByQualifiedIDSync.sync(identifiers: Set(arrayLiteral: qualifiedID))
+                let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
+                connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
             }
         } else {
             if let userID = object.to.remoteIdentifier {
-                connectionByIDSync.sync(identifiers: Set(arrayLiteral: userID))
+                let userIdSet: Set<ConnectionByIDTranscoder.T> = [userID]
+                connectionByIDSync.sync(identifiers: userIdSet)
             }
         }
     }
