@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireProtos
 
@@ -35,9 +34,9 @@ public extension GenericMessage {
     init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: MessageDestructionTimeoutValue? = nil) {
         self.init(content: content, nonce: nonce, expiresAfterTimeInterval: timeout?.rawValue)
     }
-    
+
     init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
-        self = GenericMessage.with() {
+        self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable
             if let timeout = timeout, timeout > 0 {
@@ -48,15 +47,15 @@ public extension GenericMessage {
             messageContent.setContent(on: &$0)
         }
     }
-    
+
     init(content: MessageCapable, nonce: UUID = UUID()) {
-        self = GenericMessage.with() {
+        self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             let messageContent = content
             messageContent.setContent(on: &$0)
         }
     }
-    
+
     init(clientAction action: ClientAction, nonce: UUID = UUID()) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
@@ -113,7 +112,7 @@ extension GenericMessage {
             return data
         }
     }
-    
+
     var locationData: Location? {
         guard let content = content else { return nil }
         switch content {
@@ -128,9 +127,9 @@ extension GenericMessage {
             }
         default:
             return nil
-        }        
+        }
     }
-    
+
     public var compositeData: Composite? {
         guard let content = content else { return nil }
         switch content {
@@ -140,7 +139,7 @@ extension GenericMessage {
             return nil
         }
     }
-    
+
     public var imageAssetData: ImageAsset? {
         guard let content = content else { return nil }
         switch content {
@@ -155,7 +154,7 @@ extension GenericMessage {
             }
         default:
             return nil
-        }        
+        }
     }
 
     public var assetData: WireProtos.Asset? {
@@ -174,7 +173,7 @@ extension GenericMessage {
             return nil
         }
     }
-    
+
     public var knockData: Knock? {
         guard let content = content else { return nil }
         switch content {
@@ -191,7 +190,7 @@ extension GenericMessage {
             return nil
         }
     }
-    
+
     public var textData: Text? {
         guard let content = content else { return nil }
         switch content {
@@ -226,7 +225,7 @@ extension GenericMessage {
     var v3_isImage: Bool {
         return assetData?.original.hasRasterImage ?? false
     }
-    
+
     var v3_uploadedAssetId: String? {
         guard
             let assetData = assetData,
@@ -236,7 +235,7 @@ extension GenericMessage {
         }
         return assetData.uploaded.assetID
     }
-    
+
     public var previewAssetId: String? {
         guard
             let assetData = assetData,
@@ -274,12 +273,12 @@ extension GenericMessage {
 
 extension Ephemeral {
     public init(content: EphemeralMessageCapable, expiresAfter timeout: TimeInterval) {
-        self = Ephemeral.with() {
+        self = Ephemeral.with {
             $0.expireAfterMillis = Int64(timeout * 1000)
             content.setEphemeralContent(on: &$0)
         }
     }
-    
+
     public var messageData: MessageCapable? {
         guard let content = content else { return nil }
         switch content {
@@ -425,7 +424,7 @@ extension Text {
             $0.content = content
             $0.mentions = mentions.compactMap { WireProtos.Mention.createMention($0) }
             $0.linkPreview = linkPreviews.map { WireProtos.LinkPreview($0) }
-            
+
             if let quotedMessage = replyingTo,
                let quotedMessageNonce = quotedMessage.nonce,
                let quotedMessageHash = quotedMessage.hashOfContent {
@@ -436,19 +435,19 @@ extension Text {
             }
         }
     }
-    
+
     public func applyEdit(from text: Text) -> Text {
         var updatedText = text
         // Transfer read receipt expectation
         updatedText.expectsReadConfirmation = expectsReadConfirmation
-        
+
         // We always keep the quote from the original message
         hasQuote
             ? updatedText.quote = quote
             : updatedText.clearQuote()
         return updatedText
     }
-    
+
     public func updateLinkPreview(from text: Text) -> Text {
         guard !text.linkPreview.isEmpty else {
             return self
@@ -560,7 +559,7 @@ extension WireProtos.Confirmation {
             $0.type = type
         })
     }
-    
+
     public init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
         self = WireProtos.Confirmation.with {
             $0.firstMessageID = messageId.transportString()
@@ -578,7 +577,7 @@ extension External {
             $0.sha256 = sha256
         }
     }
-    
+
     init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
         self = External(withOTRKey: key.aesKey, sha256: key.sha256)
     }
@@ -594,17 +593,15 @@ public extension WireProtos.Mention {
 public extension WireDataModel.Mention {
     func convertToProtosMention() -> WireProtos.Mention? {
         guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
-        
+
         return WireProtos.Mention.with {
             $0.start = Int32(range.location)
             $0.length = Int32(range.length)
             $0.userID = userID
-            
-            
-            
+
             guard let domain = user.domain else { return }
-            
-            $0.qualifiedUserID =  WireProtos.QualifiedUserId.with{
+
+            $0.qualifiedUserID =  WireProtos.QualifiedUserId.with {
                 $0.id = userID
                 $0.domain = domain
             }
@@ -647,7 +644,7 @@ public extension LinkPreview {
             }
         }
     }
-    
+
     init(articleMetadata: ArticleMetadata) {
         self = LinkPreview.with {
             $0.url = articleMetadata.originalURLString
@@ -660,7 +657,7 @@ public extension LinkPreview {
             }
         }
     }
-    
+
     init(twitterMetadata: TwitterStatusMetadata) {
         self = LinkPreview.with {
             $0.url = twitterMetadata.originalURLString
@@ -670,17 +667,17 @@ public extension LinkPreview {
             if let imageData = twitterMetadata.imageData.first {
                 $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
             }
-            
+
             guard let author = twitterMetadata.author,
                 let username = twitterMetadata.username else { return }
-            
+
             $0.tweet = WireProtos.Tweet.with({
                 $0.author = author
                 $0.username = username
             })
         }
     }
-    
+
     init(withOriginalURL originalURL: String,
          permanentURL: String,
          offset: Int32,
@@ -693,7 +690,7 @@ public extension LinkPreview {
             $0.url = originalURL
             $0.permanentURL = permanentURL
             $0.urlOffset = offset
-            
+
             if let title = title {
                 $0.title = title
             }
@@ -711,19 +708,19 @@ public extension LinkPreview {
             }
         }
     }
-    
+
     mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
         image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         if let original = original {
             image.original = original
         }
     }
-    
+
     mutating func update(withAssetKey assetKey: String, assetToken: String?) {
         image.uploaded.assetID = assetKey
         image.uploaded.assetToken = assetToken ?? ""
     }
-    
+
     var hasTweet: Bool {
         switch metaData {
         case .tweet:

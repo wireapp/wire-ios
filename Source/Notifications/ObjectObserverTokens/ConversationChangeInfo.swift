@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
-extension ZMConversation : ObjectInSnapshot {
-    
-    @objc public static var observableKeys : Set<String> {
+extension ZMConversation: ObjectInSnapshot {
+
+    @objc public static var observableKeys: Set<String> {
         return Set([#keyPath(ZMConversation.allMessages),
                     #keyPath(ZMConversation.lastModifiedDate),
                     #keyPath(ZMConversation.isArchived),
@@ -55,7 +54,6 @@ extension ZMConversation : ObjectInSnapshot {
 
 }
 
-
 ////////////////////
 ////
 //// ConversationObserverToken
@@ -63,59 +61,58 @@ extension ZMConversation : ObjectInSnapshot {
 ////
 ////////////////////
 
+@objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
 
-@objcMembers public final class ConversationChangeInfo : ObjectChangeInfo {
-
-    public var languageChanged : Bool {
+    public var languageChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.language))
     }
 
-    public var messagesChanged : Bool {
+    public var messagesChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.allMessages))
     }
 
-    public var participantsChanged : Bool {
+    public var participantsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.localParticipantRoles),
                                         #keyPath(ZMConversation.isSelfAnActiveMember),
                                         #keyPath(ZMConversation.participantRoles)
         )
     }
 
-    public var activeParticipantsChanged : Bool {
+    public var activeParticipantsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.isSelfAnActiveMember),
                                         #keyPath(ZMConversation.localParticipants))
     }
-    
-    public var nameChanged : Bool {
+
+    public var nameChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.displayName),
                                         #keyPath(ZMConversation.userDefinedName)) || activeParticipantsChanged
     }
 
-    public var lastModifiedDateChanged : Bool {
+    public var lastModifiedDateChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.lastModifiedDate))
     }
 
-    public var unreadCountChanged : Bool {
+    public var unreadCountChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.estimatedUnreadCount))
     }
 
-    public var connectionStateChanged : Bool {
+    public var connectionStateChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.relatedConnectionState))
     }
 
-    public var isArchivedChanged : Bool {
+    public var isArchivedChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.isArchived))
     }
 
-    public var mutedMessageTypesChanged : Bool {
+    public var mutedMessageTypesChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.mutedStatus))
     }
 
-    public var conversationListIndicatorChanged : Bool {
+    public var conversationListIndicatorChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.conversationListIndicator))
     }
 
-    public var clearedChanged : Bool {
+    public var clearedChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.clearedTimeStamp))
     }
 
@@ -123,25 +120,25 @@ extension ZMConversation : ObjectInSnapshot {
         return changedKeysContain(keys: #keyPath(ZMConversation.team))
     }
 
-    public var securityLevelChanged : Bool {
+    public var securityLevelChanged: Bool {
         return changedKeysContain(keys: SecurityLevelKey)
     }
-        
-    public var createdRemotelyChanged : Bool {
+
+    public var createdRemotelyChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.remoteIdentifier))
     }
-    
-    public var allowGuestsChanged : Bool {
+
+    public var allowGuestsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
                changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString))
     }
-    
-    public var destructionTimeoutChanged : Bool {
+
+    public var destructionTimeoutChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.localMessageDestructionTimeout)) ||
                 changedKeysContain(keys: #keyPath(ZMConversation.syncedMessageDestructionTimeout))
     }
-    
-    public var hasReadReceiptsEnabledChanged : Bool {
+
+    public var hasReadReceiptsEnabledChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.hasReadReceiptsEnabled))
     }
 
@@ -152,15 +149,15 @@ extension ZMConversation : ObjectInSnapshot {
     public var legalHoldStatusChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.legalHoldStatus))
     }
-    
+
     public var labelsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.labels))
     }
-    
-    public var conversation : ZMConversation { return self.object as! ZMConversation }
-    
-    public override var description : String { return self.debugDescription }
-    public override var debugDescription : String {
+
+    public var conversation: ZMConversation { return self.object as! ZMConversation }
+
+    public override var description: String { return self.debugDescription }
+    public override var debugDescription: String {
 
         return ["allMessagesChanged: \(messagesChanged)",
                 "participantsChanged: \(participantsChanged)",
@@ -184,20 +181,19 @@ extension ZMConversation : ObjectInSnapshot {
                 "labelsChanged: \(labelsChanged)"
             ].joined(separator: ", ")
     }
-    
+
     public required init(object: NSObject) {
         super.init(object: object)
     }
-    
+
     static func changeInfo(for conversation: ZMConversation, changes: Changes) -> ConversationChangeInfo? {
         return ConversationChangeInfo(object: conversation, changes: changes)
     }
 }
 
-@objc public protocol ZMConversationObserver : NSObjectProtocol {
+@objc public protocol ZMConversationObserver: NSObjectProtocol {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo)
 }
-
 
 extension ConversationChangeInfo {
 
@@ -207,17 +203,15 @@ extension ConversationChangeInfo {
     public static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .ConversationChange,
                                           managedObjectContext: conversation.managedObjectContext!,
-                                          object: conversation)
-        { [weak observer] (note) in
+                                          object: conversation) { [weak observer] (note) in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? ConversationChangeInfo
                 else { return }
-            
+
             observer.conversationDidChange(changeInfo)
-        } 
+        }
     }
 }
-
 
 /// Conversation degraded
 extension ConversationChangeInfo {
@@ -231,9 +225,9 @@ extension ConversationChangeInfo {
 
         return false
     }
-    
+
     /// Users that caused the conversation to degrade
-    @objc public var usersThatCausedConversationToDegrade : Set<ZMUser> {
+    @objc public var usersThatCausedConversationToDegrade: Set<ZMUser> {
         let untrustedParticipants = self.conversation.localParticipants.filter { user -> Bool in
             return !user.isTrusted
         }

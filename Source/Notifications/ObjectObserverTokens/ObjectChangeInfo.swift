@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
-
-/// MARK: Base class for observer / change info
+// MARK: Base class for observer / change info
 public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
-    
+
     var changeInfos: [String: NSObject?] { get set }
 
     init(object: NSObject)
@@ -34,7 +32,7 @@ public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
 }
 
 open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
-    
+
     let object: NSObject
 
     open var changedKeys = Set<String>()
@@ -49,7 +47,7 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
         changeInfos = changes.originalChanges
         considerAllKeysChanged = changes.mayHaveUnknownChanges
     }
-    
+
     public required init(object: NSObject) {
         self.object = object
     }
@@ -57,20 +55,18 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
     func changedKeysContain(keys: String...) -> Bool {
         return considerAllKeysChanged || !changedKeys.isDisjoint(with: keys)
     }
-    
+
     var customDebugDescription: String {
         guard let managedObject = object as? NSManagedObject else {
             return "ChangeInfo for \(object) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
         }
-        
+
         return "ChangeInfo for \(managedObject.objectID) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
     }
 }
 
-
-
 extension ObjectChangeInfo {
-    
+
     static func changeInfo(for object: NSObject, changes: Changes) -> ObjectChangeInfo? {
         switch object {
         case let object as ZMConversation:  return ConversationChangeInfo.changeInfo(for: object, changes: changes)
@@ -84,6 +80,5 @@ extension ObjectChangeInfo {
             return nil
         }
     }
-    
-}
 
+}

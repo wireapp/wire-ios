@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireSystem
 
 protocol ObjectInSnapshot {
-    static var observableKeys : Set<String> { get }
-    var notificationName : Notification.Name { get }
+    static var observableKeys: Set<String> { get }
+    var notificationName: Notification.Name { get }
 }
 
-extension ZMUser : ObjectInSnapshot {
-    
-    static public var observableKeys : Set<String> {
+extension ZMUser: ObjectInSnapshot {
+
+    static public var observableKeys: Set<String> {
         return [
             #keyPath(ZMUser.name),
             #keyPath(ZMUser.accentColorValue),
@@ -57,20 +56,19 @@ extension ZMUser : ObjectInSnapshot {
         ]
     }
 
-    public var notificationName : Notification.Name {
+    public var notificationName: Notification.Name {
         return .UserChange
     }
 }
 
-
-@objcMembers open class UserChangeInfo : ObjectChangeInfo {
+@objcMembers open class UserChangeInfo: ObjectChangeInfo {
 
     static let UserClientChangeInfoKey = "clientChanges"
-    
+
     static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {
         var originalChanges = changes.originalChanges
         let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
-        
+
         if let clientChanges = clientChanges {
             var userClientChangeInfos = [UserClientChangeInfo]()
             clientChanges.forEach {
@@ -84,79 +82,79 @@ extension ZMUser : ObjectInSnapshot {
         let modifiedChanges = changes.merged(with: Changes(originalChanges: originalChanges))
         return UserChangeInfo(object: user, changes: modifiedChanges)
     }
-    
+
     public required init(object: NSObject) {
         self.user = object as! UserType
         super.init(object: object)
     }
 
-    open var nameChanged : Bool {
+    open var nameChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMUser.name))
     }
-    
-    open var accentColorValueChanged : Bool {
+
+    open var accentColorValueChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMUser.accentColorValue))
     }
 
-    open var imageMediumDataChanged : Bool {
+    open var imageMediumDataChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserType.completeImageData), #keyPath(ZMUser.completeProfileAssetIdentifier))
     }
 
-    open var imageSmallProfileDataChanged : Bool {
+    open var imageSmallProfileDataChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserType.previewImageData), #keyPath(ZMUser.previewProfileAssetIdentifier))
     }
 
-    open var profileInformationChanged : Bool {
+    open var profileInformationChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMUser.emailAddress), #keyPath(ZMUser.phoneNumber))
     }
 
-    open var connectionStateChanged : Bool {
+    open var connectionStateChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMUser.isConnected),
                                   #keyPath(ZMUser.canBeConnected),
                                   #keyPath(ZMUser.isPendingApprovalByOtherUser),
                                   #keyPath(ZMUser.isPendingApprovalBySelfUser))
     }
 
-    open var trustLevelChanged : Bool {
+    open var trustLevelChanged: Bool {
         return userClientChangeInfos.count != 0
     }
 
-    open var clientsChanged : Bool {
+    open var clientsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMUser.clients))
     }
 
-    public var handleChanged : Bool {
+    public var handleChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMUser.handle))
     }
 
-    public var teamsChanged : Bool {
+    public var teamsChanged: Bool {
         return changedKeys.contains(#keyPath(ZMUser.team))
     }
-    
-    public var availabilityChanged : Bool {
+
+    public var availabilityChanged: Bool {
         return changedKeys.contains(#keyPath(ZMUser.availability))
     }
 
-    public var readReceiptsEnabledChanged : Bool {
+    public var readReceiptsEnabledChanged: Bool {
         return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabled))
     }
-    
-    public var readReceiptsEnabledChangedRemotelyChanged : Bool {
+
+    public var readReceiptsEnabledChangedRemotelyChanged: Bool {
         return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabledChangedRemotely))
     }
-    
-    public var richProfileChanged : Bool {
+
+    public var richProfileChanged: Bool {
         return changedKeys.contains(ZMUserKeys.RichProfile)
     }
 
     public var legalHoldStatusChanged: Bool {
         return !changedKeys.intersection(ZMUser.keysAffectingLegalHoldStatus()).isEmpty
     }
-    
+
     public var isUnderLegalHoldChanged: Bool {
         return changedKeys.contains(#keyPath(ZMUser.isUnderLegalHold))
     }
-    
+
     public var roleChanged: Bool {
         return changedKeys.contains(#keyPath(ZMUser.participantRoles))
     }
@@ -166,17 +164,14 @@ extension ZMUser : ObjectInSnapshot {
     }
 
     public let user: UserType
-    open var userClientChangeInfos : [UserClientChangeInfo] {
+    open var userClientChangeInfos: [UserClientChangeInfo] {
         return changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
     }
 }
 
-
-
-@objc public protocol ZMUserObserver : NSObjectProtocol {
+@objc public protocol ZMUserObserver: NSObjectProtocol {
     func userDidChange(_ changeInfo: UserChangeInfo)
 }
-
 
 extension UserChangeInfo {
 
@@ -190,12 +185,12 @@ extension UserChangeInfo {
             return add(searchUserObserver: observer, for: user, in: managedObjectContext)
         }
         else if let user = user as? ZMUser {
-            return add(userObserver: observer, for:user, in: managedObjectContext)
+            return add(userObserver: observer, for: user, in: managedObjectContext)
         }
 
         return nil
     }
-    
+
     // MARK: Registering SearchUserObservers
 
     /// Adds an observer for all ZMSearchUsers in the given context. You must hold on to the token and use it to unregister.
@@ -215,7 +210,7 @@ extension UserChangeInfo {
             else {
                 return
             }
-            
+
             observer.userDidChange(changeInfo)
         }
     }

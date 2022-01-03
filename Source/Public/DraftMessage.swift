@@ -22,21 +22,21 @@ import WireCryptobox
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
 @objcMembers public final class DraftMessage: NSObject {
-    
+
     /// The text of the message.
     public let text: String
     /// The mentiones contained in the text.
     public let mentions: [Mention]
     /// The quoted message, if available.
     public let quote: ZMMessage?
-    
+
     public init(text: String, mentions: [Mention], quote: ZMMessage?) {
         self.text = text
         self.mentions = mentions
         self.quote = quote
         super.init()
     }
-    
+
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? DraftMessage else { return false }
         return (text, mentions, quote) == (other.text, other.mentions, other.quote)
@@ -54,14 +54,14 @@ fileprivate final class StorableDraftMessage: NSObject, Codable {
     let mentions: [StorableMention]
     /// The quoted message, if available.
     let quote: StorableQuote?
-    
+
     init(text: String, mentions: [StorableMention], quote: StorableQuote?) {
         self.text = text
         self.mentions = mentions
         self.quote = quote
         super.init()
     }
-    
+
     /// Converts this storable version into a regular `DraftMessage`.
     /// The passed in `context` is needed to fetch the user objects.
     fileprivate func draftMessage(in context: NSManagedObjectContext, for conversation: ZMConversation) -> DraftMessage {
@@ -73,13 +73,13 @@ fileprivate final class StorableDraftMessage: NSObject, Codable {
 
 /// A serializable version of `Mention` that conforms to `Codable` and
 /// stores a user identifier instead of a whole `UserType` value.
-fileprivate struct StorableMention: Codable {
+private struct StorableMention: Codable {
 
     /// The range of the mention.
     let range: NSRange
     /// The user identifier of the user being mentioned.
     let userIdentifier: UUID
-    
+
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func mention(in context: NSManagedObjectContext) -> Mention? {
@@ -90,29 +90,29 @@ fileprivate struct StorableMention: Codable {
 
 /// A serializable version of `ZMMessage` that conforms to `Codable` and
 /// stores the message identifier instead of a whole `ZMMessage` value.
-fileprivate struct StorableQuote: Codable {
-    
+private struct StorableQuote: Codable {
+
     /// The identifier for the message being quoted.
     let nonce: UUID?
-    
+
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func quote(in context: NSManagedObjectContext, for conversation: ZMConversation) -> ZMMessage? {
         guard let nonce = nonce else { return nil }
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
     }
-    
+
 }
 
 // MARK: - Conversation Accessors
 
 @objc extension ZMConversation {
-    
+
     private static let log = ZMSLog(tag: "EAR")
-    
+
     /// Internal storage of the serialized `draftMessage`.
     @NSManaged var draftMessageData: Data?
-    
+
     /// Nonce of the encrypted `draftMessage`, this is nil if draft is not encrypted.
     @NSManaged var draftMessageNonce: Data?
 
@@ -124,10 +124,10 @@ fileprivate struct StorableQuote: Codable {
                     let encodedData = try? JSONEncoder().encode(value.storable),
                     let context = managedObjectContext
                 else { return }
-                
+
                 do {
                     let (data, nonce) = try encryptDataIfNeeded(data: encodedData, in: context)
-                    
+
                     draftMessageData = data
                     draftMessageNonce = nonce
                 } catch {
@@ -138,7 +138,7 @@ fileprivate struct StorableQuote: Codable {
                 draftMessageNonce = nil
             }
         }
-        
+
         get {
             guard
                 let data = draftMessageData,
@@ -155,24 +155,24 @@ fileprivate struct StorableQuote: Codable {
         }
 
     }
-    
+
     @nonobjc
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
         return try moc.encryptData(data: data)
     }
-    
+
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
         guard let nonce = draftMessageNonce else { return data }
         return try moc.decryptData(data: data, nonce: nonce)
     }
-    
+
 }
 
 // MARK: - Storable Helper
 
 fileprivate extension UserType {
-    
+
     // Private helper to get the user identifier for a `UserType`.
     var userIdentifier: UUID? {
         if let user = self as? ZMUser {
@@ -180,14 +180,14 @@ fileprivate extension UserType {
         } else if let user = self as? ServiceUser {
             return user.userIdentifier
         }
-        
+
         return nil
     }
-    
+
 }
 
 fileprivate extension Mention {
-    
+
     /// The storable version of the object.
     var storable: StorableMention? {
         return user.userIdentifier.map {

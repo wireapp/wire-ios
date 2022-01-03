@@ -37,7 +37,7 @@ extension ZMUpdateEvent {
             return nil
         }
     }
-    
+
     public var userIDs: [UUID] {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
             let userIds = dataPayload["user_ids"] as? [String] else {
@@ -55,7 +55,7 @@ extension ZMUpdateEvent {
               let userDicts = dataPayload["users"] as? [NSDictionary] else {
                 return nil
         }
-        
+
         let qualifiedIDs: [QualifiedID] = userDicts.compactMap({
             let qualifiedID = $0.optionalDictionary(forKey: "qualified_id") as NSDictionary?
 

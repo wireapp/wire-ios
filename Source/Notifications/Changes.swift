@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 struct Changes: Mergeable {
 
     // MARK: - Properties

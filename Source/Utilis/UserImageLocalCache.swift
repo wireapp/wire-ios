@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import PINCache
 import WireTransport
@@ -29,7 +28,7 @@ extension ZMUser {
         guard let userRemoteId = remoteIdentifier?.transportString(), let suffix = suffix else { return nil }
         return (userRemoteId + "-" + suffix)
     }
-    
+
     @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {
         switch size {
         case .preview:
@@ -38,19 +37,18 @@ extension ZMUser {
             return cacheIdentifier(suffix: completeProfileAssetIdentifier)
         }
     }
-    
+
 }
 
 // MARK: NSManagedObjectContext
 
 let NSManagedObjectContextUserImageCacheKey = "zm_userImageCacheKey"
-extension NSManagedObjectContext
-{
-    @objc public var zm_userImageCache : UserImageLocalCache! {
+extension NSManagedObjectContext {
+    @objc public var zm_userImageCache: UserImageLocalCache! {
         get {
             return self.userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
         }
-        
+
         set {
             self.userInfo[NSManagedObjectContextUserImageCacheKey] = newValue
         }
@@ -58,24 +56,23 @@ extension NSManagedObjectContext
 }
 
 // MARK: Cache
-@objcMembers open class UserImageLocalCache : NSObject {
-    
+@objcMembers open class UserImageLocalCache: NSObject {
+
     fileprivate let log = ZMSLog(tag: "UserImageCache")
-    
+
     /// Cache for large user profile image
-    fileprivate let largeUserImageCache : PINCache
-    
+    fileprivate let largeUserImageCache: PINCache
+
     /// Cache for small user profile image
-    fileprivate let smallUserImageCache : PINCache
-    
-    
+    fileprivate let smallUserImageCache: PINCache
+
     /// Create UserImageLocalCache
     /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
     public init(location: URL? = nil) {
-        
+
         let largeUserImageCacheName = "largeUserImages"
         let smallUserImageCacheName = "smallUserImages"
-        
+
         if let rootPath = location?.path {
             largeUserImageCache = PINCache(name: largeUserImageCacheName, rootPath: rootPath)
             smallUserImageCache = PINCache(name: smallUserImageCacheName, rootPath: rootPath)
@@ -83,15 +80,15 @@ extension NSManagedObjectContext
             largeUserImageCache = PINCache(name: largeUserImageCacheName)
             smallUserImageCache = PINCache(name: smallUserImageCacheName)
         }
-        
+
         largeUserImageCache.configureLimits(50 * MEGABYTE)
         smallUserImageCache.configureLimits(25 * MEGABYTE)
-        
+
         largeUserImageCache.makeURLSecure()
         smallUserImageCache.makeURLSecure()
         super.init()
     }
-    
+
     /// Stores image in cache and returns true if the data was stored
     private func setImage(inCache cache: PINCache, cacheKey: String?, data: Data) -> Bool {
         if let resolvedCacheKey = cacheKey {
@@ -100,13 +97,13 @@ extension NSManagedObjectContext
         }
         return false
     }
-    
+
     /// Removes all images for user
     open func removeAllUserImages(_ user: ZMUser) {
         user.imageCacheKey(for: .complete).apply(largeUserImageCache.removeObject)
         user.imageCacheKey(for: .preview).apply(smallUserImageCache.removeObject)
     }
-    
+
     open func setUserImage(_ user: ZMUser, imageData: Data, size: ProfileImageSize) {
         let key = user.imageCacheKey(for: size)
         switch size {
@@ -122,10 +119,10 @@ extension NSManagedObjectContext
             }
         }
     }
-    
+
     open func userImage(_ user: ZMUser, size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
         guard let cacheKey = user.imageCacheKey(for: size) else { return completion(nil) }
-        
+
         queue.async {
             switch size {
             case .preview:
@@ -135,7 +132,7 @@ extension NSManagedObjectContext
             }
         }
     }
-    
+
     open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
         guard let cacheKey = user.imageCacheKey(for: size) else { return nil }
         let data: Data?
@@ -151,10 +148,10 @@ extension NSManagedObjectContext
 
         return data
     }
-    
+
     open func hasUserImage(_ user: ZMUser, size: ProfileImageSize) -> Bool {
         guard let cacheKey = user.imageCacheKey(for: size) else { return false }
-        
+
         switch size {
         case .preview:
             return smallUserImageCache.containsObject(forKey: cacheKey)
@@ -162,7 +159,7 @@ extension NSManagedObjectContext
             return largeUserImageCache.containsObject(forKey: cacheKey)
         }
     }
-    
+
 }
 
 public extension UserImageLocalCache {

@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 extension Notification.Name {
 
     static let ConversationChange = Notification.Name("ZMConversationChangedNotification")

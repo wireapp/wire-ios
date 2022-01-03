@@ -19,7 +19,7 @@
 import Foundation
 
 public extension String {
-    
+
     static func randomChar() -> UnicodeScalar {
         let string = "abcdefghijklmnopqrstuvxyz"
         let chars = Array(string.unicodeScalars)
@@ -27,7 +27,7 @@ public extension String {
         // in this case we know random will fit inside int
         return chars[Int(random)]
     }
-    
+
     func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
         for char in self.unicodeScalars {
@@ -42,31 +42,31 @@ public extension String {
 }
 
 public extension GenericMessage {
-    
+
     func obfuscatedMessage() -> GenericMessage? {
         guard let messageID = (messageID as String?).flatMap(UUID.init) else { return nil }
         guard case .ephemeral? = self.content else { return nil }
-        
+
         if let someText = textData {
             let content = someText.content
             let obfuscatedContent = content.obfuscated()
-            var obfuscatedLinkPreviews : [LinkPreview] = []
+            var obfuscatedLinkPreviews: [LinkPreview] = []
             if linkPreviews.count > 0 {
                 let offset = linkPreviews.first!.urlOffset
                 let offsetIndex = obfuscatedContent.index(obfuscatedContent.startIndex, offsetBy: Int(offset), limitedBy: obfuscatedContent.endIndex) ?? obfuscatedContent.startIndex
                 let originalURL = obfuscatedContent[offsetIndex...]
                 obfuscatedLinkPreviews = linkPreviews.map { $0.obfuscated(originalURL: String(originalURL)) }
             }
-            
+
             let obfuscatedText = Text.with {
                 $0.content = obfuscatedContent
                 $0.mentions = []
                 $0.linkPreview = obfuscatedLinkPreviews
             }
-            
+
             return GenericMessage(content: obfuscatedText, nonce: messageID)
         }
-        
+
         if let someAsset = assetData {
             let obfuscatedAsset = someAsset.obfuscated()
             return GenericMessage(content: obfuscatedAsset, nonce: messageID)
@@ -94,7 +94,7 @@ extension ImageAsset {
 }
 
 extension LinkPreview {
-    
+
     func obfuscated(originalURL: String) -> LinkPreview {
         let obfTitle = hasTitle ? title.obfuscated() : ""
         let obfSummary = hasSummary ? summary.obfuscated() : ""
@@ -136,7 +136,7 @@ extension WireProtos.Asset {
     func obfuscated() -> WireProtos.Asset {
         var assetOriginal: WireProtos.Asset.Original?
         var assetPreview: WireProtos.Asset.Preview?
-        
+
         if hasOriginal {
             assetOriginal = WireProtos.Asset.Original()
             if original.hasRasterImage {
@@ -147,12 +147,12 @@ extension WireProtos.Asset {
                 }
                 assetOriginal?.image = imageMetaData
             }
-            
+
             if original.hasName {
                 let obfName = original.name.obfuscated()
                 assetOriginal?.name = obfName
             }
-            
+
             let metaData = original.metaData
             switch metaData {
             case .audio?:
@@ -161,12 +161,12 @@ extension WireProtos.Asset {
                 assetOriginal?.video = WireProtos.Asset.VideoMetaData()
             default:
                 break
-            }            
+            }
             assetOriginal?.size = 10
             assetOriginal?.mimeType = original.mimeType
         }
-        
-        if hasPreview  {
+
+        if hasPreview {
             assetPreview = WireProtos.Asset.Preview()
             let imageMetaData = WireProtos.Asset.ImageMetaData.with {
                 $0.tag = preview.image.tag
