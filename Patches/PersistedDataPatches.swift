@@ -22,7 +22,7 @@ private let zmLog = ZMSLog(tag: "Patches")
 
 /// Patches to apply to migrate some persisted data from a previous
 /// version of the app - database fixes, local files clean up, etc.
-public struct PersistedDataPatch {
+public final class PersistedDataPatch {
     
     /// Max version for which the patch needs to be applied
     let version: FrameworkVersion
@@ -36,19 +36,21 @@ public struct PersistedDataPatch {
     }
 
     /// Apply all patches to the MOC
-    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil)
-    {
+    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil) {
+        guard let currentVersion = Bundle(for: Self.self).infoDictionary!["CFBundleShortVersionString"] as? String else {
+            return zmLog.safePublic("Can't retrieve CFBundleShortVersionString for data model, skipping patches..")
+        }
 
-        /// Normally we fetch the short version from the framework bundle, but it's not working so we hardcode the version.
-        let currentVersion = "279.0.4"
         defer {
             moc.setPersistentStoreMetadata(currentVersion, key: lastDataModelPatchedVersionKey)
             moc.saveOrRollback()
         }
         
-        guard let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String),
-              let previousPatchVersion = FrameworkVersion(previousPatchVersionString) else {
-            return zmLog.info("No previous patch version stored (expected on fresh installs), skipping patches..")
+        guard
+            let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String),
+            let previousPatchVersion = FrameworkVersion(previousPatchVersionString)
+        else {
+            return zmLog.safePublic("No previous patch version stored (expected on fresh installs), skipping patches..")
         }
         
         (patches ?? PersistedDataPatch.allPatchesToApply).filter { $0.version > previousPatchVersion }.forEach {
