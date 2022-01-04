@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 @testable import WireLinkPreview
 
@@ -30,7 +29,7 @@ struct OpenGraphMockData {
 class OpenGraphMockDataProvider: NSObject {
 
     static func twitterData() -> OpenGraphMockData {
-        
+
         let expected = OpenGraphData(
             title: "ericasadun on Twitter",
             type: "article",
@@ -48,9 +47,9 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: nil
         )
     }
-    
+
     static func twitterDataWithImages() -> OpenGraphMockData {
-        
+
         let expected = OpenGraphData(
             title: "Ayaka Nonaka on Twitter",
             type: "article",
@@ -61,7 +60,7 @@ class OpenGraphMockDataProvider: NSObject {
             description: "“Hello from Lake Tahoe. Happy weekend everyone! ✌🏼️💙❤️”",
             userGeneratedImage: true
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("twitter_images_head"),
             expected: expected,
@@ -69,9 +68,9 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: nil
         )
     }
-    
+
     static func foursquareData() -> OpenGraphMockData {
-        
+
         var expected = OpenGraphData(
             title: "NETA Mexican Street Food",
             type: "playfoursquare:venue",
@@ -81,7 +80,7 @@ class OpenGraphMockDataProvider: NSObject {
             siteName: "Foursquare",
             description: "Burrito-Imbiss in Berlin, Berlin"
         )
-        
+
         expected.foursquareMetaData = FoursquareMetaData(latitude: 52.53084856462712, longitude: 13.4021941476607)
 
         return OpenGraphMockData(
@@ -148,7 +147,7 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: "20170918063647"
         )
     }
-    
+
     static func crashingDataEmoji() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Wall posts ",
@@ -159,7 +158,7 @@ class OpenGraphMockDataProvider: NSObject {
             siteName: nil,
             description: "📍 xxxxx"
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("crash_emoji"),
             expected: expected,
@@ -167,7 +166,7 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: nil
         )
     }
-    
+
     static func instagramData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Instagram photo by Silvan Dähn • Aug 5, 2015 at 4:27pm UTC",
@@ -223,7 +222,7 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: "20180523034751"
         )
     }
-    
+
     static func washingtonPostData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Holocaust Museum to visitors: Please stop catching Pokémon here",
@@ -234,7 +233,7 @@ class OpenGraphMockDataProvider: NSObject {
             siteName: "Washington Post",
             description: "Melding the real world with a digital one can sometimes lead to uncomfortable consequences."
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("washington_post_head"),
             expected: expected,
@@ -242,7 +241,7 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: "20180519102639"
         )
     }
-    
+
     static func mediumData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "The tune for this summer — audio filters — Wire News",
@@ -253,7 +252,7 @@ class OpenGraphMockDataProvider: NSObject {
             siteName: "Medium",
             description: "Hello again from the Wire news room. Even though it’s a hot summer out there, we have been busy making our app the most modern, private…"
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("medium_head"),
             expected: expected,
@@ -261,7 +260,7 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: nil
         )
     }
-    
+
     static func wireData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Wire — modern, private communication. For iOS, Android, OS X, Windows and web.",
@@ -271,7 +270,7 @@ class OpenGraphMockDataProvider: NSObject {
             imageUrls: ["https://lh3.ggpht.com/gbxDT30ZwpwYMCF7ilrSaIpRQP3Z1Xdx2WUcyW5x_e8FDN8kA4CJGQQ0fFpVhKiGnPkAIOEf7S1_9cNi684Be-OY=s1024"],
             description: "HD quality calls, private and group chats with inline photos, music and video. Secure and perfectly synced across your devices."
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("wire_head"),
             expected: expected,
@@ -290,7 +289,7 @@ class OpenGraphMockDataProvider: NSObject {
             siteName: "Polygon",
             description: "How to answer one of the game's toughest questions"
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("polygon_head"),
             expected: expected,
@@ -336,7 +335,7 @@ class OpenGraphMockDataProvider: NSObject {
             urlVersion: nil
         )
     }
-    
+
     static func yahooSports() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Mario Gomez: Besiktas verlängert Leihe",
@@ -347,7 +346,7 @@ class OpenGraphMockDataProvider: NSObject {
             siteName: "Yahoo Sport",
             description: "Der deutsche Stürmer spielt offenbar auch in der kommenden Saison in Istanbul. Die Türken leihen ihn demnach erneut aus. Ein wichtiges Argument sei die Champions League."
         )
-        
+
         return OpenGraphMockData(
             head: fixtureWithName("yahoo_sports_head"),
             expected: expected,
@@ -394,15 +393,12 @@ class OpenGraphMockDataProvider: NSObject {
         )
     }
 
-
-
-
     // MARK: - Helper
-    
+
     private static func fixtureWithName(_ name: String) -> String {
         let bundle = Bundle(for: OpenGraphMockDataProvider.self)
         let url = bundle.url(forResource: name, withExtension: "txt")!
         return try! String(contentsOf: url)
     }
-    
+
 }

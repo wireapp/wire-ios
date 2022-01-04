@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 enum OpenGraphAttribute {
@@ -38,7 +37,7 @@ enum OpenGraphPropertyType: String {
     case description = "og:description"
     case siteName = "og:site_name"
     case userGeneratedImage = "og:image:user_generated"
-    
+
     // MARK: Foursquare
     case latitudeFSQ = "playfoursquare:location:latitude"
     case longitudeFSQ = "playfoursquare:location:longitude"
@@ -46,12 +45,12 @@ enum OpenGraphPropertyType: String {
 
 enum OpenGraphSiteName: String {
     case other
-    case twitter = "twitter"
-    case vimeo = "vimeo"
-    case youtube = "youtube"
-    case instagram = "instagram"
-    case foursquare = "foursquare"
-    
+    case twitter
+    case vimeo
+    case youtube
+    case instagram
+    case foursquare
+
     init?(string: String) {
         self.init(rawValue: string.lowercased())
     }

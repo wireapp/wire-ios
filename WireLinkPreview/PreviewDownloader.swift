@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 private let userAgent = "Wire LinkPreview Bot"
@@ -32,16 +31,16 @@ enum HeaderKey: String {
 }
 
 final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownloaderType {
-    
+
     typealias DownloadCompletion = (OpenGraphData?) -> Void
-    
+
     var containerByTaskID = [Int: MetaStreamContainer]()
     var completionByURL = [URL: DownloadCompletion]()
     var cancelledTaskIDs = Set<Int>()
     var session: URLSessionType! = nil
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue
-    
+
     init(resultsQueue: OperationQueue, parsingQueue: OperationQueue? = nil, urlSession: URLSessionType? = nil) {
         self.resultsQueue = resultsQueue
         self.parsingQueue = parsingQueue ?? OperationQueue()
@@ -54,7 +53,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         configuration.isDiscretionary = false
         session = urlSession ?? Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: parsingQueue)
     }
-    
+
     func requestOpenGraphData(fromURL url: URL, completion: @escaping DownloadCompletion) {
         completionByURL[url] = completion
         var request = URLRequest(url: url)
@@ -62,15 +61,15 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         request.allHTTPHeaderFields = [HeaderKey.userAgent.rawValue: userAgent]
         session.dataTask(with: request).resume()
     }
-    
+
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         processReceivedData(data, forTask: dataTask as URLSessionDataTaskType, withIdentifier: dataTask.taskIdentifier)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        urlSession(session as URLSessionType , task: task as URLSessionDataTaskType, didCompleteWithError: error as NSError?)
+        urlSession(session as URLSessionType, task: task as URLSessionDataTaskType, didCompleteWithError: error as NSError?)
     }
-    
+
     func urlSession(_ session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
         guard let url = task.originalRequest?.url, let completion = completionByURL[url] else { return }
 
@@ -87,7 +86,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
             return completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
     }
-    
+
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else { return }
         urlSession(session as URLSessionType, dataTask: dataTask as URLSessionDataTaskType, didReceiveHTTPResponse: httpResponse, completionHandler: completionHandler)
@@ -97,7 +96,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         let container = containerByTaskID[identifier] ?? MetaStreamContainer()
         container.addData(data)
         containerByTaskID[identifier] = container
-        
+
         guard let url = task.originalRequest?.url,
             let completion = completionByURL[url] else { return }
 
@@ -108,7 +107,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         default:
             break
         }
-        
+
         parseMetaHeader(container, url: url) { [weak self] result in
             guard let `self` = self else { return }
             self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
@@ -121,7 +120,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         cancelledTaskIDs.insert(task.taskIdentifier)
         task.cancel()
     }
-    
+
     func completeAndCleanUp(_ completion: DownloadCompletion, result: OpenGraphData?, url: URL, taskIdentifier: Int) {
         completion(result)
         self.containerByTaskID[taskIdentifier] = nil
@@ -136,7 +135,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
                 completion(result)
             }
         }
-        
+
         scanner.parse()
     }
 
@@ -146,7 +145,6 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
 }
 
-
 extension PreviewDownloader {
 
      /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
@@ -155,11 +153,11 @@ extension PreviewDownloader {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
-        if let contentType = contentType , !contentType.lowercased().contains("text/html") || !response.isSuccess {
+        if let contentType = contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: dataTask.taskIdentifier)
             return completionHandler(.cancel)
         }
-        
+
         return completionHandler(.allow)
     }
 

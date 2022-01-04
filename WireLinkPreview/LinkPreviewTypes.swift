@@ -16,21 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
+@objcMembers open class LinkMetadata: NSObject {
 
-@objcMembers open class LinkMetadata : NSObject {
-    
     public let originalURLString: String
     public let permanentURL: URL?
     public let resolvedURL: URL?
     public let characterOffsetInText: Int
     open var imageURLs = [URL]()
     open var imageData = [Data]()
-    
+
     public typealias DownloadCompletion = (_ successful: Bool) -> Void
-    
+
     public init(originalURLString: String, permanentURLString: String, resolvedURLString: String, offset: Int) {
         self.originalURLString = originalURLString
         permanentURL = URL(string: permanentURLString)
@@ -39,7 +37,7 @@ import Foundation
         super.init()
     }
 
-    @objc public var isBlacklisted: Bool {
+    public var isBlacklisted: Bool {
         if let permanentURL = permanentURL {
             return PreviewBlacklist.isBlacklisted(permanentURL)
         } else if let resolvedURL = resolvedURL {
@@ -48,7 +46,7 @@ import Foundation
             return false
         }
     }
-    
+
     func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: @escaping DownloadCompletion) {
         guard let imageURL = imageURLs.first else { return completion(false) }
         downloader.downloadImage(fromURL: imageURL) { [weak self] imageData in
@@ -60,26 +58,25 @@ import Foundation
 
 }
 
-
-@objcMembers public class ArticleMetadata : LinkMetadata {
-    public var title : String?
-    public var summary : String?
+@objcMembers public class ArticleMetadata: LinkMetadata {
+    public var title: String?
+    public var summary: String?
 }
 
-@objcMembers public class FoursquareLocationMetadata : LinkMetadata {
-    public var title : String?
-    public var subtitle : String?
+@objcMembers public class FoursquareLocationMetadata: LinkMetadata {
+    public var title: String?
+    public var subtitle: String?
     public var latitude: Float?
     public var longitude: Float?
 }
 
-@objcMembers public class InstagramPictureMetadata : LinkMetadata {
-    public var title : String?
-    public var subtitle : String?
+@objcMembers public class InstagramPictureMetadata: LinkMetadata {
+    public var title: String?
+    public var subtitle: String?
 }
 
-@objcMembers public class TwitterStatusMetadata : LinkMetadata {
-    public var message : String?
-    public var username : String?
-    public var author : String?
+@objcMembers public class TwitterStatusMetadata: LinkMetadata {
+    public var message: String?
+    public var username: String?
+    public var author: String?
 }

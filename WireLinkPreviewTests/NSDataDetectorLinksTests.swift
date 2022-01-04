@@ -121,5 +121,4 @@ class NSDataDetectorLinksTests: XCTestCase {
         XCTAssertEqual(links.count, 1)
     }
 
-
 }

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 protocol ImageDownloaderType {
@@ -25,15 +24,15 @@ protocol ImageDownloaderType {
 }
 
 final class ImageDownloader: NSObject, ImageDownloaderType {
-    
+
     typealias ImageData = Data
-    
+
     let workerQueue: OperationQueue
     let resultsQueue: OperationQueue
     let session: URLSessionType
-    
-    init(resultsQueue: OperationQueue, 
-         workerQueue: OperationQueue = OperationQueue(), 
+
+    init(resultsQueue: OperationQueue,
+         workerQueue: OperationQueue = OperationQueue(),
          session: URLSessionType? = nil) {
         self.resultsQueue = resultsQueue
         self.workerQueue = workerQueue
@@ -43,36 +42,36 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
         self.session = session ?? URLSession(configuration: .ephemeral)
         super.init()
     }
-    
+
     func downloadImage(fromURL url: URL, completion: @escaping (Data?) -> Void) {
         downloadImages(fromURLs: [url]) { imagesByURL in
             completion(imagesByURL.values.first)
         }
     }
-    
+
     func downloadImages(fromURLs urls: [URL], completion: @escaping ([URL: ImageData]) -> Void) {
         workerQueue.addOperation { [weak self] in
             guard let `self` = self else { return }
             var result = [URL: ImageData]()
             let group = DispatchGroup()
-            
+
             urls.forEach { url in
                 group.enter()
                 self.session.dataTaskWithURL(url) { data, response, _ in
-                    if let httpResponse = response as? HTTPURLResponse , httpResponse.contentTypeImage {
+                    if let httpResponse = response as? HTTPURLResponse, httpResponse.contentTypeImage {
                         result[url] = data
                     }
                     group.leave()
                 }.resume()
             }
-            
+
             _ = group.wait(timeout: DispatchTime.distantFuture)
             self.resultsQueue.addOperation {
                 completion(result)
             }
         }
     }
-    
+
 }
 
 extension HTTPURLResponse {
@@ -80,7 +79,7 @@ extension HTTPURLResponse {
     var contentTypeImage: Bool {
         let contentTypeKey = HeaderKey.contentType.rawValue
         guard let contentType = allHeaderFields[contentTypeKey] as? String ?? allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }
-        
+
         // we don't consider svg a valid image type b/c UIImage doesn't directly
         // support it
         return contentType.contains("image") && !contentType.contains("svg")

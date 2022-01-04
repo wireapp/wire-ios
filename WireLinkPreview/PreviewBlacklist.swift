@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 enum PreviewBlacklist {
@@ -29,7 +28,7 @@ enum PreviewBlacklist {
         "spotify",
         "giphy"
     ]
-    
+
     static func isBlacklisted(_ url: URL) -> Bool {
         return blacklistedHosts.contains { blacklisted in
             url.absoluteString.lowercased().contains(blacklisted)

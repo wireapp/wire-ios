@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 @testable import WireLinkPreview
 
@@ -44,15 +43,15 @@ class MetaStreamContainerTests: XCTestCase {
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Lowercase() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head>")
     }
-    
+
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Capitalized() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</Head>")
     }
-    
+
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Uppercase() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</HEAD>")
     }
-    
+
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_WithSpaces() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head >", shouldUpdate: false)
     }
@@ -88,7 +87,7 @@ class MetaStreamContainerTests: XCTestCase {
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_WithSpaces_ASCII() {
         assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</head >", shouldUpdate: false, encoding: .ascii)
     }
-    
+
     func testThatItExtractsTheHead_whenAllInOneLine() {
         let head = "<head>header</head>"
         let html = "<!DOCTYPE html><html lang=\"en\">\(head)"
@@ -111,13 +110,13 @@ class MetaStreamContainerTests: XCTestCase {
         let html = body + head
         assertThatItExtractsTheCorrectHead(html, expectedHead: body)
     }
-    
+
     func testThatItExtractsTheHead_whenOneASeparateLine() {
         let head = "<head>\nheader\n</head>"
         let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
         assertThatItExtractsTheCorrectHead(html, expectedHead: head)
     }
-    
+
     func testThatItExtractsTheHead_whenItHasAttributes() {
         let head = "<head data-network=\"123\">\nheader\n</head>"
         let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
@@ -159,37 +158,37 @@ class MetaStreamContainerTests: XCTestCase {
         let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
         assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
     }
-    
+
     // MARK: - Helper
-    
+
     func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, encoding: String.Encoding = .utf8, file: StaticString = #file, line: UInt = #line) {
         // when
         sut.addData(html.data(using: encoding)!)
-        
+
         // then
         XCTAssertTrue(sut.reachedEndOfHead, "Should reach end of head", file: file, line: line)
         guard let head = sut.head else { return XCTFail("Head was nil", file: file, line: line) }
         XCTAssertEqual(head, expectedHead, "Should have expected head", file: file, line: line)
     }
-    
+
     func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, encoding: String.Encoding = .utf8, line: UInt = #line) {
         // given
         let first = "First".data(using: encoding)!
         let second = "Head".data(using: encoding)!
         let fourth = "End".data(using: encoding)!
-        
+
         // when & then
         sut.addData(first)
         XCTAssertFalse(sut.reachedEndOfHead, line: line)
-        
+
         // when & then
         sut.addData(second)
         XCTAssertFalse(sut.reachedEndOfHead, line: line)
-        
+
         // when & then
         sut.addData(head.data(using: encoding)!)
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)
-        
+
         // when & then
         sut.addData(fourth)
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)

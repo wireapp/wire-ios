@@ -19,22 +19,22 @@
 @testable import WireLinkPreview
 
 class MockURLSessionDataTask: URLSessionDataTaskType {
-    
+
     var taskIdentifier = 0
     var resumeCallCount = 0
     var cancelCallCount = 0
-    var mockOriginalRequest: URLRequest? = nil
+    var mockOriginalRequest: URLRequest?
     var state: URLSessionTask.State = .completed
-    
+
     var originalRequest: URLRequest? {
         return mockOriginalRequest
     }
-    
+
     func resume() {
         resumeCallCount += 1
         state = .running
     }
-    
+
     func cancel() {
         cancelCallCount += 1
         state = .canceling
@@ -42,20 +42,20 @@ class MockURLSessionDataTask: URLSessionDataTaskType {
 }
 
 class MockURLSession: URLSessionType {
-    
+
     var dataTaskWithURLCallCount = 0
     var dataTaskWithURLParameters = [URLRequest]()
     var dataTaskWithURLClosureCallCount = 0
     var dataTaskWithURLClosureCompletions = [DataTaskCompletion]()
-    var mockDataTask: MockURLSessionDataTask? = nil
-    var dataTaskGenerator: ((URL, DataTaskCompletion) -> URLSessionDataTaskType)? = nil
-    
+    var mockDataTask: MockURLSessionDataTask?
+    var dataTaskGenerator: ((URL, DataTaskCompletion) -> URLSessionDataTaskType)?
+
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType {
         dataTaskWithURLCallCount += 1
         dataTaskWithURLParameters.append(request)
         return mockDataTask!
     }
-    
+
     func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType {
         dataTaskWithURLClosureCallCount += 1
         dataTaskWithURLClosureCompletions.append(completionHandler)

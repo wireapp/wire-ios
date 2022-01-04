@@ -54,7 +54,7 @@ public protocol LinkAttachmentDetectorType {
 
 public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType {
 
-    private let linkDetector : NSDataDetector? = NSDataDetector.linkDetector
+    private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
     private let previewDownloader: PreviewDownloaderType
     private let workerQueue: OperationQueue
 

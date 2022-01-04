@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 import WireUtilities
 
 public protocol LinkPreviewDetectorType {
-    
+
     func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void)
-    
+
 }
 
-public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
-    
-    private let linkDetector : NSDataDetector? = NSDataDetector.linkDetector
+public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
+
+    private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
     private let previewDownloader: PreviewDownloaderType
     private let imageDownloader: ImageDownloaderType
     private let workerQueue: OperationQueue
-    
+
     public typealias DetectCompletion = ([LinkMetadata]) -> Void
-    
+
     public convenience override init() {
         let workerQueue = OperationQueue()
         self.init(
@@ -43,7 +42,7 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
             workerQueue: workerQueue
         )
     }
-    
+
     init(previewDownloader: PreviewDownloaderType, imageDownloader: ImageDownloaderType, workerQueue: OperationQueue) {
         self.workerQueue = workerQueue
         self.previewDownloader = previewDownloader
@@ -82,5 +81,5 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     deinit {
         previewDownloader.tearDown()
     }
-    
+
 }

@@ -16,39 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 @testable import WireLinkPreview
 
 class ImageDownloaderTests: XCTestCase {
-    
+
     var sut: ImageDownloader!
     var mockSession: MockURLSession!
-    
+
     override func setUp() {
         super.setUp()
         mockSession = MockURLSession()
-        sut = ImageDownloader(resultsQueue: .main, workerQueue:.main, session: mockSession)
+        sut = ImageDownloader(resultsQueue: .main, workerQueue: .main, session: mockSession)
     }
-    
+
     func testThatItCreatesADataTaskForTheImageURL() {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
         let url = URL(string: "www.example.com")!
         let mockTask = MockURLSessionDataTask()
         mockSession.mockDataTask = mockTask
-        
+
         // when
         sut.downloadImage(fromURL: url) { _ in
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 1)
         XCTAssertEqual(mockTask.resumeCallCount, 1)
     }
-    
+
     func testThatitCallsTheCompletionOnTheResultsQueue() {
         let completionExpectation = expectation(description: "It should call the completion handler")
         let url = URL(string: "www.example.com")!
@@ -56,7 +55,7 @@ class ImageDownloaderTests: XCTestCase {
 
         let queue = OperationQueue()
         sut = ImageDownloader(resultsQueue: queue, session: mockSession)
-        
+
         // when
         sut.downloadImage(fromURL: url) { _ in
             XCTAssertEqual(OperationQueue.current, queue)
@@ -65,7 +64,7 @@ class ImageDownloaderTests: XCTestCase {
 
         waitForExpectations(timeout: 2, handler: nil)
     }
-    
+
     func testThatItCreatesAndResumesADataTaskForAllURLs() {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
@@ -75,9 +74,9 @@ class ImageDownloaderTests: XCTestCase {
             URL(string: "www.example.com/3")!,
             URL(string: "www.example.com/4")!
         ]
-        
+
         let mockTask = MockURLSessionDataTask()
-        
+
         var callCount = 0
         mockSession.dataTaskGenerator = { _, completion in
             completion(nil, nil, nil)
@@ -87,65 +86,65 @@ class ImageDownloaderTests: XCTestCase {
             }
             return mockTask
         }
-        
+
         // when
         sut.downloadImages(fromURLs: urls) { _ in }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(mockSession.dataTaskWithURLClosureCallCount, 4)
         XCTAssertEqual(mockTask.resumeCallCount, 4)
     }
-    
+
     func testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_JPEG() {
         assertThatItReturnsTheImageData(true, withHeaderFields: ["Content-Type": "image/jpeg"])
     }
-    
+
     func testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_JPG() {
         assertThatItReturnsTheImageData(true, withHeaderFields: ["Content-Type": "image/jpg"])
     }
-    
+
     func testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_PNG() {
         assertThatItReturnsTheImageData(true, withHeaderFields: ["Content-Type": "image/png"])
     }
-    
+
     func testThatItDoesReturnTheDataIfTheResponseHeaderContainsContentTypeImage_GIF() {
         assertThatItReturnsTheImageData(true, withHeaderFields: ["content-type": "image/gif"])
     }
-    
+
     func testThatItDoesNotReturnTheDataIfTheResponseHeaderContainsContentTypeImage_SVG() {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["content-type": "image/svg"])
     }
-    
+
     func testThatItDoesNotReturnTheDataInTheCompletionIfTheResponseHeaderDoesNotContainContentTypeImage() {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["Content-Type": "text/html"])
     }
-    
+
     func testThatItDoesNotReturnTheDataInTheCompletionIfTheResponseHeaderDoesNotContainContentTypeImage_lowercase() {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["content-type": "text/html"])
     }
-    
+
     func assertThatItReturnsTheImageData(_ shouldReturn: Bool, withHeaderFields headers: [String: String], line: UInt = #line) {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
         let url = URL(string: "www.example.com")!
-        
+
         let data = "test data".data(using: .utf8)!
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headers)
-        
-        mockSession.dataTaskGenerator = { url, completion in
+
+        mockSession.dataTaskGenerator = { _, completion in
             completion(data, response, nil)
             return MockURLSessionDataTask()
         }
-        
-        var result: Data? = nil
-        
+
+        var result: Data?
+
         // when
         sut.downloadImage(fromURL: url) {
             result = $0
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 2, handler: nil)
         if shouldReturn {

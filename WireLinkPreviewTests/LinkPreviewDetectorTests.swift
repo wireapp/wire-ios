@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 @testable import WireLinkPreview
 
-
-
 class LinkPreviewDetectorTests: XCTestCase {
-    
+
     var sut: LinkPreviewDetector!
     var mockImageTask: MockURLSessionDataTask!
     var imageDownloader: MockImageDownloader!
     var previewDownloader: MockPreviewDownloader!
-    
+
     override func setUp() {
         super.setUp()
         mockImageTask = MockURLSessionDataTask()
@@ -48,7 +45,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         sut = nil
         super.tearDown()
     }
-    
+
     func testThatItCallsTeardownAfterDeallocating() {
         // given
         XCTAssertFalse(previewDownloader.tornDown)
@@ -59,7 +56,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         // then
         XCTAssertTrue(previewDownloader.tornDown)
     }
-            
+
     func testThatItCallsTheCompletionWithAnEmptyArrayWhenThereIsNoLinkInTheText() {
         // given
         let text = "This is a sample containing no link"
@@ -77,52 +74,52 @@ class LinkPreviewDetectorTests: XCTestCase {
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 0)
         XCTAssertEqual(result, [])
     }
-    
+
     func testThatItRequestsToDownloadTheOpenGraphDataWhenThereIsALink() {
         // given
         let text = "This is a sample containing a link: www.example.com"
-        
+
         // when
         sut.downloadLinkPreviews(inText: text) { _ in }
-        
+
         // then
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://www.example.com")!])
     }
-    
+
     func testThatItReturnsAnEmptyArrayIfThePreviewDownloaderReturnsANilOpenGraphData() {
         // given
         let text = "This is a sample containing a link: www.example.com"
         let completionExpectation = expectation(description: "It calls the completion closure")
-        
+
         // when
         var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://www.example.com")!])
         XCTAssertEqual(result, [])
     }
-    
+
     func testThatItRequestsToDownloadTheImageDataWhenThereIsALinkAndThePreviewDownloaderReturnsOpenGraphData() {
         // given
         let text = "This is a sample containing a link: example.com"
         let completionExpectation = expectation(description: "It calls the completion closure")
         let openGraphData = OpenGraphMockDataProvider.nytimesData().expected!
         previewDownloader.mockOpenGraphData = openGraphData
-        
+
         // when
         var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
@@ -133,21 +130,21 @@ class LinkPreviewDetectorTests: XCTestCase {
         XCTAssertEqual(article.characterOffsetInText, 36)
         XCTAssertTrue(article.imageData.isEmpty)
     }
-    
+
     func testThatItRequestsToDownloadOnlyTheFirstImageDataWhenThereIsALinkAndThePreviewDownloaderReturnsOpenGraphData() {
         // given
         let text = "This is a sample containing a link: www.example.com"
         let completionExpectation = expectation(description: "It calls the completion closure")
         let openGraphData = OpenGraphMockDataProvider.twitterDataWithImages().expected!
         previewDownloader.mockOpenGraphData = openGraphData
-        
+
         // when
         var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
@@ -161,53 +158,53 @@ class LinkPreviewDetectorTests: XCTestCase {
         XCTAssertEqual(twitterStatus.originalURLString, "www.example.com")
         XCTAssertTrue(twitterStatus.imageData.isEmpty)
     }
-    
+
     func testThatItCallsTheCompletionClosureOnTheResultsQueue_LinkInText_NoData() {
         let text = "This is a sample containing a link: www.example.com"
         assertThatItCallsTheCompletionClosure(withText: text)
     }
-    
+
     func testThatItCallsTheCompletionClosureOnTheResultsQueue_LinkInText_Data() {
         let text = "This is a sample containing a link: www.example.com"
         previewDownloader.mockOpenGraphData = OpenGraphMockDataProvider.guardianData().expected!
         assertThatItCallsTheCompletionClosure(withText: text)
     }
-    
+
     func testThatItCallsTheCompletionClosureOnTheResultsQueue_NoLinkInText() {
         let text = "This is a sample not containing a link"
         assertThatItCallsTheCompletionClosure(withText: text)
     }
-    
+
     func testThatItImmediatelyCallsTheCompletionHandlerForHostsOnTheBlacklist() {
         // given
         let url = "www.soundcloud.com"
         let completionExpectation = expectation(description: "It calls the completion closure")
         var result = [LinkMetadata]()
-        
+
         // when
         sut.downloadLinkPreviews(inText: url) {
             result = $0
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertTrue(result.isEmpty)
     }
-    
+
     func assertThatItCallsTheCompletionClosure(withText text: String, line: UInt = #line) {
         // given
         let queue = OperationQueue()
         sut = LinkPreviewDetector(previewDownloader: previewDownloader, imageDownloader: imageDownloader, workerQueue: queue)
         let completionExpectation = expectation(description: "It calls the completion closure")
-        
+
         // when
         sut.downloadLinkPreviews(inText: text) { _ in
             completionExpectation.fulfill()
         }
-        
+
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
     }
-    
+
 }
