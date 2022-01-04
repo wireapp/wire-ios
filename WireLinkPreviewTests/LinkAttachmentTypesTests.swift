@@ -40,10 +40,10 @@ class LinkAttachmentTypesTests: XCTestCase {
 
     func testThatItDecodesYouTubeFromOpenGraph() {
         // GIVEN
-        let og = OpenGraphData(title: "iPhone X - Reveal", type: "video.other", url: "https://www.youtube.com/watch?v=sRIQsy2PGyM", resolvedURL: "https://www.youtube.com/watch?v=sRIQsy2PGyM", imageUrls: ["https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg"])
+        let openGraphData = OpenGraphData(title: "iPhone X - Reveal", type: "video.other", url: "https://www.youtube.com/watch?v=sRIQsy2PGyM", resolvedURL: "https://www.youtube.com/watch?v=sRIQsy2PGyM", imageUrls: ["https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg"])
 
         // WHEN
-        let decodedAttachment = LinkAttachment(openGraphData: og, detectedType: .youTubeVideo, originalRange: NSRange(location: 10, length: 43))
+        let decodedAttachment = LinkAttachment(openGraphData: openGraphData, detectedType: .youTubeVideo, originalRange: NSRange(location: 10, length: 43))
 
         // THEN
         XCTAssertEqual(decodedAttachment?.type, .youTubeVideo)
@@ -52,5 +52,5 @@ class LinkAttachmentTypesTests: XCTestCase {
         XCTAssertEqual(decodedAttachment?.thumbnails, [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!])
         XCTAssertEqual(decodedAttachment?.originalRange, NSRange(location: 10, length: 43))
     }
-    
+
 }

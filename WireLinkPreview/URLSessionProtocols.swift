@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
 typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
@@ -30,7 +29,7 @@ protocol URLSessionType {
 protocol URLSessionDataTaskType {
     func resume()
     func cancel()
-    
+
     var originalRequest: URLRequest? { get }
     var taskIdentifier: Int { get }
     var state: URLSessionTask.State { get }
@@ -42,7 +41,7 @@ extension URLSession: URLSessionType {
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType {
         return (dataTask(with: request) as URLSessionDataTask) as URLSessionDataTaskType
     }
-    
+
     func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType {
         return (dataTask(with: url, completionHandler: completionHandler) as URLSessionDataTask) as URLSessionDataTaskType
     }

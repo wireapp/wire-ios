@@ -181,5 +181,4 @@ class LinkAttachmentDetectorTests: XCTestCase {
         waitForExpectations(timeout: 0.2, handler: nil)
     }
 
-
 }

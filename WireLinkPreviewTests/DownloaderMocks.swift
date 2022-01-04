@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 @testable import WireLinkPreview
 
 class MockPreviewDownloader: PreviewDownloaderType {
-    
+
     typealias Completion = (OpenGraphData?) -> Void
-    
-    var mockOpenGraphData: OpenGraphData? = nil
+
+    var mockOpenGraphData: OpenGraphData?
     var requestOpenGraphDataCallCount = 0
     var requestOpenGraphDataURLs = [URL]()
     var requestOpenGraphDataCompletions = [Completion]()
-    
+
     func requestOpenGraphData(fromURL url: URL, completion: @escaping Completion) {
         requestOpenGraphDataCallCount += 1
         requestOpenGraphDataURLs.append(url)
@@ -42,26 +41,26 @@ class MockPreviewDownloader: PreviewDownloaderType {
 }
 
 class MockImageDownloader: ImageDownloaderType {
-    
+
     typealias ImageCompletion = (Data?) -> Void
-    var mockImageData: Data? = nil
+    var mockImageData: Data?
     var downloadImageURLs = [URL]()
     var downloadImageCallCount = 0
     var downloadImageCompletion = [ImageCompletion]()
-    
-    typealias ImagesCompletion = ([URL : Data]) -> Void
+
+    typealias ImagesCompletion = ([URL: Data]) -> Void
     var mockImageDataByUrl = [URL: Data]()
     var downloadImagesCallCount = 0
     var downloadImagesURLs = [URL]()
     var downloadImagesCompletion = [ImagesCompletion]()
-    
+
     func downloadImage(fromURL url: URL, completion: @escaping ImageCompletion) {
         downloadImageCallCount += 1
         downloadImageURLs.append(url)
         downloadImageCompletion.append(completion)
         completion(mockImageData)
     }
-    
+
     func downloadImages(fromURLs urls: [URL], completion: @escaping ImagesCompletion) {
         downloadImagesCallCount += 1
         downloadImageURLs.append(contentsOf: urls)

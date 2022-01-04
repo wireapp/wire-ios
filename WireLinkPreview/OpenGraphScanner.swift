@@ -19,9 +19,9 @@
 import Foundation
 
 final class OpenGraphScanner: NSObject {
-    
+
     typealias ParserCompletion = (OpenGraphData?) -> Void
-    
+
     let xmlString: String
     var contentsByProperty = [OpenGraphPropertyType: String]()
     var images = [String]()
@@ -35,7 +35,7 @@ final class OpenGraphScanner: NSObject {
         originalURL = url
         super.init()
     }
-    
+
     func parse() {
         // 1. Parse the document
         guard let document = HTMLDocument(xmlString: xmlString) else { return completion(nil) }
@@ -74,8 +74,7 @@ final class OpenGraphScanner: NSObject {
     private func parseOpenGraphMetadata(_ element: HTMLElement) {
         if let rawProperty = element[attribute: OpenGraphAttribute.property]?.stringValue(removingEntities: false),
             let property = OpenGraphPropertyType(rawValue: rawProperty),
-            let content = element[attribute: OpenGraphAttribute.content]?.stringValue(removingEntities: true)
-        {
+            let content = element[attribute: OpenGraphAttribute.content]?.stringValue(removingEntities: true) {
             addProperty(property, value: content)
         }
     }

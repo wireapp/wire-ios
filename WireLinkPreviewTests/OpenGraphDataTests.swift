@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 @testable import WireLinkPreview
 
 class OpenGraphDataTests: XCTestCase {
-    
+
     func testThatItCreatesAValidOpenGraphDataFromPropertyMapping() {
         // given
         let title = "title"
@@ -29,10 +28,10 @@ class OpenGraphDataTests: XCTestCase {
         let type = "article"
         let mapping: [OpenGraphPropertyType: String] = [.title: title, .type: type, .description: name, .url: url]
         let images = ["www.example.com/image"]
-        
+
         // when
-        guard let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: url)!, images: images) else { return XCTFail() }
-        
+        guard let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: url)!, images: images) else { return XCTFail("SUT is nil") }
+
         // then
         XCTAssertEqual(sut.title, title)
         XCTAssertEqual(sut.type, type)
@@ -58,71 +57,71 @@ class OpenGraphDataTests: XCTestCase {
         XCTAssertNotNil(sut)
         XCTAssertEqual(sut?.type, "website")
     }
-    
+
     func testThatItReturnsNilWhenRequiredPropertiesAreMissing() {
         // given
         let title = "title"
         let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name]
         let images = ["www.example.com/image"]
-        
+
         // when
         let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: "www.example.com/image")!, images: images)
-        
+
         // then
         XCTAssertNil(sut)
     }
-    
+
     func testThatItSetsTheCorrectSiteName() {
         [OpenGraphSiteName.twitter, .youtube, .vimeo, .instagram, .foursquare].forEach { siteName in
             asserThatItSetsTheCorrectSiteName(siteName.rawValue, expected: siteName)
             asserThatItSetsTheCorrectSiteName(siteName.rawValue.capitalized, expected: siteName)
         }
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Twitter() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.twitterData(), expectedClass: TwitterStatusMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_TwitterWithImages() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.twitterDataWithImages(), expectedClass: TwitterStatusMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_TheVerge() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.vergeData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Foursqaure() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.foursquareData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Nytimes() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.nytimesData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Guardian() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.guardianData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Youtube() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.youtubeData())
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Vimeo() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.vimeoData())
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Instagram() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.instagramData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_WashingtonPost() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.washingtonPostData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Medium() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.mediumData(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_Polygon() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.polygonData(), expectedClass: ArticleMetadata.self)
     }
@@ -134,7 +133,7 @@ class OpenGraphDataTests: XCTestCase {
     func testThatItCreatesTheCorrectLinkPreview_iTunesWithoutTitle() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.iTunesDataWithoutTitle(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItCreatesTheCorrectLinkPreview_YahooSports() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.yahooSports(), expectedClass: ArticleMetadata.self)
     }
@@ -143,16 +142,16 @@ class OpenGraphDataTests: XCTestCase {
         // given
         let data = OpenGraphMockDataProvider.foursquareData().expected
         let originalURLString = "www.example.com"
-        
+
         // when
         let preview = data?.linkPreview(originalURLString, offset: 42)
-        
+
         // then
         XCTAssertEqual(preview?.characterOffsetInText, 42)
         XCTAssertEqual(preview?.originalURLString, originalURLString)
         XCTAssertNotEqual(preview?.permanentURL?.absoluteString, originalURLString)
     }
-    
+
     // MARK: - Helper
 
     func asserThatItSetsTheCorrectSiteName(_ siteNameString: String, expected: OpenGraphSiteName, line: UInt = #line) {
@@ -162,14 +161,14 @@ class OpenGraphDataTests: XCTestCase {
         let type = "article"
         let mapping: [OpenGraphPropertyType: String] = [.title: title, .type: type, .siteName: siteNameString, .url: url]
         let images = ["www.example.com/image"]
-        
+
         // when
         guard let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: url)!, images: images) else { return XCTFail(line: line) }
-        
+
         XCTAssertEqual(sut.siteName, expected, line: line)
         XCTAssertEqual(sut.siteNameString, siteNameString, line: line)
     }
-    
+
     func assertLinkPreviewMapping(ofOpenGraphData openGraphData: OpenGraphMockData, expectedClass: AnyClass = LinkMetadata.self, expectedFailure: Bool = false, line: UInt = #line) {
         if let linkPreview = openGraphData.expected?.linkPreview(openGraphData.urlString, offset: 12) {
             XCTAssertFalse(expectedFailure, line: line)
@@ -178,5 +177,5 @@ class OpenGraphDataTests: XCTestCase {
             XCTAssertTrue(expectedFailure, "No link preview present", line: line)
         }
     }
-    
+
 }

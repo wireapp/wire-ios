@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import XCTest
 @testable import WireLinkPreview
 
 class OpenGraphScannerTests: XCTestCase {
-    
+
     func testThatItCanParseCorrectlyStrippedSampleData_Twitter() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.twitterData())
     }
-    
+
     func testThatItCanParseCorrectlyStrippedSampleData_TwitterWithImages() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.twitterDataWithImages())
     }
@@ -33,7 +32,7 @@ class OpenGraphScannerTests: XCTestCase {
     func testThatItCanParseCorrectlyStrippedSampleData_Verge() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.vergeData())
     }
-    
+
     func testThatItCanParseCorrectlyStrippedSampleData_Foursquare() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.foursquareData())
     }
@@ -57,11 +56,11 @@ class OpenGraphScannerTests: XCTestCase {
     func testThatItCanParseCorrectlyStrippedSampleData_NYTimes() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.nytimesData())
     }
-    
+
     func testThatItCanParseCorrectlyStrippedSampleData_WashingtonPost() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.washingtonPostData())
     }
-    
+
     func testThatItCanParseCorrectlyStrippedSampleData_Wire() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.wireData())
     }
@@ -77,7 +76,7 @@ class OpenGraphScannerTests: XCTestCase {
     func testThatItCanParseCorrectlyStrippedSampleData_iTunesWithoutTitle() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.iTunesDataWithoutTitle())
     }
-    
+
     func testThatItCanParseCorrectlyStrippedSampleData_yahooSports() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.yahooSports())
     }
@@ -85,7 +84,7 @@ class OpenGraphScannerTests: XCTestCase {
     func testThatItCanParseCorrectlyStrippedSampleData_VK_Emoji_crash() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.crashingDataEmoji())
     }
-    
+
     func assertThatItParsesSampleDataCorrectly(_ mockData: OpenGraphMockData, line: UInt = #line) {
         // given
         var receivedData: OpenGraphData?
@@ -100,7 +99,7 @@ class OpenGraphScannerTests: XCTestCase {
         XCTAssertEqual(mockData.expected?.title, receivedData?.title, line: line)
         XCTAssertEqual(mockData.expected?.type, receivedData?.type, line: line)
         XCTAssertEqual(mockData.expected?.url, receivedData?.url, line: line)
-        
+
         XCTAssertEqual(mockData.expected?.imageUrls ?? [], receivedData?.imageUrls ?? [], line: line)
         XCTAssertEqual(mockData.expected?.siteName, receivedData?.siteName, line: line)
         XCTAssertEqual(mockData.expected?.siteNameString, receivedData?.siteNameString, line: line)
@@ -110,5 +109,5 @@ class OpenGraphScannerTests: XCTestCase {
 
         XCTAssertEqual(mockData.expected, receivedData, line: line)
     }
-    
+
 }
