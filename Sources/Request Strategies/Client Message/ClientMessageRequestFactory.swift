@@ -29,15 +29,40 @@ public final class ClientMessageRequestFactory: NSObject {
     let octetStreamContentType = "application/octet-stream"
 
     public func upstreamRequestForFetchingClients(conversationId: UUID, selfClient: UserClient) -> ZMTransportRequest? {
-        let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
+        let path = "/" + ["conversations",
+                          conversationId.transportString(),
+                          "otr",
+                          "messages"].joined(separator: "/")
+
+        return upstreamRequestForFetchingClients(path: path, selfClient: selfClient)
+    }
+
+    public func upstreamRequestForFetchingClients(conversationId: UUID, domain: String, selfClient: UserClient) -> ZMTransportRequest? {
+        let path = "/" + ["conversations",
+                          domain,
+                          conversationId.transportString(),
+                          "proteus",
+                          "messages"].joined(separator: "/")
+
+        return upstreamRequestForFetchingClients(path: path, selfClient: selfClient)
+    }
+
+    private func upstreamRequestForFetchingClients(path: String, selfClient: UserClient) -> ZMTransportRequest? {
         let newOtrMessage = Proteus_NewOtrMessage(withSender: selfClient, nativePush: false, recipients: [])
 
-        let path = originalPath.pathWithMissingClientStrategy(strategy: .doNotIgnoreAnyMissingClient)
         guard let data = try? newOtrMessage.serializedData() else {
             zmLog.debug("failed to serialize message")
             return nil
         }
-        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: data, type: protobufContentType, contentDisposition: nil)
+
+        let request = ZMTransportRequest(
+            path: path.pathWithMissingClientStrategy(strategy: .doNotIgnoreAnyMissingClient),
+            method: .methodPOST,
+            binaryData: data,
+            type: protobufContentType,
+            contentDisposition: nil
+        )
+
         return request
     }
 
