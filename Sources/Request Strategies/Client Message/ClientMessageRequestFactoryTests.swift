@@ -141,3 +141,43 @@ extension ClientMessageRequestFactoryTests {
         }
     }
 }
+
+// MARK: - Client discovery
+extension ClientMessageRequestFactoryTests {
+
+    func testThatPathIsCorrect_WhenCreatingRequest_WithoutDomain() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let conversationID = UUID()
+
+            // WHEN
+            let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
+                conversationId: conversationID,
+                selfClient: self.selfClient
+            )
+
+            // THEN
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request?.path, "/conversations/\(conversationID.transportString())/otr/messages")
+        }
+    }
+
+    func testThatPathIsCorrect_WhenCreatingRequest_WithDomain() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let conversationID = UUID()
+            let domain = "wire.com"
+
+            // WHEN
+            let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
+                conversationId: conversationID,
+                domain: domain,
+                selfClient: self.selfClient
+            )
+
+            // THEN
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request?.path, "/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+        }
+    }
+}
