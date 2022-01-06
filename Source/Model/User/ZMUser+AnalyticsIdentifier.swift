@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 extension ZMUser {
 
     /// Underlying storage of the analytics identifier.

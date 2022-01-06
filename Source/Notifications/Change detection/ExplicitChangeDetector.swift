@@ -90,7 +90,7 @@ class ExplicitChangeDetector: ChangeDetector {
     private func getChangedKeysSinceLastSave(object: ZMManagedObject) -> UpdatedObject {
         var changedKeys = object.changedKeys
 
-        if changedKeys.isEmpty || object.isFault  {
+        if changedKeys.isEmpty || object.isFault {
             // If the object is a fault, calling changedValues() will return an empty set.
             // Luckily we created a snapshot of the object before the merge happend which
             // we can use to compare the values.

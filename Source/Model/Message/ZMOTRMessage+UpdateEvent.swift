@@ -21,14 +21,14 @@ import Foundation
 private let zmLog = ZMSLog(tag: "event-processing")
 
 extension ZMOTRMessage {
-    
+
     @objc
     static func createOrUpdate(fromUpdateEvent updateEvent: ZMUpdateEvent,
                                      inManagedObjectContext moc: NSManagedObjectContext,
                                      prefetchResult: ZMFetchRequestBatchResult) -> ZMOTRMessage? {
-        
+
         let selfUser = ZMUser.selfUser(in: moc)
-        
+
         guard
             let senderID = updateEvent.senderUUID,
             let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
@@ -37,7 +37,7 @@ extension ZMOTRMessage {
                 zmLog.debug("Illegal sender or conversation, abort processing.")
                 return nil
         }
-        
+
         guard
             let message = GenericMessage(from: updateEvent),
             let content = message.content
@@ -47,17 +47,17 @@ extension ZMOTRMessage {
                 return nil
         }
         zmLog.debug("Processing:\n\(message)")
-        
+
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
-        
+
         if !message.knownMessage {
             UnknownMessageAnalyticsTracker.tagUnknownMessage(with: moc.analytics)
         }
-        
+
         // Verify sender is part of conversation
         conversation.verifySender(of: updateEvent, moc: moc)
-        
+
         // Insert the message
         switch content {
         case .lastRead where conversation.isSelfConversation:
@@ -91,7 +91,7 @@ extension ZMOTRMessage {
 
         case .edited:
             return ZMClientMessage.editMessage(withEdit: message.edited, forConversation: conversation, updateEvent: updateEvent, inContext: moc, prefetchResult: prefetchResult)
-            
+
         case .clientAction(.resetSession):
             let sender = ZMUser.fetchOrCreate(with: senderID, domain: nil, in: moc)
             guard
@@ -110,22 +110,22 @@ extension ZMOTRMessage {
             else {
                 return nil
             }
-            
+
             let messageClass: AnyClass = GenericMessage.entityClass(for: message)
             var clientMessage = messageClass.fetch(withNonce: nonce,
                                                    for: conversation,
                                                    in: moc,
                                                    prefetchResult: prefetchResult,
                                                    assumeMissingIfNotPrefetched: true) as? ZMOTRMessage
-            
+
             guard !isZombieObject(clientMessage) else {
                 return nil
             }
-            
+
             var isNewMessage = false
             if clientMessage == nil {
                 isNewMessage = true
-                
+
                 if messageClass is ZMClientMessage.Type {
                     clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: moc)
                 } else if messageClass is ZMAssetClientMessage.Type {
@@ -133,22 +133,22 @@ extension ZMOTRMessage {
                 } else {
                     return nil
                 }
-                
+
                 clientMessage?.senderClientID = updateEvent.senderClientID
                 clientMessage?.serverTimestamp = updateEvent.timestamp
-                
+
                 if isGroup(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier) {
                     let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
                     clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
                 }
-                
+
                 if let message = clientMessage {
                     prefetchResult.add([message])
                 }
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID {
                 return nil
             }
-            
+
             // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
             clientMessage?.update(with: updateEvent, initialUpdate: isNewMessage)
 
@@ -159,30 +159,30 @@ extension ZMOTRMessage {
             guard !isZombieObject(clientMessage) && clientMessage?.nonce != nil else {
                 return nil
             }
-            
+
             clientMessage?.update(with: updateEvent, for: conversation)
             clientMessage?.unarchiveIfNeeded(conversation)
             clientMessage?.updateCategoryCache()
-            
+
             return clientMessage
         }
-        
+
         return nil
     }
-    
+
     private static func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
         guard let message = message else { return false }
         return message.isZombieObject
     }
-    
+
     private static func isSelf(conversation: ZMConversation, andIsSenderID senderID: UUID, differentFromSelfUserID selfUserID: UUID) -> Bool {
         return conversation.isSelfConversation && senderID != selfUserID
     }
-    
+
     private static func isGroup(conversation: ZMConversation, andIsSenderID senderID: UUID, differentFromSelfUserID selfUserID: UUID) -> Bool {
         return conversation.conversationType == .group && senderID != selfUserID
     }
-    
+
     private static func appendInvalidSystemMessage(forUpdateEvent event: ZMUpdateEvent, toConversation conversation: ZMConversation, inContext moc: NSManagedObjectContext) {
         guard let remoteId = event.senderUUID,
               let sender = ZMUser.fetch(with: remoteId, domain: nil, in: moc) else {

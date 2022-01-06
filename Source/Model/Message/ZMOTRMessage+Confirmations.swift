@@ -19,16 +19,16 @@
 import Foundation
 
 extension ZMOTRMessage {
-    
+
     private static let deliveryConfirmationDayThreshold = 7
-    
-    @NSManaged @objc dynamic var expectsReadConfirmation: Bool
-    
+
+    @NSManaged dynamic var expectsReadConfirmation: Bool
+
     @objc
     var needsDeliveryConfirmation: Bool {
         return needsDeliveryConfirmationAtCurrentDate()
     }
-    
+
     func needsDeliveryConfirmationAtCurrentDate(_ currentDate: Date = Date()) -> Bool {
         guard let conversation = conversation, conversation.conversationType == .oneOnOne,
               let sender = sender, !sender.isSelfUser,
@@ -37,13 +37,13 @@ extension ZMOTRMessage {
               deliveryState != .delivered,
               deliveryState != .read
         else { return false }
-        
+
         return daysElapsed <= ZMOTRMessage.deliveryConfirmationDayThreshold
     }
-    
+
     func needsReadConfirmation(_ genericMessage: GenericMessage) -> Bool {
         guard let conversation = conversation, let managedObjectContext = managedObjectContext else { return false }
-        
+
         if conversation.conversationType == .oneOnOne {
             var expectsReadConfirmation: Bool {
                 switch genericMessage.content {
@@ -70,7 +70,7 @@ extension ZMOTRMessage {
         } else if conversation.conversationType == .group {
             return expectsReadConfirmation
         }
-        
+
         return false
     }
 }

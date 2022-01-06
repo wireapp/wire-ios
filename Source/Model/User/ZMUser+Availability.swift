@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 @objc
-public enum AvailabilityKind : Int, CaseIterable {
+public enum AvailabilityKind: Int, CaseIterable {
     case none, available, busy, away
-    
+
     public init(proto: WireProtos.Availability) {
-        ///TODO: change ZMAvailabilityType to NS_CLOSED_ENUM
+        /// TODO: change ZMAvailabilityType to NS_CLOSED_ENUM
         switch proto.type {
         case .none:
             self = .none
@@ -41,20 +40,20 @@ public enum AvailabilityKind : Int, CaseIterable {
 
 /// Describes how the user should be notified about a change.
 public struct NotificationMethod: OptionSet {
-    
+
     public let rawValue: Int
-    
+
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
-    
+
     /// Alert user by local notification
     public static let notification = NotificationMethod(rawValue: 1 << 0)
     /// Alert user by alert dialogue
     public static let alert = NotificationMethod(rawValue: 1 << 1)
-    
+
     public static let all: NotificationMethod = [.notification, .alert]
-    
+
 }
 
 extension ZMUser {
@@ -91,7 +90,7 @@ extension ZMUser {
             .prefix(remainingSlots)
 
         recipients.formUnion(teamUsers)
-        
+
         recipients = recipients.filter { !$0.isFederated }
 
         return recipients
@@ -127,44 +126,44 @@ extension ZMUser {
         return Set(result)
     }
 
-    @objc public var availability : AvailabilityKind {
+    @objc public var availability: AvailabilityKind {
         get {
             self.willAccessValue(forKey: AvailabilityKey)
             let value = (self.primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
             self.didAccessValue(forKey: AvailabilityKey)
-            
+
             return AvailabilityKind(rawValue: value.intValue) ?? .none
         }
-        
+
         set {
             guard isSelfUser else { return } // TODO move this setter to ZMEditableUser
-            
+
             updateAvailability(newValue)
         }
     }
-        
-    internal func updateAvailability(_ newValue : AvailabilityKind) {
+
+    internal func updateAvailability(_ newValue: AvailabilityKind) {
         self.willChangeValue(forKey: AvailabilityKey)
         self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
         self.didChangeValue(forKey: AvailabilityKey)
     }
-    
-    public func updateAvailability(from genericMessage : GenericMessage) {
+
+    public func updateAvailability(from genericMessage: GenericMessage) {
         updateAvailability(AvailabilityKind(proto: genericMessage.availability))
     }
-    
+
     private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
-    
+
     /// Returns an option set describing how we should notify the user about the change in behaviour for the availability feature
     public var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
         get {
             guard let rawValue = managedObjectContext?.persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int else { return [] }
-            
+
             return NotificationMethod(rawValue: rawValue)
         }
         set {
             managedObjectContext?.setPersistentStoreMetadata(newValue.rawValue, key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey)
         }
     }
-    
+
 }

@@ -19,14 +19,14 @@
 import Foundation
 
 extension ZMMessage {
-    
+
     class func predicateForMessagesOlderThan(_ date: Date) -> NSPredicate {
         return NSPredicate(format: "%K < %@", ZMMessageServerTimestampKey, date as NSDate)
     }
-    
+
     public class func deleteMessagesOlderThan(_ date: Date, context: NSManagedObjectContext) throws {
         context.zm_fileAssetCache.deleteAssetsOlderThan(date)
         try context.batchDeleteEntities(named: ZMMessage.entityName(), matching: predicateForMessagesOlderThan(date))
     }
-    
+
 }

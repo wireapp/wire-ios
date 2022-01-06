@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 extension ZMOTRMessage {
-    
+
     /// Whether the message caused security level degradation (from verified to unverified)
     /// in this user session (i.e. since the app was started. This will be kept in memory
     /// and not persisted). This flag can be set only from the sync context. It can be read
     /// from any context.
-    override public var causedSecurityLevelDegradation : Bool {
+    override public var causedSecurityLevelDegradation: Bool {
         get {
             guard let conversation = self.conversation, let moc = self.managedObjectContext else { return false }
             let messagesByConversation = moc.messagesThatCausedSecurityLevelDegradationByConversation
@@ -35,7 +34,7 @@ extension ZMOTRMessage {
         set {
             guard let conversation = self.conversation, let moc = self.managedObjectContext else { return }
             guard moc.zm_isSyncContext else { fatal("Cannot mark message as degraded security on non-sync moc") }
-            
+
             // make sure it's persisted
             if self.objectID.isTemporaryID {
                 try! moc.obtainPermanentIDs(for: [self])
@@ -43,7 +42,7 @@ extension ZMOTRMessage {
             if conversation.objectID.isTemporaryID {
                 try! moc.obtainPermanentIDs(for: [conversation])
             }
-            
+
             // set
             var dictionary = moc.messagesThatCausedSecurityLevelDegradationByConversation
             var messagesForConversation = dictionary[conversation.objectID] ?? Set()
@@ -64,18 +63,18 @@ extension ZMOTRMessage {
 }
 
 extension ZMConversation {
-    
+
     /// List of messages that were not sent because of security level degradation in the conversation
     /// in this user session (i.e. since the app was started. This will be kept in memory
     /// and not persisted).
-    public var messagesThatCausedSecurityLevelDegradation : [ZMOTRMessage] {
+    public var messagesThatCausedSecurityLevelDegradation: [ZMOTRMessage] {
         guard let moc = self.managedObjectContext else { return [] }
         guard let messageIds = moc.messagesThatCausedSecurityLevelDegradationByConversation[self.objectID] else { return [] }
         return messageIds.compactMap {
             (try? moc.existingObject(with: $0)) as? ZMOTRMessage
         }
     }
-    
+
     public func clearMessagesThatCausedSecurityLevelDegradation() {
         guard let moc = self.managedObjectContext else { return }
         var currentMessages = moc.messagesThatCausedSecurityLevelDegradationByConversation
@@ -87,12 +86,12 @@ extension ZMConversation {
 
 private let messagesThatCausedSecurityLevelDegradationKey = "ZM_messagesThatCausedSecurityLevelDegradation"
 
-typealias SecurityDegradingMessagesByConversation = [NSManagedObjectID : Set<NSManagedObjectID>]
+typealias SecurityDegradingMessagesByConversation = [NSManagedObjectID: Set<NSManagedObjectID>]
 
 extension NSManagedObjectContext {
-    
+
     /// Non-persisted list of messages that caused security level degradation, indexed by conversation
-    fileprivate(set) var messagesThatCausedSecurityLevelDegradationByConversation : SecurityDegradingMessagesByConversation {
+    fileprivate(set) var messagesThatCausedSecurityLevelDegradationByConversation: SecurityDegradingMessagesByConversation {
         get {
             return self.userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation ?? SecurityDegradingMessagesByConversation()
         }
@@ -101,7 +100,7 @@ extension NSManagedObjectContext {
             self.zm_hasUserInfoChanges = true
         }
     }
-    
+
     /// Merge list of messages that caused security level degradation from one context to another
     func mergeSecurityLevelDegradationInfo(fromUserInfo userInfo: [String: Any]) {
         guard self.zm_isUserInterfaceContext else { return } // we don't merge anything to sync, sync is autoritative

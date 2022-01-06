@@ -21,15 +21,15 @@ import Foundation
 private let zmLog = ZMSLog(tag: "ZMMessage")
 
 extension ZMMessage {
-    
+
     func removePendingDeliveryReceipts() {
         // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the backend
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {
             return
         }
-        
+
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
-        
+
         let possibleMatches = self.managedObjectContext?.executeFetchRequestOrAssert(requestForInsertedMessages) as? [ZMClientMessage]
         let confirmationReceipts = possibleMatches?.filter { candidateConfirmationReceipt in
             guard let genericMessage = candidateConfirmationReceipt.underlyingMessage else {
@@ -44,7 +44,7 @@ extension ZMMessage {
         }
         // TODO: Re-enable
         //            NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
-        
+
         confirmationReceipts?.map { $0 as ZMClientMessage }.forEach {
             $0.managedObjectContext?.delete($0)
         }
@@ -59,12 +59,12 @@ extension ZMMessage {
         else {
             return
         }
-        
+
         // To avoid reinserting when receiving an edit we delete the message locally
         message.removeClearingSender(true)
         moc.delete(message)
     }
-    
+
     static func remove(remotelyDeletedMessage deletedMessage: MessageDelete,
                        inConversation conversation: ZMConversation,
                        senderID: UUID,
@@ -75,10 +75,10 @@ extension ZMMessage {
         else {
             return
         }
-        
+
         // We need to cascade delete the pending delivery confirmation messages for the message being deleted
         message.removePendingDeliveryReceipts()
-        
+
         guard !message.hasBeenDeleted else {
             zmLog.error("Attempt to delete the deleted message: \(deletedMessage), existing: \(message)")
             return
@@ -88,15 +88,15 @@ extension ZMMessage {
         if senderID != message.sender?.remoteIdentifier && !message.isEphemeral {
             return
         }
-        
+
         let selfUser = ZMUser.selfUser(in: moc)
-        
+
         // Only clients other than self should see the system message
         if senderID != selfUser.remoteIdentifier && !message.isEphemeral, let sender = message.sender {
             let timestamp = message.serverTimestamp ?? Date()
             conversation.appendDeletedForEveryoneSystemMessage(at: timestamp, sender: sender)
         }
-        
+
         // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
         if message.isEphemeral && message.sender?.remoteIdentifier != selfUser.remoteIdentifier {
             message.removeClearingSender(true)
@@ -105,7 +105,7 @@ extension ZMMessage {
             message.removeClearingSender(true)
             message.updateCategoryCache()
         }
-        
+
         conversation.updateTimestampsAfterDeletingMessage()
     }
 }

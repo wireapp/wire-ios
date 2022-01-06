@@ -27,7 +27,7 @@ extension ZMMessage {
         else {
             return
         }
-        
+
         localMessage.addReaction(reaction.emoji, forUser: user)
         localMessage.updateCategoryCache()
     }

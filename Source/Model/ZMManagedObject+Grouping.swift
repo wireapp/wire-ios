@@ -85,7 +85,7 @@ extension NSManagedObjectContext {
                 zmLog.error("findDuplicated<T> does not support in-memory store")
             return [:]
         }
-        
+
         guard let entity = NSEntityDescription.entity(forEntityName: T.entityName(), in: self),
               let attribute = entity.attributesByName[keyPath] else {
                 fatal("Cannot preapare the fetch")
@@ -93,7 +93,7 @@ extension NSManagedObjectContext {
 
         let keyPathExpression = NSExpression(forKeyPath: keyPath)
         let countExpression = NSExpression(forFunction: "count:", arguments: [keyPathExpression])
-        
+
         let countExpressionDescription = NSExpressionDescription()
         countExpressionDescription.name = "count"
         countExpressionDescription.expression = countExpression
@@ -104,26 +104,26 @@ extension NSManagedObjectContext {
         request.propertiesToFetch = [attribute, countExpressionDescription]
         request.propertiesToGroupBy = [attribute]
         request.resultType = .dictionaryResultType
-        
+
         do {
             let distinctIDAndCount = try self.execute(request) as! NSAsynchronousFetchResult<NSDictionary>
-            
+
             guard let finalResult = distinctIDAndCount.finalResult else {
                 return [:]
             }
-            
+
             let ids = finalResult.filter {
                 ($0["count"] as? Int ?? 0) > 1
             }.compactMap {
                 $0[keyPath]
             }
-            
+
             let fetchAllDuplicatesRequest = NSFetchRequest<T>()
             fetchAllDuplicatesRequest.entity = entity
             fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K IN %@", argumentArray: [keyPath, ids])
 
             return self.fetchOrAssert(request: fetchAllDuplicatesRequest).group(by: keyPath)
-            
+
         } catch let error {
             fatal("Cannot perform the fetch: \(error)")
         }
@@ -141,7 +141,7 @@ extension Array where Element: NSObject {
                 }
                 return TupleKeyArray(key: valueForKey, value: [$0])
             }
-        
+
         return tuples.compactMap { $0 }.merge()
     }
 }

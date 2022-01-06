@@ -32,34 +32,34 @@ extension ZMUser: UserType {
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
         let selfClient = selfUser?.selfClient()
         let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
-        
+
         return !hasUntrustedClients
     }
-    
+
     public func isGuest(in conversation: ConversationLike) -> Bool {
         return _isGuest(in: conversation)
     }
-    
+
     public var teamName: String? {
         return team?.name
     }
-    
+
     public var hasDigitalSignatureEnabled: Bool {
         return team?.fetchFeatureFlag(with: .digitalSignature)?.isEnabled ?? false
     }
-    
+
     public var previewImageData: Data? {
         return imageSmallProfileData
     }
-    
+
     public var completeImageData: Data? {
         return imageMediumData
     }
-    
+
     public var activeConversations: Set<ZMConversation> {
         return Set(self.participantRoles.compactMap {$0.conversation})
     }
-    
+
     public var isVerified: Bool {
         guard let selfUser = managedObjectContext.map(ZMUser.selfUser) else {
             return false
@@ -99,7 +99,7 @@ extension ZMUser: UserType {
     @objc class func keyPathsForValuesAffectingIsUnderLegalHold() -> Set<String> {
         return [UserClientsKey, "clients.deviceClass"]
     }
-    
+
     public var allClients: [UserClientType] {
         return Array(clients)
     }
@@ -117,13 +117,13 @@ extension ZMUser: UserType {
     public func refreshTeamData() {
         team?.refreshMetadata()
     }
-    
+
 }
 
 public struct AssetKey {
-    
+
     static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
-    
+
     public init?(_ string: String) {
         if AssetKey.validate(string: string) {
             stringValue = string
@@ -131,10 +131,10 @@ public struct AssetKey {
             return nil
         }
     }
-    
-    let stringValue : String
-    
-    fileprivate static func validate(string : String) -> Bool {
+
+    let stringValue: String
+
+    fileprivate static func validate(string: String) -> Bool {
         return CharacterSet(charactersIn: string).isSubset(of: legalCharacterSet)
     }
 }
@@ -142,7 +142,7 @@ public struct AssetKey {
 @objc public enum ProfileImageSize: Int {
     case preview
     case complete
-    
+
     public var imageFormat: ZMImageFormat {
         switch self {
         case .preview:
@@ -166,7 +166,7 @@ public struct AssetKey {
         case .complete: return "complete"
         }
     }
-    
+
     public static var allSizes: [ProfileImageSize] {
         return [.preview, .complete]
     }
@@ -194,37 +194,37 @@ public extension Notification.Name {
 }
 
 extension ZMUser {
-    
+
     @objc static public let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
     @objc static public let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
 
     @NSManaged public var previewProfileAssetIdentifier: String?
     @NSManaged public var completeProfileAssetIdentifier: String?
-    
+
     /// Conversations created by this user
     @NSManaged var conversationsCreated: Set<ZMConversation>
-    
+
     /// Team membership for this user
     @NSManaged public internal(set) var membership: Member?
 
     /// Reactions expressed by this user
     @NSManaged var reactions: Set<Reaction>
-    
+
     /// System messages referencing this user
     @NSManaged var systemMessages: Set<ZMSystemMessage>
-    
+
     @NSManaged public var expiresAt: Date?
-    
+
     /// `accountIsDeleted` is true if this account has been deleted on the backend
     @NSManaged public internal(set) var isAccountDeleted: Bool
-    
+
     @NSManaged public var usesCompanyLogin: Bool
-    
+
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
-    
+
     @NSManaged public var domain: String?
-    
+
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         guard let imageData = data else {
@@ -232,29 +232,29 @@ extension ZMUser {
             return
         }
         managedObjectContext?.zm_userImageCache?.setUserImage(self, imageData: imageData, size: size)
-        
+
         if let uiContext = managedObjectContext?.zm_userInterface {
             let changedKey = size == .preview ? #keyPath(ZMUser.previewImageData) : #keyPath(ZMUser.completeImageData)
             NotificationDispatcher.notifyNonCoreDataChanges(objectID: objectID, changedKeys: [changedKey], uiContext: uiContext)
         }
     }
-    
+
     public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
         managedObjectContext?.zm_userImageCache?.userImage(self, size: size, queue: queue, completion: completion)
     }
-    
+
     @objc(imageDataforSize:)
     public func imageData(for size: ProfileImageSize) -> Data? {
         return managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
     }
-    
+
     public static var previewImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.previewProfileAssetIdentifierKey)
         let assetIdIsValid = NSPredicate { (user, _) -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.previewProfileAssetIdentifier?.isValidAssetID ?? false
         }
-        let notCached = NSPredicate() { (user, _) -> Bool in
+        let notCached = NSPredicate { (user, _) -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.imageSmallProfileData == nil
         }
@@ -267,23 +267,23 @@ extension ZMUser {
             guard let user = user as? ZMUser else { return false }
             return user.completeProfileAssetIdentifier?.isValidAssetID ?? false
         }
-        let notCached = NSPredicate() { (user, _) -> Bool in
+        let notCached = NSPredicate { (user, _) -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.imageMediumData == nil
         }
         return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, assetIdIsValid, notCached])
     }
-    
+
     public func updateAndSyncProfileAssetIdentifiers(previewIdentifier: String, completeIdentifier: String) {
         guard isSelfUser else { return }
         previewProfileAssetIdentifier = previewIdentifier
         completeProfileAssetIdentifier = completeIdentifier
         setLocallyModifiedKeys([ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey])
     }
-    
+
     @objc public func updateAssetData(with assets: NSArray?, authoritative: Bool) {
         guard !hasLocalModifications(forKeys: [ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey]) else { return }
-        guard let assets = assets as? [[String : String]], !assets.isEmpty else {
+        guard let assets = assets as? [[String: String]], !assets.isEmpty else {
             if authoritative {
                 previewProfileAssetIdentifier = nil
                 completeProfileAssetIdentifier = nil
@@ -305,30 +305,30 @@ extension ZMUser {
             }
         }
     }
-    
+
     @objc public func requestPreviewProfileImage() {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .preview) else { return }
-        
+
         NotificationInContext(name: .userDidRequestPreviewAsset,
                               context: moc.notificationContext,
                               object: self.objectID).post()
     }
-    
+
     @objc public func requestCompleteProfileImage() {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .complete) else { return }
-        
+
         NotificationInContext(name: .userDidRequestCompleteAsset,
                               context: moc.notificationContext,
                               object: self.objectID).post()
     }
-    
+
     /// Mark the user's account as having been deleted. This will also remove the user from any conversations he/she
     /// is still a participant of.
     @objc public func markAccountAsDeleted(at timestamp: Date) {
         isAccountDeleted = true
         removeFromAllConversations(at: timestamp)
     }
-    
+
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
@@ -336,7 +336,7 @@ extension ZMUser {
                 convo.conversationType == .group else { return nil}
             return convo
         }
-        
+
         allGroupConversations.forEach { conversation in
             if isTeamMember && conversation.team == team {
                 conversation.appendTeamMemberRemovedSystemMessage(user: self, at: timestamp)
@@ -350,23 +350,23 @@ extension ZMUser {
 
 extension ZMUser {
     // MARK: - Participant role
-    
+
     @objc
     public var conversations: Set<ZMConversation> {
-        return Set(participantRoles.compactMap{ return $0.conversation })
+        return Set(participantRoles.compactMap { return $0.conversation })
     }
 }
 
 extension NSManagedObject: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         let moc: String = self.managedObjectContext?.description ?? "nil"
-        
+
         return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(self.objectID)"
     }
 }
 
 extension ZMUser {
-    
+
     /// The initials e.g. "JS" for "John Smith"
     @objc public var initials: String? {
         return PersonName.person(withName: self.name ?? "", schemeTagger: nil).initials
@@ -431,4 +431,3 @@ extension ZMUser: UserConnections {
     }
 
 }
-

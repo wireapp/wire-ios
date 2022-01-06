@@ -18,47 +18,46 @@
 
 import Foundation
 
-
 extension ZMMessage {
-    
+
     /// Type of content present in the message
-    public var category : MessageCategory {
-        
+    public var category: MessageCategory {
+
         let category = self.categoryFromContent
         guard category != .none else {
             return .undefined
         }
-        
+
         return category.union(self.likedCategory)
     }
-    
+
     /// Obj-c compatible function
     @objc public func updateCategoryCache() {
         _ = self.storeCategoryCache()
     }
-    
+
     /// A cached version of the cateogry. The getter will recalculate the category if not set already
-    public var cachedCategory : MessageCategory {
-        
+    public var cachedCategory: MessageCategory {
+
         get {
             self.willAccessValue(forKey: ZMMessageCachedCategoryKey)
             let value = (self.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber) ?? NSNumber(value: 0)
             self.didAccessValue(forKey: ZMMessageCachedCategoryKey)
-            
+
             var category = MessageCategory(rawValue: value.int32Value)
             if category == .none {
                 category = self.storeCategoryCache()
             }
             return category
         }
-        
+
         set {
             self.willChangeValue(forKey: ZMMessageCachedCategoryKey)
             self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: ZMMessageCachedCategoryKey)
             self.didChangeValue(forKey: ZMMessageCachedCategoryKey)
         }
     }
-    
+
     /// Calculate and save category in the category cache field. If no category
     /// is passed, it will compute it before storing it.
     /// - returns: the category that was stored
@@ -67,33 +66,33 @@ extension ZMMessage {
         self.cachedCategory = categoryToStore
         return categoryToStore
     }
-    
+
     /// Sorted fetch request by category. It will match a Core Data object if the intersection of the Core Data value and ANY of the passed
     /// in categories is matching that category (in other words, the Core Data value can have more bits set that a certain category and it will
     /// still match).
     public static func fetchRequestMatching(categories: Set<MessageCategory>,
                                             excluding: MessageCategory = .none,
                                             conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
-        
+
         let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: categories.map {
                 return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
             }
         )
-        
-        let excludingPredicate : NSPredicate? = (excluding != .none)
+
+        let excludingPredicate: NSPredicate? = (excluding != .none)
             ? NSPredicate(format: "(%K & %d) = 0", ZMMessageCachedCategoryKey, excluding.rawValue)
             : nil
-        let conversationPredicate : NSPredicate? = (conversation != nil)
+        let conversationPredicate: NSPredicate? = (conversation != nil)
             ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
             : nil
-        
+
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [orPredicate, excludingPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
     }
-    
+
     public static func fetchRequestMatching(matchPairs: [CategoryMatch],
                                             conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
-        
+
         let categoryPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: matchPairs.map {
             if $0.excluding != .none {
                 return NSPredicate(format: "((%K & %d) = %d) && ((%K & %d) = 0)" ,
@@ -103,14 +102,14 @@ extension ZMMessage {
             return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue)
             }
         )
-        let conversationPredicate : NSPredicate? = (conversation != nil)
+        let conversationPredicate: NSPredicate? = (conversation != nil)
             ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
             : nil
-        
+
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
     }
-    
+
 }
 
 // MARK: - Categories from specific content
@@ -119,12 +118,12 @@ let linkParser = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.li
 extension ZMMessage {
 
     /// Category according only to content (excluding likes)
-    fileprivate var categoryFromContent : MessageCategory {
-        
+    fileprivate var categoryFromContent: MessageCategory {
+
         guard !self.isObfuscated, !self.isZombieObject else {
             return .none
         }
-        
+
         let category = [self.textCategory,
                         self.imageCategory,
                         self.fileCategory,
@@ -133,14 +132,13 @@ extension ZMMessage {
                         self.systemMessageCategory
             ]
             .reduce(MessageCategory.none) {
-                (current : MessageCategory, other: MessageCategory) in
+                (current: MessageCategory, other: MessageCategory) in
                 return current.union(other)
         }
         return category
     }
 
-    
-    fileprivate var imageCategory : MessageCategory {
+    fileprivate var imageCategory: MessageCategory {
         guard let imageMessageData = self.imageMessageData else {
             return .none
         }
@@ -153,8 +151,8 @@ extension ZMMessage {
         }
         return category
     }
-    
-    fileprivate var textCategory : MessageCategory {
+
+    fileprivate var textCategory: MessageCategory {
         guard let textData = self.textMessageData,
               let text = textData.messageText, !text.isEmpty else {
             return .none
@@ -173,8 +171,8 @@ extension ZMMessage {
         }
         return category
     }
-    
-    fileprivate var fileCategory : MessageCategory {
+
+    fileprivate var fileCategory: MessageCategory {
         guard let fileData = self.fileMessageData,
             self.imageCategory == .none else {
             return .none
@@ -191,15 +189,15 @@ extension ZMMessage {
         }
         return category
     }
-    
-    fileprivate var locationCategory : MessageCategory {
+
+    fileprivate var locationCategory: MessageCategory {
         if self.locationMessageData != nil {
             return .location
         }
         return .none
     }
-    
-    fileprivate var likedCategory : MessageCategory {
+
+    fileprivate var likedCategory: MessageCategory {
         guard !self.reactions.isEmpty else {
             return .none
         }
@@ -211,15 +209,15 @@ extension ZMMessage {
         }
         return .none
     }
-    
-    fileprivate var knockCategory : MessageCategory {
+
+    fileprivate var knockCategory: MessageCategory {
         guard self.knockMessageData != nil else {
             return .none
         }
         return .knock
     }
-    
-    fileprivate var systemMessageCategory : MessageCategory {
+
+    fileprivate var systemMessageCategory: MessageCategory {
         guard self.systemMessageData != nil else {
             return .none
         }
@@ -229,10 +227,10 @@ extension ZMMessage {
 
 // MARK: - Categories
 /// Type of content in a message
-public struct MessageCategory : OptionSet {
-    
+public struct MessageCategory: OptionSet {
+
     public let rawValue: Int32
-    
+
     public static let none = MessageCategory([])
     public static let undefined = MessageCategory(rawValue: 1 << 0)
     public static let text = MessageCategory(rawValue: 1 << 1)
@@ -248,29 +246,29 @@ public struct MessageCategory : OptionSet {
     public static let systemMessage = MessageCategory(rawValue: 1 << 11)
     public static let excludedFromCollection = MessageCategory(rawValue: 1 << 12)
     public static let linkPreview = MessageCategory(rawValue: 1 << 13)
-    
+
     public init(rawValue: Int32) {
         self.rawValue = rawValue
     }
 }
 
-extension MessageCategory : CustomDebugStringConvertible {
+extension MessageCategory: CustomDebugStringConvertible {
 
-    fileprivate static let descriptions: [MessageCategory : String] = [
-        .undefined : "Undefined",
-        .text : "Text",
-        .link : "Link",
-        .image : "Image",
-        .GIF : "GIF",
-        .file : "File",
-        .audio : "Audio",
-        .video : "Video",
-        .location : "Location",
-        .liked : "Liked",
-        .knock : "Knock",
-        .systemMessage : "System message",
-        .excludedFromCollection : "Excluded from collection",
-        .linkPreview : "Link preview"
+    fileprivate static let descriptions: [MessageCategory: String] = [
+        .undefined: "Undefined",
+        .text: "Text",
+        .link: "Link",
+        .image: "Image",
+        .GIF: "GIF",
+        .file: "File",
+        .audio: "Audio",
+        .video: "Video",
+        .location: "Location",
+        .liked: "Liked",
+        .knock: "Knock",
+        .systemMessage: "System message",
+        .excludedFromCollection: "Excluded from collection",
+        .linkPreview: "Link preview"
     ]
 
     public var debugDescription: String {
@@ -285,9 +283,9 @@ extension MessageCategory : CustomDebugStringConvertible {
     }
 }
 
-extension MessageCategory : Hashable {
-    
-    public var hashValue : Int {
+extension MessageCategory: Hashable {
+
+    public var hashValue: Int {
         return self.rawValue.hashValue
     }
 }

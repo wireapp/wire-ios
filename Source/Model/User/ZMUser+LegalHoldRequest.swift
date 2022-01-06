@@ -31,7 +31,7 @@ public protocol SelfLegalHoldSubject {
 
     /// Whether the user needs to acknowledge the current legal hold status.
     var needsToAcknowledgeLegalHoldStatus: Bool { get }
-    
+
     /// Call this method a pending legal hold request was cancelled
     func legalHoldRequestWasCancelled()
 
@@ -86,19 +86,19 @@ public struct LegalHoldRequest: Codable, Hashable {
         }
 
     }
-    
+
     /**
      * Represent a client in the legal hold request.
      */
-    
+
     private struct Client: Codable, Hashable {
-        
+
         /// The ID of the client
         let id: String
     }
-    
+
     private let client: Client
-    
+
     /// The ID of the legal hold client.
     public var clientIdentifier: String {
         get {
@@ -187,11 +187,11 @@ extension ZMUser: SelfLegalHoldSubject {
             didChangeValue(forKey: ZMUserKeys.legalHoldRequest)
         }
     }
-    
+
     /**
      * Call this method a pending legal hold request was cancelled
      */
-    
+
     public func legalHoldRequestWasCancelled() {
         legalHoldRequest = nil
         needsToAcknowledgeLegalHoldStatus = false
