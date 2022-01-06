@@ -22,7 +22,7 @@ extension ZMMessage {
     @objc public func prepareToSend() {
         expireAndNotifyIfInsertingIntoDegradedConversation()
     }
-    
+
     /// If we are adding the message to a degraded conversation we want to expire it immediately
     /// and fire a notification on conversation security level change so that UI could act accordingly
     fileprivate func expireAndNotifyIfInsertingIntoDegradedConversation() {

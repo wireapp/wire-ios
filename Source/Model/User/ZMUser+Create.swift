@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public extension ZMUser {
 
     /// Fetch an existing user or create a new one if it doesn't already exist.

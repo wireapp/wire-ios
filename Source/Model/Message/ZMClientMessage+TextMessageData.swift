@@ -19,39 +19,39 @@
 import Foundation
 
 extension ZMClientMessage: ZMTextMessageData {
-    
+
     @NSManaged public var quote: ZMMessage?
-    
+
     public var quoteMessage: ZMConversationMessage? {
         return quote
     }
-    
-    public override var textMessageData: ZMTextMessageData? {        
+
+    public override var textMessageData: ZMTextMessageData? {
         guard underlyingMessage?.textData != nil else {
             return nil
         }
         return self
     }
-    
-    public var isQuotingSelf: Bool{
+
+    public var isQuotingSelf: Bool {
         return quote?.sender?.isSelfUser ?? false
     }
-    
+
     public var hasQuote: Bool {
         return underlyingMessage?.textData?.hasQuote ?? false
     }
-    
+
     public var messageText: String? {
         return underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
     }
-    
+
     public var mentions: [Mention] {
         return Mention.mentions(from: underlyingMessage?.textData?.mentions, messageText: messageText, moc: managedObjectContext)
     }
-    
+
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
         guard let nonce = nonce, isEditableMessage else { return }
-        
+
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
         let editNonce = UUID()
@@ -66,7 +66,7 @@ extension ZMClientMessage: ZMTextMessageData {
         }
 
         updateNormalizedText()
-        
+
         self.nonce = editNonce
         self.updatedTimestamp = Date()
         self.reactions.removeAll()
@@ -74,6 +74,5 @@ extension ZMClientMessage: ZMTextMessageData {
         self.linkAttachments = nil
         self.delivered = false
     }
-    
-}
 
+}

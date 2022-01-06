@@ -19,7 +19,7 @@
 import Foundation
 
 @objc public protocol UserClientType: NSObjectProtocol {
-    
+
     /// Free-form string decribing the client, this information is only available for your own clients.
     var label: String? { get }
     /// Remote identifier of the client
@@ -44,10 +44,10 @@ import Foundation
     var fingerprint: Data? { get }
     /// True if the self user has verfied the client
     var verified: Bool { get }
-    
+
     /// Delete any existing session with client and establish a new one.
     func resetSession()
-    
+
     /// Returns true if this is the active client of the self user
     func isSelfClient() -> Bool
 

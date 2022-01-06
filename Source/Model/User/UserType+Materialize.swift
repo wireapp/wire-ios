@@ -19,30 +19,30 @@
 import Foundation
 
 extension Sequence where Element: UserType {
-    
+
     /// Materialize a sequence of UserType into concrete ZMUser instances.
     ///
     /// - parameter context: NSManagedObjectContext on which users should be created.
     ///
     /// - Returns: List of concrete users which could be materialized.
-    
+
     public func materialize(in context: NSManagedObjectContext) -> [ZMUser] {
         precondition(context.zm_isUserInterfaceContext, "You can only materialize users on the UI context")
-        
+
         let nonExistingUsers = self.compactMap({ $0 as? ZMSearchUser }).filter({ $0.user == nil })
         nonExistingUsers.createLocalUsers(in: context.zm_sync)
-        
+
         return self.compactMap({ $0.unbox(in: context) })
     }
-    
+
 }
 
 extension UserType {
-    
+
     public func materialize(in context: NSManagedObjectContext) -> ZMUser? {
         return [self].materialize(in: context).first
     }
-    
+
     fileprivate func unbox(in context: NSManagedObjectContext) -> ZMUser? {
         if let user = self as? ZMUser {
             return user
@@ -53,14 +53,14 @@ extension UserType {
                 return ZMUser.fetch(with: remoteIdentifier, domain: searchUser.domain, in: context)
             }
         }
-        
+
         return nil
     }
-    
+
 }
 
 extension Sequence where Element: ZMSearchUser {
-    
+
     fileprivate func createLocalUsers(in context: NSManagedObjectContext) {
         let nonExistingUsers = filter({ $0.user == nil }).map { (userID: $0.remoteIdentifier,
                                                                  teamID: $0.teamIdentifier,
@@ -77,5 +77,5 @@ extension Sequence where Element: ZMSearchUser {
             context.saveOrRollback()
         }
     }
-    
+
 }

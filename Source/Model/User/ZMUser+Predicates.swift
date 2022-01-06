@@ -20,12 +20,12 @@ import Foundation
 import WireUtilities
 
 extension ZMUser {
-    
+
     /// Retrieves all users (excluding bots), having ZMConnectionStatusAccepted connection statuses.
     @objc static var predicateForConnectedNonBotUsers: NSPredicate {
         return predicateForUsers(withSearch: "", connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
     }
-    
+
     /// Retrieves connected users with name or handle matching search string
     ///
     /// - Parameter query: search string
@@ -34,7 +34,7 @@ extension ZMUser {
     public static func predicateForConnectedUsers(withSearch query: String) -> NSPredicate {
         return predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
     }
-    
+
     /// Retrieves all users with name or handle matching search string
     ///
     /// - Parameter query: search string
@@ -42,7 +42,7 @@ extension ZMUser {
     public static func predicateForAllUsers(withSearch query: String) -> NSPredicate {
         return predicateForUsers(withSearch: query, connectionStatuses: nil)
     }
-    
+
     /// Retrieves users with name or handle matching search string, having one of given connection statuses
     ///
     /// - Parameters:
@@ -55,18 +55,18 @@ extension ZMUser {
         if let statuses = connectionStatuses {
             allPredicates.append([predicateForUsers(withConnectionStatuses: statuses)])
         }
-        
+
         if !query.isEmpty {
-            let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName) : "%K MATCHES %@"], matchingSearch: query)
+            let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName): "%K MATCHES %@"], matchingSearch: query)
             let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), query.strippingLeadingAtSign())
             allPredicates.append([namePredicate, handlePredicate].compactMap {$0})
         }
-        
+
         let orPredicates = allPredicates.map { NSCompoundPredicate(orPredicateWithSubpredicates: $0) }
-        
+
         return NSCompoundPredicate(andPredicateWithSubpredicates: orPredicates)
     }
-    
+
     @objc(predicateForUsersWithConnectionStatusInArray:)
     public static func predicateForUsers(withConnectionStatuses connectionStatuses: [Int16]) -> NSPredicate {
         return NSPredicate(format: "(%K IN (%@))", #keyPath(ZMUser.connection.status), connectionStatuses)

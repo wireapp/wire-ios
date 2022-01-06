@@ -28,7 +28,7 @@ enum ConversationAction {
     case modifyOtherConversationMember
     case leaveConversation
     case deleteConvesation
-    
+
     var name: String {
         switch self {
         case .addConversationMember: return "add_conversation_member"
@@ -45,43 +45,43 @@ enum ConversationAction {
 }
 
 public extension ZMUser {
-    
+
     var teamRole: TeamRole {
         return TeamRole(rawPermissions: permissions?.rawValue ?? 0)
     }
-    
+
     private var permissions: Permissions? {
         return membership?.permissions
     }
-    
+
     @objc(canAddServiceToConversation:)
     func canAddService(to conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.conversationType == .group else { return false }
         return hasRoleWithAction(actionName: ConversationAction.addConversationMember.name,
                                  conversation: conversation)
     }
-    
+
     @objc(canRemoveServiceFromConversation:)
     func canRemoveService(from conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.conversationType == .group else { return false }
         return hasRoleWithAction(actionName: ConversationAction.removeConversationMember.name,
                                  conversation: conversation)
     }
-    
+
     @objc(canAddUserToConversation:)
     func canAddUser(to conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
         return hasRoleWithAction(actionName: ConversationAction.addConversationMember.name,
                                  conversation: conversation)
     }
-    
+
     @objc(canRemoveUserFromConversation:)
     func canRemoveUser(from conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
         return hasRoleWithAction(actionName: ConversationAction.removeConversationMember.name,
                                  conversation: conversation)
     }
-    
+
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
@@ -97,14 +97,14 @@ public extension ZMUser {
         return hasRoleWithAction(actionName: ConversationAction.modifyOtherConversationMember.name,
                                  conversation: conversation)
     }
-    
+
     @objc(canModifyReadReceiptSettingsInConversation:)
     func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationReceiptMode.name,
                                  conversation: conversation)
     }
-    
+
     @objc(canModifyEphemeralSettingsInConversation:)
     func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool {
         if conversation.conversationType == .group {
@@ -124,20 +124,20 @@ public extension ZMUser {
 
         return isTeamMember
     }
-    
+
     @objc(canModifyAccessControlSettingsInConversation:)
     func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group,
             conversation.teamRemoteIdentifier != nil
             else { return false }
-        
+
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationAccess.name, conversation: conversation)
     }
-    
+
     @objc(canModifyTitleInConversation:)
     func canModifyTitle(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        
+
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationName.name, conversation: conversation)
     }
 
@@ -151,22 +151,22 @@ public extension ZMUser {
     func canCreateConversation(type: ZMConversationType) -> Bool {
         switch type {
         case .oneOnOne:
-            ///all users are allow to open 1-on-1 conversation
+            /// all users are allow to open 1-on-1 conversation
             return true
         default:
             /// partner is not allowed to create non 1-on-1 convo
             return permissions?.contains(.member) ?? true
         }
     }
-    
+
     @objc var canCreateService: Bool {
         return permissions?.contains(.member) ?? false
     }
-    
+
     @objc var canManageTeam: Bool {
         return permissions?.contains(.admin) ?? false
     }
-    
+
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         guard
             let otherUser = user as? ZMUser,
@@ -178,7 +178,7 @@ public extension ZMUser {
 
         return selfUserTeamID == otherUserTeamID && !isFederating(with: otherUser)
     }
-    
+
     @objc func _isGuest(in conversation: ConversationLike) -> Bool {
         guard let conversation = conversation as? ZMConversation else { return false }
         if isSelfUser {
@@ -214,7 +214,7 @@ public extension ZMUser {
                 && membership == nil
         }
     }
-    
+
     private func hasRoleWithAction(actionName: String, conversation: ConversationLike) -> Bool {
         guard conversation.isSelfAnActiveMember,
             let role = self.role(in: conversation)

@@ -19,10 +19,10 @@
 import Foundation
 
 extension ZMMessage {
-    
+
     @objc
     func updateQuoteRelationships() {
         assertionFailure("Subclasses should override this method")
     }
-    
+
 }

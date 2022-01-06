@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     case none
     case assetKey(String)
@@ -25,7 +24,6 @@ public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
         self = .none
     }
 }
-
 
 public func ==(lhs: SearchUserAsset, rhs: SearchUserAsset) -> Bool {
     switch (lhs, rhs) {

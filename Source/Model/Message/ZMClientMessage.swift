@@ -21,20 +21,20 @@ import Foundation
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {
 
-    @objc public static let linkPreviewStateKey = "linkPreviewState"
-    @objc public static let linkPreviewKey = "linkPreview"
-    
+    public static let linkPreviewStateKey = "linkPreviewState"
+    public static let linkPreviewKey = "linkPreview"
+
     //// From https://github.com/wearezeta/generic-message-proto:
     //// "If payload is smaller then 256KB then OM can be sent directly"
     //// Just to be sure we set the limit lower, to 128KB (base 10)
-    @objc public static let byteSizeExternalThreshold: UInt = 128000
-    
+    public static let byteSizeExternalThreshold: UInt = 128000
+
     /// Link Preview state
     @NSManaged public var updatedTimestamp: Date?
-    
+
     /// In memory cache
-    var cachedUnderlyingMessage: GenericMessage? = nil
-    
+    var cachedUnderlyingMessage: GenericMessage?
+
     public override static func entityName() -> String {
         return "ClientMessage"
     }
@@ -43,8 +43,8 @@ public class ZMClientMessage: ZMOTRMessage {
         return (super.ignoredKeys ?? Set())
             .union([#keyPath(updatedTimestamp)])
     }
-    
-    public override var updatedAt : Date? {
+
+    public override var updatedAt: Date? {
         return updatedTimestamp
     }
 
@@ -57,22 +57,22 @@ public class ZMClientMessage: ZMOTRMessage {
 
     public override func awakeFromFetch() {
         super.awakeFromFetch()
-        
+
         cachedUnderlyingMessage = nil
     }
-    
+
     public override func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
         super.awake(fromSnapshotEvents: flags)
-        
+
         cachedUnderlyingMessage = nil
     }
-    
+
     public override func didTurnIntoFault() {
         super.didTurnIntoFault()
-        
+
         cachedUnderlyingMessage = nil
     }
-    
+
     public override var isUpdatingExistingMessage: Bool {
         guard let content = underlyingMessage?.content else {
                 return false
@@ -97,7 +97,7 @@ public class ZMClientMessage: ZMOTRMessage {
                 super.expire()
                 return
         }
-        
+
         switch content {
         case .edited:
             // Replace the nonce with the original
@@ -129,8 +129,8 @@ public class ZMClientMessage: ZMOTRMessage {
         }
         super.resend()
     }
-    
-    public override func update(withPostPayload payload: [AnyHashable : Any], updatedKeys: Set<AnyHashable>?) {
+
+    public override func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
         // we don't want to update the conversation if the message is a confirmation message
         guard
             let genericMessage = underlyingMessage,
@@ -147,7 +147,7 @@ public class ZMClientMessage: ZMOTRMessage {
                 let conversation = conversation else {
                     return
             }
-            
+
             let original = ZMMessage.fetch(withNonce: originalID, for: conversation, in: managedObjectContext)
             original?.sender = nil
             original?.senderClientID = nil
@@ -157,7 +157,7 @@ public class ZMClientMessage: ZMOTRMessage {
                 Logging.messageProcessing.error("sent message response nonce does not match")
                 return
             }
-            
+
             if let serverTimestamp = (payload as NSDictionary).optionalDate(forKey: "time") {
                 updatedTimestamp = serverTimestamp
             }
@@ -171,10 +171,10 @@ public class ZMClientMessage: ZMOTRMessage {
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [encryptedNotSynced, notExpired])
     }
-    
+
     public override func markAsSent() {
         super.markAsSent()
-        
+
         if linkPreviewState == ZMLinkPreviewState.uploaded {
             linkPreviewState = ZMLinkPreviewState.done
         }
@@ -204,10 +204,10 @@ public class ZMClientMessage: ZMOTRMessage {
         }
         // processed or downloaded
         let hasMedium = managedObjectContext.zm_fileAssetCache.hasDataOnDisk(self, format: ZMImageFormat.medium, encrypted: false)
-        
+
         // original
         let hasOriginal = managedObjectContext.zm_fileAssetCache.hasDataOnDisk(self, format: ZMImageFormat.original, encrypted: false)
-        
+
         return hasMedium || hasOriginal
     }
 }
@@ -221,7 +221,7 @@ extension ZMClientMessage {
     public override var fileMessageData: ZMFileMessageData? {
         return nil
     }
-    
+
     public override var isSilenced: Bool {
         return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }

@@ -20,18 +20,18 @@ import Foundation
 
 @objc
 protocol ContentHashing {
-    
+
     /// SHA-256 hash of the message content (text, image, location, ...)
     var hashOfContent: Data? { get }
-    
+
 }
 
 @objc
 extension ZMOTRMessage: ContentHashing {
-    
+
     var hashOfContent: Data? {
         assertionFailure("Subclasses should override this method")
         return nil
     }
-    
+
 }

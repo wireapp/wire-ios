@@ -89,7 +89,7 @@ extension String {
 extension GenericMessage {
     public func validatingFields() -> GenericMessage? {
         guard UUID.isValid(object: messageID), let content = self.content else { return nil }
-        
+
         switch content {
         case .text:
             guard text.validatingFields() != nil else { return nil }
@@ -189,11 +189,11 @@ extension MessageEdit {
 extension Confirmation {
     public func validatingFields() -> Confirmation? {
         guard UUID.isValid(object: firstMessageID) else { return nil }
-        
+
         if !moreMessageIds.isEmpty {
             guard UUID.isValid(array: moreMessageIds) else { return nil }
         }
-        
+
         return self
     }
 }
@@ -225,7 +225,7 @@ extension WireProtos.Asset {
         if case .uploaded? = status {
             guard uploaded.validatingFields() != nil else { return nil }
         }
-        
+
         return self
     }
 }

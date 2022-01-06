@@ -29,11 +29,11 @@ public enum ZMUserKeys {
         self.type = type
         self.value = value
     }
-    
+
     public static func == (lhs: UserRichProfileField, rhs: UserRichProfileField) -> Bool {
         return lhs.type == rhs.type && lhs.value == rhs.value
     }
-    
+
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserRichProfileField else { return false }
         return self == other
@@ -44,14 +44,14 @@ extension ZMUser {
     private enum Keys {
         static let RichProfile = "richProfile"
     }
-    
+
     @NSManaged private var primitiveRichProfile: Data?
     public var richProfile: [UserRichProfileField] {
         get {
             self.willAccessValue(forKey: ZMUserKeys.RichProfile)
             let fields: [UserRichProfileField]
             if let data = primitiveRichProfile {
-                fields = (try? JSONDecoder().decode([UserRichProfileField].self, from:data)) ?? []
+                fields = (try? JSONDecoder().decode([UserRichProfileField].self, from: data)) ?? []
             } else {
                 fields = []
             }
