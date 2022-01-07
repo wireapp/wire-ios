@@ -19,14 +19,14 @@
 import XCTest
 @testable import WireDataModel
 
-class CoreDataStackTests_EncryptionAtRest: DatabaseBaseTest {
+final class CoreDataStackTests_EncryptionAtRest: DatabaseBaseTest {
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatItStoresAndClearsDatabaseKeyOnAllContexts() throws {
         // Given
         let sut = createStorageStackAndWaitForCompletion()
         let account = Account(userName: "", userIdentifier: UUID())
-#if targetEnvironment(simulator)
+#if targetEnvironment(simulator) && swift(>=5.4)
         if #available(iOS 15, *) {
             XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
         }
