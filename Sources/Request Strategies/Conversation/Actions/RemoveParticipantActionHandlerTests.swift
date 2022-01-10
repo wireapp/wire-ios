@@ -107,12 +107,14 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         ]
 
         for (expectedError, response) in errorResponses {
-            guard let error = ConversationRemoveParticipantError(response: response) else { return XCTFail() }
+            guard let error = ConversationRemoveParticipantError(response: response) else {
+                return XCTFail("Error is invalid")
+            }
 
             if case error = expectedError {
                 // success
             } else {
-                XCTFail()
+                XCTFail("Unexpected error")
             }
         }
     }

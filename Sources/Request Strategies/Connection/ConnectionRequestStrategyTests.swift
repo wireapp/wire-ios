@@ -276,7 +276,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             let request = self.sut.nextRequest()!
             guard let payload = Payload.PaginationStatus(request) else {
-                return XCTFail()
+                return XCTFail("Invalid Payload")
             }
 
             request.complete(with: self.successfulResponse(request: payload, connections: connections))

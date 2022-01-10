@@ -68,10 +68,17 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.methodPOST)
             XCTAssertEqual(request.transportRequest.path, "/users/prekeys")
 
-            guard let payloadData = (request.transportRequest.payload as? String)?.data(using: .utf8),
-                  let payload = Payload.ClientListByUserID(payloadData),
-                  let clientList = payload[missingUser.remoteIdentifier.transportString()] else {
-                XCTFail(); return
+            guard let payloadData = (request.transportRequest.payload as? String)?.data(using: .utf8) else {
+                XCTFail("Payload data is missing")
+                return
+            }
+            guard let payload = Payload.ClientListByUserID(payloadData) else {
+                XCTFail("Payload is missing")
+                return
+            }
+            guard let clientList = payload[missingUser.remoteIdentifier.transportString()] else {
+                XCTFail("Client List is missing")
+                return
             }
 
             XCTAssertEqual(clientList.sorted(), [firstMissingClient.remoteIdentifier!,
@@ -98,11 +105,24 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.methodPOST)
             XCTAssertEqual(request.transportRequest.path, "/users/list-prekeys")
 
-            guard let payloadData = (request.transportRequest.payload as? String)?.data(using: .utf8),
-                  let payload = Payload.ClientListByQualifiedUserID(payloadData),
-                  let userList = payload[missingUser.domain!],
-                  let clientList = userList[missingUser.remoteIdentifier.transportString()] else {
-                XCTFail(); return
+            guard let payloadData = (request.transportRequest.payload as? String)?.data(using: .utf8) else {
+                 XCTFail("Payload data is missing")
+                 return
+            }
+
+            guard let  payload = Payload.ClientListByQualifiedUserID(payloadData) else {
+                XCTFail("Payload is missing")
+                return
+            }
+
+            guard let userList = payload[missingUser.domain!] else {
+                XCTFail("User list is missing")
+                return
+            }
+
+            guard let clientList = userList[missingUser.remoteIdentifier.transportString()] else {
+                 XCTFail("Client list is missing")
+                 return
             }
 
             XCTAssertEqual(clientList.sorted(), [firstMissingClient.remoteIdentifier!,
@@ -119,7 +139,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             guard let request = self.sut.nextRequest() else {
-                XCTFail(); return
+                XCTFail("Request is nil"); return
             }
 
             // THEN
@@ -136,7 +156,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             guard let request = self.sut.nextRequest() else {
-                XCTFail(); return
+                XCTFail("Request is nil"); return
             }
 
             // THEN
@@ -204,11 +224,17 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             self.sut.notifyChangeTrackers(self.selfClient)
 
             // WHEN
-            guard
-                let firstRequest = self.sut.nextRequest(),
-                let payloadData = (firstRequest.payload as? String)?.data(using: .utf8),
-                let firstPayload = Payload.ClientListByUserID(payloadData) else {
-                XCTFail(); return
+            guard let firstRequest = self.sut.nextRequest() else {
+                XCTFail("Failed to create request")
+                return
+            }
+            guard let payloadData = (firstRequest.payload as? String)?.data(using: .utf8) else {
+                XCTFail("Payload data is missing")
+                return
+            }
+            guard let firstPayload = Payload.ClientListByUserID(payloadData) else {
+                XCTFail("Client list payload is missing")
+                return
             }
 
             // THEN
@@ -216,7 +242,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(firstRequest.path, "/users/prekeys")
             XCTAssertEqual(firstPayload.count, 1)
             guard let first = firstPayload.first else {
-                XCTFail(); return
+                XCTFail("First payload is missing"); return
             }
             firstEntry = first
             firstRequest.complete(with: self.successfulResponse(for: firstPayload))
@@ -225,10 +251,18 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         var secondEntry: (key: String, value: [String])!
         self.syncMOC.performGroupedAndWait { _ in
             // and when
-            guard let secondRequest = self.sut.nextRequest(),
-                  let payloadData = (secondRequest.payload as? String)?.data(using: .utf8),
-                  let secondPayload = Payload.ClientListByUserID(payloadData) else {
-                XCTFail(); return
+            guard let secondRequest = self.sut.nextRequest() else {
+                XCTFail("Failed to create request")
+                return
+            }
+            guard let payloadData = (secondRequest.payload as? String)?.data(using: .utf8) else {
+                XCTFail("Payload data is missing")
+                return
+            }
+
+            guard let secondPayload = Payload.ClientListByUserID(payloadData) else {
+                XCTFail("Second payload is missing")
+                return
             }
 
             // THEN
@@ -236,7 +270,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(secondRequest.path, "/users/prekeys")
             XCTAssertEqual(secondPayload.count, 1)
             guard let second = secondPayload.first else {
-                XCTFail(); return
+                XCTFail("Second payload is missing"); return
             }
             secondEntry = second
             secondRequest.complete(with: self.successfulResponse(for: secondPayload))
@@ -280,11 +314,17 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             self.sut.notifyChangeTrackers(self.selfClient)
 
             // WHEN
-            guard
-                let firstRequest = self.sut.nextRequest(),
-                let payloadData = (firstRequest.payload as? String)?.data(using: .utf8),
-                let firstPayload = Payload.ClientListByQualifiedUserID(payloadData) else {
-                XCTFail(); return
+            guard let firstRequest = self.sut.nextRequest() else {
+                XCTFail("Failed to create request")
+                return
+            }
+            guard let payloadData = (firstRequest.payload as? String)?.data(using: .utf8) else {
+                XCTFail("Payload data is missing")
+                return
+            }
+            guard let firstPayload = Payload.ClientListByQualifiedUserID(payloadData) else {
+                XCTFail("First payload is missing")
+                return
             }
 
             // THEN
@@ -292,7 +332,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(firstRequest.path, "/users/list-prekeys")
             XCTAssertEqual(firstPayload.count, 1)
             guard let first = firstPayload.first?.value.first else {
-                XCTFail(); return
+                XCTFail("First is invalid"); return
             }
             firstEntry = first
             firstRequest.complete(with: self.successfulFederatedResponse(for: firstPayload))
@@ -301,10 +341,17 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         var secondEntry: (key: String, value: [String])!
         self.syncMOC.performGroupedAndWait { _ in
             // and when
-            guard let secondRequest = self.sut.nextRequest(),
-                  let payloadData = (secondRequest.payload as? String)?.data(using: .utf8),
-                  let secondPayload = Payload.ClientListByQualifiedUserID(payloadData) else {
-                XCTFail(); return
+            guard let secondRequest = self.sut.nextRequest() else {
+                XCTFail("Failed to create request")
+                return
+            }
+            guard let payloadData = (secondRequest.payload as? String)?.data(using: .utf8) else {
+                XCTFail("Payload data is missing")
+                return
+            }
+            guard let secondPayload = Payload.ClientListByQualifiedUserID(payloadData) else {
+                XCTFail("Second payload is missing")
+                return
             }
 
             // THEN
@@ -312,7 +359,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(secondRequest.path, "/users/list-prekeys")
             XCTAssertEqual(secondPayload.count, 1)
             guard let second = secondPayload.first?.value.first else {
-                XCTFail(); return
+                XCTFail("Second payload is missing"); return
             }
             secondEntry = second
             secondRequest.complete(with: self.successfulFederatedResponse(for: secondPayload))
@@ -591,7 +638,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             guard let request = self.sut.nextRequest() else {
-                XCTFail(); return
+                XCTFail("Request is nil"); return
             }
 
             // THEN
@@ -647,7 +694,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             self.sut.isFederationEndpointAvailable = true
             self.selfClient.missesClient(self.otherClient)
             self.sut.notifyChangeTrackers(self.selfClient)
-            guard let request = self.sut.nextRequest() else { XCTFail(); return }
+            guard let request = self.sut.nextRequest() else { XCTFail("Request is nil"); return }
             XCTAssertEqual(request.path, "/users/list-prekeys")
 
             // WHEN
@@ -657,7 +704,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest() else { XCTFail(); return }
+            guard let request = self.sut.nextRequest() else { XCTFail("Request is nil"); return }
             XCTAssertEqual(request.path, "/users/prekeys")
         }
     }

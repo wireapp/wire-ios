@@ -415,7 +415,7 @@ extension FetchClientRequestStrategyTests {
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .methodGET)
             } else {
-                XCTFail()
+                XCTFail("Failed to create request")
             }
         }
     }
@@ -441,7 +441,7 @@ extension FetchClientRequestStrategyTests {
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .methodPOST)
             } else {
-                XCTFail()
+                XCTFail("Failed to create request")
             }
         }
     }

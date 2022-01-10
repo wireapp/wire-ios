@@ -81,7 +81,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         do {
             try message.setUnderlyingMessage(uploaded)
         } catch {
-            XCTFail()
+            XCTFail("Could not set generic message")
         }
 
         deleteDownloadedFileFor(message: message)
@@ -182,7 +182,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(assetData.uploaded.assetID, assetId)
             XCTAssertEqual(assetData.uploaded.assetToken, token)
             guard case .ephemeral? = message.underlyingMessage!.content else {
-                return XCTFail()
+                return XCTFail("Ephemeral's message content is invalid")
             }
             message.requestFileDownload()
         }
@@ -223,7 +223,9 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     func testThatItGeneratesNoRequestsIfMessageIsUploading_V3() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail() } // V3
+            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else {
+                return XCTFail("Failed to create message")
+            } // V3
             message.updateTransferState(.uploading, synchronize: false)
             message.requestFileDownload()
         }

@@ -310,7 +310,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             // THEN
             XCTAssertTrue(message.isEphemeral)
             guard case .ephemeral? = message.underlyingMessage!.content else {
-                return XCTFail()
+                return XCTFail("No ephemeral content found")
             }
             // The message is ephemeral and contains text
             XCTAssertTrue(message.underlyingMessage!.hasText)
