@@ -50,6 +50,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let addParticipantActionHandler: AddParticipantActionHandler
     let removeParticipantActionHandler: RemoveParticipantActionHandler
 
+    let updateRoleActionHandler: UpdateRoleActionHandler
+
     let updateSync: KeyPathObjectSync<ConversationRequestStrategy>
     let actionSync: EntityActionSync
 
@@ -119,9 +121,12 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.addParticipantActionHandler = AddParticipantActionHandler(context: managedObjectContext)
         self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext)
 
+        self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext)
+
         self.actionSync = EntityActionSync(actionHandlers: [
             addParticipantActionHandler,
-            removeParticipantActionHandler
+            removeParticipantActionHandler,
+            updateRoleActionHandler
         ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
