@@ -29,12 +29,12 @@ extension ZMAssetClientMessage {
 
     func deleteContent() {
         managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
-        
+
         if let url = temporaryDirectoryURL,
             FileManager.default.fileExists(atPath: url.path) {
             try? FileManager.default.removeItem(at: url)
         }
-        
+
         dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach {
             $0.managedObjectContext?.delete($0)
         }
@@ -44,7 +44,7 @@ extension ZMAssetClientMessage {
         associatedTaskIdentifier = nil
         preprocessedSize = CGSize.zero
     }
-    
+
     override public func removeClearingSender(_ clearingSender: Bool) {
         if !clearingSender {
             markRemoteAssetToBeDeleted()
@@ -52,17 +52,17 @@ extension ZMAssetClientMessage {
         deleteContent()
         super.removeClearingSender(clearingSender)
     }
-    
+
     private func markRemoteAssetToBeDeleted() {
         guard sender == ZMUser.selfUser(in: managedObjectContext!) else {
             return
         }
-        
+
         // Request the asset to be deleted
         if let identifier = underlyingMessage?.v3_uploadedAssetId {
             NotificationCenter.default.post(name: .deleteAssetNotification, object: identifier)
         }
-        
+
         // Request the preview asset to be deleted
         if let previewIdentifier = underlyingMessage?.previewAssetId {
             NotificationCenter.default.post(name: .deleteAssetNotification, object: previewIdentifier)

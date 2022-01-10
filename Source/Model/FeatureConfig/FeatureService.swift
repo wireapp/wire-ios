@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 /// This class facilitates storage and retrieval of feature configs to and from
@@ -148,7 +147,7 @@ public class FeatureService {
 
             case .conferenceCalling:
                 storeConferenceCalling(.init())
-                
+
             case .fileSharing:
                 storeFileSharing(.init())
 

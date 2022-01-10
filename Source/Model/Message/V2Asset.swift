@@ -16,28 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import MobileCoreServices
 
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
-    
+
     public var isDownloaded: Bool {
         return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
                moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
     }
-    
+
     public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         let cache = moc.zm_fileAssetCache
         let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
         let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
-        
+
         queue.async {
             completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache?.assetData($0) }).first)
         }
     }
-    
+
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
 
@@ -51,7 +50,7 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     public var imageMessageData: ZMImageMessageData? {
         guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil else { return nil }
-        
+
         return self
     }
 
@@ -97,15 +96,15 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
     public var originalSize: CGSize {
-        guard let asset = assetClientMessage.mediumGenericMessage?.imageAssetData else  { return .zero }
+        guard let asset = assetClientMessage.mediumGenericMessage?.imageAssetData else { return .zero }
         let size = CGSize(width: Int(asset.originalWidth), height: Int(asset.originalHeight))
-        
+
         if size != .zero {
             return size
         }
-        
+
         return assetClientMessage.preprocessedSize
-        
+
     }
 
     // MARK: - Helper
@@ -119,7 +118,6 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
 }
-
 
 extension V2Asset: AssetProxyType {
 
@@ -151,11 +149,11 @@ extension V2Asset: AssetProxyType {
 
         return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
     }
-    
+
     public func requestFileDownload() {
         guard assetClientMessage.fileMessageData != nil || assetClientMessage.imageMessageData != nil else { return }
         guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
-        
+
         if assetClientMessage.imageMessageData != nil {
             NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
         } else {

@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMClientMessage {
-    
+
     func deleteContent() {
         cachedUnderlyingMessage = nil
         dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach {
@@ -29,7 +29,7 @@ extension ZMClientMessage {
         normalizedText = nil
         quote = nil
     }
-    
+
     public override func removeClearingSender(_ clearingSender: Bool) {
         deleteContent()
         super.removeClearingSender(clearingSender)

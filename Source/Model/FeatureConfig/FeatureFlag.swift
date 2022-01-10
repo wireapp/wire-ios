@@ -25,25 +25,25 @@ public enum FeatureFlagType: String {
 @objcMembers
 public class FeatureFlag: ZMManagedObject {
     public static let teamKey = #keyPath(FeatureFlag.team)
-    
+
     @NSManaged public var identifier: String
     @NSManaged public var isEnabled: Bool
     @NSManaged public var updatedTimestamp: Date
     @NSManaged public var team: Team?
-    
+
     open override var ignoredKeys: Set<AnyHashable>? {
         return (super.ignoredKeys ?? Set())
             .union([#keyPath(updatedTimestamp)])
     }
-    
+
     public override static func entityName() -> String {
         return "FeatureFlag"
     }
-    
-    public var updatedAt : Date? {
+
+    public var updatedAt: Date? {
         return updatedTimestamp
     }
-    
+
     @discardableResult
     public static func updateOrCreate(with type: FeatureFlagType,
                                      value: Bool,
@@ -65,7 +65,7 @@ public class FeatureFlag: ZMManagedObject {
                                  context: context)
         return featureFlag
     }
-    
+
     @discardableResult
     public static func insert(with type: FeatureFlagType,
                               value: Bool,
@@ -80,7 +80,7 @@ public class FeatureFlag: ZMManagedObject {
         featureFlag.team = team
         return featureFlag
     }
-    
+
     @discardableResult
     public static func fetch(with type: FeatureFlagType,
                              team: Team,

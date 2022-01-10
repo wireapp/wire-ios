@@ -31,7 +31,7 @@ public extension Feature {
         public init(status: Feature.Status = .enabled) {
             self.status = status
         }
-        
+
     }
 
 }

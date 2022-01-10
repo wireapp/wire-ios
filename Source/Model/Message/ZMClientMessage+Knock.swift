@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMClientMessage: ZMKnockMessageData {
-    
+
     public override var knockMessageData: ZMKnockMessageData? {
         guard underlyingMessage?.knockData != nil else {
             return nil

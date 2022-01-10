@@ -41,13 +41,13 @@ private let log = ZMSLog(tag: "Conversations")
 
 @objc
 public final class SignatureStatus: NSObject {
-    
+
     @objc
     public enum ErrorYpe: Int {
         case noConsentURL
         case retrieveFailed
     }
-    
+
     // MARK: - Private Property
     private(set) var asset: WireProtos.Asset?
     private(set) var managedObjectContext: NSManagedObjectContext
@@ -64,15 +64,15 @@ public final class SignatureStatus: NSObject {
                 managedObjectContext: NSManagedObjectContext) {
         self.asset = asset
         self.managedObjectContext = managedObjectContext
-        
+
         documentID = asset?.uploaded.assetID
         fileName = asset?.original.name.removingExtremeCombiningCharacters
-        
+
         encodedHash = data?
             .zmSHA256Digest()
             .base64String()
     }
-    
+
     // MARK: - Public Method
     public func signDocument() {
         guard encodedHash != nil else {
@@ -83,13 +83,13 @@ public final class SignatureStatus: NSObject {
         DigitalSignatureNotification(state: .consentURLPending)
             .post(in: managedObjectContext.notificationContext)
     }
-    
+
     public func retrieveSignature() {
          guard case .waitingForCodeVerification = state else { return }
          state = .waitingForSignature
          RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
-    
+
     public func didReceiveConsentURL(_ url: URL?) {
         guard let consentURL = url else {
             state = .signatureInvalid
@@ -101,7 +101,7 @@ public final class SignatureStatus: NSObject {
         DigitalSignatureNotification(state: .consentURLReceived(consentURL))
             .post(in: managedObjectContext.notificationContext)
     }
-    
+
     public func didReceiveSignature(with data: Data?) {
         guard
             let cmsData = data,
@@ -112,24 +112,24 @@ public final class SignatureStatus: NSObject {
                 .post(in: managedObjectContext.notificationContext)
             return
         }
-        
+
         state = .finished
         let fileMetaData = ZMFileMetadata(fileURL: fileMetaDataInfo.url,
                                           name: fileMetaDataInfo.fileName)
         DigitalSignatureNotification(state: .digitalSignatureReceived(fileMetaData))
             .post(in: managedObjectContext.notificationContext)
     }
-    
+
     public func didReceiveError(_ errorType: ErrorYpe) {
         state = .signatureInvalid
         DigitalSignatureNotification(state: .signatureInvalid(errorType: errorType))
             .post(in: managedObjectContext.notificationContext)
     }
-    
+
     public func store() {
         managedObjectContext.signatureStatus = self
     }
-    
+
     // MARK: - Private Method
     private func writeCMSSignatureFile(for data: Data) -> CMSFileMetadataInfo? {
         guard
@@ -139,7 +139,7 @@ public final class SignatureStatus: NSObject {
         else {
             return nil
         }
-        
+
         let temporaryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let cmsFileName = "\(fileName)(\(assetID)).cms"
         let cmsURL = temporaryURL.appendingPathComponent(cmsFileName)
@@ -148,7 +148,7 @@ public final class SignatureStatus: NSObject {
         } catch {
             log.error("Failed to decode SignatureRetrieveResponse with \(error)")
         }
-        
+
         return CMSFileMetadataInfo(url: cmsURL, fileName: cmsFileName)
     }
 }
@@ -160,7 +160,7 @@ public extension SignatureStatus {
         return NotificationInContext.addObserver(name: DigitalSignatureNotification.notificationName,
                                                  context: context.notificationContext,
                                                  queue: .main) { [weak observer] note in
-            if let note = note.userInfo[DigitalSignatureNotification.userInfoKey] as? DigitalSignatureNotification  {
+            if let note = note.userInfo[DigitalSignatureNotification.userInfoKey] as? DigitalSignatureNotification {
                 switch note.state {
                 case .consentURLPending:
                     observer?.willReceiveSignatureURL()
@@ -177,8 +177,8 @@ public extension SignatureStatus {
 }
 
 // MARK: - DigitalSignatureNotification
-public class DigitalSignatureNotification: NSObject  {
-    
+public class DigitalSignatureNotification: NSObject {
+
     // MARK: - State
     public enum State {
         case consentURLPending
@@ -186,19 +186,19 @@ public class DigitalSignatureNotification: NSObject  {
         case signatureInvalid(errorType: SignatureStatus.ErrorYpe)
         case digitalSignatureReceived(_ cmsFileMetaData: ZMFileMetadata)
     }
-    
+
     // MARK: - Public Property
     public static let notificationName = Notification.Name("DigitalSignatureNotification")
     public static let userInfoKey = notificationName.rawValue
-    
+
     public let state: State
-    
+
     // MARK: - Init
     public init(state: State) {
         self.state = state
         super.init()
     }
-    
+
     // MARK: - Public Method
     public func post(in context: NotificationContext) {
         NotificationInContext(name: DigitalSignatureNotification.notificationName,
@@ -211,7 +211,7 @@ public class DigitalSignatureNotification: NSObject  {
 private struct CMSFileMetadataInfo {
     let url: URL
     let fileName: String
-    
+
     public init(url: URL, fileName: String) {
         self.url = url
         self.fileName = fileName
@@ -221,7 +221,7 @@ private struct CMSFileMetadataInfo {
 // MARK: - NSManagedObjectContext
 extension NSManagedObjectContext {
     private static let signatureStatusKey = "SignatureStatus"
-    
+
     @objc public var signatureStatus: SignatureStatus? {
         get {
             precondition(zm_isSyncContext, "signatureStatus can only be accessed on the sync context")

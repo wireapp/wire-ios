@@ -30,14 +30,14 @@ extension ZMAssetClientMessage {
         }
 
         version = 3 // We assume received assets are V3 since backend no longer supports sending V2 assets.
-        
+
         guard
             let assetData = message.assetData,
             let status = assetData.status
         else {
             return
         }
-        
+
         switch status {
         case .uploaded(let data) where data.hasAssetID:
             updateTransferState(.uploaded, synchronize: false)

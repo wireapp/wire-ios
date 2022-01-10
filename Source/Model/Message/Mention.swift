@@ -20,14 +20,14 @@ import Foundation
 
 @objc
 public class Mention: NSObject {
-    
+
     public let range: NSRange
     public let user: UserType
-    
+
     init?(_ protobuf: WireProtos.Mention, context: NSManagedObjectContext) {
         let userRemoteID = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.id : protobuf.userID
         let domain = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.domain : nil
-        
+
         guard
             let userId = UUID(uuidString: userRemoteID),
             protobuf.length > 0,
@@ -36,22 +36,22 @@ public class Mention: NSObject {
         else {
             return nil
         }
-        
+
         self.user = user
         self.range = NSRange(location: Int(protobuf.start), length: Int(protobuf.length))
     }
-    
+
     public init(range: NSRange, user: UserType) {
         self.range = range
         self.user = user
     }
-    
+
     public override func isEqual(_ object: Any?) -> Bool {
         guard let otherMention = object as? Mention else { return false }
-        
+
         return user.isEqual(otherMention.user) && NSEqualRanges(range, otherMention.range)
     }
-        
+
 }
 
 extension Mention {
@@ -59,18 +59,18 @@ extension Mention {
         guard let protos = protos,
             let messageText = messageText,
             let managedObjectContext = moc else { return [] }
-        
+
         let mentions = Array(protos.compactMap({ Mention($0, context: managedObjectContext) }).prefix(500))
         var mentionRanges = IndexSet()
         let messageRange = NSRange(messageText.startIndex ..< messageText.endIndex, in: messageText)
-        
+
         return mentions.filter({ mention  in
             let range = mention.range.range
-            
+
             guard !mentionRanges.intersects(integersIn: range), range.upperBound <= messageRange.upperBound else { return false }
-            
+
             mentionRanges.insert(integersIn: range)
-            
+
             return true
         })
     }

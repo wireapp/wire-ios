@@ -49,7 +49,7 @@ public class Feature: ZMManagedObject {
     @NSManaged private var configData: Data?
     @NSManaged public var needsToNotifyUser: Bool
     @NSManaged var hasInitialDefault: Bool
-    
+
     public var config: Data? {
         get {
             return configData
@@ -62,7 +62,7 @@ public class Feature: ZMManagedObject {
             configData = newValue
         }
     }
-    
+
     public var name: Name {
         get {
             guard let name = Name(rawValue: nameValue) else {
@@ -76,7 +76,7 @@ public class Feature: ZMManagedObject {
             nameValue = newValue.rawValue
         }
     }
-    
+
     public var status: Status {
         get {
             guard let status = Status(rawValue: statusValue) else {
@@ -100,7 +100,7 @@ public class Feature: ZMManagedObject {
     }
 
     // MARK: - Methods
-    
+
     public override static func entityName() -> String {
         return "Feature"
     }
@@ -108,7 +108,6 @@ public class Feature: ZMManagedObject {
     public override static func sortKey() -> String {
         return #keyPath(Feature.nameValue)
     }
-
 
     /// Fetch the instance for the given name.
     ///

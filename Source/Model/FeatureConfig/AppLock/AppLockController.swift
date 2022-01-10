@@ -115,7 +115,7 @@ public final class AppLockController: AppLockType {
     }
 
     // MARK: - Life cycle
-    
+
     public init(userId: UUID, selfUser: ZMUser, legacyConfig: LegacyConfig? = nil) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
@@ -126,7 +126,7 @@ public final class AppLockController: AppLockType {
 
         featureService = FeatureService(context: selfUser.managedObjectContext!)
     }
-    
+
     // MARK: - Methods
 
     public func beginTimer() {
@@ -224,7 +224,7 @@ public final class AppLockController: AppLockType {
     func fetchPasscode() -> Data? {
         return try? Keychain.fetchItem(keychainItem)
     }
-    
+
 }
 
 // MARK: - TEST ONLY!

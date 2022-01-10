@@ -28,7 +28,7 @@ protocol BiometricsStateProtocol {
 final class BiometricsState: BiometricsStateProtocol {
 
     private let UserDefaultsDomainStateKey = "DomainStateKey"
-    
+
     var lastPolicyDomainState: Data? {
         get {
             return UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
@@ -38,7 +38,7 @@ final class BiometricsState: BiometricsStateProtocol {
             UserDefaults.standard.set(newValue, forKey: UserDefaultsDomainStateKey)
         }
     }
-    
+
     var currentPolicyDomainState: Data?
 
     /// Returns `true` if the biometrics database has changed, e.g if finger prints are
@@ -49,7 +49,7 @@ final class BiometricsState: BiometricsStateProtocol {
         guard let lastState = lastPolicyDomainState else { return false }
         return currentPolicyDomainState != lastState
     }
-    
+
     /// Persists the last seen biometrics state for future comparisons.
 
      func persistState() {

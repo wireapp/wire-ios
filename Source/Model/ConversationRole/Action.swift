@@ -29,15 +29,15 @@ final public class Action: ZMManagedObject {
     public override static func entityName() -> String {
         return String(describing: Action.self)
     }
-    
+
     private static func fetchExistingAction(with name: String,
                                     role: Role,
                                     in context: NSManagedObjectContext) -> Action? {
         let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
-        
+
         let actions = context.fetchOrAssert(request: fetchRequest)
-        return actions.first(where:{
+        return actions.first(where: {
             role.actions.contains($0)
         })
     }
@@ -50,7 +50,7 @@ final public class Action: ZMManagedObject {
         entry.name = name
         return entry
     }
-    
+
     @discardableResult
     public static func fetchOrCreate(with name: String,
                                      role: Role,

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 extension ZMConversation {
@@ -28,7 +27,7 @@ extension ZMConversation {
                             clients: [client],
                             timestamp: timestamp)
     }
-    
+
     public func appendTeamMemberRemovedSystemMessage(user: ZMUser, at timestamp: Date) {
         appendSystemMessage(type: .teamMemberLeave,
                             sender: user,
@@ -36,7 +35,7 @@ extension ZMConversation {
                             clients: nil,
                             timestamp: timestamp)
     }
-    
+
     public func appendParticipantRemovedSystemMessage(user: ZMUser, sender: ZMUser? = nil, at timestamp: Date) {
         appendSystemMessage(type: .participantsRemoved,
                             sender: sender ?? user,
@@ -44,7 +43,7 @@ extension ZMConversation {
                             clients: nil,
                             timestamp: timestamp)
     }
-    
+
     @objc(appendNewConversationSystemMessageAtTimestamp:users:)
     public func appendNewConversationSystemMessage(at timestamp: Date, users: Set<ZMUser>) {
         let systemMessage = appendSystemMessage(type: .newConversation,
@@ -52,19 +51,19 @@ extension ZMConversation {
                                                 users: users,
                                                 clients: nil,
                                                 timestamp: timestamp)
-        
+
         systemMessage.text = userDefinedName
-        
+
         // Fill out team specific properties if the conversation was created in the self user team
         if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team, team == selfUserTeam {
-            
+
             let members = selfUserTeam.members.compactMap { $0.user }
             let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
-            
+
             systemMessage.allTeamUsersAdded = users.isSuperset(of: members)
             systemMessage.numberOfGuestsAdded = Int16(guests.count)
         }
-        
+
         if hasReadReceiptsEnabled {
             appendMessageReceiptModeIsOnMessage(timestamp: timestamp.nextNearestTimestamp)
         }
@@ -78,5 +77,5 @@ extension ZMConversation {
                             timestamp: timestamp,
                             messageTimer: timer)
     }
-    
+
 }

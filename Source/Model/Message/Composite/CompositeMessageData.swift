@@ -27,7 +27,7 @@ public protocol CompositeMessageData {
 public enum CompositeMessageItem {
     case text(ZMTextMessageData)
     case button(ButtonMessageData)
-    
+
     internal init?(with protoItem: Composite.Item, message: ZMClientMessage) {
         guard let content = protoItem.content else { return nil }
         let itemContent = CompositeMessageItemContent(with: protoItem, message: message)
@@ -60,7 +60,7 @@ public enum ButtonMessageState {
     case unselected
     case selected
     case confirmed
-    
+
     init(from state: ButtonState.State?) {
         guard let state = state else {
             self = .unselected
@@ -68,7 +68,7 @@ public enum ButtonMessageState {
         }
         self = ButtonMessageState(from: state)
     }
-    
+
     init(from state: ButtonState.State) {
         switch state {
         case .unselected:
