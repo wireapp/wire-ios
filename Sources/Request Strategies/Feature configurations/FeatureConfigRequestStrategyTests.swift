@@ -53,12 +53,16 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
     func test_ItGeneratesARequest_ToFetchASingleConfig() {
         syncMOC.performGroupedAndWait { context -> Void in
             // Given
-            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            guard let feature = Feature.fetch(name: .appLock, context: context) else {
+                return XCTFail("Failed to fetch AppLock feature")
+            }
             feature.needsToBeUpdatedFromBackend = true
 
             // When
             self.boostrapChangeTrackers(with: feature)
-            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed() else {
+                return XCTFail("Request is nil")
+            }
 
             // Then
             XCTAssertEqual(request.path, "/feature-configs/appLock")
@@ -70,7 +74,9 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
             // Given
             _ = self.setUpTeam(in: context)
 
-            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            guard let feature = Feature.fetch(name: .appLock, context: context) else {
+                return XCTFail("Failed to fetch AppLock feature")
+            }
             feature.needsToBeUpdatedFromBackend = false
 
             // When
@@ -87,11 +93,13 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             feature = Feature.fetch(name: .fileSharing, context: self.syncMOC)
-            guard let feature = feature else { return XCTFail() }
+            guard let feature = feature else {
+                return XCTFail("Failed to fetch FileSharing feature")
+            }
             feature.needsToBeUpdatedFromBackend = true
 
             self.boostrapChangeTrackers(with: feature)
-            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail("Request is nil") }
             XCTAssertNotNil(request)
 
             // when
@@ -122,7 +130,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             // When
             Feature.triggerBackendRefreshForAllConfigs()
-            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail() }
+            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail("Request is nil") }
 
             // Then
             XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/features")

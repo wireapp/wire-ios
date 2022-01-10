@@ -155,7 +155,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             do {
                 try message = conversation.appendKnock() as? ZMClientMessage
             } catch {
-                XCTFail()
+                XCTFail("Failed to append knock message")
             }
 
             // WHEN
@@ -235,7 +235,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             XCTAssertNil(data)
             guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
             guard case .ephemeral? = genericMessage.content else {
-                return XCTFail()
+                return XCTFail("No ephemeral content found")
             }
             XCTAssertTrue(message.linkAttachments?.isEmpty == false)
         }

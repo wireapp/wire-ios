@@ -96,7 +96,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
-                XCTFail()
+                XCTFail("Next request is nil")
                 return
             }
 
@@ -105,7 +105,7 @@ extension ClientMessageRequestStrategyTests {
             case .text(let data)?:
                 XCTAssertTrue(data.expectsReadConfirmation)
             default:
-                XCTFail()
+                XCTFail("Unexpected message content")
             }
         }
     }
@@ -122,7 +122,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
-                XCTFail()
+                XCTFail("Next request is nil")
                 return
             }
 
@@ -131,7 +131,7 @@ extension ClientMessageRequestStrategyTests {
             case .text(let data)?:
                 XCTAssertFalse(data.expectsReadConfirmation)
             default:
-                XCTFail()
+                XCTFail("Unexpected message content")
             }
         }
     }
@@ -155,7 +155,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
-                XCTFail()
+                XCTFail("Next request is nil")
                 return
             }
 
@@ -191,7 +191,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
-                XCTFail()
+                XCTFail("Next request is nil")
                 return
             }
 
@@ -221,7 +221,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
-                XCTFail()
+                XCTFail("Next request is nil")
                 return
             }
 
@@ -242,7 +242,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else {
-                XCTFail()
+                XCTFail("Request is nil")
                 return
             }
 
@@ -273,7 +273,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else {
-                XCTFail()
+                XCTFail("Request is nil")
                 return
             }
 
@@ -297,7 +297,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else {
-                XCTFail()
+                XCTFail("Request is nil")
                 return
             }
 
@@ -316,7 +316,7 @@ extension ClientMessageRequestStrategyTests {
             let sha = receivedMessage.external.sha256
 
             guard let protobuf = self.outgoingMessageWrapper(from: request) else {
-                return XCTFail()
+                return XCTFail("protobuf is invalid")
             }
             XCTAssertTrue(protobuf.hasBlob)
             XCTAssertEqual(protobuf.blob.zmSHA256Digest(), sha)
@@ -353,7 +353,7 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
             // WHEN
-            guard let request = self.sut.nextRequest() else { return XCTFail() }
+            guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
             request.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil))
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -383,7 +383,7 @@ extension ClientMessageRequestStrategyTests {
             }
 
             // WHEN
-            guard let request = self.sut.nextRequest() else { return XCTFail() }
+            guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
             let payload = ["label": "missing-legalhold-consent", "code": 403, "message": ""] as NSDictionary
             request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil))
         }
@@ -419,7 +419,7 @@ extension ClientMessageRequestStrategyTests {
                 "from": self.otherUser.remoteIdentifier.transportString()
                 ] as NSDictionary
             guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
-                XCTFail()
+                XCTFail("Failed to create event")
                 return
             }
 

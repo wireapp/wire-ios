@@ -172,7 +172,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             let messageSet: Set<NSManagedObject> = [message]
             message = self.createFileMessage()
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            guard let request = self.sut.nextRequest() else { return XCTFail() }
+            guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
             request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
         }
 

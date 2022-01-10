@@ -62,7 +62,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
             try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
         } catch {
-            XCTFail()
+            XCTFail("Could not set generic message")
         }
 
         message.version = 2

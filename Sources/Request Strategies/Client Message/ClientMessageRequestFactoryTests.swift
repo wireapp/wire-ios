@@ -94,7 +94,7 @@ extension ClientMessageRequestFactoryTests {
 
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, useFederationEndpoint: false) else {
-                return XCTFail()
+                return XCTFail("Invalid request")
             }
 
             // THEN
