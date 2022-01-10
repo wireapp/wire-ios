@@ -19,20 +19,20 @@
 import Foundation
 
 fileprivate extension ZMConversationMessage {
-    
+
     var serverTimestampIncludingChildMessages: Date? {
-        
+
         if let systemMessage = self as? ZMSystemMessage {
             return systemMessage.lastChildMessageDate
         }
-        
+
         return serverTimestamp
     }
-    
+
 }
 
 fileprivate extension ZMMessage {
-    
+
     static func isVisible(_ message: ZMMessage) -> Bool {
         if let systemMessage = message as? ZMSystemMessage, let parentMessage = systemMessage.parentMessage as? ZMMessage {
             return parentMessage.visibleInConversation != nil
@@ -40,13 +40,13 @@ fileprivate extension ZMMessage {
             return message.visibleInConversation != nil
         }
     }
-    
+
 }
 
 extension ZMConversation {
-    
+
     // MARK: - Timestamps
-    
+
     func updatePendingLastRead(_ timestamp: Date) {
         if timestamp > pendingLastReadServerTimestamp {
             pendingLastReadServerTimestamp = timestamp
@@ -56,121 +56,121 @@ extension ZMConversation {
             previousLastReadServerTimestamp = lastReadServerTimeStamp
         }
     }
-    
+
     @objc
     func updateLastRead(_ timestamp: Date, synchronize: Bool = false) {
         guard let managedObjectContext = managedObjectContext else { return }
-        
+
         if timestamp > lastReadServerTimeStamp {
             lastReadServerTimeStamp = timestamp
-            
+
             // modified keys are set "automatically" on the uiMOC
             if synchronize && managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys(Set([ZMConversationLastReadServerTimeStampKey]))
             }
-            
+
             NotificationInContext(name: ZMConversation.lastReadDidChangeNotificationName, context: managedObjectContext.notificationContext, object: self, userInfo: nil).post()
         }
     }
-    
+
     @objc
     public func updateLastModified(_ timestamp: Date) {
         if timestamp > lastModifiedDate {
             lastModifiedDate = timestamp
         }
     }
-    
+
     @objc
     public func updateServerModified(_ timestamp: Date) {
         if timestamp > lastServerTimeStamp {
             lastServerTimeStamp = timestamp
         }
     }
-    
+
     @objc
     public func updateCleared(_ timestamp: Date, synchronize: Bool = false) {
         guard let managedObjectContext = managedObjectContext else { return }
-        
+
         if timestamp > clearedTimeStamp {
             clearedTimeStamp = timestamp
-            
+
             if synchronize && managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys(Set([ZMConversationClearedTimeStampKey]))
             }
         }
     }
-    
+
     @objc @discardableResult
     func updateArchived(_ timestamp: Date, synchronize: Bool = false) -> Bool {
         guard let managedObjectContext = managedObjectContext else { return false }
-        
+
         if timestamp > archivedChangedTimestamp {
             archivedChangedTimestamp = timestamp
-            
+
             if synchronize && managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys([ZMConversationArchivedChangedTimeStampKey])
             }
-            
+
             return true
         } else if timestamp == archivedChangedTimestamp {
             if synchronize {
                 setLocallyModifiedKeys([ZMConversationArchivedChangedTimeStampKey])
             }
-            
+
             return true
         }
-        
+
         return false
     }
-        
+
     @objc @discardableResult
     func updateMuted(_ timestamp: Date, synchronize: Bool = false) -> Bool {
         guard let managedObjectContext = managedObjectContext else { return false }
-        
+
         if timestamp > silencedChangedTimestamp {
             silencedChangedTimestamp = timestamp
-            
+
             if synchronize && managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys([ZMConversationSilencedChangedTimeStampKey])
             }
-            
+
             return true
         } else if timestamp == silencedChangedTimestamp {
             if synchronize {
                 setLocallyModifiedKeys([ZMConversationSilencedChangedTimeStampKey])
             }
-            
+
             return true
         }
-        
+
         return false
     }
-    
+
     fileprivate func updateLastUnreadKnock(_ timestamp: Date?) {
         guard let timestamp = timestamp else { return lastUnreadKnockDate = nil }
-        
+
         if timestamp > lastUnreadKnockDate {
             lastUnreadKnockDate = timestamp
         }
     }
-    
+
     fileprivate func updateLastUnreadMissedCall(_ timestamp: Date?) {
         guard let timestamp = timestamp else { return lastUnreadMissedCallDate = nil }
-        
+
         if timestamp > lastUnreadMissedCallDate {
             lastUnreadMissedCallDate = timestamp
         }
     }
-    
+
     // MARK: - Update timestamps on messages events
-    
+
     /// Update timetamps after an message has been updated or created from an update event
     @objc
-    func updateTimestampsAfterUpdatingMessage(_ message: ZMMessage) {        
+    func updateTimestampsAfterUpdatingMessage(_ message: ZMMessage) {
         guard let timestamp = message.serverTimestamp else { return }
-        
+
         updateServerModified(timestamp)
-        
+
         if message.shouldGenerateUnreadCount() {
             updateLastModified(timestamp)
         }
@@ -179,58 +179,58 @@ extension ZMConversation {
             // if the message was sent by the self user we don't want to send a lastRead event, since we consider this message to be already read
             updateLastRead(timestamp, synchronize: false)
         }
-        
+
         self.needsToCalculateUnreadMessages = true
     }
-    
+
     /// Update timetamps after an message has been inserted locally by the self user
     @objc
     func updateTimestampsAfterInsertingMessage(_ message: ZMMessage) {
         guard let timestamp = message.serverTimestamp else { return }
-        
+
         if message.shouldGenerateUnreadCount() {
             updateLastModified(timestamp)
         }
 
         calculateLastUnreadMessages()
     }
-    
+
     /// Update timetamps after an message has been deleted
     @objc
     func updateTimestampsAfterDeletingMessage() {
         // If an unread message is deleted we must re-calculate the unread messages.
         calculateLastUnreadMessages()
     }
-    
+
     // MARK: - Mark as read
-    
+
     /// Mark all messages in the conversation as read
     @objc
     public func markAsRead() {
         guard let timestamp = lastServerTimeStamp else { return }
-        
+
         enqueueMarkAsReadUpdate(timestamp)
         savePendingLastRead()
     }
-    
+
     /// Mark messages up until the given message as read
     @objc(markMessagesAsReadUntil:)
     public func markMessagesAsRead(until message: ZMConversationMessage) {
         guard let messageTimestamp = message.serverTimestampIncludingChildMessages else { return }
-        
+
         if let currentTimestamp = lastReadServerTimeStamp,
             currentTimestamp.compare(messageTimestamp) == .orderedDescending {
             // Current last read timestamp is newer than message we are marking as read
             return
         }
-        
+
         // Any unsent unread message is cleared when entering a conversation
         if hasUnreadUnsentMessage {
             hasUnreadUnsentMessage = false
         }
-        
+
         guard let unreadTimestamp = message.isSent ? messageTimestamp : unreadMessagesIncludingInvisible(until: messageTimestamp).last?.serverTimestamp else { return }
-        
+
         enqueueMarkAsReadUpdate(unreadTimestamp)
     }
 
@@ -248,14 +248,14 @@ extension ZMConversation {
         lastReadTimestampUpdateCounter += 1
         let currentCount: Int64 = lastReadTimestampUpdateCounter
         let groups = managedObjectContext.enterAllGroups()
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + lastReadTimestampSaveDelay) { [weak self] in
             guard currentCount == self?.lastReadTimestampUpdateCounter else { return managedObjectContext.leaveAllGroups(groups) }
             self?.savePendingLastRead()
             managedObjectContext.leaveAllGroups(groups)
         }
     }
-    
+
     /// Perform the an mark-as-read update by updating the last-read timestamp and
     /// create read confirmations for the newly read messages.
     ///
@@ -272,9 +272,9 @@ extension ZMConversation {
         else {
             return
         }
-        
+
         let objectID = self.objectID
-        
+
         syncMOC.performGroupedBlock {
             let conversation = syncMOC.object(with: objectID) as? ZMConversation
             conversation?.confirmUnreadMessagesAsRead(in: range)
@@ -294,7 +294,7 @@ extension ZMConversation {
         previousLastReadServerTimestamp = nil
         lastReadTimestampUpdateCounter = 0
     }
-        
+
     /// Calculates the the last unread knock, missed call and total unread unread count. This should be re-calculated
     /// when the last read timetamp changes or a message is inserted / deleted.
 
@@ -302,23 +302,23 @@ extension ZMConversation {
     func calculateLastUnreadMessages() {
         // We only calculate unread message on the sync MOC
         guard let managedObjectContext = managedObjectContext, managedObjectContext.zm_isSyncContext else { return }
-        
+
         let messages = unreadMessages()
-        var lastKnockDate: Date? = nil
-        var lastMissedCallDate: Date? = nil
+        var lastKnockDate: Date?
+        var lastMissedCallDate: Date?
         var unreadCount: Int64 = 0
         var unreadSelfMentionCount: Int64 = 0
         var unreadSelfReplyCount: Int64 = 0
-        
+
         for message in messages {
             if message.isKnock {
                 lastKnockDate = message.serverTimestamp
             }
-            
+
             if message.isSystem, let systemMessage = message as? ZMSystemMessage, systemMessage.systemMessageType == .missedCall {
                 lastMissedCallDate = message.serverTimestamp
             }
-            
+
             if let textMessageData = message.textMessageData {
                 if textMessageData.isMentioningSelf {
                     unreadSelfMentionCount += 1
@@ -327,12 +327,12 @@ extension ZMConversation {
                     unreadSelfReplyCount += 1
                 }
             }
-            
+
             if message.shouldGenerateUnreadCount() {
                 unreadCount += 1
             }
         }
-        
+
         updateLastUnreadKnock(lastKnockDate)
         updateLastUnreadMissedCall(lastMissedCallDate)
         internalEstimatedUnreadCount = unreadCount
@@ -340,10 +340,10 @@ extension ZMConversation {
         internalEstimatedUnreadSelfReplyCount = unreadSelfReplyCount
         needsToCalculateUnreadMessages = false
     }
-    
+
     /// Returns the first unread message in a converation. If the first unread message is child message
     /// of system message the parent message will be returned.
-    
+
     @objc
     public var firstUnreadMessage: ZMConversationMessage? {
         let replaceChildWithParent: (ZMMessage) -> ZMMessage = { message in
@@ -359,13 +359,13 @@ extension ZMConversation {
             .filter { $0.visibleInConversation != nil }
             .first { $0.shouldGenerateUnreadCount() }
     }
-    
+
     /// Returns first unread message mentioning the self user.
 
     public var firstUnreadMessageMentioningSelf: ZMConversationMessage? {
         return unreadMessages.first(where: { $0.textMessageData?.isMentioningSelf ?? false })
     }
-    
+
     /// Returns all unread messages. This may contain unread child messages of a system message
     /// which aren't directly visible in the conversation.
 
@@ -382,7 +382,7 @@ extension ZMConversation {
         let range = (lastReadServerTimeStamp ?? .distantPast)...timestamp
         return unreadMessagesIncludingInvisible(in: range)
     }
-    
+
     internal func unreadMessages(in range: ClosedRange<Date>) -> [ZMMessage] {
         return unreadMessagesIncludingInvisible(in: range).filter(ZMMessage.isVisible)
     }
@@ -400,8 +400,7 @@ extension ZMConversation {
                                              ZMMessageServerTimestampKey, range.upperBound as NSDate)
 
         fetchRequest.sortDescriptors = ZMMessage.defaultSortDescriptors()
-        
+
         return managedObjectContext.fetchOrAssert(request: fetchRequest).filter { $0.shouldGenerateUnreadCount() }
     }
 }
-

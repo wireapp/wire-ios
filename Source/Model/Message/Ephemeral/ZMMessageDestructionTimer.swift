@@ -18,49 +18,48 @@
 
 import Foundation
 
-
 let MessageDeletionTimerKey = "MessageDeletionTimer"
 let MessageObfuscationTimerKey = "MessageObfuscationTimer"
 private let log = ZMSLog(tag: "ephemeral")
 
 public extension NSManagedObjectContext {
-    
-    @objc var zm_messageDeletionTimer : ZMMessageDestructionTimer? {
+
+    @objc var zm_messageDeletionTimer: ZMMessageDestructionTimer? {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimerKey should be started only on the uiContext")
-        
+
         return userInfo[MessageDeletionTimerKey] as? ZMMessageDestructionTimer
     }
-    
-    @objc var zm_messageObfuscationTimer : ZMMessageDestructionTimer? {
+
+    @objc var zm_messageObfuscationTimer: ZMMessageDestructionTimer? {
         precondition(zm_isSyncContext, "MessageObfuscationTimer should be started only on the syncContext")
-        
+
         return userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer
     }
-    
+
     @objc func zm_createMessageObfuscationTimer() {
         precondition(zm_isSyncContext, "MessageObfuscationTimer should be started only on the syncContext")
-        
+
         guard userInfo[MessageObfuscationTimerKey] == nil else {
             log.debug("Obfuscation timer already exists, skipping")
-            return 
+            return
         }
 
         userInfo[MessageObfuscationTimerKey] = ZMMessageDestructionTimer(managedObjectContext: self)
         log.debug("creating obfuscation timer")
     }
-    
+
     @objc func zm_createMessageDeletionTimer() {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimer should be started only on the uiContext")
-        
+
         guard userInfo[MessageDeletionTimerKey] == nil else {
             log.debug("Deletion timer already exists, skipping")
-            return 
+            return
         }
 
         userInfo[MessageDeletionTimerKey] = ZMMessageDestructionTimer(managedObjectContext: self)
         log.debug("creating deletion timer")
     }
-    
+
     /// Tears down zm_messageObfuscationTimer and zm_messageDeletionTimer
     /// Call inside a performGroupedBlock(AndWait) when calling it from another context
     @objc func zm_teardownMessageObfuscationTimer() {
@@ -71,7 +70,7 @@ public extension NSManagedObjectContext {
             log.debug("tearing down obfuscation timer")
         }
     }
-    
+
     /// Tears down zm_messageDeletionTimer
     /// Call inside a performGroupedBlock(AndWait) when calling it from another context
     @objc func zm_teardownMessageDeletionTimer() {
@@ -84,16 +83,16 @@ public extension NSManagedObjectContext {
     }
 }
 
-enum MessageDestructionType : String {
+enum MessageDestructionType: String {
     static let UserInfoKey = "destructionType"
-    
+
     case obfuscation, deletion
 }
 
-@objcMembers public class ZMMessageDestructionTimer : ZMMessageTimer {
+@objcMembers public class ZMMessageDestructionTimer: ZMMessageTimer {
 
-    internal var isTesting : Bool = false
-    
+    internal var isTesting: Bool = false
+
     override init(managedObjectContext: NSManagedObjectContext!) {
         super.init(managedObjectContext: managedObjectContext)
         timerCompletionBlock = { [weak self] (message, userInfo) in
@@ -101,17 +100,17 @@ enum MessageDestructionType : String {
                 return log.debug("not forwarding timer, nil message or zombie")
             }
 
-            strongSelf.messageTimerDidFire(message: message, userInfo:userInfo)
+            strongSelf.messageTimerDidFire(message: message, userInfo: userInfo)
         }
     }
-    
+
     func messageTimerDidFire(message: ZMMessage, userInfo: [AnyHashable: Any]?) {
-        guard let userInfo = userInfo as? [String : Any],
+        guard let userInfo = userInfo as? [String: Any],
               let type = userInfo[MessageDestructionType.UserInfoKey] as? String
         else { return }
-        
+
         log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(type)")
-        switch MessageDestructionType(rawValue:type) {
+        switch MessageDestructionType(rawValue: type) {
         case .some(.obfuscation):
             message.obfuscate()
         case .some(.deletion):
@@ -127,18 +126,16 @@ enum MessageDestructionType : String {
         let fireDate = Date().addingTimeInterval(timeout)
         start(forMessageIfNeeded: message,
               fire: fireDate,
-              userInfo: [MessageDestructionType.UserInfoKey : MessageDestructionType.obfuscation.rawValue])
+              userInfo: [MessageDestructionType.UserInfoKey: MessageDestructionType.obfuscation.rawValue])
     }
-    
+
     public func startDeletionTimer(message: ZMMessage, timeout: TimeInterval) -> TimeInterval {
         log.debug("starting deletion timer for \(message.nonce?.transportString() ?? "") timeout in \(timeout)")
         let fireDate = Date().addingTimeInterval(timeout)
         start(forMessageIfNeeded: message,
               fire: fireDate,
-              userInfo: [MessageDestructionType.UserInfoKey : MessageDestructionType.deletion.rawValue])
+              userInfo: [MessageDestructionType.UserInfoKey: MessageDestructionType.deletion.rawValue])
         return timeout
     }
 
 }
-
-

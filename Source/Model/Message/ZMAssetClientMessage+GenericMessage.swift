@@ -23,28 +23,28 @@ extension ZMAssetClientMessage {
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
         return self.dataSet.lazy
             .compactMap { $0 as? ZMGenericMessageData }
-            .first(where: {$0.underlyingMessage?.imageAssetData?.imageFormat() == format} )
+            .first(where: {$0.underlyingMessage?.imageAssetData?.imageFormat() == format})
     }
-    
+
     public var mediumGenericMessage: GenericMessage? {
         return self.genericMessageDataFromDataSet(for: .medium)?.underlyingMessage
     }
-    
+
     static func keyPathsForValuesAffectingMediumGenericMessage() -> Set<String> {
         return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
     }
-    
+
     public var previewGenericMessage: GenericMessage? {
         return self.genericMessageDataFromDataSet(for: .preview)?.underlyingMessage
     }
-    
+
     static func keyPathsForValuesAffectingPreviewGenericMessage() -> Set<String> {
         return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
     }
-    
+
     public var underlyingMessage: GenericMessage? {
         guard !isZombieObject else { return nil }
-        
+
         if cachedUnderlyingAssetMessage == nil {
             cachedUnderlyingAssetMessage = underlyingMessageMergedFromDataSet(filter: {
                 $0.assetData != nil
@@ -57,7 +57,7 @@ extension ZMAssetClientMessage {
     ///
     /// - Parameter message: The protobuf message object to be associated with this asset client message.
     /// - Throws `ProcessingError` if the protobuf data can't be processed.
-    
+
     public func setUnderlyingMessage(_ message: GenericMessage) throws {
         try mergeWithExistingData(message: message)
     }
@@ -98,27 +98,27 @@ extension ZMAssetClientMessage {
             throw ProcessingError.failedToProcessMessageData(reason: error.localizedDescription)
         }
     }
-    
-    func underlyingMessageMergedFromDataSet(filter: (GenericMessage)->Bool) -> GenericMessage? {
+
+    func underlyingMessageMergedFromDataSet(filter: (GenericMessage) -> Bool) -> GenericMessage? {
         let filteredData = self.dataSet
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
             .filter(filter)
             .compactMap { try? $0.serializedData() }
-        
+
         guard !filteredData.isEmpty else {
             return nil
         }
-        
+
         var message = GenericMessage()
         filteredData.forEach {
             try? message.merge(serializedData: $0)
         }
         return message
     }
-    
+
     /// Returns the generic message for the given representation
     func genericMessage(dataType: AssetClientMessageDataType) -> GenericMessage? {
-        
+
         if self.fileMessageData != nil {
             switch dataType {
             case .fullAsset:
@@ -146,7 +146,7 @@ extension ZMAssetClientMessage {
                 })
             }
         }
-        
+
         if self.imageMessageData != nil {
             switch dataType {
             case .fullAsset:
@@ -157,15 +157,14 @@ extension ZMAssetClientMessage {
                 return nil
             }
         }
-        
+
         return nil
     }
-    
-    
+
     override public var imageMessageData: ZMImageMessageData? {
         return self.asset?.imageMessageData
     }
-    
+
     override public var fileMessageData: ZMFileMessageData? {
         let isFileMessage = underlyingMessage?.assetData != nil
         return isFileMessage ? self : nil

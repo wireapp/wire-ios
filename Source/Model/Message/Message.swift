@@ -43,7 +43,7 @@ public extension ZMConversationMessage {
     var isPDF: Bool {
         return isFile && fileMessageData?.isPDF ?? false
     }
-    
+
     var isPass: Bool {
         return isFile && fileMessageData!.isPass
     }
@@ -133,7 +133,7 @@ public class Message: NSObject {
     public class func isPDF(_ message: ZMConversationMessage) -> Bool {
         return message.isPDF
     }
-    
+
     @objc(isVideoMessage:)
     public class func isVideo(_ message: ZMConversationMessage) -> Bool {
         return message.isVideo

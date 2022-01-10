@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "event-processing")
-
 
 /// This enum matches the backend convention for type
 @objc(ZMBackendConversationType)
@@ -29,7 +27,7 @@ public enum BackendConversationType: Int {
     case `self` = 1
     case oneOnOne = 2
     case connection = 3
-    
+
     public static func clientConversationType(rawValue: Int) -> ZMConversationType {
         guard let backendType = BackendConversationType(rawValue: rawValue) else {
             return .invalid
@@ -48,42 +46,42 @@ public enum BackendConversationType: Int {
 }
 
 extension ZMConversation {
-    
+
     public struct PayloadKeys {
-        
+
         private init() {}
-        
-        public static let nameKey = "name";
-        public static let typeKey = "type";
-        public static let IDKey = "id";
-        public static let qualifiedIDKey = "qualified_id";
-        public static let targetKey = "target";
-        public static let domainKey = "domain";
-        
-        public static let othersKey = "others";
-        public static let membersKey = "members";
-        public static let selfKey = "self";
-        public static let creatorKey = "creator";
-        public static let teamIdKey = "team";
-        public static let conversationRoleKey = "conversation_role";
-        public static let accessModeKey = "access";
-        public static let accessRoleKey = "access_role";
-        public static let messageTimer = "message_timer";
-        public static let receiptMode = "receipt_mode";
-        
-        public static let OTRMutedValueKey = "otr_muted";
-        public static let OTRMutedStatusValueKey = "otr_muted_status";
-        public static let OTRMutedReferenceKey = "otr_muted_ref";
-        public static let OTRArchivedValueKey = "otr_archived";
-        public static let OTRArchivedReferenceKey = "otr_archived_ref";
+
+        public static let nameKey = "name"
+        public static let typeKey = "type"
+        public static let IDKey = "id"
+        public static let qualifiedIDKey = "qualified_id"
+        public static let targetKey = "target"
+        public static let domainKey = "domain"
+
+        public static let othersKey = "others"
+        public static let membersKey = "members"
+        public static let selfKey = "self"
+        public static let creatorKey = "creator"
+        public static let teamIdKey = "team"
+        public static let conversationRoleKey = "conversation_role"
+        public static let accessModeKey = "access"
+        public static let accessRoleKey = "access_role"
+        public static let messageTimer = "message_timer"
+        public static let receiptMode = "receipt_mode"
+
+        public static let OTRMutedValueKey = "otr_muted"
+        public static let OTRMutedStatusValueKey = "otr_muted_status"
+        public static let OTRMutedReferenceKey = "otr_muted_ref"
+        public static let OTRArchivedValueKey = "otr_archived"
+        public static let OTRArchivedReferenceKey = "otr_archived_ref"
     }
-    
+
     public func updateCleared(fromPostPayloadEvent event: ZMUpdateEvent ) {
         if let timeStamp = event.timestamp {
             updateCleared(timeStamp, synchronize: true)
         }
     }
-    
+
     @objc
     public func update(updateEvent: ZMUpdateEvent) {
         if let timeStamp = updateEvent.timestamp {
@@ -100,15 +98,15 @@ extension ZMConversation {
         accessModeStrings = accessModes
         accessRoleString = role
     }
-    
+
     public func updateReceiptMode(_ receiptMode: Int?) {
         if let receiptMode = receiptMode {
             let enabled = receiptMode > 0
             let receiptModeChanged = !self.hasReadReceiptsEnabled && enabled
-            self.hasReadReceiptsEnabled = enabled;
-            
+            self.hasReadReceiptsEnabled = enabled
+
             // We only want insert a system message if this is an existing conversation (non empty)
-            if (receiptModeChanged && self.lastMessage != nil) {
+            if receiptModeChanged && self.lastMessage != nil {
                 self.appendMessageReceiptModeIsOnMessage(timestamp: Date())
             }
         }
@@ -134,21 +132,21 @@ extension ZMConversation {
 
         updatePotentialGapSystemMessagesIfNeeded(users: localParticipants)
     }
-    
+
     public func updateTeam(identifier: UUID?) {
         guard let teamId = identifier,
             let moc = self.managedObjectContext else { return }
         self.teamRemoteIdentifier = teamId
         self.team = Team.fetchOrCreate(with: teamId, create: false, in: moc, created: nil)
     }
-    
+
     @objc func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
         guard let latestSystemMessage = ZMSystemMessage.fetchLatestPotentialGapSystemMessage(in: self)
             else { return }
-        
+
         let removedUsers = latestSystemMessage.users.subtracting(users)
         let addedUsers = users.subtracting(latestSystemMessage.users)
-        
+
         latestSystemMessage.addedUsers = addedUsers
         latestSystemMessage.removedUsers = removedUsers
         latestSystemMessage.updateNeedsUpdatingUsersIfNeeded()
@@ -161,7 +159,7 @@ extension ZMConversation {
 
         internalIsArchived = archived
     }
-    
+
     private func updateIsArchived(payload: [String: Any]) -> Bool {
         if let silencedRef = payload.date(fromKey: PayloadKeys.OTRArchivedReferenceKey),
             self.updateArchived(silencedRef, synchronize: false) {
@@ -201,16 +199,15 @@ extension ZMConversation {
             teamOrConversation: self.team != nil ? .team(self.team!) : .conversation(self),
             in: self.managedObjectContext!)
     }
-    
+
 }
 
-
 extension Dictionary where Key == String, Value == Any {
-    
+
     func UUID(fromKey key: String) -> UUID? {
         return (self[key] as? String).flatMap(Foundation.UUID.init)
     }
-    
+
     func date(fromKey key: String) -> Date? {
         return (self as NSDictionary).optionalDate(forKey: key)
     }
@@ -221,11 +218,11 @@ extension Dictionary where Key == String, Value == Any {
 }
 
 extension Dictionary where Key == String, Value == Any? {
-    
+
     func UUID(fromKey key: String) -> UUID? {
         return (self[key] as? String).flatMap(Foundation.UUID.init)
     }
-    
+
     func date(fromKey key: String) -> Date? {
         return (self as NSDictionary).optionalDate(forKey: key)
     }

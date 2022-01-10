@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMClientMessage {
-    
+
     override open var needsReadConfirmation: Bool {
         guard let genericMessage = underlyingMessage else { return false }
         return needsReadConfirmation(genericMessage)

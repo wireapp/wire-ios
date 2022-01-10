@@ -21,18 +21,18 @@ import Foundation
 public enum TeamOrConversation {
     case team(Team)
     case conversation(ZMConversation)
-    
+
     /// Creates a team if the conversation belongs to a team, or a conversation otherwise
     public static func matching(_ conversation: ZMConversation) -> TeamOrConversation {
         return self.fromTeamOrConversation(team: conversation.team, conversation: conversation)
     }
-    
+
     /// Creates a team or a conversation
     static func fromTeamOrConversation(team: Team?,
                                        conversation: ZMConversation?) -> TeamOrConversation {
         if let team = team {
             return .team(team)
-            
+
         } else if let conversation = conversation {
             return .conversation(conversation)
         }
@@ -58,12 +58,11 @@ public final class Role: ZMManagedObject {
     public override static func entityName() -> String {
         return String(describing: Role.self)
     }
-    
+
     public override static func isTrackingLocalModifications() -> Bool {
         return false
     }
-    
-    @objc
+
     @discardableResult
     static public func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
@@ -72,8 +71,7 @@ public final class Role: ZMManagedObject {
                       name: name,
                       teamOrConversation: .conversation(conversation))
     }
-    
-    @objc
+
     @discardableResult
     static public func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
@@ -82,11 +80,11 @@ public final class Role: ZMManagedObject {
                       name: name,
                       teamOrConversation: .team(team))
     }
-    
+
     static public func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               teamOrConversation: TeamOrConversation) -> Role {
-        
+
         let entry = Role.insertNewObject(in: managedObjectContext)
         entry.name = name
         switch teamOrConversation {
@@ -115,10 +113,10 @@ public final class Role: ZMManagedObject {
             teamOrConvoPredicate
         ])
         fetchRequest.fetchLimit = 1
-        
+
         return context.fetchOrAssert(request: fetchRequest).first
     }
-    
+
     public static func fetchOrCreateRole(with name: String,
                                   teamOrConversation: TeamOrConversation,
                                   in context: NSManagedObjectContext) -> Role {
@@ -127,7 +125,6 @@ public final class Role: ZMManagedObject {
                                                   in: context)
         return existingRole ?? create(managedObjectContext: context, name: name, teamOrConversation: teamOrConversation)
     }
-    
 
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any],
@@ -137,14 +134,14 @@ public final class Role: ZMManagedObject {
         guard let conversationRole = payload["conversation_role"] as? String,
             let actionNames = payload["actions"] as? [String]
             else { return nil }
-        
+
         let fetchedRole = fetchExistingRole(with: conversationRole,
                                             teamOrConversation: teamOrConversation,
                                             in: context)
 
         let role = fetchedRole ?? Role.insertNewObject(in: context)
-        
-        actionNames.forEach() { actionName in
+
+        actionNames.forEach { actionName in
             var created = false
             Action.fetchOrCreate(with: actionName, role: role, in: context, created: &created)
         }

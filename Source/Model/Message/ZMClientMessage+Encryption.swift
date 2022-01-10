@@ -185,12 +185,10 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
     public var debugInfo: String {
         return "\(String(describing: underlyingMessage))"
     }
-    
+
 }
 
-
 extension GenericMessage {
-
 
     public func encryptForProteus(for recipients: [ZMUser: Set<UserClient>],
                                   with missingClientsStrategy: MissingClientsStrategy,
@@ -226,9 +224,8 @@ extension GenericMessage {
         return (data, missingClientsStrategy)
     }
 
-
     /// Attempts to generate an encrypted payload for the given set of users.
-    
+
     public func encryptForTransport(forBroadcastRecipients recipients: Set<ZMUser>,
                                     useQualifiedIdentifiers: Bool = false,
                                     in context: NSManagedObjectContext) -> EncryptedPayloadGenerator.Payload? {
@@ -264,7 +261,6 @@ extension GenericMessage {
         return (data, missingClientsStrategy)
     }
 
-
     private func encrypt(for recipients: [ZMUser: Set<UserClient>],
                          with missingClientsStrategy: MissingClientsStrategy,
                          externalData: Data? = nil,
@@ -277,10 +273,10 @@ extension GenericMessage {
         else {
             return nil
         }
-        
+
         let encryptionContext = selfClient.keysStore.encryptionContext
         var messageData: Data?
-        
+
         encryptionContext.perform { sessionsDirectory in
             if useQualifiedIdentifiers, let selfDomain = ZMUser.selfUser(in: context).domain {
                 let message = proteusMessage(selfClient,
@@ -310,7 +306,7 @@ extension GenericMessage {
                                                                            in: context)
             }
         }
-        
+
         // Reset all failed sessions.
         recipients.values
             .flatMap { $0 }
@@ -341,7 +337,7 @@ extension GenericMessage {
                                               missingClientsStrategy: missingClientsStrategy,
                                               blob: externalData)
     }
-    
+
     /// Returns a message for the given recipients.
 
     private func otrMessage(_ selfClient: UserClient,
@@ -349,21 +345,21 @@ extension GenericMessage {
                             missingClientsStrategy: MissingClientsStrategy,
                             externalData: Data?,
                             sessionDirectory: EncryptionSessionsDirectory) -> Proteus_NewOtrMessage {
-        
+
         let userEntries = userEntriesWithEncryptedData(selfClient,
                                                        recipients: recipients,
                                                        sessionDirectory: sessionDirectory)
 
         // We do not want to send pushes for delivery receipts.
         let nativePush = !hasConfirmation
-        
+
         var message = Proteus_NewOtrMessage(withSender: selfClient,
                                             nativePush: nativePush,
                                             recipients: userEntries,
                                             blob: externalData)
 
         if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
-            message.reportMissing = Array(users.map{ $0.userId })
+            message.reportMissing = Array(users.map { $0.userId })
         }
 
         return message
@@ -402,7 +398,7 @@ extension GenericMessage {
 
         return recipients.compactMap { (user, clients) in
             guard !user.isAccountDeleted else { return nil }
-            
+
             let clientEntries = clientEntriesWithEncryptedData(selfClient,
                                                                userClients: clients,
                                                                sessionDirectory: sessionDirectory)
@@ -462,7 +458,7 @@ extension GenericMessage {
             guard
                 hasConfirmation,
                 let managedObjectContext = conversation.managedObjectContext,
-                let message = ZMMessage.fetch(withNonce:UUID(uuidString: confirmation.firstMessageID), for:conversation, in:managedObjectContext),
+                let message = ZMMessage.fetch(withNonce: UUID(uuidString: confirmation.firstMessageID), for: conversation, in: managedObjectContext),
                 let sender = message.sender
                 else {
                     return nil
@@ -473,7 +469,7 @@ extension GenericMessage {
 
         func recipientForOtherUsers() -> Set<ZMUser>? {
             guard conversation.connectedUser != nil || (otherUsers.isEmpty == false) else { return nil }
-            if let connectedUser = conversation.connectedUser { return Set(arrayLiteral:connectedUser) }
+            if let connectedUser = conversation.connectedUser { return Set(arrayLiteral: connectedUser) }
             return Set(otherUsers)
         }
 
@@ -489,7 +485,7 @@ extension GenericMessage {
 
             guard
                 let managedObjectContext = conversation.managedObjectContext,
-                let message = ZMMessage.fetch(withNonce:nonce, for:conversation, in: managedObjectContext),
+                let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: managedObjectContext),
                 message.destructionDate != nil
             else {
                 return nil
@@ -556,7 +552,7 @@ extension GenericMessage {
 // MARK: - External
 
 extension GenericMessage {
-    
+
     /// Returns a message with recipients, with the content stored externally, and a strategy to handle missing clients.
 
     private func encryptForTransportWithExternalDataBlob(for conversation: ZMConversation) -> EncryptedPayloadGenerator.Payload? {
@@ -564,7 +560,7 @@ extension GenericMessage {
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: encryptedDataWithKeys.keys))
         return externalGenericMessage.encryptForTransport(for: conversation, externalData: encryptedDataWithKeys.data)
     }
-    
+
     private func encryptForTransportWithExternalDataBlob(for recipients: [ZMUser: Set<UserClient>],
                                                          with missingClientsStrategy: MissingClientsStrategy,
                                                          useQualifiedIdentifiers: Bool = false,

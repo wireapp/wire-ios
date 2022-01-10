@@ -19,28 +19,28 @@
 import Foundation
 
 extension ZMClientMessage {
-    
+
     public var underlyingMessage: GenericMessage? {
         guard !isZombieObject else {
             return nil
         }
-        
+
         if cachedUnderlyingMessage == nil {
             cachedUnderlyingMessage = underlyingMessageMergedFromDataSet()
         }
         return cachedUnderlyingMessage
     }
-    
+
     private func underlyingMessageMergedFromDataSet() -> GenericMessage? {
         let filteredData = dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
             .filter { $0.knownMessage && $0.imageAssetData == nil }
             .compactMap { try? $0.serializedData() }
-        
+
         guard !Array(filteredData).isEmpty else {
             return nil
         }
-        
+
         var message = GenericMessage()
         filteredData.forEach {
             try? message.merge(serializedData: $0)
@@ -55,7 +55,7 @@ extension ZMClientMessage {
 
     public func setUnderlyingMessage(_ message: GenericMessage) throws {
         let messageData = try mergeWithExistingData(message)
-        
+
         if nonce == .none, let messageID = messageData.underlyingMessage?.messageID {
             nonce = UUID(uuidString: messageID)
         }

@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireUtilities
-
 
 extension ZMMessage {
 
@@ -120,14 +118,11 @@ public struct TextSearchQueryFetchConfiguration {
     }
 }
 
-
 public protocol TextSearchQueryDelegate: AnyObject {
     func textSearchQueryDidReceive(result: TextQueryResult)
 }
 
-
 private let zmLog = ZMSLog(tag: "text search")
-
 
 /// This class should be used to perform a text search for messages in a conversation.
 /// Each instance can only be used to perform a search once. A running instance can be cancelled.
@@ -243,7 +238,7 @@ public class TextSearchQuery: NSObject {
             guard let `self` = self else { return }
 
             let request = ZMClientMessage.descendingFetchRequest(with: self.predicateForIndexedMessagesQueryMatch)
-            
+
             request?.fetchLimit = self.fetchConfiguration.indexedBatchSize
             request?.fetchOffset = callCount * self.fetchConfiguration.indexedBatchSize
 
@@ -342,7 +337,7 @@ public class TextSearchQuery: NSObject {
     private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate = {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
             self.predicateForQueryMatch,
-            ZMClientMessage.predicateForIndexedMessages(),
+            ZMClientMessage.predicateForIndexedMessages()
         ])
     }()
 
@@ -361,5 +356,5 @@ public class TextSearchQuery: NSObject {
             ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
         ])
     }()
-    
+
 }

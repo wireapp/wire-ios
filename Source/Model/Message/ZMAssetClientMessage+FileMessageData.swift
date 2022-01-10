@@ -16,58 +16,57 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import MobileCoreServices
 
 // MARK: - ZMFileMessageData
 @objc public protocol ZMFileMessageData: NSObjectProtocol {
-    
+
     /// MIME type of the file being transfered (implied from file extension)
     var mimeType: String? { get }
-    
+
     /// Original file size
     var size: UInt64 { get }
-    
+
     /// File transfer state
     var transferState: AssetTransferState { get }
-    
+
     /// Download state (.downloaded, downloading, ...)
     var downloadState: AssetDownloadState { get }
-    
+
     /// File name as was sent
     var filename: String? { get }
-    
+
     /// Currend download / upload progress
     var progress: Float { get set }
-    
+
     /// The file location on the filesystem
     var fileURL: URL? { get }
-    
+
     /// The asset ID of the thumbnail, if any
     var thumbnailAssetID: String? { get set }
-    
+
     /// Duration of the media in milliseconds
     var durationMilliseconds: UInt64 { get }
-    
+
     /// Dimensions of the video
     var videoDimensions: CGSize { get }
-    
+
     /// File thumbnail preview image
     var previewData: Data? { get }
-    
+
     /// This can be used as a cache key for @c -previewData
     var imagePreviewDataIdentifier: String? { get }
-    
+
     /// Normalized loudness of audio data
     var normalizedLoudness: [Float]? { get }
-    
+
     /// Marks file to be downloaded
     func requestFileDownload()
-    
+
     /// Marks file image preview to be downloaded
     func requestImagePreviewDownload()
-    
+
     /// Video-message related properties
     /// if MIME type is indicating the video content
     var isVideo: Bool { get }
@@ -80,56 +79,55 @@ import MobileCoreServices
     /// in `ZMFileMessageStateUploading` state, or in `ZMFileMessageStateDownloading`
     /// state on receiver side.
     func cancelTransfer()
-    
+
     /// Audio-message related properties
     /// if MIME type is indicating the audio content
     var isAudio: Bool { get }
-    
+
     /// if MIME type is indicating the pdf content
     var isPDF: Bool { get }
-    
+
     /// Whether the file message represents a v3 image
     var v3_isImage: Bool { get }
-    
+
     /// Fetch preview image data from disk
     func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void)
-    
+
     /// Signing a PDF document
     func signPDFDocument(observer: SignatureObserver) -> Any?
-    
+
     /// retrieve a PDF signature
     func retrievePDFSignature()
 }
 
 extension ZMAssetClientMessage: ZMFileMessageData {
-    
+
     /// Notification name for canceled file upload
     public static let didCancelFileDownloadNotificationName = Notification.Name(rawValue: "ZMAssetClientMessageDidCancelFileDownloadNotification")
 
-    
     // MIME type of the file being transfered (implied from file extension)
     public var mimeType: String? {
-        
+
         guard let asset = underlyingMessage?.assetData else {
             return nil
         }
-        
+
         if asset.original.hasMimeType {
             return asset.original.mimeType
         }
-        
+
         if asset.preview.hasMimeType {
             return asset.preview.mimeType
         }
-        
+
         if let assetData = previewGenericMessage?.imageAssetData, assetData.hasMimeType {
             return assetData.mimeType
         }
-        
+
         if let assetData = mediumGenericMessage?.imageAssetData, assetData.hasMimeType {
             return assetData.mimeType
         }
-        
+
         return nil
     }
 
@@ -137,7 +135,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     public var richAssetType: RichAssetFileType? {
         return mimeType.flatMap(RichAssetFileType.init)
     }
-    
+
     public var fileURL: URL? {
         guard
             let assetURL = asset?.fileURL,
@@ -147,55 +145,55 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         else {
             return nil
         }
-        
+
         let secureFilename = (filename as NSString).lastPathComponent
         var temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(secureFilename)
-        
+
         if let mime = mimeType,
            let fileExtension = UTIHelper.convertToFileExtension(mime: mime),
             richAssetType == .audio,
             temporaryFileURL.pathExtension != fileExtension {
             temporaryFileURL.appendPathExtension(fileExtension)
         }
-        
+
         if FileManager.default.fileExists(atPath: temporaryFileURL.path) {
             return temporaryFileURL
         }
-        
+
         do {
             try FileManager.default.createDirectory(at: temporaryFileURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
             try FileManager.default.linkItem(at: assetURL, to: temporaryFileURL)
         } catch {
             return nil
         }
-        
+
         return temporaryFileURL
     }
-        
+
     public var temporaryDirectoryURL: URL? {
         guard let cacheKey = FileAssetCache.cacheKeyForAsset(self) else { return nil }
         var temporaryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         temporaryURL.appendPathComponent(cacheKey)
         return temporaryURL
     }
-    
+
     public var previewData: Data? {
         return asset?.previewData
     }
-    
+
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
         guard nil != fileMessageData, !isImage else { return completionHandler(nil) }
-        
+
         asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }
-    
+
     /// File name as was sent or `nil` in case of an image asset
     public var filename: String? {
         return underlyingMessage?.assetData?.original.name.normalizedFilename
     }
-    
+
     public var thumbnailAssetID: String? {
-        
+
         get {
             guard fileMessageData != nil else { return nil }
             guard let assetData = genericMessage(dataType: .thumbnail)?.assetData,
@@ -204,7 +202,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 else { return nil }
             return assetData.preview.remote.assetID
         }
-        
+
         set {
             // This method has to inject this value in the currently existing thumbnail message.
             // Unfortunately it is immutable. So I need to create a copy, modify and then replace.
@@ -229,7 +227,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             }
         }
     }
-    
+
     private func replaceGenericMessageForThumbnail(with genericMessage: GenericMessage) throws {
         cachedUnderlyingAssetMessage = nil
 
@@ -249,7 +247,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             }
         }
     }
-    
+
     public var imagePreviewDataIdentifier: String? {
         return asset?.imagePreviewDataIdentifier
     }
@@ -261,19 +259,19 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     public var isVideo: Bool {
         return richAssetType == .video
     }
-    
+
     public var isAudio: Bool {
         return richAssetType == .audio
     }
-    
+
     public var isPDF: Bool {
         return mimeType == "application/pdf"
     }
-    
+
     public var v3_isImage: Bool {
         return underlyingMessage?.v3_isImage ?? false
     }
-    
+
     public var videoDimensions: CGSize {
         guard let assetData = underlyingMessage?.assetData else { return CGSize.zero }
         let w = assetData.original.video.width
@@ -291,25 +289,24 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
         return 0
     }
-    
+
     public var normalizedLoudness: [Float]? {
         guard isAudio,
             let assetData = underlyingMessage?.assetData,
-            assetData.original.audio.hasNormalizedLoudness else
-        {
+            assetData.original.audio.hasNormalizedLoudness else {
             return nil
         }
         return assetData.original.normalizedLoudnessLevels
     }
-    
+
     public func requestFileDownload() {
         asset?.requestFileDownload()
     }
-    
+
     public func requestImagePreviewDownload() {
         asset?.requestPreviewDownload()
     }
-    
+
     public func signPDFDocument(observer: SignatureObserver) -> Any? {
         guard
             let managedObjectContext = managedObjectContext,
@@ -319,10 +316,10 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         else {
             return nil
         }
-        
+
         let token = SignatureStatus.addObserver(observer,
                                                 context: managedObjectContext)
-        
+
         let asset = underlyingMessage?.assetData
         syncContext.performGroupedBlock {
             let status = SignatureStatus(asset: asset,
@@ -331,10 +328,10 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             status.store()
             status.signDocument()
         }
-        
+
         return token
     }
-    
+
     public func retrievePDFSignature() {
         guard
             let managedObjectContext = managedObjectContext,
@@ -342,17 +339,17 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         else {
             return
         }
-        
+
         syncContext.performGroupedBlock {
             syncContext.signatureStatus?.retrieveSignature()
         }
     }
 }
-    
+
 extension ZMAssetClientMessage {
-    
+
     public func cancelTransfer() {
-        
+
         switch transferState {
         case .uploading:
             expire()
@@ -379,5 +376,5 @@ extension ZMAssetClientMessage {
             try! self.managedObjectContext!.obtainPermanentIDs(for: [self])
         }
     }
-    
+
 }

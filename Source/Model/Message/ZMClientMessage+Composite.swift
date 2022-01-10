@@ -53,7 +53,7 @@ extension ZMClientMessage {
         let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         message?.updateButtonStates(withConfirmation: confirmation)
     }
-    
+
     static func expireButtonState(forButtonAction buttonAction: ButtonAction,
                                         forConversation conversation: ZMConversation,
                                         inContext moc: NSManagedObjectContext) {
@@ -67,17 +67,17 @@ extension ZMClientMessage {
 extension ZMClientMessage {
     private func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation) {
         guard let moc = managedObjectContext else { return }
-        
+
         if !containsButtonState(withId: confirmation.buttonID) {
             ButtonState.insert(with: confirmation.buttonID, message: self, inContext: moc)
         }
         buttonStates?.confirmButtonState(withId: confirmation.buttonID)
     }
-    
+
     private func containsButtonState(withId buttonId: String) -> Bool {
         return buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
     }
-    
+
     private func expireButtonState(withButtonAction buttonAction: ButtonAction) {
         let state = buttonStates?.first(where: { $0.remoteIdentifier == buttonAction.buttonID })
         managedObjectContext?.performGroupedBlock { [managedObjectContext] in

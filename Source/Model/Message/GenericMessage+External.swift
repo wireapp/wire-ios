@@ -41,7 +41,7 @@ extension GenericMessage {
         let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
         return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
     }
-    
+
     /// Creates a genericMessage from a ZMUpdateEvent and  External
     /// The symetrically encrypted data (representing the original GenericMessage)
     /// contained in the update event will be decrypted using the encryption keys in the External
@@ -52,12 +52,12 @@ extension GenericMessage {
         guard let externalDataString = updateEvent.payload.optionalString(forKey: "external") else { return nil }
         let externalData = Data(base64Encoded: externalDataString)
         let externalSha256 = externalData?.zmSHA256Digest()
-        
+
         guard externalSha256 == external.sha256 else {
             zmLog.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256), updateEvent: \(updateEvent)")
             return nil
         }
-        
+
         let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(key: external.otrKey)
         guard let message = GenericMessage(withBase64String: decryptedData?.base64String()) else {
             return nil

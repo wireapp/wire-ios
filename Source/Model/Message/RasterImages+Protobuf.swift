@@ -21,9 +21,9 @@ public extension WireProtos.Asset.Original {
         guard case .image? = metaData else {
             return false
         }
-        
+
         guard let uti = UTIHelper.convertToUti(mime: mimeType) else { return false }
-        
+
         return !UTIHelper.conformsToVectorType(uti: uti)
     }
 }

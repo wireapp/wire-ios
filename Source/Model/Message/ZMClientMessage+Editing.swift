@@ -34,13 +34,13 @@ extension ZMClientMessage {
         editedMessage.updateCategoryCache()
         return editedMessage
     }
-    
+
     /// Apply a message edit update
     ///
     /// - parameter messageEdit: Message edit update
     /// - parameter updateEvent: Update event which delivered the message edit update
     /// - Returns: true if edit was succesfully applied
-    
+
     func processMessageEdit(_ messageEdit: MessageEdit, from updateEvent: ZMUpdateEvent) -> Bool {
         guard
             let nonce = updateEvent.messageNonce,
@@ -51,7 +51,7 @@ extension ZMClientMessage {
         else {
             return false
         }
-        
+
         do {
             let genericMessage = GenericMessage(content: originalText.applyEdit(from: messageEdit.text), nonce: nonce)
             try setUnderlyingMessage(genericMessage)
@@ -65,8 +65,8 @@ extension ZMClientMessage {
         updatedTimestamp = updateEvent.timestamp
         reactions.removeAll()
         linkAttachments = nil
-        
+
         return true
     }
-    
+
 }

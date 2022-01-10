@@ -25,7 +25,7 @@ extension ZMClientMessage {
             || ephemeral != nil
             || isObfuscated
     }
-    
+
     var ephemeral: Ephemeral? {
         return dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
@@ -45,4 +45,3 @@ extension ZMClientMessage {
         return TimeInterval(ephemeral.expireAfterMillis / 1000)
     }
 }
-

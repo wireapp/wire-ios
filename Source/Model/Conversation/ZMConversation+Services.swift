@@ -31,10 +31,10 @@ extension ZMConversation {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [sameTeam, groupConversation, selfIsActiveMember, onlyOneOtherParticipant, hasParticipantWithServiceIdentifier, noUserDefinedName])
 
         let fetchRequest = sortedFetchRequest(with: predicate)
-        
+
         fetchRequest.fetchLimit = 1
         let result = moc.fetchOrAssert(request: fetchRequest)
-        
+
         return result.first as? ZMConversation
     }
 }

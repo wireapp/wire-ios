@@ -29,11 +29,11 @@ import Foundation
 }
 
 extension ZMMessage {
-    
+
     static func appendReaction(_ unicodeValue: String?, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
         guard let message = message as? ZMMessage, let context = message.managedObjectContext, let messageID = message.nonce else { return nil }
         guard message.isSent else { return nil }
-        
+
         let emoji = unicodeValue ?? ""
         let reaction = WireProtos.Reaction.createReaction(emoji: emoji, messageID: messageID)
         let genericMessage = GenericMessage(content: reaction)
@@ -49,30 +49,30 @@ extension ZMMessage {
             return nil
         }
     }
-    
+
     @discardableResult
     @objc public static func addReaction(_ reaction: MessageReaction, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
         // confirmation that we understand the emoji
         // the UI should never send an emoji we dont handle
-        if Reaction.transportReaction(from: reaction.unicodeValue) == .none{
+        if Reaction.transportReaction(from: reaction.unicodeValue) == .none {
             fatal("We can't append this reaction \(reaction.unicodeValue), this is a programmer error.")
         }
-        
+
         return appendReaction(reaction.unicodeValue, toMessage: message)
     }
-    
-    @objc public static func removeReaction(onMessage message:ZMConversationMessage) {
+
+    @objc public static func removeReaction(onMessage message: ZMConversationMessage) {
         _ = appendReaction(nil, toMessage: message)
     }
-    
-    @objc public func addReaction(_ unicodeValue: String?, forUser user:ZMUser) {
-        removeReaction(forUser:user)
+
+    @objc public func addReaction(_ unicodeValue: String?, forUser user: ZMUser) {
+        removeReaction(forUser: user)
         guard let unicodeValue = unicodeValue,
             unicodeValue.count > 0 else {
                 updateCategoryCache()
                 return
         }
-        
+
         guard let reaction = self.reactions.first(where: {$0.unicodeValue! == unicodeValue}) else {
             // we didn't find a reaction, need to add a new one
             let newReaction = Reaction.insertReaction(unicodeValue, users: [user], inMessage: self)
@@ -82,10 +82,10 @@ extension ZMMessage {
         }
         reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
     }
-    
+
     fileprivate func removeReaction(forUser user: ZMUser) {
         guard let reaction = self.reactions.first(where: {$0.users.contains(user)}) else {
-            return;
+            return
         }
         reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).remove(user)
     }
@@ -96,7 +96,7 @@ extension ZMMessage {
         guard let moc = managedObjectContext else { return }
         oldReactions.forEach(moc.delete)
     }
-    
+
     @objc public func clearConfirmations() {
         let oldConfirmations = self.confirmations
         mutableSetValue(forKey: ZMMessageConfirmationKey).removeAllObjects()
