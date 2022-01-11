@@ -740,7 +740,7 @@ extension ZMAssetClientMessageTests {
 
     func testThatItSavesTheOriginalFileWhenCreatingMessage() throws {
         // given
-        let sut = try appendImageMessage(to: conversation)
+        let sut = appendImageMessage(to: conversation)
 
         // then
         XCTAssertNotNil(uiMOC.zm_fileAssetCache.assetData(sut, format: .original, encrypted: false))
@@ -752,7 +752,7 @@ extension ZMAssetClientMessageTests {
         let expectedSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
 
         // when
-        let sut = try appendImageMessage(to: conversation, imageData: image)
+        let sut = appendImageMessage(to: conversation, imageData: image)
 
         // then
         XCTAssertEqual(expectedSize, sut.imageMessageData?.originalSize)
@@ -1135,7 +1135,7 @@ extension ZMAssetClientMessageTests {
 
     func checkThatImageAssetMessageCanBeDeleted(_ canBeDeleted: Bool, _ state: ZMDeliveryState, line: UInt = #line) throws {
         // given
-        let sut = try appendImageMessage(to: conversation)
+        let sut = appendImageMessage(to: conversation)
         XCTAssertNotNil(sut.imageMessageData, line: line)
         XCTAssertTrue(uiMOC.saveOrRollback(), line: line)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
