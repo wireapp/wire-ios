@@ -62,10 +62,10 @@ public final class SendableBatchObserver {
 
         sendables.forEach { message in
             if message.isSent {
-                totalProgress = totalProgress + 1.0 / Float(sendables.count)
+                totalProgress += 1.0 / Float(sendables.count)
             } else {
                 let messageProgress = (message.deliveryProgress ?? 0)
-                totalProgress = totalProgress +  messageProgress / Float(sendables.count)
+                totalProgress += messageProgress / Float(sendables.count)
             }
         }
 
