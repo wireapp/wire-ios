@@ -145,10 +145,15 @@ extension ClientMessageRequestFactoryTests {
 // MARK: - Client discovery
 extension ClientMessageRequestFactoryTests {
 
-    func testThatPathIsCorrect_WhenCreatingRequest_WithoutDomain() {
+    func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversationID = UUID()
+            let expectedMessage = Proteus_NewOtrMessage(
+                withSender: self.selfClient,
+                nativePush: false,
+                recipients: []
+            )
 
             // WHEN
             let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
@@ -156,17 +161,31 @@ extension ClientMessageRequestFactoryTests {
                 selfClient: self.selfClient
             )
 
+            guard let data = request?.binaryData else {
+                return XCTFail()
+            }
+
+            let message = try? Proteus_NewOtrMessage(serializedData: data)
+
             // THEN
             XCTAssertNotNil(request)
+            XCTAssertNotNil(message)
             XCTAssertEqual(request?.path, "/conversations/\(conversationID.transportString())/otr/messages")
+            XCTAssertEqual(message, expectedMessage)
         }
     }
 
-    func testThatPathIsCorrect_WhenCreatingRequest_WithDomain() {
+    func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversationID = UUID()
             let domain = "wire.com"
+            let expectedMessage = Proteus_QualifiedNewOtrMessage(
+                withSender: self.selfClient,
+                nativePush: false,
+                recipients: [],
+                missingClientsStrategy: .doNotIgnoreAnyMissingClient
+            )
 
             // WHEN
             let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
@@ -175,9 +194,17 @@ extension ClientMessageRequestFactoryTests {
                 selfClient: self.selfClient
             )
 
+            guard let data = request?.binaryData else {
+                return XCTFail()
+            }
+
+            let message = try? Proteus_QualifiedNewOtrMessage(serializedData: data)
+
             // THEN
             XCTAssertNotNil(request)
+            XCTAssertNotNil(message)
             XCTAssertEqual(request?.path, "/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(message, expectedMessage)
         }
     }
 }
