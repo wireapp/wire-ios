@@ -27,7 +27,6 @@ class PushMessageHandlerDummy: NSObject, PushMessageHandler {
     func didFailToSend(_ message: ZMMessage) {
         // nop
     }
-
 }
 
 class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
@@ -380,7 +379,6 @@ public class SharingSession {
 }
 
 extension SharingSession: LinkPreviewDetectorType {
-
     public func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
         applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excluding, completion: completion)
     }
@@ -390,7 +388,6 @@ extension SharingSession: LinkPreviewDetectorType {
 // MARK: - Helper
 
 fileprivate extension ZMConversationList {
-
     var writeableConversations: [Conversation] {
         return self.filter {
             if let conversation = $0 as? ZMConversation {

@@ -27,15 +27,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .red
         window?.makeKeyAndVisible()
-        let vc = UIViewController()
+        let viewController = UIViewController()
         let textView = UITextView()
         textView.text = "This is the test host application for WireShareEngine tests."
-        vc.view.addSubview(textView)
+        viewController.view.addSubview(textView)
         textView.backgroundColor = .green
         textView.textContainerInset = .init(top: 22, left: 22, bottom: 22, right: 22)
         textView.isEditable = false
-        textView.frame = vc.view.frame.insetBy(dx: 22, dy: 44)
-        window?.rootViewController = vc
+        textView.frame = viewController.view.frame.insetBy(dx: 22, dy: 44)
+        window?.rootViewController = viewController
 
         return true
     }

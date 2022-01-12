@@ -21,7 +21,7 @@ import LocalAuthentication
 import WireDataModel
 @testable import WireShareEngine
 
-class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
+class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
 
     // MARK: - Life Cycle
 
