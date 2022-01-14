@@ -445,6 +445,12 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 - (NSArray *)imageMediaTypes;
 {
     NSMutableArray *types = [NSMutableArray array];
+
+    // Due to some refactoring for federation, the backend now sets the returned
+    // content type for asset endpoints to application/json. We need to include this
+    // in the accepted content types otherwise we'll get a 406 response error.
+    [types addObject:@"application/json"];
+
     {
         for (NSString *uti in CFBridgingRelease(CGImageSourceCopyTypeIdentifiers())) {
             NSString *mimeType = [UTIHelper convertToMimeWithUti:uti];

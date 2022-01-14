@@ -712,8 +712,12 @@ static XCTestCase *currentTestCase;
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
     NSString *accept = requestHeaders[@"Accept"];
     XCTAssertNotNil(accept);
-    NSArray *types = [accept componentsSeparatedByString:@", "];
+    NSMutableArray *types = [[accept componentsSeparatedByString:@", "] mutableCopy];
     XCTAssertGreaterThan(types.count, 0u);
+
+    XCTAssertTrue([types containsObject:@"application/json"]);
+    [types removeObject:@"application/json"];
+
     for (NSString *t in types) {
         XCTAssertTrue([t hasPrefix:@"image/"], @"type '%@'", t);
     }
