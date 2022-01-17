@@ -20,6 +20,7 @@ import Foundation
 @testable import WireDataModel
 
 class ConversationTests_Team: ZMConversationTestsBase {
+
     var sut: ZMConversation!
 
     override func setUp() {
@@ -34,7 +35,7 @@ class ConversationTests_Team: ZMConversationTestsBase {
         super.tearDown()
     }
 
-    func testThatItReturnsFalse_WhenTeamIdIsNil() {
+    func test_ConversationIsNotATeamConversation_WhenTeamIdIsNil() {
         // Given
         sut.teamRemoteIdentifier = nil
 
@@ -42,7 +43,7 @@ class ConversationTests_Team: ZMConversationTestsBase {
         XCTAssertFalse(sut.isTeamConversation)
     }
 
-    func testThatItReturnsFalse_WhenConversationIsNotFederated_AndTeamIdIsDifferentFromSelfUser() {
+    func test_ConversationIsNotATeamConversation_WhenTeamIdIsDifferentFromSelfUser() {
         // Given
         let team = createTeam(in: uiMOC)
         createMembership(in: uiMOC, user: selfUser, team: team, with: nil)
@@ -52,19 +53,8 @@ class ConversationTests_Team: ZMConversationTestsBase {
         XCTAssertFalse(sut.isTeamConversation)
     }
 
-    func testThatItReturnsTrue_WhenConversationIsNotFederated_AndTeamIdIsSameAsSelfUser_() {
-        // Given
-        let teamId = UUID()
-        let team = createTeam(in: uiMOC)
-        team.remoteIdentifier = teamId
-        createMembership(in: uiMOC, user: selfUser, team: team, with: nil)
-        sut.teamRemoteIdentifier = teamId
-
-        // When / Then
-        XCTAssertTrue(sut.isTeamConversation)
-    }
-
-    func testThatItReturnsFalse_WhenConversationIsFederated() {
+    // @SF.Federation @SF.Separation @TSFI.UserInterface @S0.2
+    func test_ConversationIsNotATeamConversation_WhenItIsFederated() {
         // Given
         let teamId = UUID()
         let team = createTeam(in: uiMOC)
@@ -78,4 +68,18 @@ class ConversationTests_Team: ZMConversationTestsBase {
         // When / Then
         XCTAssertFalse(sut.isTeamConversation)
     }
+
+    // @SF.Federation @SF.Separation @TSFI.UserInterface @S0.2
+    func test_ConversationIsATeamConversation_WhenTeamIdIsTheSameAsSelfUser_AndItIsNotFederated() {
+        // Given
+        let teamId = UUID()
+        let team = createTeam(in: uiMOC)
+        team.remoteIdentifier = teamId
+        createMembership(in: uiMOC, user: selfUser, team: team, with: nil)
+        sut.teamRemoteIdentifier = teamId
+
+        // When / Then
+        XCTAssertTrue(sut.isTeamConversation)
+    }
+
 }
