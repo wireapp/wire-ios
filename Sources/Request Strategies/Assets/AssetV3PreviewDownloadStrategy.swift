@@ -21,7 +21,19 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
-@objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+@objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, FederationAware {
+
+    public var useFederationEndpoint: Bool {
+        get {
+            requestFactory.useFederationEndpoint
+        }
+
+        set {
+            requestFactory.useFederationEndpoint = newValue
+        }
+    }
+
+    private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
     private var token: Any?
@@ -31,7 +43,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
         let filter = NSPredicate { object, _ in
             guard let message = object as? ZMAssetClientMessage, nil != message.fileMessageData else { return false }
-            guard message.version == 3, message.visibleInConversation != nil else { return false }
+            guard message.version >= 3, message.visibleInConversation != nil else { return false }
             guard nil != message.underlyingMessage?.previewAssetId else { return false }
             return !message.hasDownloadedPreview
         }
@@ -112,11 +124,11 @@ extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage,
             let asset = assetClientMessage.underlyingMessage?.assetData,
-            assetClientMessage.version == 3 {
+            assetClientMessage.version >= 3 {
 
             let remote = asset.preview.remote
             let token = remote.hasAssetToken ? remote.assetToken : nil
-            if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: remote.assetID, token: token) {
+            if let request = requestFactory.requestToGetAsset(withKey: remote.assetID, token: token, domain: remote.assetDomain) {
                 request.add(ZMCompletionHandler(on: self.managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 })
@@ -124,7 +136,7 @@ extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
             }
         }
 
-        fatal("Cannot generate request to download v3 file preview for \(object.safeForLoggingDescription)")
+        fatal("Cannot generate request to download v3/v4 file preview for \(object.safeForLoggingDescription)")
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

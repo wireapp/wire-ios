@@ -169,8 +169,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
-            let messageSet: Set<NSManagedObject> = [message]
             message = self.createFileMessage()
+            let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
             guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
             request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
@@ -200,8 +200,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
-            let messageSet: Set<NSManagedObject> = [message]
             message = self.createFileMessage()
+            let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
             let request = self.sut.nextRequest()
 
@@ -220,8 +220,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
-            let messageSet: Set<NSManagedObject> = [message]
             message = self.createImageMessage()
+            let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
             let request = self.sut.nextRequest()
 
@@ -259,8 +259,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
-            let messageAsset: Set<NSManagedObject> = [message]
             message = self.createImageMessage()
+            let messageAsset: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageAsset)
             let request = self.sut.nextRequest()
 
@@ -278,8 +278,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
-            let messageSet: Set<NSManagedObject> = [message]
             message = self.createImageMessage()
+            let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
             let request = self.sut.nextRequest()
 

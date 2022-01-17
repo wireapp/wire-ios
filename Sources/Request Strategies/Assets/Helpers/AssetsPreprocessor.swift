@@ -57,7 +57,7 @@ import Foundation
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        let predicate = NSPredicate(format: "version == 3 && %K == NO", DeliveredKey)
+        let predicate = NSPredicate(format: "version >= 3 && %K == NO", DeliveredKey)
         return ZMAssetClientMessage.sortedFetchRequest(with: predicate)
     }
 

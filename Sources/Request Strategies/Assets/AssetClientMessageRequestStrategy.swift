@@ -61,7 +61,7 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
-        let isAssetV3 = NSPredicate(format: "version == 3")
+        let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
     }

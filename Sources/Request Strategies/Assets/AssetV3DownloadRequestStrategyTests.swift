@@ -68,14 +68,15 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
         sha: Data  = Data.randomEncryptionKey()
-        ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
+    ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
 
         let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let messageDomain = sut.useFederationEndpoint ? UUID.create().transportString() : nil
+        let (assetId, token, domain) = (UUID.create().transportString(), UUID.create().transportString(), messageDomain)
         let content = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
         var uploaded = GenericMessage(content: content, nonce: message.nonce!, expiresAfter: conversation.activeMessageDestructionTimeoutValue)
 
-        uploaded.updateUploaded(assetId: assetId, token: token)
+        uploaded.updateUploaded(assetId: assetId, token: token, domain: domain)
         message.updateTransferState(.uploaded, synchronize: false)
 
         do {
@@ -87,7 +88,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         deleteDownloadedFileFor(message: message)
         XCTAssertEqual(message.version, 3)
         syncMOC.saveOrRollback()
-        return (message, assetId, token)
+        return (message, assetId, token, domain)
     }
 
     fileprivate func deleteDownloadedFileFor(message: ZMAssetClientMessage) {
@@ -101,7 +102,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
 
             // Given
-            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             assetMessage = message
 
             // When
@@ -122,7 +123,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
 
             // Given
-            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data())
             assetMessage = message
 
@@ -138,19 +139,22 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItGeneratesARequestToTheV3EndpointIfTheProtobufContainsAnAssetID_V3() {
+    func testThatItGeneratesAnExpectedV3RequestToTheV3EndpointIfTheProtobufContainsAnAssetID_whenFederationIsNotEnabled() {
 
         var expectedAssetId: String = ""
         syncMOC.performGroupedBlockAndWait {
 
             // Given
-            guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            self.sut.useFederationEndpoint = false
+            guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
 
             expectedAssetId = assetId
             XCTAssert(assetData.hasUploaded)
             XCTAssertEqual(assetData.uploaded.assetID, assetId)
             XCTAssertEqual(assetData.uploaded.assetToken, token)
+            XCTAssertFalse(assetData.uploaded.hasAssetDomain)
+            XCTAssertNil(domain)
             message.requestFileDownload()
         }
 
@@ -167,20 +171,23 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItGeneratesARequestToTheV3EndpointITheProtobufContainsAnAssetID_EphemeralConversation_V3() {
+    func testThatItGeneratesAnExpectedV3RequestToTheV3EndpointITheProtobufContainsAnAssetID_EphemeralConversation_whenFederationIsNotEnabled() {
 
         var expectedAssetId: String = ""
         syncMOC.performGroupedBlockAndWait {
 
             // Given
+            self.sut.useFederationEndpoint = false
             self.conversation.setMessageDestructionTimeoutValue(.custom(5), for: .selfUser)
-            guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
 
             expectedAssetId = assetId
             XCTAssert(assetData.hasUploaded)
             XCTAssertEqual(assetData.uploaded.assetID, assetId)
             XCTAssertEqual(assetData.uploaded.assetToken, token)
+            XCTAssertFalse(assetData.uploaded.hasAssetDomain)
+            XCTAssertNil(domain)
             guard case .ephemeral? = message.underlyingMessage!.content else {
                 return XCTFail("Ephemeral's message content is invalid")
             }
@@ -196,6 +203,76 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             // Then
             XCTAssertEqual(request.method, .methodGET)
             XCTAssertEqual(request.path, "/assets/v3/\(expectedAssetId)")
+            XCTAssert(request.needsAuthentication)
+        }
+    }
+
+    func testThatItGeneratesAnExpectedV4RequestToTheV3EndpointIfTheProtobufContainsAnAssetID_whenFederationIsEnabled() {
+
+        var expectedAssetId: String = ""
+        var expectedDomain: String! = ""
+        syncMOC.performGroupedBlockAndWait {
+
+            // Given
+            self.sut.useFederationEndpoint = true
+            guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
+
+            expectedAssetId = assetId
+            expectedDomain = domain
+            XCTAssert(assetData.hasUploaded)
+            XCTAssertEqual(assetData.uploaded.assetID, assetId)
+            XCTAssertEqual(assetData.uploaded.assetToken, token)
+            XCTAssertEqual(assetData.uploaded.assetDomain, domain!)
+            message.requestFileDownload()
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // When
+            guard let request = self.sut.nextRequest() else { return XCTFail("No request generated") }
+
+            // Then
+            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.path, "/assets/v4/\(expectedDomain!)/\(expectedAssetId)")
+            XCTAssert(request.needsAuthentication)
+        }
+    }
+
+    func testThatItGeneratesAnExpectedV4RequestToTheV3EndpointITheProtobufContainsAnAssetID_EphemeralConversation_whenFederationIsEnabled() {
+
+        var expectedAssetId: String = ""
+        var expectedDomain: String! = ""
+        syncMOC.performGroupedBlockAndWait {
+
+            // Given
+            self.sut.useFederationEndpoint = true
+            self.conversation.setMessageDestructionTimeoutValue(.custom(5), for: .selfUser)
+            guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
+
+            expectedAssetId = assetId
+            expectedDomain = domain
+            XCTAssert(assetData.hasUploaded)
+            XCTAssertEqual(assetData.uploaded.assetID, assetId)
+            XCTAssertEqual(assetData.uploaded.assetToken, token)
+            XCTAssertEqual(assetData.uploaded.assetDomain, domain!)
+            guard case .ephemeral? = message.underlyingMessage!.content else {
+                return XCTFail("content missing")
+            }
+            message.requestFileDownload()
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // When
+            guard let request = self.sut.nextRequest() else { return XCTFail("No request generated") }
+
+            // Then
+            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.path, "/assets/v4/\(expectedDomain!)/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
     }
@@ -223,7 +300,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     func testThatItGeneratesNoRequestsIfMessageIsUploading_V3() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else {
+            guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else {
                 return XCTFail("Failed to create message")
             } // V3
             message.updateTransferState(.uploading, synchronize: false)
@@ -252,7 +329,7 @@ extension AssetV3DownloadRequestStrategyTests {
         var message: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
             let sha = encryptedData.zmSHA256Digest()
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!
             msg.requestFileDownload()
             message = msg
         }
@@ -276,7 +353,7 @@ extension AssetV3DownloadRequestStrategyTests {
     func testThatItDeletesMessageIfItCannotDownload_PermanentError_V3() {
         let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             return msg
         }
@@ -304,7 +381,7 @@ extension AssetV3DownloadRequestStrategyTests {
     func testThatItMarksDownloadAsFailedIfCannotDownload_TemporaryError_403_V3() {
         let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             return msg
         }
@@ -328,7 +405,7 @@ extension AssetV3DownloadRequestStrategyTests {
     func testThatItMarksDownloadAsFailedIfCannotDownload_TemporaryError_500_V3() {
         let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             return msg
         }
@@ -354,7 +431,7 @@ extension AssetV3DownloadRequestStrategyTests {
         // GIVEN
         var message: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             message = msg
         }
@@ -382,7 +459,7 @@ extension AssetV3DownloadRequestStrategyTests {
 
         // GIVEN
         self.syncMOC.performGroupedBlockAndWait {
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             message = msg
         }
@@ -589,7 +666,7 @@ extension AssetV3DownloadRequestStrategyTests {
 
         // GIVEN
         self.syncMOC.performGroupedBlockAndWait {
-            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
+            let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             message = msg
         }

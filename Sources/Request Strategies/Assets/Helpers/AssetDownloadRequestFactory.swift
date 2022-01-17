@@ -19,13 +19,25 @@
 import Foundation
 import WireTransport
 
-public final class AssetDownloadRequestFactory: NSObject {
+public final class AssetDownloadRequestFactory: NSObject, FederationAware {
 
-    public func requestToGetAsset(withKey key: String, token: String?) -> ZMTransportRequest? {
-        let path = "/assets/v3/\(key)"
+    public var useFederationEndpoint: Bool = false
+
+    public func requestToGetAsset(withKey key: String, token: String?, domain: String?) -> ZMTransportRequest? {
+
+        let path: String
+        if useFederationEndpoint {
+            guard let domain = domain else { return nil }
+
+            path = "/assets/v4/\(domain)/\(key)"
+        } else {
+            path = "/assets/v3/\(key)"
+        }
+
         let request = ZMTransportRequest.assetGet(fromPath: path, assetToken: token)
         request?.forceToBackgroundSession()
         return request
+
     }
 
 }
