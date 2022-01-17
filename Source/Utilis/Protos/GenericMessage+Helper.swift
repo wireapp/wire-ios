@@ -716,9 +716,10 @@ public extension LinkPreview {
         }
     }
 
-    mutating func update(withAssetKey assetKey: String, assetToken: String?) {
+    mutating func update(withAssetKey assetKey: String, assetToken: String?, assetDomain: String?) {
         image.uploaded.assetID = assetKey
         image.uploaded.assetToken = assetToken ?? ""
+        image.uploaded.assetDomain = assetDomain ?? ""
     }
 
     var hasTweet: Bool {

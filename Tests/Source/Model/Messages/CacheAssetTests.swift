@@ -181,7 +181,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         sut.encrypt()
 
         // when
-        sut.updateWithAssetId("asset-123", token: "token-123")
+        sut.updateWithAssetId("asset-123", token: "token-123", domain: UUID().uuidString)
 
         // then
         XCTAssertTrue(sut.isUploaded)
@@ -195,7 +195,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         sut.encrypt()
 
         // when
-        sut.updateWithAssetId("asset-123", token: "token-123")
+        sut.updateWithAssetId("asset-123", token: "token-123", domain: UUID().uuidString)
 
         // then
         XCTAssertTrue(sut.isUploaded)
@@ -209,7 +209,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         sut.encrypt()
 
         // when
-        sut.updateWithAssetId("asset-123", token: "token-123")
+        sut.updateWithAssetId("asset-123", token: "token-123", domain: UUID().uuidString)
 
         // then
         XCTAssertTrue(sut.isUploaded)

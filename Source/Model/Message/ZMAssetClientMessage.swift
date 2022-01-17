@@ -398,14 +398,14 @@ struct CacheAsset: AssetType {
 
     }
 
-    func updateWithAssetId(_ assetId: String, token: String?) {
+    func updateWithAssetId(_ assetId: String, token: String?, domain: String?) {
         guard var genericMessage = owner.underlyingMessage else { return }
 
         switch type {
         case .thumbnail:
-            genericMessage.updatePreview(assetId: assetId, token: token)
+            genericMessage.updatePreview(assetId: assetId, token: token, domain: domain)
         case .image, .file:
-            genericMessage.updateUploaded(assetId: assetId, token: token)
+            genericMessage.updateUploaded(assetId: assetId, token: token, domain: domain)
         }
 
         do {
@@ -560,7 +560,7 @@ public protocol AssetType {
     var isUploaded: Bool { get }
 
     /// Update the asset with the asset id and token received from the backend
-    func updateWithAssetId(_ assetId: String, token: String?)
+    func updateWithAssetId(_ assetId: String, token: String?, domain: String?)
 
     /// Update the asset with preprocessed image data
     func updateWithPreprocessedData(_ preprocessedImageData: Data, imageProperties: ZMIImageProperties)
