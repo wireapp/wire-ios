@@ -143,7 +143,9 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             let messageText = message.textMessageData?.messageText,
             let mentions = message.textMessageData?.mentions
         {
-            linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
+            let assetToken = payload["token"] as? String
+            let assetDomain = payload["domain"] as? String
+            linkPreview.update(withAssetKey: assetKey, assetToken: assetToken, assetDomain: assetDomain)
 
             let updatedText = Text.with {
                 $0.content = messageText

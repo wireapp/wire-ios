@@ -18,10 +18,21 @@
 
 import Foundation
 
-@objcMembers public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
+@objcMembers public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy, FederationAware {
+    
+    public var useFederationEndpoint: Bool {
+        get {
+            requestFactory.useFederationEndpoint
+        }
+
+        set {
+            requestFactory.useFederationEndpoint = newValue
+        }
+    }
+
+    private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let assetRequestFactory = AssetDownloadRequestFactory()
     private var notificationToken: Any?
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
@@ -120,7 +131,8 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
 
         // Protobuf initializes the token to an empty string when set to nil
         let token = remoteData.hasAssetToken && remoteData.assetToken != "" ? remoteData.assetToken : nil
-        let request = assetRequestFactory.requestToGetAsset(withKey: remoteData.assetID, token: token)
+        let domain = remoteData.assetDomain
+        let request = requestFactory.requestToGetAsset(withKey: remoteData.assetID, token: token, domain: domain)
         request?.add(ZMCompletionHandler(on: managedObjectContext) { response in
             self.handleResponse(response, forMessage: message)
         })

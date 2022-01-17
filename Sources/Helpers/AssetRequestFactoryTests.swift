@@ -95,4 +95,5 @@ class AssetRequestFactoryTests: ZMTBaseTest {
         XCTAssert(conversation.containsTeamUser)
         XCTAssertEqual(AssetRequestFactory.Retention(conversation: conversation), .eternalInfrequentAccess)
     }
+
 }

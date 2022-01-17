@@ -82,8 +82,8 @@ extension FetchClientRequestStrategyTests {
                     "id": clientUUID.transportString(),
                     "class": "phone"
                 ]
-            let clientSet: Set<NSManagedObject> = [client]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> = [client]
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
@@ -105,8 +105,8 @@ extension FetchClientRequestStrategyTests {
             // GIVEN
             self.otherUser.domain = nil
             let clientUUID = UUID()
-            let clientSet: Set<NSManagedObject> =  [client]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> =  [client]
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
@@ -157,8 +157,8 @@ extension FetchClientRequestStrategyTests {
                     ]]
             ]
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
-            let clientSet: Set<NSManagedObject> = [client]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> = [client]
             self.otherUser.domain = "example.com"
             self.syncMOC.saveOrRollback()
 
@@ -185,13 +185,13 @@ extension FetchClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let clientUUID = UUID()
+            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             let clientSet: Set<NSManagedObject> = [client]
             let userID = self.otherUser.remoteIdentifier.transportString()
             let payload: Payload.UserClientByDomain = [
                 "example.com": [userID: []]
             ]
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
-            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             self.otherUser.domain = "example.com"
 
             // WHEN

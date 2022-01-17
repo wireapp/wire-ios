@@ -18,7 +18,9 @@
 
 import Foundation
 
-public final class AssetRequestFactory: NSObject {
+public final class AssetRequestFactory: NSObject, FederationAware {
+
+    public var useFederationEndpoint: Bool = false
 
     public enum Retention: String {
         /// The asset will be automatically removed from the backend
@@ -44,6 +46,7 @@ public final class AssetRequestFactory: NSObject {
         static let accessLevel = "public"
         static let retention = "retention"
         static let boundary = "frontier"
+        static let domain = "domain"
 
         enum ContentType {
             static let json = "application/json"
@@ -66,12 +69,17 @@ public final class AssetRequestFactory: NSObject {
 
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {
         let fileDataHeader = [Constant.md5: (data as NSData).zmMD5Digest().base64String()]
-        let metaData = try JSONSerialization.data(withJSONObject: [Constant.accessLevel: shareable, Constant.retention: retention.rawValue], options: [])
+        let jsonObject: [String: Any] = [
+            Constant.accessLevel: shareable,
+            Constant.retention: retention.rawValue
+        ]
+
+        let metaData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
 
         return NSData.multipartData(withItems: [
             ZMMultipartBodyItem(data: metaData, contentType: Constant.ContentType.json, headers: nil),
             ZMMultipartBodyItem(data: data, contentType: Constant.ContentType.octetStream, headers: fileDataHeader)
-            ], boundary: Constant.boundary)
+        ], boundary: Constant.boundary)
     }
 
     private func uploadURL(for message: ZMAssetClientMessage, in moc: NSManagedObjectContext, shareable: Bool, retention: Retention, data: Data) -> URL? {

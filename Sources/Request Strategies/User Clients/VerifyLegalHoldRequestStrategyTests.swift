@@ -102,8 +102,8 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         let clientID = "client123"
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            let conversationSet: Set<NSManagedObject> = [conversation]
             conversation = self.createGroupConversation(with: self.otherUser)
+            let conversationSet: Set<NSManagedObject> = [conversation]
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
 
             self.sut.objectsDidChange(conversationSet)
@@ -132,8 +132,8 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: true))
             XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: self.otherUser, createIfNeeded: true))
 
-            let conversationSet: Set<NSManagedObject> = [conversation]
             conversation = self.createGroupConversation(with: self.otherUser)
+            let conversationSet: Set<NSManagedObject> = [conversation]
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
 
@@ -161,8 +161,8 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             // GIVEN
             XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: true))
 
-            let conversationSet: Set<NSManagedObject> = [conversation]
             conversation = self.createGroupConversation(with: self.otherUser)
+            let conversationSet: Set<NSManagedObject> = [conversation]
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
 

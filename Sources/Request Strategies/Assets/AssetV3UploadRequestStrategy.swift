@@ -52,7 +52,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     }
 
     private static var updatePredicate: NSPredicate {
-        return NSPredicate(format: "version == 3 && delivered == NO && transferState == \(AssetTransferState.uploading.rawValue)")
+        return NSPredicate(format: "version >= 3 && delivered == NO && transferState == \(AssetTransferState.uploading.rawValue)")
     }
 
     private static var filterPredicate: NSPredicate {
@@ -68,7 +68,7 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         let assetClientMessages = object.compactMap { object -> ZMAssetClientMessage? in
             guard let message = object as? ZMAssetClientMessage,
-                message.version == 3,
+                message.version >= 3,
                 message.transferState == .uploadingCancelled
                 else { return nil }
             return message
@@ -117,6 +117,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     private func requestForUploadingAsset(_ asset: AssetType, for message: ZMAssetClientMessage) -> ZMUpstreamRequest {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
+
         guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention) else { fatal("Could not create asset request") }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
@@ -141,8 +142,9 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         }
 
         let token = payload["token"] as? String
+        let domain = payload["domain"] as? String
 
-        asset.updateWithAssetId(assetId, token: token)
+        asset.updateWithAssetId(assetId, token: token, domain: domain)
 
         if message.processingState == .done {
             message.updateTransferState(.uploaded, synchronize: false)
