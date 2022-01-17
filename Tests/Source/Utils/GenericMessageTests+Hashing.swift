@@ -103,7 +103,7 @@ class GenericMessageTests_Hashing: XCTestCase {
             $0.uploaded.sha256 = Data()
         }
         var assetMessage = GenericMessage(content: asset)
-        assetMessage.updateUploaded(assetId: "3-2-1-38d4f5b9", token: nil)
+        assetMessage.updateUploaded(assetId: "3-2-1-38d4f5b9", token: nil, domain: nil)
         let timestamp = Date(timeIntervalSince1970: 1540213769)
 
         // when
@@ -120,7 +120,7 @@ class GenericMessageTests_Hashing: XCTestCase {
             $0.uploaded.sha256 = Data()
         }
         var assetMessage = GenericMessage(content: asset)
-        assetMessage.updateUploaded(assetId: "3-3-3-82a62735", token: nil)
+        assetMessage.updateUploaded(assetId: "3-3-3-82a62735", token: nil, domain: nil)
         let timestamp = Date(timeIntervalSince1970: 1540213965)
 
         // when

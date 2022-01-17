@@ -195,7 +195,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
 
         var updated = LinkPreview(preview)
         updated.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
-        updated.update(withAssetKey: "id", assetToken: nil)
+        updated.update(withAssetKey: "id", assetToken: nil, assetDomain: nil)
         let text = Text.with {
             $0.content = "Text"
             $0.linkPreview = [updated]

@@ -311,7 +311,7 @@ extension ZMAssetClientMessageTests {
         // when
         let asset = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
         var originalMessage = GenericMessage(content: asset, nonce: nonce)
-        originalMessage.updateUploaded(assetId: "id", token: "token")
+        originalMessage.updateUploaded(assetId: "id", token: "token", domain: "domain")
         let updateEvent = createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: originalMessage)
         sut.update(with: updateEvent, initialUpdate: true)
 
@@ -368,7 +368,7 @@ extension ZMAssetClientMessageTests {
         // when
         let asset = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
         var message = GenericMessage(content: asset, nonce: nonce)
-        message.updateUploaded(assetId: "id", token: "token")
+        message.updateUploaded(assetId: "id", token: "token", domain: "domain")
         let updateEvent = createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: message)
         sut.update(with: updateEvent, initialUpdate: true)
 
@@ -1168,7 +1168,7 @@ extension ZMAssetClientMessageTests {
 
 extension ZMAssetClientMessageTests {
 
-    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String?, token: String?)
+    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String?, token: String?, domain: String?)
 
     private func updateEventForOriginal(nonce: UUID, image: WireProtos.Asset.ImageMetaData? = nil, preview: WireProtos.Asset.Preview? = nil, mimeType: String = "image/jpeg", name: String? = nil) -> ZMUpdateEvent {
         let original = WireProtos.Asset.Original(withSize: 128, mimeType: mimeType, name: name, imageMetaData: image)
@@ -1184,14 +1184,13 @@ extension ZMAssetClientMessageTests {
         return createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: GenericMessage(content: asset, nonce: nonce))
     }
 
-    func previewGenericMessage(with nonce: UUID, assetId: String? = UUID.create().transportString(), token: String? = UUID.create().transportString(), otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (GenericMessage, PreviewMeta) {
-
+    func previewGenericMessage(with nonce: UUID, assetId: String? = UUID.create().transportString(), token: String? = UUID.create().transportString(), domain: String? = UUID.create().transportString(), otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (GenericMessage, PreviewMeta) {
         let remoteData = WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: assetId, assetToken: token)
         let preview = WireProtos.Asset.Preview(size: 512, mimeType: "image/jpeg", remoteData: remoteData, imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 4578))
         let asset = WireProtos.Asset.with { $0.preview = preview }
         let message = GenericMessage(content: asset, nonce: nonce)
 
-        let previewMeta = (otr, sha, assetId, token)
+        let previewMeta = (otr, sha, assetId, token, domain)
 
         XCTAssertEqual(message.asset.preview.remote.assetID, assetId)
         return (message, previewMeta)
