@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension XCTestCase {
+public extension XCTest {
     
-    public func waitForGroupsToBeEmpty(_ groups: [DispatchGroup], timeout: TimeInterval = 5) -> Bool {
+    func waitForGroupsToBeEmpty(_ groups: [DispatchGroup], timeout: TimeInterval = 5) -> Bool {
         
         let timeoutDate = Date(timeIntervalSinceNow: timeout)
         var groupCounter = groups.count
