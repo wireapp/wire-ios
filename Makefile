@@ -1,10 +1,7 @@
 SHELL   := /usr/bin/env bash
 VERSION := 0.3.0
 
-TARGETS := armv7-apple-ios \
-           armv7s-apple-ios \
-           i386-apple-ios \
-           aarch64-apple-ios \
+TARGETS := aarch64-apple-ios \
            x86_64-apple-ios
 
 # pkg-config is invoked by libsodium-sys
@@ -56,6 +53,8 @@ cryptobox: build/lib/libcryptobox.a build/include/cbox.h
 cryptobox-%:
 	mkdir -p build
 	cd build
+	cp -rf Carthage/Checkouts/cryptobox-ios/mk/cryptobox-src.mk ./mk
+	cp -rf Carthage/Checkouts/cryptobox-ios/mk/libsodium-src.mk ./mk
 	if [ ! -f build/cryptobox-ios-$*.tar.gz ]; then \
 	curl -L -o build/cryptobox-ios-$*.tar.gz https://github.com/wireapp/cryptobox-ios/releases/download/v$*/cryptobox-ios-$*.tar.gz; \
 	fi
