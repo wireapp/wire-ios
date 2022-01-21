@@ -370,7 +370,7 @@
 		A9CDCDC5237D9A6E008A9BC6 /* UIColor+Equatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Equatable.swift"; sourceTree = "<group>"; };
 		A9CDCDC8237D9AE3008A9BC6 /* ColorComponentsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorComponentsTests.swift; sourceTree = "<group>"; };
 		A9CDCDC9237D9AE3008A9BC6 /* UIColor+MixingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+MixingTests.swift"; sourceTree = "<group>"; };
-		A9E6BE78269744B900E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
+		A9F499E9279AC94B00969F4B /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+Containment.swift"; sourceTree = "<group>"; };
 		BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+ContainmentTests.swift"; sourceTree = "<group>"; };
 		BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparison.swift; sourceTree = "<group>"; };
@@ -623,7 +623,7 @@
 		546E84FA1B73DCA300532F17 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A9E6BE78269744B900E410ED /* ios.xcconfig */,
+				A9F499E9279AC94B00969F4B /* ios-arm64Simulator.xcconfig */,
 				F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */,
 				F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */,
 				F1E148C7207BAED000F81833 /* project-common.xcconfig */,
@@ -921,7 +921,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1310;
 				TargetAttributes = {
 					09F028CD1B78BE2700BADDB6 = {
 						CreatedOnToolsVersion = 6.4;
