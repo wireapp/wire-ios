@@ -18,4 +18,4 @@
 
 #include "warnings.xcconfig"
 #include "../version.xcconfig"
-#include "../../../Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"
+#include "../../../Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"
