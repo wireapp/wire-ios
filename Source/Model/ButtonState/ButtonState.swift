@@ -32,11 +32,11 @@ class ButtonState: ZMManagedObject {
         buttonState.state = .unselected
         return buttonState
     }
-    
+
     override static func entityName() -> String {
         return String(describing: ButtonState.self)
     }
-    
+
     override static func isTrackingLocalModifications() -> Bool {
         return false
     }
@@ -46,7 +46,7 @@ class ButtonState: ZMManagedObject {
         case selected
         case confirmed
     }
-    
+
     var state: State {
         get {
             return State(rawValue: stateValue) ?? .unselected
@@ -65,7 +65,7 @@ extension Set where Element: ButtonState {
                 .unselected
         }
     }
-    
+
     func resetExpired() {
         for button in self {
             button.isExpired = false

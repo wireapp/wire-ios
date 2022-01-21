@@ -21,9 +21,9 @@ import Foundation
 extension ZMConnection {
     @objc(connectionsInManagedObjectContext:)
     class func connections(inManagedObjectContext moc: NSManagedObjectContext) -> [NSFetchRequestResult] {
-        
+
         let request = sortedFetchRequest()
-        
+
         let result = moc.fetchOrAssert(request: request)
         return result
     }
@@ -31,8 +31,8 @@ extension ZMConnection {
     public static func fetchOrCreate(userID: UUID, domain: String?, in context: NSManagedObjectContext) -> ZMConnection {
         guard let connection = fetch(userID: userID, domain: domain, in: context) else {
             return create(userID: userID, domain: domain, in: context)
-        } 
-        
+        }
+
         return connection
     }
 

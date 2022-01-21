@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public extension ZMConversation {
 
     @objc static private var emptyConversationEllipsis: String {
         return "…"
     }
-    
+
     @objc static private var emptyGroupConversationName: String {
         return NSLocalizedString("conversation.displayname.emptygroup", comment: "")
     }
@@ -39,7 +38,7 @@ public extension ZMConversation {
         case .self, .invalid: return result ?? ""
         }
     }
-    
+
     /// A meaningful display name is one that can be constructed from the conversation
     /// data, rather than relying on a fallback placeholder name, such as "…" or "Empty conversation".
     ///
@@ -52,7 +51,7 @@ public extension ZMConversation {
         case .invalid: return nil
         }
     }
-    
+
     private func connectionDisplayName() -> String? {
         precondition(conversationType == .connection)
 
@@ -69,8 +68,7 @@ public extension ZMConversation {
     private var selfUser: ZMUser? {
         return managedObjectContext.map(ZMUser.selfUser)
     }
-    
-    
+
     /// Get the group name from the participants
     ///
     /// - Returns: a group name with creator at the first and other users sorted by name
@@ -80,12 +78,12 @@ public extension ZMConversation {
         if let userDefined = userDefinedName, !userDefined.isEmpty {
             return userDefined
         }
-        
+
         let activeNames: [String] = localParticipants.compactMap { (user) -> String? in
             guard user != selfUser else { return nil }
             return user.name
         }
-        
+
         return activeNames.isEmpty ? nil : activeNames.sorted().joined(separator: ", ")
     }
 

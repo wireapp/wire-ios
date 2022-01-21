@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
-
 
 extension Team {
 
@@ -27,11 +25,11 @@ extension Team {
     // deletion rule (Team → Member). Conversations will be preserved but their teams realtion will be nullified.
     static func deleteLocalTeamsAndMembers(in context: NSManagedObjectContext) {
         let request = Team.sortedFetchRequest()
-        
+
         guard let teams = context.fetchOrAssert(request: request) as? [NSManagedObject] else {
             return
         }
-        
+
         teams.forEach(context.delete)
     }
 

@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 private let unknownMessageEventName = "debug.compatibility_unknown_message"
-
 
 extension AnalyticsType {
 
@@ -29,7 +27,6 @@ extension AnalyticsType {
     }
 
 }
-
 
 /// Objective-C compatibility wrapper for the unknown message event
 class UnknownMessageAnalyticsTracker: NSObject {

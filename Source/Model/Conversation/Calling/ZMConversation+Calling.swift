@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public extension ZMConversation {
 
     @discardableResult
     @objc func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date, relevantForStatus: Bool = true) -> ZMSystemMessage {
         let associatedMessage = associatedSystemMessage(of: .missedCall, sender: user)
-        
+
         let message = appendSystemMessage(
             type: .missedCall,
             sender: user,
@@ -31,11 +30,11 @@ public extension ZMConversation {
             timestamp: timestamp,
             relevantForStatus: relevantForStatus
         )
-        
+
         if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
-        
+
         associatedMessage?.addChild(message)
 
         managedObjectContext?.enqueueDelayedSave()
@@ -45,7 +44,7 @@ public extension ZMConversation {
     @discardableResult
     @objc func appendPerformedCallMessage(with duration: TimeInterval, caller: ZMUser) -> ZMSystemMessage {
         let associatedMessage = associatedSystemMessage(of: .performedCall, sender: caller)
-        
+
         let message = appendSystemMessage(
             type: .performedCall,
             sender: caller,
@@ -58,7 +57,7 @@ public extension ZMConversation {
         if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
-        
+
         associatedMessage?.addChild(message)
 
         managedObjectContext?.enqueueDelayedSave()
@@ -70,12 +69,11 @@ public extension ZMConversation {
               lastMessage.systemMessageType == type,
               lastMessage.sender == sender
         else { return nil }
-        
+
         return lastMessage
     }
 
 }
-
 
 public extension ZMSystemMessage {
 
@@ -83,7 +81,7 @@ public extension ZMSystemMessage {
         mutableSetValue(forKey: #keyPath(ZMSystemMessage.childMessages)).add(message)
         message.visibleInConversation = nil
         message.hiddenInConversation = conversation
-        
+
         managedObjectContext?.processPendingChanges()
     }
 

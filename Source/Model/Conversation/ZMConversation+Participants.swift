@@ -73,15 +73,14 @@ extension ZMConversation {
 
         return sortedUser ?? []
     }
-    
+
     @objc public var sortedActiveParticipants: [ZMUser] {
         return sortedUsers(localParticipants)
     }
 
-    
     /// Whether the roles defined for this conversation should be re-downloaded
     @NSManaged public var needsToDownloadRoles: Bool
-    
+
     @objc
     public var isSelfAnActiveMember: Bool {
         return self.participantRoles.contains(where: { (role) -> Bool in
@@ -89,26 +88,26 @@ extension ZMConversation {
         })
     }
     // MARK: - keyPathsForValuesAffecting
-    
+
     static var participantRolesKeys: [String] {
         return [#keyPath(ZMConversation.participantRoles)]
     }
-    
+
     @objc
     public class func keyPathsForValuesAffectingActiveParticipants() -> Set<String> {
         return Set(participantRolesKeys)
     }
-    
+
     @objc
     public class func keyPathsForValuesAffectingLocalParticipants() -> Set<String> {
         return Set(participantRolesKeys)
     }
-    
+
     @objc
     public class func keyPathsForValuesAffectingLocalParticipantRoles() -> Set<String> {
         return Set(participantRolesKeys + [#keyPath(ZMConversation.participantRoles.role)])
     }
-    
+
     @objc
     public class func keyPathsForValuesAffectingDisplayName() -> Set<String> {
         return Set([ZMConversationConversationTypeKey,
@@ -118,7 +117,7 @@ extension ZMConversation {
                     ZMConversationUserDefinedNameKey] +
                    ZMConversation.participantRolesKeys)
     }
-    
+
     @objc
     public class func keyPathsForValuesAffectingLocalParticipantsExcludingSelf() -> Set<String> {
         return Set(ZMConversation.participantRolesKeys)
@@ -169,22 +168,22 @@ extension ZMConversation {
         action.send(in: context.notificationContext)
     }
 
-    //MARK: - Participants methods
-    
+    // MARK: - Participants methods
+
     /// Participants that are in the conversation, according to the local state,
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipantRoles: Set<ParticipantRole> {
         return participantRoles
     }
-    
+
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipants: Set<ZMUser> {
         return Set(localParticipantRoles.compactMap { $0.user })
     }
-    
+
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
 
@@ -192,9 +191,9 @@ extension ZMConversation {
     public var localParticipantsExcludingSelf: Set<ZMUser> {
         return self.localParticipants.filter { !$0.isSelfUser }
     }
-    
+
     // MARK: - Participant operations
-    
+
     /// Add participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.
@@ -210,7 +209,7 @@ extension ZMConversation {
     public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role?) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: [(user, role)])
     }
-    
+
     /// Add participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.
@@ -226,7 +225,7 @@ extension ZMConversation {
     public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role?) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: users.map { ($0, role) })
     }
-    
+
     /// Add participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.
@@ -239,32 +238,32 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     public func addParticipantsAndUpdateConversationState(usersAndRoles: [(ZMUser, Role?)]) {
-        
+
         // Is this a new conversation, or an existing one that is being updated?
         let doesExistsOnBackend = self.remoteIdentifier != nil
-        
+
         let addedRoles = usersAndRoles.compactMap { (user, role) -> ParticipantRole? in
             guard !user.isAccountDeleted else { return nil }
-            
+
             // make sure the role is the right team/conversation role
             require(
                 role == nil || (role!.team == self.team || role!.conversation == self),
                 "Tried to add a role that does not belong to the conversation"
             )
-            
+
             guard let (result, pr) = updateExistingOrCreateParticipantRole(for: user, with: role) else { return nil }
             return (result == .created) ? pr : nil
         }
-        
+
         let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: {$0.user?.isSelfUser == true})
         if addedSelfUser {
             self.markToDownloadRolesIfNeeded()
             self.needsToBeUpdatedFromBackend = true
         }
-        
+
         if !addedRoles.isEmpty {
             self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
-            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }),  addedSelfUser: addedSelfUser)
+            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }), addedSelfUser: addedSelfUser)
         }
     }
 
@@ -276,37 +275,36 @@ extension ZMConversation {
     // Fetch an existing role or create a new one if needed
     // Returns whether it was created or found
     private func updateExistingOrCreateParticipantRole(for user: ZMUser, with role: Role?) -> (FetchOrCreation, ParticipantRole)? {
-        
+
         guard let moc = self.managedObjectContext else { return nil }
-        
+
         // If the user is already there, just change the role
         if let current = self.participantRoles.first(where: {$0.user == user}) {
             if let role = role {
                 current.role = role
             }
-            
+
             return (.fetched, current)
-            
+
         } else {
             // A new participant role
             let participantRole = ParticipantRole.insertNewObject(in: moc)
             participantRole.conversation = self
             participantRole.user = user
             participantRole.role = role
-            
+
             return (.created, participantRole)
         }
     }
-    
+
     private func checkIfArchivedStatusChanged(addedSelfUser: Bool) {
         if addedSelfUser &&
             self.mutedStatus == MutedMessageOptionValue.none.rawValue &&
-            self.isArchived
-        {
+            self.isArchived {
             self.isArchived = false
         }
     }
-    
+
     private func checkIfVerificationLevelChanged(addedUsers: Set<ZMUser>, addedSelfUser: Bool) {
         let clients = Set(addedUsers.flatMap { $0.clients })
         self.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: addedUsers)
@@ -315,7 +313,7 @@ extension ZMConversation {
             self.increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
         }
     }
-    
+
     /// Remove participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.
@@ -328,28 +326,28 @@ extension ZMConversation {
     /// status, etc.
     @objc
     public func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
-        
+
         guard let moc = self.managedObjectContext else { return }
         let existingUsers = Set(self.participantRoles.map { $0.user })
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
-            
+
             guard existingUsers.contains(user),
                 let existingRole = participantRoles.first(where: { $0.user == user })
                 else { return nil }
-            
+
             participantRoles.remove(existingRole)
             moc.delete(existingRole)
             return user
         })
-        
+
         if !removedUsers.isEmpty {
             let removedSelf = removedUsers.contains(where: { $0.isSelfUser })
             self.checkIfArchivedStatusChanged(removedSelfUser: removedSelf, initiatingUser: initiatingUser)
             self.checkIfVerificationLevelChanged(removedUsers: removedUsers)
         }
     }
-    
+
     /// Remove participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.
@@ -364,20 +362,19 @@ extension ZMConversation {
     public func removeParticipantAndUpdateConversationState(user: ZMUser, initiatingUser: ZMUser? = nil) {
         self.removeParticipantsAndUpdateConversationState(users: Set(arrayLiteral: user), initiatingUser: initiatingUser)
     }
-    
+
     private func checkIfArchivedStatusChanged(removedSelfUser: Bool, initiatingUser: ZMUser?) {
         if removedSelfUser, let initiatingUser = initiatingUser {
             self.isArchived = initiatingUser.isSelfUser
         }
     }
-    
+
     private func checkIfVerificationLevelChanged(removedUsers: Set<ZMUser>) {
         self.increaseSecurityLevelIfNeededAfterRemoving(users: removedUsers)
     }
-    
-    
+
     // MARK: - Conversation roles
-    
+
     /// List of roles for the conversation whether it's linked with a team or not
     @objc
     public func getRoles() -> Set<Role> {
@@ -386,7 +383,7 @@ extension ZMConversation {
         }
         return nonTeamRoles
     }
-    
+
     /// Check if roles are missing, and mark them to download if needed
     @objc public func markToDownloadRolesIfNeeded() {
         guard
@@ -399,11 +396,9 @@ extension ZMConversation {
             needsToDownloadRoles = true
         }
     }
-    
+
     // MARK: - Utils
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
         return localParticipants.contains { $0.userId == userId }
     }
 }
-
-

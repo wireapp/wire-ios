@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 public typealias Conversation = ConversationLike & SwiftConversationLike
@@ -26,7 +25,7 @@ public protocol ConversationLike: NSObjectProtocol {
     var conversationType: ZMConversationType { get }
     var isSelfAnActiveMember: Bool { get }
     var teamRemoteIdentifier: UUID? { get }
-    
+
     func localParticipantsContain(user: UserType) -> Bool
     var localParticipantsCount: Int { get }
 
@@ -36,15 +35,15 @@ public protocol ConversationLike: NSObjectProtocol {
 
     var isUnderLegalHold: Bool { get }
     var securityLevel: ZMConversationSecurityLevel { get }
-    
+
     func verifyLegalHoldSubjects()
 
     var sortedActiveParticipantsUserTypes: [UserType] { get }
-    
+
     var relatedConnectionState: ZMConnectionStatus { get }
     var lastMessage: ZMConversationMessage? { get }
     var firstUnreadMessage: ZMConversationMessage? { get }
-    
+
     var areServicesPresent: Bool { get }
 }
 
@@ -64,24 +63,24 @@ extension ZMConversation: ConversationLike {
     public var localParticipantsCount: Int {
         return localParticipants.count
     }
-    
+
     public func localParticipantsContain(user: UserType) -> Bool {
         guard let user = user as? ZMUser else { return false }
         return localParticipants.contains(user)
     }
-    
+
     public var connectedUserType: UserType? {
         return connectedUser
 	}
-	
+
 	private static let userNameSorter: (UserType, UserType) -> Bool = {
 		$0.name < $1.name
 	}
-	
+
 	public var sortedOtherParticipants: [UserType] {
 		return localParticipants.filter { !$0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
 	}
-	
+
 	public var sortedServiceUsers: [UserType] {
 		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
     }

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 extension ZMConversation {
@@ -28,6 +27,6 @@ extension ZMConversation {
                                  users: nil,
                                  clients: nil,
                                  timestamp: date)
-        
+
     }
 }

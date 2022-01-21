@@ -88,7 +88,6 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
         }
     }
 
-
 }
 
 public extension MessageDestructionTimeoutValue {
@@ -164,7 +163,7 @@ public extension MessageDestructionTimeoutValue {
 
 }
 
-fileprivate let longStyleFormatter: DateComponentsFormatter = {
+private let longStyleFormatter: DateComponentsFormatter = {
     let formatter = DateComponentsFormatter()
     formatter.includesApproximationPhrase = false
     formatter.maximumUnitCount = 1

@@ -19,8 +19,7 @@
 import Foundation
 
 extension ZMConnection {
-    
-    
+
     /// add a user to connection's conversation, if not there already
     /// - Parameter user: the user to insert
     @objc

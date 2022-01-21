@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-
 fileprivate extension Notification {
 
-    var contextDidSaveData: [AnyHashable : AnyObject] {
+    var contextDidSaveData: [AnyHashable: AnyObject] {
         guard let info = userInfo else { return [:] }
-        var changes = [AnyHashable : AnyObject]()
+        var changes = [AnyHashable: AnyObject]()
         for (key, value) in info {
             guard let set = value as? NSSet else { continue }
             changes[key] = set.compactMap {
@@ -108,7 +106,6 @@ fileprivate extension Notification {
     }
 }
 
-
 private let zmLog = ZMSLog(tag: "shared object store")
 
 // This class is needed to test unarchiving data saved before project rename
@@ -132,7 +129,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         self.directory = accountContainer.appendingPathComponent(directoryName)
         self.url = directory.appendingPathComponent(fileName)
         super.init()
-        FileManager.default.createAndProtectDirectory(at:directory)
+        FileManager.default.createAndProtectDirectory(at: directory)
     }
 
     @discardableResult public func store(_ object: T) -> Bool {
@@ -167,7 +164,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
             return []
         }
     }
-    
+
     public func unarchiver(_ unarchiver: NSKeyedUnarchiver, cannotDecodeObjectOfClassName name: String, originalClasses classNames: [String]) -> Swift.AnyClass? {
         let oldModulePrefix = "ZMCDataModel"
         if let modulePrefixRange = name.range(of: oldModulePrefix) {
@@ -186,5 +183,5 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
             zmLog.error("Failed to remove item at url: \(url), error: \(error)")
         }
     }
-    
+
 }

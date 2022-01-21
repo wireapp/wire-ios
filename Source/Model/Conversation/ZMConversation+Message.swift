@@ -58,7 +58,6 @@ extension ZMConversation {
 
     }
 
-
     /// Appends a button action message.
     ///
     /// - Parameters:
@@ -181,7 +180,7 @@ extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    public func appendImage(at URL: URL, nonce: UUID = UUID()) throws -> ZMConversationMessage  {
+    public func appendImage(at URL: URL, nonce: UUID = UUID()) throws -> ZMConversationMessage {
         guard
             URL.isFileURL,
             ZMImagePreprocessor.sizeOfPrerotatedImage(at: URL) != .zero,
@@ -260,7 +259,6 @@ extension ZMConversation {
             }
         }
     }
-
 
     private func append(asset: WireProtos.Asset,
                         nonce: UUID,
@@ -376,19 +374,18 @@ extension ZMConversation {
         }
     }
 
-
 }
 
-@objc 
+@objc
 extension ZMConversation {
-    
+
     // MARK: - Objective-C compability methods
-    
+
     @discardableResult @objc(appendMessageWithText:)
     public func _appendText(content: String) -> ZMConversationMessage? {
         return try? appendText(content: content)
     }
-    
+
     @discardableResult @objc(appendMessageWithText:fetchLinkPreview:)
     public func _appendText(content: String, fetchLinkPreview: Bool) -> ZMConversationMessage? {
         return try? appendText(content: content, fetchLinkPreview: fetchLinkPreview)
@@ -419,17 +416,17 @@ extension ZMConversation {
                                fetchLinkPreview: fetchLinkPreview,
                                nonce: nonce)
     }
-    
+
     @discardableResult @objc(appendKnock)
     public func _appendKnock() -> ZMConversationMessage? {
         return try? appendKnock()
     }
-    
+
     @discardableResult @objc(appendMessageWithLocationData:)
     public func _appendLocation(with locationData: LocationData) -> ZMConversationMessage? {
         return try? appendLocation(with: locationData)
     }
-    
+
     @discardableResult @objc(appendMessageWithImageData:)
     public func _appendImage(from imageData: Data) -> ZMConversationMessage? {
         return try? appendImage(from: imageData)

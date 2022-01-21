@@ -16,22 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 @objcMembers public class Member: ZMManagedObject {
 
     @NSManaged public var team: Team?
     @NSManaged public var user: ZMUser?
     @NSManaged public var createdBy: ZMUser?
     @NSManaged public var createdAt: Date?
-    @NSManaged public var remoteIdentifier_data : Data?
+    @NSManaged public var remoteIdentifier_data: Data?
     @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: Permissions {
         get {
-            return Permissions(rawValue: permissionsRawValue)            
+            return Permissions(rawValue: permissionsRawValue)
         }
         set {
-            permissionsRawValue = newValue.rawValue            
+            permissionsRawValue = newValue.rawValue
         }
     }
 
@@ -46,7 +45,7 @@
     public override static func defaultSortDescriptors() -> [NSSortDescriptor] {
         return []
     }
-    
+
     public var remoteIdentifier: UUID? {
         get {
             guard let data = remoteIdentifier_data else { return nil }
@@ -60,7 +59,7 @@
     @objc(getOrCreateMemberForUser:inTeam:context:)
     public static func getOrCreateMember(for user: ZMUser, in team: Team, context: NSManagedObjectContext) -> Member {
         precondition(context.zm_isSyncContext)
-        
+
         if let existing = user.membership {
             return existing
         }
@@ -78,18 +77,15 @@
 
 }
 
-
 // MARK: - Transport
 
-
-fileprivate enum ResponseKey: String {
+private enum ResponseKey: String {
     case user, permissions, createdBy = "created_by", createdAt = "created_at"
 
     enum Permissions: String {
         case `self`, copy
     }
 }
-
 
 extension Member {
 
@@ -101,11 +97,11 @@ extension Member {
         let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
         let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
         let member = getOrCreateMember(for: user, in: team, context: context)
-        
+
         member.updatePermissions(with: payload)
         member.createdAt = createdAt
         member.createdBy = createdBy.flatMap({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) })
-        
+
         return member
     }
 

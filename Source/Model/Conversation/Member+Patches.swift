@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
-
 
 extension Member {
 
@@ -32,5 +30,5 @@ extension Member {
     static private func migrateUserRemoteIdentifer(for member: Member) {
         member.remoteIdentifier = member.user?.remoteIdentifier
     }
-    
+
 }

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 @objc
@@ -38,13 +37,13 @@ public protocol AnalyticsType: NSObjectProtocol {
         print(Date(), "[ANALYTICS]", #function, event)
     }
 
-    public func tagEvent(_ event: String, attributes: [String : NSObject]) {
+    public func tagEvent(_ event: String, attributes: [String: NSObject]) {
         print(Date(), "[ANALYTICS]", #function, event, attributes)
     }
 
-    var eventAttributes = [String : [String : NSObject]]()
+    var eventAttributes = [String: [String: NSObject]]()
 
-    public func setPersistedAttributes(_ attributes: [String : NSObject]?, for event: String) {
+    public func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
         if let attributes = attributes {
             eventAttributes[event] = attributes
         } else {
@@ -53,7 +52,7 @@ public protocol AnalyticsType: NSObjectProtocol {
         print(Date(), "[ANALYTICS]", #function, event, eventAttributes[event] ?? [:])
     }
 
-    public func persistedAttributes(for event: String) -> [String : NSObject]? {
+    public func persistedAttributes(for event: String) -> [String: NSObject]? {
         let value = eventAttributes[event] ?? [:]
         print(Date(), "[ANALYTICS]", #function, event, value)
         return value
