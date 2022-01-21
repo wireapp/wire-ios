@@ -268,7 +268,7 @@ extension GenericMessage {
 extension WireProtos.Asset.RemoteData {
     mutating func update(assetId: String, token: String?, domain: String?) {
         assetID = assetId
-        
+
         if let token = token {
             assetToken = token
         }

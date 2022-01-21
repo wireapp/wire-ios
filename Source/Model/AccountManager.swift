@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
-
 
 private let log = ZMSLog(tag: "Accounts")
 
@@ -36,7 +34,6 @@ fileprivate extension UserDefaults {
 
 }
 
-
 /// Class used to safely access and change stored accounts and the current selected account.
 @objcMembers public final class AccountManager: NSObject {
 
@@ -45,7 +42,7 @@ fileprivate extension UserDefaults {
     private(set) public var selectedAccount: Account? // The currently selected account or `nil` in case there is none
 
     private var store: AccountStore
-    
+
     /// Returns the sum of unread conversations in all accounts.
     public var totalUnreadCount: Int {
         return accounts.reduce(0) { return $0 + $1.unreadConversationCount }
@@ -104,14 +101,14 @@ fileprivate extension UserDefaults {
     /// This method should be called each time accounts are added or
     /// removed, or when the selectedAccountIdentifier has been changed.
     private func updateAccounts() {
-        
+
         // since some objects (eg. AccountView) observe changes in the account, we must
         // make sure their object addresses are maintained after updating, i.e if
         // exisiting objects need to be updated from the account store, we just update
         // their properties and not replace the whole object.
         //
         var updatedAccounts = [Account]()
-        
+
         for account in computeSortedAccounts() {
             if let existingAccount = self.account(with: account.userIdentifier) {
                 existingAccount.updateWith(account)
@@ -120,9 +117,9 @@ fileprivate extension UserDefaults {
                 updatedAccounts.append(account)
             }
         }
-        
+
         accounts = updatedAccounts
-        
+
         let computedAccount = computeSelectedAccount()
         if let account = computedAccount, let exisitingAccount = self.account(with: account.userIdentifier) {
             exisitingAccount.updateWith(account)
@@ -130,10 +127,10 @@ fileprivate extension UserDefaults {
         } else {
             selectedAccount = computedAccount
         }
-        
+
         NotificationCenter.default.post(name: AccountManagerDidUpdateAccountsNotificationName, object: self)
     }
-    
+
     public func account(with id: UUID) -> Account? {
         return accounts.first(where: { return $0.userIdentifier == id })
     }
@@ -160,5 +157,5 @@ fileprivate extension UserDefaults {
             }
         }
     }
-    
+
 }

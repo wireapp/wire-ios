@@ -19,21 +19,21 @@
 import Foundation
 
 public protocol AccountDeletedObserver: AnyObject {
-    func accountDeleted(accountId : UUID)
+    func accountDeleted(accountId: UUID)
 }
 
 public struct AccountDeletedNotification {
     public static let notificationName = Notification.Name("AccountDeletedNotification")
-    public static var userInfoKey : String { return notificationName.rawValue }
+    public static var userInfoKey: String { return notificationName.rawValue }
 
-    weak var context : NSManagedObjectContext?
+    weak var context: NSManagedObjectContext?
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
 
     public func post(in context: NotificationContext, object: AnyObject? = nil) {
-        NotificationInContext(name: type(of:self).notificationName, context: context, object:object, userInfo: [type(of:self).userInfoKey : self]).post()
+        NotificationInContext(name: type(of: self).notificationName, context: context, object: object, userInfo: [type(of: self).userInfoKey: self]).post()
     }
 }
 

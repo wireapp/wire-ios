@@ -19,9 +19,9 @@
 import Foundation
 
 extension ZMConversation {
-    
-    @NSManaged @objc dynamic public var hasReadReceiptsEnabled: Bool
-    
+
+    @NSManaged dynamic public var hasReadReceiptsEnabled: Bool
+
     /// Confirm unread received messages as read.
     ///
     /// - Parameters:
@@ -31,7 +31,7 @@ extension ZMConversation {
     func confirmUnreadMessagesAsRead(in range: ClosedRange<Date>) -> [ZMClientMessage] {
         let unreadMessagesNeedingConfirmation = unreadMessages(in: range).filter(\.needsReadConfirmation)
         var confirmationMessages: [ZMClientMessage] = []
-        
+
         for messages in unreadMessagesNeedingConfirmation.partition(by: \.sender).values {
             guard
                 !messages.isEmpty,
@@ -48,10 +48,10 @@ extension ZMConversation {
             }
 
         }
-        
+
         return confirmationMessages
     }
-    
+
     @discardableResult @objc
     public func appendMessageReceiptModeChangedMessage(fromUser user: ZMUser, timestamp: Date, enabled: Bool) -> ZMSystemMessage {
         let message = appendSystemMessage(
@@ -61,14 +61,14 @@ extension ZMConversation {
             clients: nil,
             timestamp: timestamp
         )
-        
+
         if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
-        
+
         return message
     }
-    
+
     @discardableResult @objc
     public func appendMessageReceiptModeIsOnMessage(timestamp: Date) -> ZMSystemMessage {
         let message = appendSystemMessage(
@@ -78,8 +78,8 @@ extension ZMConversation {
             clients: nil,
             timestamp: timestamp
         )
-        
+
         return message
     }
-    
+
 }

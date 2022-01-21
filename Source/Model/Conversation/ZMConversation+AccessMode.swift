@@ -21,7 +21,7 @@ import Foundation
 /// Defines how users can join a conversation.
 public struct ConversationAccessMode: OptionSet {
     public let rawValue: Int
-    
+
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
@@ -33,7 +33,7 @@ public struct ConversationAccessMode: OptionSet {
     public static let link      = ConversationAccessMode(rawValue: 1 << 2)
     /// Internal value that indicates the conversation that cannot be joined (1-1).
     public static let `private` = ConversationAccessMode(rawValue: 1 << 3)
-    
+
     public static let legacy    = invite
     public static let teamOnly  = ConversationAccessMode()
     public static let allowGuests: ConversationAccessMode = [.invite, .code]
@@ -50,11 +50,11 @@ public extension ConversationAccessMode {
                                                                           .code: "code",
                                                                           .link: "link",
                                                                           .`private`: "private"]
-    
+
     var stringValue: [String] {
         return ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
     }
-    
+
     init(values: [String]) {
         var result = ConversationAccessMode()
         ConversationAccessMode.stringValues.forEach {
@@ -89,9 +89,9 @@ public extension ConversationAccessRole {
 }
 
 extension ZMConversation: SwiftConversationLike {
-    @NSManaged @objc dynamic internal var accessModeStrings: [String]?
-    @NSManaged @objc dynamic internal var accessRoleString: String?
-    
+    @NSManaged dynamic internal var accessModeStrings: [String]?
+    @NSManaged dynamic internal var accessRoleString: String?
+
     public var sortedActiveParticipantsUserTypes: [UserType] {
         return sortedActiveParticipants
     }
@@ -112,9 +112,9 @@ extension ZMConversation: SwiftConversationLike {
             accessRole = ConversationAccessRole.value(forAllowGuests: newValue)
         }
     }
-    
+
     // The conversation access mode is stored as an array of string in CoreData, cf. `acccessModeStrings`.
-    
+
     /// Defines how users can join a conversation.
     public var accessMode: ConversationAccessMode? {
         get {
@@ -132,14 +132,14 @@ extension ZMConversation: SwiftConversationLike {
             accessModeStrings = value.stringValue
         }
     }
-    
+
     /// Defines who can join the conversation.
     public var accessRole: ConversationAccessRole? {
         get {
             guard let strings = self.accessRoleString else {
                 return nil
             }
-            
+
             return ConversationAccessRole(rawValue: strings)
         }
         set {
@@ -151,4 +151,3 @@ extension ZMConversation: SwiftConversationLike {
         }
     }
 }
-

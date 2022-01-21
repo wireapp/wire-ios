@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-
 private let log = ZMSLog(tag: "Accounts")
-
 
 /// Persistence layer for `Account` objects.
 /// Objects are stored in files named after their identifier like this:

@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 extension ZMConversation {
 
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
@@ -35,7 +34,6 @@ extension ZMConversation {
         var created: Bool = false
         return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created)
     }
-
 
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
     ///
@@ -68,14 +66,12 @@ extension ZMConversation {
         }
     }
 
-    
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
     static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                               participants: [ZMUser]) -> ZMConversation?
-    {
+                                               participants: [ZMUser]) -> ZMConversation? {
         return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
-    
+
     /// Insert a new group conversation with name into the user session
 
     @objc
@@ -85,8 +81,7 @@ extension ZMConversation {
                                                team: Team? = nil,
                                                allowGuests: Bool = true,
                                                readReceipts: Bool = false,
-                                               participantsRole: Role? = nil) -> ZMConversation?
-    {
+                                               participantsRole: Role? = nil) -> ZMConversation? {
         return self.insertGroupConversation(moc: session.viewContext,
                                             participants: participants.materialize(in: session.viewContext),
                                             name: name,
@@ -95,7 +90,7 @@ extension ZMConversation {
                                             readReceipts: readReceipts,
                                             participantsRole: participantsRole)
     }
-    
+
     @objc
     static public func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser],
@@ -103,8 +98,7 @@ extension ZMConversation {
                                                team: Team? = nil,
                                                allowGuests: Bool = true,
                                                readReceipts: Bool = false,
-                                               participantsRole: Role? = nil) -> ZMConversation?
-    {
+                                               participantsRole: Role? = nil) -> ZMConversation? {
         return insertGroupConversation(moc: moc,
                                        participants: participants,
                                        name: name,
@@ -114,7 +108,7 @@ extension ZMConversation {
                                        participantsRole: participantsRole,
                                        type: .group)
     }
-        
+
     /// insert a conversation with group type
     ///
     /// - Parameters:
@@ -135,14 +129,13 @@ extension ZMConversation {
                                                allowGuests: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil,
-                                               type: ZMConversationType = .group) -> ZMConversation?
-    {        
+                                               type: ZMConversationType = .group) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
 
-        if (team != nil && !selfUser.canCreateConversation(type: type)) {
+        if team != nil && !selfUser.canCreateConversation(type: type) {
             return nil
         }
-        
+
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.lastModifiedDate = Date()
         conversation.conversationType = .group
@@ -150,19 +143,19 @@ extension ZMConversation {
         conversation.team = team
         conversation.userDefinedName = name
 
-        if (team != nil) {
-            conversation.allowGuests = allowGuests;
-            conversation.hasReadReceiptsEnabled = readReceipts;
+        if team != nil {
+            conversation.allowGuests = allowGuests
+            conversation.hasReadReceiptsEnabled = readReceipts
         }
-        
+
         let participantsIncludingSelf = Set(participants + [selfUser])
-        
+
         // Add the new conversation system message
         conversation.appendNewConversationSystemMessage(at: Date(), users: Set(participantsIncludingSelf))
-        
+
         // Add the participants
         conversation.addParticipantsAndUpdateConversationState(users: participantsIncludingSelf, role: participantsRole)
-        
+
         // We need to check if we should add a 'secure' system message in case all participants are trusted
         conversation.increaseSecurityLevelIfNeededAfterTrusting(
             clients: Set(participantsIncludingSelf.flatMap { $0.clients })
@@ -170,7 +163,7 @@ extension ZMConversation {
 
         return conversation
     }
-    
+
     @objc
     static func fetchOrCreateOneToOneTeamConversation(
         moc: NSManagedObjectContext,
@@ -180,23 +173,23 @@ extension ZMConversation {
         guard let team = team,
             !participant.isSelfUser
         else { return nil }
-        
+
         if let conversation = self.existingTeamConversation(moc: moc, participant: participant, team: team) {
             return conversation
         }
-        
+
         return insertGroupConversation(moc: moc,
                                        participants: [participant],
                                        name: nil,
                                        team: team,
                                        participantsRole: participantRole,
-                                       type:.oneOnOne)
+                                       type: .oneOnOne)
     }
-    
+
     private static func existingTeamConversation(moc: NSManagedObjectContext,
-                                                 participant:ZMUser,
-                                                 team:Team) -> ZMConversation? {
-        
+                                                 participant: ZMUser,
+                                                 team: Team) -> ZMConversation? {
+
         // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
         //  1. It is a conversation inside the team
         //  2. The only participants are the current user and the selected user
@@ -216,14 +209,14 @@ extension ZMConversation {
             ZMConversationParticipantRolesKey,
             selfUser
         )
-        
+
         let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             sameTeam,
             groupConversation,
             noUserDefinedName,
             sameParticipant
         ])
-        
+
         let request = self.sortedFetchRequest(with: compoundPredicate)
 
         return moc.fetchOrAssert(request: request).first as? ZMConversation

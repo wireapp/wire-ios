@@ -94,7 +94,7 @@ public class Team: ZMManagedObject, TeamType {
 }
 
 extension Team {
-    
+
     public func members(matchingQuery query: String) -> [Member] {
         let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
 
@@ -112,7 +112,6 @@ extension Team {
         return featureFlags.first(where: {$0.identifier == type.rawValue})
     }
 }
-
 
 // MARK: - Logo Image
 extension Team {
@@ -132,7 +131,7 @@ extension Team {
                     NotificationDispatcher.notifyNonCoreDataChanges(objectID: objectID, changedKeys: [#keyPath(Team.imageData)], uiContext: uiContext)
                 }
             }
-            
+
             guard let newValue = newValue else {
                 managedObjectContext?.zm_fileAssetCache.deleteAssetData(for: self, format: Team.defaultLogoFormat, encrypted: false)
                 return
@@ -152,7 +151,7 @@ extension Team {
 
     public static var imageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", Team.pictureAssetIdKey)
-        let notCached = NSPredicate() { (team, _) -> Bool in
+        let notCached = NSPredicate { (team, _) -> Bool in
             guard let team = team as? Team else { return false }
             return team.imageData == nil
         }

@@ -25,7 +25,7 @@ public enum UpdateRoleError: Error {
 public class UpdateRoleAction: EntityAction {
     public var resultHandler: ResultHandler?
 
-    public typealias Result = Void    
+    public typealias Result = Void
     public typealias Failure = UpdateRoleError
 
     public let userID: NSManagedObjectID

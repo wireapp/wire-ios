@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-extension Account : NotificationContext { }
+extension Account: NotificationContext { }
 
 extension Notification.Name {
     public static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")
@@ -71,7 +70,7 @@ public final class Account: NSObject, Codable {
         self.loginCredentials = loginCredentials
         super.init()
     }
-    
+
     /// Updates the properties of the receiver with the given account. Use this method
     /// when you wish to update an exisiting account object with newly fetched properties
     /// from the account store.
