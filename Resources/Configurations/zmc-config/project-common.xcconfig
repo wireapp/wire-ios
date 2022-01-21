@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-#include "ios.xcconfig"
+#include "ios-arm64Simulator.xcconfig"
 #include "warnings.xcconfig"
 #include "../version.xcconfig"
