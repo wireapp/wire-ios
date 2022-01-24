@@ -321,13 +321,13 @@
 		871667FF1BB2CD2A009C6EEA /* ZMKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMKeychain.h; sourceTree = "<group>"; };
 		8756C4492178C97A00627F1F /* BackendEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendEnvironment.swift; sourceTree = "<group>"; };
 		87B2B79A20BC476E00799AB9 /* ZMTransportRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMTransportRequest.swift; sourceTree = "<group>"; };
+		A9226274279ECB1700D4CF72 /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		A93DCD7923B6654100AD8575 /* AccessToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessToken.swift; sourceTree = "<group>"; };
 		A93DCD7B23B668A800AD8575 /* AccessTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenTests.swift; sourceTree = "<group>"; };
 		A96E0104265FF7D10034A057 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
 		A96E0105265FF7D10034A057 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
 		A96E010B265FF7D90034A057 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		A96E010C265FF7D90034A057 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
-		A9E6BE8026974B8900E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
 		AF9D8F9C1F20D99500ABF225 /* TestTrustVerificator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTrustVerificator.swift; sourceTree = "<group>"; };
 		BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftStructs+TransportEncoding.swift"; sourceTree = "<group>"; };
 		BF3EDB241F2619820015D158 /* ZMPersistentCookieStorage+Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMPersistentCookieStorage+Label.swift"; sourceTree = "<group>"; };
@@ -600,7 +600,7 @@
 		547712091B751F7900223568 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A9E6BE8026974B8900E410ED /* ios.xcconfig */,
+				A9226274279ECB1700D4CF72 /* ios-arm64Simulator.xcconfig */,
 				5477120B1B751F7900223568 /* ios-test-host.xcconfig */,
 				5477120C1B751F7900223568 /* ios-test-target.xcconfig */,
 				547712101B751F7900223568 /* project-common.xcconfig */,
