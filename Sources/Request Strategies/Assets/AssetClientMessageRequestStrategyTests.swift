@@ -62,7 +62,7 @@ fileprivate extension ZMTransportRequest {
 
 }
 
-class AssetClientMessageRequestStrategyTests: MessagingTestBase {
+final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     fileprivate var mockApplicationStatus: MockApplicationStatus!
     fileprivate var sut: AssetClientMessageRequestStrategy!
