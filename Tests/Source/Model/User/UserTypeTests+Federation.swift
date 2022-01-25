@@ -21,6 +21,16 @@ import Foundation
 
 class UserTypeTests_Federation: ModelObjectsTests {
 
+    override func setUp() {
+        super.setUp()
+        uiMOC.zm_isFederationEnabled = true
+    }
+
+    override func tearDown() {
+        uiMOC.zm_isFederationEnabled = false
+        super.tearDown()
+    }
+
     func testThatUsersAreFederating_WhenBelongingToADifferentDomain() {
         // GIVEN
         let user: ZMUser = self.userWithClients(count: 2, trusted: true)

@@ -934,6 +934,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 - (void)testThatItAssignsQualifiedIDIfTheUserDoesNotHaveOne
 {
     // given
+    self.uiMOC.zm_isFederationEnabled = true;
     NSUUID *remoteIdentifier = [NSUUID createUUID];
     NSString *domain = @"example.com";
     
@@ -952,6 +953,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // then
     XCTAssertEqualObjects(user.remoteIdentifier, [qualifedIDPayload[@"id"] UUID]);
     XCTAssertEqualObjects(user.domain, qualifedIDPayload[@"domain"]);
+
+    // cleanup
+    self.uiMOC.zm_isFederationEnabled = false;
 }
 
 

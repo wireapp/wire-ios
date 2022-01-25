@@ -223,7 +223,31 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
 
-    @NSManaged public var domain: String?
+    /// The backend domain of the user.
+    ///
+    /// Note: If the federation feature flag is not set (i.e `context.zm_isFederationEnabled` is `false`),
+    /// then `nil` will always be returned. This is to ensure that we only use the domain if needed since
+    /// some code assumes that if a domain exists then the app should use federated apis.
+
+    public var domain: String? {
+        get {
+            // Only consider the domain if the app needs to federate.
+            guard managedObjectContext?.zm_isFederationEnabled == true else { return nil }
+
+            willAccessValue(forKey: #keyPath(domain))
+            let result = primitiveDomain
+            didAccessValue(forKey: #keyPath(domain))
+            return result
+        }
+
+        set {
+            willChangeValue(forKey: #keyPath(domain))
+            primitiveDomain = newValue
+            didChangeValue(forKey: #keyPath(domain))
+        }
+    }
+
+    @NSManaged private var primitiveDomain: String?
 
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {

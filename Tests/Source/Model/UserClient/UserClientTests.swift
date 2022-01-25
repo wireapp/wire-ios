@@ -591,6 +591,7 @@ extension UserClientTests {
 
     func testThatItSetsNeedsSessionMigration_WhenInsertingANewSelfUserClientAndDomainIsSet() {
         // given
+        uiMOC.zm_isFederationEnabled = true
         _ = createSelfClient()
         ZMUser.selfUser(in: uiMOC).domain = "example.com"
 
@@ -606,6 +607,9 @@ extension UserClientTests {
 
         // then
         XCTAssertFalse(newClient.needsSessionMigration)
+
+        // cleanup
+        uiMOC.zm_isFederationEnabled = false
     }
 
     func testThatItDoNothingWhenHasAFingerprint() {
@@ -757,6 +761,7 @@ extension UserClientTests {
     func testThatItSetsNeedsToMigrateSession_WhenCreatingUserClientAndDomainIsSet() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            self.syncMOC.zm_isFederationEnabled = true
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherUser.domain = "example.com"
@@ -765,6 +770,9 @@ extension UserClientTests {
 
             // THEN
             XCTAssertEqual(client?.needsSessionMigration, false)
+
+            // CLEANUP
+            self.syncMOC.zm_isFederationEnabled = false
         }
     }
 
@@ -951,6 +959,7 @@ extension UserClientTests {
 
     func testThatItReturnsCorrectSessionIdentifier_WhenSessionDoesNotNeedMigration() {
         // given
+        uiMOC.zm_isFederationEnabled = true
         let domain = UUID().uuidString
         let user = createUser(in: uiMOC)
         user.domain = domain
@@ -971,11 +980,15 @@ extension UserClientTests {
 
         // then
         XCTAssertEqual(sessionIdentifier, expectedSessionIdentifier)
+
+        // cleanup
+        uiMOC.zm_isFederationEnabled = false
     }
 
     func testThatItMigratesSessionIdentifierFromV2ToV3_WhenUserDomainIsAvailable() {
         syncMOC.performGroupedBlockAndWait { [self] in
             // given
+            syncMOC.zm_isFederationEnabled = true
             let selfClient = createSelfClient(onMOC: syncMOC)
 
             let otherClient = UserClient.insertNewObject(in: syncMOC)
@@ -1023,6 +1036,9 @@ extension UserClientTests {
                 // then
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v2SessionIdentifier))
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v3SessionIdentifier))
+
+                // cleanup
+                syncMOC.zm_isFederationEnabled = false
             }
         }
 

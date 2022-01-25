@@ -107,11 +107,17 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
     }
 
     func testThatItReportsIsGuest_ForAFederatedConversation() {
+        // given
+        uiMOC.zm_isFederationEnabled = true
         let user = ZMUser.selfUser(in: uiMOC)
         user.domain = UUID().transportString()
         conversation.domain = UUID().transportString()
 
+        // then
         XCTAssertTrue(user.isGuest(in: conversation))
+
+        // cleanup
+        uiMOC.zm_isFederationEnabled = false
     }
 
     func testThatItReportsIsGuest_ForANonTeamUserInATeamConversation() {
@@ -269,6 +275,7 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
     // @SF.Federation @SF.Separation @TSFI.UserInterface @S0.2
     func testThatItDoesNotAllowSeeingCompanyInformationBetweenUsers_WhenTeamIsTheSame_AndDomainIsDifferent() {
         // given
+        uiMOC.zm_isFederationEnabled = true
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
 
         // we add actual team members as well
@@ -285,6 +292,9 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         // then
         XCTAssertFalse(user1CanSeeUser2)
         XCTAssertFalse(user2CanSeeUser1)
+
+        // cleanup
+        uiMOC.zm_isFederationEnabled = false
     }
 
     // MARK: Notifications Setting
