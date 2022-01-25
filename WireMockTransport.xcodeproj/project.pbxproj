@@ -245,7 +245,7 @@
 		A9DABBB42661208900D07588 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		A9DABBC3266120E500D07588 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		A9DABBC4266120E500D07588 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
-		A9E6BE872697555E00E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
+		A9FF19B527A014930067DC26 /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		F110503E222051B200F3EB62 /* MockTransportSession+users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+users.swift"; sourceTree = "<group>"; };
 		F119FC1920444F9C00969615 /* MockTransportSessionConversationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionConversationsTests.swift; sourceTree = "<group>"; };
 		F119FC1B2044551200969615 /* MockTransportSessionConversationAccessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionConversationAccessTests.swift; sourceTree = "<group>"; };
@@ -561,7 +561,7 @@
 		54C902521B7532F6007162A8 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A9E6BE872697555E00E410ED /* ios.xcconfig */,
+				A9FF19B527A014930067DC26 /* ios-arm64Simulator.xcconfig */,
 				54C902541B7532F6007162A8 /* ios-test-host.xcconfig */,
 				54C902551B7532F6007162A8 /* ios-test-target.xcconfig */,
 				54C902591B7532F6007162A8 /* project-common.xcconfig */,
@@ -820,7 +820,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Zeta Project";
 				TargetAttributes = {
 					54C902321B7532DD007162A8 = {
