@@ -25,13 +25,11 @@ class ConversationTests_Federation: ZMConversationTestsBase {
 
     override func setUp() {
         super.setUp()
-        uiMOC.zm_isFederationEnabled = true
         sut = createConversation(in: uiMOC)
         user = createUser(in: uiMOC)
     }
 
     override func tearDown() {
-        uiMOC.zm_isFederationEnabled = false
         sut = nil
         user = nil
         super.tearDown()
