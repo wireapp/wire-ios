@@ -93,6 +93,7 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
 
     func testThatItFetchesEntityByDomain_WhenObjectIsRegisteredInContext() throws {
         // given
+        mocs.viewContext.zm_isFederationEnabled = true
         let domain = "example.com"
         let selfUser = ZMUser.selfUser(in: mocs.viewContext)
         selfUser.domain = domain
@@ -107,10 +108,14 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
 
         // then
         XCTAssertEqual(user.objectID, fetched?.objectID)
+
+        // cleanup
+        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func testThatItFetchesEntityByDomain_WhenObjectIsNotRegisteredInContext() throws {
         // given
+        mocs.viewContext.zm_isFederationEnabled = true
         let selfUser = ZMUser.selfUser(in: mocs.viewContext)
         selfUser.domain = "example.com"
 
@@ -126,10 +131,14 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
 
         // then
         XCTAssertEqual(user.objectID, fetched?.objectID)
+
+        // cleanup
+        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func testThatEmptyDomainIsTreatedAsNilDomain() throws {
         // given
+        mocs.viewContext.zm_isFederationEnabled = true
         let selfUser = ZMUser.selfUser(in: mocs.viewContext)
         selfUser.domain = "example.com"
 
@@ -145,9 +154,13 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
 
         // then
         XCTAssertEqual(user.objectID, fetched?.objectID)
+
+        // cleanup
+        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func testEntityFetching_WhenSearchingForLocalEntity() {
+        mocs.viewContext.zm_isFederationEnabled = true
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
 
@@ -185,9 +198,13 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
                                  entityDomain: nil,
                                  searchDomain: remoteDomain,
                                  fetched: false)
+
+        // cleanup
+        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func testEntityFetching_WhenSearchingForRemoteEntity() {
+        mocs.viewContext.zm_isFederationEnabled = true
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
 
@@ -210,6 +227,9 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
                                  entityDomain: remoteDomain,
                                  searchDomain: localDomain,
                                  fetched: false)
+
+        // cleanup
+        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func assertEntityFetchingWhen(selfUserDomain: String?,

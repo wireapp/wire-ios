@@ -131,6 +131,10 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
     }
 
     func assertMatrixRow(_ conversationType: ZMConversationType, selfUser selfUserType: RelativeUserState, otherUsers: [RelativeUserState], expectedResult: ZMConversation.ExternalParticipantsState, file: StaticString = #file, line: UInt = #line) {
+        if selfUserType == .federated || otherUsers.contains(.federated) {
+            uiMOC.zm_isFederationEnabled = true
+        }
+
         let conversation = createConversationWithSelfUser()
         conversation.conversationType = conversationType
 
@@ -196,6 +200,9 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
 
         uiMOC.saveOrRollback()
         XCTAssertEqual(conversation.externalParticipantsState, expectedResult, file: file, line: line)
+
+        // cleanup
+        uiMOC.zm_isFederationEnabled = false
     }
 
 }

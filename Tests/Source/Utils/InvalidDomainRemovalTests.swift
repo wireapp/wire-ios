@@ -21,6 +21,20 @@ import XCTest
 
 class InvalidDomainRemovalTests: DiskDatabaseTest {
 
+    override func setUp() {
+        super.setUp()
+        coreDataStack.syncContext.performGroupedAndWait { context in
+            context.zm_isFederationEnabled = true
+        }
+    }
+
+    override func tearDown() {
+        coreDataStack.syncContext.performGroupedAndWait { context in
+            context.zm_isFederationEnabled = false
+        }
+        super.tearDown()
+    }
+
     func testAllUsersWithInvalidDomainIsRemoved() throws {
         coreDataStack.syncContext.performGroupedAndWait { context in
             // GIVEN
