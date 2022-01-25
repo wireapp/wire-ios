@@ -71,7 +71,6 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
 
     func testThatItFetchesEntityByDomain() throws {
         // given
-        mocs.viewContext.zm_isFederationEnabled = true
         let domain = "example.com"
         let selfUser = ZMUser.selfUser(in: mocs.viewContext)
         selfUser.domain = domain
@@ -89,18 +88,12 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
 
         // then
         XCTAssertEqual(connection.objectID, fetched?.objectID)
-
-        // cleanup
-        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func testEntityFetching_WhenSearchingForLocalEntity() {
-        // Given
-        mocs.viewContext.zm_isFederationEnabled = true
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
 
-        // Then
         assertEntityFetchingWhen(selfUserDomain: nil,
                                  entityDomain: nil,
                                  searchDomain: nil,
@@ -135,18 +128,12 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
                                  entityDomain: nil,
                                  searchDomain: remoteDomain,
                                  fetched: false)
-
-        // Cleanup
-        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func testEntityFetching_WhenSearchingForRemoteEntity() {
-        // Given
-        mocs.viewContext.zm_isFederationEnabled = true
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
 
-        // Then
         assertEntityFetchingWhen(selfUserDomain: localDomain,
                                  entityDomain: remoteDomain,
                                  searchDomain: remoteDomain,
@@ -166,9 +153,6 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
                                  entityDomain: remoteDomain,
                                  searchDomain: localDomain,
                                  fetched: false)
-
-        // Cleanup
-        mocs.viewContext.zm_isFederationEnabled = false
     }
 
     func assertEntityFetchingWhen(selfUserDomain: String?,

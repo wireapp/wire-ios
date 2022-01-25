@@ -646,7 +646,6 @@ extension ZMUserTests_Swift {
 
     func testThatReturnsExpectedRecipientsForBroadcast_WhenFederationIsEnabled() {
         // given
-        uiMOC.zm_isFederationEnabled = true
         let selfUserFederatedTeam = createTeam(in: uiMOC)
         createMembership(in: uiMOC, user: selfUser, team: selfUserFederatedTeam)
 
@@ -683,9 +682,6 @@ extension ZMUserTests_Swift {
 
         // then
         XCTAssertEqual(recipients, Set([selfUser, selfTeamUser1, selfTeamUser2]))
-
-        // cleanup
-        uiMOC.zm_isFederationEnabled = false
     }
 
     func testThatItReturnsRecipientsForBroadcastUpToAMaximumCount() {

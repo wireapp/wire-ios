@@ -56,7 +56,6 @@ class ConversationTests_Team: ZMConversationTestsBase {
     // @SF.Federation @SF.Separation @TSFI.UserInterface @S0.2
     func test_ConversationIsNotATeamConversation_WhenItIsFederated() {
         // Given
-        uiMOC.zm_isFederationEnabled = true
         let teamId = UUID()
         let team = createTeam(in: uiMOC)
         team.remoteIdentifier = teamId
@@ -68,9 +67,6 @@ class ConversationTests_Team: ZMConversationTestsBase {
 
         // When / Then
         XCTAssertFalse(sut.isTeamConversation)
-
-        // Cleanup
-        uiMOC.zm_isFederationEnabled = false
     }
 
     // @SF.Federation @SF.Separation @TSFI.UserInterface @S0.2
