@@ -27,14 +27,14 @@ extension CoreDataStack {
     private static let databaseDirectoryName = "data"
     private static let workQueue = DispatchQueue(label: "database backup", qos: .userInitiated)
     private static let fileManager = FileManager()
-    
+
     // Each backup for any account will be created in a unique subdirectory inside.
     // Calling `clearBackupDirectory` will remove this directory and all backups.
     public static var backupsDirectory: URL {
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         return tempURL.appendingPathComponent("backups")
     }
-    
+
     // Directory in which unzipped backups should be places.
     // This directory is located inside of `backupsDirectory`.
     // Calling `clearBackupDirectory` will remove this directory.
@@ -42,7 +42,7 @@ extension CoreDataStack {
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         return tempURL.appendingPathComponent("imports")
     }
-    
+
     public enum BackupImportError: Error {
            case incompatibleBackup(Error)
            case failedToCopy(Error)
@@ -53,12 +53,12 @@ extension CoreDataStack {
         case failedToWrite(Error)
         case missingEAREncryptionKey
     }
-    
+
     public struct BackupInfo {
         public let url: URL
         public let metadata: BackupMetadata
     }
-    
+
     // Calling this method will delete all backups stored inside `backupsDirectory`
     // as well as inside `importsDirectory` if there are any.
     public static func clearBackupDirectory(dispatchGroup: ZMSDispatchGroup? = nil) {
@@ -70,7 +70,7 @@ extension CoreDataStack {
                 log.debug("error removing directory: \(error)")
             }
         }
-        
+
         workQueue.async(group: dispatchGroup) {
             remove(at: backupsDirectory)
             remove(at: importsDirectory)
@@ -100,7 +100,7 @@ extension CoreDataStack {
                 completion(.failure(error))
             }
         }
-        
+
         let accountDirectory = Self.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
@@ -128,7 +128,7 @@ extension CoreDataStack {
                     sourceOptions: options,
                     ofType: NSSQLiteStoreType
                 )
-                
+
                 try prepareStoreForBackupExport(coordinator: coordinator,
                                                 location: backupLocation,
                                                 options: options,
@@ -138,7 +138,7 @@ extension CoreDataStack {
                 let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
                 try metadata.write(to: metadataURL)
                 log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
-                
+
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(.init(url: backupDirectory, metadata: metadata)))
                 }
@@ -147,7 +147,7 @@ extension CoreDataStack {
             }
         }
     }
-        
+
     /// Will import a backup for a given account
     ///
     /// - Parameters:
@@ -163,36 +163,36 @@ extension CoreDataStack {
         dispatchGroup: ZMSDispatchGroup? = nil,
         completion: @escaping ((Result<URL>) -> Void)
         ) {
-        
+
         func fail(_ error: BackupImportError) {
             log.debug("error backing up local store: \(error)")
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(.failure(error))
             }
         }
-        
+
         let accountDirectory = accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
         let backupStoreFile = backupDirectory.appendingPathComponent(databaseDirectoryName).appendingStoreFile()
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
-        
+
         workQueue.async(group: dispatchGroup) {
             do {
                 let metadata = try BackupMetadata(url: metadataURL)
-                
+
                 let model = CoreDataStack.loadMessagingModel()
                 if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: model) {
                     return fail(.incompatibleBackup(verificationError))
                 }
-                
+
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-                
+
                 // Create target directory
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: true)
-                
+
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
-                
+
                 // Import the persistent store to the account data directory
                 try coordinator.replacePersistentStore(
                     at: accountStoreFile,
@@ -201,7 +201,7 @@ extension CoreDataStack {
                     sourceOptions: options,
                     ofType: NSSQLiteStoreType
                 )
-                
+
                 log.info("successfully imported backup with metadata: \(metadata)")
 
                 DispatchQueue.main.async(group: dispatchGroup) {
@@ -212,7 +212,7 @@ extension CoreDataStack {
             }
         }
     }
-    
+
     private static func prepareStoreForBackupExport(coordinator: NSPersistentStoreCoordinator,
                                                     location: URL,
                                                     options: [String: Any],
@@ -221,7 +221,7 @@ extension CoreDataStack {
         let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
-        
+
         try context.performGroupedAndWait { context in
             if context.encryptMessagesAtRest {
                 guard let encryptionKeys = encryptionKeys else { throw BackupError.missingEAREncryptionKey }
@@ -230,22 +230,22 @@ extension CoreDataStack {
                 try context.save()
             }
         }
-        
+
         // Close the store, not doing so could lead to data loss when copying the store files.
         try coordinator.remove(store)
     }
-    
+
     private static func prepareStoreForBackupImport(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any]) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
-        
+
         try context.performGroupedAndWait { context in
             context.prepareToImportBackup()
             try context.save()
         }
-        
+
         // Close the store, not doing so could lead to data loss when copying the store files.
         try coordinator.remove(store)
     }

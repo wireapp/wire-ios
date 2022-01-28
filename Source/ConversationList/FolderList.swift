@@ -20,51 +20,51 @@ import Foundation
 
 @objcMembers
 public class FolderList: NSObject { // TODO jacob turn into struct and make generic
-    
+
     var backingList: [Label]
-    
+
     public init(labels: [Label]) {
         backingList = labels.sorted(by: FolderList.comparator)
     }
-    
+
     private static var comparator: (Label, Label) -> Bool {
         guard let sortDescriptors = Label.defaultSortDescriptors(), !sortDescriptors.isEmpty else {
             fatal("Missing sort descriptors")
         }
-        
+
         return { (lhs: Any, rhs: Any) -> Bool in
             for sortDesriptor in sortDescriptors {
                 let result = sortDesriptor.compare(lhs, to: rhs)
-                
+
                 if result != .orderedSame {
                     return result == .orderedAscending
                 }
             }
-            
+
             return true
         }
     }
-    
+
     @objc(insertLabel:)
     public func insert(label: Label) {
         guard let sortDescriptors = Label.defaultSortDescriptors(), !sortDescriptors.isEmpty else {
             return
         }
-        
+
         let index = backingList.firstIndex(where: { return FolderList.comparator(label, $0) }) ?? backingList.count
-        
+
         backingList.insert(label, at: index)
     }
-    
+
     @objc(resortLabel:)
     public func resort(label: Label) {
         remove(label: label)
         insert(label: label)
     }
-    
+
     @objc(removeLabel:)
     public func remove(label: Label) {
         backingList.removeAll(where: { $0 == label })
     }
-    
+
 }

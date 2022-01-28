@@ -127,7 +127,6 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         self.accountContainer = accountDirectory
 
-
         let eventContainer = PersistentContainer(name: "ZMEventModel")
         let messagesContainer = PersistentContainer(name: "zmessaging")
 
@@ -193,7 +192,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     public func loadStores(completionHandler: @escaping (Error?) -> Void) {
 
         let dispatchGroup = DispatchGroup()
-        var loadingStoreError: Error? = nil
+        var loadingStoreError: Error?
 
         dispatchGroup.enter()
         loadMessagesStore { (error) in
@@ -220,7 +219,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             return
         }
 
-        messagesContainer.loadPersistentStores { (store, error) in
+        messagesContainer.loadPersistentStores { (_, error) in
 
             guard error == nil else {
                 completionHandler(error)
@@ -244,7 +243,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             return
         }
 
-        eventsContainer.loadPersistentStores { (store, error) in
+        eventsContainer.loadPersistentStores { (_, error) in
 
             guard error == nil else {
                 completionHandler(error)
@@ -398,13 +397,13 @@ extension NSPersistentStoreCoordinator {
         return [
             // https://www.sqlite.org/pragma.html
             NSSQLitePragmasOption: [
-                "journal_mode" : "WAL",
+                "journal_mode": "WAL",
                 "synchronous": "FULL",
-                "secure_delete" : "TRUE"
+                "secure_delete": "TRUE"
             ],
             NSMigratePersistentStoresAutomaticallyOption: supportsMigration,
             NSInferMappingModelAutomaticallyOption: supportsMigration
         ]
     }
-    
+
 }

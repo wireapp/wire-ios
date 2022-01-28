@@ -29,5 +29,5 @@ extension NSManagedObjectContext {
         userInfo[SessionObjectIDKey] = session.objectID
         ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)
     }
-    
+
 }

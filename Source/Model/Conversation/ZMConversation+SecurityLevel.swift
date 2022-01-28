@@ -420,7 +420,7 @@ extension ZMConversation {
     /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 
     /// halting the enumeration when a system message for security level degradation is found.
     /// This is executed asychronously on the sync context
-    private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(block: @escaping (ZMOTRMessage)->Void) {
+    private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(block: @escaping (ZMOTRMessage) -> Void) {
         guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }

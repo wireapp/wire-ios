@@ -19,7 +19,7 @@
 import Foundation
 
 public extension NSManagedObjectContext {
-    
+
     /// Execute an NSBatchUpdateRequest and merge the resulting changes into all contexts.
     ///
     /// - parameters:
@@ -30,13 +30,13 @@ public extension NSManagedObjectContext {
         do {
             let result = try execute(request) as? NSBatchUpdateResult
             let objectIDArray = result?.result as? [NSManagedObjectID] ?? []
-            let changes: [AnyHashable : Any] = [NSUpdatedObjectsKey: objectIDArray]
-            
+            let changes: [AnyHashable: Any] = [NSUpdatedObjectsKey: objectIDArray]
+
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes,
                                                 into: [zm_userInterface, zm_sync])
         } catch {
             fatal("Error performing batch update \(error.localizedDescription)")
         }
     }
-    
+
 }
