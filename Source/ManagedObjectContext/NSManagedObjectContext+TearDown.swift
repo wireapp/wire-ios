@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireUtilities;
+import WireUtilities
 
 extension NSManagedObjectContext: TearDownCapable {
-    
+
     /// Tear down the context. Using the context after this call results in
     /// undefined behavior.
     public func tearDown() {

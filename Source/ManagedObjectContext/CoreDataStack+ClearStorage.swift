@@ -50,7 +50,7 @@ extension CoreDataStack {
     /// Delete all files in directories where Wire has historically
     /// been storing data.
     private func clearStorage() throws {
-        
+
         for location in storageLocations {
             try clearStoreFiles(in: location)
             try clearSessionStore(in: location)
@@ -107,7 +107,7 @@ extension CoreDataStack {
         guard !accountDataFolderExists() else { return }
 
         Logging.localStorage.info("Clearing storage on upgrade from legacy installation")
-            
+
         do {
             try clearStorage()
         } catch let error {

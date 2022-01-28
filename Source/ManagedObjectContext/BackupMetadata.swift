@@ -20,13 +20,13 @@ public struct BackupMetadata: Codable {
     public enum Platform: String, Codable {
         case iOS
     }
-    
+
     public let platform: Platform
     public let appVersion, modelVersion: String
     public let creationTime: Date
     public let userIdentifier: UUID
     public let clientIdentifier: String
-    
+
     public init(
         appVersion: String,
         modelVersion: String,
@@ -41,7 +41,7 @@ public struct BackupMetadata: Codable {
         self.userIdentifier = userIdentifier
         self.clientIdentifier = clientIdentifier
     }
-    
+
     public init(
         userIdentifier: UUID,
         clientIdentifier: String,
@@ -73,21 +73,21 @@ public func ==(lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
 // MARK: - Serialization Helper
 
 public extension BackupMetadata {
-    
+
     func write(to url: URL) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(.iso8601)
         let data = try encoder.encode(self)
         try data.write(to: url)
     }
-    
+
     init(url: URL) throws {
         let data = try Data(contentsOf: url)
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(.iso8601)
         self = try decoder.decode(type(of: self), from: data)
     }
-    
+
 }
 
 private extension DateFormatter {
@@ -108,12 +108,12 @@ private extension Locale {
 // MARK: - Verification
 
 public extension BackupMetadata {
-    
+
     enum VerificationError: Error {
         case backupFromNewerAppVersion
         case userMismatch
     }
-    
+
     func verify(
         using userIdentifier: UUID,
         modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
@@ -126,7 +126,7 @@ public extension BackupMetadata {
         guard current >= backup else { return .backupFromNewerAppVersion }
         return nil
     }
-    
+
 }
 
 // MARK: - Version Helper

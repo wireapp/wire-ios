@@ -19,23 +19,23 @@
 import Foundation
 
 extension CoreDataStack {
-    
+
     public enum MigrationError: Error {
         case missingLocalStore
         case migrationFailed(Error)
     }
-    
+
     private static let fileManager = FileManager()
     private static let workQueue = DispatchQueue(label: "Local storage migration", qos: .userInitiated)
     private static let databaseDirectoryName = "data"
-        
+
     // Each migration for any account will be created in a unique subdirectory inside.
     // Calling `clearMigrationDirectory` will remove this directory and all migrations.
     public static var migrationDirectory: URL {
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         return tempURL.appendingPathComponent("migration")
     }
-    
+
     // Calling this method will delete all migrations stored inside `migrationDirectory`.
     public static func clearMigrationDirectory(dispatchGroup: ZMSDispatchGroup? = nil) {
         workQueue.async(group: dispatchGroup) {
@@ -51,7 +51,7 @@ extension CoreDataStack {
             Logging.localStorage.debug("error removing directory: \(error)")
         }
     }
-        
+
     /// Perform a migration on the local storage.
     ///
     /// The migration will be performed on a temporary copy of the local store which will
@@ -70,18 +70,18 @@ extension CoreDataStack {
         migration: @escaping (NSManagedObjectContext) throws -> Void,
         completion: @escaping (Result<Void>) -> Void
         ) {
-        
+
         func fail(_ error: MigrationError) {
             Logging.localStorage.error("Migrating local store failed: \(error)")
-            
+
             // Clean up temporary migration store
             removeDirectory(at: Self.migrationDirectory)
-            
+
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(.failure(error))
             }
         }
-        
+
         let accountDirectory = Self.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
@@ -108,12 +108,12 @@ extension CoreDataStack {
                     sourceOptions: options,
                     ofType: NSSQLiteStoreType
                 )
-                
+
                 try performMigration(coordinator: coordinator,
                                      location: migrationStoreLocation,
                                      options: options,
                                      migration: migration)
-                
+
                 // Import the persistent store to the account data directory
                 try coordinator.replacePersistentStore(
                     at: storeFile,
@@ -122,10 +122,10 @@ extension CoreDataStack {
                     sourceOptions: options,
                     ofType: NSSQLiteStoreType
                 )
-                
+
                 // Clean up temporary migration store
                 removeDirectory(at: Self.migrationDirectory)
-                
+
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(()))
                 }
@@ -134,19 +134,19 @@ extension CoreDataStack {
             }
         }
     }
-    
+
     private static func performMigration(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any], migration: @escaping (NSManagedObjectContext) throws -> Void) throws {
-        
+
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         _ = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
-        
-        try context.performGroupedAndWait{ context in
+
+        try context.performGroupedAndWait { context in
             try migration(context)
             _ = context.makeMetadataPersistent()
             try context.save()
         }
     }
-    
+
 }

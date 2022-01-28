@@ -19,14 +19,14 @@
 import Foundation
 
 public extension ContextProvider {
-    
+
     /// Retrieve or create the encryption keys necessary for enabling / disabling encryption at rest.
     ///
     /// This method should only be called on the main thread.
-    
+
     func encryptionKeysForSettingEncryptionAtRest(enabled: Bool) throws -> EncryptionKeys {
         var encryptionKeys: EncryptionKeys
-        
+
         if enabled {
             try EncryptionKeys.deleteKeys(for: account)
             encryptionKeys = try EncryptionKeys.createKeys(for: account)
@@ -35,10 +35,10 @@ public extension ContextProvider {
             encryptionKeys = try viewContext.getEncryptionKeys()
             clearEncryptionKeysInAllContexts()
         }
-        
+
         return encryptionKeys
     }
-    
+
     /// Synchronously stores the given encryption keys in each managed object context.
 
     func storeEncryptionKeysInAllContexts(encryptionKeys: EncryptionKeys) {
