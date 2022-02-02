@@ -132,6 +132,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
     fileprivate var internalCompleteImageData: Data?
+    fileprivate var internalIsAccountDeleted: Bool?
 
     @objc
     public var hasTeam: Bool {
@@ -306,9 +307,13 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isAccountDeleted: Bool {
-        guard let user = user else { return false }
+        if let isDeleted = internalIsAccountDeleted {
+            return isDeleted
+        } else if let user = user {
+            return user.isAccountDeleted
+        }
 
-        return user.isAccountDeleted
+        return false
     }
 
     public var isUnderLegalHold: Bool {
@@ -465,7 +470,8 @@ public class ZMSearchUser: NSObject, UserType {
                 domain: String? = nil,
                 teamIdentifier: UUID? = nil,
                 user existingUser: ZMUser? = nil,
-                contact: ZMAddressBookContact? = nil) {
+                contact: ZMAddressBookContact? = nil
+    ) {
 
         let personName = PersonName.person(withName: name, schemeTagger: nil)
 
@@ -538,11 +544,14 @@ public class ZMSearchUser: NSObject, UserType {
                   remoteIdentifier: remoteIdentifier,
                   domain: domain,
                   teamIdentifier: teamIdentifier,
-                  user: user)
+                  user: user
+        )
 
         self.providerIdentifier =  payload["provider"] as? String
         self.summary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
+        self.internalIsAccountDeleted = payload["deleted"] as? Bool
+
     }
 
     public var smallProfileImageCacheKey: String? {
