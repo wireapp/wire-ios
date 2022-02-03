@@ -1030,4 +1030,78 @@
     XCTAssertTrue([privateDescription rangeOfString:clientID].location == NSNotFound);
 }
 
+- (void)testPrivateDescriptionWithEmoji
+{
+    // given
+    NSString *clientID = @"608b4f25ba2b193";
+    NSString *uuid = @"9e86b08a-8de7-11e9-810f-22000a62954d";
+    NSString *path = [NSString stringWithFormat:@"with/%@/🤨/%@/emoji", clientID, uuid];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+
+    // when
+    NSString *privateDescription = [request safeForLoggingDescription];
+
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"with/"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"/emoji"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"/🤨/"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:uuid].location == NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:clientID].location == NSNotFound);
+}
+
+- (void)testPrivateDescriptionWithOverlappedIDs
+{
+    // given
+    NSString *clientID = @"608b4f25ba2b193";
+    NSString *uuid = @"9e86b08a-8de7-11e9-810f-22000a62954d";
+    NSString *path = [NSString stringWithFormat:@"ids/%@%@/overlapped", clientID, uuid];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+
+    // when
+    NSString *privateDescription = [request safeForLoggingDescription];
+
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"ids/"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"/overlapped"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:uuid].location == NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:clientID].location == NSNotFound);
+
+    // given
+    path = [NSString stringWithFormat:@"ids/%@%@/overlapped", uuid, clientID];
+    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+
+    // when
+    privateDescription = [request safeForLoggingDescription];
+
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"ids/"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"/overlapped"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:uuid].location == NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:clientID].location == NSNotFound);
+
+    // given
+    path = [NSString stringWithFormat:@"ids/%@%@/overlapped", uuid, uuid];
+    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+
+    // when
+    privateDescription = [request safeForLoggingDescription];
+
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"ids/"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"/overlapped"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:uuid].location == NSNotFound);
+
+    // given
+    path = [NSString stringWithFormat:@"ids/%@%@/overlapped", clientID, clientID];
+    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+
+    // when
+    privateDescription = [request safeForLoggingDescription];
+
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"ids/"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"/overlapped"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:clientID].location == NSNotFound);
+}
+
 @end

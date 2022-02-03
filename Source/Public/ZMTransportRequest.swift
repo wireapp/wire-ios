@@ -35,17 +35,31 @@ extension String {
 
     var removingSensitiveInfo: String {
         let result = NSMutableString(string: self)
-        let range = NSMakeRange(0, self.count)
+        let range = NSMakeRange(0, utf16.count)
 
         String.matchers
-        .flatMap {
-            $0.matches(in: self, options: [], range: range)
-        }
-        .reversed()
-        .forEach {
-            let matchedString = result.substring(with: $0.range)
-            result.replaceCharacters(in: $0.range, with: matchedString.readableHash)
-        }
+            .flatMap { $0.matches(in: self, options: [], range: range) }
+            .sorted { $0.range.lowerBound < $1.range.lowerBound }
+            .map { $0.range }
+            .reduce(into: [NSRange]()) { result, range in
+                guard let last = result.popLast() else {
+                    result.append(range)
+                    return
+                }
+
+                if NSIntersectionRange(last, range).length > 0 {
+                    let mergedRange = NSUnionRange(last, range)
+                    result.append(mergedRange)
+                } else {
+                    result.append(last)
+                    result.append(range)
+                }
+            }
+            .reversed()
+            .forEach {
+                let substring = result.substring(with: $0)
+                result.replaceCharacters(in: $0, with: substring.readableHash)
+            }
 
         return result as String
     }
