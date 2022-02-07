@@ -58,7 +58,7 @@ class EncryptionKeysTests: XCTestCase {
         XCTAssertNotNil(publicKey)
     }
 
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
+    // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
     func testThatEncryptionKeysAreSuccessfullyCreated() throws {
         // when
 #if targetEnvironment(simulator) && swift(>=5.4)
@@ -105,7 +105,7 @@ class EncryptionKeysTests: XCTestCase {
         XCTAssertThrowsError(try EncryptionKeys(account: account))
     }
 
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
+    // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
     func testThatAsymmetricKeysWorksWithExpectedAlgorithm() throws {
         // given
         let data = "Hello world".data(using: .utf8)!
