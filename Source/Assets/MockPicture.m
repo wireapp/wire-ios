@@ -43,7 +43,7 @@
     CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef) imageData, NULL);
     Require(source != NULL);
     NSString *type = CFBridgingRelease(CGImageSourceGetType(source));
-    self.contentType = CFBridgingRelease(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef) type, kUTTagClassMIMEType));
+    self.contentType = [UTIHelper convertToMimeWithUti:type];
     NSDictionary *properties =  CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(source, 0, NULL));
     self.info = @{
                   @"width" : properties[(__bridge id) kCGImagePropertyPixelWidth],
