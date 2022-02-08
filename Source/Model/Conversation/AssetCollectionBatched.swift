@@ -26,7 +26,7 @@ public struct CategoryMatch: Hashable {
     }
 }
 
-public func ==(lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
+public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
     return (lhs.excluding == rhs.excluding) && (lhs.including == rhs.including)
 }
 

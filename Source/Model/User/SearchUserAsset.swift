@@ -25,7 +25,7 @@ public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     }
 }
 
-public func ==(lhs: SearchUserAsset, rhs: SearchUserAsset) -> Bool {
+public func == (lhs: SearchUserAsset, rhs: SearchUserAsset) -> Bool {
     switch (lhs, rhs) {
     case (.none, .none): return true
     case (.assetKey(let leftKey), .assetKey(let rightKey)): return leftKey == rightKey

@@ -78,10 +78,10 @@ import Foundation
 
 // MARK: - Operators
 
-public func ==(lhs: Version, rhs: Version) -> Bool {
+public func == (lhs: Version, rhs: Version) -> Bool {
     return lhs.compare(with: rhs) == .orderedSame
 }
 
-public func <(lhs: Version, rhs: Version) -> Bool {
+public func < (lhs: Version, rhs: Version) -> Bool {
     return lhs.compare(with: rhs) == .orderedAscending
 }

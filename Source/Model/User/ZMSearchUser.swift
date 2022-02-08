@@ -59,9 +59,9 @@ public struct SearchUserAssetKeys {
 
             for asset in assetsPayload {
                 guard let size = (asset[ResponseKey.assetSize.rawValue] as? String).flatMap(AssetSize.init),
-                    let key = asset[ResponseKey.assetKey.rawValue] as? String,
-                    let type = (asset[ResponseKey.assetType.rawValue] as? String).flatMap(AssetKind.init),
-                    type == .image else { continue }
+                      let key = asset[ResponseKey.assetKey.rawValue] as? String,
+                      let type = (asset[ResponseKey.assetType.rawValue] as? String).flatMap(AssetKind.init),
+                      type == .image else { continue }
 
                 switch size {
                 case .preview: previewKey = key
@@ -145,45 +145,32 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var teamCreatedBy: UUID? {
-        get {
-            return user?.membership?.createdBy?.remoteIdentifier ?? internalTeamCreatedBy
-        }
+        return user?.membership?.createdBy?.remoteIdentifier ?? internalTeamCreatedBy
     }
 
     public var emailAddress: String? {
-        get {
-            return user?.emailAddress
-        }
+        return user?.emailAddress
     }
 
     public var phoneNumber: String? {
-        get {
-            return user?.phoneNumber
-        }
+        return user?.phoneNumber
     }
 
     public var domain: String? {
-        get {
-            return user?.domain ?? internalDomain
-        }
+        return user?.domain ?? internalDomain
     }
 
     public var name: String? {
-        get {
-            return user?.name ?? internalName
-        }
+        return user?.name ?? internalName
+
     }
 
     public var handle: String? {
-        get {
-            return user?.handle ?? internalHandle
-        }
+        return user?.handle ?? internalHandle
     }
 
     public var initials: String? {
-        get {
-            return user?.initials ?? internalInitials
-        }
+        return user?.initials ?? internalInitials
     }
 
     public var availability: AvailabilityKind {
@@ -321,12 +308,10 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var accentColorValue: ZMAccentColor {
-        get {
-            if let user = user {
-                return user.accentColorValue
-            } else {
-                return internalAccentColorValue
-            }
+        if let user = user {
+            return user.accentColorValue
+        } else {
+            return internalAccentColorValue
         }
     }
 
@@ -435,9 +420,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public override var hash: Int {
-        get {
-            return remoteIdentifier?.hashValue ?? super.hash
-        }
+        return remoteIdentifier?.hashValue ?? super.hash
     }
 
     public static func searchUsers(from payloadArray: [[String: Any]], contextProvider: ContextProvider) -> [ZMSearchUser] {
@@ -529,7 +512,7 @@ public class ZMSearchUser: NSObject, UserType {
             let remoteIdentifier = UUID(uuidString: uuidString),
             let name = payload["name"] as? String else {
                 return nil
-        }
+            }
 
         let teamIdentifier = (payload["team"] as? String).flatMap({ UUID(uuidString: $0) })
         let handle = payload["handle"] as? String

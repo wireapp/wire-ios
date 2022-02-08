@@ -47,8 +47,8 @@ extension ZMConnection {
     }
 
     public static func fetch(userID: UUID,
-                      domain: String?,
-                      in context: NSManagedObjectContext) -> ZMConnection? {
+                             domain: String?,
+                             in context: NSManagedObjectContext) -> ZMConnection? {
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain
 

@@ -61,17 +61,13 @@ extension NSManagedObjectContext {
 
     /// Non-persisted store metadata
     @objc internal var nonCommittedMetadata: NSMutableDictionary {
-        get {
-            return self.userInfo[metadataKey] as? NSMutableDictionary ?? NSMutableDictionary()
-        }
+        return self.userInfo[metadataKey] as? NSMutableDictionary ?? NSMutableDictionary()
     }
 
     /// Non-persisted deleted metadata (need to keep around to know what to remove
     /// from the store when persisting)
     @objc internal var nonCommittedDeletedMetadataKeys: Set<String> {
-        get {
-            return self.userInfo[metadataKeysToRemove] as? Set<String> ?? Set<String>()
-        }
+        return self.userInfo[metadataKeysToRemove] as? Set<String> ?? Set<String>()
     }
 
     /// Discard non commited store metadata

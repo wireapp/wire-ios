@@ -151,10 +151,10 @@ public extension ZMUser {
     func canCreateConversation(type: ZMConversationType) -> Bool {
         switch type {
         case .oneOnOne:
-            /// all users are allow to open 1-on-1 conversation
+            // all users are allow to open 1-on-1 conversation
             return true
         default:
-            /// partner is not allowed to create non 1-on-1 convo
+            // partner is not allowed to create non 1-on-1 convo
             return permissions?.contains(.member) ?? true
         }
     }

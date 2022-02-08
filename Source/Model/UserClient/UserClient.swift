@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireCryptobox
@@ -95,15 +95,6 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     @NSManaged private var primitivePushToken: Data?
     public var pushToken: PushToken? {
-        set {
-            precondition(managedObjectContext!.zm_isSyncContext, "Push token should be set only on sync context")
-            if newValue != pushToken {
-                self.willChangeValue(forKey: Keys.PushToken)
-                primitivePushToken = try? JSONEncoder().encode(newValue)
-                self.didChangeValue(forKey: Keys.PushToken)
-                setLocallyModifiedKeys([Keys.PushToken])
-            }
-        }
         get {
             self.willAccessValue(forKey: Keys.PushToken)
             let token: PushToken?
@@ -115,6 +106,16 @@ public class UserClient: ZMManagedObject, UserClientType {
             self.didAccessValue(forKey: Keys.PushToken)
             return token
         }
+        set {
+            precondition(managedObjectContext!.zm_isSyncContext, "Push token should be set only on sync context")
+            if newValue != pushToken {
+                self.willChangeValue(forKey: Keys.PushToken)
+                primitivePushToken = try? JSONEncoder().encode(newValue)
+                self.didChangeValue(forKey: Keys.PushToken)
+                setLocallyModifiedKeys([Keys.PushToken])
+            }
+        }
+
     }
 
     /// Clients that are trusted by self client.
@@ -146,7 +147,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 
         // Fetch fingerprint if not there yet (could remain nil after fetch)
         if let managedObjectContext = self.managedObjectContext,
-            let _ = self.remoteIdentifier, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
+           self.remoteIdentifier != nil, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
             self.fingerprint = self.fetchFingerprint()
         }
     }
@@ -154,7 +155,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     public var verified: Bool {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient()
-            else { return false }
+        else { return false }
         return selfClient.remoteIdentifier == self.remoteIdentifier || selfClient.trustedClients.contains(self)
     }
 
@@ -188,7 +189,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             baseModifiedPredicate!,
             notDeletedPredicate,
             remoteIdentifierPresentPredicate
-            ])
+        ])
         return modifiedPredicate
     }
 
@@ -292,9 +293,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Access this property only from the syncContext
     public var hasSessionWithSelfClient: Bool {
         guard let selfClient = ZMUser.selfUser(in: managedObjectContext!).selfClient()
-            else {
-                zmLog.error("SelfUser has no selfClient")
-                return false
+        else {
+            zmLog.error("SelfUser has no selfClient")
+            return false
         }
         var hasSession = false
         selfClient.keysStore.encryptionContext.perform { [weak self](sessionsDirectory) in
@@ -461,8 +462,8 @@ public extension UserClient {
 
     @objc func fetchFingerprintOrPrekeys() {
         guard self.fingerprint == .none,
-            let syncMOC = self.managedObjectContext?.zm_sync
-            else { return }
+              let syncMOC = self.managedObjectContext?.zm_sync
+        else { return }
 
         if self.objectID.isTemporaryID {
             do {
@@ -479,7 +480,7 @@ public extension UserClient {
                   let syncClient = obj as? UserClient,
                   let sessionIdentifier = syncClient.sessionIdentifier,
                   let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
-                else { return }
+            else { return }
 
             if syncSelfClient == syncClient {
                 syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
@@ -513,6 +514,9 @@ public extension UserClient {
 public extension UserClient {
 
     @objc var failedToEstablishSession: Bool {
+        get {
+            return managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
+        }
         set {
             if newValue {
                 managedObjectContext?.zm_failedToEstablishSessionStore?.add(self)
@@ -521,9 +525,6 @@ public extension UserClient {
             }
         }
 
-        get {
-            return managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
-        }
     }
 }
 
@@ -532,8 +533,8 @@ public extension UserClient {
 
     @objc func isSelfClient() -> Bool {
         guard let managedObjectContext = managedObjectContext,
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            else { return false }
+              let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+        else { return false }
         return self == selfClient
     }
 
@@ -562,7 +563,7 @@ public extension UserClient {
     /// If there is no session it does nothing
     static func deleteSession(for clientID: EncryptionSessionIdentifier, managedObjectContext: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(), selfClient.sessionIdentifier != clientID
-            else { return }
+        else { return }
 
         selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
             sessionsDirectory.delete(clientID)
@@ -586,7 +587,7 @@ public extension UserClient {
             }
         }
 
-        // Because of caching within the `perform` block, it commits to disk only at the end of a block. 
+        // Because of caching within the `perform` block, it commits to disk only at the end of a block.
         // I don't think the cache is smart enough to perform the sum of operations (delete + recreate)
         // if at the end of the block the session is still there. Just to be safe, I split the operations
         // in two separate `perform` blocks.
@@ -621,7 +622,7 @@ public extension UserClient {
             numberOfKeysRemaining -= 1
         }
         if numberOfKeysRemaining < 0 { // this will recover from the fact that the number might already be < 0
-                                       // from a previous run
+            // from a previous run
             numberOfKeysRemaining = 0
         }
         if numberOfKeysRemaining == 0 {
@@ -713,7 +714,7 @@ extension UserClient {
             guard let user = $1 else { return }
             guard user.isSelfUser else {
                 return $0.formUnion(user.participantRoles
-                    .compactMap { $0.conversation})
+                                        .compactMap { $0.conversation})
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()

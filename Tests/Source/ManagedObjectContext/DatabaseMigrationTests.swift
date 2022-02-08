@@ -318,7 +318,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
 
         // Check that we have current version fixture file
-        guard let _ = databaseFixtureURL(version: modelVersion) else {
+        guard databaseFixtureURL(version: modelVersion) != nil else {
             let versionsWithoutCurrent = allVersions.filter { $0 != fixtureVersion }
             createDatabaseWithOlderModelVersion(versionName: versionsWithoutCurrent.last!)
             let directory = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)

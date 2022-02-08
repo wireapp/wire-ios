@@ -114,10 +114,10 @@ extension NotificationInContext {
     }
 
     convenience public init(name: Notification.Name,
-                context: NotificationContext,
-                object: AnyObject? = nil,
-                changeInfo: ObjectChangeInfo,
-                userInfo: [String: Any]? = nil) {
+                            context: NotificationContext,
+                            object: AnyObject? = nil,
+                            changeInfo: ObjectChangeInfo,
+                            userInfo: [String: Any]? = nil) {
         var userInfo = userInfo ?? [:]
         userInfo[UserInfoKeys.changeInfo.rawValue] = changeInfo
 
@@ -129,10 +129,10 @@ extension NotificationInContext {
     }
 
     convenience public init(name: Notification.Name,
-                context: NotificationContext,
-                object: AnyObject? = nil,
-                changedKeys: [String],
-                userInfo: [String: Any]? = nil) {
+                            context: NotificationContext,
+                            object: AnyObject? = nil,
+                            changedKeys: [String],
+                            userInfo: [String: Any]? = nil) {
         var userInfo = userInfo ?? [:]
         userInfo[UserInfoKeys.changedKeys.rawValue] = changedKeys
 

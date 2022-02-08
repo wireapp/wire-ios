@@ -33,14 +33,14 @@ public enum BackendConversationType: Int {
             return .invalid
         }
         switch backendType {
-            case .group:
-                return .group
-            case .oneOnOne:
-                return .oneOnOne
-            case .connection:
-                return .connection
-            case .`self`:
-                return .`self`
+        case .group:
+            return .group
+        case .oneOnOne:
+            return .oneOnOne
+        case .connection:
+            return .connection
+        case .`self`:
+            return .`self`
         }
     }
 }
@@ -135,14 +135,14 @@ extension ZMConversation {
 
     public func updateTeam(identifier: UUID?) {
         guard let teamId = identifier,
-            let moc = self.managedObjectContext else { return }
+              let moc = self.managedObjectContext else { return }
         self.teamRemoteIdentifier = teamId
         self.team = Team.fetchOrCreate(with: teamId, create: false, in: moc, created: nil)
     }
 
     @objc func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
         guard let latestSystemMessage = ZMSystemMessage.fetchLatestPotentialGapSystemMessage(in: self)
-            else { return }
+        else { return }
 
         let removedUsers = latestSystemMessage.users.subtracting(users)
         let addedUsers = users.subtracting(latestSystemMessage.users)
@@ -162,7 +162,7 @@ extension ZMConversation {
 
     private func updateIsArchived(payload: [String: Any]) -> Bool {
         if let silencedRef = payload.date(fromKey: PayloadKeys.OTRArchivedReferenceKey),
-            self.updateArchived(silencedRef, synchronize: false) {
+           self.updateArchived(silencedRef, synchronize: false) {
             self.internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
             return true
         }
@@ -181,7 +181,7 @@ extension ZMConversation {
     @objc(shouldAddEvent:)
     public func shouldAdd(event: ZMUpdateEvent) -> Bool {
         if let clearedTime = self.clearedTimeStamp, let time = event.timestamp,
-            clearedTime.compare(time) != .orderedAscending {
+           clearedTime.compare(time) != .orderedAscending {
             return false
         }
         return self.conversationType != .self

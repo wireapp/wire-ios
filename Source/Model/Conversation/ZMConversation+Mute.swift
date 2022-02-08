@@ -90,7 +90,7 @@ public extension ZMConversation {
             }
 
             if managedObjectContext.zm_isUserInterfaceContext,
-                let lastServerTimestamp = self.lastServerTimeStamp {
+               let lastServerTimestamp = self.lastServerTimeStamp {
                 updateMuted(lastServerTimestamp, synchronize: true)
             }
         }
@@ -99,15 +99,14 @@ public extension ZMConversation {
     /// Returns an option set of messages types which should be muted when also considering the
     /// the availability status of the self user.
     var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
-        get {
-            guard let managedObjectContext = self.managedObjectContext else {
-                return .none
-            }
-
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-            return selfUser.mutedMessagesTypes.union(mutedMessageTypes)
+        guard let managedObjectContext = self.managedObjectContext else {
+            return .none
         }
+
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        return selfUser.mutedMessagesTypes.union(mutedMessageTypes)
     }
+
 }
 
 extension ZMUser {
@@ -133,7 +132,7 @@ public extension ZMConversation {
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         if let senderID = senderID,
-            let sender = ZMUser.fetch(with: senderID, in: managedObjectContext), sender.isSelfUser {
+           let sender = ZMUser.fetch(with: senderID, in: managedObjectContext), sender.isSelfUser {
             return true
         }
 

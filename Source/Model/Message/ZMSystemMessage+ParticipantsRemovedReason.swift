@@ -41,18 +41,18 @@ extension ZMSystemMessage {
     @objc public static let participantsRemovedReasonKey = "participantsRemovedReason"
 
     @objc public var participantsRemovedReason: ZMParticipantsRemovedReason {
-        set {
-            let key = #keyPath(ZMSystemMessage.participantsRemovedReasonKey)
-            self.willChangeValue(forKey: key)
-            self.setPrimitiveValue(newValue.rawValue, forKey: key)
-            self.didChangeValue(forKey: key)
-        }
         get {
             let key = #keyPath(ZMSystemMessage.participantsRemovedReasonKey)
             self.willAccessValue(forKey: key)
             let raw = (self.primitiveValue(forKey: key) as? NSNumber) ?? 0
             self.didAccessValue(forKey: key)
             return ZMParticipantsRemovedReason(rawValue: raw.int16Value) ?? .none
+        }
+        set {
+            let key = #keyPath(ZMSystemMessage.participantsRemovedReasonKey)
+            self.willChangeValue(forKey: key)
+            self.setPrimitiveValue(newValue.rawValue, forKey: key)
+            self.didChangeValue(forKey: key)
         }
     }
 

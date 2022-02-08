@@ -31,8 +31,8 @@ final public class Action: ZMManagedObject {
     }
 
     private static func fetchExistingAction(with name: String,
-                                    role: Role,
-                                    in context: NSManagedObjectContext) -> Action? {
+                                            role: Role,
+                                            in context: NSManagedObjectContext) -> Action? {
         let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
 
@@ -45,7 +45,7 @@ final public class Action: ZMManagedObject {
     @objc
     @discardableResult
     private static func create(managedObjectContext: NSManagedObjectContext,
-                              name: String) -> Action {
+                               name: String) -> Action {
         let entry = Action.insertNewObject(in: managedObjectContext)
         entry.name = name
         return entry

@@ -148,7 +148,7 @@ extension ZMUser: ObjectInSnapshot {
     }
 
     public var legalHoldStatusChanged: Bool {
-        return !changedKeys.intersection(ZMUser.keysAffectingLegalHoldStatus()).isEmpty
+        return !changedKeys.isDisjoint(with: ZMUser.keysAffectingLegalHoldStatus())
     }
 
     public var isUnderLegalHoldChanged: Bool {

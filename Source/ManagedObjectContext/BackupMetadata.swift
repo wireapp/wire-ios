@@ -61,7 +61,7 @@ public struct BackupMetadata: Codable {
 
 extension BackupMetadata: Equatable {}
 
-public func ==(lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
+public func == (lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
     return lhs.platform == rhs.platform
         && lhs.appVersion == rhs.appVersion
         && lhs.modelVersion == rhs.modelVersion

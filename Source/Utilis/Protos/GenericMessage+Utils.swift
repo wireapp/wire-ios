@@ -26,9 +26,9 @@ extension GenericMessage {
 
 extension ImageAsset {
     public init(mediumProperties: ZMIImageProperties?,
-         processedProperties: ZMIImageProperties?,
-         encryptionKeys: ZMImageAssetEncryptionKeys?,
-         format: ZMImageFormat) {
+                processedProperties: ZMIImageProperties?,
+                encryptionKeys: ZMImageAssetEncryptionKeys?,
+                format: ZMImageFormat) {
         self = ImageAsset.with {
             $0.width = Int32(processedProperties?.size.width ?? 0)
             $0.height = Int32(processedProperties?.size.height ?? 0)

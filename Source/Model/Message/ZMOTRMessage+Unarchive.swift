@@ -22,7 +22,7 @@ extension ZMConversation {
     fileprivate func unarchive(with message: ZMOTRMessage) {
         self.internalIsArchived = false
 
-        if let _ = self.lastServerTimeStamp, let serverTimestamp = message.serverTimestamp {
+        if self.lastServerTimeStamp != nil, let serverTimestamp = message.serverTimestamp {
             self.updateArchived(serverTimestamp, synchronize: false)
         }
     }

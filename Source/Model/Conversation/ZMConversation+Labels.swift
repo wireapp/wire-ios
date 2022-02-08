@@ -22,6 +22,9 @@ extension ZMConversation {
 
     @objc
     public var isFavorite: Bool {
+        get {
+            return labels.any({ $0.kind == .favorite })
+        }
         set {
             guard let managedObjectContext = managedObjectContext else { return }
 
@@ -33,9 +36,7 @@ extension ZMConversation {
                 removeLabel(favoriteLabel)
             }
         }
-        get {
-            return labels.any({ $0.kind == .favorite })
-        }
+
     }
 
     @objc

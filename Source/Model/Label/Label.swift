@@ -109,11 +109,10 @@ public class Label: ZMManagedObject, LabelType {
             fatal("Label entity not registered in managed object model")
         }
 
-        for managedObject in context.registeredObjects {
-            if managedObject.entity == entity, !managedObject.isFault {
-                guard let label = managedObject as? Label, label.kind == .favorite else { continue }
-                return label
-            }
+        for managedObject in context.registeredObjects where managedObject.entity == entity && !managedObject.isFault {
+            guard let label = managedObject as? Label, label.kind == .favorite else { continue }
+            return label
+
         }
 
         let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
