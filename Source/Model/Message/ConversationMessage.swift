@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireLinkPreview
@@ -129,7 +129,7 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Returns the date when a ephemeral message will be destructed or `nil` if th message is not ephemeral
     var destructionDate: Date? { get }
 
-    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session (since the 
+    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session (since the
     /// app was restarted)
     var causedSecurityLevelDegradation: Bool { get }
 
@@ -176,11 +176,11 @@ public extension ZMConversationMessage {
 
 public extension Equatable where Self: ZMConversationMessage { }
 
-public func ==(lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
+public func == (lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
     return lhs.isEqual(rhs)
 }
 
-public func ==(lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Bool {
+public func == (lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Bool {
     switch (lhs, rhs) {
     case (nil, nil):
         return true
@@ -233,12 +233,12 @@ extension ZMMessage: ZMConversationMessage {
 
     public var canBeMarkedUnread: Bool {
         guard self.isNormal,
-                let _ = self.serverTimestamp,
-                let _ = self.conversation,
-                let sender = self.sender,
-                !sender.isSelfUser else {
-                return false
-        }
+              self.serverTimestamp != nil,
+              self.conversation != nil,
+              let sender = self.sender,
+              !sender.isSelfUser else {
+                  return false
+              }
 
         return true
     }
@@ -250,9 +250,9 @@ extension ZMMessage: ZMConversationMessage {
               let managedObjectContext = self.managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
 
-                zmLog.error("Cannot mark as unread message outside of the conversation.")
-                return
-        }
+                  zmLog.error("Cannot mark as unread message outside of the conversation.")
+                  return
+              }
         let conversationID = conversation.objectID
 
         conversation.lastReadServerTimeStamp = Date(timeInterval: -0.01, since: serverTimestamp)
@@ -325,10 +325,8 @@ extension ZMMessage {
 
     @objc public var usersReaction: [String: [UserType]] {
         var result = [String: [ZMUser]]()
-        for reaction in reactions {
-            if reaction.users.count > 0 {
-                result[reaction.unicodeValue!] = [ZMUser](reaction.users)
-            }
+        for reaction in reactions where reaction.users.count > 0 {
+            result[reaction.unicodeValue!] = [ZMUser](reaction.users)
         }
         return result
     }

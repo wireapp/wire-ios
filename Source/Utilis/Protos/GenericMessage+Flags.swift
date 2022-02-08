@@ -82,20 +82,18 @@ extension GenericMessage {
 
 extension Ephemeral {
     public var legalHoldStatus: LegalHoldStatus {
-        get {
-            guard let content = content else { return .unknown }
-            switch content {
-            case let .text(value):
-                return value.legalHoldStatus
-            case .image:
-                return .unknown
-            case let .knock(value):
-                return value.legalHoldStatus
-            case let .asset(value):
-                return value.legalHoldStatus
-            case let .location(value):
-                return value.legalHoldStatus
-            }
+        guard let content = content else { return .unknown }
+        switch content {
+        case let .text(value):
+            return value.legalHoldStatus
+        case .image:
+            return .unknown
+        case let .knock(value):
+            return value.legalHoldStatus
+        case let .asset(value):
+            return value.legalHoldStatus
+        case let .location(value):
+            return value.legalHoldStatus
         }
     }
 

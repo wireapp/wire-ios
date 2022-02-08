@@ -38,7 +38,7 @@ public struct AnyClassTuple<T: Hashable>: Hashable {
 
 }
 
-public func ==<T>(lhs: AnyClassTuple<T>, rhs: AnyClassTuple<T>) -> Bool {
+public func == <T>(lhs: AnyClassTuple<T>, rhs: AnyClassTuple<T>) -> Bool {
     // We store the hash which makes comparison very cheap.
     return (lhs.hashValue == rhs.hashValue)
         && (lhs.secondElement == rhs.secondElement)

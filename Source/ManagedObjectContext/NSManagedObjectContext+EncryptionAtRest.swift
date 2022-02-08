@@ -167,13 +167,15 @@ extension NSManagedObjectContext {
     /// Whether the encryption at rest feature is enabled.
 
     internal(set) public var encryptMessagesAtRest: Bool {
+        get {
+            (persistentStoreMetadata(forKey: PersistentMetadataKey.encryptMessagesAtRest.rawValue) as? NSNumber)?.boolValue ?? false
+        }
+
         set {
             setPersistentStoreMetadata(NSNumber(booleanLiteral: newValue),
                                        key: PersistentMetadataKey.encryptMessagesAtRest.rawValue)
         }
-        get {
-            (persistentStoreMetadata(forKey: PersistentMetadataKey.encryptMessagesAtRest.rawValue) as? NSNumber)?.boolValue ?? false
-        }
+
     }
 
     // MARK: - Encryption / Decryption
@@ -238,8 +240,8 @@ extension NSManagedObjectContext {
     private static let encryptionKeysUserInfoKey = "encryptionKeys"
 
     public var encryptionKeys: EncryptionKeys? {
-        set { userInfo[Self.encryptionKeysUserInfoKey] = newValue }
         get { userInfo[Self.encryptionKeysUserInfoKey] as? EncryptionKeys }
+        set { userInfo[Self.encryptionKeysUserInfoKey] = newValue }
     }
 
     func getEncryptionKeys() throws -> EncryptionKeys {

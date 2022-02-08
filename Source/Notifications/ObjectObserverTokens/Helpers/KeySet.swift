@@ -42,7 +42,7 @@ public enum AffectedKeys: Equatable {
     }
 }
 
-public func ==(lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
+public func == (lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
     switch (lhs, rhs) {
     case let (.some(lk), .some(rk)):
         return lk == rk
@@ -124,7 +124,7 @@ extension KeySet: Hashable {
     }
 }
 
-public func ==(lhs: KeySet, rhs: KeySet) -> Bool {
+public func == (lhs: KeySet, rhs: KeySet) -> Bool {
     return lhs.backing == rhs.backing
 }
 

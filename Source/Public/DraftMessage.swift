@@ -118,6 +118,21 @@ private struct StorableQuote: Codable {
 
     /// The draft message of the conversation.
     public var draftMessage: DraftMessage? {
+        get {
+            guard
+                let data = draftMessageData,
+                let context = managedObjectContext,
+                let decryptedData = try? decryptDataIfNeeded(data: data, in: context)
+            else { return nil }
+            do {
+                let storable = try JSONDecoder().decode(StorableDraftMessage.self, from: decryptedData)
+                return storable.draftMessage(in: context, for: self)
+            } catch {
+                draftMessageData = nil
+                return nil
+            }
+        }
+
         set {
             if let value = newValue {
                 guard
@@ -136,21 +151,6 @@ private struct StorableQuote: Codable {
             } else {
                 draftMessageData = nil
                 draftMessageNonce = nil
-            }
-        }
-
-        get {
-            guard
-                let data = draftMessageData,
-                let context = managedObjectContext,
-                let decryptedData = try? decryptDataIfNeeded(data: data, in: context)
-            else { return nil }
-            do {
-                let storable = try JSONDecoder().decode(StorableDraftMessage.self, from: decryptedData)
-                return storable.draftMessage(in: context, for: self)
-            } catch {
-                draftMessageData = nil
-                return nil
             }
         }
 

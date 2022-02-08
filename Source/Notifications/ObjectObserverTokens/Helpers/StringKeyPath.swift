@@ -73,7 +73,7 @@ public final class StringKeyPath: Hashable {
 
 extension StringKeyPath: Equatable {
 }
-public func ==(lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
+public func == (lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
     return (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
 }

@@ -588,14 +588,14 @@ extension ZMConversation {
 
     @discardableResult
     func appendSystemMessage(type: ZMSystemMessageType,
-                                         sender: ZMUser,
-                                         users: Set<ZMUser>?,
-                                         addedUsers: Set<ZMUser> = Set(),
-                                         clients: Set<UserClient>?,
-                                         timestamp: Date,
-                                         duration: TimeInterval? = nil,
-                                         messageTimer: Double? = nil,
-                                         relevantForStatus: Bool = true) -> ZMSystemMessage {
+                             sender: ZMUser,
+                             users: Set<ZMUser>?,
+                             addedUsers: Set<ZMUser> = Set(),
+                             clients: Set<UserClient>?,
+                             timestamp: Date,
+                             duration: TimeInterval? = nil,
+                             messageTimer: Double? = nil,
+                             relevantForStatus: Bool = true) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender

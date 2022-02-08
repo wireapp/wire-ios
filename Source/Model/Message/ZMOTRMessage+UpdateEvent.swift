@@ -24,8 +24,8 @@ extension ZMOTRMessage {
 
     @objc
     static func createOrUpdate(fromUpdateEvent updateEvent: ZMUpdateEvent,
-                                     inManagedObjectContext moc: NSManagedObjectContext,
-                                     prefetchResult: ZMFetchRequestBatchResult) -> ZMOTRMessage? {
+                               inManagedObjectContext moc: NSManagedObjectContext,
+                               prefetchResult: ZMFetchRequestBatchResult) -> ZMOTRMessage? {
 
         let selfUser = ZMUser.selfUser(in: moc)
 

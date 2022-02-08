@@ -55,8 +55,8 @@ extension ZMClientMessage {
     }
 
     static func expireButtonState(forButtonAction buttonAction: ButtonAction,
-                                        forConversation conversation: ZMConversation,
-                                        inContext moc: NSManagedObjectContext) {
+                                  forConversation conversation: ZMConversation,
+                                  inContext moc: NSManagedObjectContext) {
         let nonce = UUID(uuidString: buttonAction.referenceMessageID)
         let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         message?.expireButtonState(withButtonAction: buttonAction)

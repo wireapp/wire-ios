@@ -78,7 +78,7 @@ extension ZMConversation {
     public func clearMessagesThatCausedSecurityLevelDegradation() {
         guard let moc = self.managedObjectContext else { return }
         var currentMessages = moc.messagesThatCausedSecurityLevelDegradationByConversation
-        if let _ = currentMessages.removeValue(forKey: self.objectID) {
+        if currentMessages.removeValue(forKey: self.objectID) != nil {
             moc.messagesThatCausedSecurityLevelDegradationByConversation = currentMessages
         }
     }

@@ -46,9 +46,9 @@ public class FeatureFlag: ZMManagedObject {
 
     @discardableResult
     public static func updateOrCreate(with type: FeatureFlagType,
-                                     value: Bool,
-                                     team: Team,
-                                     context: NSManagedObjectContext) -> FeatureFlag {
+                                      value: Bool,
+                                      team: Team,
+                                      context: NSManagedObjectContext) -> FeatureFlag {
         precondition(context.zm_isSyncContext)
 
         if let existing = team.fetchFeatureFlag(with: type) {

@@ -87,7 +87,6 @@ extension ZMConversationTests {
         let result = uiMOC.executeFetchRequestOrAssert(request)
 
         XCTAssertEqual(result.count, 1)
-        /// TODO
         XCTAssertTrue((result.first is ZMAssetClientMessage))
     }
 }

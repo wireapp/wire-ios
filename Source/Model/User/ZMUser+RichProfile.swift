@@ -30,14 +30,11 @@ public enum ZMUserKeys {
         self.value = value
     }
 
-    public static func == (lhs: UserRichProfileField, rhs: UserRichProfileField) -> Bool {
-        return lhs.type == rhs.type && lhs.value == rhs.value
-    }
-
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserRichProfileField else { return false }
-        return self == other
+        return self.type == other.type && self.value == other.value
     }
+
 }
 
 extension ZMUser {

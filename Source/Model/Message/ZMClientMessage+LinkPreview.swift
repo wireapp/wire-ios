@@ -24,6 +24,13 @@ extension ZMClientMessage {
     public static let linkPreviewImageDownloadNotification = NSNotification.Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
 
     public var linkPreviewState: ZMLinkPreviewState {
+        get {
+            let key = #keyPath(ZMClientMessage.linkPreviewState)
+            self.willAccessValue(forKey: key)
+            let raw = (self.primitiveValue(forKey: key) as? NSNumber) ?? 0
+            self.didAccessValue(forKey: key)
+            return ZMLinkPreviewState(rawValue: raw.int16Value)!
+        }
         set {
             let key = #keyPath(ZMClientMessage.linkPreviewState)
             self.willChangeValue(forKey: key)
@@ -33,13 +40,6 @@ extension ZMClientMessage {
             if newValue != .done {
                 self.setLocallyModifiedKeys(Set([key]))
             }
-        }
-        get {
-            let key = #keyPath(ZMClientMessage.linkPreviewState)
-            self.willAccessValue(forKey: key)
-            let raw = (self.primitiveValue(forKey: key) as? NSNumber) ?? 0
-            self.didAccessValue(forKey: key)
-            return ZMLinkPreviewState(rawValue: raw.int16Value)!
         }
     }
 

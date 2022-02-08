@@ -23,9 +23,9 @@ import AddressBook
 @objcMembers public class AddressBookEntry: ZMManagedObject {
 
     public enum Fields: String {
-        case localIdentifier = "localIdentifier"
-        case user = "user"
-        case cachedName = "cachedName"
+        case localIdentifier
+        case user
+        case cachedName
     }
 
     @NSManaged public var localIdentifier: String?

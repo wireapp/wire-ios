@@ -23,10 +23,10 @@ private var zmLog = ZMSLog(tag: "MessageChangeInfo")
 // MARK: Message observing 
 
 enum MessageKey: String {
-    case previewGenericMessage = "previewGenericMessage"
-    case mediumGenericMessage = "mediumGenericMessage"
-    case linkPreview = "linkPreview"
-    case underlyingMessage = "underlyingMessage"
+    case previewGenericMessage
+    case mediumGenericMessage
+    case linkPreview
+    case underlyingMessage
 }
 
 extension ZMMessage: ObjectInSnapshot {
