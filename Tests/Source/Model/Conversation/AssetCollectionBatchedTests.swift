@@ -51,7 +51,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         var messages = [ZMMessage]()
         (0..<count).forEach { _ in
             let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
-            offset = offset + 5
+            offset += 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")
             messages.append(message)
             message.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
@@ -353,9 +353,9 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         // then
         let allMessages = sut.assets(for: defaultMatchPair)
         XCTAssertEqual(allMessages.count, 20)
-        XCTAssertTrue(allMessages.reduce(true) { result, element in
+        XCTAssertTrue(allMessages.allSatisfy { element in
             guard let message = element as? ZMMessage else { return false }
-            return result && message.managedObjectContext!.zm_isUserInterfaceContext
+            return message.managedObjectContext!.zm_isUserInterfaceContext
         })
     }
 

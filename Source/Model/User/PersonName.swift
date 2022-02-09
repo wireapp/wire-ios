@@ -50,7 +50,7 @@
             lastIndex = self.components.count - 1
             guard self.components.count > 1 && self.components[1].zmIsGodName() else { break }
             guard self.components.count > 2 else { return [] }
-            startIndex = startIndex + 1
+            startIndex += 1
         }
         return Array(self.components[startIndex...lastIndex])
     }()
@@ -61,15 +61,15 @@
         var name = String()
         switch self.nameOrder {
         case .givenNameLast:
-            name = name+self.components.last!
+            name += self.components.last!
         case .givenNameFirst:
-            name = name+firstComponent
+            name += firstComponent
         case .arabicGivenName:
-            name = name+firstComponent
+            name += firstComponent
             guard self.components.count > 1 else { break }
             let comp = self.components[1]
             guard comp.zmIsGodName() else { break }
-            name = name+" "+comp
+            name = [name, comp].joined(separator: " ")
         }
         return name
     }()
@@ -80,12 +80,12 @@
         var _initials = String()
         switch self.nameOrder {
         case .givenNameLast:
-            _initials = _initials + (firstComponent.zmFirstComposedCharacter() ?? "")
-            _initials = _initials + (firstComponent.zmSecondComposedCharacter() ?? "")
+            _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
+            _initials += (firstComponent.zmSecondComposedCharacter() ?? "")
         case .arabicGivenName, .givenNameFirst:
-            _initials = _initials + (firstComponent.zmFirstComposedCharacter() ?? "")
+            _initials += (firstComponent.zmFirstComposedCharacter() ?? "")
             guard self.components.count > 1, let lastComponent = self.components.last else { break }
-            _initials = _initials + (lastComponent.zmFirstComposedCharacter() ?? "")
+            _initials += (lastComponent.zmFirstComposedCharacter() ?? "")
         }
         return _initials
     }()
