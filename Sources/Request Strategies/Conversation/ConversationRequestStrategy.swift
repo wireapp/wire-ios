@@ -585,13 +585,17 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
 
     private func removeSelfUser(_ conversations: Set<UUID>) {
         for conversationID in conversations {
-            guard
-                let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context),
-                conversation.conversationType == .group,
-                conversation.isSelfAnActiveMember
-            else {
+            guard let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context) else {
                 continue
             }
+
+            guard conversation.conversationType == .group,
+                  conversation.isSelfAnActiveMember
+            else {
+                conversation.needsToBeUpdatedFromBackend = false
+                continue
+            }
+
             let selfUser = ZMUser.selfUser(in: context)
             conversation.removeParticipantAndUpdateConversationState(user: selfUser, initiatingUser: selfUser)
             conversation.needsToBeUpdatedFromBackend = false

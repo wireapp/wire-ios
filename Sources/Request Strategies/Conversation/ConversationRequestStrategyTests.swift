@@ -295,11 +295,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let response = responseFailure(code: 403, label: .unknown)
 
         // when
-        fetchConversation(with: response)
+        fetchConversation(groupConversation, with: response)
+        fetchConversation(oneToOneConversation, with: response)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(self.oneToOneConversation.needsToBeUpdatedFromBackend)
         }
     }
 
@@ -308,7 +310,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let response = responseFailure(code: 404, label: .notFound)
 
         // when
-        fetchConversation(with: response)
+        fetchConversation(groupConversation, with: response)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -321,7 +323,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let response = responseFailure(code: 403, label: .unknown)
 
         // when
-        fetchConversation(with: response)
+        fetchConversation(groupConversation, with: response)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -952,11 +954,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func fetchConversation(with response: ZMTransportResponse) {
+    func fetchConversation(_ conversation: ZMConversation, with response: ZMTransportResponse) {
         syncMOC.performGroupedBlockAndWait {
             // given
-            self.groupConversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
+            conversation.needsToBeUpdatedFromBackend = true
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([conversation])) }
 
             // when
             let request = self.sut.nextRequest()!
