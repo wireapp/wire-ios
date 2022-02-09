@@ -132,9 +132,9 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         let offset = (type == .asset) ? self.assetMessageOffset : self.clientMessageOffset
         let numberToAnalyze = min(allMessages.count - offset, AssetCollectionBatched.defaultFetchCount)
         if type == .asset {
-            self.assetMessageOffset = self.assetMessageOffset + numberToAnalyze
+            self.assetMessageOffset += numberToAnalyze
         } else {
-            self.clientMessageOffset = self.clientMessageOffset + numberToAnalyze
+            self.clientMessageOffset += numberToAnalyze
         }
 
         // check if we reached the last message
@@ -280,7 +280,7 @@ extension AssetCollectionBatched {
         messageMap.forEach {
             var newValues = $1
             if let otherValues = other[$0] {
-                newValues = newValues + otherValues
+                newValues += otherValues
             }
             newSortedMessages[$0] = newValues
         }

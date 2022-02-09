@@ -142,7 +142,7 @@ class BatchDeleteTests: ZMTBaseTest {
                                    newIndexPath: IndexPath?) {
                 switch type {
                 case .delete:
-                    deletedCount = deletedCount + 1
+                    deletedCount += 1
                 case .insert:
                     break
                 case .move:

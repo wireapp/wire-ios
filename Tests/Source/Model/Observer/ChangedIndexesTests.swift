@@ -54,7 +54,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
                 XCTAssertEqual(from, 3)
                 XCTAssertEqual(to, 2)
             }
-            callCount = callCount+1
+            callCount += 1
         }
         XCTAssertEqual(callCount, 1)
 
@@ -100,7 +100,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 4)
             }
-            callCount = callCount+1
+            callCount += 1
         }
         XCTAssertEqual(callCount, 3)
 
@@ -140,7 +140,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
                 XCTAssertEqual(from, 1)
                 XCTAssertEqual(to, 1)
             }
-            callCount = callCount+1
+            callCount += 1
         }
         XCTAssertEqual(callCount, 2)
 
@@ -187,7 +187,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
                 XCTAssertEqual(from, 3)
                 XCTAssertEqual(to, 2)
             }
-            callCount = callCount+1
+            callCount += 1
         }
         XCTAssertEqual(callCount, 1)
 
@@ -232,7 +232,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
                 XCTAssertEqual(from, 4)
                 XCTAssertEqual(to, 3)
             }
-            callCount = callCount+1
+            callCount += 1
         }
         XCTAssertEqual(callCount, 3)
 
@@ -271,7 +271,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 1)
             }
-            callCount = callCount+1
+            callCount += 1
         }
         XCTAssertEqual(callCount, 2)
 
