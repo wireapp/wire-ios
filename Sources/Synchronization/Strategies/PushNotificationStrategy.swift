@@ -47,6 +47,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
          notificationsTracker: NotificationsTracker?,
          notificationSessionDelegate: NotificationSessionDelegate?,
          useLegacyPushNotifications: Bool) {
+
+        self.useLegacyPushNotifications = useLegacyPushNotifications
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -59,7 +61,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
-        self.useLegacyPushNotifications = useLegacyPushNotifications
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
