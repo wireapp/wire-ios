@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-request-strategy" ~> "refactor/notification-extension"
+github "wireapp/wire-ios-request-strategy" ~> 261.3.1
