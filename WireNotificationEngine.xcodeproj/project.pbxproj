@@ -14,7 +14,6 @@
 		067ECB5D2487ABA100701956 /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		067ECB602487ABF700701956 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
 		06894D5D276B274200DA4E33 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D3B276B26D500DA4E33 /* HTMLString.xcframework */; };
-		06894D5F276B274200DA4E33 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D43276B26D600DA4E33 /* libPhoneNumberiOS.xcframework */; };
 		06894D63276B274200DA4E33 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D42276B26D600DA4E33 /* PINCache.xcframework */; };
 		06894D65276B274200DA4E33 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D44276B26D600DA4E33 /* Starscream.xcframework */; };
 		06894D67276B274200DA4E33 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D49276B26D600DA4E33 /* SwiftProtobuf.xcframework */; };
@@ -23,11 +22,9 @@
 		06894D6D276B274200DA4E33 /* WireImages.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D3F276B26D600DA4E33 /* WireImages.xcframework */; };
 		06894D6F276B274200DA4E33 /* WireLinkPreview.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D41276B26D600DA4E33 /* WireLinkPreview.xcframework */; };
 		06894D73276B274300DA4E33 /* WireProtos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D48276B26D600DA4E33 /* WireProtos.xcframework */; };
-		06894D75276B274300DA4E33 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D40276B26D600DA4E33 /* WireRequestStrategy.xcframework */; };
 		06894D77276B274300DA4E33 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D46276B26D600DA4E33 /* WireSystem.xcframework */; };
 		06894D7B276B274300DA4E33 /* WireTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D3C276B26D500DA4E33 /* WireTransport.xcframework */; };
 		06894D7D276B274300DA4E33 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D47276B26D600DA4E33 /* WireUtilities.xcframework */; };
-		06894D7F276B274400DA4E33 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D3E276B26D600DA4E33 /* ZipArchive.xcframework */; };
 		06894D82276B27DD00DA4E33 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D45276B26D600DA4E33 /* WireTesting.xcframework */; };
 		06894D85276B27E100DA4E33 /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		06894D89276B282B00DA4E33 /* WireMockTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D3A276B26D500DA4E33 /* WireMockTransport.xcframework */; };
@@ -37,6 +34,7 @@
 		069712972497C1BF00C32169 /* NotificationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* NotificationSession.swift */; };
 		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
+		06E6F44327B54EB1001624D4 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D40276B26D600DA4E33 /* WireRequestStrategy.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,12 +74,10 @@
 		06894D3B276B26D500DA4E33 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
 		06894D3C276B26D500DA4E33 /* WireTransport.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTransport.xcframework; path = Carthage/Build/WireTransport.xcframework; sourceTree = "<group>"; };
 		06894D3D276B26D600DA4E33 /* WireDataModel.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireDataModel.xcframework; path = Carthage/Build/WireDataModel.xcframework; sourceTree = "<group>"; };
-		06894D3E276B26D600DA4E33 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
 		06894D3F276B26D600DA4E33 /* WireImages.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireImages.xcframework; path = Carthage/Build/WireImages.xcframework; sourceTree = "<group>"; };
 		06894D40276B26D600DA4E33 /* WireRequestStrategy.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireRequestStrategy.xcframework; path = Carthage/Build/WireRequestStrategy.xcframework; sourceTree = "<group>"; };
 		06894D41276B26D600DA4E33 /* WireLinkPreview.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireLinkPreview.xcframework; path = Carthage/Build/WireLinkPreview.xcframework; sourceTree = "<group>"; };
 		06894D42276B26D600DA4E33 /* PINCache.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PINCache.xcframework; path = Carthage/Build/PINCache.xcframework; sourceTree = "<group>"; };
-		06894D43276B26D600DA4E33 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
 		06894D44276B26D600DA4E33 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		06894D45276B26D600DA4E33 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		06894D46276B26D600DA4E33 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
@@ -130,11 +126,9 @@
 				06894D63276B274200DA4E33 /* PINCache.xcframework in Frameworks */,
 				06894D69276B274200DA4E33 /* WireCryptobox.xcframework in Frameworks */,
 				06894D77276B274300DA4E33 /* WireSystem.xcframework in Frameworks */,
-				06894D5F276B274200DA4E33 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				06894D6F276B274200DA4E33 /* WireLinkPreview.xcframework in Frameworks */,
 				06894D7D276B274300DA4E33 /* WireUtilities.xcframework in Frameworks */,
-				06894D75276B274300DA4E33 /* WireRequestStrategy.xcframework in Frameworks */,
-				06894D7F276B274400DA4E33 /* ZipArchive.xcframework in Frameworks */,
+				06E6F44327B54EB1001624D4 /* WireRequestStrategy.xcframework in Frameworks */,
 				06894D6D276B274200DA4E33 /* WireImages.xcframework in Frameworks */,
 				06894D65276B274200DA4E33 /* Starscream.xcframework in Frameworks */,
 				06894D73276B274300DA4E33 /* WireProtos.xcframework in Frameworks */,
@@ -156,7 +150,6 @@
 			isa = PBXGroup;
 			children = (
 				06894D3B276B26D500DA4E33 /* HTMLString.xcframework */,
-				06894D43276B26D600DA4E33 /* libPhoneNumberiOS.xcframework */,
 				06894D4A276B26D600DA4E33 /* OCMock.xcframework */,
 				06894D42276B26D600DA4E33 /* PINCache.xcframework */,
 				06894D44276B26D600DA4E33 /* Starscream.xcframework */,
@@ -172,7 +165,6 @@
 				06894D45276B26D600DA4E33 /* WireTesting.xcframework */,
 				06894D3C276B26D500DA4E33 /* WireTransport.xcframework */,
 				06894D47276B26D600DA4E33 /* WireUtilities.xcframework */,
-				06894D3E276B26D600DA4E33 /* ZipArchive.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -190,7 +182,9 @@
 				06604295247FE76A00A5F161 /* Products */,
 				060256312489322000E060E1 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		06604295247FE76A00A5F161 /* Products */ = {
 			isa = PBXGroup;

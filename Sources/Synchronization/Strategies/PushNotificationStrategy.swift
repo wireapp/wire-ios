@@ -34,6 +34,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     private var eventProcessor: UpdateEventProcessor!
     private var delegate: NotificationSessionDelegate?
     private var moc: NSManagedObjectContext!
+
+    private let useLegacyPushNotifications: Bool
     
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
@@ -43,7 +45,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
-         notificationSessionDelegate: NotificationSessionDelegate?) {
+         notificationSessionDelegate: NotificationSessionDelegate?,
+         useLegacyPushNotifications: Bool) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -56,16 +59,15 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
+        self.useLegacyPushNotifications = useLegacyPushNotifications
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-//        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
-        return requestGenerators.nextRequest()
+        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
     }
     
     public override func nextRequest() -> ZMTransportRequest? {
-//        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
-        return requestGenerators.nextRequest()
+        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
@@ -75,6 +77,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     public var isFetchingStreamForAPNS: Bool {
         return self.pushNotificationStatus.hasEventsToFetch
     }
+
 }
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
