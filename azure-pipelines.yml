@@ -1,8 +1,8 @@
 resources:
   repositories:
-  - repository: wire-ios-notification-engine
+  - repository: wire-ios-shared-resources
     type: github
-    name: wireapp/wire-ios-notification-engine
+    name: wireapp/wire-ios-shared-resources
     ref: refs/heads/master # Branch to fetch the jobs template from
     endpoint: wireapp
 
@@ -13,4 +13,6 @@ trigger:
       - refs/tags/*
 
 jobs:
-  - template: Azure/framework-pipelines.yml@wire-ios-notification-engine
+  - template: Azure/framework-pipelines.yml@wire-ios-shared-resources
+    parameters:
+        xcodeAppName: Xcode_12.4
