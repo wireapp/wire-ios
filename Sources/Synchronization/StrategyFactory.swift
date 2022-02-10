@@ -36,14 +36,18 @@ class StrategyFactory {
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
-         notificationSessionDelegate: NotificationSessionDelegate?) {
+         notificationSessionDelegate: NotificationSessionDelegate?,
+         useLegacyPushNotifications: Bool) {
+
         self.contextProvider = contextProvider
         self.applicationStatus = applicationStatus
         self.pushNotificationStatus = pushNotificationStatus
         self.notificationsTracker = notificationsTracker
         self.delegate = notificationSessionDelegate
 
-        self.strategies = createStrategies()
+        self.strategies = [
+            createPushNotificationStrategy(useLegacyPushNotifications: useLegacyPushNotifications)
+        ]
     }
 
     deinit {
@@ -59,21 +63,14 @@ class StrategyFactory {
         tornDown = true
     }
 
-    private func createStrategies() -> [AnyObject] {
-        return [
-            
-            createPushNotificationStrategy()
-        ]
-    }
-    
-    private func createPushNotificationStrategy() -> PushNotificationStrategy {
+    private func createPushNotificationStrategy(useLegacyPushNotifications: Bool) -> PushNotificationStrategy {
         return PushNotificationStrategy(withManagedObjectContext: contextProvider.syncContext,
                                         eventContext: contextProvider.eventContext,
                                         applicationStatus: applicationStatus,
                                         pushNotificationStatus: pushNotificationStatus,
                                         notificationsTracker: notificationsTracker,
-                                        notificationSessionDelegate: delegate
-        )
+                                        notificationSessionDelegate: delegate,
+                                        useLegacyPushNotifications: useLegacyPushNotifications)
     }
 }
 

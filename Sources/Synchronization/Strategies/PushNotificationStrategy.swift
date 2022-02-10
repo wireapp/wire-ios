@@ -34,6 +34,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     private var eventProcessor: UpdateEventProcessor!
     private var delegate: NotificationSessionDelegate?
     private var moc: NSManagedObjectContext!
+
+    private let useLegacyPushNotifications: Bool
     
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
@@ -43,7 +45,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
-         notificationSessionDelegate: NotificationSessionDelegate?) {
+         notificationSessionDelegate: NotificationSessionDelegate?,
+         useLegacyPushNotifications: Bool) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -56,16 +59,17 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
+        self.useLegacyPushNotifications = useLegacyPushNotifications
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-//        return isFetchingStreamForAPNS && !isLegacyPushNotification ? requestGenerators.nextRequest() : nil
-        return !isLegacyPushNotification ? requestGenerators.nextRequest() : nil
+//        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
+        return !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
     }
     
     public override func nextRequest() -> ZMTransportRequest? {
-//        return isFetchingStreamForAPNS && !isLegacyPushNotification ? requestGenerators.nextRequest() : nil
-        return !isLegacyPushNotification ? requestGenerators.nextRequest() : nil
+//        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
+        return !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
@@ -76,9 +80,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         return self.pushNotificationStatus.hasEventsToFetch
     }
 
-    public var isLegacyPushNotification: Bool {
-        return self.pushNotificationStatus.isPushNotificationInLegacyMode
-    }
 }
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
