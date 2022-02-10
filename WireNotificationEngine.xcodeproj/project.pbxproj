@@ -190,7 +190,9 @@
 				06604295247FE76A00A5F161 /* Products */,
 				060256312489322000E060E1 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		06604295247FE76A00A5F161 /* Products */ = {
 			isa = PBXGroup;

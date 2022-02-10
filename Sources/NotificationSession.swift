@@ -223,7 +223,8 @@ public class NotificationSession {
                             cachesDirectory: URL,
                             accountContainer: URL,
                             analytics: AnalyticsType?,
-                            delegate: NotificationSessionDelegate?) throws {
+                            delegate: NotificationSessionDelegate?,
+                            useLegacyPushNotifications: Bool) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext,
                                                                     transportSession: transportSession)
@@ -232,7 +233,8 @@ public class NotificationSession {
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
-                                              notificationSessionDelegate: delegate)
+                                              notificationSessionDelegate: delegate,
+                                              useLegacyPushNotifications: useLegacyPushNotifications)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         
