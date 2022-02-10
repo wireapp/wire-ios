@@ -162,8 +162,8 @@ public class NotificationSession {
                             accountIdentifier: UUID,
                             environment: BackendEnvironmentProvider,
                             analytics: AnalyticsType?,
-                            delegate: NotificationSessionDelegate?
-    ) throws {
+                            delegate: NotificationSessionDelegate?,
+                            useLegacyPushNotifications: Bool) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
@@ -195,7 +195,8 @@ public class NotificationSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
-            delegate: delegate
+            delegate: delegate,
+            useLegacyPushNotifications: useLegacyPushNotifications
         )
     }
     
@@ -205,8 +206,7 @@ public class NotificationSession {
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory
-        ) throws {
+                  strategyFactory: StrategyFactory) throws {
         
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
