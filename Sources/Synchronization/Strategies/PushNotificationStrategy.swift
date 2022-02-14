@@ -34,6 +34,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     private var eventProcessor: UpdateEventProcessor!
     private var delegate: NotificationSessionDelegate?
     private var moc: NSManagedObjectContext!
+
+    private let useLegacyPushNotifications: Bool
     
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
@@ -43,7 +45,10 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
-         notificationSessionDelegate: NotificationSessionDelegate?) {
+         notificationSessionDelegate: NotificationSessionDelegate?,
+         useLegacyPushNotifications: Bool) {
+
+        self.useLegacyPushNotifications = useLegacyPushNotifications
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -59,13 +64,11 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-//        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
-        return requestGenerators.nextRequest()
+        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
     }
     
     public override func nextRequest() -> ZMTransportRequest? {
-//        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
-        return requestGenerators.nextRequest()
+        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
@@ -75,6 +78,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     public var isFetchingStreamForAPNS: Bool {
         return self.pushNotificationStatus.hasEventsToFetch
     }
+
 }
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
@@ -103,6 +107,20 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 }
 
 extension PushNotificationStrategy: UpdateEventProcessor {
+    func processEventsIfReady() -> Bool {
+        /// TODO check this
+        return true
+    }
+
+    var eventConsumers: [ZMEventConsumer] {
+        /// TODO check this
+        get {
+            return []
+        }
+        set(newValue) {
+        }
+    }
+
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
             let localNotifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
@@ -130,7 +148,7 @@ extension PushNotificationStrategy {
         return events.compactMap { event in
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
-                conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: moc)
+                conversation = ZMConversation.fetch(with: conversationID, in: moc)
             }
             return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: moc)
         }
