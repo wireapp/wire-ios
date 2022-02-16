@@ -69,7 +69,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     private let statusViewController: CallStatusViewController
     private let accessoryViewController: CallAccessoryViewController
     private let actionsView = CallActionsView()
-    private var hasMutedToastBeenShown: Bool = false
+
     var configuration: CallInfoViewControllerInput {
         didSet {
             updateState()
@@ -105,11 +105,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         updateState()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        Toast.hide()
-    }
-
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard traitCollection.didSizeClassChange(from: previousTraitCollection) else { return }
@@ -129,32 +124,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         addChild(statusViewController)
         [statusViewController.view, accessoryViewController.view, actionsView].forEach(stackView.addArrangedSubview)
         statusViewController.didMove(toParent: self)
-    }
-
-    private func showMutedToastMessageIfNeeded() {
-        guard configuration.state != .terminating else {
-            Toast.hide()
-            return
-        }
-        guard
-            case .established(let duration) = configuration.state,
-            duration <= 5.0,
-            configuration.isMuted,
-            !hasMutedToastBeenShown
-        else {
-            return
-        }
-
-        let toastConfig = ToastConfiguration(
-            message: L10n.Localizable.Call.Toast.MutedOnJoin.message,
-            colorScheme: ColorSchemeColor.utilityNeutral,
-            variant: ColorSchemeVariant.light,
-            dismissable: true,
-            moreInfoAction: nil,
-            accessibilityIdentifier: "toast.mutedOnJoin"
-        )
-        Toast.show(with: toastConfig)
-        hasMutedToastBeenShown = true
     }
 
     private func createConstraints() {
@@ -197,7 +166,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         accessoryViewController.configuration = configuration
         backgroundViewController.view.isHidden = configuration.videoPlaceholderState == .hidden
         updateAccessoryView()
-        showMutedToastMessageIfNeeded()
+
         if configuration.networkQuality.isNormal {
             navigationItem.titleView = nil
         } else {
