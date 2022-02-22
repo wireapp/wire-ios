@@ -214,8 +214,6 @@ public class NotificationSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
-        
-        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
     
     public convenience init(coreDataStack: CoreDataStack,

@@ -34,12 +34,13 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     private var eventProcessor: UpdateEventProcessor!
     private var delegate: NotificationSessionDelegate?
     private var moc: NSManagedObjectContext!
+    private var localNotifications = [ZMLocalNotification]()
 
     private let useLegacyPushNotifications: Bool
     
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
-    
+
     init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
          eventContext: NSManagedObjectContext,
          applicationStatus: ApplicationStatus,
@@ -97,8 +98,30 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             }
         }
         eventProcessor.storeUpdateEvents(parsedEvents, ignoreBuffer: true)
-        pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: hasMoreToFetch)
-        
+        pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+
+        if !hasMoreToFetch {
+            // We should only process local notifications once after we've finished fetching
+            // all events because otherwise we tell the delegate (i.e the notification
+            // service extension) to use its content handler more than once, which may lead
+            // to unexpected behavior.
+            processLocalNotifications()
+            localNotifications.removeAll()
+        }
+    }
+
+    private func processLocalNotifications() {
+        var alert = ClientNotification(title: "", body: "")
+
+        // The notification service extension API doesn't support generating multiple user notifications.
+        // In this case, the body text will be replaced in the UI project.
+        if localNotifications.count == 1 {
+            let notification = localNotifications[0]
+            alert.title = notification.title ?? ""
+            alert.body = notification.body
+        }
+
+        self.delegate?.modifyNotification(alert, messageCount: localNotifications.count)
     }
     
     public func failedFetchingEvents() {
@@ -122,19 +145,10 @@ extension PushNotificationStrategy: UpdateEventProcessor {
     }
 
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
-            let localNotifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
-            var alert = ClientNotification(title: "", body: "")
-            if localNotifications.count == 1 {
-                if let notification = localNotifications.first {
-                    alert.title = notification.title ?? ""
-                    alert.body = notification.body
-                }
-            }
-            // The notification service extension API doesn't support generating multiple user notifications. In this case, the body text will be replaced in the UI project.
-            
-            self.delegate?.modifyNotification(alert, messageCount: localNotifications.count)
-        })
+        eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
+            let notifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
+            self.localNotifications.append(contentsOf: notifications)
+        }
     }
     
     public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
