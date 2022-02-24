@@ -58,7 +58,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesAnExpectedRequestForUpdatingRole() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = self.user.remoteIdentifier!
             let conversationID = self.conversation.remoteIdentifier!
@@ -75,7 +75,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItFailsCreatingRequestWhenUserIDIsMissing() {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { _ in
             // given
             self.user.remoteIdentifier = nil
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
@@ -89,7 +89,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItFailesCreatingRequestWhenConversationIDIsMissing() {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { _ in
             // given
             self.conversation.remoteIdentifier = nil
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
@@ -103,7 +103,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItFailesCreatingRequestWhenRoleNameIsMissing() {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { _ in
             // given
             self.role.name = nil
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
@@ -117,7 +117,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
     }
 
     func testThatTheSucceededRequestUpdatesTheDatabase() {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { _ in
             // given
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
             let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
@@ -131,7 +131,7 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
     }
 
     func testThatTheFailedRequestDoesNotUpdateTheDatabase() {
-        syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait { _ in
             // given
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
             let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
