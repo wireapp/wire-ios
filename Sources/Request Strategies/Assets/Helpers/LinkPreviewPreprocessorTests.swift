@@ -191,7 +191,7 @@ extension LinkPreviewPreprocessorTests {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "@john - www.sunet.se hello"
-            let message = self.createMessage(text: text, mentions: [Mention(range: NSMakeRange(0, 20), user: self.otherUser)])
+            let message = self.createMessage(text: text, mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)])
 
             // WHEN
             self.sut.processMessage(message)
