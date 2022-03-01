@@ -82,9 +82,8 @@ extension Permissions: CustomDebugStringConvertible {
 }
 
 extension Permissions: Hashable {
-
-    public var hashValue: Int {
-        return rawValue.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.rawValue)
     }
 
 }

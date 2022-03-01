@@ -115,7 +115,7 @@
         // If the name contains latin scheme tag, it uses the first name as the given name
         // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
         schemeTagger.string = string
-        let tags = schemeTagger.tags(in: NSMakeRange(0, schemeTagger.string!.count), scheme: convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.script), options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
+        let tags = schemeTagger.tags(in: NSRange(location: 0, length: schemeTagger.string!.count), scheme: convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.script), options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
 
         let nameOrder: NameOrder
         if tags.contains("Arab") {
