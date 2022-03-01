@@ -423,7 +423,7 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(filename.contains("body"))
 
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let matches = regexp.matches(in: filename as String, options: [], range: NSMakeRange(0, filename.count))
+        let matches = regexp.matches(in: filename as String, options: [], range: NSRange(location: 0, length: filename.count))
 
         XCTAssertTrue(matches.count > 0)
     }

@@ -75,16 +75,15 @@ extension ZMMessage {
                                             conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
 
         let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: categories.map {
-                return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
-            }
-        )
+            return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
+        })
 
         let excludingPredicate: NSPredicate? = (excluding != .none)
-            ? NSPredicate(format: "(%K & %d) = 0", ZMMessageCachedCategoryKey, excluding.rawValue)
-            : nil
+        ? NSPredicate(format: "(%K & %d) = 0", ZMMessageCachedCategoryKey, excluding.rawValue)
+        : nil
         let conversationPredicate: NSPredicate? = (conversation != nil)
-            ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
-            : nil
+        ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
+        : nil
 
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [orPredicate, excludingPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
@@ -100,11 +99,10 @@ extension ZMMessage {
                                    ZMMessageCachedCategoryKey, $0.excluding.rawValue)
             }
             return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue)
-            }
-        )
+        })
         let conversationPredicate: NSPredicate? = (conversation != nil)
-            ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
-            : nil
+        ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
+        : nil
 
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
@@ -130,11 +128,11 @@ extension ZMMessage {
                         self.locationCategory,
                         self.knockCategory,
                         self.systemMessageCategory
-            ]
+        ]
             .reduce(MessageCategory.none) {
                 (current: MessageCategory, other: MessageCategory) in
                 return current.union(other)
-        }
+            }
         return category
     }
 
@@ -155,8 +153,8 @@ extension ZMMessage {
     fileprivate var textCategory: MessageCategory {
         guard let textData = self.textMessageData,
               let text = textData.messageText, !text.isEmpty else {
-            return .none
-        }
+                  return .none
+              }
         var category = MessageCategory.text
         if textData.linkPreview != nil {
             category.update(with: .link)
@@ -174,9 +172,9 @@ extension ZMMessage {
 
     fileprivate var fileCategory: MessageCategory {
         guard let fileData = self.fileMessageData,
-            self.imageCategory == .none else {
-            return .none
-        }
+              self.imageCategory == .none else {
+                  return .none
+              }
         var category = MessageCategory.file
         if let asset = self as? ZMAssetClientMessage, asset.transferState.isOne(of: [.uploadingFailed, .uploadingCancelled]) {
             category.update(with: .excludedFromCollection)
@@ -285,7 +283,8 @@ extension MessageCategory: CustomDebugStringConvertible {
 
 extension MessageCategory: Hashable {
 
-    public var hashValue: Int {
-        return self.rawValue.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.rawValue)
     }
+
 }
