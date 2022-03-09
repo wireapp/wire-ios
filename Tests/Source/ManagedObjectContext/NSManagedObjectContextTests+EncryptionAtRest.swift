@@ -40,6 +40,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
     // MARK: - Message Content
 
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
+    // Make sure that message content is encrypted when EAR is enabled
     func testExistingMessageContentIsEncrypted_WhenEarIsEnabled() throws {
         // Given
         let conversation = createConversation(in: uiMOC)
@@ -102,6 +103,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
     // MARK: - Normalized Text
 
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
+    // Make sure that message content normalized for text search is also encrypted when EAR is enabled
     func testNormalizedMessageContentIsCleared_WhenEarIsEnabled() throws {
         // Given
         let conversation = createConversation(in: uiMOC)
@@ -150,6 +152,8 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
     // MARK: - Draft messages
 
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
+    // Make sure that message content that is drafted but not send by the user yet is also encrypted
+    // when EAR is enabled
     func testDraftMessageContentIsEncrypted_WhenEarIsEnabled() throws {
         // Given
         let conversation = createConversation(in: uiMOC)
