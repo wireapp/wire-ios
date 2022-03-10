@@ -22,6 +22,7 @@ import XCTest
 final class CoreDataStackTests_EncryptionAtRest: DatabaseBaseTest {
 
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
+    // This test makes sure that the database encryption keys are actually deleted on all core data contexts (in this case view, sync and search)
     func testThatItStoresAndClearsDatabaseKeyOnAllContexts() throws {
         // Given
         let sut = createStorageStackAndWaitForCompletion()

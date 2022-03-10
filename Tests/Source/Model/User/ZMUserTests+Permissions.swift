@@ -267,7 +267,7 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
     }
 
     // @SF.Federation @SF.Separation @TSFI.UserInterface @S0.2
-    func testThatItDoesNotAllowSeeingCompanyInformationBetweenUsers_WhenTeamIsTheSame_AndDomainIsDifferent() {
+    func testThatUserCannotSeeCompanyInformationOfAnotherUser_WhenTeamIsTheSame_AndDomainIsDifferent() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
 
