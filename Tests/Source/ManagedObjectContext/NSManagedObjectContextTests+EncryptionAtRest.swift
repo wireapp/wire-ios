@@ -241,7 +241,6 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
         }
     }
 
-    // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
     func testMigrationIsCanceled_WhenASingleInstanceFailsToMigrate() throws {
         // Given
         let encryptionKeys1 = validEncryptionKeys

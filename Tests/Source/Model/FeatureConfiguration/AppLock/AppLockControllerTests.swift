@@ -107,7 +107,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
     }
 
     // @SF.Locking @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func test_ItIsLocked_WhenTimeoutIsExceeded() {
+    func test_AppIsLocked_WhenTimeoutIsExceeded() {
         // Given
         let sut = createSut(timeout: 10)
         sut._setState(.needsChecking)
@@ -324,7 +324,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
     }
 
     // @SF.Locking @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func test_ItEvaluatesAuthentication_WithInCorrectCustomPasscode() throws {
+    func test_AppLockControllerEvaluatesAuthentication_WithInCorrectCustomPasscode() throws {
         // Given
         let sut = createSut()
         try sut.updatePasscode("boo!")

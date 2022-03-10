@@ -32,12 +32,10 @@ class EncryptionKeysTests: XCTestCase {
         account = nil
     }
 
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatEncryptionKeysThrowsIfKeysDontExist() {
         XCTAssertThrowsError(try EncryptionKeys(account: account))
     }
 
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatPublicAccountKeyThrowsIfItDoesNotExist() throws {
         XCTAssertThrowsError(try EncryptionKeys.publicKey(for: account))
     }
