@@ -18,13 +18,10 @@
 
 import WireRequestStrategy
 
-public protocol NotificationSessionDelegate: class {
-    func modifyNotification(_ alert: ClientNotification, messageCount: Int)
-}
+public protocol NotificationSessionDelegate: AnyObject {
 
-public struct ClientNotification {
-    public var title: String
-    public var body: String
+    func notificationSessionDidGenerateNotification(_ notification: ZMLocalNotification?)
+
 }
 
 final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
@@ -32,9 +29,10 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var eventProcessor: UpdateEventProcessor!
-    private var delegate: NotificationSessionDelegate?
     private var moc: NSManagedObjectContext!
     private var localNotifications = [ZMLocalNotification]()
+
+    private weak var delegate: NotificationSessionDelegate?
 
     private let useLegacyPushNotifications: Bool
     
@@ -111,17 +109,15 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     }
 
     private func processLocalNotifications() {
-        var alert = ClientNotification(title: "", body: "")
+        let notification: ZMLocalNotification?
 
-        // The notification service extension API doesn't support generating multiple user notifications.
-        // In this case, the body text will be replaced in the UI project.
-        if localNotifications.count == 1 {
-            let notification = localNotifications[0]
-            alert.title = notification.title ?? ""
-            alert.body = notification.body
+        if localNotifications.count > 1 {
+            notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: moc)
+        } else {
+            notification = localNotifications.first
         }
 
-        self.delegate?.modifyNotification(alert, messageCount: localNotifications.count)
+        delegate?.notificationSessionDidGenerateNotification(notification)
     }
     
     public func failedFetchingEvents() {
