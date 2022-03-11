@@ -78,4 +78,23 @@ extension ZMConversation {
                             messageTimer: timer)
     }
 
+    @objc(appendNewPotentialGapSystemMessage:inContext:)
+    static public func appendNewPotentialGapSystemMessage(at timestamp: Date?, inContext moc: NSManagedObjectContext) {
+        let offset = 0.1
+        var lastMessageTimestamp = timestamp
+        guard let conversations = moc.executeFetchRequestOrAssert(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
+            return
+        }
+        for conversation in conversations {
+            if lastMessageTimestamp == nil {
+                // In case we did not receive a payload we will add 1/10th to the last modified date of
+                // the conversation to make sure it appears below the last message
+                lastMessageTimestamp = conversation.lastModifiedDate?.addingTimeInterval(offset) ?? Date()
+            }
+            if let timestamp = lastMessageTimestamp {
+                conversation.appendNewPotentialGapSystemMessage(users: conversation.localParticipants, timestamp: timestamp)
+            }
+        }
+    }
+
 }
