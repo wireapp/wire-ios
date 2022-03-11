@@ -54,14 +54,18 @@ extension MockTransportSession {
     }
 
     func processPostPushToken(_ payload: ZMTransportData?) -> ZMTransportResponse {
-        if let payload = payload?.asDictionary() as? [String : String],
+        let transportType = useLegaclyPushNotifications ? "APNS_VOIP" : "APNS"
+
+        guard
+            let payload = payload?.asDictionary() as? [String: String],
             let token = payload["token"],
             let _ = payload["app"],
-            let transport = payload["transport"], transport == "APNS_VOIP" {
-
-            addPushToken(token, payload: payload)
-            return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 201, transportSessionError: nil)
+            let transport = payload["transport"], transport == transportType
+        else {
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
         }
-        return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+
+        addPushToken(token, payload: payload)
+        return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 201, transportSessionError: nil)
     }
 }

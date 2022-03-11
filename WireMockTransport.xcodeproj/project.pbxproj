@@ -488,7 +488,9 @@
 				54C902341B7532DD007162A8 /* Products */,
 				54C902651B753419007162A8 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		54C902341B7532DD007162A8 /* Products */ = {
 			isa = PBXGroup;
