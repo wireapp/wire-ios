@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067BB07025068D6500946EC8 /* String+HexDecodedData.swift */; };
 		097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E36C21B7B62150039CC4C /* NSLocale+Internal.m */; };
 		097E36C51B7B631C0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */; };
@@ -235,6 +236,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
 		097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+Internal.h"; sourceTree = "<group>"; };
 		09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+SharedUserDefaults.m"; sourceTree = "<group>"; };
@@ -702,6 +704,7 @@
 				8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */,
 				5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */,
 				EF2AFC9C228176C3008C921A /* UUID+Data.swift */,
+				067BB07025068D6500946EC8 /* String+HexDecodedData.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1057,6 +1060,7 @@
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
 				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
+				067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */,
 				A94DA30826BC239400CC626C /* Data+Image.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
