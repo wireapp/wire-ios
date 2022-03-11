@@ -128,6 +128,8 @@ NS_ASSUME_NONNULL_END
 */
 - (void)appendMessage:(nonnull ZMMessage *)message;
 
+- (void)mergeWithExistingConversationWithRemoteID:(nonnull NSUUID *)remoteID;
+
 - (ZMConversationType)internalConversationType;
 
 + (nonnull NSUUID *)selfConversationIdentifierInContext:(nonnull NSManagedObjectContext *)context;
