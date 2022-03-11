@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,23 @@
 
 import Foundation
 
-enum Logging {
+public extension NSManagedObjectContext {
 
-    // For logs related to processing message data, which may included
-    // work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
-    // and `ZMAssetClientMessage` container types.
+    private static let ServerTimeDeltaKey = "ServerTimeDeltaKey"
 
-    static let messageProcessing = ZMSLog(tag: "Message Processing")
-    static let localStorage = ZMSLog(tag: "local-storage")
-    static let eventProcessing = ZMSLog(tag: "event-processing")
+    @objc
+    var serverTimeDelta: TimeInterval {
+
+        get {
+            precondition(zm_isSyncContext, "serverTimeDelta can only be accessed on the sync context")
+            return userInfo[NSManagedObjectContext.ServerTimeDeltaKey] as? TimeInterval ?? 0
+        }
+
+        set {
+            precondition(zm_isSyncContext, "serverTimeDelta can only be accessed on the sync context")
+            userInfo[NSManagedObjectContext.ServerTimeDeltaKey] = newValue
+        }
+
+    }
 
 }

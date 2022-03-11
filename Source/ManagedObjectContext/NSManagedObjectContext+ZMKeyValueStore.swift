@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,27 @@
 
 import Foundation
 
-enum Logging {
+@objc(ZMKeyValueStore)
+public protocol KeyValueStore: NSObjectProtocol {
 
-    // For logs related to processing message data, which may included
-    // work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
-    // and `ZMAssetClientMessage` container types.
+    func store(value: PersistableInMetadata?, key: String)
+    func storedValue(key: String) -> Any?
 
-    static let messageProcessing = ZMSLog(tag: "Message Processing")
-    static let localStorage = ZMSLog(tag: "local-storage")
-    static let eventProcessing = ZMSLog(tag: "event-processing")
+}
+
+@objc
+public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
+    func enqueueDelayedSave()
+}
+
+extension NSManagedObjectContext: ZMSynchonizableKeyValueStore {
+
+    public func store(value: PersistableInMetadata?, key: String) {
+        self.setPersistentStoreMetadata(value, key: key)
+    }
+
+    public func storedValue(key: String) -> Any? {
+        return self.persistentStoreMetadata(forKey: key)
+    }
 
 }
