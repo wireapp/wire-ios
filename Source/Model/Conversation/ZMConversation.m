@@ -635,6 +635,22 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return conversationType;
 }
 
+// Used to merge a local 1:1 conversation with the remote conversation after a connection
+// request has been accepted.
+- (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
+{
+    ZMConversation *existingConversation = [ZMConversation internalFetchObjectWithRemoteIdentifier:remoteID inManagedObjectContext:self.managedObjectContext];
+    if ((existingConversation != nil) && ![existingConversation isEqual:self]) {
+        Require(self.remoteIdentifier == nil);
+        [self.mutableMessages unionSet:existingConversation.allMessages];
+        // Just to be on the safe side, force update:
+        self.needsToBeUpdatedFromBackend = YES;
+        // This is a duplicate. Delete the other one
+        [self.managedObjectContext deleteObject:existingConversation];
+    }
+    self.remoteIdentifier = remoteID;
+}
+
 + (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team moc:(NSManagedObjectContext *)moc
 {
     NSPredicate *teamPredicate = [NSPredicate predicateWithFormat:@"(%K == %@)", TeamKey, team];
