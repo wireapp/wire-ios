@@ -22,7 +22,7 @@ import WireCryptobox
 
 class MessagingTestBase: ZMTBaseTest {
 
-    fileprivate(set) var groupConversation: ZMConversation!
+    var groupConversation: ZMConversation!
     fileprivate(set) var oneToOneConversation: ZMConversation!
     fileprivate(set) var selfClient: UserClient!
     fileprivate(set) var otherUser: ZMUser!
@@ -44,6 +44,10 @@ class MessagingTestBase: ZMTBaseTest {
 
     var uiMOC: NSManagedObjectContext! {
         return self.coreDataStack.viewContext
+    }
+
+    var eventMOC: NSManagedObjectContext! {
+        return self.coreDataStack.eventContext
     }
 
     override func setUp() {
@@ -321,6 +325,14 @@ extension MessagingTestBase {
     override var allDispatchGroups: [ZMSDispatchGroup] {
         return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
     }
+
+    func performPretendingUiMocIsSyncMoc(block: () -> Void) {
+        uiMOC.resetContextType()
+        uiMOC.markAsSyncContext()
+        block()
+        uiMOC.resetContextType()
+        uiMOC.markAsUIContext()
+    }
 }
 
 // MARK: - Cache cleaning
@@ -336,4 +348,49 @@ extension MessagingTestBase {
             try! FileManager.default.removeItem(at: $0)
         }
     }
+}
+
+// MARK: - Payload for message
+extension MessagingTestBase {
+    public func payloadForMessage(in conversation: ZMConversation?,
+                                  type: String,
+                                  data: NSDictionary) -> NSMutableDictionary? {
+        return payloadForMessage(in: conversation!, type: type, data: data, time: nil)
+    }
+
+    public func payloadForMessage(in conversation: ZMConversation,
+                                  type: String,
+                                  data: NSDictionary,
+                                  time: Date?) -> NSMutableDictionary? {
+        //      {
+        //         "conversation" : "8500be67-3d7c-4af0-82a6-ef2afe266b18",
+        //         "data" : {
+        //            "content" : "test test",
+        //            "nonce" : "c61a75f3-285b-2495-d0f6-6f0e17f0c73a"
+        //         },
+        //         "from" : "39562cc3-717d-4395-979c-5387ae17f5c3",
+        //         "id" : "11.800122000a4ab4f0",
+        //         "time" : "2014-06-22T19:57:50.948Z",
+        //         "type" : "conversation.message-add"
+        //      }
+        let user = ZMUser.insertNewObject(in: conversation.managedObjectContext!)
+        user.remoteIdentifier = UUID.create()
+
+        return payloadForMessage(in: conversation, type: type, data: data, time: time, from: user)
+    }
+
+    public func payloadForMessage(in conversation: ZMConversation,
+                                  type: String,
+                                  data: NSDictionary,
+                                  time: Date?,
+                                  from: ZMUser) -> NSMutableDictionary? {
+
+        return ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
+                "data": data,
+                "from": from.remoteIdentifier.transportString(),
+                "time": time?.transportString() ?? "",
+                "type": type
+        ]
+    }
+
 }
