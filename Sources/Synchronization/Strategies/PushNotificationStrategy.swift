@@ -24,7 +24,7 @@ public protocol NotificationSessionDelegate: AnyObject {
 
 }
 
-final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
+final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, UpdateEventProcessor {
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
@@ -78,6 +78,31 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         return self.pushNotificationStatus.hasEventsToFetch
     }
 
+    func processEventsIfReady() -> Bool {
+        /// TODO check this
+        return true
+    }
+
+    var eventConsumers: [ZMEventConsumer] {
+        /// TODO check this
+        get {
+            return []
+        }
+        set(newValue) {
+        }
+    }
+
+    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
+            let notifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
+            self.localNotifications.append(contentsOf: notifications)
+        }
+    }
+
+    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        // Events will be processed in the foreground
+    }
+
 }
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
@@ -122,33 +147,6 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     
     public func failedFetchingEvents() {
         pushNotificationStatus.didFailToFetchEvents()
-    }
-}
-
-extension PushNotificationStrategy: UpdateEventProcessor {
-    func processEventsIfReady() -> Bool {
-        /// TODO check this
-        return true
-    }
-
-    var eventConsumers: [ZMEventConsumer] {
-        /// TODO check this
-        get {
-            return []
-        }
-        set(newValue) {
-        }
-    }
-
-    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
-            let notifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
-            self.localNotifications.append(contentsOf: notifications)
-        }
-    }
-    
-    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        // Events will be processed in the foreground
     }
 }
 
