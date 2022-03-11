@@ -73,6 +73,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 
+@property (nonatomic) BOOL useLegaclyPushNotifications;
+
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
 
 - (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload;

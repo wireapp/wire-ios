@@ -25,7 +25,7 @@
 
 @implementation MockTransportPushTokenTests
 
-- (void)testThatWeCanRegisterVOIPPushToken;
+- (void)testItFailsToRegisterVOIPPushToken
 {
     // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
@@ -37,11 +37,10 @@
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
     
     // THEN
-    XCTAssertEqual(response.HTTPStatus, (NSInteger) 201);
-    XCTAssertEqualObjects(response.payload, payload);
+    XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);
 }
 
-- (void)testItFailsToRegisterRegularToken;
+- (void)testThatWeCanRegisterRegularToken;
 {
     // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
@@ -53,7 +52,8 @@
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
 
     // THEN
-    XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);
+    XCTAssertEqual(response.HTTPStatus, (NSInteger) 201);
+    XCTAssertEqualObjects(response.payload, payload);
 }
 
 - (void)testThatItFailsWhenAnyFieldIsMissing;
