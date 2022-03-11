@@ -110,6 +110,10 @@ public extension UUID {
     func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
         return (self as NSUUID).compare(withType1UUID: type1UUID)
     }
+
+    func compare(withType1 uuid: UUID) -> ComparisonResult {
+        return (self as NSUUID).compare(withType1UUID: uuid as NSUUID)
+    }
     
     static func timeBasedUUID() -> NSUUID {
         return NSUUID.timeBasedUUID()
