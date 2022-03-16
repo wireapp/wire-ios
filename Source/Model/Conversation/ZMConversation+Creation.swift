@@ -80,6 +80,7 @@ extension ZMConversation {
                                                name: String? = nil,
                                                team: Team? = nil,
                                                allowGuests: Bool = true,
+                                               allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
         return self.insertGroupConversation(moc: session.viewContext,
@@ -87,6 +88,7 @@ extension ZMConversation {
                                             name: name,
                                             team: team,
                                             allowGuests: allowGuests,
+                                            allowServices: allowServices,
                                             readReceipts: readReceipts,
                                             participantsRole: participantsRole)
     }
@@ -97,6 +99,7 @@ extension ZMConversation {
                                                name: String? = nil,
                                                team: Team? = nil,
                                                allowGuests: Bool = true,
+                                               allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
         return insertGroupConversation(moc: moc,
@@ -104,6 +107,7 @@ extension ZMConversation {
                                        name: name,
                                        team: team,
                                        allowGuests: allowGuests,
+                                       allowServices: allowServices,
                                        readReceipts: readReceipts,
                                        participantsRole: participantsRole,
                                        type: .group)
@@ -117,6 +121,7 @@ extension ZMConversation {
     ///   - name: the name of the convo
     ///   - team: the team of the convo
     ///   - allowGuests: allow guest or not
+    ///   - allowServices: allow services or not
     ///   - readReceipts: allow read receipts or not
     ///   - participantsRole: the participants' role
     ///   - type: the convo type want to be created (for permission check)
@@ -127,6 +132,7 @@ extension ZMConversation {
                                                name: String? = nil,
                                                team: Team? = nil,
                                                allowGuests: Bool = true,
+                                               allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil,
                                                type: ZMConversationType = .group) -> ZMConversation? {
@@ -145,6 +151,7 @@ extension ZMConversation {
 
         if team != nil {
             conversation.allowGuests = allowGuests
+            conversation.allowServices = allowServices
             conversation.hasReadReceiptsEnabled = readReceipts
         }
 

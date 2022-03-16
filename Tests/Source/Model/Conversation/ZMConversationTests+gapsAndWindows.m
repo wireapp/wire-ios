@@ -42,6 +42,7 @@
                                                                                  name:NULL
                                                                                  team:NULL
                                                                           allowGuests:YES
+                                                                        allowServices:YES
                                                                          readReceipts:NO
                                                                      participantsRole:nil];
     

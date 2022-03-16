@@ -36,6 +36,7 @@ extension ZMConversation: ObjectInSnapshot {
                     #keyPath(ZMConversation.team),
                     #keyPath(ZMConversation.accessModeStrings),
                     #keyPath(ZMConversation.accessRoleString),
+                    #keyPath(ZMConversation.accessRoleStringsV2),
                     #keyPath(ZMConversation.remoteIdentifier),
                     #keyPath(ZMConversation.localMessageDestructionTimeout),
                     #keyPath(ZMConversation.syncedMessageDestructionTimeout),
@@ -130,7 +131,12 @@ extension ZMConversation: ObjectInSnapshot {
 
     public var allowGuestsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
-               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString))
+               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
+               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
+    }
+
+    public var allowServicesChanged: Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
     public var destructionTimeoutChanged: Bool {
