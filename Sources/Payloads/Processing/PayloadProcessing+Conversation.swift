@@ -91,9 +91,9 @@ extension Payload.Conversation {
 
         guard let conversationID = id ?? qualifiedID?.uuid,
               let rawConversationType = type else {
-            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
-            return
-        }
+                  Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+                  return
+              }
 
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
 
@@ -227,10 +227,14 @@ extension Payload.Conversation {
             conversation.updateReceiptMode(readReceiptMode)
         }
 
-        if let access = access, let accessRole = accessRole {
-            conversation.updateAccessStatus(accessModes: access, role: accessRole)
+        if let accessModes = access {
+            if let accessRoles = accessRoleV2 {
+                conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles)
+            } else if let accessRole = accessRole, let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
+                conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles.map(\.rawValue))
+            }
         }
-
         if let messageTimer = messageTimer {
             conversation.updateMessageDestructionTimeout(timeout: messageTimer)
         }
@@ -403,7 +407,12 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationAccess 
             return
         }
 
-        conversation.updateAccessStatus(accessModes: data.access, role: data.accessRole)
+        if let accessRoles = data.accessRoleV2 {
+            conversation.updateAccessStatus(accessModes: data.access, accessRoles: accessRoles)
+        } else if let accessRole = data.accessRole, let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+            let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
+            conversation.updateAccessStatus(accessModes: data.access, accessRoles: accessRoles.map(\.rawValue))
+        }
     }
 
 }

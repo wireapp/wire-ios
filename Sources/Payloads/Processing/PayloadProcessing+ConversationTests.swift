@@ -203,19 +203,58 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let accessMode: ConversationAccessMode = .allowGuests
-            let accessRole: ConversationAccessRole = .team
+            let accessRole: Set<ConversationAccessRoleV2> = [.teamMember]
             let qualifiedID = self.groupConversation.qualifiedID!
 
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.group.rawValue,
                                                            access: accessMode.stringValue,
-                                                           accessRole: accessRole.rawValue)
+                                                           accessRoleV2: accessRole.map(\.rawValue))
             // when
             conversationPayload.updateOrCreate(in: self.syncMOC)
 
             // then
             XCTAssertEqual(self.groupConversation.accessMode, accessMode)
-            XCTAssertEqual(self.groupConversation.accessRole, accessRole)
+            XCTAssertEqual(self.groupConversation.accessRoles, accessRole)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_UpdateAccessRoleV2() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let accessMode: ConversationAccessMode = .allowGuests
+            let accessRoleV2: Set<ConversationAccessRoleV2> = [.teamMember, .nonTeamMember, .guest]
+            let qualifiedID = self.groupConversation.qualifiedID!
+
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           type: BackendConversationType.group.rawValue,
+                                                           access: accessMode.stringValue,
+                                                           accessRoleV2: accessRoleV2.map(\.rawValue))
+
+            // WHEN
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // THEN
+            XCTAssertEqual(self.groupConversation.accessRoles, accessRoleV2)
+
+        }
+    }
+
+    func testThatItMapsFromLegacyAccessRoleToAccessRoleV2() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let accessRole: ConversationAccessRole = .team
+            let qualifiedID = self.groupConversation.qualifiedID!
+
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           type: BackendConversationType.group.rawValue,
+                                                           accessRole: accessRole.rawValue)
+            // WHEN
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // THEN
+            let accessRoleV2 = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole)
+            XCTAssertEqual(self.groupConversation.accessRoles, accessRoleV2)
         }
     }
 

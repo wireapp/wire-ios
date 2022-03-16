@@ -485,10 +485,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performAndWait {
 
             let newAccessMode = ConversationAccessMode(values: ["code", "invite"])
-            let newAccessRole = ConversationAccessRole.team
+            let newAccessRole: Set<ConversationAccessRoleV2> = [.teamMember, .guest]
 
             XCTAssertNotEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertNotEqual(self.groupConversation.accessRole, newAccessRole)
+            XCTAssertNotEqual(self.groupConversation.accessRoles, newAccessRole)
 
             // GIVEN
             let event = self.updateEvent(type: "conversation.access-update",
@@ -497,7 +497,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                                          timestamp: Date(),
                                          dataPayload: [
                                             "access": newAccessMode.stringValue,
-                                            "access_role": newAccessRole.rawValue
+                                            "access_role_v2": newAccessRole.map(\.rawValue)
                                         ])
 
             // WHEN
@@ -505,7 +505,33 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // THEN
             XCTAssertEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertEqual(self.groupConversation.accessRole, newAccessRole)
+            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
+        }
+    }
+
+    // MARK: Access Role
+
+    func testThatItHandlesAccessRoleUpdateEventWhenMappingFromLegacyAccessRoleToAccessRoleV2() {
+        self.syncMOC.performAndWait {
+            let newAccessMode = ConversationAccessMode(values: ["code", "invite"])
+            let legacyAccessRole: ConversationAccessRole = .team
+
+            // GIVEN
+            let event = self.updateEvent(type: "conversation.access-update",
+                                         senderID: self.otherUser.remoteIdentifier!,
+                                         conversationID: self.groupConversation.remoteIdentifier!,
+                                         timestamp: Date(),
+                                         dataPayload: [
+                                            "access": newAccessMode.stringValue,
+                                            "access_role": legacyAccessRole.rawValue
+                                        ])
+
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+
+            // THEN
+            let newAccessRole = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
+            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
         }
     }
 
@@ -1055,6 +1081,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                                     creator: nil,
                                     access: nil,
                                     accessRole: nil,
+                                    accessRoleV2: nil,
                                     name: nil,
                                     members: nil,
                                     lastEvent: nil,
