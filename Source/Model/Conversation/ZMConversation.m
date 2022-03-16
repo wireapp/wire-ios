@@ -107,6 +107,8 @@ static NSString *const TeamKey = @"team";
 
 static NSString *const AccessModeStringsKey = @"accessModeStrings";
 static NSString *const AccessRoleStringKey = @"accessRoleString";
+static NSString *const AccessRoleStringsKeyV2 = @"accessRoleStringsV2";
+
 
 NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 3.0;
 
@@ -339,6 +341,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             TeamRemoteIdentifierDataKey,
             AccessModeStringsKey,
             AccessRoleStringKey,
+            AccessRoleStringsKeyV2,
             LanguageKey,
             HasReadReceiptsEnabledKey,
             ZMConversationLegalHoldStatusKey,

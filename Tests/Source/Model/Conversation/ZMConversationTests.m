@@ -86,6 +86,7 @@
                                                                                 name:nil
                                                                                 team:nil
                                                                          allowGuests:YES
+                                                                        allowServices:YES
                                                                         readReceipts:NO
                                                                     participantsRole:nil];
         conversation.conversationType = ZMConversationTypeGroup;
@@ -162,6 +163,7 @@
                                                                              name:nil
                                                                              team:nil
                                                                       allowGuests:YES
+                                                                      allowServices:YES
                                                                      readReceipts:NO
                                                                  participantsRole:nil];
     
@@ -182,6 +184,7 @@
                                                                              name:@"abc"
                                                                              team:team
                                                                       allowGuests:YES
+                                                                    allowServices:YES
                                                                      readReceipts:YES
                                                                  participantsRole:nil];
     
@@ -201,6 +204,7 @@
                                                                              name:@"abc"
                                                                              team:nil
                                                                       allowGuests:YES
+                                                                    allowServices: YES
                                                                      readReceipts:NO
                                                                  participantsRole:nil];
     
@@ -648,6 +652,7 @@
                                                                     name:nil
                                                                     team:nil
                                                              allowGuests:YES
+                                                           allowServices:YES
                                                             readReceipts:NO
                                                         participantsRole:nil];
     
@@ -666,6 +671,7 @@
                                                                     name:nil
                                                                     team:nil
                                                              allowGuests:YES
+                                                           allowServices:YES
                                                             readReceipts:NO
                                                         participantsRole:nil];
     

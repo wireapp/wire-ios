@@ -32,6 +32,7 @@ public protocol ConversationLike: NSObjectProtocol {
     var displayName: String { get }
     var connectedUserType: UserType? { get }
     var allowGuests: Bool { get }
+    var allowServices: Bool { get }
 
     var isUnderLegalHold: Bool { get }
     var securityLevel: ZMConversationSecurityLevel { get }
@@ -50,7 +51,7 @@ public protocol ConversationLike: NSObjectProtocol {
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
 public protocol SwiftConversationLike {
     var accessMode: ConversationAccessMode? { get }
-    var accessRole: ConversationAccessRole? { get }
+    var accessRoles: Set<ConversationAccessRoleV2> { get }
 
     var teamType: TeamType? { get }
 

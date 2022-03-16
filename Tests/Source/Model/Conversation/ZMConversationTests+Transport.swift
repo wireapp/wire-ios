@@ -26,15 +26,15 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     func testThatItUpdateAccessStatus() {
         syncMOC.performGroupedBlockAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let accessRole = ConversationAccessRole.team
+            let accessRoles: Set<ConversationAccessRoleV2> = [.teamMember, .guest, .service]
             let accessMode = ConversationAccessMode.allowGuests
 
             // when
-            conversation.updateAccessStatus(accessModes: accessMode.stringValue, role: accessRole.rawValue)
+            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map({$0.rawValue}))
 
             // then
             XCTAssertEqual(conversation.accessMode, accessMode)
-            XCTAssertEqual(conversation.accessRole, accessRole)
+            XCTAssertEqual(conversation.accessRoles, accessRoles)
         }
     }
 

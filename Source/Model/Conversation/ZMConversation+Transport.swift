@@ -66,6 +66,7 @@ extension ZMConversation {
         public static let conversationRoleKey = "conversation_role"
         public static let accessModeKey = "access"
         public static let accessRoleKey = "access_role"
+        public static let accessRoleKeyV2 = "access_role_v2"
         public static let messageTimer = "message_timer"
         public static let receiptMode = "receipt_mode"
 
@@ -94,9 +95,9 @@ extension ZMConversation {
         setMessageDestructionTimeoutValue(.init(rawValue: timeout / 1000), for: .groupConversation)
     }
 
-    public func updateAccessStatus(accessModes: [String], role: String) {
+    public func updateAccessStatus(accessModes: [String], accessRoles: [String]) {
         accessModeStrings = accessModes
-        accessRoleString = role
+        accessRoleStringsV2 = accessRoles
     }
 
     public func updateReceiptMode(_ receiptMode: Int?) {

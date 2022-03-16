@@ -122,4 +122,5 @@ class RolesMigrationTests: DiskDatabaseTest {
         XCTAssertEqual(groupConvo.localParticipants, Set([user1, user2]))
         XCTAssertEqual((groupConvo.value(forKey: oldKey) as! NSOrderedSet).count, 0)
     }
+
 }
