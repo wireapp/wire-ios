@@ -29,6 +29,7 @@ extension Payload {
             case qualifiedUsers = "qualified_users"
             case access
             case accessRole = "access_role"
+            case accessRoleV2 = "access_role_v2"
             case name
             case team
             case messageTimer = "message_timer"
@@ -40,6 +41,7 @@ extension Payload {
         let qualifiedUsers: [QualifiedID]?
         let access: [String]?
         let accessRole: String?
+        let accessRoleV2: [String]?
         let name: String?
         let team: ConversationTeamInfo?
         let messageTimer: TimeInterval?
@@ -58,6 +60,7 @@ extension Payload {
             name = conversation.userDefinedName
             access = conversation.accessMode?.stringValue
             accessRole = conversation.accessRole?.rawValue
+            accessRoleV2 = conversation.accessRoles.map(\.rawValue)
             conversationRole = ZMConversation.defaultMemberRoleName
             team = conversation.team?.remoteIdentifier.map({ ConversationTeamInfo(teamID: $0) })
             readReceiptMode = conversation.hasReadReceiptsEnabled ? 1 : 0
@@ -74,6 +77,7 @@ extension Payload {
             case creator
             case access
             case accessRole = "access_role"
+            case accessRoleV2 = "access_role_v2"
             case name
             case members
             case lastEvent = "last_event"
@@ -93,6 +97,7 @@ extension Payload {
         let creator: UUID?
         let access: [String]?
         let accessRole: String?
+        let accessRoleV2: [String]?
         let name: String?
         let members: ConversationMembers?
         let lastEvent: String?
@@ -107,6 +112,7 @@ extension Payload {
              creator: UUID? = nil,
              access: [String]? = nil,
              accessRole: String? = nil,
+             accessRoleV2: [String]? = nil,
              name: String? = nil,
              members: ConversationMembers? = nil,
              lastEvent: String? = nil,
@@ -121,6 +127,7 @@ extension Payload {
             self.creator = creator
             self.access = access
             self.accessRole = accessRole
+            self.accessRoleV2 = accessRoleV2
             self.name = name
             self.members = members
             self.lastEvent = lastEvent
@@ -436,6 +443,7 @@ extension Payload {
         enum CodingKeys: String, CodingKey {
             case access
             case accessRole = "access_role"
+            case accessRoleV2 = "access_role_v2"
         }
 
         static var eventType: ZMUpdateEventType {
@@ -443,7 +451,8 @@ extension Payload {
         }
 
         let access: [String]
-        let accessRole: String
+        let accessRole: String?
+        let accessRoleV2: [String]?
     }
 
     struct UpdateConversationName: EventData {

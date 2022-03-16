@@ -240,7 +240,7 @@ extension StoreUpdateEventTests {
                     XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
                 }
                 #endif
-                
+
                 XCTAssertTrue(storedEvent.isEncrypted)
 
                 guard let privateKey = self.encryptionKeys?.privateKey else {
