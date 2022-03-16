@@ -46,9 +46,18 @@ import UserNotifications
 
     /// Unarchives all previously created notifications that haven't been cancelled yet
     func unarchiveOldNotifications() {
-        guard let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
-        let unarchivedNotes =  NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
-            else { return }
+        // NotificationUserInfo was moved from WireSyncEngine. To avoid crashing when unarchiving
+        // data stored in previous versions, we must add a mapping of the class from the old name.
+        NSKeyedUnarchiver.setClass(WireRequestStrategy.NotificationUserInfo.self, forClassName: "WireSyncEngine.NotificationUserInfo")
+
+        guard
+            let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
+            let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
+        else {
+            return
+
+        }
+
         self.oldNotifications = unarchivedNotes
     }
 
