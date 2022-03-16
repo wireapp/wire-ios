@@ -61,11 +61,17 @@ extension MockTransportSession {
         guard let accessRole = payload["access_role"] as? String else {
             return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
         }
+
+        guard let accessRoleV2 = payload["access_role_v2"] as? [String] else {
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        }
+
         guard let access = payload["access"] as? [String] else {
             return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
         }
 
         conversation.accessRole = accessRole
+        conversation.accessRoleV2 = accessRoleV2
         conversation.accessMode = access
 
         let responsePayload = [
@@ -75,6 +81,7 @@ extension MockTransportSession {
             "from" : selfUser.identifier,
             "data" : [
                 "access_role" : conversation.accessRole,
+                "access_role_v2" : conversation.accessRoleV2,
                 "access" : conversation.accessMode
             ]
         ] as ZMTransportData

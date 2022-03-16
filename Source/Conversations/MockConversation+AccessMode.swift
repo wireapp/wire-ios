@@ -31,6 +31,32 @@ public enum MockConversationAccessRole: String {
     }
 }
 
+public enum MockConversationAccessRoleV2: String {
+    /// Users with Wire accounts belonging to the same team owning the conversation.
+    case teamMember = "team_member"
+    /// Users with Wire accounts belonging to another team or no team.
+    case nonTeamMember = "non_team_member"
+    /// Users without Wire accounts, or wireless users (i.e users who join with a guest link and temporary account).
+    case guest = "guest"
+    /// A service pseudo-user, aka a non-human bot.
+    case service = "service"
+
+    public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
+        switch (allowGuests, allowServices) {
+        case (true, true):
+            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
+        case (false, false):
+            return [teamMember.rawValue]
+        case (true, false):
+            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue]
+        case (false, true):
+            return [teamMember.rawValue, service.rawValue]
+        }
+    }
+
+}
+
+
 public struct MockConversationAccessMode: OptionSet {
     public let rawValue: Int
 

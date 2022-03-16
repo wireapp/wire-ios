@@ -80,9 +80,11 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
         let role = "team"
         let access = ["invite", "code"]
+        let accessRoleV2 = ["team_member", "non_team_member", "guest"]
         // given
         let payload = [
             "access_role": role,
+            "access_role_v2": accessRoleV2,
             "access": access,
             ] as ZMTransportData
 
@@ -96,10 +98,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         XCTAssertEqual(receivedPayload["conversation"] as? String, conversation.identifier)
         guard let payloadData = receivedPayload["data"] as? [String: Any] else { XCTFail(); return }
         guard let responseRole = payloadData["access_role"] as? String else { XCTFail(); return }
+        guard let responseRoleV2 = payloadData["access_role_v2"] as? [String] else { XCTFail(); return }
         guard let responseAccess = payloadData["access"] as? [String] else { XCTFail(); return }
 
 
         XCTAssertEqual(responseRole, role)
+        XCTAssertEqual(responseRoleV2, accessRoleV2)
         XCTAssertEqual(responseAccess, access)
     }
     

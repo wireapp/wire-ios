@@ -100,39 +100,50 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
     func testThatPushPayloadIsPresentWhenChangingAccessMode() {
         // given
         let newAccessMode = ["invite", "code"]
+        let newAccessRoleV2 = ["team_member", "non_team_member"]
         var conversation: MockConversation!
         sut.performRemoteChanges { session in
             conversation = session.insertTeamConversation(to: self.team, with: [], creator: self.selfUser)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotEqual(conversation.accessMode, newAccessMode)
+        XCTAssertNotEqual(conversation.accessRoleV2, newAccessRoleV2)
 
         // when
         conversation.accessMode = newAccessMode
+        conversation.accessRoleV2 = newAccessRoleV2
 
         // then
         XCTAssertNotNil(conversation.changePushPayload)
         guard let access = conversation.changePushPayload?["access"] as? [String] else { XCTFail(); return }
+        guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String] else { XCTFail(); return }
         XCTAssertEqual(access, newAccessMode)
+        XCTAssertEqual(accessRoleV2, newAccessRoleV2)
     }
 
     func testThatPushPayloadIsPresentWhenChangingAccessRole() {
         // given
         let newAccessRole = "non_activated"
+        let newAccessRoleV2 = ["team_member", "non_team_member", "guest", "service"]
         var conversation: MockConversation!
         sut.performRemoteChanges { session in
             conversation = session.insertTeamConversation(to: self.team, with: [], creator: self.selfUser)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotEqual(conversation.accessRole, newAccessRole)
+        XCTAssertNotEqual(conversation.accessRoleV2, newAccessRoleV2)
 
         // when
         conversation.accessRole = newAccessRole
+        conversation.accessRoleV2 = newAccessRoleV2
 
         // then
         XCTAssertNotNil(conversation.changePushPayload)
         guard let accessRole = conversation.changePushPayload?["access_role"] as? String else { XCTFail(); return }
+        guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String] else { XCTFail(); return }
+
         XCTAssertEqual(accessRole, newAccessRole)
+        XCTAssertEqual(accessRoleV2, newAccessRoleV2)
     }
 
     func testThatUpdateEventIsGeneratedWhenChangingAccessRoles() {
@@ -149,6 +160,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         sut.performRemoteChanges { session in
             conversation.accessRole = "non_activated"
             conversation.accessMode = ["invite", "code"]
+            conversation.accessRoleV2 = ["[team_member", "non_team_member", "guest", "service"]
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -160,6 +172,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         XCTAssertNotNil(data["access"])
         XCTAssertNotNil(data["access_role"])
+        XCTAssertNotNil(data["access_role_v2"])
 
     }
     
