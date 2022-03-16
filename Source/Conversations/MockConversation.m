@@ -51,6 +51,7 @@
 @dynamic otrMutedStatus;
 @dynamic team;
 @dynamic accessRole;
+@dynamic accessRoleV2;
 @dynamic accessMode;
 @dynamic link;
 @dynamic receiptMode;
@@ -70,6 +71,7 @@
     conversation.creator = creator;
     conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
     conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
+    conversation.accessRoleV2 = [MockConversation defaultAccessRoleV2WithConversationType:type team:nil];
     [conversation.mutableActiveUsers addObject:creator];
     return conversation;
 }
@@ -86,6 +88,7 @@
     [conversation.mutableActiveUsers addObject:creator];
     conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
     conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
+    conversation.accessRoleV2 = [MockConversation defaultAccessRoleV2WithConversationType:type team:nil];
     return conversation;
 }
 
@@ -171,6 +174,7 @@
     data[@"type"] = self.transportConversationType;
     data[@"access"] = self.accessMode;
     data[@"access_role"] = self.accessRole;
+    data[@"access_role_v2"] = self.accessRoleV2;
     data[@"team"] = self.team.identifier ?: [NSNull null];
     
     if (self.receiptMode != nil) {

@@ -500,7 +500,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     [conversation.managedObjectContext performBlockAndWait:^{
         NSDictionary *dict = (id) data;
         XCTAssertTrue([dict isKindOfClass:[NSDictionary class]]);
-        NSArray *keys = @[@"creator", @"id", @"members", @"name", @"type", @"team", @"access_role", @"access"];
+        NSArray *keys = @[@"creator", @"id", @"members", @"name", @"type", @"team", @"access_role", @"access_role_v2", @"access"];
         AssertDictionaryHasKeys(dict, keys);
         
         XCTAssertEqualObjects(dict[@"creator"], conversation.creator ? conversation.creator.identifier: [NSNull null]);
