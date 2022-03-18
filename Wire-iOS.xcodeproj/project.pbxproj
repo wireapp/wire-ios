@@ -168,7 +168,6 @@
 		1689FD4B2195C8B800A656E2 /* EphemeralCountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */; };
 		168A16AC1D9597C2005CFA6C /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A16AB1D9597C2005CFA6C /* ShareExtensionViewController.swift */; };
 		168A16AF1D9597C2005CFA6C /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 168A16AD1D9597C2005CFA6C /* MainInterface.storyboard */; };
-		168A16B31D9597C2005CFA6C /* Wire Share Extension.appex in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		169FF9331C57CB2100C5BF90 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 169FF9321C57CB2100C5BF90 /* VideoToolbox.framework */; };
 		16A293DA1F5FFA2E00B4EB16 /* SkeletonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A293D91F5FFA2E00B4EB16 /* SkeletonViewController.swift */; };
 		16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FDC42154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift */; };
@@ -1233,6 +1232,7 @@
 		EE09DE6025B24B2000B515F0 /* AppLockModuleRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */; };
 		EE0DE1CD21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */; };
 		EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */; };
+		EE12922827E47E6D00C9CC60 /* Wire Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EE1AFBFE2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */; };
 		EE2538852166151C00932606 /* ConversationActionController+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2538842166151C00932606 /* ConversationActionController+Notifications.swift */; };
 		EE2C42EC25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2C42EB25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift */; };
@@ -1752,7 +1752,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				168A16B31D9597C2005CFA6C /* Wire Share Extension.appex in Embed Frameworks */,
 				A96867AD26A5E59F00679D95 /* WireDataModel.xcframework in Embed Frameworks */,
 				A96867CE26A5E68600679D95 /* Down.xcframework in Embed Frameworks */,
 				A96867A726A5E52F00679D95 /* WireCanvas.xcframework in Embed Frameworks */,
