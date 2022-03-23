@@ -150,6 +150,10 @@ public class NotificationSession {
     private let coreDataStack: CoreDataStack
     private let operationLoop: RequestGeneratingOperationLoop
     private let strategyFactory: StrategyFactory
+
+    private var syncManagedObjectContext: NSManagedObjectContext {
+        return coreDataStack.syncContext
+    }
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -277,12 +281,13 @@ public class NotificationSession {
                 return
             }
             
-            ////TODO katerina: update the badge count
-            // once notification processing is finished, it's safe to update the badge
+            /// Once notification processing is finished, it's safe to update the icon badge count.
             let completionHandler = {
-                completion(true)
-//                let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
-//                self.sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
+                /// Count number of conversations with unread messages and update the application icon badge count.
+                let accountID = self.coreDataStack.account.userIdentifier
+                let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
+                Logging.push.safePublic("Updating badge count for \(accountID) to \(SanitizedString(stringLiteral: String(unreadCount)))")
+                self.strategyFactory.delegate?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
             }
             
             self.fetchEvents(fromPushChannelPayload: payload, completionHandler: completionHandler)
@@ -294,13 +299,10 @@ public class NotificationSession {
             return completionHandler()
         }
         self.applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
-            
-            ////TODO katerina: check callEventStatus
             completionHandler()
         })
     }
-    
-    ////TODO: need to verify with the BE response
+
     private func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
             let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],

@@ -21,6 +21,7 @@ import WireRequestStrategy
 public protocol NotificationSessionDelegate: AnyObject {
 
     func notificationSessionDidGenerateNotification(_ notification: ZMLocalNotification?)
+    func updateAppIconBadge(accountID: UUID, unreadCount: Int)
 
 }
 
