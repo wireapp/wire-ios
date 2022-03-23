@@ -20,8 +20,7 @@ import WireRequestStrategy
 
 public protocol NotificationSessionDelegate: AnyObject {
 
-    func notificationSessionDidGenerateNotification(_ notification: ZMLocalNotification?)
-    func updateAppIconBadge(accountID: UUID, unreadCount: Int)
+    func notificationSessionDidGenerateNotification(_ notification: ZMLocalNotification?, unreadConversationCount: Int)
 
 }
 
@@ -142,8 +141,8 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
         } else {
             notification = localNotifications.first
         }
-
-        delegate?.notificationSessionDidGenerateNotification(notification)
+        let unreadCount = Int(ZMConversation.unreadConversationCount(in: moc))
+        delegate?.notificationSessionDidGenerateNotification(notification, unreadConversationCount: unreadCount)
     }
     
     public func failedFetchingEvents() {
