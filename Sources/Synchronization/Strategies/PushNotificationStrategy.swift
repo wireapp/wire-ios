@@ -94,6 +94,10 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
+            /// This should update the number of unread messages but doesn't work
+            ZMConversation.calculateLastUnreadMessages(in: self.moc)
+            self.moc.saveOrRollback()
+
             let notifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
             self.localNotifications.append(contentsOf: notifications)
         }
