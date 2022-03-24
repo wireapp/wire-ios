@@ -284,7 +284,6 @@ public class NotificationSession {
                 return
             }
             
-            /// Once notification processing is finished, it's safe to update the icon badge count.
             let completionHandler = {
                 completion(true)
             }
