@@ -87,7 +87,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 /// Completes a request and removes from all pending requests lists
 - (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response;
 
-
 @end
 
 
@@ -223,6 +222,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedTransportRequests removeAllObjects];
     self.shouldSendPushChannelEvents = NO;
     self.shouldKeepPushChannelOpen = NO;
+}
+
+- (void)generateEmailVerificationCode
+{
+    _generatedEmailVerificationCode = @"123456";
 }
 
 - (ZMTransportSession *)mockedTransportSession;
@@ -458,7 +462,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/invitations", @"processInvitationsRequest:"],
              @[@"/teams", @"processTeamsRequest:"],
              @[@"/broadcast", @"processBroadcastRequest:"],
-             @[@"/providers", @"processServicesProvidersRequest:"]
+             @[@"/providers", @"processServicesProvidersRequest:"],
+             @[@"/verification-code/send", @"processVerificationCodeSendRequest:"]
              ];
 }
 
@@ -1118,4 +1123,3 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 }
 
 @end
-
