@@ -36,11 +36,20 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSString *email = [request.payload.asDictionary optionalStringForKey:@"email"];
         NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
         NSString *code = [request.payload.asDictionary optionalStringForKey:@"code"];
-        
+        NSString *verificationCode = [request.payload.asDictionary optionalStringForKey:@"verification_code"];
+
         if((password == nil || email == nil) && (code == nil || phone == nil)) {
             return [self errorResponseWithCode:400 reason:@"missing-key"];
         }
-        
+
+        if(self.generatedEmailVerificationCode != nil) {
+            if (verificationCode == nil) {
+                return [self errorResponseWithCode:403 reason:@"code-authentication-required"];
+            } else if (![self.generatedEmailVerificationCode isEqualToString:verificationCode]) {
+                return [self errorResponseWithCode:403 reason:@"code-authentication-failed"];
+            }
+        }
+
         if(phone != nil
            && (
                ! [self.phoneNumbersWaitingForVerificationForLogin containsObject:phone] ||
@@ -85,11 +94,11 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         self.clientCompletedLogin = YES;
         
         NSDictionary *responsePayload = @{
-                                          @"access_token" : HardcodedAccessToken,
-                                          @"expires_in" : @900,
-                                          @"token_type" : @"Bearer",
-                                          @"user": user.identifier
-                                          };
+                                         @"access_token" : HardcodedAccessToken,
+                                         @"expires_in" : @900,
+                                         @"token_type" : @"Bearer",
+                                         @"user": user.identifier
+        };
 
         NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
         return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers];
@@ -104,7 +113,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
         
         if(phone == nil) {
-            [self errorResponseWithCode:400 reason:@"missing-key"];
+            return [self errorResponseWithCode:400 reason:@"missing-key"];
         }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -123,6 +132,28 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
+/// handles /verification-code/send
+- (ZMTransportResponse *)processVerificationCodeSendRequest:(ZMTransportRequest *)request;
+{
+    if ([request matchesWithPath:@"/verification-code/send" method:ZMMethodPOST]) {
+        NSString *email = [request.payload.asDictionary optionalStringForKey:@"email"];
+        NSString *action = [request.payload.asDictionary optionalStringForKey:@"action"];
+
+        if (email == nil || action == nil) {
+            return [self errorResponseWithCode:400 reason:@"bad-request"];
+        }
+
+        if ([action isEqualToString:@"create_scim_token"] || [action isEqualToString:@"login"] || [action isEqualToString:@"delete_team"]) {
+            [self generateEmailVerificationCode];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+        } else {
+            return [self errorResponseWithCode:400 reason:@"bad-request"];
+        }
+
+    }
+
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+}
 
 
 @end

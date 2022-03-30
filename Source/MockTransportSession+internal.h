@@ -32,6 +32,7 @@
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data;
 
+- (void)generateEmailVerificationCode;
 - (MockConnection *)connectionFromUserIdentifier:(NSString *)fromUserIdentifier toUserIdentifier:(NSString *)toUserIdentifier;
 
 @property (nonatomic, readonly) NSMutableSet *whitelistedEmails;
