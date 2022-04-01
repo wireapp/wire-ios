@@ -150,6 +150,8 @@ public class NotificationSession {
     private let coreDataStack: CoreDataStack
     private let operationLoop: RequestGeneratingOperationLoop
     private let strategyFactory: StrategyFactory
+
+    public let accountIdentifier: UUID
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -196,7 +198,8 @@ public class NotificationSession {
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
             delegate: delegate,
-            useLegacyPushNotifications: useLegacyPushNotifications
+            useLegacyPushNotifications: useLegacyPushNotifications,
+            accountIdentifier: accountIdentifier
         )
     }
     
@@ -206,7 +209,8 @@ public class NotificationSession {
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory) throws {
+                  strategyFactory: StrategyFactory,
+                  accountIdentifier: UUID) throws {
         
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -214,6 +218,7 @@ public class NotificationSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
+        self.accountIdentifier = accountIdentifier
     }
     
     public convenience init(coreDataStack: CoreDataStack,
@@ -222,7 +227,8 @@ public class NotificationSession {
                             accountContainer: URL,
                             analytics: AnalyticsType?,
                             delegate: NotificationSessionDelegate?,
-                            useLegacyPushNotifications: Bool) throws {
+                            useLegacyPushNotifications: Bool,
+                            accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext,
                                                                     transportSession: transportSession)
@@ -253,7 +259,8 @@ public class NotificationSession {
             saveNotificationPersistence: saveNotificationPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
-            strategyFactory: strategyFactory
+            strategyFactory: strategyFactory,
+            accountIdentifier: accountIdentifier
         )
     }
 
@@ -277,12 +284,8 @@ public class NotificationSession {
                 return
             }
             
-            ////TODO katerina: update the badge count
-            // once notification processing is finished, it's safe to update the badge
             let completionHandler = {
                 completion(true)
-//                let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
-//                self.sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
             }
             
             self.fetchEvents(fromPushChannelPayload: payload, completionHandler: completionHandler)
@@ -294,13 +297,10 @@ public class NotificationSession {
             return completionHandler()
         }
         self.applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
-            
-            ////TODO katerina: check callEventStatus
             completionHandler()
         })
     }
-    
-    ////TODO: need to verify with the BE response
+
     private func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
             let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
