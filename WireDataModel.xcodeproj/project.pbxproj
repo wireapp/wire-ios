@@ -480,6 +480,7 @@
 		EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA625B9C2C6000210AC /* AppLockType.swift */; };
 		EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */; };
 		EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */; };
+		EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */; };
 		EECFAA3826D52EB700D9E100 /* Feature.SelfDeletingMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECFAA3726D52EB700D9E100 /* Feature.SelfDeletingMessages.swift */; };
 		EEDA9C0E2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */; };
 		EEDA9C1225121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C1125121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift */; };
@@ -1249,6 +1250,7 @@
 		EEBACDA625B9C2C6000210AC /* AppLockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockType.swift; sourceTree = "<group>"; };
 		EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.Config.swift; sourceTree = "<group>"; };
 		EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockAuthenticationResult.swift; sourceTree = "<group>"; };
+		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
 		EECFAA3726D52EB700D9E100 /* Feature.SelfDeletingMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.SelfDeletingMessages.swift; sourceTree = "<group>"; };
 		EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EEDA9C1125121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContextTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
@@ -1707,6 +1709,7 @@
 				0686649D256FB087001C8747 /* AppLock */,
 				EE28991C26B4420A00E7BAF0 /* ConferenceCalling */,
 				EECA830126EF34FB0087ECB0 /* SelfDeletingMessages */,
+				EEC47ED427A81ED70020B599 /* ClassifiedDomains */,
 				EE9AD9152696F01700DD5F51 /* FeatureService.swift */,
 				54CB3FE924A3994400BA86DD /* FeatureFlag.swift */,
 				064F8E07255E04800040371D /* Feature.swift */,
@@ -1892,6 +1895,14 @@
 				EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */,
 			);
 			path = "Change detection";
+			sourceTree = "<group>";
+		};
+		EEC47ED427A81ED70020B599 /* ClassifiedDomains */ = {
+			isa = PBXGroup;
+			children = (
+				EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */,
+			);
+			path = ClassifiedDomains;
 			sourceTree = "<group>";
 		};
 		EECA82FD26EF34E20087ECB0 /* SelfDeletingMessages */ = {
@@ -3334,6 +3345,7 @@
 				062FD8852756053800B9DE39 /* Feature.ConversationGuestLinks.swift in Sources */,
 				F9B71F0D1CB264DF001DB03F /* ZMConversationListDirectory.m in Sources */,
 				A949418F23E1DB79001B0373 /* ZMConnection+Fetch.swift in Sources */,
+				EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */,
 				54CB3FEA24A3994400BA86DD /* FeatureFlag.swift in Sources */,
 				F920AE2A1E3A5FDD001BC14F /* Dictionary+Mapping.swift in Sources */,
 				F93265211D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift in Sources */,
