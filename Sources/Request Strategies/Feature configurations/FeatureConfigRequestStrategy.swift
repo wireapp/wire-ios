@@ -148,6 +148,10 @@ extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
         case .conversationGuestLinks:
             let response = try decoder.decode(SimpleConfigResponse.self, from: data)
             featureService.storeConversationGuestLinks(.init(status: response.status))
+
+        case .classifiedDomains:
+            let response = try decoder.decode(ConfigResponse<Feature.ClassifiedDomains.Config>.self, from: data)
+            featureService.storeClassifiedDomains(.init(status: response.status, config: response.config))
         }
     }
 
@@ -183,6 +187,7 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
             featureService.storeAppLock(.init(status: allConfigs.applock.status, config: allConfigs.applock.config))
             featureService.storeFileSharing(.init(status: allConfigs.fileSharing.status))
             featureService.storeSelfDeletingMessages(.init(status: allConfigs.selfDeletingMessages.status, config: allConfigs.selfDeletingMessages.config))
+            featureService.storeClassifiedDomains(.init(status: allConfigs.classifiedDomains.status, config: allConfigs.classifiedDomains.config))
 
         } catch {
             zmLog.error("Failed to decode feature config response: \(error)")
@@ -225,6 +230,7 @@ private struct AllConfigsResponse: Decodable {
     let applock: ConfigResponse<Feature.AppLock.Config>
     let fileSharing: SimpleConfigResponse
     let selfDeletingMessages: ConfigResponse<Feature.SelfDeletingMessages.Config>
+    let classifiedDomains: ConfigResponse<Feature.ClassifiedDomains.Config>
 
 }
 
@@ -263,6 +269,9 @@ private extension Feature {
 
         case .conversationGuestLinks:
             return "conversationGuestLinks"
+
+        case .classifiedDomains:
+            return "classifiedDomains"
         }
     }
 
