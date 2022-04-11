@@ -160,6 +160,27 @@ public class FeatureService {
         }
     }
 
+    public func fetchClassifiedDomains() -> Feature.ClassifiedDomains {
+        guard
+            let feature = Feature.fetch(name: .classifiedDomains, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! JSONDecoder().decode(Feature.ClassifiedDomains.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains) {
+        let config = try! JSONEncoder().encode(classifiedDomains.config)
+
+        Feature.updateOrCreate(havingName: .classifiedDomains, in: context) {
+            $0.status = classifiedDomains.status
+            $0.config = config
+        }
+    }
+
     // MARK: - Helpers
 
     func createDefaultConfigsIfNeeded() {
@@ -179,6 +200,9 @@ public class FeatureService {
 
             case .conversationGuestLinks:
                 storeConversationGuestLinks(.init())
+
+            case .classifiedDomains:
+                storeClassifiedDomains(.init())
             }
         }
     }

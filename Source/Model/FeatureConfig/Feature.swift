@@ -36,6 +36,7 @@ public class Feature: ZMManagedObject {
         case fileSharing
         case selfDeletingMessages
         case conversationGuestLinks
+        case classifiedDomains
     }
 
     public enum Status: String, Codable {
@@ -194,7 +195,7 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforceAppLock != newConfig.enforceAppLock
 
-        case .conferenceCalling, .fileSharing, .conversationGuestLinks:
+        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains:
             return
 
         case .selfDeletingMessages:
