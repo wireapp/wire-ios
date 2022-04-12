@@ -305,7 +305,7 @@
     XCTAssertNotEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    BOOL didConsume = [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    BOOL didConsume = [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertFalse(didConsume);
@@ -320,7 +320,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    BOOL didConsume = [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    BOOL didConsume = [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertTrue(didConsume);
@@ -337,7 +337,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:NO];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:NO apiVersion:0];
     
     // then
     XCTAssertNil(self.sut.currentAccessTokenTask);
@@ -353,7 +353,7 @@
 
     // when
     [self.sut sendAccessTokenRequestWithURLSession:self.urlSession];
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
@@ -370,14 +370,14 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task1);
     
     // when consuming the request
-    [self.sut consumeRequestWithTask:task1 data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task1 data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then we create a new task, because the first request failed
     XCTAssertEqual(self.backoff.increaseBackoffCount, 1);
     XCTAssertEqual(self.sut.currentAccessTokenTask, task2);
     
     // when consuming the second request
-    [self.sut consumeRequestWithTask:task2 data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task2 data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertEqual(self.backoff.resetBackoffCount, 1);
@@ -393,7 +393,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task1);
     
     // when consuming the request
-    [self.sut consumeRequestWithTask:task1 data:nil session:self.urlSession shouldRetry:NO];
+    [self.sut consumeRequestWithTask:task1 data:nil session:self.urlSession shouldRetry:NO apiVersion:0];
     
     // no new task is created
     XCTAssertNil(self.sut.currentAccessTokenTask);
@@ -419,7 +419,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertEqual(self.backoff.increaseBackoffCount, 1);
@@ -436,7 +436,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertEqual(self.backoff.increaseBackoffCount, 1);
@@ -453,7 +453,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertEqual(self.backoff.increaseBackoffCount, 1);
@@ -472,7 +472,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertEqual(self.backoff.increaseBackoffCount, 0);
@@ -489,7 +489,7 @@
     XCTAssertEqual(self.sut.currentAccessTokenTask, task);
     
     // when
-    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES];
+    [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
     XCTAssertEqual(self.backoff.resetBackoffCount, 1);
@@ -846,7 +846,7 @@
     {
         id task  = [self mockURLSessionTaskWithStatusCode:500 error:nil hasTransportData:YES];
         [self.sut sendAccessTokenRequestWithURLSession:self.urlSession];
-        [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:NO];
+        [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:NO apiVersion:0];
         XCTAssertNotNil(self.sut.accessToken);
     }
     

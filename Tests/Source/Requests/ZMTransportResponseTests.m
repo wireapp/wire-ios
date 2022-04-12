@@ -32,15 +32,15 @@
 - (void)testThatItReturnFailureOnHTTPError
 {
     [self performIgnoringZMLogError:^{
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:0 transportSessionError:nil];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:0 transportSessionError:nil apiVersion:0];
         XCTAssertNotEqual(response.result, ZMTransportResponseStatusSuccess);
     }];
     for(int status = 1; status < 99; ++status) {
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil apiVersion:0];
         XCTAssertNotEqual(response.result, ZMTransportResponseStatusSuccess);
     }
     for(int status = 300; status < 999; ++status) {
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil apiVersion:0];
         XCTAssertNotEqual(response.result, ZMTransportResponseStatusSuccess);
     }
 }
@@ -49,7 +49,7 @@
 {
     [self performIgnoringZMLogError:^{
         NSError *error = [NSError errorWithDomain:@"foo" code:123 userInfo:nil];
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:200 transportSessionError:error];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:200 transportSessionError:error apiVersion:0];
         XCTAssertNotEqual(response.result, ZMTransportResponseStatusSuccess);
     }];
 }
@@ -59,7 +59,7 @@
     [self performIgnoringZMLogError:^{
         NSArray<NSNumber *> * permanentErrors = @[@(400), @(403), @(404), @(405), @(406), @(410), @(412), @(451)];
         for (NSNumber *code in permanentErrors) {
-            ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:code.integerValue transportSessionError:nil];
+            ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:code.integerValue transportSessionError:nil apiVersion:0];
             XCTAssertTrue(response.isPermanentylUnavailableError);
         }
     }];
@@ -70,7 +70,7 @@
     [self performIgnoringZMLogError:^{
         NSArray<NSNumber *> * permanentErrors = @[@(401), @(500), @(201), @(302)];
         for (NSNumber *code in permanentErrors) {
-            ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:code.integerValue transportSessionError:nil];
+            ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:code.integerValue transportSessionError:nil apiVersion:0];
             XCTAssertFalse(response.isPermanentylUnavailableError);
         }
     }];
@@ -79,7 +79,7 @@
 - (void)testThatItReturnsNoPermanentErrorForSuccess
 {
     for(int status = 200; status < 300; ++status) {
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil apiVersion:0];
         XCTAssertFalse(response.isPermanentylUnavailableError);
     }
 }
@@ -87,7 +87,7 @@
 - (void)testThatItReturnSuccess
 {
     for(int status = 200; status < 300; ++status) {
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil apiVersion:0];
         XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
     }
 }
@@ -95,7 +95,7 @@
 - (void)testThatItReturnsATimeout
 {
     NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:error];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:error apiVersion:0];
     XCTAssertEqual(response.result, ZMTransportResponseStatusExpired);
 }
 
@@ -105,7 +105,7 @@
     NSInteger statusCode = 432;
     NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeTryAgainLater userInfo:@{@"errortest": @"foo-bar"}];
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:error];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:error apiVersion:0];
     
     XCTAssertNil(response.imageData);
     XCTAssertEqualObjects(response.payload, payload);
@@ -119,7 +119,7 @@
     NSInteger statusCode = 432;
     NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:@{@"errortest": @"foo-bar"}];
     
-    ZMTransportResponse *response = [[ZMTransportResponse alloc ] initWithImageData:imageData HTTPStatus:statusCode transportSessionError:error headers:nil];
+    ZMTransportResponse *response = [[ZMTransportResponse alloc ] initWithImageData:imageData HTTPStatus:statusCode transportSessionError:error headers:nil apiVersion:0];
     
     XCTAssertNil(response.payload);
     XCTAssertEqualObjects(response.imageData, imageData);
@@ -130,8 +130,8 @@
 - (void)testThatAnHTTPErrorLowerThan500DoesNotSetsAnError
 {
     for(NSInteger i = 100; i < 500; ++i) {
-        ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil];
-        ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil];
+        ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
+        ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
         XCTAssertNil(imageResponse.transportSessionError);
         XCTAssertNil(payloadResponse.transportSessionError);
         XCTAssertNotEqual(imageResponse.result, ZMTransportResponseStatusTemporaryError);
@@ -145,8 +145,8 @@
         if(i == 408) { // 408 is a timeout
             continue;
         }
-        ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil];
-        ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil];
+        ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
+        ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
         XCTAssertEqual(imageResponse.result, ZMTransportResponseStatusPermanentError);
         XCTAssertEqual(payloadResponse.result, ZMTransportResponseStatusPermanentError);
     }
@@ -154,8 +154,8 @@
 
 - (void)testThatAnHTTPErrorOf408IsATryAgainLater
 {
-    ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:408 transportSessionError:nil headers:nil];
-    ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:408 transportSessionError:nil headers:nil];
+    ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:408 transportSessionError:nil headers:nil apiVersion:0];
+    ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:408 transportSessionError:nil headers:nil apiVersion:0];
     XCTAssertEqual(imageResponse.result, ZMTransportResponseStatusTryAgainLater);
     XCTAssertEqual(payloadResponse.result, ZMTransportResponseStatusTryAgainLater);
 }
@@ -166,8 +166,8 @@
         if(i >= 300 && i < 500) {
             continue;
         }
-        ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil];
-        ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil];
+        ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
+        ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
         XCTAssertNotEqual(imageResponse.result, ZMTransportResponseStatusPermanentError);
         XCTAssertNotEqual(payloadResponse.result, ZMTransportResponseStatusPermanentError);
     }
@@ -184,7 +184,7 @@
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
     
     // when
-    ZMTransportResponse *sut = [[ZMTransportResponse alloc] initWithHTTPURLResponse:response data:[NSData data] error:nil];
+    ZMTransportResponse *sut = [[ZMTransportResponse alloc] initWithHTTPURLResponse:response data:[NSData data] error:nil apiVersion:0];
     
     // then
     XCTAssertNotNil(sut);
@@ -205,7 +205,7 @@
     
     // when
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
-    ZMTransportResponse *zmResponse = [[ZMTransportResponse alloc] initWithHTTPURLResponse:response data:contentData error:nil];
+    ZMTransportResponse *zmResponse = [[ZMTransportResponse alloc] initWithHTTPURLResponse:response data:contentData error:nil apiVersion:0];
     
     // then
     XCTAssertNotNil(zmResponse);
@@ -257,7 +257,7 @@
     
     // when
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
-    ZMTransportResponse *zmResponse = [[ZMTransportResponse alloc] initWithHTTPURLResponse:response data:nil error:nil];
+    ZMTransportResponse *zmResponse = [[ZMTransportResponse alloc] initWithHTTPURLResponse:response data:nil error:nil apiVersion:0];
     
     // then
     XCTAssertEqual([response zmContentTypeForBodyData:[NSData data]], ZMTransportResponseContentTypeEmpty);

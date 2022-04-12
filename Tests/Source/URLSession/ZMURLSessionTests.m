@@ -151,7 +151,7 @@ static NSString * const DataKey = @"data";
 - (void)testThatItPassesTheRequestToTheCompletionMethod;
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/"];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/" apiVersion:0];
     NSURLSessionTask *task = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:request];
     
     // when
@@ -269,7 +269,7 @@ static NSString * const DataKey = @"data";
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completionHandler"];
     
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/"];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/" apiVersion:0];
     NSURLSessionTask *task = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:request];
     configurationBlock(task);
     
@@ -369,7 +369,7 @@ static NSString * const DataKey = @"data";
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:302 HTTPVersion:@"1.1" headerFields:@{}];
     
     // when
-    ZMTransportRequest *fakeRequest = [ZMTransportRequest requestGetFromPath:@"foo"];
+    ZMTransportRequest *fakeRequest = [ZMTransportRequest requestGetFromPath:@"foo" apiVersion:0];
     fakeRequest.doesNotFollowRedirects = YES;
     [self.sut setRequest:fakeRequest forTask:originalTask];
     
@@ -458,7 +458,7 @@ willPerformHTTPRedirection:response
                                                    verifyBlock:(void (^)(ZMTransportResponse *response))verifyBlock
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"www.example.com"];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"www.example.com" apiVersion:0];
     request.shouldFailInsteadOfRetry = shouldFailInsteadOfRetry;
     
     __block ZMTransportResponse *receivedResponse;
@@ -659,7 +659,7 @@ willPerformHTTPRedirection:response
     NSString *path = @"https://baz.example.com/1/";
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:path]];
     NSString *contentType = @"multipart/mixed; boundary=frontier";
-    ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType apiVersion:0];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
 

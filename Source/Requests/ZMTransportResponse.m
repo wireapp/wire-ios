@@ -1,6 +1,6 @@
 // 
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,25 +45,25 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 @implementation ZMTransportResponse
 
-- (instancetype)initWithHTTPURLResponse:(NSHTTPURLResponse *)HTTPResponse data:(NSData *)data error:(NSError *)error;
+- (instancetype)initWithHTTPURLResponse:(NSHTTPURLResponse *)HTTPResponse data:(NSData *)data error:(NSError *)error apiVersion:(int)apiVersion;
 {
     switch ([HTTPResponse zmContentTypeForBodyData:data]) {
         case ZMTransportResponseContentTypeImage: {
-            self = [self initWithImageData:data HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields];
+            self = [self initWithImageData:data HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields apiVersion:apiVersion];
             break;
         }
         case ZMTransportResponseContentTypeJSON: {
             id<ZMTransportData> responsePayload = [ZMTransportCodec interpretResponse:HTTPResponse data:data error:error];
-            self = [self initWithPayload:responsePayload HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields];
+            self = [self initWithPayload:responsePayload HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields apiVersion:apiVersion];
             break;
         }
         case ZMTransportResponseContentTypeEmpty: {
-            self = [self initWithPayload:nil HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields];
+            self = [self initWithPayload:nil HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields apiVersion:apiVersion];
             break;
         }
         default:
         {
-            self = [self initWithPayload:nil HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields];
+            self = [self initWithPayload:nil HTTPStatus:HTTPResponse.statusCode transportSessionError:error headers:HTTPResponse.allHeaderFields apiVersion:apiVersion];
             self.rawData = data;
             break;
         }
@@ -73,18 +73,18 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
     return self;
 }
 
-- (instancetype)initWithImageData:(NSData *)imageData HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers;
+- (instancetype)initWithImageData:(NSData *)imageData HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers apiVersion:(int)apiVersion;
 {
-    return [self initWithImageData:imageData payload:nil HTTPStatus:status networkError:error headers:headers];
+    return [self initWithImageData:imageData payload:nil HTTPStatus:status networkError:error headers:headers apiVersion:apiVersion];
 }
 
 
-- (instancetype)initWithPayload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers;
+- (instancetype)initWithPayload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers apiVersion:(int)apiVersion;
 {
-    return [self initWithImageData:nil payload:payload HTTPStatus:status networkError:error headers:headers];
+    return [self initWithImageData:nil payload:payload HTTPStatus:status networkError:error headers:headers apiVersion:apiVersion];
 }
 
-- (instancetype)initWithImageData:(NSData *)imageData payload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status networkError:(NSError *)error headers:(NSDictionary *)headers
+- (instancetype)initWithImageData:(NSData *)imageData payload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status networkError:(NSError *)error headers:(NSDictionary *)headers apiVersion:(int)apiVersion
 {
     self = [super init];
     if(self) {
@@ -94,26 +94,27 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
         _imageData = [imageData copy];
         _HTTPStatus = status;
         _headers = headers;
-        
+        _apiVersion = apiVersion;
+
         self.rawResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:status HTTPVersion:@"HTTP/1.1" headerFields:headers];
         self.rawData = self.imageData ?: [ZMTransportCodec encodedTransportData:self.payload];
     }
     return self;
 }
 
-+ (instancetype)responseWithPayload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers;
++ (instancetype)responseWithPayload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error headers:(NSDictionary *)headers apiVersion:(int)apiVersion;
 {
-    return [[self alloc] initWithPayload:payload HTTPStatus:status transportSessionError:error headers:headers];
+    return [[self alloc] initWithPayload:payload HTTPStatus:status transportSessionError:error headers:headers apiVersion:apiVersion];
 }
 
-+ (instancetype)responseWithPayload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error;
++ (instancetype)responseWithPayload:(id<ZMTransportData>)payload HTTPStatus:(NSInteger)status transportSessionError:(NSError *)error apiVersion:(int)apiVersion;
 {
-    return [self responseWithPayload:payload HTTPStatus:status transportSessionError:error headers:nil];
+    return [self responseWithPayload:payload HTTPStatus:status transportSessionError:error headers:nil apiVersion:apiVersion];
 }
 
-+ (instancetype)responseWithTransportSessionError:(NSError *)error;
++ (instancetype)responseWithTransportSessionError:(NSError *)error apiVersion:(int)apiVersion;
 {
-    return [self responseWithPayload:nil HTTPStatus:0 transportSessionError:error headers:nil];
+    return [self responseWithPayload:nil HTTPStatus:0 transportSessionError:error headers:nil apiVersion:apiVersion];
 }
 
 
