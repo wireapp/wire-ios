@@ -62,12 +62,12 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
     }
     
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest(for: apiVersion) : nil
     }
     
-    public override func nextRequest() -> ZMTransportRequest? {
-        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest() : nil
+    public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest(for: apiVersion) : nil
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
