@@ -36,15 +36,15 @@ public class AvailabilityRequestStrategy: AbstractRequestStrategy {
                                                          managedObjectContext: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return modifiedSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return modifiedSync.nextRequest(for: apiVersion)
     }
 
 }
 
 extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
 
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
+    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let selfUser = managedObject as? ZMUser else { return nil }
 
         let originalPath = "/broadcast/otr/messages"
@@ -62,7 +62,8 @@ extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
                                          method: .methodPOST,
                                          binaryData: dataAndMissingClientStrategy.data,
                                          type: protobufContentType,
-                                         contentDisposition: nil)
+                                         contentDisposition: nil,
+                                         apiVersion: apiVersion.rawValue)
 
         return ZMUpstreamRequest(keys: keys, transportRequest: request)
     }
@@ -89,7 +90,7 @@ extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
         return false
     }
 
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
+    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         return nil // we will never insert objects
     }
 

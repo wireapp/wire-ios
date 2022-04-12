@@ -106,7 +106,7 @@ class OTREntityTranscoderTests: MessagingTestBase {
                 "label": "unknown-client"
             ]
 
-            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 403, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // WHEN
             XCTAssertFalse(self.sut.shouldTryToResend(entity: self.mockEntity, afterFailureWithResponse: response))
@@ -122,7 +122,7 @@ class OTREntityTranscoderTests: MessagingTestBase {
             let payload = [
                 "deleted": ["\(self.otherUser.remoteIdentifier!)": [self.otherClient.remoteIdentifier!] ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
@@ -142,7 +142,7 @@ class OTREntityTranscoderTests: MessagingTestBase {
             let payload = [
                 "missing": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
@@ -166,7 +166,7 @@ class OTREntityTranscoderTests: MessagingTestBase {
             let payload = [
                 "missing": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
@@ -185,7 +185,7 @@ class OTREntityTranscoderTests: MessagingTestBase {
             let payload = [
                 "missing": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
@@ -204,7 +204,7 @@ class OTREntityTranscoderTests: MessagingTestBase {
             let payload = [
                 "redundant": ["\(user.remoteIdentifier!)": [clientId] ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // WHEN
             self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)

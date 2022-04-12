@@ -44,7 +44,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let action = ConnectToUserAction(userID: userID, domain: domain)
 
             // when
-            let request = try XCTUnwrap(self.sut.request(for: action))
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v0))
 
             // then
             XCTAssertEqual(request.path, "/connections")
@@ -57,16 +57,15 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     func testThatItCreatesARequestForConnectingToUser_Federated() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
-            self.sut.useFederationEndpoint = true
             let userID = UUID()
             let domain = self.owningDomain
             let action = ConnectToUserAction(userID: userID, domain: domain)
 
             // when
-            let request = try XCTUnwrap(self.sut.request(for: action))
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v1))
 
             // then
-            XCTAssertEqual(request.path, "/connections/\(domain)/\(userID.transportString())")
+            XCTAssertEqual(request.path, "/v1/connections/\(domain)/\(userID.transportString())")
             XCTAssertEqual(request.method, .methodPOST)
         }
     }
@@ -76,9 +75,9 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     func testThatItParsesAllKnownConnectionToUserErrorResponses() {
 
         let errorResponses: [(ConnectToUserError, ZMTransportResponse)] = [
-            (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit)),
-            (.noIdentity, responseFailure(code: 403, label: .noIdentity)),
-            (.missingLegalholdConsent, responseFailure(code: 403, label: .missingLegalholdConsent))
+            (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit, apiVersion: .v0)),
+            (.noIdentity, responseFailure(code: 403, label: .noIdentity, apiVersion: .v0)),
+            (.missingLegalholdConsent, responseFailure(code: 403, label: .missingLegalholdConsent, apiVersion: .v0))
         ]
 
         for (expectedError, response) in errorResponses {
@@ -96,7 +95,8 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -116,7 +116,8 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             let expectation = self.expectation(description: "Result Handler was called")
             action.onResult { (result) in
@@ -149,7 +150,8 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
 
             let response = ZMTransportResponse(payload: nil,
                                                httpStatus: 404,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)

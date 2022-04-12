@@ -31,8 +31,8 @@ class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractReques
 
     internal var mutableConfiguration: ZMStrategyConfigurationOption = []
 
-    override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "dummy/request")
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
     }
 
     override var configuration: ZMStrategyConfigurationOption {
@@ -45,8 +45,8 @@ class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrat
 
     internal var mutableConfiguration: ZMStrategyConfigurationOption = []
 
-    override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "dummy/request")
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
     }
 
     override var configuration: ZMStrategyConfigurationOption {
@@ -208,7 +208,7 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = synchronizationState
 
         // then
-        XCTAssertNotNil(sut.nextRequest(), "expected \(configuration) to pass", file: file, line: line)
+        XCTAssertNotNil(sut.nextRequest(for: .v0), "expected \(configuration) to pass", file: file, line: line)
     }
 
     func assertFail(withConfiguration configuration: ZMStrategyConfigurationOption,
@@ -224,7 +224,7 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = synchronizationState
 
         // then
-        XCTAssertNil(sut.nextRequest(), "expected \(configuration) to fail", file: file, line: line)
+        XCTAssertNil(sut.nextRequest(for: .v0), "expected \(configuration) to fail", file: file, line: line)
     }
 
     func testAbstractRequestStrategy() {

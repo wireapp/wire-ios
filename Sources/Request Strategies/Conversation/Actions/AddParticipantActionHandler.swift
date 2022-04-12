@@ -34,22 +34,22 @@ extension ConversationAddParticipantsError {
 
 }
 
-class AddParticipantActionHandler: ActionHandler<AddParticipantAction>, FederationAware {
+class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
-    var useFederationEndpoint: Bool = false
-
-    override func request(for action: AddParticipantAction) -> ZMTransportRequest? {
-        if useFederationEndpoint {
-            return federatedRequest(for: action)
-        } else {
-            return nonFederatedRequest(for: action)
+    override func request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+        switch apiVersion {
+        case .v0:
+            return nonFederatedRequest(for: action, apiVersion: apiVersion)
+        case .v1:
+            return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
 
-    func nonFederatedRequest(for action: AddParticipantAction) -> ZMTransportRequest? {
+    func nonFederatedRequest(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
         guard
+            apiVersion == .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.remoteIdentifier?.transportString(),
             let users: [ZMUser] = action.userIDs.existingObjects(in: context),
@@ -63,13 +63,14 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction>, Federati
         }
 
         let path = "/conversations/\(conversationID)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData)
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
-    func federatedRequest(for action: AddParticipantAction) -> ZMTransportRequest? {
+    func federatedRequest(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
         guard
+            apiVersion > .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.qualifiedID,
             let users: [ZMUser] = action.userIDs.existingObjects(in: context),
@@ -84,7 +85,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction>, Federati
         }
         let path = "/conversations/\(conversationID.uuid)/members/v2"
 
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData)
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: AddParticipantAction) {

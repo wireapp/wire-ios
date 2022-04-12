@@ -21,7 +21,7 @@ import Foundation
 public protocol EntityTranscoder: AnyObject {
     associatedtype Entity: Hashable
 
-    func request(forEntity entity: Entity) -> ZMTransportRequest?
+    func request(forEntity entity: Entity, apiVersion: APIVersion) -> ZMTransportRequest?
 
     func request(forEntity entity: Entity, didCompleteWithResponse response: ZMTransportResponse)
 

@@ -36,7 +36,6 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
                                              applicationStatus: mockApplicationStatus,
                                              clientRegistrationDelegate: mockClientRegistrationStatus)
-        sut.useFederationEndpoint = true
 
         syncMOC.performGroupedBlockAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -68,8 +67,8 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             self.sut.processEventsWhileInBackground([event])
 
             // then
-            let request = try XCTUnwrap(self.sut.nextRequest())
-            XCTAssertEqual(request.path, "/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
+            let request = try XCTUnwrap(self.sut.nextRequest(for: .v1))
+            XCTAssertEqual(request.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
         }
     }
 
@@ -77,13 +76,12 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         try syncMOC.performGroupedAndWait { _ in
             let conversationID = self.oneToOneConversation.remoteIdentifier!.transportString()
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
-            self.sut.useFederationEndpoint = false
 
             // when
             self.sut.processEventsWhileInBackground([event])
 
             // then
-            let request = try XCTUnwrap(self.sut.nextRequest())
+            let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
             XCTAssertEqual(request.path, "/conversations/\(conversationID)/otr/messages")
         }
     }

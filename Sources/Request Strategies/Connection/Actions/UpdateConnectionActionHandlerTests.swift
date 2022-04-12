@@ -44,7 +44,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                                                 newStatus: .cancelled)
 
             // when
-            let request = try XCTUnwrap(self.sut.request(for: action))
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v0))
 
             // then
             XCTAssertEqual(request.path, "/connections/\(userID.transportString())")
@@ -57,16 +57,15 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func testThatItCreatesARequestForUpdatingConnection_Federated() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
-            self.sut.useFederationEndpoint = true
             let userID = self.oneToOneConversation.connection!.to.qualifiedID!
             let action = UpdateConnectionAction(connection: self.oneToOneConversation.connection!,
                                                 newStatus: .cancelled)
 
             // when
-            let request = try XCTUnwrap(self.sut.request(for: action))
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v1))
 
             // then
-            XCTAssertEqual(request.path, "/connections/\(userID.domain)/\(userID.uuid.transportString())")
+            XCTAssertEqual(request.path, "/v1/connections/\(userID.domain)/\(userID.uuid.transportString())")
             XCTAssertEqual(request.method, .methodPUT)
             let payload = Payload.ConnectionUpdate(request)
             XCTAssertEqual(payload?.status, .cancelled)
@@ -78,10 +77,10 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     func testThatItParsesAllKnownConnectionUpdateErrorResponses() {
 
         let errorResponses: [(UpdateConnectionError, ZMTransportResponse)] = [
-            (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit)),
-            (.noIdentity, responseFailure(code: 403, label: .noIdentity)),
-            (.missingLegalholdConsent, responseFailure(code: 403, label: .missingLegalholdConsent)),
-            (.notConnected, responseFailure(code: 403, label: .notConnected))
+            (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit, apiVersion: .v0)),
+            (.noIdentity, responseFailure(code: 403, label: .noIdentity, apiVersion: .v0)),
+            (.missingLegalholdConsent, responseFailure(code: 403, label: .missingLegalholdConsent, apiVersion: .v0)),
+            (.notConnected, responseFailure(code: 403, label: .notConnected, apiVersion: .v0))
         ]
 
         for (expectedError, response) in errorResponses {
@@ -100,7 +99,8 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -120,7 +120,8 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             let expectation = self.expectation(description: "Result Handler was called")
             action.onResult { (result) in
@@ -152,7 +153,8 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
 
             let response = ZMTransportResponse(payload: nil,
                                                httpStatus: 404,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)

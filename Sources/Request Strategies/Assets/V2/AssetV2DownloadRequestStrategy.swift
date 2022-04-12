@@ -86,8 +86,8 @@ import WireTransport
         }
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return self.assetDownstreamObjectSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
@@ -129,7 +129,7 @@ import WireTransport
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage {
 
             let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
@@ -145,7 +145,7 @@ import WireTransport
                 self.managedObjectContext.enqueueDelayedSave()
             }
 
-            if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage) {
+            if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage, apiVersion: apiVersion) {
                 request.add(taskCreationHandler)
                 request.add(completionHandler)
                 request.add(progressHandler)

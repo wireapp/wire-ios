@@ -30,22 +30,22 @@ extension ConversationRemoveParticipantError {
 
 }
 
-class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction>, FederationAware {
+class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
-    var useFederationEndpoint: Bool = false
-
-    override func request(for action: RemoveParticipantAction) -> ZMTransportRequest? {
-        if useFederationEndpoint {
-            return federatedRequest(for: action)
-        } else {
-            return nonFederatedRequest(for: action)
+    override func request(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+        switch apiVersion {
+        case .v0:
+            return nonFederatedRequest(for: action, apiVersion: apiVersion)
+        case .v1:
+            return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
 
-    func nonFederatedRequest(for action: RemoveParticipantAction) -> ZMTransportRequest? {
+    func nonFederatedRequest(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
         guard
+            apiVersion == .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.remoteIdentifier?.transportString(),
             let user = ZMUser.existingObject(for: action.userID, in: context),
@@ -57,13 +57,14 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction>, Fe
         }
 
         let path = "/conversations/\(conversationID)/\(user.isServiceUser ? "bots" : "members")/\(userID)"
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil)
+        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    func federatedRequest(for action: RemoveParticipantAction) -> ZMTransportRequest? {
+    func federatedRequest(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
         guard
+            apiVersion > .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.qualifiedID,
             let user: ZMUser = ZMUser.existingObject(for: action.userID, in: context),
@@ -75,7 +76,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction>, Fe
         }
         let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
 
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil)
+        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: RemoveParticipantAction) {

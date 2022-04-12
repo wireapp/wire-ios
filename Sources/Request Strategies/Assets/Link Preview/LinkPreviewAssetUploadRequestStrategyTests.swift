@@ -116,7 +116,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
     }
 
     func completeRequest(_ message: ZMClientMessage, request: ZMTransportRequest?, assetId: String, token: String, domain: String) {
-        let response = ZMTransportResponse(payload: ["key": assetId, "token": token, "domain": domain] as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+        let response = ZMTransportResponse(payload: ["key": assetId, "token": token, "domain": domain] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         _ = sut.updateUpdatedObject(message, requestUserInfo: nil, response: response, keysToParse: [ZMClientMessage.linkPreviewStateKey])
     }
 }
@@ -135,7 +135,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNotNil(request)
@@ -154,7 +154,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
 
             // WHEN
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -170,7 +170,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -186,7 +186,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -201,7 +201,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN & THEN
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: .v0))
         }
     }
 
@@ -227,7 +227,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.syncMOC.saveOrRollback()
 
             self.process(self.sut, message: message)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // WHEN
             self.completeRequest(message, request: request, assetId: assetId, token: token, domain: domain)
@@ -258,7 +258,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.syncMOC.saveOrRollback()
 
             self.process(self.sut, message: message)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             let assetId = "id123"
             let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
@@ -301,7 +301,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.syncMOC.saveOrRollback()
 
             self.process(self.sut, message: message)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             XCTAssertTrue(message.isEphemeral)
 

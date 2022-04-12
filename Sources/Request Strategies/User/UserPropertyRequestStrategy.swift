@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTransport
 
 private enum UserProperty: CaseIterable {
     case readReceiptsEnabled
@@ -55,14 +56,14 @@ extension UserProperty {
         self = property
     }
 
-    func upstreamRequest(newValue: ZMTransportData) -> ZMTransportRequest {
+    func upstreamRequest(newValue: ZMTransportData, apiVersion: APIVersion) -> ZMTransportRequest {
         let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
-        return ZMTransportRequest(path: path, method: .methodPUT, payload: newValue)
+        return ZMTransportRequest(path: path, method: .methodPUT, payload: newValue, apiVersion: apiVersion.rawValue)
     }
 
-    func downstreamRequest() -> ZMTransportRequest {
+    func downstreamRequest(apiVersion: APIVersion) -> ZMTransportRequest {
         let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
-        return ZMTransportRequest(getFromPath: path)
+        return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
     typealias  UpdateType = (source: UpdateSource, method: UpdateMethod)
@@ -150,19 +151,19 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
                                                   groupQueue: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate {
             downstreamSync.readyForNextRequestIfNotBusy()
-            return downstreamSync.nextRequest()
+            return downstreamSync.nextRequest(for: apiVersion)
         } else {
-            return modifiedSync.nextRequest()
+            return modifiedSync.nextRequest(for: apiVersion)
         }
     }
 }
 
 extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
 
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
+    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let selfUser = managedObject as? ZMUser else { return nil }
 
         let allProperties = Set(UserProperty.allCases.map(\.propertyName))
@@ -178,7 +179,7 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
 
         switch property {
         case .readReceiptsEnabled:
-            request = property.upstreamRequest(newValue: property.transportValue(for: selfUser))
+            request = property.upstreamRequest(newValue: property.transportValue(for: selfUser), apiVersion: apiVersion)
         }
 
         return ZMUpstreamRequest(keys: keys, transportRequest: request)
@@ -206,7 +207,7 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
         return false
     }
 
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
+    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         return nil // we will never insert objects
     }
 
@@ -261,7 +262,7 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
         return self.fetchedProperty
     }
 
-    public func request(for sync: ZMSingleRequestSync) -> ZMTransportRequest? {
+    public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if propertiesToFetch.isEmpty {
             initializePropertiesToFetch()
         }
@@ -270,7 +271,7 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
             return nil
         }
 
-        return property.downstreamRequest()
+        return property.downstreamRequest(apiVersion: apiVersion)
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

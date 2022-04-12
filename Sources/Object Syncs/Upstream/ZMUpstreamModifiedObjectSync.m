@@ -196,9 +196,9 @@ ZM_EMPTY_ASSERTING_INIT();
     [self.updatedObjects addPossibleObjectToSynchronize:mo];
 }
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 {
-    return [self processNextUpdate];
+    return [self processNextUpdateWithAPIVersion:apiVersion];
 }
 
 - (void)addUpdatedObject:(ZMManagedObject *)mo
@@ -237,7 +237,7 @@ ZM_EMPTY_ASSERTING_INIT();
     return objectWithKeys;
 }
 
-- (ZMTransportRequest *)processNextUpdate
+- (ZMTransportRequest *)processNextUpdateWithAPIVersion:(APIVersion)apiVersion
 {
     ZMObjectWithKeys *objectWithKeys = [self nextObjectToSync];
     if (objectWithKeys == nil) {
@@ -251,7 +251,7 @@ ZM_EMPTY_ASSERTING_INIT();
         }
     }
 
-    ZMUpstreamRequest *request = [transcoder requestForUpdatingObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync];
+    ZMUpstreamRequest *request = [transcoder requestForUpdatingObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync apiVersion:apiVersion];
     [request.transportRequest setDebugInformationTranscoder:transcoder];
     
     if (request == nil) {

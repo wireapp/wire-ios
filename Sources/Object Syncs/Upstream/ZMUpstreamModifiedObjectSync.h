@@ -50,7 +50,7 @@
                         keysToSync:(NSArray<NSString *> *)keysToSync
               managedObjectContext:(NSManagedObjectContext *)context;
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end
 

@@ -18,7 +18,7 @@
 import Foundation
 
 class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
-    override func request(for action: UpdateRoleAction) -> ZMTransportRequest? {
+    override func request(for action: UpdateRoleAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let role = Role.existingObject(for: action.roleID, in: context),
@@ -37,7 +37,7 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
 
         let path = "/conversations/\(conversationId.transportString())/members/\(userId.transportString())"
 
-        let request = ZMTransportRequest(path: path, method: .methodPUT, payload: payloadString as ZMTransportData)
+        let request = ZMTransportRequest(path: path, method: .methodPUT, payload: payloadString as ZMTransportData, apiVersion: apiVersion.rawValue)
         return request
     }
 

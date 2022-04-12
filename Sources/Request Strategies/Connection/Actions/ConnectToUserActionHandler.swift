@@ -17,37 +17,25 @@
 
 import Foundation
 
-class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction>, FederationAware {
+class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
 
-    var useFederationEndpoint: Bool = false
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    override func request(for action: ActionHandler<ConnectToUserAction>.Action) -> ZMTransportRequest? {
-        if useFederationEndpoint {
-            return federatedRequest(for: action)
-        } else {
-            return nonFederatedRequest(for: action)
+    override func request(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+        switch apiVersion {
+        case .v0:
+            return nonFederatedRequest(for: action, apiVersion: apiVersion)
+        case .v1:
+            return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
 
-    func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action) -> ZMTransportRequest? {
-        guard
-            let domain  = action.domain
-        else {
-            Logging.network.error("Can't create request for connection request")
-            return nil
-        }
-
-        return ZMTransportRequest(path: "/connections/\(domain)/\(action.userID.transportString())",
-                                  method: .methodPOST,
-                                  payload: nil)
-    }
-
-    func nonFederatedRequest(for action: ActionHandler<ConnectToUserAction>.Action) -> ZMTransportRequest? {
+    func nonFederatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         let payload = Payload.ConnectionRequest(userID: action.userID, name: "default")
 
         guard
+            apiVersion == .v0,
             let payloadData = payload.payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
@@ -57,8 +45,24 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction>, Federation
 
         return ZMTransportRequest(path: "/connections",
                                   method: .methodPOST,
-                                  payload: payloadAsString as ZMTransportData)
+                                  payload: payloadAsString as ZMTransportData,
+                                  apiVersion: apiVersion.rawValue)
 
+    }
+
+    func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard
+            apiVersion > .v0,
+            let domain  = action.domain ?? APIVersion.domain
+        else {
+            Logging.network.error("Can't create request for connection request")
+            return nil
+        }
+
+        return ZMTransportRequest(path: "/connections/\(domain)/\(action.userID.transportString())",
+                                  method: .methodPOST,
+                                  payload: nil,
+                                  apiVersion: apiVersion.rawValue)
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<ConnectToUserAction>.Action) {

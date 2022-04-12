@@ -89,7 +89,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             self.sut.upstreamSync?.objectsDidChange(messageSet)
 
             // when
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // then
             XCTAssertNotNil(request)
@@ -105,7 +105,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             self.sut.upstreamSync?.objectsDidChange(messageSet)
 
             // when
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // then
             XCTAssertNil(request)
@@ -121,7 +121,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             self.sut.upstreamSync?.objectsDidChange(messageSet)
 
             // when
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // then
             XCTAssertNil(request)
@@ -136,7 +136,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             self.sut.upstreamSync?.objectsDidChange(messageSet)
 
             // when
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // then
             XCTAssertNil(request)
@@ -154,7 +154,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
                 self.sut.upstreamSync?.objectsDidChange(messageSet)
 
                 // when
-                let request = self.sut.nextRequest()
+                let request = self.sut.nextRequest(for: .v0)
 
                 // then
                 XCTAssertNil(request)
@@ -172,7 +172,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
+            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("Request is nil") }
             request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
         }
 
@@ -203,7 +203,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // when
             request?.updateProgress(expectedProgress)
@@ -223,10 +223,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createImageMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -242,10 +242,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createFileMessage() // has two assets (file and thumbnail)
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -262,10 +262,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createImageMessage()
             let messageAsset: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageAsset)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": expectedAssetId] as ZMTransportData, httpStatus: 201, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: ["key": expectedAssetId] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -281,10 +281,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createImageMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: 0))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

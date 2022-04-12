@@ -70,7 +70,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(conversationSet)
 
             // THEN
-            XCTAssertEqual(self.sut.nextRequest()?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+            XCTAssertEqual(self.sut.nextRequest(for: .v0)?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
         }
     }
 
@@ -84,10 +84,10 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             let conversationSet: Set<NSManagedObject> = [conversation]
             self.sut.objectsDidChange(conversationSet)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -107,11 +107,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
 
             self.sut.objectsDidChange(conversationSet)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
             let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [self.otherUser.remoteIdentifier.transportString(): [clientID]], deleted: nil, redundant: nil))
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -137,11 +137,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
 
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
             let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [self.otherUser.remoteIdentifier.transportString(): [existingClientID]], deleted: nil, redundant: nil))
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -166,11 +166,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
 
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
             let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [:], deleted: nil, redundant: nil))
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -192,11 +192,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(clientSet)
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
             let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [selfUser.remoteIdentifier.transportString(): [selfClientID]], deleted: nil, redundant: nil))
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 

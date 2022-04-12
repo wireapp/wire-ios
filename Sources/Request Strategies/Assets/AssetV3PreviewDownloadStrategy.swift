@@ -21,17 +21,7 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
-@objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, FederationAware {
-
-    public var useFederationEndpoint: Bool {
-        get {
-            requestFactory.useFederationEndpoint
-        }
-
-        set {
-            requestFactory.useFederationEndpoint = newValue
-        }
-    }
+@objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     private let requestFactory = AssetDownloadRequestFactory()
 
@@ -77,8 +67,8 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         }
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return downstreamSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return downstreamSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
@@ -121,14 +111,14 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
 extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage,
             let asset = assetClientMessage.underlyingMessage?.assetData,
             assetClientMessage.version >= 3 {
 
             let remote = asset.preview.remote
             let token = remote.hasAssetToken ? remote.assetToken : nil
-            if let request = requestFactory.requestToGetAsset(withKey: remote.assetID, token: token, domain: remote.assetDomain) {
+            if let request = requestFactory.requestToGetAsset(withKey: remote.assetID, token: token, domain: remote.assetDomain, apiVersion: apiVersion) {
                 request.add(ZMCompletionHandler(on: self.managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 })

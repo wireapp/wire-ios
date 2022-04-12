@@ -22,6 +22,6 @@
 /// A request strategy decides what is the next request to send
 @protocol RequestStrategy <NSObject>
 
-- (nullable ZMTransportRequest *)nextRequest;
+- (nullable ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end

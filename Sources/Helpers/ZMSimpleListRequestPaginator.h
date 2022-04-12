@@ -43,7 +43,7 @@
                  includeClientID:(BOOL)includeClientID
                       transcoder:(id<ZMSimpleListRequestPaginatorSync>)transcoder;
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 /// this will cause the fetch to restart at the nextPaginatedRequest
 - (void)resetFetching;

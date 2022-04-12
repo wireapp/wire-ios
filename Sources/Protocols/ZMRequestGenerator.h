@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+@import WireTransport;
 
 @class ZMTransportRequest;
 
@@ -23,7 +24,7 @@
 
 @protocol ZMRequestGenerator <NSObject>
 
-- (ZMTransportRequest * __nullable)nextRequest;
+- (ZMTransportRequest * __nullable)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end
 
@@ -39,6 +40,6 @@
 
 @interface NSArray (ZMRequestGeneratorSource)
 
-- (ZMTransportRequest * __nullable)nextRequest;
+- (ZMTransportRequest * __nullable)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end

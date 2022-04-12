@@ -63,7 +63,7 @@
                             filter:(NSPredicate *)filter
               managedObjectContext:(NSManagedObjectContext *)moc NS_DESIGNATED_INITIALIZER;
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @property (nonatomic, readonly) NSPredicate *predicateForObjectsToDownload;
 @property (nonatomic, readonly) NSEntityDescription *entity;
@@ -74,7 +74,7 @@
 
 @protocol ZMDownstreamTranscoder <NSObject>
 
-- (ZMTransportRequest *)requestForFetchingObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync>)downstreamSync;
+- (ZMTransportRequest *)requestForFetchingObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync>)downstreamSync apiVersion:(APIVersion)apiVersion;
 - (void)deleteObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 - (void)updateObject:(ZMManagedObject *)object withResponse:(ZMTransportResponse *)response downstreamSync:(id<ZMObjectSync>)downstreamSync;
 

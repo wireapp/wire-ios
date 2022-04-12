@@ -61,16 +61,16 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
         status = .fetching("")
     }
 
-    func nextRequest() -> ZMTransportRequest? {
+    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard request == nil, case .fetching(let start) = status else {
             return nil
         }
 
         switch method {
         case .get:
-            self.request = getRequest(startReference: start)
+            self.request = getRequest(startReference: start, apiVersion: apiVersion)
         case .post:
-            self.request = postRequest(startReference: start)
+            self.request = postRequest(startReference: start, apiVersion: apiVersion)
         }
 
         request?.add(ZMCompletionHandler(on: context, block: { (response) in
@@ -96,7 +96,7 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
         return request
     }
 
-    private func getRequest(startReference: String) -> ZMTransportRequest? {
+    private func getRequest(startReference: String, apiVersion: APIVersion) -> ZMTransportRequest? {
         var queryItems = [URLQueryItem(name: "size", value: String(pageSize))]
 
         if !startReference.isEmpty {
@@ -110,10 +110,10 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
             return nil
         }
 
-        return ZMTransportRequest(getFromPath: path)
+        return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
-    private func postRequest(startReference: String) -> ZMTransportRequest? {
+    private func postRequest(startReference: String, apiVersion: APIVersion) -> ZMTransportRequest? {
         let payload = Payload.PaginationStatus(pagingState: startReference, size: pageSize)
 
         guard
@@ -123,7 +123,7 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
             return nil
         }
 
-        return ZMTransportRequest(path: basePath, method: .methodPOST, payload: payloadAsString as ZMTransportData)
+        return ZMTransportRequest(path: basePath, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
 }

@@ -54,7 +54,7 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             ]
 
             // WHEN
-            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
+            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue), clientRegistrationDelegate: MockClientRegistrationStatus())
             self.syncMOC.saveOrRollback()
 
             // THEN
@@ -91,7 +91,7 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             ]
 
             // WHEN
-            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
+            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue), clientRegistrationDelegate: MockClientRegistrationStatus())
             self.syncMOC.saveOrRollback()
 
             // THEN
@@ -116,7 +116,7 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
             ]
 
             // WHEN
-            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
+            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue), clientRegistrationDelegate: MockClientRegistrationStatus())
             moc.saveOrRollback()
 
             // THEN

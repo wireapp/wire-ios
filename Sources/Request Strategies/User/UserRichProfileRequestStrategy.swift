@@ -36,17 +36,17 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
                                                          managedObjectContext: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return modifiedSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return modifiedSync.nextRequest(for: apiVersion)
     }
 }
 
 extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         guard let user = object as? ZMUser else { fatal("Object \(object.classForCoder) is not ZMUser") }
         guard let remoteIdentifier = user.remoteIdentifier else { fatal("User does not have remote identifier") }
         let path = "/users/\(remoteIdentifier)/rich-info"
-        return ZMTransportRequest(path: path, method: .methodGET, payload: nil)
+        return ZMTransportRequest(path: path, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

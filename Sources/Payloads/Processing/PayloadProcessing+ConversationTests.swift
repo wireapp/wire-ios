@@ -20,12 +20,17 @@ import XCTest
 
 class PayloadProcessing_ConversationTests: MessagingTestBase {
 
+    override func tearDown() {
+        APIVersion.isFederationEnabled = false
+        super.tearDown()
+    }
+
     // MARK: Group conversations
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncMOC.zm_isFederationEnabled = true
+            APIVersion.isFederationEnabled = true
             let qualifiedID = self.groupConversation.qualifiedID!
             let conversation = Payload.Conversation(qualifiedID: qualifiedID,
                                                     type: BackendConversationType.group.rawValue)
@@ -42,7 +47,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_DoesntUpdatesQualifiedID_WhenFederationIsDisabled() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncMOC.zm_isFederationEnabled = false
+            APIVersion.isFederationEnabled = false
             let qualifiedID = self.groupConversation.qualifiedID!
             let conversation = Payload.Conversation(qualifiedID: qualifiedID,
                                                     id: qualifiedID.uuid,
@@ -322,7 +327,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() throws {
         syncMOC.performGroupedAndWait { syncMOC in
             // given
-            self.syncMOC.zm_isFederationEnabled = true
+            APIVersion.isFederationEnabled = true
             self.otherUser.connection?.conversation = nil
 
             let conversationID = UUID()
@@ -350,7 +355,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreateConversation_OneToOne_DoesntAssignDomain_WhenFederationIsDisabled() throws {
         syncMOC.performGroupedAndWait { syncMOC in
             // given
-            self.syncMOC.zm_isFederationEnabled = false
+            APIVersion.isFederationEnabled = false
             self.otherUser.connection?.conversation = nil
 
             let conversationID = UUID()
@@ -490,7 +495,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_CreatesConversation() throws {
         try syncMOC.performGroupedAndWait { syncMOC in
             // given
-            self.syncMOC.zm_isFederationEnabled = true
+            APIVersion.isFederationEnabled = true
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
@@ -506,7 +511,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_DoesntAssignDomain_WhenFederationIsDisabled() throws {
         try syncMOC.performGroupedAndWait { syncMOC in
             // given
-            self.syncMOC.zm_isFederationEnabled = false
+            APIVersion.isFederationEnabled = false
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 

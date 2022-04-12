@@ -25,6 +25,12 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
 
+    var apiVersion: APIVersion! {
+        didSet {
+            APIVersion.current = apiVersion
+        }
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -35,12 +41,15 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         sut = ConversationRequestStrategy(withManagedObjectContext: syncMOC,
                                           applicationStatus: mockApplicationStatus,
                                           syncProgress: mockSyncProgress)
+
+        apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
+        apiVersion = nil
 
         super.tearDown()
     }
@@ -50,6 +59,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             let domain = "example.com"
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.domain = domain
@@ -57,10 +67,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
 
             // then
-            XCTAssertEqual(request.path, "/conversations/\(domain)/\(conversationID.transportString())")
+            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
             XCTAssertEqual(request.method, .methodGET)
         }
     }
@@ -75,7 +85,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
@@ -86,6 +96,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToCreateConversationIsGenerated_WhenRemoteIdentifierIsNotSet() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group
@@ -95,11 +106,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
             let payload = Payload.NewConversation(request)
 
             // then
-            XCTAssertEqual(request.path, "/conversations")
+            XCTAssertEqual(request.path, "/v1/conversations")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertEqual(payload?.name, conversation.userDefinedName)
             XCTAssertEqual(Set(payload!.qualifiedUsers!), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
@@ -109,6 +120,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToUpdateConversationNameIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.userDefinedName = "Hello World"
@@ -117,11 +129,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
             let payload = Payload.UpdateConversationName(request)
 
             // then
-            XCTAssertEqual(request.path, "/conversations/\(domain)/\(conversationID.transportString())/name")
+            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/name")
             XCTAssertEqual(request.method, .methodPUT)
             XCTAssertEqual(payload?.name, self.groupConversation.userDefinedName)
         }
@@ -130,6 +142,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToUpdateArchiveStatusIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.isArchived = true
@@ -138,11 +151,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
             let payload = Payload.UpdateConversationStatus(request)
 
             // then
-            XCTAssertEqual(request.path, "/conversations/\(domain)/\(conversationID.transportString())/self")
+            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
             XCTAssertEqual(request.method, .methodPUT)
             XCTAssertEqual(payload?.archived, true)
         }
@@ -151,6 +164,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToUpdateMutedStatusIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             let domain = self.groupConversation.domain!
             let conversationID = self.groupConversation.remoteIdentifier!
             self.groupConversation.mutedMessageTypes = .all
@@ -159,11 +173,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
             let payload = Payload.UpdateConversationStatus(request)
 
             // then
-            XCTAssertEqual(request.path, "/conversations/\(domain)/\(conversationID.transportString())/self")
+            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
             XCTAssertEqual(request.method, .methodPUT)
             XCTAssertEqual(payload?.mutedStatus, Int(MutedMessageTypes.all.rawValue))
         }
@@ -174,35 +188,38 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatRequestToListConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             self.mockSyncProgress.currentSyncPhase = .fetchingConversations
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
 
             // then
-            XCTAssertEqual(request.path, "/conversations/list-ids")
+            XCTAssertEqual(request.path, "/v1/conversations/list-ids")
         }
     }
 
     func testThatRequestToListConversationsIsNotGenerated_WhenFetchIsAlreadyInProgress() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.apiVersion = .v1
             self.mockSyncProgress.currentSyncPhase = .fetchingConversations
-            _ = self.sut.nextRequest()!
+            _ = self.sut.nextRequest(for: self.apiVersion)!
 
             // when
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     func testThatRequestToFetchConversationsIsGenerated_DuringFetchingConversationsSyncPhase() {
         // given
+        apiVersion = .v1
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
         syncMOC.performGroupedBlockAndWait {
             // when
-            let fetchRequest = self.sut.nextRequest()!
+            let fetchRequest = self.sut.nextRequest(for: self.apiVersion)!
 
             // then
             guard let fetchPayload = Payload.QualifiedUserIDList(fetchRequest) else {
@@ -218,6 +235,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
+        self.apiVersion = .v1
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -232,6 +250,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenThereIsNoConversationsToFetch() {
         // given
+        self.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -245,6 +264,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
+        self.apiVersion = .v1
         startSlowSync()
 
         // when
@@ -258,6 +278,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationMembershipStatusIsQueried_WhenNotFoundDuringSlowSyncPhase() {
         // given
+        self.apiVersion = .v1
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -272,6 +293,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
+        self.apiVersion = .v1
         let conversationID = QualifiedID(uuid: UUID(), domain: owningDomain)
         startSlowSync()
         fetchConversationListDuringSlowSync()
@@ -292,11 +314,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
-        let response = responseFailure(code: 403, label: .unknown)
+        let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
 
         // when
-        fetchConversation(groupConversation, with: response)
-        fetchConversation(oneToOneConversation, with: response)
+        fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
+        fetchConversation(oneToOneConversation, with: response, apiVersion: apiVersion)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -307,10 +329,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationIsDeleted_WhenResponseIs_404() {
         // given
-        let response = responseFailure(code: 404, label: .notFound)
+        let response = responseFailure(code: 404, label: .notFound, apiVersion: apiVersion)
 
         // when
-        fetchConversation(groupConversation, with: response)
+        fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -320,10 +342,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {
         // given
-        let response = responseFailure(code: 403, label: .unknown)
+        let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
 
         // when
-        fetchConversation(groupConversation, with: response)
+        fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
@@ -980,14 +1002,14 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func fetchConversation(_ conversation: ZMConversation, with response: ZMTransportResponse) {
+    func fetchConversation(_ conversation: ZMConversation, with response: ZMTransportResponse, apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // given
             conversation.needsToBeUpdatedFromBackend = true
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([conversation])) }
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: apiVersion)!
             request.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -998,7 +1020,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             let qualifiedConversationID = QualifiedID(uuid: self.groupConversation.remoteIdentifier!,
                                                                   domain: self.groupConversation.domain!)
 
-            let listRequest = self.sut.nextRequest()!
+            let listRequest = self.sut.nextRequest(for: self.apiVersion)!
             guard let listPayload = Payload.PaginationStatus(listRequest) else {
                 return XCTFail("List payload is invalid")
             }
@@ -1010,7 +1032,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func fetchConversationListDuringSlowSyncWithEmptyResponse() {
         syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
             guard let listPayload = Payload.PaginationStatus(request) else {
                 return XCTFail("List payload is invalid")
             }
@@ -1022,8 +1044,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func fetchConversationListDuringSlowSyncWithPermanentError() {
         syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest()!
-            request.complete(with: self.responseFailure(code: 404, label: .noEndpoint))
+            let request = self.sut.nextRequest(for: self.apiVersion)!
+            request.complete(with: self.responseFailure(code: 404, label: .noEndpoint, apiVersion: .v1))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -1033,7 +1055,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
 
             // when
-            let request = self.sut.nextRequest()!
+            let request = self.sut.nextRequest(for: self.apiVersion)!
 
             guard let payload = Payload.QualifiedUserIDList(request) else {
                 return XCTFail("Payload is invalid")
@@ -1054,7 +1076,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: 200,
-                                           transportSessionError: nil)
+                                           transportSessionError: nil,
+                                           apiVersion: apiVersion.rawValue)
 
         return response
     }
@@ -1069,7 +1092,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: 200,
-                                           transportSessionError: nil)
+                                           transportSessionError: nil,
+                                           apiVersion: apiVersion.rawValue)
 
         return response
     }

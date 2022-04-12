@@ -30,10 +30,7 @@ extension Payload.UserProfile {
     ///                            is a full update, any missing fields will be removed from
     ///                            the entity.
     func updateUserProfile(for user: ZMUser, authoritative: Bool = true) {
-
-        let isFederationEnabled = user.managedObjectContext?.zm_isFederationEnabled == true
-
-        if let qualifiedID = qualifiedID, isFederationEnabled {
+        if let qualifiedID = qualifiedID, APIVersion.isFederationEnabled {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
             precondition(user.domain == nil || user.domain == qualifiedID.domain)
 

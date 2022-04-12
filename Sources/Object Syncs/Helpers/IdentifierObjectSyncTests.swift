@@ -26,12 +26,10 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
 
     var fetchLimit: Int = 1
 
-    var isAvailable: Bool = true
-
     var lastRequestedIdentifiers: Set<UUID> = Set()
-    func request(for identifiers: Set<UUID>) -> ZMTransportRequest? {
+    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         lastRequestedIdentifiers = identifiers
-        return ZMTransportRequest(getFromPath: "/dummy/path")
+        return ZMTransportRequest(getFromPath: "/dummy/path", apiVersion: APIVersion.v0.rawValue)
     }
 
     var lastReceivedResponse: (response: ZMTransportResponse, identifiers: Set<UUID>)?
@@ -65,7 +63,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // when
         sut.sync(identifiers: [uuid])
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertTrue(transcoder.lastRequestedIdentifiers.contains(uuid))
@@ -77,11 +75,11 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // when
         sut.sync(identifiers: [uuid])
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
         XCTAssertTrue(transcoder.lastRequestedIdentifiers.contains(uuid))
 
         // then
-        XCTAssertNil(sut.nextRequest())
+        XCTAssertNil(sut.nextRequest(for: .v0))
     }
 
     func testThatItRespectsTheFetchLimit_WhenBelowNumberOfAvailableIdentifiers() {
@@ -94,7 +92,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
         // when
         sut.sync(identifiers: [uuid1])
         sut.sync(identifiers: [uuid2])
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(transcoder.lastRequestedIdentifiers.count, 1)
@@ -110,7 +108,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
         // when
         sut.sync(identifiers: [uuid1])
         sut.sync(identifiers: [uuid2])
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(transcoder.lastRequestedIdentifiers.count, 2)
@@ -123,8 +121,8 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // when
         sut.sync(identifiers: [uuid])
-        let request = sut.nextRequest()
-        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil))
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -140,13 +138,13 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // when
         sut.sync(identifiers: [uuid])
-        var request = sut.nextRequest()
+        var request = sut.nextRequest(for: .v0)
 
         for failureCode in failuresCodes {
-            request?.complete(with: ZMTransportResponse(transportSessionError: NSError(domain: ZMTransportSessionErrorDomain, code: failureCode.rawValue, userInfo: nil)))
+            request?.complete(with: ZMTransportResponse(transportSessionError: NSError(domain: ZMTransportSessionErrorDomain, code: failureCode.rawValue, userInfo: nil), apiVersion: APIVersion.v0.rawValue))
             transcoder.lastRequestedIdentifiers = Set()
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            request = sut.nextRequest()
+            request = sut.nextRequest(for: .v0)
 
             // then
             XCTAssertTrue(transcoder.lastRequestedIdentifiers.contains(uuid))
@@ -159,12 +157,12 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // when
         sut.sync(identifiers: [uuid])
-        let request = sut.nextRequest()
-        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil))
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertNil(sut.nextRequest())
+        XCTAssertNil(sut.nextRequest(for: .v0))
     }
 
     func testThatItDoesNotRetryToSyncIdentifierstOnPermanentError() {
@@ -173,12 +171,12 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // when
         sut.sync(identifiers: [uuid])
-        let request = sut.nextRequest()
-        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil))
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertNil(sut.nextRequest())
+        XCTAssertNil(sut.nextRequest(for: .v0))
     }
 
 }
