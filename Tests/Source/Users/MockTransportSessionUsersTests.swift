@@ -53,7 +53,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!],
             thirdUser.identifier: [redunduntClientId]] as ZMTransportData
         
-        let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .methodPOST)
+        let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .methodPOST, apiVersion: .v0)
         XCTAssertEqual(response.httpStatus, 200)
         
         let expectedUsers: NSArray = [selfUser.identifier, otherUser.identifier, thirdUser.identifier]
@@ -82,7 +82,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let userId = "1234"
         
         // when
-        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET)
+        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0)
         
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -97,7 +97,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
         
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0) else { XCTFail(); return }
         
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -120,7 +120,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
         
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0) else { XCTFail(); return }
         
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -151,7 +151,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
         
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET, apiVersion: .v0) else { XCTFail(); return }
         
         // then
         XCTAssertEqual(response.httpStatus, 403)

@@ -34,33 +34,33 @@
 - (ZMTransportResponse *)processAssetRequest:(ZMTransportRequest *)request;
 {
     if([request matchesWithPath:@"/conversations/*/assets/*" method:ZMMethodGET]) {
-        return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:3]];
+        return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     }
     else if([request matchesWithPath:@"/assets/*" method:ZMMethodGET]) {
-        return [self processAssetGetRequestInConversation:request.queryParameters[@"conv_id"] asset:[request RESTComponentAtIndex:1]];
+        return [self processAssetGetRequestInConversation:request.queryParameters[@"conv_id"] asset:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
     else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodGET]) {
-        return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:4]];
+        return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:4] apiVersion:request.apiVersion];
     }
-    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:request.apiVersion];
 }
 
-- (ZMTransportResponse *)sampleImageResponse {
+- (ZMTransportResponse *)sampleImageResponseWithApiVersion:(APIVersion)apiVersion {
     NSData *data =  [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"medium"withExtension:@"jpg"]];
-    return [[ZMTransportResponse alloc ] initWithImageData:data HTTPStatus:200 transportSessionError:nil headers:nil];
+    return [[ZMTransportResponse alloc ] initWithImageData:data HTTPStatus:200 transportSessionError:nil headers:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processAssetGetRequestInConversation:(NSString *)conversationID asset:(NSString *)identifier
+- (ZMTransportResponse *)processAssetGetRequestInConversation:(NSString *)conversationID asset:(NSString *)identifier apiVersion:(APIVersion)apiVersion
 {
     MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:identifier];
     if([asset.conversation isEqualToString:conversationID]) {
-        return [[ZMTransportResponse alloc ] initWithImageData:asset.data HTTPStatus:200 transportSessionError:nil headers:nil];
+        return [[ZMTransportResponse alloc ] initWithImageData:asset.data HTTPStatus:200 transportSessionError:nil headers:nil apiVersion:apiVersion];
     }
     else {
-        return [ZMTransportResponse responseWithPayload:@{@"error":@"mismatching conversation"} HTTPStatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"error":@"mismatching conversation"} HTTPStatus:404 transportSessionError:nil apiVersion:apiVersion];
     }
         
-    return [ZMTransportResponse responseWithPayload:@{@"error":@"not found"} HTTPStatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:@{@"error":@"not found"} HTTPStatus:404 transportSessionError:nil apiVersion:apiVersion];
 }
 
 #pragma mark - Asset v3
@@ -68,16 +68,16 @@
 - (ZMTransportResponse *)processAssetV3Request:(ZMTransportRequest *)request
 {
     if ([request matchesWithPath:@"/assets/v3" method:ZMMethodPOST]) {
-        return [self processAssetV3PostWithMultipartData:[request multipartBodyItemsFromRequestOrFile]];
+        return [self processAssetV3PostWithMultipartData:[request multipartBodyItemsFromRequestOrFile] apiVersion:request.apiVersion];
     } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodGET]) {
-        return [self processAssetV3GetWithKey:[request RESTComponentAtIndex:2]];
+        return [self processAssetV3GetWithKey:[request RESTComponentAtIndex:2] apiVersion:request.apiVersion];
     } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodDELETE]) {
-        return [self processAssetV3DeleteWithKey:[request RESTComponentAtIndex:2]];
+        return [self processAssetV3DeleteWithKey:[request RESTComponentAtIndex:2] apiVersion:request.apiVersion];
     }
     return nil;
 }
 
-- (ZMTransportResponse *)processAssetV3PostWithMultipartData:(NSArray *)multipart;
+- (ZMTransportResponse *)processAssetV3PostWithMultipartData:(NSArray *)multipart apiVersion:(APIVersion)apiVersion;
 {    
     if (multipart.count == 2) {
         
@@ -103,20 +103,20 @@
             payload[@"token"] = asset.token;
         }
         
-        return [[ZMTransportResponse alloc] initWithPayload:[payload copy] HTTPStatus:201 transportSessionError:nil headers:@{@"Location" : [NSString stringWithFormat:@"/asset/v3/%@", asset.identifier]}];
+        return [[ZMTransportResponse alloc] initWithPayload:[payload copy] HTTPStatus:201 transportSessionError:nil headers:@{@"Location" : [NSString stringWithFormat:@"/asset/v3/%@", asset.identifier]} apiVersion:apiVersion];
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key;
+- (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key apiVersion:(APIVersion)apiVersion;
 {
     MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:key];
     if (asset != nil) {
         
-        return [[ZMTransportResponse alloc] initWithImageData:asset.data HTTPStatus:200 transportSessionError:nil headers:nil];
+        return [[ZMTransportResponse alloc] initWithImageData:asset.data HTTPStatus:200 transportSessionError:nil headers:nil apiVersion:apiVersion];
     }
-    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:apiVersion];
 }
 
 #pragma mark - Asset v4
@@ -124,11 +124,11 @@
 - (ZMTransportResponse *)processAssetV4Request:(ZMTransportRequest *)request
 {
     if ([request matchesWithPath:@"/assets/v4/*" method:ZMMethodPOST]) {
-        return [self processAssetV4PostWithDomain:[request RESTComponentAtIndex:2] multipart:[request multipartBodyItemsFromRequestOrFile]];
+        return [self processAssetV4PostWithDomain:[request RESTComponentAtIndex:2] multipart:[request multipartBodyItemsFromRequestOrFile] apiVersion:request.apiVersion];
     } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodGET]) {
-        return [self processAssetV4GetWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3]];
+        return [self processAssetV4GetWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodDELETE]) {
-        return [self processAssetV4DeleteWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3]];
+        return [self processAssetV4DeleteWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     }
     return nil;
 }

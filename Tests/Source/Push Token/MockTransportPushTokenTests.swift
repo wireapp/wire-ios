@@ -31,10 +31,10 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
     func testThatWeCanDeletePushToken() {
         // given
         let token = "abcdef"
-        _ = response(forPayload: payload(token: token), path: "/push/tokens", method: .methodPOST)
+        _ = response(forPayload: payload(token: token), path: "/push/tokens", method: .methodPOST, apiVersion: .v0)
 
         // when
-        let result = response(forPayload: nil, path:"/push/tokens/\(token)", method: .methodDELETE)
+        let result = response(forPayload: nil, path:"/push/tokens/\(token)", method: .methodDELETE, apiVersion: .v0)
 
         // then
         XCTAssertEqual(result?.httpStatus, 204)
@@ -45,7 +45,7 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
         let token = "abcdef"
 
         // when
-        let result = response(forPayload: nil, path:"/push/tokens/\(token)", method: .methodDELETE)
+        let result = response(forPayload: nil, path:"/push/tokens/\(token)", method: .methodDELETE, apiVersion: .v0)
 
         // then
         XCTAssertEqual(result?.httpStatus, 404)
@@ -54,13 +54,13 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
     func testThatWeCanDeleteMultiplePushTokens() {
         // given
         let token1 = "abcdef"
-        _ = response(forPayload: payload(token: token1), path: "/push/tokens", method: .methodPOST)
+        _ = response(forPayload: payload(token: token1), path: "/push/tokens", method: .methodPOST, apiVersion: .v0)
         let token2 = "bcdes"
-        _ = response(forPayload: payload(token: token2), path: "/push/tokens", method: .methodPOST)
+        _ = response(forPayload: payload(token: token2), path: "/push/tokens", method: .methodPOST, apiVersion: .v0)
 
         // when
-        let result1 = response(forPayload: nil, path:"/push/tokens/\(token1)", method: .methodDELETE)
-        let result2 = response(forPayload: nil, path:"/push/tokens/\(token2)", method: .methodDELETE)
+        let result1 = response(forPayload: nil, path:"/push/tokens/\(token1)", method: .methodDELETE, apiVersion: .v0)
+        let result2 = response(forPayload: nil, path:"/push/tokens/\(token2)", method: .methodDELETE, apiVersion: .v0)
 
         // then
         XCTAssertEqual(result1?.httpStatus, 204)
@@ -71,11 +71,11 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
         // given
         let payload1 = payload(token: "some token")
         let payload2 = payload(token: "other token")
-        _ = response(forPayload: payload1, path: "/push/tokens", method: .methodPOST)
-        _ = response(forPayload: payload2, path: "/push/tokens", method: .methodPOST)
+        _ = response(forPayload: payload1, path: "/push/tokens", method: .methodPOST, apiVersion: .v0)
+        _ = response(forPayload: payload2, path: "/push/tokens", method: .methodPOST, apiVersion: .v0)
 
         // when
-        let result = response(forPayload: nil, path: "/push/tokens", method: .methodGET)
+        let result = response(forPayload: nil, path: "/push/tokens", method: .methodGET, apiVersion: .v0)
 
         // then
         XCTAssertEqual(result?.httpStatus, 200)

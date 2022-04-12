@@ -52,20 +52,20 @@
 
 @interface MockTransportSessionTests (Utility)
 
-- (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path;
-- (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path;
+- (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path apiVersion:(APIVersion)apiVersion;
+- (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 
-- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType;
+- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType apiVersion:(APIVersion)apiVersion;
 
-- (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method;
-- (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method;
+- (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion;
+- (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion;
 
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesUser:(MockUser *)user isSelfUser:(BOOL)isSelfUser failureRecorder:(ZMTFailureRecorder *)fr;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesConnection:(MockConnection *)connection;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesConversation:(MockConversation *)conversation;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict selfUserHasGroupRole:(NSString *)role;
 - (void)checkThatTransportData:(id <ZMTransportData>)data firstOtherUserHasGroupRole:(NSString *)role;
-- (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method handler:(ZMCompletionHandler *)handler;
+- (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion handler:(ZMCompletionHandler *)handler;
 - (TestPushChannelEvent *)popEvent;
 - (TestPushChannelEvent *)popEventMatchingWithBlock:(BOOL(^)(TestPushChannelEvent *event))block;
 -(void)createAndOpenPushChannel;

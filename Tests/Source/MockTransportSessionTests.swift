@@ -20,12 +20,12 @@ import Foundation
 
 extension MockTransportSessionTests {
     
-    func response(forAssetData assetData: Data, contentType: String, path: String) -> ZMTransportResponse? {
+    func response(forAssetData assetData: Data, contentType: String, path: String, apiVersion: APIVersion) -> ZMTransportResponse? {
         let expectation = self.expectation(description: "Got an asset response")
         
         var response: ZMTransportResponse?
         let result = sut.mockedTransportSession().attemptToEnqueueSyncRequest {
-            let request = ZMTransportRequest.multipartRequest(withPath: path, imageData: assetData, metaData: [:], mediaContentType: contentType)
+            let request = ZMTransportRequest.multipartRequest(withPath: path, imageData: assetData, metaData: [:], mediaContentType: contentType, apiVersion: APIVersion.v0.rawValue)
             let completion = ZMCompletionHandler(on: self.fakeSyncContext) {
                 response = $0
                 expectation.fulfill()

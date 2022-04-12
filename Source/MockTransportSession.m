@@ -82,7 +82,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
-- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
+- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(APIVersion)apiVersion;
 
 /// Completes a request and removes from all pending requests lists
 - (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response;
@@ -133,6 +133,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.pushTokens = [NSMutableDictionary dictionary];
         _nonCompletedRequests = [NSMutableArray array];
         [MockRole createConversationRolesWithContext:self.managedObjectContext];
+
+        self.supportedAPIVersions = [[NSArray alloc] initWithObjects:@0, @1, nil];
+        self.domain = @"wire.com";
+        self.federation = false;
+        self.isAPIVersionEndpointAvailable = true;
     }
     return self;
 }
@@ -190,7 +195,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (void)expireAllBlockedRequests;
 {
-    ZMTransportResponse *emptyResponse = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil]];
+    ZMTransportResponse *emptyResponse = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil] apiVersion:0];
     NSArray *nonCompleted = [self.nonCompletedRequests copy];
     for(ZMTransportRequest *request in nonCompleted) {
         [self completeRequestAndRemoveFromLists:request response:emptyResponse];
@@ -278,12 +283,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return self.generatedPushEvents;
 }
 
-- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
+- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(APIVersion)apiVersion;
 {
     NSDictionary *payload = @{
                               @"label":reason
                               };
-    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:code transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:code transportSessionError:nil apiVersion:apiVersion];
 }
 
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
@@ -326,7 +331,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     ZMTransportRequest *request = self.taskIdentifierMapping[@(taskIdentifier.identifier)];
     if (nil != request) {
-        ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError];
+        ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError apiVersion:request.apiVersion];
         [self completeRequestAndRemoveFromLists:request response:response];
     }
 }
@@ -413,7 +418,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         dispatch_after(dispatchTime, dispatch_get_main_queue(), ^(void){
             [self.managedObjectContext performGroupedBlock:^{
                 ZM_STRONG(self);
-                ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil]];
+                ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil] apiVersion:request.apiVersion];
                 response.dispatchGroup = self.requestGroup;
                 [self completeRequestAndRemoveFromLists:request response:response];
                 [self.requestGroup leave];
@@ -463,6 +468,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/teams", @"processTeamsRequest:"],
              @[@"/broadcast", @"processBroadcastRequest:"],
              @[@"/providers", @"processServicesProvidersRequest:"],
+             @[@"/api-version", @"processAPIVersionRequest:"],
              @[@"/verification-code/send", @"processVerificationCodeSendRequest:"]
              ];
 }
@@ -509,7 +515,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         }
     } else {
         LogNetwork(@"<--- Response to %@: 404 (request not handled)", request.path);
-        response = [self errorResponseWithCode:404 reason:@"no-endpoint"];
+        response = [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
         if(completionHandler) {
             completionHandler(response);
         }

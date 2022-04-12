@@ -65,25 +65,25 @@
            || (email != nil && password == nil)
            || (phone != nil && phoneCode == nil && invitationCode == nil))
         {
-            return [self errorResponseWithCode:400 reason:@"missing-key"];
+            return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
         
         // check if it's already there
         if(email != nil && [self userWithEmail:email] != nil) {
-            return [self errorResponseWithCode:409 reason:@"key-exists"];
+            return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
         }
         if(phone != nil && [self userWithPhone:phone] != nil) {
-            return [self errorResponseWithCode:409 reason:@"key-exists"];
+            return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
         }
         
         if (phone != nil) {
             if (![self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone])
             {
-                return [self errorResponseWithCode:404 reason:@"invalid-key"];
+                return [self errorResponseWithCode:404 reason:@"invalid-key" apiVersion:request.apiVersion];
             }
             
             if(![phoneCode isEqualToString:self.phoneVerificationCodeForRegistration]) {
-                return [self errorResponseWithCode:404 reason:@"invalid-credentials"];
+                return [self errorResponseWithCode:404 reason:@"invalid-credentials" apiVersion:request.apiVersion];
             }
         }
         
@@ -127,10 +127,10 @@
             self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
         }
 
-        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]}];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]} apiVersion:request.apiVersion];
     }
     
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 /// Handles "/activate"
@@ -146,36 +146,36 @@
         BOOL dryrun = ((NSNumber *)[userDetails optionalNumberForKey:@"dryrun"]).boolValue;
         
         if(code == nil && (phone == nil || email == nil)) {
-            return [self errorResponseWithCode:400 reason:@"missing-key"];
+            return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
 
         if([self.emailsWaitingForVerificationForRegistration containsObject:email]){
             if(![code isEqualToString:self.emailActivationCode]) {
-                return [self errorResponseWithCode:404 reason:@"not-found"];
+                return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
             }
             else {
                 if(!dryrun) {
                     [self.emailsWaitingForVerificationForRegistration removeObject:email];
                 }
-                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
 
             }
         }
         else if([self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone]) {
             if(![code isEqualToString:self.phoneVerificationCodeForRegistration]) {
-                return [self errorResponseWithCode:404 reason:@"not-found"];
+                return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
             }
             else {
                 if(!dryrun) {
                     [self.phoneNumbersWaitingForVerificationForRegistration removeObject:phone];
                 }
-                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
 
             }
         }
         else if([self.phoneNumbersWaitingForVerificationForProfile containsObject:phone]) {
             if(![code isEqualToString:self.phoneVerificationCodeForUpdatingProfile]) {
-                return [self errorResponseWithCode:404 reason:@"not-found"];
+                return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
             }
             else {
                 if(!dryrun) {
@@ -183,15 +183,15 @@
                     self.selfUser.phone = phone;
                     [self saveAndCreatePushChannelEventForSelfUser];
                 }
-                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
                 
             }
         }
         else {
-            return [self errorResponseWithCode:404 reason:@"not-found"];
+            return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
         }
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 
@@ -205,7 +205,7 @@
         NSString *phone = [userDetails optionalStringForKey:@"phone"];
         
         if(email == nil && phone == nil) {
-            return [self errorResponseWithCode:400 reason:@"missing-key"];
+            return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
         
         if(email != nil) {
@@ -216,7 +216,7 @@
                    || existingUser != self.selfUser
                    )
                ) {
-                return [self errorResponseWithCode:409 reason:@"key-exists"];
+                return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
             }
 
             [self.emailsWaitingForVerificationForRegistration addObject:email];
@@ -224,16 +224,16 @@
         }
         else if(phone != nil) {
             if([self userWithPhone:phone] != nil) {
-                return [self errorResponseWithCode:409 reason:@"key-exists"];
+                return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
             }
             
             [self.phoneNumbersWaitingForVerificationForRegistration addObject:phone];
         }
         
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
     }
     
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 @end

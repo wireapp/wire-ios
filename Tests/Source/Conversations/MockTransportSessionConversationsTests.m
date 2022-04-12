@@ -43,7 +43,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -64,7 +64,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     [self checkThatTransportData:response.payload selfUserHasGroupRole:@"wire_admin"];
@@ -85,7 +85,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     [self checkThatTransportData:response.payload selfUserHasGroupRole:@"wire_member"];
@@ -111,7 +111,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     [self checkThatTransportData:response.payload firstOtherUserHasGroupRole:@"wire_admin"];
@@ -136,7 +136,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     [self checkThatTransportData:response.payload firstOtherUserHasGroupRole:@"wire_member"];
@@ -158,7 +158,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 403);
@@ -176,7 +176,7 @@
     
     // WHEN
     NSString *path = [@"/conversations/" stringByAppendingPathComponent:NSUUID.createUUID.transportString];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -213,7 +213,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:nil path:@"/conversations/" method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/conversations/" method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -265,7 +265,7 @@
     
     NSDictionary *payload = @{ @"users": @[user1ID, user2ID] };
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/conversations/" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/conversations/" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -315,7 +315,7 @@
                                @"conversation_role" : @"wire_member"
                                };
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/conversations/" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/conversations/" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -366,7 +366,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", oneOnOneConversationID, path]];
-    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -385,7 +385,7 @@
     AssertDateIsRecent([responsePayload dateFor:@"time"]);
     
     path = @"/notifications";
-    ZMTransportResponse *eventsResponse = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *eventsResponse = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(eventsResponse);
@@ -453,7 +453,7 @@
     
     // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
-    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST apiVersion:0];
     
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
@@ -522,7 +522,7 @@
     // WHEN
     NSString *requestBasePath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     NSString *requestPath = [NSString stringWithFormat:@"%@?report_missing=%@", requestBasePath, otherUser.identifier];
-    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST apiVersion:0];
     
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
@@ -584,7 +584,7 @@
     // WHEN
     NSString *requestBasePath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
     NSString *requestPath = [NSString stringWithFormat:@"%@?report_missing=%@", requestBasePath, otherUser.identifier];
-    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST apiVersion:0];
     
     XCTAssertNotNil(response);
     XCTAssertNil(response.transportSessionError);
@@ -645,7 +645,7 @@
     
     // WHEN
     NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
-    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:requestPath method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -951,7 +951,7 @@
     NSString *path = [@"/conversations/" stringByAppendingString:conversationID];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
@@ -976,7 +976,7 @@
     NSString *path = [[@"/conversations/" stringByAppendingString:conversation.identifier] stringByAppendingString:@"/receipt-mode"];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
@@ -1010,7 +1010,7 @@
     
     NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", groupConversationID, @"members", user1ID]];
     
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodDELETE];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodDELETE apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -1052,7 +1052,7 @@
                               };
     
     //WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -1103,7 +1103,7 @@
                               };
     
     //WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -1151,7 +1151,7 @@
                               };
 
     //WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -1192,7 +1192,7 @@
                               @"users": @[user3ID.lowercaseString]
                               };
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -1228,7 +1228,7 @@
     
     // WHEN
     NSString *path = @"/conversations/ids";
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -1270,7 +1270,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/conversations?ids=%@", [requestedConversationIDs componentsJoinedByString:@","]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -1315,7 +1315,7 @@
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
@@ -1347,7 +1347,7 @@
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
@@ -1379,7 +1379,7 @@
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{
@@ -1414,7 +1414,7 @@
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT apiVersion:0];
     
     // THEN
     [self.sut.managedObjectContext performBlockAndWait:^{

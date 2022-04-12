@@ -175,7 +175,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
+    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST apiVersion:0]; // this will simulate the user logging in
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
@@ -217,7 +217,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 }
 
 
-- (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path;
+- (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
     
@@ -225,10 +225,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     ZMTransportRequestGenerator postGenerator = ^ZMTransportRequest*(void) {
         ZMTransportRequest *request;
         if ([path containsString:@"conversations"]) {
-            request = [ZMTransportRequest multipartRequestWithPath:path imageData:imageData metaData:contentDisposition];
+            request = [ZMTransportRequest multipartRequestWithPath:path imageData:imageData metaData:contentDisposition apiVersion:apiVersion];
         }
         else {
-            request = [ZMTransportRequest postRequestWithPath:path imageData:imageData contentDisposition:contentDisposition];
+            request = [ZMTransportRequest postRequestWithPath:path imageData:imageData contentDisposition:contentDisposition apiVersion:apiVersion];
         }
         
         [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *r) {
@@ -245,7 +245,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType;
+- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType apiVersion:(APIVersion)apiVersion;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a file upload response"];
     __block ZMTransportResponse *response;
@@ -273,7 +273,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         NSURL *fileURL = [directory URLByAppendingPathComponent:NSUUID.createUUID.transportString].filePathURL;
         NSData *multipartData = [NSData multipartDataWithItems:items boundary:@"frontier"];
         XCTAssertTrue([multipartData writeToFile:fileURL.path atomically:YES]);
-        ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType];
+        ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType apiVersion:apiVersion];
         [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *r) {
             response = r;
             [expectation fulfill];
@@ -289,13 +289,13 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path;
+- (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
     
     __block ZMTransportResponse *response;
     ZMTransportRequestGenerator postGenerator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:path imageData:imageData metaData:metaData metaDataContentType:@"application/x-protobuf" mediaContentType:imageMediaType];
+        ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:path imageData:imageData metaData:metaData metaDataContentType:@"application/x-protobuf" mediaContentType:imageMediaType apiVersion:apiVersion];
         
         [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *r) {
             response = r;
@@ -311,7 +311,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method
+- (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
     
@@ -324,7 +324,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         [expectation fulfill];
     }];
     
-    ZMTransportRequestGenerator generator = [self createGeneratorForPayload:payload path:path method:method handler:handler];
+    ZMTransportRequestGenerator generator = [self createGeneratorForPayload:payload path:path method:method apiVersion:apiVersion handler:handler];
     
     ZMTransportEnqueueResult* result = [mockedTransportSession attemptToEnqueueSyncRequestWithGenerator:generator];
     
@@ -334,7 +334,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method
+- (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
     
@@ -347,7 +347,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         [expectation fulfill];
     }];
     
-    ZMTransportRequestGenerator generator = [self createGeneratorForProtobufData:data path:path method:method handler:handler];
+    ZMTransportRequestGenerator generator = [self createGeneratorForProtobufData:data path:path method:method apiVersion:apiVersion handler:handler];
     
     ZMTransportEnqueueResult* result = [mockedTransportSession attemptToEnqueueSyncRequestWithGenerator:generator];
     
@@ -357,7 +357,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method handler:(ZMCompletionHandler *)handler
+- (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion handler:(ZMCompletionHandler *)handler
 {
     switch (method) {
         case ZMMethodGET:
@@ -370,17 +370,17 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     }
     
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:method payload:payload];
+        ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:method payload:payload apiVersion:apiVersion];
         [request addCompletionHandler:handler];
         return request;
     };
     return generator;
 }
 
-- (ZMTransportRequestGenerator)createGeneratorForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method handler:(ZMCompletionHandler *)handler
+- (ZMTransportRequestGenerator)createGeneratorForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion handler:(ZMCompletionHandler *)handler
 {
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:@"application/x-protobuf" contentDisposition:nil];
+        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:@"application/x-protobuf" contentDisposition:nil apiVersion:apiVersion];
         [request addCompletionHandler:handler];
         return request;
     };
