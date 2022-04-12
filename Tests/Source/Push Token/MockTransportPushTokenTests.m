@@ -34,7 +34,7 @@
                               @"transport" : @"APNS_VOIP"};
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);
@@ -49,7 +49,7 @@
                               @"transport" : @"APNS"};
 
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, (NSInteger) 201);
@@ -71,7 +71,7 @@
         // WHEN
         __block ZMTransportResponse *response;
         [self performIgnoringZMLogError:^{
-            response = [self responseForPayload:p2 path:@"/push/tokens" method:ZMMethodPOST];
+            response = [self responseForPayload:p2 path:@"/push/tokens" method:ZMMethodPOST apiVersion:0];
         }];
         
         // THEN
@@ -93,7 +93,7 @@
                               @"transport" : @"sfkhhksdf"};
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);

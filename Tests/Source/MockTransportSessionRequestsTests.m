@@ -41,11 +41,11 @@
     self.sut.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NOT_USED(request);
         receivedRequest = request;
-        return [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:expectedStatus transportSessionError:expectedError];
+        return [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:expectedStatus transportSessionError:expectedError apiVersion:0];
     };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:requestPath method:requestMethod];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:requestPath method:requestMethod apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -82,7 +82,7 @@
     };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:requestPath method:requestMethod];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:requestPath method:requestMethod apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -110,7 +110,7 @@
         completed = YES;
     }];
     
-    ZMTransportRequestGenerator generator = [self createGeneratorForPayload:nil path:@"/foo" method:ZMMethodGET handler:handler];
+    ZMTransportRequestGenerator generator = [self createGeneratorForPayload:nil path:@"/foo" method:ZMMethodGET apiVersion:0 handler:handler];
     
     ZMTransportEnqueueResult* result = [self.sut.mockedTransportSession attemptToEnqueueSyncRequestWithGenerator:generator];
     WaitForAllGroupsToBeEmpty(0.2);
@@ -149,7 +149,7 @@
     NSString *path = [NSString pathWithComponents:@[@"/", @"assets", [NSString stringWithFormat:@"%@?conv_id=%@", assetID, convID]]];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -202,7 +202,7 @@
             XCTFail(@"Shouldn't respond");
         }];
         
-        ZMTransportRequestGenerator generator = [self createGeneratorForPayload:payload path:path method:ZMMethodPOST handler:handler];
+        ZMTransportRequestGenerator generator = [self createGeneratorForPayload:payload path:path method:ZMMethodPOST apiVersion:0 handler:handler];
         
         ZMTransportEnqueueResult *result = [self.sut.mockedTransportSession attemptToEnqueueSyncRequestWithGenerator:generator];
         
@@ -218,7 +218,7 @@
         self.sut.doNotRespondToRequests = NO;
         
         NSString *path = @"/notifications";
-        ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+        ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
         
         // THEN
         XCTAssertNotNil(response);
@@ -254,7 +254,7 @@
     }];
     
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodGET payload:nil];
+        ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodGET payload:nil apiVersion:0];
         [request addCompletionHandler:handler];
         return request;
     };
@@ -296,7 +296,7 @@
     }];
     
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodGET payload:nil];
+        ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodGET payload:nil apiVersion:0];
         [request expireAfterInterval:0.2]; //This is the important bit
         [request addCompletionHandler:handler];
         return request;
@@ -338,9 +338,9 @@
 - (void)testThatTheListOfRequestsContainsTheRequestsSent
 {
     // GIVEN
-    ZMTransportRequest *req1 = [ZMTransportRequest requestGetFromPath:@"/this/path"];
-    ZMTransportRequest *req2 = [ZMTransportRequest requestWithPath:@"/foo/bar" method:ZMMethodDELETE payload:nil];
-    ZMTransportRequest *req3 = [ZMTransportRequest requestWithPath:@"/arrrr" method:ZMMethodPUT payload:@{@"name":@"Johnny"}];
+    ZMTransportRequest *req1 = [ZMTransportRequest requestGetFromPath:@"/this/path" apiVersion:0];
+    ZMTransportRequest *req2 = [ZMTransportRequest requestWithPath:@"/foo/bar" method:ZMMethodDELETE payload:nil apiVersion:0];
+    ZMTransportRequest *req3 = [ZMTransportRequest requestWithPath:@"/arrrr" method:ZMMethodPUT payload:@{@"name":@"Johnny"} apiVersion:0];
     
     NSArray *requests = @[req1, req2, req3];
     
@@ -357,9 +357,9 @@
 - (void)testThatResetRequestDiscardsPreviousRequests
 {
     // GIVEN
-    ZMTransportRequest *req1 = [ZMTransportRequest requestGetFromPath:@"/this/path"];
-    ZMTransportRequest *req2 = [ZMTransportRequest requestWithPath:@"/foo/bar" method:ZMMethodDELETE payload:nil];
-    ZMTransportRequest *req3 = [ZMTransportRequest requestWithPath:@"/arrrr" method:ZMMethodPUT payload:@{@"name":@"Johnny"}];
+    ZMTransportRequest *req1 = [ZMTransportRequest requestGetFromPath:@"/this/path" apiVersion:0];
+    ZMTransportRequest *req2 = [ZMTransportRequest requestWithPath:@"/foo/bar" method:ZMMethodDELETE payload:nil apiVersion:0];
+    ZMTransportRequest *req3 = [ZMTransportRequest requestWithPath:@"/arrrr" method:ZMMethodPUT payload:@{@"name":@"Johnny"} apiVersion:0];
     for(ZMTransportRequest *request in @[req1, req2]) {
         [self sendRequestToMockTransportSession:request];
     }

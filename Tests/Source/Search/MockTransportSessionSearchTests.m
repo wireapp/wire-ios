@@ -61,7 +61,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=AA&l=200&d=1"]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     
     // THEN
@@ -131,7 +131,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=aa&l=3&d=1"]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     
     // THEN
@@ -194,7 +194,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=User&l=200&d=1"]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     
     // THEN

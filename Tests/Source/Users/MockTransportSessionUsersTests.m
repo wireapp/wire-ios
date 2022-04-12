@@ -94,7 +94,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/users/?ids=%@,%@,%@", [user1ID lowercaseString], [user2ID uppercaseString], user3ID];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -171,7 +171,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/users/?handles=%@,%@,%@", [user1Handle lowercaseString], [user2Handle uppercaseString], user3Handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -209,7 +209,7 @@
     
     // WHEN
     NSString *path = @"/self";
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -236,7 +236,7 @@
     
     // WHEN
     NSString *path = @"/self";
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -264,7 +264,7 @@
     
     // WHEN
     NSString *path = [@"/users/" stringByAppendingPathComponent:user.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -307,7 +307,7 @@
     
     // WHEN
     NSString *path = [@"/users/" stringByAppendingPathComponent:user1ID];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -341,7 +341,7 @@
     
     // WHEN
     NSString *path = [@"/users/" stringByAppendingPathComponent:userID];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -382,7 +382,7 @@
     
     // WHEN
     NSString *path = [@"/users/" stringByAppendingPathComponent:user1ID];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -418,7 +418,7 @@
     
     // WHEN
     NSString *path = [@"/users/" stringByAppendingPathComponent:user1ID];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -455,7 +455,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/self" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/self" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -487,7 +487,7 @@
     NSString *email = @"foo@bar.bar";
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"email":email} path:@"/self/email" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"email":email} path:@"/self/email" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -504,7 +504,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/email" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/email" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
@@ -523,7 +523,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"email":email} path:@"/self/email" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"email":email} path:@"/self/email" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -540,7 +540,7 @@
     NSString *password = @"12%$#%";
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"new_password":password} path:@"/self/password" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"new_password":password} path:@"/self/password" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -556,7 +556,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/passwprd" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/passwprd" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -574,7 +574,7 @@
     NSString *password = @"12%$#%";
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"old_password":password, @"new_password":password} path:@"/self/password" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"old_password":password, @"new_password":password} path:@"/self/password" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 403);
@@ -593,7 +593,7 @@
     NSString *password = @"12%$#%";
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"old_password":formerPassword, @"new_password":password} path:@"/self/password" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"old_password":formerPassword, @"new_password":password} path:@"/self/password" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -610,14 +610,14 @@
     NSString *phone = @"+99123245";
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/self/phone" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/self/phone" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertTrue([self.sut.phoneNumbersWaitingForVerificationForProfile containsObject:phone]);
     
     // and when
-    response = [self responseForPayload:@{@"phone":phone, @"code":self.sut.phoneVerificationCodeForUpdatingProfile} path:@"/activate" method:ZMMethodPOST];
+    response = [self responseForPayload:@{@"phone":phone, @"code":self.sut.phoneVerificationCodeForUpdatingProfile} path:@"/activate" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -637,7 +637,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/self/phone" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/self/phone" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -653,7 +653,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/phone" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/phone" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
@@ -669,7 +669,7 @@
     NSString *handle = @"aaa12";
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"handle":handle} path:@"/self/handle" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"handle":handle} path:@"/self/handle" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -691,7 +691,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"handle":handle} path:@"/self/handle" method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:@{@"handle":handle} path:@"/self/handle" method:ZMMethodPUT apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -713,7 +713,7 @@
     
     // WHEN
     NSString *path = [@"/users/handles/" stringByAppendingPathComponent:handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -732,7 +732,7 @@
     
     // WHEN
     NSString *path = [@"/users/handles/" stringByAppendingPathComponent:handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodHEAD];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodHEAD apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -747,7 +747,7 @@
     
     // WHEN
     NSString *path = [@"/users/handles/" stringByAppendingPathComponent:handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -769,7 +769,7 @@
 
     // WHEN
     NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -785,7 +785,7 @@
 
     // WHEN
     NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -800,7 +800,7 @@
 
     // WHEN
     NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 422);
@@ -823,7 +823,7 @@
                               @"return" : @1,
                               @"handles" : @[existingHandle, nonExistingHandle]
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -846,7 +846,7 @@
     NSDictionary *payload = @{
                               @"handles" : @[existingHandle, nonExistingHandle]
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
@@ -866,7 +866,7 @@
     NSDictionary *payload = @{
                               @"return" : @12
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
@@ -887,7 +887,7 @@
                               @"return" : @1,
                               @"handles" : @[existingHandle]
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/handles/" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);

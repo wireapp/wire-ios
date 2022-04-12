@@ -48,7 +48,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         let data = self.verySmallJPEGData()
         
         // when
-        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v3")
+        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v3", apiVersion: .v0)
         XCTAssertNotNil(response)
         
         // then
@@ -65,7 +65,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
     
     func testDownloadingNonexistingAssetRequestV3() {
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v3/12345", method: .methodGET)
+        let response = self.response(forPayload: nil, path: "/assets/v3/12345", method: .methodGET, apiVersion: .v0)
         
         // then
         XCTAssertNotNil(response)
@@ -84,7 +84,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .methodGET)
+        let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .methodGET, apiVersion: .v0)
         
         // then
         XCTAssertNotNil(response)
@@ -93,7 +93,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
     
     func testDeletingNonexistingAssetRequestV3() {
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v3/12345", method: .methodDELETE)
+        let response = self.response(forPayload: nil, path: "/assets/v3/12345", method: .methodDELETE, apiVersion: .v0)
         
         // then
         XCTAssertNotNil(response)
@@ -111,7 +111,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertNotNil(asset)
         
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .methodDELETE)
+        let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .methodDELETE, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
 
@@ -125,7 +125,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
 
         // when
         let domain = UUID.create().transportString()
-        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v4/\(domain)")
+        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v4/\(domain)", apiVersion: .v0)
         XCTAssertNotNil(response)
 
         // then
@@ -145,7 +145,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         // when
         let key = UUID.create().transportString()
         let domain = UUID.create().transportString()
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .methodGET)
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .methodGET, apiVersion: .v0)
 
         // then
         XCTAssertNotNil(response)
@@ -164,7 +164,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .methodGET)
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .methodGET, apiVersion: .v0)
 
         // then
         XCTAssertNotNil(response)
@@ -175,7 +175,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         // when
         let key = UUID.create().transportString()
         let domain = UUID.create().transportString()
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .methodDELETE)
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .methodDELETE, apiVersion: .v0)
 
         // then
         XCTAssertNotNil(response)
@@ -193,7 +193,7 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .methodDELETE)
+        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .methodDELETE, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
 

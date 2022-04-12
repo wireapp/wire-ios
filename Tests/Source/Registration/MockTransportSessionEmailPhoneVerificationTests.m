@@ -47,7 +47,7 @@
     
     // WHEN
     NSString *path = @"/activate/send";
-    ZMTransportResponse *response = [self responseForPayload:@{} path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:@{} path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -74,7 +74,7 @@
     NSString *path = @"/activate/send";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
-                                                               } path:path method:ZMMethodPOST];
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -102,7 +102,7 @@
     NSString *path = @"/activate/send";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
-                                                               } path:path method:ZMMethodPOST];
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -116,7 +116,7 @@
 
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -134,7 +134,7 @@
 
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -148,10 +148,10 @@
     NSDictionary *validationPayload = @{@"email":email,@"code":self.sut.emailActivationCode,@"dryrun":@YES};
     NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
     NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST];
+    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST apiVersion:0];
 
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -167,7 +167,7 @@
     NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
 
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -181,10 +181,10 @@
     NSDictionary *validationPayload = @{@"email":email,@"code":self.sut.emailActivationCode};
     NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
     NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST];
+    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST apiVersion:0];
 
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -200,7 +200,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -218,7 +218,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -232,10 +232,10 @@
     NSDictionary *validationPayload = @{@"phone":phone,@"code":self.sut.phoneVerificationCodeForRegistration,@"dryrun":@YES};
     NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
     NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST];
+    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST apiVersion:0];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -251,7 +251,7 @@
     NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -265,10 +265,10 @@
     NSDictionary *validationPayload = @{@"phone":phone,@"code":self.sut.phoneVerificationCodeForRegistration};
     NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
     NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST];
+    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST apiVersion:0];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);

@@ -69,6 +69,12 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 /// List of domains which the backend is federated with
 @property (nonatomic) NSArray<NSString *> *federatedDomains;
 
+// What gets returned on GET /api-version
+@property (nonatomic) NSArray<NSNumber *> *supportedAPIVersions;
+@property (nonatomic) NSString *domain;
+@property (nonatomic) BOOL federation;
+@property (nonatomic) BOOL isAPIVersionEndpointAvailable;
+
 @property (nonatomic, readonly) NSArray *updateEvents;
 
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;

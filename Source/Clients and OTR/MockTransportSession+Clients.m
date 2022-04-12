@@ -31,34 +31,34 @@
 - (ZMTransportResponse *)processClientsRequest:(ZMTransportRequest *)request;
 {
     if ([request matchesWithPath:@"/clients" method:ZMMethodPOST]) {
-        return [self processRegisterClientWithPayload:[request.payload asDictionary]];
+        return [self processRegisterClientWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
     else if ([request matchesWithPath:@"/clients" method:ZMMethodGET]) {
-        return [self processGetClientsListRequest];
+        return [self processGetClientsListRequestWithApiVersion:request.apiVersion];
     }
     else if ([request matchesWithPath:@"/clients/*" method:ZMMethodGET]) {
-        return [self processGetClientById:[request RESTComponentAtIndex:1]];
+        return [self processGetClientById:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
     else if ([request matchesWithPath:@"/clients/*" method:ZMMethodPUT]) {
-        return [self processUpdateClient:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+        return [self processUpdateClient:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
     else if ([request matchesWithPath:@"/clients/*" method:ZMMethodDELETE]) {
-        return [self processDeleteClientRequest:[request RESTComponentAtIndex:1]];
+        return [self processDeleteClientRequest:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
     else if ([request matchesWithPath:@"/clients/*/prekeys" method:ZMMethodGET]) {
-        return [self processClientPreKeysForClient:[request RESTComponentAtIndex:1]];
+        return [self processClientPreKeysForClient:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 static NSInteger const MaxUserClientsAllowed = 2;
 
-- (ZMTransportResponse *)processRegisterClientWithPayload:(NSDictionary *)payload
+- (ZMTransportResponse *)processRegisterClientWithPayload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"UserClient"];
     NSArray *existingClients = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
     if (existingClients.count == MaxUserClientsAllowed) {
-        return [self errorResponseWithCode:403 reason:@"too-many-clients"];
+        return [self errorResponseWithCode:403 reason:@"too-many-clients" apiVersion:apiVersion];
     }
     
     BOOL selfClientExists = nil != [existingClients firstObjectMatchingWithBlock:^BOOL(MockUserClient *userClient){
@@ -68,17 +68,17 @@ static NSInteger const MaxUserClientsAllowed = 2;
     NSString *password = [payload optionalStringForKey:@"password"];
     if (selfClientExists &&
         !(password != nil && [password isEqualToString:self.selfUser.password])) {
-        return [self errorResponseWithCode:403 reason:@"missing-auth"];
+        return [self errorResponseWithCode:403 reason:@"missing-auth" apiVersion:apiVersion];
     }
     
     MockUserClient *newClient = [MockUserClient insertClientWithPayload:payload context:self.managedObjectContext];
     newClient.user = self.selfUser;
     
     if (newClient != nil) {
-        return [ZMTransportResponse responseWithPayload:[newClient transportData] HTTPStatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:[newClient transportData] HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
     }
     
-    return [self errorResponseWithCode:400 reason:@"bad request"];
+    return [self errorResponseWithCode:400 reason:@"bad request" apiVersion:apiVersion];
 }
 
 - (MockUserClient *)userClientByIdentifier:(NSString *)identifier
@@ -91,43 +91,43 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return userClients.firstObject;
 }
 
-- (ZMTransportResponse *)processGetClientsListRequest
+- (ZMTransportResponse *)processGetClientsListRequestWithApiVersion:(APIVersion)apiVersion
 {
     NSArray *payload = [self.selfUser.clients mapWithBlock:^id(MockUserClient *client) {
         return [client transportData];
     }].allObjects;
-    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processGetClientById:(NSString *)clientId
+- (ZMTransportResponse *)processGetClientById:(NSString *)clientId apiVersion:(APIVersion)apiVersion
 {
     MockUserClient *userClient = [self userClientByIdentifier:clientId];
     if (userClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:apiVersion];
     }
     
-    return [ZMTransportResponse responseWithPayload:userClient.transportData HTTPStatus:200 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:userClient.transportData HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processClientPreKeysForClient:(NSString *__unused)clientId
+- (ZMTransportResponse *)processClientPreKeysForClient:(NSString *__unused)clientId apiVersion:(APIVersion)apiVersion
 {
-    return [self errorResponseWithCode:418 reason:@"Not implemented"];
+    return [self errorResponseWithCode:418 reason:@"Not implemented" apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processUpdateClient:(NSString *__unused)clientId payload:(NSDictionary *__unused)payload;
+- (ZMTransportResponse *)processUpdateClient:(NSString *__unused)clientId payload:(NSDictionary *__unused)payload apiVersion:(APIVersion)apiVersion;
 {
-    return [self errorResponseWithCode:418 reason:@"Not implemented"];
+    return [self errorResponseWithCode:418 reason:@"Not implemented" apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processDeleteClientRequest:(NSString *)clientId;
+- (ZMTransportResponse *)processDeleteClientRequest:(NSString *)clientId apiVersion:(APIVersion)apiVersion;
 {
     MockUserClient *userClient = [self userClientByIdentifier:clientId];
     if (userClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:apiVersion];
     }
     [self.managedObjectContext deleteObject:userClient];
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];    
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
 

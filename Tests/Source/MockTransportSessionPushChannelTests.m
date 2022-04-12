@@ -53,7 +53,7 @@
         
         payload = @{@"email" : selfUser.email, @"password" : selfUser.password};
     }];
-    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
+    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST apiVersion:0]; // this will simulate the user logging in
     
     // WHEN
     [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
@@ -529,7 +529,7 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password
-                                                               } path:path method:ZMMethodPOST];
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
     [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     
     WaitForAllGroupsToBeEmpty(0.5);
@@ -626,7 +626,7 @@
     NSArray *expectedTypes = [self createConversationAndReturnExpectedNotificationTypes];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications" method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications" method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);
@@ -652,7 +652,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/notifications?since=%@", [NSUUID createUUID].transportString];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -678,14 +678,14 @@
     NSArray *expectedTypes = [self createConversationAndReturnExpectedNotificationTypes];
     XCTAssertTrue(eventsOffset < expectedTypes.count);
     
-    ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications" method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications" method:ZMMethodGET apiVersion:0];
     
     NSArray *allEvents = [[[response.payload asDictionary] arrayForKey:@"notifications" ] asDictionaries];
     NSUUID *startingEventID = [allEvents[eventsOffset-1] uuidForKey:@"id"];
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/notifications?since=%@", startingEventID.transportString];
-    response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
     
     // THEN
     NSArray *expectedEvents = [allEvents subarrayWithRange:NSMakeRange(eventsOffset, allEvents.count - eventsOffset)];
@@ -723,7 +723,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications/last" method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/notifications/last" method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.result, ZMTransportResponseStatusSuccess);

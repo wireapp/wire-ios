@@ -59,10 +59,10 @@
                                           @"documents": userPayload
                                           };
         
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
     }
     
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 // handles /onboarding
@@ -71,11 +71,11 @@
     if(request.method == ZMMethodPOST) {
         NSArray *selfEmailArray = [[request.payload asDictionary] arrayForKey:@"self"];
         if(selfEmailArray.count == 0) {
-            return [self errorResponseWithCode:400 reason:@"no self email"];
+            return [self errorResponseWithCode:400 reason:@"no self email" apiVersion:request.apiVersion];
         }
         NSArray *cards = [[request.payload asDictionary] arrayForKey:@"cards"];
         if(cards == nil) {
-            return [self errorResponseWithCode:400 reason:@"missing contacts"];
+            return [self errorResponseWithCode:400 reason:@"missing contacts" apiVersion:request.apiVersion];
         }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -92,10 +92,10 @@
                                 @"cards" : @[]
                                 }];
         }
-        return [ZMTransportResponse responseWithPayload:@{@"results" : results} HTTPStatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"results" : results} HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
         
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 

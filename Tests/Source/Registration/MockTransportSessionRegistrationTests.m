@@ -72,7 +72,7 @@
     
     for(size_t i = 0; i < sizeof(methods)/sizeof(methods[0]); ++i) {
         // WHEN
-        ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:methods[i]];
+        ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:methods[i] apiVersion:0];
         
         // THEN
         XCTAssertEqual(response.HTTPStatus, 404);
@@ -91,7 +91,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -117,7 +117,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     NSURL *url = [NSURL URLWithString:@"/register" relativeToURL:self.sut.baseURL];
     
     // THEN
@@ -137,7 +137,7 @@
                               };
     
     // WHEN
-    __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // expect
     __block NSData *cookieData;
@@ -157,7 +157,7 @@
                               };
     
     // WHEN
-    __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // expect
     __block NSData *cookieData;
@@ -177,7 +177,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -200,7 +200,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNil([[response.payload asDictionary] optionalStringForKey:@"email"]);
@@ -220,7 +220,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     XCTAssertEqualObjects([[response.payload asDictionary] optionalStringForKey:@"email"], payload[@"email"]);
 
     // THEN
@@ -243,7 +243,7 @@
                               @"password" : @"supersecure",
                               };
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     XCTAssertNotNil(response);
     
     // WHEN
@@ -272,7 +272,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -304,7 +304,7 @@
         [dictionaryWithoutAKey removeObjectForKey:key];
         
         // WHEN
-        ZMTransportResponse *response = [self responseForPayload:dictionaryWithoutAKey path:@"/register" method:ZMMethodPOST];
+        ZMTransportResponse *response = [self responseForPayload:dictionaryWithoutAKey path:@"/register" method:ZMMethodPOST apiVersion:0];
         
         // THEN
         XCTAssertEqual(response.HTTPStatus, 400);
@@ -329,7 +329,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -339,7 +339,7 @@
 - (void)requestVerificationCodeForPhone:(NSString *)phone {
     NSDictionary *requestPayload = @{@"phone":phone};
     NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+    [self responseForPayload:requestPayload path:path method:ZMMethodPOST apiVersion:0];
 }
 
 - (void)testThatRegistrationWithPhoneNumberReturns201AndCreatesAUserIfItHasAValidPhoneVerificationCode
@@ -354,7 +354,7 @@
     [self requestVerificationCodeForPhone:phone];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -380,7 +380,7 @@
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:ZM_ARG_SAVE(cookieData)];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -403,7 +403,7 @@
     }];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -421,7 +421,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -439,7 +439,7 @@
     [self requestVerificationCodeForPhone:phone];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);

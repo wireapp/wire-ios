@@ -25,10 +25,10 @@
 - (ZMTransportResponse *)processNotificationFallbackRequest:(ZMTransportRequest *)request
 {
     if([request matchesWithPath:@"/push/fallback" method:ZMMethodPOST]) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
     }
     
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 
@@ -62,21 +62,21 @@
             return event.transportData;
         }];
         NSInteger statusCode = notFound ? 404 : 200;
-        return [ZMTransportResponse responseWithPayload:@{@"notifications":payload} HTTPStatus:statusCode transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:@{@"notifications":payload} HTTPStatus:statusCode transportSessionError:nil apiVersion:request.apiVersion];
     }
     // /notifications/last
     else if([request matchesWithPath:@"/notifications/last" method:ZMMethodGET])
     {
         MockPushEvent *last = self.generatedPushEvents.lastObject;
         if(last != nil) {
-            return [ZMTransportResponse responseWithPayload:last.transportData HTTPStatus:200 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:last.transportData HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
         }
         else {
-            return [self errorResponseWithCode:404 reason:@"no notification to send"];
+            return [self errorResponseWithCode:404 reason:@"no notification to send" apiVersion:request.apiVersion];
         }
     }
     else {
-        return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+        return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
     }
 }
 

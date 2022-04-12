@@ -46,7 +46,7 @@
                                       @"cards": @[@{@"contact":@[]}]
                                       };
     NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v3"]];
-    ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     NSDictionary *expectedPayload = @{
@@ -69,7 +69,7 @@
     NSString *path = [NSString pathWithComponents:@[@"/", @"onboarding", @"v3"]];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 400);
@@ -85,7 +85,7 @@
     
     // WHEN
     [self performIgnoringZMLogError:^{
-        ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST];
+        ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST apiVersion:0];
         
         // THEN
         XCTAssertEqual(response.HTTPStatus, 400);
@@ -103,7 +103,7 @@
     
     // WHEN
     [self performIgnoringZMLogError:^{
-        ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST];
+        ZMTransportResponse *response = [self responseForPayload:upstreamPayload path:path method:ZMMethodPOST apiVersion:0];
         
         // THEN
         XCTAssertEqual(response.HTTPStatus, 400);

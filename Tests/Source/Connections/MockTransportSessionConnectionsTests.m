@@ -52,7 +52,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:nil path:@"/connections" method:ZMMethodGET];
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/connections" method:ZMMethodGET apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -94,7 +94,7 @@
                               @"name": @"",
                               @"message": message
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
@@ -137,7 +137,7 @@
                               @"name": @"",
                               @"message": @""
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST apiVersion:0];
     
     
     // THEN
@@ -181,7 +181,7 @@
     NSDictionary *payload = @{
                               @"status": @"sent"
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:[NSString stringWithFormat:@"/connections/%@", connection.to.identifier] method:ZMMethodPUT];
+    ZMTransportResponse *response = [self responseForPayload:payload path:[NSString stringWithFormat:@"/connections/%@", connection.to.identifier] method:ZMMethodPUT apiVersion:0];
     XCTAssertEqual(response.HTTPStatus, 403);
 }
 
@@ -211,7 +211,7 @@
                               @"name": @"",
                               @"message": @""
                               };
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
@@ -247,7 +247,7 @@
                               };
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/connections" method:ZMMethodPOST apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);

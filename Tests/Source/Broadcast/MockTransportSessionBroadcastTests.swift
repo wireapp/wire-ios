@@ -65,8 +65,8 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         }
         
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
         
         // then
         for response in [responseJSON, responsePROTO] {
@@ -114,8 +114,8 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [], plainText: messageData).serializedData()
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
 
         // then
         for response in [responseJSON, responsePROTO] {
@@ -164,8 +164,8 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
 
         // then
         for response in [responseJSON, responsePROTO] {
@@ -214,8 +214,8 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
 
         // when
-        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
-        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST, apiVersion: .v0)
 
         // then
         for response in [responseJSON, responsePROTO] {

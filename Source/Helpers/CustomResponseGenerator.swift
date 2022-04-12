@@ -27,7 +27,8 @@ import Foundation
     static public let ResponseNotCompleted : ZMTransportResponse = ZMTransportResponse(
         payload: ["label":"This will prevent the response from being completed. The completion handler won't be called at all."] as ZMTransportData,
         httpStatus: 500,
-        transportSessionError: nil
+        transportSessionError: nil,
+        apiVersion: 0
     )
-    
+
 }

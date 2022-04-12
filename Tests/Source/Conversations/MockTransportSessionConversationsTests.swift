@@ -190,7 +190,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
        
         // when
         let path = "/conversations/\(conversation.identifier)/roles"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -235,7 +235,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         
         // when
         let path = "/conversations/\(conversation.identifier)/roles"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -305,7 +305,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         
         // WHEN
         let requestPath = "/conversations/\(conversation!.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.methodPOST)
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.methodPOST, apiVersion: .v0)
         
         // THEN
         XCTAssertEqual(response!.httpStatus, 201)
@@ -354,7 +354,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         
         // WHEN
         let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST)
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST, apiVersion: .v0)
         
         // THEN
         XCTAssertNotNil(response)
@@ -410,7 +410,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         
         // WHEN
         let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST)
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST, apiVersion: .v0)
         
         // THEN
         XCTAssertNotNil(response)

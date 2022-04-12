@@ -30,26 +30,28 @@
     {
         if (request.binaryData != nil) {
             return [self processBroascastOTRMessageToConversationWithProtobuffData:request.binaryData
-                                                                             query:request.queryParameters];
+                                                                             query:request.queryParameters
+                                                                        apiVersion:request.apiVersion];
         }
         else {
             return [self processBroadcastOTRMessageWithPayload:[request.payload asDictionary]
-                                                         query:request.queryParameters];
+                                                         query:request.queryParameters
+                                                    apiVersion:request.apiVersion];
         }
     }
     
-    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:request.apiVersion];
 }
 
 // POST /broadcast/otr/messages
-- (ZMTransportResponse *)processBroadcastOTRMessageWithPayload:(NSDictionary *)payload query:(NSDictionary *)query
+- (ZMTransportResponse *)processBroadcastOTRMessageWithPayload:(NSDictionary *)payload query:(NSDictionary *)query apiVersion:(APIVersion)apiVersion
 {
     NSAssert(self.selfUser != nil, @"No self user in mock transport session");
     
     NSDictionary *recipients = payload[@"recipients"];
     MockUserClient *senderClient = [self otrMessageSender:payload];
     if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:apiVersion];
     }
     
     NSString *onlyForUser = query[@"report_missing"];
@@ -63,7 +65,7 @@
         statusCode = 201;
     }
     
-    return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil];
+    return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil apiVersion:apiVersion];
 }
 
 @end

@@ -49,7 +49,7 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password
-                                                               } path:path method:ZMMethodPOST];
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertNotNil(response);
@@ -75,13 +75,13 @@
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
+    [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST apiVersion:0];
 
     // and when
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"phone": phone,
                                                                @"code": self.sut.phoneVerificationCodeForLogin
-                                                               } path:@"/login" method:ZMMethodPOST];
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertNotNil(response);
@@ -109,15 +109,19 @@
     [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
-    [self responseForPayload:@{@"email":email} path:@"/login/send" method:ZMMethodPOST];
+    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action}
+                                                                            path:@"/verification-code/send"
+                                                                          method:ZMMethodPOST
+                                                                      apiVersion:0];
+
+    [self responseForPayload:@{@"email":email} path:@"/login/send" method:ZMMethodPOST apiVersion:0];
 
     // and when
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password,
                                                                @"verification_code": self.sut.generatedEmailVerificationCode
-                                                               } path:@"/login" method:ZMMethodPOST];
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertNotNil(response);
@@ -149,7 +153,7 @@
     ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{
                                                                                   @"email":email,
                                                                                   @"action":action
-                                                                                  } path:@"/verification-code/send" method:ZMMethodPOST];
+                                                                                  } path:@"/verification-code/send" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertNotNil(verificationCodeSendResponse);
@@ -159,7 +163,7 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password,
-                                                               } path:@"/login" method:ZMMethodPOST];
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertNotNil(verificationCodeSendResponse);
@@ -185,13 +189,13 @@
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
+    [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST apiVersion:0];
 
     // and when
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"phone": phone,
                                                                @"code": self.sut.invalidPhoneVerificationCode
-                                                               } path:@"/login" method:ZMMethodPOST];
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
 
     // THEN
     XCTAssertNotNil(response);
@@ -219,7 +223,10 @@
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
+    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action}
+                                                                            path:@"/verification-code/send"
+                                                                          method:ZMMethodPOST
+                                                                      apiVersion:0];
 
     // THEN
     XCTAssertNotNil(verificationCodeSendResponse);
@@ -231,7 +238,7 @@
                                                                @"email": email,
                                                                @"password": password,
                                                                @"verification_code": verificationCode,
-                                                               } path:@"/login" method:ZMMethodPOST];
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
 
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
@@ -256,14 +263,14 @@
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
+    [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST apiVersion:0];
 
     // and when
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"phone": phone,
                                                                @"code": self.sut.phoneVerificationCodeForLogin
-                                                               } path:@"/login" method:ZMMethodPOST];
-
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -285,8 +292,8 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
      // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
-
+    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -307,8 +314,8 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST];
-
+    ZMTransportResponse *response = [self responseForPayload:@{@"phone":phone} path:@"/login/send" method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -334,8 +341,8 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"phone": phone,
                                                                @"code": self.sut.phoneVerificationCodeForLogin
-                                                               } path:@"/login" method:ZMMethodPOST];
-
+                                                               } path:@"/login" method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 404);
@@ -365,8 +372,8 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password
-                                                               } path:path method:ZMMethodPOST];
-
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
@@ -394,8 +401,8 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": @"invalid"
-                                                               } path:path method:ZMMethodPOST];
-
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
@@ -427,8 +434,8 @@
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": @"invalid@example.com",
                                                                @"password": password
-                                                               } path:path method:ZMMethodPOST];
-
+                                                               } path:path method:ZMMethodPOST apiVersion:0];
+    
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
