@@ -89,4 +89,56 @@ extension ZMConversationTests {
         XCTAssertEqual(result.count, 1)
         XCTAssertTrue((result.first is ZMAssetClientMessage))
     }
+
+    // MARK: - Domain tests
+
+    func testThatItTreatsEmptyDomainAsNil() {
+        // given
+        let uuid = UUID.create()
+
+        syncMOC.performGroupedBlockAndWait {
+            // when
+            let created = ZMConversation.fetchOrCreate(with: uuid, domain: "", in: self.syncMOC)
+
+            // then
+            XCTAssertEqual(uuid, created.remoteIdentifier)
+            XCTAssertEqual(nil, created.domain)
+        }
+    }
+
+    func testThatItIgnoresDomainWhenFederationIsDisabled() {
+        // given
+        let uuid = UUID.create()
+
+        syncMOC.performGroupedBlockAndWait {
+            // when
+            APIVersion.isFederationEnabled = false
+            let created = ZMConversation.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
+
+            // then
+            XCTAssertNotNil(created)
+            XCTAssertEqual(uuid, created.remoteIdentifier)
+            XCTAssertEqual(nil, created.domain)
+        }
+    }
+
+    func testThatItAssignsDomainWhenFederationIsEnabled() {
+        // given
+        let uuid = UUID.create()
+        let domain = "a.com"
+
+        syncMOC.performGroupedBlockAndWait {
+            // when
+            APIVersion.isFederationEnabled = true
+            let created = ZMConversation.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
+
+            // then
+            XCTAssertNotNil(created)
+            XCTAssertEqual(uuid, created.remoteIdentifier)
+            XCTAssertEqual(domain, created.domain)
+
+            // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a swift enum
+            APIVersion.isFederationEnabled = false
+        }
+    }
 }
