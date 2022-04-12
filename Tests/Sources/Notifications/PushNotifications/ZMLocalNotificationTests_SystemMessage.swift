@@ -67,9 +67,9 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
 
         // given, when
         syncMOC.performGroupedBlockAndWait {
-            let note1 = self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: Set(arrayLiteral: self.selfUser))
-            let note2 = self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: Set(arrayLiteral: self.selfUser))
-            let note3 = self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: Set(arrayLiteral: self.selfUser, self.otherUser1))
+            let note1 = self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.selfUser])
+            let note2 = self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.selfUser])
+            let note3 = self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.selfUser, self.otherUser1])
 
             // then
             XCTAssertNotNil(note1)
@@ -83,10 +83,10 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
 
     func testThatItDoesNotCreateANotificationForParticipantAdd_Other() {
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertNil(self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: Set(arrayLiteral: self.otherUser1)))
-            XCTAssertNil(self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: Set(arrayLiteral: self.otherUser1, self.otherUser2)))
-            XCTAssertNil(self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: Set(arrayLiteral: self.otherUser1)))
-            XCTAssertNil(self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: Set(arrayLiteral: self.otherUser1, self.otherUser2)))
+            XCTAssertNil(self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.otherUser1]))
+            XCTAssertNil(self.noteForParticipantAdded(self.groupConversation, aSender: self.sender, otherUsers: [self.otherUser1, self.otherUser2]))
+            XCTAssertNil(self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.otherUser1]))
+            XCTAssertNil(self.noteForParticipantAdded(self.groupConversationWithoutName, aSender: self.sender, otherUsers: [self.otherUser1, self.otherUser2]))
         }
     }
 

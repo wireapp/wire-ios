@@ -41,7 +41,7 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenter {
     }
 
     public func requestAuthorization(options: UNAuthorizationOptions,
-                              completionHandler: @escaping (Bool, Error?) -> Void) {
+                                     completionHandler: @escaping (Bool, Error?) -> Void) {
         requestedAuthorizationOptions.insert(options)
     }
 
