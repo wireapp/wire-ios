@@ -20,6 +20,7 @@ import Foundation
 import CoreData
 import WireTransport
 import WireRequestStrategy
+import WireDataModel
 
 let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 
@@ -42,7 +43,8 @@ public final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append({
-                        return requestGenerator.nextRequest()
+                        guard let apiVersion = APIVersion.current else { return nil }
+                        return requestGenerator.nextRequest(for: apiVersion)
                     })
                 }
             }
@@ -57,7 +59,8 @@ public final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append({
-                    requestStrategy.nextRequest()
+                    guard let apiVersion = APIVersion.current else { return nil }
+                    return requestStrategy.nextRequest(for: apiVersion)
                 })
             }
         }
