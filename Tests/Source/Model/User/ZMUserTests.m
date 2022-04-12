@@ -175,57 +175,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     }];
 }
 
-- (void)testThatItTreatsEmptyDomainAsNil
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-
-    [self.syncMOC performBlockAndWait:^{
-        // when
-        ZMUser *created = [ZMUser fetchOrCreateWith:uuid domain:@"" in:self.syncMOC];
-
-        // then
-        XCTAssertNotNil(created);
-        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
-        XCTAssertEqualObjects(nil, created.domain);
-    }];
-}
-
-- (void)testThatItIgnoresDomainWhenFederationIsDisabled
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-
-    [self.syncMOC performBlockAndWait:^{
-        // when
-        self.syncMOC.zm_isFederationEnabled = NO;
-        ZMUser *created = [ZMUser fetchOrCreateWith:uuid domain:@"a.com" in:self.syncMOC];
-
-        // then
-        XCTAssertNotNil(created);
-        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
-        XCTAssertEqualObjects(nil, created.domain);
-    }];
-}
-
-- (void)testThatItAssignsDomainWhenFederationIsEnabled
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-    NSString *domain = @"a.com";
-
-    [self.syncMOC performBlockAndWait:^{
-        // when
-        self.syncMOC.zm_isFederationEnabled = YES;
-        ZMUser *created = [ZMUser fetchOrCreateWith:uuid domain:domain in:self.syncMOC];
-
-        // then
-        XCTAssertNotNil(created);
-        XCTAssertEqualObjects(uuid, created.remoteIdentifier);
-        XCTAssertEqualObjects(domain, created.domain);
-    }];
-}
-
 - (void)testThatItReturnsAnExistingUserByPhone
 {
     // given

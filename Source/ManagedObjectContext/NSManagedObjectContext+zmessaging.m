@@ -35,7 +35,6 @@ NSString * const IsSyncContextKey = @"ZMIsSyncContext";
 NSString * const IsSearchContextKey = @"ZMIsSearchContext";
 NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
 NSString * const IsEventContextKey = @"ZMIsEventDecoderContext";
-NSString * const IsFederationEnabledKey = @"ZMIsFederationEnabledKey";
 
 static NSString * const SyncContextKey = @"ZMSyncContext";
 static NSString * const UserInterfaceContextKey = @"ZMUserInterfaceContext";
@@ -145,14 +144,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     }
     
     return nil;
-}
-
-- (BOOL)zm_isFederationEnabled {
-    return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsFederationEnabledKey] boolValue];
-}
-
-- (void)setZm_isFederationEnabled:(BOOL)enabled {
-    [self.userInfo setValue:[NSNumber numberWithBool:enabled] forKey:IsFederationEnabledKey];
 }
 
 - (void)setZm_syncContext:(NSManagedObjectContext *)zm_syncContext

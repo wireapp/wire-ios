@@ -21,6 +21,12 @@ import Foundation
 
 // MARK: - Modified keys for profile picture upload
 final class ZMUserTests_Swift: ModelObjectsTests {
+
+    override func tearDown() {
+        APIVersion.isFederationEnabled = false
+        super.tearDown()
+    }
+
     func testThatSettingUserProfileAssetIdentifiersDirectlyDoesNotMarkAsModified() {
         // GIVEN
         let user = ZMUser.selfUser(in: uiMOC)
@@ -1109,4 +1115,54 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+}
+
+// MARK: - Domain tests
+extension ZMUserTests_Swift {
+    func testThatItTreatsEmptyDomainAsNil() {
+        // given
+        let uuid = UUID.create()
+
+        syncMOC.performGroupedBlockAndWait {
+            // when
+            let created = ZMUser.fetchOrCreate(with: uuid, domain: "", in: self.syncMOC)
+
+            // then
+            XCTAssertEqual(uuid, created.remoteIdentifier)
+            XCTAssertEqual(nil, created.domain)
+        }
+    }
+
+    func testThatItIgnoresDomainWhenFederationIsDisabled() {
+        // given
+        let uuid = UUID.create()
+
+        syncMOC.performGroupedBlockAndWait {
+            // when
+            APIVersion.isFederationEnabled = false
+            let created = ZMUser.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
+
+            // then
+            XCTAssertNotNil(created)
+            XCTAssertEqual(uuid, created.remoteIdentifier)
+            XCTAssertEqual(nil, created.domain)
+        }
+    }
+
+    func testThatItAssignsDomainWhenFederationIsEnabled() {
+        // given
+        let uuid = UUID.create()
+        let domain = "a.com"
+
+        syncMOC.performGroupedBlockAndWait {
+            // when
+            APIVersion.isFederationEnabled = true
+            let created = ZMUser.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
+
+            // then
+            XCTAssertNotNil(created)
+            XCTAssertEqual(uuid, created.remoteIdentifier)
+            XCTAssertEqual(domain, created.domain)
+        }
+    }
 }

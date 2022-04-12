@@ -266,6 +266,8 @@
 		5EFE9C0A2126BF9D007932A6 /* ZMPropertyNormalizationResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFE9C082126BF9D007932A6 /* ZMPropertyNormalizationResult.m */; };
 		5EFE9C0D2126CB7D007932A6 /* UnregisteredUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFE9C0B2126CB71007932A6 /* UnregisteredUserTests.swift */; };
 		5EFE9C0F2126D3FA007932A6 /* NormalizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFE9C0E2126D3FA007932A6 /* NormalizationResult.swift */; };
+		630B4C9627D8C899005D6F30 /* APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B4C9527D8C899005D6F30 /* APIVersion.swift */; };
+		630B4C9827D8C920005D6F30 /* APIVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B4C9727D8C920005D6F30 /* APIVersionTests.swift */; };
 		631A0578240420380062B387 /* UserClient+SafeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631A0577240420380062B387 /* UserClient+SafeLogging.swift */; };
 		631A0586240439470062B387 /* UserClientTests+SafeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631A0585240439470062B387 /* UserClientTests+SafeLogging.swift */; };
 		63298D9A2434D04D006B6018 /* GenericMessage+External.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63298D992434D04D006B6018 /* GenericMessage+External.swift */; };
@@ -1010,6 +1012,8 @@
 		5EFE9C082126BF9D007932A6 /* ZMPropertyNormalizationResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMPropertyNormalizationResult.m; sourceTree = "<group>"; };
 		5EFE9C0B2126CB71007932A6 /* UnregisteredUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnregisteredUserTests.swift; sourceTree = "<group>"; };
 		5EFE9C0E2126D3FA007932A6 /* NormalizationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizationResult.swift; sourceTree = "<group>"; };
+		630B4C9527D8C899005D6F30 /* APIVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIVersion.swift; sourceTree = "<group>"; };
+		630B4C9727D8C920005D6F30 /* APIVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIVersionTests.swift; sourceTree = "<group>"; };
 		631A0577240420380062B387 /* UserClient+SafeLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+SafeLogging.swift"; sourceTree = "<group>"; };
 		631A0585240439470062B387 /* UserClientTests+SafeLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClientTests+SafeLogging.swift"; sourceTree = "<group>"; };
 		63298D992434D04D006B6018 /* GenericMessage+External.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+External.swift"; sourceTree = "<group>"; };
@@ -1739,6 +1743,7 @@
 				169315F025AC501300709F15 /* MigrateSenderClientTests.swift */,
 				EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */,
 				16827AF12732AB2E0079405D /* InvalidDomainRemovalTests.swift */,
+				630B4C9727D8C920005D6F30 /* APIVersionTests.swift */,
 				E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */,
 			);
 			name = Utils;
@@ -2328,6 +2333,7 @@
 				162207F7272291CA0041EDE8 /* String+NilEmpty.swift */,
 				16E6F26324B614DC0015B249 /* EncryptionKeys.swift */,
 				EE997A1325062295008336D2 /* Logging.swift */,
+				630B4C9527D8C899005D6F30 /* APIVersion.swift */,
 			);
 			name = Utilis;
 			path = Source/Utilis;
@@ -3198,6 +3204,7 @@
 				EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */,
 				BF1B98041EC313C600DE033B /* Team.swift in Sources */,
 				A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */,
+				630B4C9627D8C899005D6F30 /* APIVersion.swift in Sources */,
 				165124D82189AE90006A3C75 /* ZMAssetClientMessage+Quotes.swift in Sources */,
 				BF5DF5CD20F4EB3E002BCB67 /* ZMSystemMessage+NewConversation.swift in Sources */,
 				0651D00423FC46A500411A22 /* ZMClientMessage+Confirmations.swift in Sources */,
@@ -3574,6 +3581,7 @@
 				F9C8770B1E015AAF00792613 /* AssetColletionTests.swift in Sources */,
 				F18998861E7AEECF00E579A2 /* ZMUserTests+Swift.swift in Sources */,
 				16CDEBF72209897D00E74A41 /* ZMMessageTests+ShouldGenerateUnreadCount.swift in Sources */,
+				630B4C9827D8C920005D6F30 /* APIVersionTests.swift in Sources */,
 				162294A5222038FA00A98679 /* CacheAssetTests.swift in Sources */,
 				543ABF5C1F34A19C00DBE28B /* DatabaseBaseTest.swift in Sources */,
 				A9EEFEFA23A6D0CB0007828A /* RolesMigrationTests.swift in Sources */,
