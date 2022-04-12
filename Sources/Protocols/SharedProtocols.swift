@@ -27,12 +27,3 @@ import Foundation
     func didDetectCurrentClientDeletion()
 
 }
-
-/// Request strategies which adopt this protocol declare that they can talk to federation aware endpoints.
-@objc public protocol FederationAware: NSObjectProtocol {
-
-    /// If `true` the request strategy will talk to federation aware endpoints, otherwise it will
-    // fallback to legacy endpoints.
-    var useFederationEndpoint: Bool { get set }
-
-}

@@ -50,7 +50,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
 
             // when
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
 
             // then
             XCTAssertNotNil(request)
@@ -128,13 +128,13 @@ extension UserPropertyRequestStrategyTests {
             let selfUser = ZMUser.selfUser(in: moc)
 
             // when
-            let request = self.sut.nextRequestIfAllowed()
+            let request = self.sut.nextRequestIfAllowed(for: .v0)
 
             XCTAssertNotNil(request)
             XCTAssertEqual(request!.method, .methodGET)
             XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
 
-            let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
 
@@ -151,13 +151,13 @@ extension UserPropertyRequestStrategyTests {
             let selfUser = ZMUser.selfUser(in: moc)
 
             // when
-            let request = self.sut.nextRequestIfAllowed()
+            let request = self.sut.nextRequestIfAllowed(for: .v0)
 
             XCTAssertNotNil(request)
             XCTAssertEqual(request!.method, .methodGET)
             XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
 
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
 

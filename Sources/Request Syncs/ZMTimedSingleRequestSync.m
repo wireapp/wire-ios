@@ -97,7 +97,7 @@
     RequireString(self.isInvalidated, "Did not invalidate timer before dealloc");
 }
 
-- (ZMTransportRequest *)nextRequest
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
 {
     if(self.shouldReturnRequest && ( ! self.isInvalidated) ) {
         
@@ -117,7 +117,7 @@
             });
         }
         
-        return [super nextRequest];
+        return [super nextRequestForAPIVersion:apiVersion];
     }
     return nil;
 }

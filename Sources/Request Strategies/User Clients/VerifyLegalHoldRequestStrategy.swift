@@ -26,8 +26,8 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
     fileprivate let requestFactory =  ClientMessageRequestFactory()
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return conversationSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return conversationSync.nextRequest(for: apiVersion)
     }
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
@@ -75,16 +75,12 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         return 1
     }
 
-    public var isAvailable: Bool {
-        return true
-    }
-
-    public func request(for identifiers: Set<ZMConversation>) -> ZMTransportRequest? {
+    public func request(for identifiers: Set<ZMConversation>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let conversationID = identifiers.first?.remoteIdentifier, identifiers.count == 1,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return nil }
 
-        return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, selfClient: selfClient)
+        return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, domain: nil, selfClient: selfClient, apiVersion: apiVersion, forceLegacyEndpoint: !APIVersion.isFederationEnabled)
     }
 
     public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>) {

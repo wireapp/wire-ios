@@ -17,14 +17,7 @@
 
 import Foundation
 
-public class ConnectionRequestStrategy: AbstractRequestStrategy, FederationAware, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
-
-    public var useFederationEndpoint: Bool = false {
-        didSet {
-            connectToUserActionHandler.useFederationEndpoint = useFederationEndpoint
-            updateConnectionActionHandler.useFederationEndpoint = useFederationEndpoint
-        }
-    }
+public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
 
     let eventsToProcess: [ZMUpdateEventType] = [
         .userConnection
@@ -82,21 +75,22 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, FederationAware
         updateSync.transcoder = self
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if syncProgress.currentSyncPhase == .fetchingConnections {
-            fetchAllConnections()
+            fetchAllConnections(for: apiVersion)
         }
 
-        return requestGenerators.nextRequest()
+        return requestGenerators.nextRequest(for: apiVersion)
     }
 
-    func fetchAllConnections() {
+    func fetchAllConnections(for apiVersion: APIVersion) {
         guard !isFetchingAllConnections else { return }
 
         isFetchingAllConnections = true
 
-        if useFederationEndpoint {
-            connectionListSync.fetch { [weak self] result in
+        switch apiVersion {
+        case .v0:
+            localConnectionListSync.fetch { [weak self] (result) in
                 switch result {
                 case .success(let connectionList):
                     self?.createConnectionsAndFinishSyncPhase(connectionList.connections,
@@ -105,8 +99,9 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, FederationAware
                     self?.failSyncPhase()
                 }
             }
-        } else {
-            localConnectionListSync.fetch { [weak self] (result) in
+
+        case .v1:
+            connectionListSync.fetch { [weak self] result in
                 switch result {
                 case .success(let connectionList):
                     self?.createConnectionsAndFinishSyncPhase(connectionList.connections,
@@ -153,15 +148,20 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
     typealias T = ZMConnection
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
-        if useFederationEndpoint {
-            if let qualifiedID = object.to.qualifiedID {
-                let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
-                connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
-            }
-        } else {
+        defer { completion() }
+        guard let apiVersion = APIVersion.current else { return }
+
+        switch apiVersion {
+        case .v0:
             if let userID = object.to.remoteIdentifier {
                 let userIdSet: Set<ConnectionByIDTranscoder.T> = [userID]
                 connectionByIDSync.sync(identifiers: userIdSet)
+            }
+
+        case .v1:
+            if let qualifiedID = object.to.qualifiedID {
+                let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
+                connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
             }
         }
     }
@@ -200,7 +200,6 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
     var fetchLimit: Int = 1
-    var isAvailable: Bool = true
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -210,11 +209,11 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
         self.context = context
     }
 
-    func request(for identifiers: Set<UUID>) -> ZMTransportRequest? {
+    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let userID = identifiers.first.map({ $0.transportString() }) else { return nil }
 
         // GET /connections/<UUID>
-        return ZMTransportRequest(getFromPath: "/connections/\(userID)")
+        return ZMTransportRequest(getFromPath: "/connections/\(userID)", apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
@@ -248,7 +247,6 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
 
     var fetchLimit: Int = 1
-    var isAvailable: Bool = true
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -258,11 +256,16 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         self.context = context
     }
 
-    func request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
-        guard let qualifiedID = identifiers.first.map({ $0 }) else { return nil }
+    func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard
+            apiVersion > .v0,
+            let qualifiedID = identifiers.first
+        else {
+            return nil
+        }
 
         // GET /connections/domain/<UUID>
-        return ZMTransportRequest(getFromPath: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())")
+        return ZMTransportRequest(getFromPath: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {

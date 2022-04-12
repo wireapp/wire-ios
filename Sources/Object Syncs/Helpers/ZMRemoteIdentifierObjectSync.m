@@ -49,7 +49,7 @@
     return self;
 }
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 {
     if (self.remoteIdentifiersThatNeedToBeDownloaded.count == 0) {
         return nil;

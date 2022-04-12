@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMSingleRequestTranscoder <NSObject>
 
-- (ZMTransportRequest * __nullable)requestForSingleRequestSync:(ZMSingleRequestSync *)sync;
+- (ZMTransportRequest * __nullable)requestForSingleRequestSync:(ZMSingleRequestSync *)sync apiVersion:(APIVersion)apiVersion;
 - (void)didReceiveResponse:(ZMTransportResponse *)response forSingleRequest:(ZMSingleRequestSync *)sync;
 
 @end
@@ -59,7 +59,7 @@ typedef NS_ENUM(int, ZMSingleRequestProgress) {
 /// mark the completion as "noted" by the client, and goes back to the idle state
 - (void)resetCompletionState;
 
-- (ZMTransportRequest *__nullable)nextRequest;
+- (ZMTransportRequest *__nullable)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end
 

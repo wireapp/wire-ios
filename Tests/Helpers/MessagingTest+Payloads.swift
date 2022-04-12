@@ -56,13 +56,14 @@ extension MessagingTestBase {
             status: .accepted)
     }
 
-    func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "") -> ZMTransportResponse {
+    func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "", apiVersion: APIVersion) -> ZMTransportResponse {
         let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message)
         let payloadData = responseFailure.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
         let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
                                            httpStatus: code,
-                                           transportSessionError: nil)
+                                           transportSessionError: nil,
+                                           apiVersion: apiVersion.rawValue)
 
         return response
 

@@ -157,9 +157,9 @@ static NSString* ZMLogTag = @"Network";
     }];
 }
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 {
-    return [self processNextInsert];
+    return [self processNextInsertWithAPIVersion:apiVersion];
 }
 
 /// returns false if object has dependencies, adding it to insertedObjectsWithDependencies
@@ -201,7 +201,7 @@ static NSString* ZMLogTag = @"Network";
     return nextObject;
 }
 
-- (ZMTransportRequest *)processNextInsert
+- (ZMTransportRequest *)processNextInsertWithAPIVersion:(APIVersion)apiVersion
 {
     ZMManagedObject *nextObject = [self nextObjectToSync];
     if (nextObject == nil) {
@@ -215,7 +215,7 @@ static NSString* ZMLogTag = @"Network";
         }
     }
     
-    ZMUpstreamRequest *request = [transcoder requestForInsertingObject:nextObject forKeys:nil];
+    ZMUpstreamRequest *request = [transcoder requestForInsertingObject:nextObject forKeys:nil apiVersion:apiVersion];
     
     if (request == nil) {
         [self.insertedObjects didFinishSynchronizingObject:nextObject];

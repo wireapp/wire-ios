@@ -83,8 +83,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
 
     // MARK: - Overrides
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return fetchAllConfigsSync.nextRequest() ?? fetchSingleConfigSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return fetchAllConfigsSync.nextRequest(for: apiVersion) ?? fetchSingleConfigSync.nextRequest(for: apiVersion)
     }
 
 }
@@ -93,13 +93,13 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
 
 extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         guard let feature = object as? Feature else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
-        return requestToFetchConfig(for: feature)
+        return requestToFetchConfig(for: feature, apiVersion: apiVersion)
     }
 
-    private func requestToFetchConfig(for feature: Feature) -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "/feature-configs/\(feature.transportName)")
+    private func requestToFetchConfig(for feature: Feature, apiVersion: APIVersion) -> ZMTransportRequest? {
+        return ZMTransportRequest(getFromPath: "/feature-configs/\(feature.transportName)", apiVersion: apiVersion.rawValue)
     }
 
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
@@ -161,14 +161,14 @@ extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
 
 extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
 
-    public func request(for sync: ZMSingleRequestSync) -> ZMTransportRequest? {
+    public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard sync == fetchAllConfigsSync else { return nil }
-        return requestToFetchAllFeatureConfigs()
+        return requestToFetchAllFeatureConfigs(with: apiVersion)
     }
 
-    private func requestToFetchAllFeatureConfigs() -> ZMTransportRequest? {
+    private func requestToFetchAllFeatureConfigs(with apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let teamId = team?.remoteIdentifier?.transportString() else { return nil }
-        return ZMTransportRequest(getFromPath: "/teams/\(teamId)/features")
+        return ZMTransportRequest(getFromPath: "/teams/\(teamId)/features", apiVersion: apiVersion.rawValue)
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

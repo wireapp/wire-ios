@@ -38,7 +38,7 @@
 
 @implementation ZMTimedSingleRequestSyncTests
 
-- (ZMTransportRequest *)requestForSingleRequestSync:(ZMSingleRequestSync *)sync
+- (ZMTransportRequest *)requestForSingleRequestSync:(ZMSingleRequestSync *)sync apiVersion:(APIVersion)apiVersion
 {
     NOT_USED(sync);
     ++self.transcoderCallsToRequest;
@@ -56,8 +56,8 @@
 
     self.coreDataStack = self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
                                                                             inMemoryStore:YES];
-    self.dummyRequest = [ZMTransportRequest requestGetFromPath:self.name];
-    self.dummyResponse = [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+    self.dummyRequest = [ZMTransportRequest requestGetFromPath:self.name apiVersion:0];
+    self.dummyResponse = [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:0];
     self.transcoderCallsToRequest = 0;
     self.trancoderResponses = [NSMutableArray array];
 }
@@ -79,7 +79,7 @@
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.coreDataStack.viewContext];
     
     // then
-    XCTAssertEqual([sut nextRequest], self.dummyRequest);
+    XCTAssertEqual([sut nextRequestForAPIVersion:APIVersionV0], self.dummyRequest);
     XCTAssertEqual(self.transcoderCallsToRequest, 1u);
     XCTAssertEqualWithAccuracy(sut.timeInterval, interval,0.01);
     [sut invalidate];
@@ -94,14 +94,14 @@
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.coreDataStack.viewContext];
 
     // when
-    ZMTransportRequest *request1 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertEqual(request1, self.dummyRequest);
     
     for(int i = 0; i < ATTEMPTS; ++i) {
         [self spinMainQueueWithTimeout:0.05];
-        ZMTransportRequest *request2 = [sut nextRequest];
+        ZMTransportRequest *request2 = [sut nextRequestForAPIVersion:APIVersionV0];
         // then
         XCTAssertNil(request2);
     }
@@ -117,14 +117,14 @@
     const int ATTEMPTS = 3;
     NSTimeInterval interval = 0.01;
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.coreDataStack.viewContext];
-    ZMTransportRequest *request1 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
     XCTAssertEqual(request1, self.dummyRequest);
     
     for(int i = 0; i < ATTEMPTS; ++i) {
         // when
         [self spinMainQueueWithTimeout:0.05];
         WaitForAllGroupsToBeEmpty(0.5);
-        ZMTransportRequest *request2 = [sut nextRequest];
+        ZMTransportRequest *request2 = [sut nextRequestForAPIVersion:APIVersionV0];
         
         // then
         XCTAssertEqual(request2, self.dummyRequest);
@@ -146,7 +146,7 @@
     [[mockOperationLoop expect] notifyNewRequestsAvailable:OCMOCK_ANY];
     
     // when
-    ZMTransportRequest *request = [sut nextRequest];
+    ZMTransportRequest *request = [sut nextRequestForAPIVersion:APIVersionV0];
     XCTAssertEqual(request, self.dummyRequest);
     [self spinMainQueueWithTimeout:0.1];
 
@@ -166,7 +166,7 @@
     
     // when
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0.05 groupQueue:self.coreDataStack.viewContext];
-    [sut nextRequest];
+    [sut nextRequestForAPIVersion:APIVersionV0];
     [sut invalidate];
 
     WaitForAllGroupsToBeEmpty(0.5);
@@ -183,7 +183,7 @@
     // given
     NSTimeInterval interval = 0.1;
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.coreDataStack.viewContext];
-    ZMTransportRequest *request1 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
     XCTAssertEqual(request1, self.dummyRequest);
     id mockOperationLoop = [OCMockObject mockForClass:ZMRequestAvailableNotification.class];
     [[mockOperationLoop reject] notifyNewRequestsAvailable:OCMOCK_ANY];
@@ -203,7 +203,7 @@
 {
     // given
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.coreDataStack.viewContext];
-    ZMTransportRequest *request1 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
     XCTAssertEqual(request1, self.dummyRequest);
     id mockOperationLoop = [OCMockObject mockForClass:ZMRequestAvailableNotification.class];
     [[mockOperationLoop reject] notifyNewRequestsAvailable:OCMOCK_ANY];
@@ -224,7 +224,7 @@
 {
     // given
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.coreDataStack.viewContext];
-    ZMTransportRequest *request1 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
     XCTAssertEqual(request1, self.dummyRequest);
     
     sut.timeInterval = 0.01;
@@ -232,7 +232,7 @@
     [[mockOperationLoop expect] notifyNewRequestsAvailable:OCMOCK_ANY];
     
     // when
-    [sut nextRequest];
+    [sut nextRequestForAPIVersion:APIVersionV0];
     [self spinMainQueueWithTimeout:0.2];
     
     // then
@@ -247,8 +247,8 @@
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.coreDataStack.viewContext];
     
     // when
-    ZMTransportRequest *request1 = [sut nextRequest];
-    ZMTransportRequest *request2 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
+    ZMTransportRequest *request2 = [sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertNotNil(request1);
@@ -261,13 +261,13 @@
     // given
     ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.coreDataStack.viewContext];
     
-    ZMTransportRequest *request1 = [sut nextRequest];
+    ZMTransportRequest *request1 = [sut nextRequestForAPIVersion:APIVersionV0];
     
     // when
     [request1 completeWithResponse:self.dummyResponse];
     WaitForAllGroupsToBeEmpty(0.5);
     [sut readyForNextRequest];
-    ZMTransportRequest *request2 = [sut nextRequest];
+    ZMTransportRequest *request2 = [sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertNotNil(request1);

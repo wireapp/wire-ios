@@ -18,16 +18,24 @@
 
 
 @import WireUtilities;
+@import WireTransport;
 
 #import "ZMRequestGenerator.h"
 
 
 @implementation NSArray (ZMRequestGeneratorSource)
 
-- (ZMTransportRequest *)nextRequest;
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 {
-    ZMTransportRequest *request = [self firstNonNilReturnedFromSelector:@selector(nextRequest)];
-    return request;
+    for (uint i = 0; i < self.count; i++) {
+        ZMTransportRequest *request = [[self objectAtIndex:i] nextRequestForAPIVersion:apiVersion];
+
+        if (request != nil) {
+            return request;
+        }
+    }
+
+    return nil;
 }
 
 @end

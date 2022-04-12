@@ -106,22 +106,22 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         return [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return self.assetUpstreamSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return self.assetUpstreamSync.nextRequest(for: apiVersion)
     }
 }
 
 extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
+    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMClientMessage else { return nil }
         guard keys.contains(ZMClientMessage.linkPreviewStateKey) else { return nil }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
         guard let imageData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true) else { return nil }
 
-        return ZMUpstreamRequest(keys: [ZMClientMessage.linkPreviewStateKey], transportRequest: requestFactory.upstreamRequestForAsset(withData: imageData, retention: retention))
+        return ZMUpstreamRequest(keys: [ZMClientMessage.linkPreviewStateKey], transportRequest: requestFactory.upstreamRequestForAsset(withData: imageData, retention: retention, apiVersion: apiVersion))
     }
 
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
+    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         return nil
     }
 

@@ -39,8 +39,6 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     let context: NSManagedObjectContext
     var onRequestScheduledHandler: OnRequestScheduledHandler?
 
-    public var isFederationEndpointAvailable = false
-
     public init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         self.context = context
         self.applicationStatus = applicationStatus
@@ -54,8 +52,8 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
         return [dependencySync]
     }
 
-    public func nextRequest() -> ZMTransportRequest? {
-        return dependencySync.nextRequest()
+    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return dependencySync.nextRequest(for: apiVersion)
     }
 
     public func onRequestScheduled(_ handler: @escaping OnRequestScheduledHandler) {
@@ -71,17 +69,10 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
         dependencySync.expireEntities(withDependency: dependency)
     }
 
-    public func request(forEntity entity: Message) -> ZMTransportRequest? {
-
-        if isFederationEndpointAvailable, ZMUser.selfUser(in: context).domain == nil {
-            isFederationEndpointAvailable = false
-        }
-
+    public func request(forEntity entity: Message, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let conversation = entity.conversation,
-            let request = requestFactory.upstreamRequestForMessage(entity,
-                                                                   in: conversation,
-                                                                   useFederationEndpoint: isFederationEndpointAvailable)
+            let request = requestFactory.upstreamRequestForMessage(entity, in: conversation, apiVersion: apiVersion)
         else {
             return nil
         }
@@ -98,30 +89,30 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     public func request(forEntity entity: Message, didCompleteWithResponse response: ZMTransportResponse) {
         entity.delivered(with: response)
 
-        if isFederationEndpointAvailable {
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+
+        switch apiVersion {
+        case .v0:
+            _ = entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
+        case .v1:
             let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
             _ = payload?.updateClientsChanges(for: entity)
-        } else {
-            _ = entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
         }
+
         purgeEncryptedPayloadCache()
     }
 
     public func shouldTryToResend(entity: Message, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return false }
+
         switch response.httpStatus {
-        case 404:
-            let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
-            if payload?.label == .noEndpoint {
-                isFederationEndpointAvailable = false
-                return true
-            }
-            return false
         case 412:
-            if isFederationEndpointAvailable {
+            switch apiVersion {
+            case .v0:
+                return entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate).contains(.missing)
+            case .v1:
                 let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
                 return payload?.updateClientsChanges(for: entity) ?? false
-            } else {
-                return entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate).contains(.missing)
             }
 
         default:

@@ -136,7 +136,7 @@
 
 - (void)testThatItDoesNotReturnARequestIfItDoesNotHaveMoreToDownload
 {
-    XCTAssertNil(self.sut.nextRequest);
+    XCTAssertNil([self.sut nextRequestForAPIVersion:APIVersionV0]);
 }
 
 @end
@@ -180,11 +180,11 @@
     [self.sut resetFetching];
 
     // expect
-    ZMTransportRequest *expectedRequest = [ZMTransportRequest requestGetFromPath:@"baa"];
-    [[[self.singleRequestSync expect] andReturn:expectedRequest] nextRequest];
+    ZMTransportRequest *expectedRequest = [ZMTransportRequest requestGetFromPath:@"baa" apiVersion:APIVersionV0];
+    [[[self.singleRequestSync expect] andReturn:expectedRequest] nextRequestForAPIVersion:APIVersionV0];
 
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
 
     // then
     XCTAssertEqual(expectedRequest, request);
@@ -198,7 +198,7 @@
     [self.sut resetFetching];
 
     // when
-    ZMTransportRequest *request = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *request = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // after
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu", self.basePath, (unsigned long) self.pageSize];
@@ -223,7 +223,7 @@
     [self.sut resetFetching];
 
     // when
-    ZMTransportRequest *request = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *request = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // after
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu&%@=%@", self.basePath, (unsigned long) self.pageSize, startKey, startUUID.transportString];
@@ -245,7 +245,7 @@
         [self.sut resetFetching];
 
         // when
-        ZMTransportRequest *request = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+        ZMTransportRequest *request = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
         // after
         NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu&%@=%@", self.basePath, (unsigned long) self.pageSize, @"client", selfClientID];
@@ -267,7 +267,7 @@
     NSDictionary *expectedPayload = @{@"foo":@42};
 
     // expect
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
     [[[self.transcoder expect] andReturn:[NSUUID createUUID]] nextUUIDFromResponse:response forListPaginator:OCMOCK_ANY];
 
     // when
@@ -284,7 +284,7 @@
     // expect
     [[self.singleRequestSync expect] readyForNextRequest];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -302,7 +302,7 @@
     // expect
     [[self.singleRequestSync expect] readyForNextRequest];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:404 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:404 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -321,7 +321,7 @@
     // expect
     [[self.singleRequestSync expect] readyForNextRequest];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:500 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:500 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -344,7 +344,7 @@
     [self.sut resetFetching];
 
     [[[self.transcoder expect] andReturn:[NSUUID createUUID]] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -360,7 +360,7 @@
     [self.sut resetFetching];
 
     [[[self.transcoder expect] andReturn:[NSUUID createUUID]] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -376,7 +376,7 @@
     [self.sut resetFetching];
     NSDictionary *payload = @{@"has_more": @(YES)};
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -392,7 +392,7 @@
     [self.sut resetFetching];
     NSDictionary *payload = @{@"has_more": @(NO)};
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -408,7 +408,7 @@
     [self.sut resetFetching];
 
     [[self.transcoder reject] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"has_more" : @1} HTTPStatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"has_more" : @1} HTTPStatus:400 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -428,7 +428,7 @@
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"has_more" : @1} HTTPStatus:400 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"has_more" : @1} HTTPStatus:400 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -449,7 +449,7 @@
     [[self.singleRequestSync stub] readyForNextRequest];
     [self.sut resetFetching];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"has_more" : @1} HTTPStatus:404 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"has_more" : @1} HTTPStatus:404 transportSessionError:nil apiVersion:APIVersionV0];
     [[[transcoder expect] andReturnValue:OCMOCK_VALUE(YES)] shouldParseErrorForResponse:response];
 
     // when
@@ -469,7 +469,7 @@
 
     [[self.transcoder reject] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:500 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:500 transportSessionError:nil apiVersion:APIVersionV0];
 
     // when
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
@@ -495,12 +495,12 @@
     NSDictionary *payload = @{@"has_more" : @(YES)};
     [[[self.transcoder expect] andReturn:[self returnFullPageWithLastIdentifier:lastIdentifier]] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
-    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // then
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu&start=%@", self.basePath, (unsigned long)self.pageSize, lastIdentifier.transportString];
@@ -526,18 +526,18 @@
     [self.sut resetFetching];
 
     // when
-    ZMTransportRequest *firstRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *firstRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // then
     NSString *expectedURL1 = [NSString stringWithFormat:@"%@?size=%lu&start=%@", self.basePath, (unsigned long)self.pageSize, startIdentifier.transportString];
     XCTAssertEqualObjects(firstRequest.path, expectedURL1);
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
-    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // then
     NSString *expectedURL2 = [NSString stringWithFormat:@"%@?size=%lu&start=%@", self.basePath, (unsigned long)self.pageSize, lastIdentifier.transportString];
@@ -552,12 +552,12 @@
     [self.sut resetFetching];
 
     [[[self.transcoder expect] andReturn:nil] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
-    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // then
     XCTAssertNil(followingRequest);
@@ -572,13 +572,13 @@
 
     [[[self.transcoder expect] andReturn:[NSUUID UUID]] nextUUIDFromResponse:OCMOCK_ANY forListPaginator:OCMOCK_ANY];
 
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:APIVersionV0];
     [self.sut didReceiveResponse:response forSingleRequest:self.singleRequestSync];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
     [self.sut resetFetching];
-    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync];
+    ZMTransportRequest *followingRequest = [self.sut requestForSingleRequestSync:self.singleRequestSync apiVersion:APIVersionV0];
 
     // then
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu", self.basePath, (unsigned long) self.pageSize];

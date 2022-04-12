@@ -24,8 +24,8 @@
 
 - (BOOL)shouldProcessUpdatesBeforeInserts;
 
-- (ZMUpstreamRequest  * _Nullable )requestForUpdatingObject:(ZMManagedObject  * _Nonnull )managedObject forKeys:(NSSet<NSString *>  * _Nonnull )keys;
-- (ZMUpstreamRequest  * _Nullable )requestForInsertingObject:(ZMManagedObject  * _Nonnull )managedObject forKeys:(NSSet<NSString *>  * _Nullable )keys;
+- (ZMUpstreamRequest  * _Nullable )requestForUpdatingObject:(ZMManagedObject  * _Nonnull )managedObject forKeys:(NSSet<NSString *>  * _Nonnull )keys apiVersion:(APIVersion)apiVersion;
+- (ZMUpstreamRequest  * _Nullable )requestForInsertingObject:(ZMManagedObject  * _Nonnull )managedObject forKeys:(NSSet<NSString *>  * _Nullable )keys apiVersion:(APIVersion)apiVersion;
 
 - (void)updateInsertedObject:(ZMManagedObject * _Nonnull)managedObject request:(ZMUpstreamRequest * _Nonnull)upstreamRequest response:(ZMTransportResponse * _Nonnull)response;
 

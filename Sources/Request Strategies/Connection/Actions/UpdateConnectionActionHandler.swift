@@ -17,45 +17,23 @@
 
 import Foundation
 
-class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction>, FederationAware {
+class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
 
-    var useFederationEndpoint: Bool = false
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
-    override func request(for action: ActionHandler<UpdateConnectionAction>.Action) -> ZMTransportRequest? {
-        if useFederationEndpoint {
-            return federatedRequest(for: action)
-        } else {
-            return nonFederatedRequest(for: action)
+    override func request(for action: ActionHandler<UpdateConnectionAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+        switch apiVersion {
+        case .v0:
+            return nonFederatedRequest(for: action, apiVersion: apiVersion)
+        case .v1:
+            return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
 
-    func federatedRequest(for action: ActionHandler<UpdateConnectionAction>.Action) -> ZMTransportRequest? {
+    func nonFederatedRequest(for action: ActionHandler<UpdateConnectionAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
-            let connection = ZMConnection.existingObject(for: action.connectionID, in: context),
-            let qualifiedID = connection.to.qualifiedID,
-            let status = Payload.ConnectionStatus(action.newStatus)
-        else {
-            Logging.network.error("Can't create request to update connection status")
-            return nil
-        }
-
-        let payload = Payload.ConnectionUpdate(status: status)
-
-        guard
-            let payloadData = payload.payloadData(encoder: encoder),
-            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
-        else {
-            Logging.network.error("Can't create payload to update connection status")
-            return nil
-        }
-
-        return ZMTransportRequest(path: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", method: .methodPUT, payload: payloadAsString as ZMTransportData)
-    }
-
-    func nonFederatedRequest(for action: ActionHandler<UpdateConnectionAction>.Action) -> ZMTransportRequest? {
-        guard
+            apiVersion == .v0,
             let connection = ZMConnection.existingObject(for: action.connectionID, in: context),
             let userID = connection.to.remoteIdentifier?.transportString(),
             let status = Payload.ConnectionStatus(action.newStatus)
@@ -74,7 +52,31 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction>, Fede
             return nil
         }
 
-        return ZMTransportRequest(path: "/connections/\(userID)", method: .methodPUT, payload: payloadAsString as ZMTransportData)
+        return ZMTransportRequest(path: "/connections/\(userID)", method: .methodPUT, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+    }
+
+    func federatedRequest(for action: ActionHandler<UpdateConnectionAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard
+            apiVersion > .v0,
+            let connection = ZMConnection.existingObject(for: action.connectionID, in: context),
+            let qualifiedID = connection.to.qualifiedID,
+            let status = Payload.ConnectionStatus(action.newStatus)
+        else {
+            Logging.network.error("Can't create request to update connection status")
+            return nil
+        }
+
+        let payload = Payload.ConnectionUpdate(status: status)
+
+        guard
+            let payloadData = payload.payloadData(encoder: encoder),
+            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
+        else {
+            Logging.network.error("Can't create payload to update connection status")
+            return nil
+        }
+
+        return ZMTransportRequest(path: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", method: .methodPUT, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<UpdateConnectionAction>.Action) {

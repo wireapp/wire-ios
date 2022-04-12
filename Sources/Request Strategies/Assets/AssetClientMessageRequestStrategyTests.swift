@@ -21,42 +21,11 @@ import WireRequestStrategy
 import XCTest
 import WireDataModel
 
-fileprivate extension AssetClientMessageRequestStrategy {
-
-    @discardableResult func assertCreatesValidLegacyRequestForAsset(in conversation: ZMConversation, line: UInt = #line) -> ZMTransportRequest! {
-        guard let request = nextRequest() else {
-            XCTFail("No request generated", line: line)
-            return nil
-        }
-
-        let converationID = conversation.remoteIdentifier!.transportString()
-
-        XCTAssertEqual(request.path, "/conversations/\(converationID)/otr/messages", line: line)
-        XCTAssertEqual(request.method, .methodPOST, line: line)
-        return request
-    }
-
-    @discardableResult func assertCreatesValidRequestForAsset(in conversation: ZMConversation, line: UInt = #line) -> ZMTransportRequest! {
-        guard let request = nextRequest() else {
-            XCTFail("No request generated", line: line)
-            return nil
-        }
-
-        let domain = conversation.domain!
-        let conversationID = conversation.remoteIdentifier!.transportString()
-
-        XCTAssertEqual(request.path, "/conversations/\(domain)/\(conversationID)/proteus/messages", line: line)
-        XCTAssertEqual(request.method, .methodPOST, line: line)
-        return request
-    }
-
-}
-
 fileprivate extension ZMTransportRequest {
 
-    func complete(withHttpStatus status: Int) {
+    func complete(withHttpStatus status: Int, apiVersion: APIVersion) {
         let payload = ["time": Date().transportString()] as ZMTransportData
-        let response = ZMTransportResponse(payload: payload, httpStatus: status, transportSessionError: nil)
+        let response = ZMTransportResponse(payload: payload, httpStatus: status, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         complete(with: response)
     }
 
@@ -68,6 +37,12 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     fileprivate var sut: AssetClientMessageRequestStrategy!
     fileprivate var imageData = mediumJPEGData()
 
+    var apiVersion: APIVersion! {
+        didSet {
+            APIVersion.current = apiVersion
+        }
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -76,17 +51,20 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedBlockAndWait {
             self.sut = AssetClientMessageRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: self.mockApplicationStatus)
-            self.sut.useFederationEndpoint = false
         }
+
+        apiVersion = .v0
     }
 
     override func tearDown() {
         mockApplicationStatus = nil
-        self.sut = nil
+        sut = nil
+        apiVersion = nil
         super.tearDown()
     }
 
     // MARK: Helper
+
     @discardableResult func createMessage(
         isImage: Bool = true,
         uploaded: Bool = false,
@@ -97,7 +75,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         conversation: ZMConversation? = nil,
         sender: ZMUser? = nil,
         line: UInt = #line
-        ) -> ZMAssetClientMessage {
+    ) -> ZMAssetClientMessage {
 
         let targetConversation = conversation ?? groupConversation!
         let message: ZMAssetClientMessage!
@@ -182,10 +160,40 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
     }
 
+    @discardableResult
+    private func assertCreatesValidRequestForAsset(in conversation: ZMConversation, line: UInt = #line) -> ZMTransportRequest! {
+        switch apiVersion! {
+        case .v0:
+            guard let request = sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("No request generated", line: line)
+                return nil
+            }
+
+            let converationID = conversation.remoteIdentifier!.transportString()
+
+            XCTAssertEqual(request.path, "/conversations/\(converationID)/otr/messages", line: line)
+            XCTAssertEqual(request.method, .methodPOST, line: line)
+            return request
+
+        case .v1:
+            guard let request = sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("No request generated", line: line)
+                return nil
+            }
+
+            let domain = conversation.domain!
+            let conversationID = conversation.remoteIdentifier!.transportString()
+
+            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID)/proteus/messages", line: line)
+            XCTAssertEqual(request.method, .methodPOST, line: line)
+            return request
+        }
+    }
+
     // MARK: Request Generation
 
     func testThatItDoesNotCreateARequestIfThereIsNoMatchingMessage() {
-        XCTAssertNil(sut.nextRequest())
+        XCTAssertNil(sut.nextRequest(for: apiVersion))
     }
 
     func testThatItDoesNotCreateARequestForAnImageMessageUploadedByOtherUser() {
@@ -194,7 +202,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             self.createMessage(uploaded: true, sender: self.otherUser)
 
             // THEN
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -205,7 +213,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             message.expire()
 
             // THEN
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -215,7 +223,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             self.createMessage(uploaded: false)
 
             // THEN
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -226,7 +234,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             message.updateTransferState(.uploaded, synchronize: true)
 
             // THEN
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -236,18 +244,18 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             self.createMessage(uploaded: true, assetId: true)
 
             // THEN
-            self.sut.assertCreatesValidLegacyRequestForAsset(in: self.groupConversation)
+            self.assertCreatesValidRequestForAsset(in: self.groupConversation)
         }
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage_WithFederationEndpointEnabled() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.sut.useFederationEndpoint = true
+            self.apiVersion = .v1
             self.createMessage(uploaded: true, assetId: true)
 
             // THEN
-            self.sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
+            self.assertCreatesValidRequestForAsset(in: self.groupConversation)
         }
     }
 
@@ -258,7 +266,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             self.createMessage(uploaded: true, assetId: true)
 
             // WHEN
-            guard let request = self.sut.nextRequest() else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // THEN
             let expected = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
@@ -274,7 +282,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
 
             // WHEN
-            XCTAssertNotNil(self.sut.nextRequest())
+            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
 
             // THEN
             switch message.underlyingMessage?.content {
@@ -293,7 +301,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
 
             // WHEN
-            XCTAssertNotNil(self.sut.nextRequest())
+            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
 
             // THEN
             switch message.underlyingMessage?.content {
@@ -320,7 +328,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            XCTAssertNotNil(self.sut.nextRequest())
+            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
 
             // THEN
             XCTAssertFalse(message.underlyingMessage!.asset.expectsReadConfirmation)
@@ -342,7 +350,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            XCTAssertNotNil(self.sut.nextRequest())
+            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
 
             // THEN
             XCTAssertTrue(message.underlyingMessage!.asset.expectsReadConfirmation)
@@ -376,7 +384,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Request is nil")
                 return
             }
@@ -407,7 +415,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Request is nil")
                 return
             }
@@ -428,10 +436,10 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.assertCreatesValidLegacyRequestForAsset(in: self.groupConversation) else {
+            guard let request = self.assertCreatesValidRequestForAsset(in: self.groupConversation) else {
                 return XCTFail("Failed to create request")
             }
-            request.complete(withHttpStatus: 400)
+            request.complete(withHttpStatus: 400, apiVersion: self.apiVersion)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -439,12 +447,11 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssert(message.isExpired)
             XCTAssertEqual(message.deliveryState, .failedToSend)
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     func testThatItNotifiesWhenAnImageCannotBeSent_MissingLegalholdConsent() {
-
         // GIVEN
         var message: ZMAssetClientMessage!
         var token: Any?
@@ -460,11 +467,11 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.assertCreatesValidLegacyRequestForAsset(in: self.groupConversation) else {
+            guard let request = self.assertCreatesValidRequestForAsset(in: self.groupConversation) else {
                 return XCTFail("Failed to create request")
             }
             let payload = ["label": "missing-legalhold-consent", "code": 403, "message": ""] as NSDictionary
-            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil))
+            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -484,9 +491,9 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.assertCreatesValidLegacyRequestForAsset(in: self.groupConversation)
+            guard let request = self.assertCreatesValidRequestForAsset(in: self.groupConversation)
                 else { return XCTFail("No request generated") }
-            request.complete(withHttpStatus: 200)
+            request.complete(withHttpStatus: 200, apiVersion: self.apiVersion)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -494,7 +501,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssert(message.delivered)
             XCTAssertEqual(message.deliveryState, .sent)
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -508,9 +515,9 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.nextRequest()
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
                 else { return XCTFail("No request generated") }
-            request.complete(withHttpStatus: 200)
+            request.complete(withHttpStatus: 200, apiVersion: self.apiVersion)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -519,7 +526,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             XCTAssert(message.delivered)
             XCTAssertEqual(message.deliveryState, .sent)
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 

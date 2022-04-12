@@ -37,11 +37,11 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
     }
 
     /// Subclasses should override this method. 
-    open func nextRequestIfAllowed() -> ZMTransportRequest? {
+    open func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fatal("you must override this method")
     }
 
-    open func nextRequest() -> ZMTransportRequest? {
+    open func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let applicationStatus = self.applicationStatus else {
             zmLog.error("applicationStatus is missing")
             return nil
@@ -50,7 +50,7 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
         let prerequisites = AbstractRequestStrategy.prerequisites(forApplicationStatus: applicationStatus)
 
         if prerequisites.isSubset(of: configuration) {
-            return nextRequestIfAllowed()
+            return nextRequestIfAllowed(for: apiVersion)
         } else {
             zmLog.debug("Not performing requests since option: \(prerequisites.subtracting(configuration)) is not configured for (\(String(describing: type(of: self))))")
         }

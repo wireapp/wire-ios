@@ -68,7 +68,7 @@
 
 - (void)makeSureFetchObjectsToDownloadHasBeenCalled;
 {
-    XCTAssertNil([self.sut nextRequest], @"Make sure -fetchObjectsToDownload has been called.");
+    XCTAssertNil([self.sut nextRequestForAPIVersion:APIVersionV0], @"Make sure -fetchObjectsToDownload has been called.");
 }
 
 - (void)testThatOnNextRequestsItDoesNotCreateARequestWhenTheObjectIsNotWhiteListed;
@@ -81,10 +81,10 @@
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expect
-    [[(id)self.transcoder reject] requestForFetchingObject:OCMOCK_ANY downstreamSync:OCMOCK_ANY];
+    [[(id)self.transcoder reject] requestForFetchingObject:OCMOCK_ANY downstreamSync:OCMOCK_ANY apiVersion:APIVersionV0];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertNil(request);
@@ -99,14 +99,14 @@
     entity.needsToBeUpdatedFromBackend = YES;
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
-    ZMTransportRequest *dummyRequest = [ZMTransportRequest requestGetFromPath:@"dummy"];
+    ZMTransportRequest *dummyRequest = [ZMTransportRequest requestGetFromPath:@"dummy" apiVersion:APIVersionV0];
     
     // expect
-    [[[(id)self.transcoder expect] andReturn:dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
+    [[[(id)self.transcoder expect] andReturn:dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut apiVersion:APIVersionV0];
     
     // when
     [self.sut whiteListObject:entity];
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertEqualObjects(dummyRequest, request);

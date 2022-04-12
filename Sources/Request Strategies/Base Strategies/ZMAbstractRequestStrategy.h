@@ -33,6 +33,6 @@
 
 - (instancetype _Nonnull)initWithManagedObjectContext:(nonnull NSManagedObjectContext *)managedObjectContext applicationStatus:(nonnull id<ZMApplicationStatus>)applicationStatus;
 
-- (ZMTransportRequest * _Nullable)nextRequestIfAllowed;
+- (ZMTransportRequest * _Nullable)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion;
 
 @end

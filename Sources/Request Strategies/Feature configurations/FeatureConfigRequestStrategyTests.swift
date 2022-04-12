@@ -60,7 +60,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             // When
             self.boostrapChangeTrackers(with: feature)
-            guard let request = self.sut.nextRequestIfAllowed() else {
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
                 return XCTFail("Request is nil")
             }
 
@@ -81,7 +81,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             // When
             self.boostrapChangeTrackers(with: feature)
-            let request = self.sut.nextRequestIfAllowed()
+            let request = self.sut.nextRequestIfAllowed(for: .v0)
 
             // Then
             XCTAssertNil(request)
@@ -99,7 +99,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
             feature.needsToBeUpdatedFromBackend = true
 
             self.boostrapChangeTrackers(with: feature)
-            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail("Request is nil") }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("Request is nil") }
             XCTAssertNotNil(request)
 
             // when
@@ -109,7 +109,8 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             let response = ZMTransportResponse(payload: payload as NSDictionary as ZMTransportData,
                                                httpStatus: 200,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
             request.complete(with: response)
         }
 
@@ -130,7 +131,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             // When
             Feature.triggerBackendRefreshForAllConfigs()
-            guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail("Request is nil") }
+            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("Request is nil") }
 
             // Then
             XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/features")
@@ -144,7 +145,7 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             // When
             Feature.triggerBackendRefreshForAllConfigs()
-            let request = self.sut.nextRequestIfAllowed()
+            let request = self.sut.nextRequestIfAllowed(for: .v0)
 
             // Then
             XCTAssertNil(request)

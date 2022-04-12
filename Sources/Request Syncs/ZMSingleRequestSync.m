@@ -70,11 +70,11 @@
     }
 }
 
-- (ZMTransportRequest *)nextRequest
+- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
 {
     id<ZMSingleRequestTranscoder> transcoder = self.transcoder;
     if(self.currentRequest == nil && self.status == ZMSingleRequestReady) {
-        ZMTransportRequest *request = [transcoder requestForSingleRequestSync:self];
+        ZMTransportRequest *request = [transcoder requestForSingleRequestSync:self apiVersion:apiVersion];
         [request setDebugInformationTranscoder:transcoder];
 
         self.currentRequest = request;

@@ -24,6 +24,12 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     private var sut: LinkPreviewUpdateRequestStrategy!
     private var applicationStatus: MockApplicationStatus!
 
+    private var apiVersion: APIVersion! {
+        didSet {
+            APIVersion.current = apiVersion
+        }
+    }
+
     override func setUp() {
         super.setUp()
         self.syncMOC.performGroupedAndWait { syncMOC in
@@ -31,13 +37,15 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
             self.sut = LinkPreviewUpdateRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
-            self.sut.useFederationEndpoint = true
         }
+
+        apiVersion = .v0
     }
 
     override func tearDown() {
         applicationStatus = nil
         sut = nil
+        apiVersion = nil
         super.tearDown()
     }
 
@@ -69,11 +77,13 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
 
             // Then
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     func testThatItDoesCreateARequestInState_Uploaded() {
+        apiVersion = .v1
+
         self.syncMOC.performGroupedAndWait { _ in
             // Given
             let message = self.insertMessage(with: .uploaded)
@@ -90,7 +100,6 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesCreateARequestInState_Uploaded_WhenFederationEndpointIsDisabled() {
         self.syncMOC.performGroupedAndWait { _ in
             // Given
-            self.sut.useFederationEndpoint = false
             let message = self.insertMessage(with: .uploaded)
 
             // When
@@ -98,11 +107,12 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // Then
-            self.verifyItCreatesALegacyRequest(in: self.groupConversation)
+            self.verifyItCreatesARequest(in: self.groupConversation)
         }
     }
 
     func testThatItDoesCreateARequestInState_Uploaded_WhenTheFirstRequestFailed() {
+        apiVersion = .v1
         var message: ZMClientMessage!
 
         self.syncMOC.performGroupedAndWait { _ in
@@ -117,7 +127,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             guard let request = self.verifyItCreatesARequest(in: self.groupConversation) else { return }
 
             // When
-            let response = ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError())
+            let response = ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError(), apiVersion: self.apiVersion.rawValue)
             request.complete(with: response)
         }
         self.syncMOC.performGroupedAndWait { _ in
@@ -130,6 +140,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
+        apiVersion = .v1
         var message: ZMClientMessage!
         self.syncMOC.performGroupedAndWait { _ in
             // Given
@@ -149,13 +160,14 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 201,
-                                               transportSessionError: nil)
+                                               transportSessionError: nil,
+                                               apiVersion: self.apiVersion.rawValue)
             request.complete(with: response)
         }
         self.syncMOC.performGroupedAndWait { _ in
             // Then
             XCTAssertEqual(message.linkPreviewState, .done)
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -180,28 +192,26 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
 
             // Then
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     @discardableResult
     func verifyItCreatesARequest(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> ZMTransportRequest? {
-        let request = sut.nextRequest()
+        let request = sut.nextRequest(for: apiVersion)
         let conversationID = conversation.remoteIdentifier!.transportString()
-        let domain = conversation.domain!
         XCTAssertNotNil(request, "No request generated", file: file, line: line)
         XCTAssertEqual(request?.method, .methodPOST, file: file, line: line)
-        XCTAssertEqual(request?.path, "/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
-        return request
-    }
 
-    @discardableResult
-    func verifyItCreatesALegacyRequest(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> ZMTransportRequest? {
-        let request = sut.nextRequest()
-        let conversationID = conversation.remoteIdentifier!.transportString()
-        XCTAssertNotNil(request, "No request generated", file: file, line: line)
-        XCTAssertEqual(request?.method, .methodPOST, file: file, line: line)
-        XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
+        switch apiVersion! {
+        case .v0:
+            XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
+
+        case .v1:
+            let domain = conversation.domain!
+            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
+        }
+
         return request
     }
 

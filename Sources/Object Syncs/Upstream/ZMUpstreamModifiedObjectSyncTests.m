@@ -57,7 +57,7 @@ static NSString *foo = @"foo";
     self.testMOC = [MockModelObjectContextFactory testContext];
     
     [self createSystemUnderTest];
-    //XCTAssertNil([self.sut nextRequest]); // Make sure we've -fetchObjectsFromStore did run
+    //XCTAssertNil([self.sut  nextRequestForAPIVersion:APIVersionV0]);); // Make sure we've -fetchObjectsFromStore did run
     self.testMOC.userInfo[@"ZMIsUserInterfaceContext"] = @YES;
 }
 
@@ -164,12 +164,12 @@ static NSString *foo = @"foo";
 
 -(ZMTransportRequest *)dummyTransportRequest
 {
-    return [ZMTransportRequest requestGetFromPath:[@"dummy-from-test-" stringByAppendingString:self.name]];
+    return [ZMTransportRequest requestGetFromPath:[@"dummy-from-test-" stringByAppendingString:self.name] apiVersion:APIVersionV0];
 }
 
 -(ZMUpstreamRequest *)dummyRequestWithKeys:(NSSet *)keys
 {
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestGetFromPath:[@"dummy-from-test-" stringByAppendingString:self.name]];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestGetFromPath:[@"dummy-from-test-" stringByAppendingString:self.name] apiVersion:APIVersionV0];
     return [[ZMUpstreamRequest alloc] initWithKeys:keys transportRequest:transportRequest];
 }
 
@@ -373,7 +373,7 @@ static NSString *foo = @"foo";
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
     
     // when
-    [self.sut nextRequest];
+    [self.sut nextRequestForAPIVersion:APIVersionV0];
 }
 
 - (void)testThatItGetsTheNextObjectToSynchronizeFromTheUpdateObjectsSet_canCreateRequestImplemented_NO
@@ -385,7 +385,7 @@ static NSString *foo = @"foo";
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
     
     // when
-    [self.sut nextRequest];
+    [self.sut nextRequestForAPIVersion:APIVersionV0];
 }
 
 - (void)testThatItAsksTheTranscoderToCreateARequestForTheNextObjectToSynchronizeAndThatItReturnsThatRequest
@@ -401,12 +401,12 @@ static NSString *foo = @"foo";
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [(ZMLocallyModifiedObjectSet *)[self.mockLocallyModifiedSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
 
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertEqualObjects(request, fakeRequest.transportRequest);
@@ -429,10 +429,10 @@ static NSString *foo = @"foo";
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[self.mockLocallyModifiedSet expect] didStartSynchronizingKeys:transcoderKeys forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     
     // then
     XCTAssertEqualObjects(request, fakeRequest.transportRequest);
@@ -455,15 +455,15 @@ static NSString *foo = @"foo";
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[self.mockLocallyModifiedSet expect] didSynchronizeToken:token];
     [[(id)self.mockTranscoder stub] updateUpdatedObject:OCMOCK_ANY requestUserInfo:OCMOCK_ANY response:OCMOCK_ANY keysToParse:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:[NSSet set]] keysToParseAfterSyncingToken:OCMOCK_ANY];
 
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
-    [request completeWithResponse:[ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil]];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
+    [request completeWithResponse:[ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:0]];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -479,20 +479,20 @@ static NSString *foo = @"foo";
     
     ZMObjectWithKeys *fakeObjectWithKeys = [self fakeObject:entity withKeys:keysToSync];
     ZMUpstreamRequest *fakeRequest = [self dummyRequestWithKeys:keysToSync];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:404 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:404 transportSessionError:nil apiVersion:APIVersionV0];
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
     [[[(id)self.mockTranscoder stub] andReturn:nil] objectToRefetchForFailedUpdateOfObject:entity];
     [[(id)self.mockTranscoder expect] shouldRetryToSyncAfterFailedToUpdateObject:OCMOCK_ANY request:fakeRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
 }
@@ -513,13 +513,13 @@ static NSString *foo = @"foo";
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didNotFinishToSynchronizeToken:token];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
-    [request completeWithResponse:[ZMTransportResponse responseWithPayload:@{} HTTPStatus:500 transportSessionError:nil]];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
+    [request completeWithResponse:[ZMTransportResponse responseWithPayload:@{} HTTPStatus:500 transportSessionError:nil apiVersion:0]];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -536,20 +536,20 @@ static NSString *foo = @"foo";
     ZMUpstreamRequest *fakeRequest = [self dummyRequestWithKeys:keysToSync];
     
     NSDictionary *responsePayload = @{@"bar": @"tralala"};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil apiVersion:0];
     NSSet *keysThatDidNotChange = [NSSet setWithObject:@"field"];
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[self.mockLocallyModifiedSet stub] didSynchronizeToken:token];
     [[(id)self.mockTranscoder expect] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -568,20 +568,20 @@ static NSString *foo = @"foo";
     ZMUpstreamRequest *fakeRequest = [self dummyRequestWithKeys:keysToSync];
     
     NSDictionary *responsePayload = @{@"bar": @"tralala"};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil apiVersion:0];
     NSSet *keysThatDidNotChange = [NSSet setWithObject:@"field"];
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[self.mockLocallyModifiedSet expect] didSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturnValue:@NO] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -600,20 +600,20 @@ static NSString *foo = @"foo";
     ZMUpstreamRequest *fakeRequest = [self dummyRequestWithKeys:keysToSync];
     
     NSDictionary *responsePayload = @{@"bar": @"tralala"};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil apiVersion:0];
     NSSet *keysThatDidNotChange = [NSSet setWithObject:@"field"];
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[self.mockLocallyModifiedSet expect] didNotFinishToSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturnValue:@YES] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -631,20 +631,20 @@ static NSString *foo = @"foo";
     ZMUpstreamRequest *fakeRequest = [self dummyRequestWithKeys:keysToSync];
     
     NSDictionary *responsePayload = @{@"bar": @"tralala"};
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil apiVersion:0];
     NSSet *keysThatDidNotChange = [NSSet set];
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[self.mockLocallyModifiedSet expect] didSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturnValue:@NO] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -724,11 +724,11 @@ static NSString *foo = @"foo";
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:404 transportSessionError:nil];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:404 transportSessionError:nil apiVersion:0];
     [request completeWithResponse:response];
     
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
@@ -758,15 +758,15 @@ static NSString *foo = @"foo";
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
-    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
+    [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
     [[(id)self.mockTranscoder expect] requestExpiredForObject:entity forKeys:keysToSync];
     [[(id)self.mockTranscoder stub] objectToRefetchForFailedUpdateOfObject:OCMOCK_ANY];
     
     // when
-    ZMTransportRequest *request = [self.sut nextRequest];
-    [request completeWithResponse:[ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:[NSError requestExpiredError]]];
+    ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
+    [request completeWithResponse:[ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:[NSError requestExpiredError] apiVersion:0]];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 

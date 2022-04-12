@@ -23,7 +23,7 @@ import Foundation
 /// - During the `.fetchingUsers` slow sync phase.
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
-public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate, FederationAware {
+public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
 
     var isFetchingAllConnectedUsers: Bool = false
     let syncProgress: SyncProgress
@@ -33,15 +33,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let userProfileByIDTranscoder: UserProfileByIDTranscoder
     let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
-
-    public var useFederationEndpoint: Bool {
-        get {
-            userProfileByQualifiedIDTranscoder.isAvailable
-        }
-        set {
-            userProfileByQualifiedIDTranscoder.isAvailable = newValue
-        }
-    }
 
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
@@ -65,27 +56,15 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         self.userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        fetchAllConnectedUsers()
-
-        return userProfileByQualifiedID.nextRequest() ?? userProfileByID.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        fetchAllConnectedUsers(for: apiVersion)
+        return userProfileByQualifiedID.nextRequest(for: apiVersion) ?? userProfileByID.nextRequest(for: apiVersion)
     }
 
-    func fetch(_ users: Set<ZMUser>) {
-        let users = users.filter({ !$0.isSelfUser })
-        guard !users.isEmpty else { return }
-
-        if userProfileByQualifiedID.isAvailable, let qualifiedUserIDs = users.qualifiedUserIDs {
-            userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
-        } else {
-            userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
-        }
-
-    }
-
-    func fetchAllConnectedUsers() {
-        guard syncProgress.currentSyncPhase == .fetchingUsers,
-              !isFetchingAllConnectedUsers
+    func fetchAllConnectedUsers(for apiVersion: APIVersion) {
+        guard
+            syncProgress.currentSyncPhase == .fetchingUsers,
+            !isFetchingAllConnectedUsers
         else {
             return
         }
@@ -95,7 +74,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         if allConnectedUsers.isEmpty {
             syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
         } else {
-            fetch(allConnectedUsers)
+            fetch(users: allConnectedUsers, for: apiVersion)
         }
 
         isFetchingAllConnectedUsers = true
@@ -104,8 +83,25 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     func allConnectedUsers() -> Set<ZMUser> {
         let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
         let connections = managedObjectContext.fetchOrAssert(request: fetchRequest)
-
         return Set(connections.compactMap(\.to))
+    }
+
+    func fetch(users: Set<ZMUser>, for apiVersion: APIVersion) {
+        let users = users.filter { !$0.isSelfUser }
+        guard !users.isEmpty else { return }
+
+        switch apiVersion {
+        case .v0:
+            userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
+
+        case .v1:
+            if let qualifiedUserIDs = users.qualifiedUserIDs {
+                userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
+            } else if let domain = APIVersion.domain {
+                let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: domain)
+                userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
+            }
+        }
     }
 
     public func didFailToSyncAllObjects() {
@@ -133,9 +129,13 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        let usersNeedingToBeUpdated = objects.compactMap({ $0 as? ZMUser}).filter(\.needsToBeUpdatedFromBackend)
+        guard let apiVersion = APIVersion.current else { return }
 
-        fetch(Set(usersNeedingToBeUpdated))
+        let usersNeedingToBeUpdated = objects
+            .compactMap { $0 as? ZMUser}
+            .filter(\.needsToBeUpdatedFromBackend)
+
+        fetch(users: Set(usersNeedingToBeUpdated), for: apiVersion)
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
@@ -143,11 +143,14 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        guard let users = objects as? Set<ZMUser> else {
+        guard
+            let users = objects as? Set<ZMUser>,
+            let apiVersion = APIVersion.current
+        else {
             return
         }
 
-        fetch(users)
+        fetch(users: users, for: apiVersion)
     }
 
 }
@@ -213,7 +216,6 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
     var fetchLimit: Int =  1600 / 25 // UUID as string is 24 + 1 for the comma
-    var isAvailable: Bool = true
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -223,10 +225,10 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         self.context = context
     }
 
-    func request(for identifiers: Set<UUID>) -> ZMTransportRequest? {
+    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         // GET /users?ids=?
         let userIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
-        return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)")
+        return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
@@ -266,7 +268,6 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
 
     var fetchLimit: Int = 500
-    var isAvailable: Bool = true
 
     weak var contextChangedTracker: ZMContextChangeTracker?
     let context: NSManagedObjectContext
@@ -277,8 +278,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         self.context = context
     }
 
-    func request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
+    func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
+            apiVersion > .v0,
             let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers)).payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
@@ -287,29 +289,13 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
         // POST /list-users
         let path = NSString.path(withComponents: ["/list-users"])
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData?)
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
-
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
-            switch responseFailure.label {
-            case .noEndpoint:
-                // NOTE should be removed or replaced once the BE exposes a version number.
-                Logging.network.warn("Endpoint not available, deactivating.")
-                isAvailable = false
-
-                // Re-schedule to fetch clients with the clients with the fallback
-                if let users = ZMUser.fetchObjects(withRemoteIdentifiers: Set(identifiers.map(\.uuid)),
-                                                   in: context) as? Set<ZMUser> {
-                    contextChangedTracker?.objectsDidChange(Set(users))
-                }
-            case .notFound:
-                markUserProfilesAsFetched(identifiers)
-            default:
-                break
-            }
-
+            guard case .notFound = responseFailure.label else { return }
+            markUserProfilesAsFetched(identifiers)
             return
         }
 
@@ -331,6 +317,22 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         for qualifiedID in missingUsers {
             let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
             user?.needsToBeUpdatedFromBackend = false
+        }
+    }
+
+}
+
+private extension Collection where Element == ZMUser {
+
+    func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
+        return compactMap { user in
+            if let qualifiedID = user.qualifiedID {
+                return qualifiedID
+            } else if let identifier = user.remoteIdentifier {
+                return QualifiedID(uuid: identifier, domain: localDomain)
+            } else {
+                return nil
+            }
         }
     }
 

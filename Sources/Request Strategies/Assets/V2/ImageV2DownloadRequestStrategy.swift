@@ -64,15 +64,15 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
         }
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return downstreamSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return downstreamSync.nextRequest(for: apiVersion)
     }
 
 }
 
 extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         guard let message = object as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
 
         if let existingData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) {
@@ -82,10 +82,10 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
         } else {
             if message.imageMessageData != nil {
                 guard let assetId = message.assetId?.transportString() else { return nil }
-                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!)
+                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
             } else if message.fileMessageData != nil {
                 guard let assetId = message.fileMessageData?.thumbnailAssetID else { return nil }
-                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!)
+                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
             }
         }
 

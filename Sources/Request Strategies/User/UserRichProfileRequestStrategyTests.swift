@@ -50,7 +50,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
 
             // when
-            guard let request = self.sut.nextRequest() else { XCTFail("Request is nil"); return }
+            guard let request = self.sut.nextRequest(for: .v0) else { XCTFail("Request is nil"); return }
 
             // then
             XCTAssertEqual(request.path, "/users/\(userID)/rich-info")
@@ -65,7 +65,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
 
             // when
@@ -76,7 +76,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
                     ["type": type, "value": value]
                 ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: payload as NSDictionary as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
             self.sut.update(user, with: response, downstreamSync: nil)
 
             // then
@@ -92,11 +92,11 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
-            let request = self.sut.nextRequest()
+            let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
 
             // when
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
             self.sut.delete(user, with: response, downstreamSync: nil)
 
             // then

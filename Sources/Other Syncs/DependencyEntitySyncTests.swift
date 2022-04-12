@@ -54,7 +54,7 @@ class MockEntityTranscoder: EntityTranscoder {
     var requestForEntityDidCompleteWithResponseExpectation: XCTestExpectation?
     var shouldTryToResendAfterFailureExpectation: XCTestExpectation?
 
-    func request(forEntity entity: MockDependencyEntity) -> ZMTransportRequest? {
+    func request(forEntity entity: MockDependencyEntity, apiVersion: APIVersion) -> ZMTransportRequest? {
         requestForEntityExpectation?.fulfill()
         didCallRequestForEntityCount += 1
         return generatedRequest
@@ -100,7 +100,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
         // when
         sut.synchronize(entity: entity)
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 1)
@@ -114,7 +114,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
         // when
         sut.synchronize(entity: entity)
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 0)
@@ -144,7 +144,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = anotherDependency
         sut.objectsDidChange(dependencySet)
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 0)
@@ -158,7 +158,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
         entity.expire()
 
         // when
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 0)
@@ -175,7 +175,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = nil
         sut.objectsDidChange(dependencySet)
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 1)
@@ -196,8 +196,8 @@ class DependencyEntitySyncTests: ZMTBaseTest {
         // when
         entity.dependentObjectNeedingUpdateBeforeProcessing = nil
         sut.objectsDidChange(dependencyAndAnotherDependencySet)
-        _ = sut.nextRequest()
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 1)
@@ -207,15 +207,15 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
     func testThatTranscoderIsAskedToHandleSuccessfullResponse() {
         // given
-        mockTranscoder.generatedRequest = ZMTransportRequest(getFromPath: "/foo")
+        mockTranscoder.generatedRequest = ZMTransportRequest(getFromPath: "/foo", apiVersion: APIVersion.v0.rawValue)
         mockTranscoder.requestForEntityDidCompleteWithResponseExpectation = expectation(description: "Was asked to handle response")
 
         let entity = MockDependencyEntity()
         sut.synchronize(entity: entity)
-        let request = sut.nextRequest()
+        let request = sut.nextRequest(for: .v0)
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         request?.complete(with: response)
 
         // then
@@ -224,15 +224,15 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
     func testThatTranscoderIsAskedToHandleFailureResponse() {
         // given
-        mockTranscoder.generatedRequest = ZMTransportRequest(getFromPath: "/foo")
+        mockTranscoder.generatedRequest = ZMTransportRequest(getFromPath: "/foo", apiVersion: APIVersion.v0.rawValue)
         mockTranscoder.shouldTryToResendAfterFailureExpectation = expectation(description: "Was asked to resend request")
 
         let entity = MockDependencyEntity()
         sut.synchronize(entity: entity)
-        let request = sut.nextRequest()
+        let request = sut.nextRequest(for: .v0)
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil)
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         request?.complete(with: response)
 
         // then
@@ -241,22 +241,22 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
     func testThatTranscoderIsAskedToCreateRequest_whenTranscoderWantsToResendRequest() {
         // given
-        mockTranscoder.generatedRequest = ZMTransportRequest(getFromPath: "/foo")
+        mockTranscoder.generatedRequest = ZMTransportRequest(getFromPath: "/foo", apiVersion: APIVersion.v0.rawValue)
         mockTranscoder.shouldTryToResendAfterFailureExpectation = expectation(description: "Was asked to resend request")
         mockTranscoder.shouldResendOnFailure = true
 
         let entity = MockDependencyEntity()
         sut.synchronize(entity: entity)
-        let request = sut.nextRequest()
+        let request = sut.nextRequest(for: .v0)
 
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil)
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         request?.complete(with: response)
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5)) // wait for response to fail
         mockTranscoder.didCallRequestForEntityCount = 0 // reset since we expect it be called again
 
         // when
-        _ = sut.nextRequest()
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 1)

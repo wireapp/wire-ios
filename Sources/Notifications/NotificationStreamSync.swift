@@ -45,14 +45,14 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         notificationStreamSyncDelegate = delegate
     }
 
-    public func nextRequest() -> ZMTransportRequest? {
+    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
        // We only reset the paginator if it is neither in progress nor has more pages to fetch.
         if listPaginator.status != ZMSingleRequestProgress.inProgress && !listPaginator.hasMoreToFetch {
             listPaginator.resetFetching()
         }
 
-        guard let request = listPaginator.nextRequest() else {
+        guard let request = listPaginator.nextRequest(for: apiVersion) else {
             return nil
         }
 

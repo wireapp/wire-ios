@@ -26,6 +26,12 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
 
+    var apiVersion: APIVersion! {
+        didSet {
+            APIVersion.current = apiVersion
+        }
+    }
+
     override func setUp() {
         super.setUp()
 
@@ -40,6 +46,8 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                applicationStatus: mockApplicationStatus)
         }
 
+        apiVersion = .v0
+
     }
 
     override func tearDown() {
@@ -48,6 +56,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         self.sut = nil
+        apiVersion = nil
 
         super.tearDown()
     }
@@ -80,7 +89,7 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
 
             // THEN
-            XCTAssertNil(self.sut.nextRequest())
+            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
@@ -95,7 +104,7 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
@@ -121,7 +130,7 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
@@ -154,7 +163,7 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
@@ -190,7 +199,7 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
@@ -220,7 +229,7 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest() == nil {
+            if self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
@@ -237,11 +246,10 @@ extension ClientMessageRequestStrategyTests {
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
-            self.sut.useFederationEndpoint = false
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            guard let request = self.sut.nextRequest() else {
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("Request is nil")
                 return
             }
@@ -260,6 +268,8 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItGeneratesARequestToSendAClientMessage_WithFederationEndpointEnabled() {
+        apiVersion = .v1
+
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
@@ -268,17 +278,16 @@ extension ClientMessageRequestStrategyTests {
             let conversationID = self.groupConversation.remoteIdentifier!.transportString()
             let conversationDomain = self.groupConversation.domain!
             self.syncMOC.saveOrRollback()
-            self.sut.useFederationEndpoint = true
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            guard let request = self.sut.nextRequest() else {
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("Request is nil")
                 return
             }
 
             // THEN
-            XCTAssertEqual(request.path, "/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
+            XCTAssertEqual(request.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertNotNil(request.binaryData)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
@@ -292,11 +301,10 @@ extension ClientMessageRequestStrategyTests {
             let text = String(repeating: "Hi", count: 100000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
-            self.sut.useFederationEndpoint = false
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            guard let request = self.sut.nextRequest() else {
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("Request is nil")
                 return
             }
@@ -353,8 +361,8 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
             // WHEN
-            guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
-            request.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil))
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("Request is nil") }
+            request.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -383,9 +391,9 @@ extension ClientMessageRequestStrategyTests {
             }
 
             // WHEN
-            guard let request = self.sut.nextRequest() else { return XCTFail("Request is nil") }
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("Request is nil") }
             let payload = ["label": "missing-legalhold-consent", "code": 403, "message": ""] as NSDictionary
-            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil))
+            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

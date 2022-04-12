@@ -23,6 +23,23 @@ import WireUtilities
 @testable import WireRequestStrategy
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
+
+    private var apiVersion: APIVersion! {
+        didSet {
+            APIVersion.current = apiVersion
+        }
+    }
+
+    override func setUp() {
+        super.setUp()
+        apiVersion = .v0
+    }
+
+    override func tearDown() {
+        apiVersion = nil
+        super.tearDown()
+    }
+
 }
 
 // MARK: - Text messages
@@ -37,7 +54,7 @@ extension ClientMessageRequestFactoryTests {
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
 
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, useFederationEndpoint: false) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, apiVersion: self.apiVersion) else {
                 return XCTFail("No request")
             }
 
@@ -67,7 +84,7 @@ extension ClientMessageRequestFactoryTests {
             let confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
 
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, in: self.oneToOneConversation, useFederationEndpoint: false) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, in: self.oneToOneConversation, apiVersion: self.apiVersion) else {
                 return XCTFail("No request")
             }
 
@@ -93,7 +110,7 @@ extension ClientMessageRequestFactoryTests {
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
 
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, useFederationEndpoint: false) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, apiVersion: self.apiVersion) else {
                 return XCTFail("Invalid request")
             }
 
@@ -125,7 +142,7 @@ extension ClientMessageRequestFactoryTests {
                                               completionHandler: nil)
 
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(entity, in: self.groupConversation, useFederationEndpoint: false) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(entity, in: self.groupConversation, apiVersion: self.apiVersion) else {
                 return XCTFail("No request")
             }
 
@@ -158,7 +175,9 @@ extension ClientMessageRequestFactoryTests {
             // WHEN
             let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
                 conversationId: conversationID,
-                selfClient: self.selfClient
+                domain: nil,
+                selfClient: self.selfClient,
+                apiVersion: self.apiVersion
             )
 
             guard let data = request?.binaryData else {
@@ -176,6 +195,7 @@ extension ClientMessageRequestFactoryTests {
     }
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
+        apiVersion = .v1
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversationID = UUID()
@@ -191,7 +211,8 @@ extension ClientMessageRequestFactoryTests {
             let request = ClientMessageRequestFactory().upstreamRequestForFetchingClients(
                 conversationId: conversationID,
                 domain: domain,
-                selfClient: self.selfClient
+                selfClient: self.selfClient,
+                apiVersion: self.apiVersion
             )
 
             guard let data = request?.binaryData else {
@@ -203,7 +224,7 @@ extension ClientMessageRequestFactoryTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertNotNil(message)
-            XCTAssertEqual(request?.path, "/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
             XCTAssertEqual(message, expectedMessage)
         }
     }

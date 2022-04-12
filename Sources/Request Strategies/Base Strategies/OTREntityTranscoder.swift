@@ -28,7 +28,7 @@ open class OTREntityTranscoder<Entity: OTREntity & Hashable> : NSObject, EntityT
         self.clientRegistrationDelegate = clientRegistrationDelegate
     }
 
-    open func request(forEntity entity: Entity) -> ZMTransportRequest? {
+    open func request(forEntity entity: Entity, apiVersion: APIVersion) -> ZMTransportRequest? {
         return nil
     }
 

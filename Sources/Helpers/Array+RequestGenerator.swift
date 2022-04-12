@@ -18,8 +18,8 @@
 
 public extension Array where Element == ZMRequestGenerator {
 
-    func nextRequest() -> ZMTransportRequest? {
-        return (self as NSArray).nextRequest()
+    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return (self as NSArray).nextRequest(for: apiVersion)
     }
 
 }

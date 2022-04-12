@@ -47,8 +47,8 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         return [preprocessor, upstreamSync, self]
     }
 
-    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return upstreamSync.nextRequest()
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return upstreamSync.nextRequest(for: apiVersion)
     }
 
     private static var updatePredicate: NSPredicate {
@@ -95,7 +95,7 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
 
 extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
+    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         return nil // no-op
     }
 
@@ -107,18 +107,18 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         // no-op
     }
 
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
+    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let message = managedObject as? AssetMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
         guard let asset = message.assets.first(where: { !$0.isUploaded}) else { return nil } // TODO jacob are we sure we only have one upload per message active?
 
-        return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage)
+        return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage, apiVersion: apiVersion)
     }
 
-    private func requestForUploadingAsset(_ asset: AssetType, for message: ZMAssetClientMessage) -> ZMUpstreamRequest {
+    private func requestForUploadingAsset(_ asset: AssetType, for message: ZMAssetClientMessage, apiVersion: APIVersion) -> ZMUpstreamRequest {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
 
-        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention) else { fatal("Could not create asset request") }
+        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention, apiVersion: apiVersion) else { fatal("Could not create asset request") }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
             message.associatedTaskIdentifier = identifier
