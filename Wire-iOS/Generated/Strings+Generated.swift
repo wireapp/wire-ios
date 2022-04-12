@@ -163,6 +163,14 @@ internal enum L10n {
         }
       }
     }
+    internal enum BackendNotSupported {
+      internal enum Alert {
+        /// The server version is not supported by this app. Please contact your system administrator.
+        internal static let message = L10n.tr("Localizable", "backend_not_supported.alert.message")
+        /// Server version not supported
+        internal static let title = L10n.tr("Localizable", "backend_not_supported.alert.title")
+      }
+    }
     internal enum ButtonMessageCell {
       /// Your answer can't be sent, please retry.
       internal static let genericError = L10n.tr("Localizable", "button_message_cell.generic_error")
