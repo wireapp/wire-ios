@@ -314,14 +314,18 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesTheCorrectAlertBody_ConvWithoutName() {
         syncMOC.performGroupedBlockAndWait {
-            guard let alertBody = self.alertBody(self.groupConversationWithoutName, aSender: self.otherUser1) else { return XCTFail()}
+            guard let alertBody = self.alertBody(self.groupConversationWithoutName, aSender: self.otherUser1) else {
+                return XCTFail("Alert body is missing")
+            }
             XCTAssertEqual(alertBody, "Other User1 ❤️ your message in a conversation")
         }
     }
 
     func testThatItCreatesTheCorrectAlertBody() {
         syncMOC.performGroupedBlockAndWait {
-            guard let alertBody = self.alertBody(self.groupConversation, aSender: self.otherUser1) else { return XCTFail()}
+            guard let alertBody = self.alertBody(self.groupConversation, aSender: self.otherUser1) else {
+                return XCTFail("Alert body is missing")
+            }
             XCTAssertEqual(alertBody, "Other User1 ❤️ your message")
         }
     }
@@ -329,7 +333,9 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesTheCorrectAlertBody_UnknownUser() {
         syncMOC.performGroupedBlockAndWait {
             self.otherUser1.name = ""
-            guard let alertBody = self.alertBody(self.groupConversation, aSender: self.otherUser1) else { return XCTFail()}
+            guard let alertBody = self.alertBody(self.groupConversation, aSender: self.otherUser1) else {
+                return XCTFail("Alert body is missing")
+            }
             XCTAssertEqual(alertBody, "Someone ❤️ your message")
         }
     }
@@ -337,7 +343,9 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         func testThatItCreatesTheCorrectAlertBody_UnknownUser_UnknownConversationName() {
             syncMOC.performGroupedBlockAndWait {
                 self.otherUser1.name = ""
-                guard let alertBody = self.alertBody(self.groupConversationWithoutName, aSender: self.otherUser1) else { return XCTFail()}
+                guard let alertBody = self.alertBody(self.groupConversationWithoutName, aSender: self.otherUser1) else {
+                    return XCTFail("Alert body is missing")
+                }
                 XCTAssertEqual(alertBody, "Someone ❤️ your message in a conversation")
             }
         }
@@ -345,7 +353,9 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         func testThatItCreatesTheCorrectAlertBody_UnknownUser_OneOnOneConv() {
             syncMOC.performGroupedBlockAndWait {
                 self.otherUser1.name = ""
-                guard let alertBody = self.alertBody(self.oneOnOneConversation, aSender: self.otherUser1) else { return XCTFail()}
+                guard let alertBody = self.alertBody(self.oneOnOneConversation, aSender: self.otherUser1) else {
+                    return XCTFail("Alert body is missing")
+                }
                 XCTAssertEqual(alertBody, "Someone ❤️ your message")
             }
         }

@@ -132,7 +132,7 @@ final class NotificationsTrackerTests: MessagingTestBase {
             NotificationsTracker.Attributes.abortedProcessing.identifier: 1 as NSObject
         ]
         guard let attributes = mockAnalytics.taggedEventsWithAttributes.first?.attributes else {
-            XCTFail(); return
+            XCTFail("Attributes are missing"); return
         }
         XCTAssertEqual(payload, attributes)
     }
