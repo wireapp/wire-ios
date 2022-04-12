@@ -108,25 +108,25 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
         // when
         (0..<3).forEach { _ in
-            sut.enqueueOneTime(.init(getFromPath: "/"))
+            sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         }
         
         // then
-        let result = sut.enqueueRequest { .init(getFromPath: "/") }
+        let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
         XCTAssertEqual(result, .maximumNumberOfRequests)
     }
     
     func testThatEnqueueOneTime_IsNotLimitedByRequestLimit() {
         // given
         (0..<3).forEach { _ in
-            sut.enqueueOneTime(.init(getFromPath: "/"))
+            sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         }
         
         let task = MockTask()
         sessionMock.nextMockTask = task
         
         // when
-        sut.enqueueOneTime(.init(getFromPath: "/"))
+        sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         
         // then
         XCTAssertEqual(task.resumeCallCount, 1)
@@ -138,7 +138,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         sessionMock.nextMockTask = task
 
         // when
-        let result = sut.enqueueRequest { .init(getFromPath: "/") }
+        let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
 
         // then
         XCTAssertEqual(result, .success)
@@ -156,19 +156,19 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     func testThatItDoesNotEnqueueMoreThanThreeRequests() {
         // when
         (0..<3).forEach { _ in
-            let result = sut.enqueueRequest { .init(getFromPath: "/") }
+            let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }
 
         // then
-        let result = sut.enqueueRequest { .init(getFromPath: "/") }
+        let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
         XCTAssertEqual(result, .maximumNumberOfRequests)
     }
 
     func testThatItDoesEnqueueAnotherRequestAfterTheLastOneHasBeenCompleted() {
         // when
         (0..<3).forEach { _ in
-            let result = sut.enqueueRequest { .init(getFromPath: "/") }
+            let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }
 
@@ -176,7 +176,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
         // then
         do {
-            let result = sut.enqueueRequest { .init(getFromPath: "/") }
+            let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .maximumNumberOfRequests)
         }
 
@@ -186,7 +186,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
         // then
         do {
-            let result = sut.enqueueRequest { .init(getFromPath: "/") }
+            let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }
     }
@@ -196,7 +196,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
         sessionMock.nextCompletionParameters = (nil, response, nil)
         let completionExpectation = expectation(description: "Completion handler should be called")
-        let request = ZMTransportRequest(getFromPath: "/")
+        let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
 
         request.add(ZMCompletionHandler(on: fakeUIContext) { response in
             // then
@@ -222,7 +222,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
         sessionMock.nextCompletionParameters = (nil, response, nil)
-        let request = ZMTransportRequest(getFromPath: "/")
+        let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
 
         // when
         _ = sut.enqueueRequest { request }
@@ -235,7 +235,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         let response = URLResponse(url: url, mimeType: "", expectedContentLength: 1, textEncodingName: nil)
         sessionMock.nextCompletionParameters = (nil, response, NSError.requestExpiredError())
         let completionExpectation = expectation(description: "Completion handler should be called with errors")
-        let request = ZMTransportRequest(getFromPath: "/")
+        let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
         
         request.add(ZMCompletionHandler(on: fakeUIContext) { response in
             // then

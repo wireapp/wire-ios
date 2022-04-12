@@ -140,10 +140,10 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
             var transportResponse: ZMTransportResponse!
             
             if let response = response as? HTTPURLResponse {
-                transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error)
+                transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
             }
             else if let error = error {
-                transportResponse = ZMTransportResponse(transportSessionError: error)
+                transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
             }
             
             if nil == transportResponse {

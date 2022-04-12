@@ -453,7 +453,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
     if (progress < request.progress) {
         float failureThresholdProgress = (float)totalBytes + ZMTransportDecreasedProgressCancellationLeeway / (float)totalBytesExpected;
         if (progress < failureThresholdProgress) {
-            [request completeWithResponse:[ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError]];
+            [request completeWithResponse:[ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError apiVersion:request.apiVersion]];
             return YES;
         }
     }

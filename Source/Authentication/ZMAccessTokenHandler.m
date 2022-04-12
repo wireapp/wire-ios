@@ -211,24 +211,24 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 
 
-- (BOOL)consumeRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry;
+- (BOOL)consumeRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry apiVersion:(int)apiVersion;
 {
     if (self.currentAccessTokenTask != task) {
         return NO;
     }
 
-    [self didCompleteAccessTokenRequestWithTask:task data:data session:session shouldRetry:shouldRetry];
+    [self didCompleteAccessTokenRequestWithTask:task data:data session:session shouldRetry:shouldRetry apiVersion:apiVersion];
     return YES;
 }
 
 
-- (void)didCompleteAccessTokenRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry
+- (void)didCompleteAccessTokenRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry apiVersion:(int)apiVersion
 {
     ZMLogInfo(@"<---- Access token task completed: %@ // %@", task, task.error);
     ZMLogInfo(@"<---- Access token URL session: %@", session.description);
     
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:NO];
-    ZMTransportResponse *response = [self transportResponseFromURLResponse:task.response data:data error:transportError];
+    ZMTransportResponse *response = [self transportResponseFromURLResponse:task.response data:data error:transportError apiVersion:apiVersion];
     BOOL needToResend = [self processAccessTokenResponse:response];
     
     // We can only re-send once we've cleared out the current
@@ -265,10 +265,10 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 }
 
 
-- (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error;
+- (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error apiVersion:(int)apiVersion;
 {
     NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *) URLResponse;
-    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:HTTPResponse data:data error:error];
+    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:HTTPResponse data:data error:error apiVersion:apiVersion];
 }
 
 

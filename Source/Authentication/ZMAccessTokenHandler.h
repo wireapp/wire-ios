@@ -56,7 +56,7 @@
 /// Returns YES if another request should be generated (e.g. it was a temporary error)
 - (BOOL)processAccessTokenResponse:(ZMTransportResponse *)response;
 
-- (BOOL)consumeRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry;
+- (BOOL)consumeRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry apiVersion:(int)apiVersion
 ;
 
 - (BOOL)hasAccessToken;

@@ -52,46 +52,46 @@
 
 -(void)testThatNeedsAuthenticationIsSetByDefault;
 {
-    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{}].needsAuthentication);
-    XCTAssertTrue([ZMTransportRequest requestGetFromPath:@"/bar"].needsAuthentication);
-    XCTAssertTrue([ZMTransportRequest requestWithPath:@"/bar" method:ZMMethodPOST payload:@{}].needsAuthentication);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} apiVersion:0].needsAuthentication);
+    XCTAssertTrue([ZMTransportRequest requestGetFromPath:@"/bar" apiVersion:0].needsAuthentication);
+    XCTAssertTrue([ZMTransportRequest requestWithPath:@"/bar" method:ZMMethodPOST payload:@{} apiVersion:0].needsAuthentication);
 }
 
 -(void)testThatCreatesAccessTokenIsNotSetByDefault;
 {
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{}].responseWillContainAccessToken);
-    XCTAssertFalse([ZMTransportRequest requestGetFromPath:@"/bar"].responseWillContainAccessToken);
-    XCTAssertFalse([ZMTransportRequest requestWithPath:@"/bar" method:ZMMethodPOST payload:@{}].responseWillContainAccessToken);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} apiVersion:0].responseWillContainAccessToken);
+    XCTAssertFalse([ZMTransportRequest requestGetFromPath:@"/bar" apiVersion:0].responseWillContainAccessToken);
+    XCTAssertFalse([ZMTransportRequest requestWithPath:@"/bar" method:ZMMethodPOST payload:@{} apiVersion:0].responseWillContainAccessToken);
 }
 
 - (void)testThatNeedsAuthenticationIsSet
 {
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone].needsAuthentication);
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken].needsAuthentication);
-    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess].needsAuthentication);
-    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsCookieAndAccessToken].needsAuthentication);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone apiVersion:0].needsAuthentication);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0].needsAuthentication);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0].needsAuthentication);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsCookieAndAccessToken apiVersion:0].needsAuthentication);
 }
 
 - (void)testThatNeedsCookieIsSet
 {
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone].needsCookie);
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken].needsCookie);
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess].needsCookie);
-    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsCookieAndAccessToken].needsCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone apiVersion:0].needsCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0].needsCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0].needsCookie);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsCookieAndAccessToken apiVersion:0].needsCookie);
 }
 
 - (void)testThatCreatesAccessTokenIsSet
 {
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone].responseWillContainAccessToken);
-    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken].responseWillContainAccessToken);
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess].responseWillContainAccessToken);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone apiVersion:0].responseWillContainAccessToken);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0].responseWillContainAccessToken);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0].responseWillContainAccessToken);
 }
 
 - (void)testThatResponseWillContainCookieIsSet;
 {
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone].responseWillContainCookie);
-    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken].responseWillContainCookie);
-    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess].responseWillContainCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone apiVersion:0].responseWillContainCookie);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0].responseWillContainCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0].responseWillContainCookie);
 }
 
 -(void)testThatRequestGetFromPathSetsProperties
@@ -101,7 +101,7 @@
     NSMutableString *path = [NSMutableString stringWithString:originalPath];
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:path];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:path apiVersion:0];
     [path setString:@"baz"]; // test that it is copied
     
     // then
@@ -121,12 +121,36 @@
     NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
     
     // when
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:(__bridge id) kUTTypePNG contentDisposition:disposition];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:(__bridge id) kUTTypePNG contentDisposition:disposition apiVersion:0];
     
     // then
     XCTAssertNotNil(request);
     XCTAssertNil(request.payload);
     XCTAssertEqualObjects(request.path, path);
+    XCTAssertEqual(request.method, method);
+    XCTAssertEqualObjects(request.contentDisposition, disposition);
+    XCTAssertEqualObjects(request.binaryData, data);
+    XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypePNG);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
+}
+
+- (void)testThatRequestWithBinaryDataSetsPropertiesWithAPIVersion;
+{
+    // given
+    int apiVersion = 5;
+    NSString * const path = @"/some/path";
+    NSString * const expectedPath = [NSString stringWithFormat:@"/v%d%@", apiVersion, path];
+    ZMTransportRequestMethod const method = ZMMethodPOST;
+    NSData * const data = [NSData dataWithBytes:((const char []){'z', 'q'}) length:2];
+    NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
+
+    // when
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:(__bridge id) kUTTypePNG contentDisposition:disposition apiVersion:apiVersion];
+
+    // then
+    XCTAssertNotNil(request);
+    XCTAssertNil(request.payload);
+    XCTAssertEqualObjects(request.path, expectedPath);
     XCTAssertEqual(request.method, method);
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
@@ -142,12 +166,36 @@
     
     // when
     NSString *contentType = @"multipart/mixed; boundary=frontier";
-    ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType];
+    ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType apiVersion:0];
     
     // then
     XCTAssertNotNil(request);
     XCTAssertNil(request.payload);
     XCTAssertEqualObjects(request.path, path);
+    XCTAssertEqual(request.method, ZMMethodPOST);
+    XCTAssertNil(request.contentDisposition);
+    XCTAssertNil(request.binaryData);
+    XCTAssertEqualObjects(fileURL, request.fileUploadURL);
+    XCTAssertTrue(request.shouldUseOnlyBackgroundSession);
+    XCTAssertTrue(request.shouldFailInsteadOfRetry);
+}
+
+- (void)testThatFileUploadRequestSetsPropertiesWithAPIVersion;
+{
+    // given
+    int apiVersion = 5;
+    NSString * const path = @"/some/path";
+    NSString * const expectedPath = [NSString stringWithFormat:@"/v%d%@", apiVersion, path];
+    NSURL *fileURL = [NSURL URLWithString:@"/url/to/some/private/file"];
+
+    // when
+    NSString *contentType = @"multipart/mixed; boundary=frontier";
+    ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType apiVersion:apiVersion];
+
+    // then
+    XCTAssertNotNil(request);
+    XCTAssertNil(request.payload);
+    XCTAssertEqualObjects(request.path, expectedPath);
     XCTAssertEqual(request.method, ZMMethodPOST);
     XCTAssertNil(request.contentDisposition);
     XCTAssertNil(request.binaryData);
@@ -163,7 +211,7 @@
     ZMTransportRequestMethod const method = ZMMethodPUT;
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest emptyPutRequestWithPath:path];
+    ZMTransportRequest *request = [ZMTransportRequest emptyPutRequestWithPath:path apiVersion:0];
     NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] init];
     [request setBodyDataAndMediaTypeOnHTTPRequest:httpRequest];
     
@@ -180,6 +228,32 @@
     XCTAssertEqualObjects([httpRequest valueForHTTPHeaderField:@"Content-Type"], @"application/json");
 }
 
+- (void)testThatEmptyPUTRequestSetsPropertiesWithAPIVersion;
+{
+    // given
+    int apiVersion = 5;
+    NSString * const path = @"/some/path";
+    NSString * const expectedPath = [NSString stringWithFormat:@"/v%d%@", apiVersion, path];
+    ZMTransportRequestMethod const method = ZMMethodPUT;
+
+    // when
+    ZMTransportRequest *request = [ZMTransportRequest emptyPutRequestWithPath:path apiVersion:apiVersion];
+    NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] init];
+    [request setBodyDataAndMediaTypeOnHTTPRequest:httpRequest];
+
+    // when
+
+    // then
+    XCTAssertNotNil(request);
+    XCTAssertNil(request.payload);
+    XCTAssertEqualObjects(request.path, expectedPath);
+    XCTAssertEqual(request.method, method);
+    XCTAssertNil(request.contentDisposition);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
+    XCTAssertEqualObjects(request.binaryData, [NSData data]);
+    XCTAssertEqualObjects([httpRequest valueForHTTPHeaderField:@"Content-Type"], @"application/json");
+}
+
 - (void)testThatImagePostRequestSetsProperties;
 {
     // given
@@ -188,12 +262,35 @@
     NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest postRequestWithPath:path imageData:data contentDisposition:disposition];
+    ZMTransportRequest *request = [ZMTransportRequest postRequestWithPath:path imageData:data contentDisposition:disposition apiVersion:0];
     
     // then
     XCTAssertNotNil(request);
     XCTAssertNil(request.payload);
     XCTAssertEqualObjects(request.path, path);
+    XCTAssertEqual(request.method, ZMMethodPOST);
+    XCTAssertEqualObjects(request.contentDisposition, disposition);
+    XCTAssertEqualObjects(request.binaryData, data);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
+    XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypeJPEG);
+}
+
+- (void)testThatImagePostRequestSetsPropertiesWithAPIVersion;
+{
+    // given
+    int apiVersion = 5;
+    NSString * const path = @"/some/path";
+    NSString * const expectedPath = [NSString stringWithFormat:@"/v%d%@", apiVersion, path];
+    NSData * const data = [self verySmallJPEGData];
+    NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
+
+    // when
+    ZMTransportRequest *request = [ZMTransportRequest postRequestWithPath:path imageData:data contentDisposition:disposition apiVersion:apiVersion];
+
+    // then
+    XCTAssertNotNil(request);
+    XCTAssertNil(request.payload);
+    XCTAssertEqualObjects(request.path, expectedPath);
     XCTAssertEqual(request.method, ZMMethodPOST);
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
@@ -208,7 +305,7 @@
     XCTAssertNotNil(textData);
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest postRequestWithPath:@"/some/path" imageData:textData contentDisposition:@{}];
+    ZMTransportRequest *request = [ZMTransportRequest postRequestWithPath:@"/some/path" imageData:textData contentDisposition:@{} apiVersion:0];
     
     // then
     XCTAssertNil(request);
@@ -225,7 +322,7 @@
     NSData *metaDataData = [NSJSONSerialization dataWithJSONObject:disposition options:0 error:NULL];
 
     // when
-    ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:path imageData:data metaData:disposition];
+    ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:path imageData:data metaData:disposition apiVersion:0];
     
     // then
     XCTAssertNotNil(request);
@@ -250,6 +347,44 @@
     XCTAssertEqualObjects(request.binaryDataType, expectedContentType);
 }
 
+- (void)testThatMultipartImagePostRequestSetsPropertiesWithAPIVersion;
+{
+    // given
+    int apiVersion = 5;
+    NSString * const path = @"/some/path";
+    NSString * const expectedPath = [NSString stringWithFormat:@"/v%d%@", apiVersion, path];
+    NSData * const data = [self verySmallJPEGData];
+    NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
+
+    NSString *boundary = @"frontier";
+    NSData *metaDataData = [NSJSONSerialization dataWithJSONObject:disposition options:0 error:NULL];
+
+    // when
+    ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:path imageData:data metaData:disposition apiVersion:apiVersion];
+
+    // then
+    XCTAssertNotNil(request);
+    XCTAssertNil(request.payload);
+    XCTAssertEqualObjects(request.path, expectedPath);
+    XCTAssertEqual(request.method, ZMMethodPOST);
+    XCTAssertNil(request.contentDisposition);
+    XCTAssertFalse(request.shouldFailInsteadOfRetry);
+    NSArray *items = [request multipartBodyItems];
+    XCTAssertEqual(items.count, 2u);
+
+    ZMMultipartBodyItem *metadataItem = items.firstObject;
+    XCTAssertEqualObjects(metadataItem.contentType, @"application/json; charset=utf-8");
+    XCTAssertEqualObjects(metadataItem.data, metaDataData);
+
+    ZMMultipartBodyItem *imageItem = items.lastObject;
+    XCTAssertEqualObjects(imageItem.contentType, @"image/jpeg");
+    XCTAssertEqualObjects(imageItem.headers, @{@"Content-MD5": [[data zmMD5Digest] base64EncodedStringWithOptions:0]});
+    XCTAssertEqualObjects(imageItem.data, data);
+
+    NSString *expectedContentType = [NSString stringWithFormat:@"multipart/mixed; boundary=%@", boundary];
+    XCTAssertEqualObjects(request.binaryDataType, expectedContentType);
+}
+
 - (void)testThatMultipartImagePostRequestIsNilForNonImageData
 {
     // given
@@ -257,7 +392,7 @@
     XCTAssertNotNil(textData);
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:@"/some/path" imageData:textData metaData:@{}];
+    ZMTransportRequest *request = [ZMTransportRequest multipartRequestWithPath:@"/some/path" imageData:textData metaData:@{} apiVersion:0];
     
     // then
     XCTAssertNil(request);
@@ -267,7 +402,7 @@
 {
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task created handler called"];
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
     
     ZMTaskCreatedHandler *handler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
@@ -290,7 +425,7 @@
     XCTestExpectation *firstExpectation = [self expectationWithDescription:@"First task created handler called"];
     XCTestExpectation *secondExpectation = [self expectationWithDescription:@"Second task created handler called"];;
     
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
     
     ZMTaskCreatedHandler *firstHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
@@ -316,7 +451,7 @@
 - (void)testThatItDoesNotAttemptToCallATaskCreatedHandlerIfNoneIsSet
 {
     // given
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     // when
     XCTAssertNoThrow([transportRequest callTaskCreationHandlersWithIdentifier:0 sessionIdentifier:@""]);
@@ -325,10 +460,10 @@
 - (void)testThatItSetsStartOfUploadTimestamp
 {
     // given
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     [transportRequest markStartOfUploadTimestamp];
     
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil apiVersion:transportRequest.apiVersion];
     
     // when
     [transportRequest completeWithResponse:response];
@@ -341,7 +476,7 @@
 {
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
 
     [transportRequest addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED){
@@ -361,7 +496,7 @@
     XCTestExpectation *expectation1 = [self expectationWithDescription:@"Completion 1 handler called"];
     XCTestExpectation *expectation2 = [self expectationWithDescription:@"Completion 2 handler called"];
 
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     [transportRequest addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED){
@@ -384,7 +519,7 @@
 - (void)testThatItDoesNotAttemptToCallACompletionHandlerIfNoneIsSet
 {
     // given
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
 
     // when
     XCTAssertNoThrow([transportRequest completeWithResponse:[[ZMTransportResponse alloc] init]]);
@@ -395,10 +530,10 @@
 {
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil apiVersion:0];
     __block ZMTransportResponse *receivedResponse;
     
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"" method:ZMMethodGET payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"" method:ZMMethodGET payload:nil apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *actualResponse){
         receivedResponse = actualResponse;
@@ -420,12 +555,12 @@
     XCTestExpectation *expectation1 = [self expectationWithDescription:@"Completion 1 handler called"];
     XCTestExpectation *expectation2 = [self expectationWithDescription:@"Completion 2 handler called"];
     XCTestExpectation *expectation3 = [self expectationWithDescription:@"Completion 3 handler called"];
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil];
+    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:0];
 
     __block NSMutableString *responses = [[NSMutableString alloc] init];
 
 
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"" method:ZMMethodGET payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"" method:ZMMethodGET payload:nil apiVersion:0];
 
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *resp) {
         NOT_USED(resp);
@@ -460,7 +595,7 @@
     const float expectedProgress = 0.5f;
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
         XCTAssertEqual(expectedProgress, progress);
@@ -481,7 +616,7 @@
     const static size_t expectedProgressSize = sizeof(expectedProgress) / sizeof(expectedProgress[0]);
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     NSUInteger __block currentCallIndex = 0;
     
@@ -510,7 +645,7 @@
     const float expectedProgress = 1.0f;
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
         XCTAssertEqual(expectedProgress, progress);
@@ -531,7 +666,7 @@
     const float expectedProgress = 0.0f;
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
         XCTAssertEqual(expectedProgress, progress);
@@ -553,7 +688,7 @@
     XCTestExpectation *expectation1 = [self expectationWithDescription:@"Task progress handler 1 called"];
     XCTestExpectation *expectation2 = [self expectationWithDescription:@"Task progress handler 2 called"];
 
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
         XCTAssertEqual(expectedProgress, progress);
@@ -575,7 +710,7 @@
 - (void)testThatItDoesNotAttemptToCallATaskProgressHandlerIfNoneIsSet
 {
     // given
-    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
+    ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{} apiVersion:0];
     
     // when
     XCTAssertNoThrow([transportRequest updateProgress:1.0f]);
@@ -585,7 +720,7 @@
 - (void)testThatARequestShouldBeExecutedOnlyOnForegroundSessionByDefault
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo" apiVersion:0];
     
     // then
     XCTAssertFalse(request.shouldUseOnlyBackgroundSession);
@@ -595,7 +730,7 @@
 - (void)testThatARequestShouldUseOnlyBackgroundSessionWhenForced
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo" apiVersion:0];
 
     // when
     [request forceToBackgroundSession];
@@ -608,7 +743,7 @@
 - (void)testThatARequestShouldUseOnlyVoipSessionWhenForced
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
+    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo" apiVersion:0];
     
     // when
     [request forceToVoipSession];
@@ -629,7 +764,7 @@
 - (void)testThatItSetsAcceptsImageData;
 {
     // given
-    ZMTransportRequest *sut = [ZMTransportRequest imageGetRequestFromPath:@"/foo/bar"];
+    ZMTransportRequest *sut = [ZMTransportRequest imageGetRequestFromPath:@"/foo/bar" apiVersion:0];
     
     // then
     XCTAssertEqual(sut.acceptedResponseMediaTypes, ZMTransportAcceptImage);
@@ -638,25 +773,25 @@
 - (void)testThatItSetsAcceptsTransportData;
 {
     // (1) given
-    ZMTransportRequest *sut = [ZMTransportRequest requestGetFromPath:@"/foo/bar"];
+    ZMTransportRequest *sut = [ZMTransportRequest requestGetFromPath:@"/foo/bar" apiVersion:0];
     
     // then
     XCTAssertEqual(sut.acceptedResponseMediaTypes, ZMTransportAcceptTransportData);
     
     // (2) given
-    sut = [ZMTransportRequest requestWithPath:@"/foo2" method:ZMMethodPOST payload:@{@"f": @2}];
+    sut = [ZMTransportRequest requestWithPath:@"/foo2" method:ZMMethodPOST payload:@{@"f": @2} apiVersion:0];
     
     // then
     XCTAssertEqual(sut.acceptedResponseMediaTypes, ZMTransportAcceptTransportData);
 
     // (3) given
-    sut = [[ZMTransportRequest alloc] initWithPath:@"/hello" method:ZMMethodPUT binaryData:[@"asdf" dataUsingEncoding:NSUTF8StringEncoding] type:@"image/jpeg" contentDisposition:@{@"asdf": @42}];
+    sut = [[ZMTransportRequest alloc] initWithPath:@"/hello" method:ZMMethodPUT binaryData:[@"asdf" dataUsingEncoding:NSUTF8StringEncoding] type:@"image/jpeg" contentDisposition:@{@"asdf": @42} apiVersion:0];
     
     // then
     XCTAssertEqual(sut.acceptedResponseMediaTypes, ZMTransportAcceptTransportData);
 
     // (4) given
-    sut = [[ZMTransportRequest alloc] initWithPath:@"/hello" method:ZMMethodPUT payload:@{@"A": @3} authentication:ZMTransportRequestAuthNeedsAccess];
+    sut = [[ZMTransportRequest alloc] initWithPath:@"/hello" method:ZMMethodPUT payload:@{@"A": @3} authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0];
 
     // then
     XCTAssertEqual(sut.acceptedResponseMediaTypes, ZMTransportAcceptTransportData);
@@ -672,7 +807,7 @@
 {
     // given
     NSDictionary *payload = @{@"A": @2};
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST payload:payload];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST payload:payload apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -687,7 +822,7 @@
 
 - (void)testThatItSetsAdditionalHeaderFieldsOnURLRequest;
 {
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil apiVersion:0];
     [sut addValue:@"as73e8f98a7==" forAdditionalHeaderField:@"Access-Token"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
 
@@ -702,7 +837,7 @@
 {
     // given
     NSString *token = @"NzFoNzJoZDYyMTI=";
-    ZMTransportRequest *sut = [ZMTransportRequest assetGetRequestFromPath:@"/assets/v3" assetToken:token];
+    ZMTransportRequest *sut = [ZMTransportRequest assetGetRequestFromPath:@"/assets/v3" assetToken:token apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -715,7 +850,7 @@
 - (void)testThatAssetGetRequestDoesNotSetAccessTokenIfNotPresent;
 {
     // given
-    ZMTransportRequest *sut = [ZMTransportRequest assetGetRequestFromPath:@"/assets/v3" assetToken:nil];
+    ZMTransportRequest *sut = [ZMTransportRequest assetGetRequestFromPath:@"/assets/v3" assetToken:nil apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -738,7 +873,7 @@
         [payload addObject:a];
     }
     // The encoded transport data is approximately 46k bytes.
-    ZMTransportRequest *sut = [ZMTransportRequest requestWithPath:@"/foo" method:ZMMethodPOST payload:payload shouldCompress:YES];
+    ZMTransportRequest *sut = [ZMTransportRequest requestWithPath:@"/foo" method:ZMMethodPOST payload:payload shouldCompress:YES apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *expected = @"H4sIAAAAAAAAE4XaS08qWRhG4f/C1DMoLlVQJzkD+yjeFRCvn"
     @"R5wEwUUBRS10/+9k056sNdgffM9eJLlpeqt/effldFgNa78zH5UxoPNoPKzMpwUeWc2and"
@@ -779,7 +914,7 @@
 {
     // given
     NSData *data = [@"jhasdhjkadshjklad" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:nil];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:nil apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -793,7 +928,7 @@
 - (void)testThatItDoesNotSetMediaTypeForRequestWithoutPayload;
 {
     // given
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -811,7 +946,8 @@
     NSURL *fileURL = [NSURL URLWithString:@"file://url/to/file"];
     ZMTransportRequest *sut = [ZMTransportRequest uploadRequestWithFileURL:fileURL
                                                                       path:[[NSBundle mainBundle] bundlePath]
-                                                               contentType:contentType];
+                                                               contentType:contentType
+                                                                apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -827,7 +963,7 @@
     // given
     NSData *data = [@"jhasdhjkadshjklad" dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *disposition = @{@"A": @YES, @"b": @1, @"c": @"foo bar", @"d": @"z", @"e": [NSNull null]};
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:disposition];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:disposition apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -841,7 +977,7 @@
 {
     // given
     NSData *data = [@"jhasdhjkadshjklad" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:nil];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:nil apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -854,7 +990,7 @@
 - (void)testThatItSetsAnExpirationDate;
 {
     // given
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodGET payload:nil apiVersion:0];
     NSTimeInterval interval = 35;
     
     // when
@@ -877,7 +1013,7 @@
 - (void)testThatPOSTWithPayloadHasRequiredPayload
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodPOST payload:@{}];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodPOST payload:@{} apiVersion:0];
     
     // then
     XCTAssertTrue(request.hasRequiredPayload);
@@ -886,7 +1022,7 @@
 - (void)testThatPOSTWithNoPayloadHasRequiredPayload
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodPOST payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodPOST payload:nil apiVersion:0];
     
     // then
     XCTAssertTrue(request.hasRequiredPayload);
@@ -895,7 +1031,7 @@
 - (void)testThatDELETEWithPayloadHasRequiredPayload
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"Foo" method:ZMMethodDELETE payload:@{}];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"Foo" method:ZMMethodDELETE payload:@{} apiVersion:0];
     
     // then
     XCTAssertTrue(request.hasRequiredPayload);
@@ -904,7 +1040,7 @@
 - (void)testThatDELETEWithNoPayloadHasRequiredPayload
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"Foo" method:ZMMethodDELETE payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"Foo" method:ZMMethodDELETE payload:nil apiVersion:0];
     
     // then
     XCTAssertTrue(request.hasRequiredPayload);
@@ -913,7 +1049,7 @@
 - (void)testThatGETWithoutPayloadHasRequiredPayload
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"Foo" method:ZMMethodGET payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"Foo" method:ZMMethodGET payload:nil apiVersion:0];
     
     // then
     XCTAssertTrue(request.hasRequiredPayload);
@@ -922,7 +1058,7 @@
 - (void)testThatHEADHasRequiredPayload
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil apiVersion:0];
     
     // then
     XCTAssertTrue(request.hasRequiredPayload);
@@ -958,7 +1094,7 @@
                       usingBackgroundSession:(BOOL)usingBackgroundSession
 {
     // given
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST payload:nil];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST payload:nil apiVersion:0];
     if (usingBackgroundSession) {
         [sut forceToBackgroundSession];
     }
@@ -986,7 +1122,7 @@
     // given
     NSString *info1 = @"....xxxXXXxxx....";
     NSString *info2 = @"32432525245345435";
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil apiVersion:0];
     
     // when
     [request addContentDebugInformation:info1];
@@ -1002,7 +1138,7 @@
 - (void)testPrivateDescription
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil apiVersion:0];
     
     // when
     NSString *privateDescription = [request safeForLoggingDescription];
@@ -1018,7 +1154,7 @@
     NSString *clientID = @"608b4f25ba2b193";
     NSString *uuid = @"9e86b08a-8de7-11e9-810f-22000a62954d";
     NSString *path = [NSString stringWithFormat:@"do/something/%@/useful?client=%@", uuid, clientID];
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil apiVersion:0];
     
     // when
     NSString *privateDescription = [request safeForLoggingDescription];
@@ -1036,7 +1172,7 @@
     NSString *clientID = @"608b4f25ba2b193";
     NSString *uuid = @"9e86b08a-8de7-11e9-810f-22000a62954d";
     NSString *path = [NSString stringWithFormat:@"with/%@/🤨/%@/emoji", clientID, uuid];
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil apiVersion:0];
 
     // when
     NSString *privateDescription = [request safeForLoggingDescription];
@@ -1055,7 +1191,7 @@
     NSString *clientID = @"608b4f25ba2b193";
     NSString *uuid = @"9e86b08a-8de7-11e9-810f-22000a62954d";
     NSString *path = [NSString stringWithFormat:@"ids/%@%@/overlapped", clientID, uuid];
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil apiVersion:0];
 
     // when
     NSString *privateDescription = [request safeForLoggingDescription];
@@ -1068,7 +1204,7 @@
 
     // given
     path = [NSString stringWithFormat:@"ids/%@%@/overlapped", uuid, clientID];
-    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil apiVersion:0];
 
     // when
     privateDescription = [request safeForLoggingDescription];
@@ -1081,7 +1217,7 @@
 
     // given
     path = [NSString stringWithFormat:@"ids/%@%@/overlapped", uuid, uuid];
-    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil apiVersion:0];
 
     // when
     privateDescription = [request safeForLoggingDescription];
@@ -1093,7 +1229,7 @@
 
     // given
     path = [NSString stringWithFormat:@"ids/%@%@/overlapped", clientID, clientID];
-    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil apiVersion:0];
 
     // when
     privateDescription = [request safeForLoggingDescription];

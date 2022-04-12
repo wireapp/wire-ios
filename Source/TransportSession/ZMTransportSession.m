@@ -413,7 +413,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     // Immediately fail request if it has already expired at this point in time
     if ((expirationDate != nil) && (expirationDate.timeIntervalSinceNow < 0.1)) {
         NSError *error = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
-        ZMTransportResponse *expiredResponse = [ZMTransportResponse responseWithTransportSessionError:error];
+        ZMTransportResponse *expiredResponse = [ZMTransportResponse responseWithTransportSessionError:error apiVersion:request.apiVersion];
         [request completeWithResponse:expiredResponse];
         [self decrementNumberOfRequestsInProgressAndNotifyOperationLoop:YES]; // TODO aren't we decrementing too late here?
         return;
@@ -507,7 +507,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         ZMLogDebug(@"Task %lu finished with error: %@", (unsigned long) task.taskIdentifier, task.error.description);
     }
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
-    ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError];
+    ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
     ZMLogPublic(@"Response to %@: %@", request.safeForLoggingDescription,  response.safeForLoggingDescription);
     ZMLogInfo(@"<---- Response to %@ %@ (status %u): %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, response);
     ZMLogInfo(@"URL Session is %@", session.description);
@@ -524,7 +524,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     if (request.needsAuthentication && (httpResponse.statusCode == 401)) {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Request requiring authentication finished with 404 response. Make sure there is an access token."};
         NSError *tryAgainError = [NSError tryAgainLaterErrorWithUserInfo:userInfo];
-        ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithTransportSessionError:tryAgainError];
+        ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithTransportSessionError:tryAgainError apiVersion:request.apiVersion];
         [request completeWithResponse:tryAgainResponse];
     } else {
         [request completeWithResponse:response];
@@ -548,10 +548,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionNewRequestAvailableNotification object:self];
 }
 
-- (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error;
+- (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error apiVersion:(int)apiVersion;
 {
     NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *) URLResponse;
-    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:HTTPResponse data:data error:error];
+    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:HTTPResponse data:data error:error apiVersion:apiVersion];
 }
 
 - (void)processCookieResponse:(NSHTTPURLResponse *)HTTPResponse;
@@ -676,7 +676,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     if (request != nil) {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Temporarily rejecting item to sync."};
         NSError *error = [NSError tryAgainLaterErrorWithUserInfo:userInfo];
-        ZMTransportResponse *tryAgainRespose = [ZMTransportResponse responseWithTransportSessionError:error];
+        ZMTransportResponse *tryAgainRespose = [ZMTransportResponse responseWithTransportSessionError:error apiVersion:request.apiVersion];
         [request completeWithResponse:tryAgainRespose];
         [self decrementNumberOfRequestsInProgressAndNotifyOperationLoop:YES];
     }
@@ -729,7 +729,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSHTTPURLResponse *HTTPResponse = (id)task.response;
     [self processCookieResponse:HTTPResponse];
 
-    BOOL didConsume = [self.accessTokenHandler consumeRequestWithTask:task data:data session:URLSession shouldRetry:self.requestScheduler.canSendRequests];
+    BOOL didConsume = [self.accessTokenHandler consumeRequestWithTask:task data:data session:URLSession shouldRetry:self.requestScheduler.canSendRequests apiVersion:request.apiVersion];
     if (!didConsume) {
         [self didCompleteRequest:request data:data task:task error:error session:URLSession];
     }
