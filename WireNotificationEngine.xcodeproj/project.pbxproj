@@ -35,6 +35,7 @@
 		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
 		06E6F44327B54EB1001624D4 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D40276B26D600DA4E33 /* WireRequestStrategy.xcframework */; };
+		06F51A0B27FD6B0D00CA0C58 /* CallEventContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F51A0A27FD6B0D00CA0C58 /* CallEventContent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,7 @@
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		06F51A0A27FD6B0D00CA0C58 /* CallEventContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CallEventContent.swift; path = Calling/CallEventContent.swift; sourceTree = "<group>"; };
 		EE62A9F127B65C04004F7ADC /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-arm64Simulator.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -240,6 +242,7 @@
 		0697129B2497CA9A00C32169 /* Strategies */ = {
 			isa = PBXGroup;
 			children = (
+				06F51A0A27FD6B0D00CA0C58 /* CallEventContent.swift */,
 				0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */,
 			);
 			path = Strategies;
@@ -435,6 +438,7 @@
 				069712942497C17600C32169 /* StrategyFactory.swift in Sources */,
 				069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */,
 				069712972497C1BF00C32169 /* NotificationSession.swift in Sources */,
+				06F51A0B27FD6B0D00CA0C58 /* CallEventContent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

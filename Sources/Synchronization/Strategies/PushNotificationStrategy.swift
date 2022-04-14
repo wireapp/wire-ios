@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireRequestStrategy
+import Foundation
 
 public protocol NotificationSessionDelegate: AnyObject {
 
@@ -106,6 +107,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 }
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
+
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
         var eventIds: [UUID] = []
         var parsedEvents: [ZMUpdateEvent] = []
@@ -148,20 +150,74 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     public func failedFetchingEvents() {
         pushNotificationStatus.didFailToFetchEvents()
     }
+
 }
 
 // MARK: - Converting events to localNotifications
+
 extension PushNotificationStrategy {
+
     private func convertToLocalNotifications(_ events: [ZMUpdateEvent], moc: NSManagedObjectContext) -> [ZMLocalNotification] {
         return events.compactMap { event in
-            var conversation: ZMConversation?
-            if let conversationID = event.conversationUUID {
-                conversation = ZMConversation.fetch(with: conversationID, in: moc)
-            }
-            let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: moc)
-            note?.increaseEstimatedUnreadCount(on: conversation)
-            
-            return note
+            return notification(from: event, in: moc)
         }
     }
+
+    private func notification(from event: ZMUpdateEvent, in context: NSManagedObjectContext) -> ZMLocalNotification? {
+        var note: ZMLocalNotification?
+        guard
+            let conversationID = event.conversationUUID,
+            let conversation = ZMConversation.fetch(with: conversationID, in: context)
+        else {
+            return nil
+        }
+
+        if let callEventContent = CallEventContent(from: event) {
+            let currentTimestamp = Date().addingTimeInterval(managedObjectContext.serverTimeDelta)
+
+            /// The caller should not be the same as the user receiving the call event and
+            /// the age of the event is less than 30 seconds
+            guard let callState = callEventContent.callState,
+                  let callerID = callEventContent.callerID,
+                  let caller = ZMUser.fetch(with: callerID, domain: event.senderDomain, in: context),
+                  caller != ZMUser.selfUser(in: context),
+                  !isEventTimedOut(currentTimestamp: currentTimestamp, eventTimestamp: event.timestamp) else {
+                      return nil
+                  }
+            note = ZMLocalNotification.init(callState: callState, conversation: conversation, caller: caller, moc: context)
+        } else {
+            note = ZMLocalNotification.init(event: event, conversation: conversation, managedObjectContext: context)
+        }
+
+        note?.increaseEstimatedUnreadCount(on: conversation)
+        return note
+    }
+
+    private func isEventTimedOut(currentTimestamp: Date, eventTimestamp: Date?) -> Bool {
+        guard let eventTimestamp = eventTimestamp else {
+            return true
+        }
+
+        return Int(currentTimestamp.timeIntervalSince(eventTimestamp)) > 30
+    }
+
+}
+
+// MARK: - Helpers
+
+private extension CallEventContent {
+
+    init?(from event: ZMUpdateEvent) {
+        guard
+            event.type == .conversationOtrMessageAdd,
+            let message = GenericMessage(from: event),
+            message.hasCalling,
+            let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
+        else {
+            return nil
+        }
+
+        self.init(from: payload)
+    }
+
 }
