@@ -146,16 +146,16 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     func testThatItProcessMemberLeaveEventInTheResponse_Bots() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // given
-            conversation.addParticipantAndUpdateConversationState(user: self.service, role: nil)
+            conversation.addParticipantAndUpdateConversationState(user: service, role: nil)
 
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: service, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [service.remoteIdentifier!], qualifiedUserIDs: [user.qualifiedID!])
+            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [service.remoteIdentifier!], qualifiedUserIDs: [service.qualifiedID!])
             let conversationEvent = conversationEventPayload(from: memberLeave,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
-            let container = Payload.EventContainer<Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>>(event: conversationEvent)
-            let payloadAsString = String(bytes: container.payloadData()!, encoding: .utf8)!
+
+            let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil,
@@ -165,7 +165,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             self.sut.handleResponse(response, action: action)
 
             // then
-            XCTAssertFalse(conversation.localParticipants.contains(user))
+            XCTAssertFalse(conversation.localParticipants.contains(service))
         }
     }
 
