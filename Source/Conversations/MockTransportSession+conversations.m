@@ -122,6 +122,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodDELETE]) {
         return [self processDeleteLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
+    else if ([request matchesWithPath:@"/conversations/*/features/conversationGuestLinks" method:ZMMethodGET]) {
+        return [self processGuestLinkFeatureStatusForConversation:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
+    }
     else if ([request matchesWithPath:@"/conversations/*/receipt-mode" method:ZMMethodPUT]) {
         return [self processReceiptModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
