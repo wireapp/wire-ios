@@ -56,7 +56,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             return nil
         }
 
-        let path = "/conversations/\(conversationID)/\(user.isServiceUser ? "bots" : "members")/\(userID)"
+        let path = "/conversations/\(conversationID)/members/\(userID)"
         return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
@@ -91,7 +91,8 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
                 let payload = response.payload,
                 let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
                 let rawData = response.rawData,
-                let conversationEvent = decodeResponse(for: user, rawResponse: rawData)
+                let apiVersion = APIVersion(rawValue: response.apiVersion),
+                let conversationEvent = decodeResponse(data: rawData, apiVersion: apiVersion)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 action.notifyResult(.failure(.unknown))
@@ -115,12 +116,10 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         }
     }
 
-    private func decodeResponse(for user: ZMUser, rawResponse: Data) -> Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>? {
-        if user.isServiceUser {
-            let container = Payload.EventContainer<Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>>(rawResponse, decoder: .defaultDecoder)
-            return container?.event
-        } else {
-            return Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(rawResponse, decoder: .defaultDecoder)
+    private func decodeResponse(data: Data, apiVersion: APIVersion) -> Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>? {
+        switch apiVersion {
+        case .v0, .v1:
+            return Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(data, decoder: .defaultDecoder)
         }
     }
 
