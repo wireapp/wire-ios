@@ -27,6 +27,15 @@ extension APIVersion {
         case federation = "APIVersionFederation"
     }
 
+    /// Where the api version information (i.e current version, local domain and federation
+    /// flag) is stored.
+    ///
+    /// **Important:** set this value to a UserDefaults instance with a suite name
+    /// matching the App Group id so that the values are accessible not only from
+    /// the main app but also the app extensions.
+
+    public static var storage: UserDefaults = .standard
+
     /// The API version against which all new backend requests should be made.
     ///
     /// The current version should be the highest value in common between the set
@@ -38,24 +47,23 @@ extension APIVersion {
 
     public static var current: Self? {
         get {
-            let key = Keys.apiVersion.rawValue
             // Fetching an integer will default to 0 if no value exists for the key,
             // so explicitly check there is a value.
-            guard UserDefaults.standard.hasValue(for: key) else { return nil }
-            let storedValue = UserDefaults.standard.integer(forKey: key)
+            guard storage.hasValue(for: Keys.apiVersion.rawValue) else { return nil }
+            let storedValue = storage.integer(forKey: Keys.apiVersion.rawValue)
             return APIVersion(rawValue: Int32(storedValue))
         }
 
         set {
-            UserDefaults.standard.set(newValue?.rawValue, forKey: Keys.apiVersion.rawValue)
+            storage.set(newValue?.rawValue, forKey: Keys.apiVersion.rawValue)
         }
     }
 
     /// The domain of the backend to which the app is connected to.
 
     public static var domain: String? {
-        get { UserDefaults.standard.string(forKey: Keys.domain.rawValue) }
-        set { UserDefaults.standard.set(newValue, forKey: Keys.domain.rawValue) }
+        get { storage.string(forKey: Keys.domain.rawValue) }
+        set { storage.set(newValue, forKey: Keys.domain.rawValue) }
     }
 
     /// Whether the connected backend has federation enabled.
@@ -63,8 +71,8 @@ extension APIVersion {
     /// If the backend has federation enabled, then it may be federating with other backends.
 
     public static var isFederationEnabled: Bool {
-        get { UserDefaults.standard.bool(forKey: Keys.federation.rawValue) }
-        set { UserDefaults.standard.set(newValue, forKey: Keys.federation.rawValue) }
+        get { storage.bool(forKey: Keys.federation.rawValue) }
+        set { storage.set(newValue, forKey: Keys.federation.rawValue) }
     }
 
 }
