@@ -129,7 +129,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
             return conversation
         }
 
-    func noteWithPayload(_ data: NSDictionary?, fromUserID: UUID?, in conversation: ZMConversation, type: String) -> ZMLocalNotification? {
+    func noteWithPayload(_ data: NSDictionary?, fromUserID: UUID?, in conversation: ZMConversation?, type: String) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
         self.syncMOC.performGroupedBlockAndWait {
             let payload = self.payloadForEvent(in: conversation, type: type, data: data, from: fromUserID)
@@ -140,14 +140,14 @@ class ZMLocalNotificationTests: MessagingTestBase {
         return note
     }
 
-    func noteWithPayload(_ data: NSDictionary?, from user: ZMUser, in conversation: ZMConversation, type: String) -> ZMLocalNotification? {
+    func noteWithPayload(_ data: NSDictionary?, from user: ZMUser, in conversation: ZMConversation?, type: String) -> ZMLocalNotification? {
         return noteWithPayload(data, fromUserID: user.remoteIdentifier, in: conversation, type: type)
     }
 
-    func payloadForEvent(in conversation: ZMConversation, type: String, data: NSDictionary?, from userID: UUID?) -> NSMutableDictionary {
+    func payloadForEvent(in conversation: ZMConversation?, type: String, data: NSDictionary?, from userID: UUID?) -> NSMutableDictionary {
         let userRemoteID = userID ?? UUID.create()
-        let convRemoteID = conversation.remoteIdentifier ?? UUID.create()
-        let serverTimeStamp = conversation.lastReadServerTimeStamp?.addingTimeInterval(5) ?? Date()
+        let convRemoteID = conversation?.remoteIdentifier ?? UUID.create()
+        let serverTimeStamp = conversation?.lastReadServerTimeStamp?.addingTimeInterval(5) ?? Date()
 
         return NSMutableDictionary(dictionary: [
             "conversation": convRemoteID.transportString(),

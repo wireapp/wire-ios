@@ -24,6 +24,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     let EventConversationDelete = "conversation.delete"
     let EventConversationCreate = "conversation.create"
     let EventNewConnection = "user.contact-join"
+    let EventaAddOTRMessage = "conversation.otr-message-add"
 
     // MARK: Helpers
 
@@ -98,7 +99,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note!.body, "Super User created a group")
+            XCTAssertEqual(note!.body, "Super User created a conversation")
         }
     }
 
@@ -111,7 +112,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note!.body, "Someone created a group")
+            XCTAssertEqual(note!.body, "Someone created a conversation")
         }
     }
 
@@ -589,6 +590,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
             // then
             XCTAssertNil(note)
+        }
+    }
+
+    func testThatItCreatesATextNotification_NoConversation() {
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            let genericMessage = GenericMessage(content: Text(content: "123"))
+
+            // when
+            let note = self.noteWithPayload(["text": try? genericMessage.serializedData().base64EncodedString()], from: self.sender, in: nil, type: self.EventaAddOTRMessage)
+
+            // then
+            XCTAssertNotNil(note)
+            XCTAssertEqual(note!.body, "Super User in a conversation: 123")
         }
     }
 

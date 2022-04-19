@@ -195,7 +195,7 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     }
 
     override func shouldCreateNotification() -> Bool {
-        return super.shouldCreateNotification() && conversation?.conversationType == .group
+        return super.shouldCreateNotification()
     }
 
 }
@@ -316,17 +316,15 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
-        guard
-            let conversation = conversation,
+        if let conversation = conversation,
             let senderUUID = event.senderUUID,
-            !conversation.isMessageSilenced(message, senderID: senderUUID)
-        else {
+            conversation.isMessageSilenced(message, senderID: senderUUID) {
             Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")
             return false
         }
 
         if let timeStamp = event.timestamp,
-            let lastRead = conversation.lastReadServerTimeStamp,
+            let lastRead = conversation?.lastReadServerTimeStamp,
             lastRead.compare(timeStamp) != .orderedAscending {
             return false
         }
