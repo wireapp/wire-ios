@@ -174,8 +174,8 @@
 "push.notification.callkit.call.started.group.noconversationname" = "%@ calling in a conversation";
 
 // CONVERSATION CREATE
-"push.notification.conversation.create" = "%1$@ created a group";
-"push.notification.conversation.create.nousername" = "Someone created a group";
+"push.notification.conversation.create" = "%1$@ created a conversation";
+"push.notification.conversation.create.nousername" = "Someone created a conversation";
 
 // CONVERSATION DELETE
 "push.notification.conversation.delete" = "%1$@ deleted the group";
