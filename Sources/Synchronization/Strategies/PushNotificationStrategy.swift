@@ -80,12 +80,10 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     }
 
     func processEventsIfReady() -> Bool {
-        /// TODO check this
         return true
     }
 
     var eventConsumers: [ZMEventConsumer] {
-        /// TODO check this
         get {
             return []
         }
@@ -165,12 +163,11 @@ extension PushNotificationStrategy {
 
     private func notification(from event: ZMUpdateEvent, in context: NSManagedObjectContext) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
-        guard
-            let conversationID = event.conversationUUID,
-            let conversation = ZMConversation.fetch(with: conversationID, in: context)
-        else {
+        guard let conversationID = event.conversationUUID else {
             return nil
         }
+
+        let conversation = ZMConversation.fetch(with: conversationID, in: context)
 
         if let callEventContent = CallEventContent(from: event) {
             let currentTimestamp = Date().addingTimeInterval(managedObjectContext.serverTimeDelta)
