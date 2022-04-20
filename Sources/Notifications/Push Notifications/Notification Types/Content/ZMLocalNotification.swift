@@ -182,6 +182,10 @@ extension ZMLocalNotification {
 extension LocalNotificationType {
 
     var shouldIncreaseUnreadCount: Bool {
+        if case LocalNotificationType.calling(.missedCall) = self {
+            return true
+        }
+
         guard case LocalNotificationType.message(let contentType) = self else {
             return false
         }
