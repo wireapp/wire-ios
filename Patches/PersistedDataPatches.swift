@@ -37,7 +37,7 @@ public final class PersistedDataPatch {
 
     /// Apply all patches to the MOC
     public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil) {
-        guard let currentVersion = Bundle(for: Self.self).infoDictionary!["CFBundleShortVersionString"] as? String else {
+        guard let currentVersion = Bundle(for: Self.self).infoDictionary!["FrameworkVersion"] as? String else {
             return zmLog.safePublic("Can't retrieve CFBundleShortVersionString for data model, skipping patches..")
         }
 
