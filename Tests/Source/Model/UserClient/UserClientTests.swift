@@ -85,7 +85,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
                                ZMUserClientMissingKey,
                                ZMUserClientNeedsToUpdateSignalingKeysKey,
                                ZMUserClientNeedsToUpdateCapabilitiesKey,
-                               "pushToken")
+                               "pushToken",
+                               "legacyPushToken")
         let client = UserClient.insertNewObject(in: self.uiMOC)
 
         XCTAssertEqual(client.keysTrackedForLocalModifications(), expectedKeys)
