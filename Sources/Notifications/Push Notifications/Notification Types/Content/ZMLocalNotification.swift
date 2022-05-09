@@ -23,7 +23,7 @@ import UserNotifications
 ///
 public enum LocalNotificationType {
 
-    public enum CallState {
+    public enum CallState: Equatable {
         case incomingCall(video: Bool)
         case missedCall(cancelled: Bool)
     }
