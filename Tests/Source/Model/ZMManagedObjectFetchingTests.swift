@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import XCTest
 
 class ZMManagedObjectFetchingTests: DatabaseBaseTest {
@@ -26,10 +27,12 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
         super.setUp()
         self.mocs = self.createStorageStackAndWaitForCompletion()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
+        APIVersion.isFederationEnabled = true
     }
 
     public override func tearDown() {
         self.mocs = nil
+        APIVersion.isFederationEnabled = false
         super.tearDown()
     }
 
