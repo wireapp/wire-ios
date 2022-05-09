@@ -73,7 +73,14 @@ public class CallKitManager: NSObject {
     fileprivate var callStateObserverToken: Any?
     fileprivate var missedCallObserverToken: Any?
     fileprivate var connectedCallConversation: ZMConversation?
-    fileprivate var calls: [UUID: CallKitCall]
+
+    fileprivate var calls: [UUID: CallKitCall] {
+        didSet {
+            VoIPPushHelper.setOngoingCalls(
+                conversationIDs: calls.values.map { $0.conversation.remoteIdentifier! }
+            )
+        }
+    }
 
     convenience init(delegate: CallKitManagerDelegate, mediaManager: MediaManagerType?) {
         self.init(provider: CXProvider(configuration: CallKitManager.providerConfiguration),
@@ -141,6 +148,10 @@ public class CallKitManager: NSObject {
 
     internal func callUUID(for conversation: ZMConversation) -> UUID? {
         return calls.first(where: { $0.value.conversation == conversation })?.key
+    }
+
+    private func callExists(for conversation: ZMConversation) -> Bool {
+        return callUUID(for: conversation) != nil
     }
 
 }
@@ -281,14 +292,29 @@ extension CallKitManager {
         }
     }
 
-    func reportIncomingCall(from user: ZMUser, in conversation: ZMConversation, video: Bool) {
+    /// Reports an incoming call to CallKit.
+    ///
+    /// - Parameters:
+    ///   - user: The caller.
+    ///   - conversation: The conversation in which the call is incoming.
+    ///   - video: Whether the caller has video enabled.
+    ///
+    /// - Throws: ReportIncomingCallError if the call could not be reported.
+
+    func reportIncomingCall(from user: ZMUser, in conversation: ZMConversation, video: Bool) throws {
+        guard !callExists(for: conversation) else {
+            log("Cannot report incoming call: call already exists, probably b/c it was reported earlier for a push notification")
+            throw ReportIncomingCallError.callAlreadyExists
+        }
 
         guard let handle = conversation.callKitHandle else {
-            return log("Cannot report incoming call: conversation is missing handle")
+            log("Cannot report incoming call: conversation is missing handle")
+            throw ReportIncomingCallError.noCallKitHandle
         }
 
         guard !conversation.needsToBeUpdatedFromBackend else {
-            return log("Cannot report incoming call: conversation needs to be updated from backend")
+            log("Cannot report incoming call: conversation needs to be updated from backend")
+            throw ReportIncomingCallError.conversationNotSynced
         }
 
         let update = CXCallUpdate()
@@ -305,30 +331,40 @@ extension CallKitManager {
 
         log("provider.reportNewIncomingCall")
 
-        provider.reportNewIncomingCall(with: callUUID, update: update) { [weak self] (error) in
+        provider.reportNewIncomingCall(with: callUUID, update: update) { [weak self] error in
             if let error = error {
                 self?.log("Cannot report incoming call: \(error)")
                 self?.calls.removeValue(forKey: callUUID)
                 conversation.voiceChannel?.leave()
-            } else {
-                self?.mediaManager?.setupAudioDevice()
             }
         }
     }
 
-    func reportCall(in conversation: ZMConversation, endedAt timestamp: Date?, reason: CXCallEndedReason) {
+    /// Reports to CallKit all calls associated with a conversation as ended.
+    ///
+    /// - Parameters:
+    ///   - conversation: The conversation in which the call(s) ended.
+    ///   - timestamp: The date at which the call(s) ended.
+    ///   - reason: The reason why the call(s) ended.
+    ///
+    /// - Throws: ReportTerminatingCallError if no call could be reported as ended.
 
-        var associatedCallUUIDs: [UUID] = []
-        for call in calls where call.value.conversation == conversation {
-                associatedCallUUIDs.append(call.key)
+    func reportCallEnded(in conversation: ZMConversation, atTime timestamp: Date?, reason: CXCallEndedReason) throws {
+        let associatedCallUUIDs = calls
+            .filter { $0.value.conversation == conversation }
+            .keys
+
+        guard !associatedCallUUIDs.isEmpty else {
+            throw ReportTerminatingCallError.callNotFound
         }
 
-        associatedCallUUIDs.forEach { (callUUID) in
+        associatedCallUUIDs.forEach { callUUID in
             calls.removeValue(forKey: callUUID)
             log("provider.reportCallEndedAt: \(String(describing: timestamp))")
             provider.reportCall(with: callUUID, endedAt: timestamp?.clampForCallKit() ?? Date(), reason: reason)
         }
     }
+
 }
 
 fileprivate extension Date {
@@ -411,6 +447,8 @@ extension CallKitManager: CXProviderDelegate {
             action.fail()
         }
 
+        mediaManager?.setupAudioDevice()
+
         if call.conversation.voiceChannel?.join(video: false) != true {
             action.fail()
         }
@@ -472,13 +510,13 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
             if shouldRing, let caller = caller as? ZMUser {
                 if conversation.mutedMessageTypesIncludingAvailability == .none {
-                    reportIncomingCall(from: caller, in: conversation, video: video)
+                    try? reportIncomingCall(from: caller, in: conversation, video: video)
                 }
             } else {
-                reportCall(in: conversation, endedAt: timestamp, reason: .unanswered)
+                try? reportCallEnded(in: conversation, atTime: timestamp, reason: .unanswered)
             }
         case let .terminating(reason: reason):
-            reportCall(in: conversation, endedAt: timestamp, reason: reason.CXCallEndedReason)
+            try? reportCallEnded(in: conversation, atTime: timestamp, reason: reason.CXCallEndedReason)
         default:
             break
         }
@@ -590,6 +628,48 @@ class CallObserver: WireCallCenterCallStateObserver {
         default:
             break
         }
+    }
+
+}
+
+// MARK: - Errors
+
+extension CallKitManager {
+
+    /// Errors describing why an incoming call could not be reported.
+
+    enum ReportIncomingCallError: Error, SafeForLoggingStringConvertible {
+
+        case callAlreadyExists
+        case noCallKitHandle
+        case conversationNotSynced
+
+        var safeForLoggingDescription: String {
+            switch self {
+            case .callAlreadyExists:
+                return "The call already exists. Perhaps it has already been reported."
+
+            case .noCallKitHandle:
+                return "No CallKit handle could be created for the conversation."
+
+            case .conversationNotSynced:
+                return "The conversation needs to be synced with the backend."
+            }
+        }
+
+    }
+
+    enum ReportTerminatingCallError: Error, SafeForLoggingStringConvertible {
+
+        case callNotFound
+
+        var safeForLoggingDescription: String {
+            switch self {
+            case .callNotFound:
+                return "The call could not be found. Perhaps it has not yet been reported."
+            }
+        }
+
     }
 
 }

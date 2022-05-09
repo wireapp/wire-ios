@@ -253,33 +253,35 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 conversationUUID: conversationUUID,
                 senderUUID: senderUUID,
                 clientId: clientId,
-                event: event,
+                conversationDomain: event.conversationDomain,
+                senderDomain: event.senderDomain,
                 payload: payload,
-                currentTimestamp: Date().addingTimeInterval(serverTimeDelta),
+                currentTimestamp: serverTimeDelta,
                 eventTimestamp: eventTimestamp
             )
         }
     }
 
-    private func processCallEvent(conversationUUID: UUID,
-                                  senderUUID: UUID,
-                                  clientId: String,
-                                  event: ZMUpdateEvent,
-                                  payload: Data,
-                                  currentTimestamp: Date,
-                                  eventTimestamp: Date) {
+    func processCallEvent(conversationUUID: UUID,
+                          senderUUID: UUID,
+                          clientId: String,
+                          conversationDomain: String?,
+                          senderDomain: String?,
+                          payload: Data,
+                          currentTimestamp: TimeInterval,
+                          eventTimestamp: Date) {
         let conversationId = AVSIdentifier(
             identifier: conversationUUID,
-            domain: event.conversationDomain
+            domain: conversationDomain
         )
         let userId = AVSIdentifier(
             identifier: senderUUID,
-            domain: event.senderDomain
+            domain: senderDomain
         )
 
         let callEvent = CallEvent(
             data: payload,
-            currentTimestamp: currentTimestamp,
+            currentTimestamp: Date().addingTimeInterval(currentTimestamp),
             serverTimestamp: eventTimestamp,
             conversationId: conversationId,
             userId: userId,

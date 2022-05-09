@@ -90,6 +90,8 @@ public class WireCallCenterV3: NSObject {
     /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to AVS.
     var isReady: Bool = false {
         didSet {
+            VoIPPushHelper.isAVSReady = isReady
+
             if isReady {
                 bufferedEvents.forEach { (item: (event: CallEvent, completionHandler: () -> Void)) in
                     let (event, completionHandler) = item
@@ -689,7 +691,7 @@ extension WireCallCenterV3 {
     ///     - conversationId: The id of the conversation where teh calling state has changed.
     ///     - messageTime: The timestamp of the event.
 
-    func handle(callState: CallState, conversationId: AVSIdentifier, messageTime: Date? = nil) {
+    func handle(callState: CallState, conversationId: AVSIdentifier, messageTime: Date? = nil, userId: AVSIdentifier? = nil) {
         callState.logState()
 
         var callState = callState
@@ -702,7 +704,7 @@ extension WireCallCenterV3 {
             muted = true
         }
 
-        let callerId = initiatorForCall(conversationId: conversationId)
+        let callerId = initiatorForCall(conversationId: conversationId) ?? userId
         let previousCallState = callSnapshots[conversationId]?.callState
 
         if case .terminating = callState {
