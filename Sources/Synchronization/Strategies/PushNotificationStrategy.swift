@@ -19,56 +19,62 @@
 import WireRequestStrategy
 import Foundation
 
-public protocol NotificationSessionDelegate: AnyObject {
+protocol PushNotificationStrategyDelegate: AnyObject {
 
-    func notificationSessionDidGenerateNotification(_ notification: ZMLocalNotification?, unreadConversationCount: Int)
+    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent])
+    func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 
 }
 
 final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, UpdateEventProcessor {
+
+    // MARK: - Properties
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var eventProcessor: UpdateEventProcessor!
     private var moc: NSManagedObjectContext!
-    private var localNotifications = [ZMLocalNotification]()
 
-    private weak var delegate: NotificationSessionDelegate?
+    weak var delegate: PushNotificationStrategyDelegate?
 
-    private let useLegacyPushNotifications: Bool
-    
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
 
-    init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-         eventContext: NSManagedObjectContext,
-         applicationStatus: ApplicationStatus,
-         pushNotificationStatus: PushNotificationStatus,
-         notificationsTracker: NotificationsTracker?,
-         notificationSessionDelegate: NotificationSessionDelegate?,
-         useLegacyPushNotifications: Bool) {
+    // MARK: - Life cycle
 
-        self.useLegacyPushNotifications = useLegacyPushNotifications
-        
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+    init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        eventContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        pushNotificationStatus: PushNotificationStatus,
+        notificationsTracker: NotificationsTracker?
+    ) {
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
        
-        sync = NotificationStreamSync(moc: managedObjectContext,
-                                      notificationsTracker: notificationsTracker,
-                                      delegate: self)
+        sync = NotificationStreamSync(
+            moc: managedObjectContext,
+            notificationsTracker: notificationsTracker,
+            delegate: self
+        )
+
         self.eventProcessor = self
         self.pushNotificationStatus = pushNotificationStatus
-        self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
     }
+
+    // MARK: - Methods
     
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest(for: apiVersion) : nil
+        return nextRequest(for: apiVersion)
     }
     
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return isFetchingStreamForAPNS && !useLegacyPushNotifications ? requestGenerators.nextRequest(for: apiVersion) : nil
+        guard isFetchingStreamForAPNS else { return nil }
+        return requestGenerators.nextRequest(for: apiVersion)
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
@@ -91,18 +97,19 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         }
     }
 
-    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+    @objc public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
-            let notifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
-            self.localNotifications.append(contentsOf: notifications)
+            self.delegate?.pushNotificationStrategy(self, didFetchEvents: decryptedUpdateEvents)
         }
     }
 
-    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+    @objc public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         // Events will be processed in the foreground
     }
 
 }
+
+// MARK: - Notification stream sync delegate
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
@@ -110,111 +117,31 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
         var eventIds: [UUID] = []
         var parsedEvents: [ZMUpdateEvent] = []
         var latestEventId: UUID? = nil
+
         for event in events {
             event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
             parsedEvents.append(event)
+
             if let uuid = event.uuid {
                 eventIds.append(uuid)
             }
+
             if !event.isTransient {
                 latestEventId = event.uuid
             }
         }
+
         eventProcessor.storeUpdateEvents(parsedEvents, ignoreBuffer: true)
         pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
 
         if !hasMoreToFetch {
-            // We should only process local notifications once after we've finished fetching
-            // all events because otherwise we tell the delegate (i.e the notification
-            // service extension) to use its content handler more than once, which may lead
-            // to unexpected behavior.
-            processLocalNotifications()
-            localNotifications.removeAll()
+            delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
         }
-    }
-
-    private func processLocalNotifications() {
-        let notification: ZMLocalNotification?
-
-        if localNotifications.count > 1 {
-            notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: moc)
-        } else {
-            notification = localNotifications.first
-        }
-        let unreadCount = Int(ZMConversation.unreadConversationCount(in: moc))
-        delegate?.notificationSessionDidGenerateNotification(notification, unreadConversationCount: unreadCount)
     }
     
     public func failedFetchingEvents() {
         pushNotificationStatus.didFailToFetchEvents()
     }
-
 }
 
-// MARK: - Converting events to localNotifications
 
-extension PushNotificationStrategy {
-
-    private func convertToLocalNotifications(_ events: [ZMUpdateEvent], moc: NSManagedObjectContext) -> [ZMLocalNotification] {
-        return events.compactMap { event in
-            return notification(from: event, in: moc)
-        }
-    }
-
-    private func notification(from event: ZMUpdateEvent, in context: NSManagedObjectContext) -> ZMLocalNotification? {
-        var note: ZMLocalNotification?
-        guard let conversationID = event.conversationUUID else {
-            return nil
-        }
-
-        let conversation = ZMConversation.fetch(with: conversationID, in: context)
-
-        if let callEventContent = CallEventContent(from: event) {
-            let currentTimestamp = Date().addingTimeInterval(managedObjectContext.serverTimeDelta)
-
-            /// The caller should not be the same as the user receiving the call event and
-            /// the age of the event is less than 30 seconds
-            guard let callState = callEventContent.callState,
-                  let callerID = callEventContent.callerID,
-                  let caller = ZMUser.fetch(with: callerID, domain: event.senderDomain, in: context),
-                  caller != ZMUser.selfUser(in: context),
-                  !isEventTimedOut(currentTimestamp: currentTimestamp, eventTimestamp: event.timestamp) else {
-                      return nil
-                  }
-            note = ZMLocalNotification.init(callState: callState, conversation: conversation, caller: caller, moc: context)
-        } else {
-            note = ZMLocalNotification.init(event: event, conversation: conversation, managedObjectContext: context)
-        }
-
-        note?.increaseEstimatedUnreadCount(on: conversation)
-        return note
-    }
-
-    private func isEventTimedOut(currentTimestamp: Date, eventTimestamp: Date?) -> Bool {
-        guard let eventTimestamp = eventTimestamp else {
-            return true
-        }
-
-        return Int(currentTimestamp.timeIntervalSince(eventTimestamp)) > 30
-    }
-
-}
-
-// MARK: - Helpers
-
-private extension CallEventContent {
-
-    init?(from event: ZMUpdateEvent) {
-        guard
-            event.type == .conversationOtrMessageAdd,
-            let message = GenericMessage(from: event),
-            message.hasCalling,
-            let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
-        else {
-            return nil
-        }
-
-        self.init(from: payload)
-    }
-
-}

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,32 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
-protocol AuthenticationStatusProvider {
+class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
-    var state: AuthenticationState { get }
+    // MARK: - Properties
 
-}
+    let context: NSManagedObjectContext
 
-enum AuthenticationState {
+    // MARK: - Life cycle
 
-    case authenticated
-    case unauthenticated
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
 
+    // MARK: - Methods
+
+    var clientIsReadyForRequests: Bool {
+        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String {
+            // TODO: move constant into shared framework
+            return !clientId.isEmpty
+        }
+
+        return false
+    }
+
+    func didDetectCurrentClientDeletion() {
+        // nop
+    }
 }

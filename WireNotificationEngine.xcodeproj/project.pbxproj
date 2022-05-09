@@ -30,12 +30,13 @@
 		06894D89276B282B00DA4E33 /* WireMockTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D3A276B26D500DA4E33 /* WireMockTransport.xcframework */; };
 		06894D8C276B282F00DA4E33 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D4A276B26D600DA4E33 /* OCMock.xcframework */; };
 		069712912497B96E00C32169 /* OperationLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06394AA12497B24600380494 /* OperationLoop.swift */; };
-		069712942497C17600C32169 /* StrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712922497C15900C32169 /* StrategyFactory.swift */; };
 		069712972497C1BF00C32169 /* NotificationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* NotificationSession.swift */; };
 		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
 		06E6F44327B54EB1001624D4 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06894D40276B26D600DA4E33 /* WireRequestStrategy.xcframework */; };
-		06F51A0B27FD6B0D00CA0C58 /* CallEventContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F51A0A27FD6B0D00CA0C58 /* CallEventContent.swift */; };
+		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
+		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
+		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +87,6 @@
 		06894D48276B26D600DA4E33 /* WireProtos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireProtos.xcframework; path = Carthage/Build/WireProtos.xcframework; sourceTree = "<group>"; };
 		06894D49276B26D600DA4E33 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		06894D4A276B26D600DA4E33 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
-		069712922497C15900C32169 /* StrategyFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyFactory.swift; sourceTree = "<group>"; };
 		069712952497C1BC00C32169 /* NotificationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSession.swift; sourceTree = "<group>"; };
 		069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatusProvider.swift; sourceTree = "<group>"; };
 		0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationStrategy.swift; sourceTree = "<group>"; };
@@ -101,7 +101,9 @@
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		06F51A0A27FD6B0D00CA0C58 /* CallEventContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CallEventContent.swift; path = Calling/CallEventContent.swift; sourceTree = "<group>"; };
+		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
+		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
+		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
 		EE62A9F127B65C04004F7ADC /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-arm64Simulator.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -203,7 +205,10 @@
 			children = (
 				0697129A2497CA8F00C32169 /* Synchronization */,
 				06604297247FE76A00A5F161 /* AppDelegate.swift */,
+				EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */,
 				069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */,
+				EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */,
+				EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */,
 				069712952497C1BC00C32169 /* NotificationSession.swift */,
 				066042A0247FE76C00A5F161 /* Assets.xcassets */,
 				066042A5247FE76C00A5F161 /* Info.plist */,
@@ -232,7 +237,6 @@
 		0697129A2497CA8F00C32169 /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
-				069712922497C15900C32169 /* StrategyFactory.swift */,
 				06394AA12497B24600380494 /* OperationLoop.swift */,
 				0697129B2497CA9A00C32169 /* Strategies */,
 			);
@@ -242,7 +246,6 @@
 		0697129B2497CA9A00C32169 /* Strategies */ = {
 			isa = PBXGroup;
 			children = (
-				06F51A0A27FD6B0D00CA0C58 /* CallEventContent.swift */,
 				0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */,
 			);
 			path = Strategies;
@@ -433,12 +436,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				067ECB602487ABF700701956 /* AppDelegate.swift in Sources */,
+				EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */,
+				EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */,
 				069712912497B96E00C32169 /* OperationLoop.swift in Sources */,
 				0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */,
-				069712942497C17600C32169 /* StrategyFactory.swift in Sources */,
 				069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */,
 				069712972497C1BF00C32169 /* NotificationSession.swift in Sources */,
-				06F51A0B27FD6B0D00CA0C58 /* CallEventContent.swift in Sources */,
+				EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
