@@ -57,9 +57,6 @@
                <Test
                   Identifier = "ZMLocalNotificationTests_Event/testThatItDoesntCreateConversationCreateNotification_OneToOne()">
                </Test>
-               <Test
-                  Identifier = "ZMLocalNotificationTests_Message">
-               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>
