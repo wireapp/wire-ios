@@ -115,7 +115,6 @@ public class UserClient: ZMManagedObject, UserClientType {
             return token
         }
         set {
-            precondition(managedObjectContext!.zm_isSyncContext, "Push token should be set only on sync context")
             if newValue != pushToken {
                 self.willChangeValue(forKey: Keys.PushToken)
                 primitivePushToken = try? JSONEncoder().encode(newValue)
