@@ -119,7 +119,6 @@ public class UserClient: ZMManagedObject, UserClientType {
                 self.willChangeValue(forKey: Keys.PushToken)
                 primitivePushToken = try? JSONEncoder().encode(newValue)
                 self.didChangeValue(forKey: Keys.PushToken)
-                setLocallyModifiedKeys([Keys.PushToken])
             }
         }
 
