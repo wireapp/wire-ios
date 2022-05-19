@@ -90,12 +90,19 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     private enum Keys {
         static let PushToken = "pushToken"
-        static let LegacyPushToken = "legacyPushToken"
         static let DeviceClass = "deviceClass"
     }
 
+    // DO NOT USE THIS PROPERTY.
+    //
+    // Storing the push token on the self user client is now deprecated.
+    // From now on, we store the push token in the user defaults and is
+    // no longer the responsibility of the data model project. We keep
+    // it here so that it can still be fetched when migrating the token
+    // to user defaults, it can be deleted after some time.
+
     @NSManaged private var primitivePushToken: Data?
-    public var pushToken: PushToken? {
+    private var pushToken: PushToken? {
         get {
             self.willAccessValue(forKey: Keys.PushToken)
             let token: PushToken?
@@ -119,28 +126,14 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     }
 
-    @NSManaged private var primitiveLegacyPushToken: Data?
-    public var legacyPushToken: PushToken? {
-        get {
-            self.willAccessValue(forKey: Keys.LegacyPushToken)
-            let token: PushToken?
-            if let data = primitiveLegacyPushToken {
-                token = try? JSONDecoder().decode(PushToken.self, from: data)
-            } else {
-                token = nil
-            }
-            self.didAccessValue(forKey: Keys.LegacyPushToken)
-            return token
-        }
-        set {
-            precondition(managedObjectContext!.zm_isSyncContext, "Push token should be set only on sync context")
-            if newValue != legacyPushToken {
-                self.willChangeValue(forKey: Keys.LegacyPushToken)
-                primitiveLegacyPushToken = try? JSONEncoder().encode(newValue)
-                self.didChangeValue(forKey: Keys.LegacyPushToken)
-                setLocallyModifiedKeys([Keys.LegacyPushToken])
-            }
-        }
+    /// Fetches and removes the old push token from the self client.
+    ///
+    /// - returns: the legacy push token if it exists.
+
+    public func retrieveLegacyPushToken() -> PushToken? {
+        guard let token = pushToken else { return nil }
+        pushToken = nil
+        return token
     }
 
     /// Clients that are trusted by self client.
@@ -189,13 +182,13 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     public override func keysTrackedForLocalModifications() -> Set<String> {
-        return [ZMUserClientMarkedToDeleteKey,
-                ZMUserClientNumberOfKeysRemainingKey,
-                ZMUserClientMissingKey,
-                ZMUserClientNeedsToUpdateSignalingKeysKey,
-                ZMUserClientNeedsToUpdateCapabilitiesKey,
-                Keys.PushToken,
-                Keys.LegacyPushToken]
+        return [
+            ZMUserClientMarkedToDeleteKey,
+            ZMUserClientNumberOfKeysRemainingKey,
+            ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
+            ZMUserClientNeedsToUpdateCapabilitiesKey
+        ]
     }
 
     public override static func sortKey() -> String {

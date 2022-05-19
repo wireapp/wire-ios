@@ -309,10 +309,9 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion() {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
-        let allVersions = ["2-24-1"] +
-            [(25...31),
-             (39...57),
-             (59...99)].joined().map { "2-\($0)-0" }
+        let allVersions = ["2-24-1"] + [(25...31), (39...57), (59...100)].joined().map {
+            "2-\($0)-0"
+        }
 
         let modelVersion = CoreDataStack.loadMessagingModel().version
         let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
