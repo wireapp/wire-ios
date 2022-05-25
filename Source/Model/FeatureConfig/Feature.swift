@@ -37,6 +37,7 @@ public class Feature: ZMManagedObject {
         case selfDeletingMessages
         case conversationGuestLinks
         case classifiedDomains
+        case digitalSignature
     }
 
     public enum Status: String, Codable {
@@ -195,9 +196,6 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforceAppLock != newConfig.enforceAppLock
 
-        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains:
-            return
-
         case .selfDeletingMessages:
             let decoder = JSONDecoder()
 
@@ -212,6 +210,9 @@ public class Feature: ZMManagedObject {
             }
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
+
+        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains, .digitalSignature:
+            return
         }
     }
 }

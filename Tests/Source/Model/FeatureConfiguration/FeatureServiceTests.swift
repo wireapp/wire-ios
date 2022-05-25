@@ -68,27 +68,6 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
         }
     }
 
-    func testItEnqueuesBackendRefreshForFeature() {
-        // Given
-        let sut = FeatureService(context: syncMOC)
-
-        syncMOC.performGroupedAndWait { context -> Void in
-            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
-            XCTAssertFalse(feature.needsToBeUpdatedFromBackend)
-        }
-
-        // When
-        syncMOC.performGroupedAndWait { _ in
-            sut.enqueueBackendRefresh(for: .appLock)
-        }
-
-        // Then
-        syncMOC.performGroupedAndWait { context -> Void in
-            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
-            XCTAssertTrue(feature.needsToBeUpdatedFromBackend)
-        }
-    }
-
 }
 
 private extension Feature.AppLock {
