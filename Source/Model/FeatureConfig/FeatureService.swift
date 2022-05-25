@@ -40,7 +40,7 @@ public class FeatureService {
         self.context = context
     }
 
-    // MARK: - Accessors
+    // MARK: - App lock
 
     public func fetchAppLock() -> Feature.AppLock {
         guard let feature = Feature.fetch(name: .appLock, context: context),
@@ -59,6 +59,8 @@ public class FeatureService {
             $0.config = config
         }
     }
+
+    // MARK: - Conference calling
 
     public func fetchConferenceCalling() -> Feature.ConferenceCalling {
         guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
@@ -81,6 +83,8 @@ public class FeatureService {
 
         notifyChange(.conferenceCallingIsAvailable)
     }
+
+    // MARK: - File sharing
 
     public func fetchFileSharing() -> Feature.FileSharing {
         guard let feature = Feature.fetch(name: .fileSharing, context: context) else {
@@ -105,6 +109,8 @@ public class FeatureService {
             notifyChange(.fileSharingEnabled)
         }
     }
+
+    // MARK: - Self deleting messages
 
     public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
         guard let feature = Feature.fetch(name: .selfDeletingMessages, context: context),
@@ -137,6 +143,8 @@ public class FeatureService {
         }
     }
 
+    // MARK: - Conversation guest links
+
     public func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks {
         guard let feature = Feature.fetch(name: .conversationGuestLinks, context: context) else {
             return .init()
@@ -160,6 +168,8 @@ public class FeatureService {
         }
     }
 
+    // MARK: - Classified domains
+
     public func fetchClassifiedDomains() -> Feature.ClassifiedDomains {
         guard
             let feature = Feature.fetch(name: .classifiedDomains, context: context),
@@ -181,7 +191,23 @@ public class FeatureService {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Digital signature
+
+    public func fetchDigitalSignature() -> Feature.DigitalSignature {
+        guard let feature = Feature.fetch(name: .digitalSignature, context: context) else {
+            return .init()
+        }
+
+        return .init(status: feature.status)
+    }
+
+    public func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature) {
+        Feature.updateOrCreate(havingName: .digitalSignature, in: context) {
+            $0.status = digitalSignature.status
+        }
+    }
+
+    // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
         for name in Feature.Name.allCases where Feature.fetch(name: name, context: context) == nil {
@@ -203,20 +229,10 @@ public class FeatureService {
 
             case .classifiedDomains:
                 storeClassifiedDomains(.init())
+
+            case .digitalSignature:
+                storeDigitalSignature(.init())
             }
-        }
-    }
-
-    /// Marks the feature as needing to be updated from the backend, which will be
-    /// picked up by the sync strategy.
-    ///
-    /// - Parameters:
-    ///     - featureName: the feature to refresh.
-
-    public func enqueueBackendRefresh(for featureName: Feature.Name) {
-        context.perform {
-            let feature = Feature.fetch(name: featureName, context: self.context)
-            feature?.needsToBeUpdatedFromBackend = true
         }
     }
 
