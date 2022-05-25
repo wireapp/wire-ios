@@ -121,15 +121,38 @@ extension OTREntity {
         return nil
     }
 
-    public func parseEmptyUploadResponse(_ response: ZMTransportResponse, in conversation: ZMConversation, clientRegistrationDelegate: ClientRegistrationDelegate) -> ZMConversationRemoteClientChangeSet {
+    func processEmptyUploadResponse(_ response: ZMTransportResponse, in conversation: ZMConversation, clientRegistrationDelegate: ClientRegistrationDelegate) -> ZMConversationRemoteClientChangeSet {
         guard !detectedDeletedSelfClient(in: response) else {
             clientRegistrationDelegate.didDetectCurrentClientDeletion()
             return [.deleted]
         }
 
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            return []
+        }
+
+        var clientListByUser = Payload.ClientListByUser()
+        switch apiVersion {
+        case .v0:
+            guard
+                let payload = response.payload as? [String: AnyObject],
+                let clientListByUserID = payload[MissingLabel] as? Payload.ClientListByUserID
+            else {
+                return []
+            }
+            clientListByUser = clientListByUserID.materializingUsers(withDomain: nil, in: context)
+        case .v1:
+            guard let payload = Payload.MessageSendingStatus(response) else {
+                return []
+            }
+            clientListByUser = payload.missingClientListByUser(context: context)
+        }
+
+        return parseMissingClients(clientListByUser, in: conversation)
+    }
+
+    private func parseMissingClients(_ clientListByUser: Payload.ClientListByUser, in conversation: ZMConversation) -> ZMConversationRemoteClientChangeSet {
         // 1) Parse the payload
-        guard let payload = response.payload as? [String: AnyObject] else { return [] }
-        guard let missingMap = payload[MissingLabel] as? [String: [String]] else { return [] }
 
         var changes: ZMConversationRemoteClientChangeSet = []
         var allMissingClients: Set<UserClient> = []
@@ -137,13 +160,8 @@ extension OTREntity {
 
         redundantUsers.remove(ZMUser.selfUser(in: context))
 
-        for (userID, remoteClientIdentifiers) in missingMap {
-            guard let userID = UUID(uuidString: userID) else { continue }
-
-            let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: context)
-            if user.isSelfUser {
-                continue
-            }
+        for (user, remoteClientIdentifiers) in clientListByUser {
+            if user.isSelfUser { continue }
 
             redundantUsers.remove(user)
 

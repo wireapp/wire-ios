@@ -18,19 +18,46 @@
 import XCTest
 @testable import WireRequestStrategy
 
-struct ClientUpdateResponse: Codable {
+private typealias ClientListByUser = [String: [String]]
+private typealias UserListByDomain = [String: ClientListByUser]
 
-    typealias ClientList = [String: [String]]
+private protocol TransportDataConvertible: Codable {
+    var transportData: ZMTransportData { get }
+}
+
+private extension TransportDataConvertible {
+    var transportData: ZMTransportData {
+        let encoded = try! JSONEncoder.defaultEncoder.encode(self)
+        return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
+    }
+}
+
+private struct ClientUpdateResponse: Codable, TransportDataConvertible {
 
     enum ErrorLabel: String, Codable {
         case unknownClient = "unknown-client"
     }
 
     var label: ErrorLabel?
-    var missing: ClientList?
-    var deleted: ClientList?
-    var redundant: ClientList?
+    var missing: ClientListByUser?
+    var deleted: ClientListByUser?
+    var redundant: ClientListByUser?
 
+    init(missing: ClientListByUser) {
+        self.missing = missing
+    }
+}
+
+extension Payload.MessageSendingStatus: TransportDataConvertible {
+    fileprivate init(missing: UserListByDomain) {
+        self.init(
+            time: .init(),
+            missing: missing,
+            redundant: .init(),
+            deleted: .init(),
+            failedToSend: .init()
+        )
+    }
 }
 
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
@@ -51,15 +78,14 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func missingClientsResponse(_ clientUpdateResponse: ClientUpdateResponse) -> ZMTransportData {
-        let encoder = JSONEncoder()
-        let encoded = try! encoder.encode(clientUpdateResponse)
-        return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
-    }
-
     // MARK: Request generation
 
     func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold() {
+        testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: .v0)
+        testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: .v1)
+    }
+
+    func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversation = self.createGroupConversation(with: self.otherUser)
@@ -70,7 +96,15 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(conversationSet)
 
             // THEN
-            XCTAssertEqual(self.sut.nextRequest(for: .v0)?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+            var expectedPath: String
+            switch apiVersion {
+            case .v0:
+                expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
+            case .v1:
+                expectedPath = "/v1/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
+            }
+
+            XCTAssertEqual(self.sut.nextRequest(for: apiVersion)?.path, expectedPath)
         }
     }
 
@@ -98,8 +132,14 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItRegistersMissingClients() {
+        testThatItRegistersMissingClients(apiVersion: .v0)
+        testThatItRegistersMissingClients(apiVersion: .v1)
+    }
+
+    private func testThatItRegistersMissingClients(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let clientID = "client123"
+
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             conversation = self.createGroupConversation(with: self.otherUser)
@@ -107,11 +147,19 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
 
             self.sut.objectsDidChange(conversationSet)
-            let request = self.sut.nextRequest(for: .v0)
-            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [self.otherUser.remoteIdentifier.transportString(): [clientID]], deleted: nil, redundant: nil))
+            let request = self.sut.nextRequest(for: apiVersion)
+            let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+
+            var transportData: ZMTransportData
+            switch apiVersion {
+            case .v0:
+                transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
+            case .v1:
+                transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+            }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -124,6 +172,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDeletesDeletedClients() {
+        testThatItRegistersMissingClients(apiVersion: .v0)
+        testThatItRegistersMissingClients(apiVersion: .v1)
+    }
+
+    private func testThatItDeletesDeletedClients(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
         let existingClientID = "client2"
@@ -137,11 +190,19 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
 
-            let request = self.sut.nextRequest(for: .v0)
-            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [self.otherUser.remoteIdentifier.transportString(): [existingClientID]], deleted: nil, redundant: nil))
+            let request = self.sut.nextRequest(for: apiVersion)
+            let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [existingClientID]]
+
+            var transportData: ZMTransportData
+            switch apiVersion {
+            case .v0:
+                transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
+            case .v1:
+                transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+            }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -155,6 +216,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry() {
+        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v0)
+        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v1)
+    }
+
+    private func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
         syncMOC.performGroupedBlockAndWait {
@@ -166,11 +232,18 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
 
-            let request = self.sut.nextRequest(for: .v0)
-            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [:], deleted: nil, redundant: nil))
+            let request = self.sut.nextRequest(for: apiVersion)
+
+            var transportData: ZMTransportData
+            switch apiVersion {
+            case .v0:
+                transportData = ClientUpdateResponse(missing: ClientListByUser()).transportData
+            case .v1:
+                transportData = Payload.MessageSendingStatus(missing: UserListByDomain()).transportData
+            }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -181,6 +254,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItIgnoresMissingSelfClients() {
+        testThatItIgnoresMissingSelfClients(apiVersion: .v0)
+        testThatItIgnoresMissingSelfClients(apiVersion: .v1)
+    }
+
+    private func testThatItIgnoresMissingSelfClients(apiVersion: APIVersion) {
         var conversation: ZMConversation!
         let selfClientID = "selfClient1"
 
@@ -192,11 +270,20 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(clientSet)
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let request = self.sut.nextRequest(for: .v0)
-            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [selfUser.remoteIdentifier.transportString(): [selfClientID]], deleted: nil, redundant: nil))
+            selfUser.domain = "example.com"
+            let request = self.sut.nextRequest(for: apiVersion)
+            let clientListByUserID = [selfUser.remoteIdentifier.transportString(): [selfClientID]]
+
+            var transportData: ZMTransportData
+            switch apiVersion {
+            case .v0:
+                transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
+            case .v1:
+                transportData = Payload.MessageSendingStatus(missing: [selfUser.domain!: clientListByUserID]).transportData
+            }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
