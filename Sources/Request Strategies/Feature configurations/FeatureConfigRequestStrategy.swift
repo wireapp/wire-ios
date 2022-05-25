@@ -20,42 +20,27 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "feature configurations")
 
-public extension Notification.Name {
-    static let fetchAllConfigsTriggerNotification = Notification.Name("fetchAllConfigsTriggerNotification")
-}
-
 @objcMembers
-public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
-    private var needsToFetchAllConfigs = false {
-        didSet {
-            guard needsToFetchAllConfigs else { return }
-            fetchAllConfigsSync.readyForNextRequestIfNotBusy()
-            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-        }
-    }
+    private let getFeatureConfigsActionHandler: GetFeatureConfigsActionHandler
+    private let actionSync: EntityActionSync
 
-    private var fetchSingleConfigSync: ZMDownstreamObjectSync!
-    private var fetchAllConfigsSync: ZMSingleRequestSync!
+    // MARK: - Life cycle
 
-    private var team: Team? {
-        return ZMUser.selfUser(in: managedObjectContext).team
-    }
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
+        getFeatureConfigsActionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
+        actionSync = EntityActionSync(actionHandlers: [getFeatureConfigsActionHandler])
 
-    private var observerToken: Any?
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [fetchSingleConfigSync]
-    }
-
-    // MARK: - Init
-
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                         applicationStatus: ApplicationStatus) {
-
-        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
 
         configuration = [
             .allowsRequestsWhileOnline,
@@ -63,143 +48,25 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
-
-        fetchSingleConfigSync = ZMDownstreamObjectSync(
-            transcoder: self,
-            entityName: Feature.entityName(),
-            predicateForObjectsToDownload: Feature.predicateForNeedingToBeUpdatedFromBackend(),
-            managedObjectContext: managedObjectContext
-        )
-
-        fetchAllConfigsSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-
-        observerToken = NotificationCenter.default.addObserver(
-            forName: .fetchAllConfigsTriggerNotification,
-            object: nil,
-            queue: nil,
-            using: { [weak self] _ in self?.needsToFetchAllConfigs = true }
-        )
     }
 
-    // MARK: - Overrides
+    // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return fetchAllConfigsSync.nextRequest(for: apiVersion) ?? fetchSingleConfigSync.nextRequest(for: apiVersion)
+        return actionSync.nextRequest(for: apiVersion)
     }
 
 }
 
-// MARK: - Single config transcoder
-
-extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
-
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard let feature = object as? Feature else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
-        return requestToFetchConfig(for: feature, apiVersion: apiVersion)
-    }
-
-    private func requestToFetchConfig(for feature: Feature, apiVersion: APIVersion) -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "/feature-configs/\(feature.transportName)", apiVersion: apiVersion.rawValue)
-    }
-
-    public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        guard
-            (downstreamSync as? ZMDownstreamObjectSync) == self.fetchSingleConfigSync,
-            let feature = object as? Feature,
-            response.result == .success,
-            let responseData = response.rawData
-        else {
-            return
-        }
-
-        do {
-            try processResponse(featureName: feature.name, data: responseData)
-            feature.needsToBeUpdatedFromBackend = false
-        } catch {
-            zmLog.error("Failed to process feature config response: \(error.localizedDescription)")
-        }
-    }
-
-    public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
-        // No op
-    }
-
-    private func processResponse(featureName: Feature.Name, data: Data) throws {
-        let featureService = FeatureService(context: managedObjectContext)
-        let decoder = JSONDecoder()
-
-        switch featureName {
-        case .conferenceCalling:
-            let response = try decoder.decode(SimpleConfigResponse.self, from: data)
-            featureService.storeConferenceCalling(.init(status: response.status))
-
-        case .fileSharing:
-            let response = try decoder.decode(SimpleConfigResponse.self, from: data)
-            featureService.storeFileSharing(.init(status: response.status))
-
-        case .appLock:
-            let response = try decoder.decode(ConfigResponse<Feature.AppLock.Config>.self, from: data)
-            featureService.storeAppLock(.init(status: response.status, config: response.config))
-
-        case .selfDeletingMessages:
-            let response = try decoder.decode(ConfigResponse<Feature.SelfDeletingMessages.Config>.self, from: data)
-            featureService.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
-
-        case .conversationGuestLinks:
-            let response = try decoder.decode(SimpleConfigResponse.self, from: data)
-            featureService.storeConversationGuestLinks(.init(status: response.status))
-
-        case .classifiedDomains:
-            let response = try decoder.decode(ConfigResponse<Feature.ClassifiedDomains.Config>.self, from: data)
-            featureService.storeClassifiedDomains(.init(status: response.status, config: response.config))
-        }
-    }
-
-}
-
-// MARK: - All configs transcoder
-
-extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
-
-    public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard sync == fetchAllConfigsSync else { return nil }
-        return requestToFetchAllFeatureConfigs(with: apiVersion)
-    }
-
-    private func requestToFetchAllFeatureConfigs(with apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let teamId = team?.remoteIdentifier?.transportString() else { return nil }
-        return ZMTransportRequest(getFromPath: "/teams/\(teamId)/features", apiVersion: apiVersion.rawValue)
-    }
-
-    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard
-            sync == fetchAllConfigsSync,
-            response.result == .success,
-            let responseData = response.rawData
-        else {
-            return
-        }
-
-        do {
-            let allConfigs = try JSONDecoder().decode(AllConfigsResponse.self, from: responseData)
-
-            let featureService = FeatureService(context: managedObjectContext)
-            featureService.storeAppLock(.init(status: allConfigs.applock.status, config: allConfigs.applock.config))
-            featureService.storeFileSharing(.init(status: allConfigs.fileSharing.status))
-            featureService.storeSelfDeletingMessages(.init(status: allConfigs.selfDeletingMessages.status, config: allConfigs.selfDeletingMessages.config))
-            featureService.storeClassifiedDomains(.init(status: allConfigs.classifiedDomains.status, config: allConfigs.classifiedDomains.config))
-
-        } catch {
-            zmLog.error("Failed to decode feature config response: \(error)")
-        }
-    }
-}
-
-// MARK: - ZMEventConsumer
+// MARK: - Event processing
 
 extension FeatureConfigRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) {
         events.forEach(processEvent)
     }
 
@@ -221,69 +88,52 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         }
     }
 
-}
+    private func processResponse(featureName: Feature.Name, data: Data) throws {
+        let featureService = FeatureService(context: managedObjectContext)
+        let decoder = JSONDecoder()
 
-// MARK: - Response models
-
-private struct AllConfigsResponse: Decodable {
-
-    let applock: ConfigResponse<Feature.AppLock.Config>
-    let fileSharing: SimpleConfigResponse
-    let selfDeletingMessages: ConfigResponse<Feature.SelfDeletingMessages.Config>
-    let classifiedDomains: ConfigResponse<Feature.ClassifiedDomains.Config>
-
-}
-
-private struct SimpleConfigResponse: Decodable {
-
-    let status: Feature.Status
-
-}
-
-private struct ConfigResponse<T: Decodable>: Decodable {
-
-    let status: Feature.Status
-    let config: T
-
-}
-
-// MARK: - Helpers
-
-private extension Feature {
-
-    /// The name to use in the endpoint.
-
-    var transportName: String {
-        switch name {
-        case .appLock:
-            return "appLock"
-
+        switch featureName {
         case .conferenceCalling:
-            return "conferenceCalling"
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            featureService.storeConferenceCalling(.init(status: response.status))
 
         case .fileSharing:
-            return "fileSharing"
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            featureService.storeFileSharing(.init(status: response.status))
+
+        case .appLock:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
+            featureService.storeAppLock(.init(status: response.status, config: response.config))
 
         case .selfDeletingMessages:
-            return "selfDeletingMessages"
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
+            featureService.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
         case .conversationGuestLinks:
-            return "conversationGuestLinks"
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            featureService.storeConversationGuestLinks(.init(status: response.status))
 
         case .classifiedDomains:
-            return "classifiedDomains"
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
+            featureService.storeClassifiedDomains(.init(status: response.status, config: response.config))
+
+        case .digitalSignature:
+            let response = try decoder.decode(FeatureStatus.self, from: data)
+            featureService.storeDigitalSignature(.init(status: response.status))
         }
     }
 
 }
 
-public extension Feature {
+struct FeatureStatus: Codable {
 
-    static func triggerBackendRefreshForAllConfigs() {
-        NotificationCenter.default.post(
-            name: .fetchAllConfigsTriggerNotification,
-            object: nil
-        )
-    }
+    let status: Feature.Status
+
+}
+
+struct FeatureStatusWithConfig<Config: Codable>: Codable {
+
+    let status: Feature.Status
+    let config: Config
 
 }
