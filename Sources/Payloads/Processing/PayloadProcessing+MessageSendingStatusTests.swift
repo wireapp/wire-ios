@@ -30,6 +30,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
         }
     }
 
+    // MARK: - Client Updates
+
     func testThatClientsAreDeleted_WhenDeletedClientsArePresent() {
         self.syncMOC.performGroupedAndWait { _ in
             // given
@@ -145,6 +147,68 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
             // then
             XCTAssertTrue(message.conversation!.needsToBeUpdatedFromBackend)
         }
+    }
+
+    // MARK: - Payload mapping
+
+    func testThatItReturnsMissingClientListByUser() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let expectedThirdUserClientList = [UUID().transportString(), UUID().transportString()]
+            let thirdDomain = "third.domain.com"
+
+            self.syncMOC.saveOrRollback()
+
+            let missing: Payload.ClientListByQualifiedUserID = [
+                self.domain: [self.otherUser.remoteIdentifier.transportString(): [self.otherClient.remoteIdentifier!]],
+                thirdDomain: [self.thirdUser.remoteIdentifier.transportString(): expectedThirdUserClientList]
+            ]
+
+            let payload = Payload.MessageSendingStatus(time: Date(), missing: missing, redundant: [:], deleted: [:], failedToSend: [:])
+
+            // when
+            let clientListByUser = payload.missingClientListByUser(context: self.syncMOC)
+
+            // then
+            let otherUserClientList = clientListByUser[self.otherUser]
+            XCTAssertNotNil(otherUserClientList)
+            XCTAssertEqual(otherUserClientList, [self.otherClient.remoteIdentifier!])
+            let thirdUserClientList = clientListByUser[self.thirdUser]
+            XCTAssertNotNil(thirdUserClientList)
+            XCTAssertEqual(thirdUserClientList, expectedThirdUserClientList)
+        }
+    }
+
+    func testThatMissingClientListByUser_CreatesNewUserIfNeeded() {
+        // given
+        let userID = UUID()
+        let clientID = UUID().transportString()
+
+        let missing: Payload.ClientListByQualifiedUserID = [
+            domain: [userID.transportString(): [clientID]]
+        ]
+
+        let payload = Payload.MessageSendingStatus(time: Date(), missing: missing, redundant: [:], deleted: [:], failedToSend: [:])
+
+        // when
+        var clientListByUser = Payload.ClientListByUser()
+        syncMOC.performGroupedBlockAndWait {
+            clientListByUser = payload.missingClientListByUser(context: self.syncMOC)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // then
+        syncMOC.performGroupedBlockAndWait {
+            guard let user = ZMUser.fetch(with: userID, domain: self.domain, in: self.syncMOC) else {
+                return XCTFail("user was not created")
+            }
+
+            let userClientList = clientListByUser[user]
+            XCTAssertEqual(userClientList, [clientID])
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
 
 }
