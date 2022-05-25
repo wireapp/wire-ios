@@ -80,6 +80,9 @@
 		A9DABBBF2661208900D07588 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DABBB42661208900D07588 /* SwiftProtobuf.xcframework */; };
 		A9DABBCD2661211C00D07588 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DABBC3266120E500D07588 /* WireTesting.xcframework */; };
 		A9DABBD12661212400D07588 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DABBC4266120E500D07588 /* OCMock.xcframework */; };
+		EE797454283D235700A0BB0C /* MockTransportSession+FeatureConfigs.h in Headers */ = {isa = PBXBuildFile; fileRef = EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */; };
+		EE797455283D235700A0BB0C /* MockTransportSession+FeatureConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */; };
+		EE797457283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */; };
 		EEA5656427D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA5656327D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift */; };
 		EEA5656627D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA5656527D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m */; };
 		EEA5656827D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA5656727D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h */; };
@@ -250,6 +253,9 @@
 		A9DABBC3266120E500D07588 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		A9DABBC4266120E500D07588 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		A9FF19B527A014930067DC26 /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
+		EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+FeatureConfigs.h"; sourceTree = "<group>"; };
+		EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+FeatureConfigs.m"; sourceTree = "<group>"; };
+		EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+FeatureConfigs.swift"; sourceTree = "<group>"; };
 		EEA5656327D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+APIVersion.swift"; sourceTree = "<group>"; };
 		EEA5656527D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+APIVersion.m"; sourceTree = "<group>"; };
 		EEA5656727D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+APIVersion.h"; sourceTree = "<group>"; };
@@ -531,6 +537,7 @@
 				F16088C62047177D002CA9B4 /* Services */,
 				F16088C020471681002CA9B4 /* Users */,
 				F16088C520471775002CA9B4 /* Teams */,
+				EE797451283D22FC00A0BB0C /* Feature Configs */,
 				54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */,
 				54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */,
 				F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */,
@@ -592,6 +599,16 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EE797451283D22FC00A0BB0C /* Feature Configs */ = {
+			isa = PBXGroup;
+			children = (
+				EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */,
+				EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */,
+				EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */,
+			);
+			path = "Feature Configs";
 			sourceTree = "<group>";
 		};
 		EEA5656227D8ADD40021ADA3 /* API Version */ = {
@@ -808,6 +825,7 @@
 				54AE5A8D1B78FA43002757E9 /* MockPicture.h in Headers */,
 				54AE5A7B1B78FA43002757E9 /* MockTransportSession+users.h in Headers */,
 				54AE5A731B78FA43002757E9 /* MockTransportSession+connections.h in Headers */,
+				EE797454283D235700A0BB0C /* MockTransportSession+FeatureConfigs.h in Headers */,
 				09E393ED1BB012EA00F3EA1B /* MockTransportSession+Clients.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -939,6 +957,7 @@
 				5502C6EE22B8EC31000684B7 /* MockPendingLegalHoldClient.swift in Sources */,
 				F1F3FE9520F38DB800B0BAF3 /* MockTransportSession+PushToken.swift in Sources */,
 				09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */,
+				EE797457283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift in Sources */,
 				54AE5A741B78FA43002757E9 /* MockTransportSession+connections.m in Sources */,
 				163EB0CF1FD1A658005B8D8D /* MockTransportSession+Broadcast.m in Sources */,
 				54AE5A821B78FA43002757E9 /* MockConversation.m in Sources */,
@@ -965,6 +984,7 @@
 				F157FEE12060235E00BC25F1 /* MockConversation+AccessMode.swift in Sources */,
 				5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */,
 				F1782DA51ED430EE00486BE3 /* MockTeamConversationEvent.swift in Sources */,
+				EE797455283D235700A0BB0C /* MockTransportSession+FeatureConfigs.m in Sources */,
 				F1F7B6FC1ED4789E0042A26D /* MockConversation.swift in Sources */,
 				54AE5A831B78FA43002757E9 /* MockEvent.m in Sources */,
 				54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */,
