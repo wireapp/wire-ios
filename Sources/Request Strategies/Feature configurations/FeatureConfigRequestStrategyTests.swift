@@ -21,147 +21,44 @@ import XCTest
 
 class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
-    var mockApplicationStatus: MockApplicationStatus!
+    // MARK: - Properties
+
     var sut: FeatureConfigRequestStrategy!
+    var mockApplicationStatus: MockApplicationStatus!
     var featureService: FeatureService!
+
+    // MARK: - Life cycle
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
 
-        sut = FeatureConfigRequestStrategy(withManagedObjectContext: syncMOC,
-                                           applicationStatus: mockApplicationStatus)
+        sut = FeatureConfigRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
 
         featureService = .init(context: syncMOC)
     }
 
     override func tearDown() {
-        mockApplicationStatus = nil
         sut = nil
+        mockApplicationStatus = nil
         featureService = nil
         super.tearDown()
     }
 
-    private func setUpTeam(in context: NSManagedObjectContext) -> UUID {
-        let team = self.createTeam(for: .selfUser(in: context))
-        return team.remoteIdentifier!
-    }
+    // MARK: - Processing events
 
-    // MARK: Single configuration
-
-    func test_ItGeneratesARequest_ToFetchASingleConfig() {
-        syncMOC.performGroupedAndWait { context -> Void in
-            // Given
-            guard let feature = Feature.fetch(name: .appLock, context: context) else {
-                return XCTFail("Failed to fetch AppLock feature")
-            }
-            feature.needsToBeUpdatedFromBackend = true
-
-            // When
-            self.boostrapChangeTrackers(with: feature)
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else {
-                return XCTFail("Request is nil")
-            }
-
-            // Then
-            XCTAssertEqual(request.path, "/feature-configs/appLock")
-        }
-    }
-
-    func test_ItDoesNotGenerateARequest_ToFetchASingleConfig_WhenNotNeeded() {
-        syncMOC.performGroupedAndWait { context -> Void in
-            // Given
-            _ = self.setUpTeam(in: context)
-
-            guard let feature = Feature.fetch(name: .appLock, context: context) else {
-                return XCTFail("Failed to fetch AppLock feature")
-            }
-            feature.needsToBeUpdatedFromBackend = false
-
-            // When
-            self.boostrapChangeTrackers(with: feature)
-            let request = self.sut.nextRequestIfAllowed(for: .v0)
-
-            // Then
-            XCTAssertNil(request)
-        }
-    }
-
-    func testThatItParsesAResponse() {
-        var feature: Feature?
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            feature = Feature.fetch(name: .fileSharing, context: self.syncMOC)
-            guard let feature = feature else {
-                return XCTFail("Failed to fetch FileSharing feature")
-            }
-            feature.needsToBeUpdatedFromBackend = true
-
-            self.boostrapChangeTrackers(with: feature)
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("Request is nil") }
-            XCTAssertNotNil(request)
-
-            // when
-            let payload = [
-                "status": "disabled"
-            ]
-
-            let response = ZMTransportResponse(payload: payload as NSDictionary as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
-            request.complete(with: response)
-        }
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        syncMOC.performGroupedBlockAndWait {
-            // then
-            XCTAssertEqual(feature!.status, .disabled)
-        }
-    }
-
-    // MARK: - All configurations
-
-    func test_ItGeneratesARequest_ToFetchAllConfigs() {
-        syncMOC.performGroupedAndWait { context -> Void in
-            // Given
-            let teamId = self.setUpTeam(in: context)
-
-            // When
-            Feature.triggerBackendRefreshForAllConfigs()
-            guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("Request is nil") }
-
-            // Then
-            XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/features")
-        }
-    }
-
-    func test_ItDoesNotGenerateARequest_ToFetchAllConfigs_WithoutATeam() {
-        syncMOC.performGroupedAndWait { context -> Void in
-            // Given
-            XCTAssertNil(ZMUser.selfUser(in: context).team)
-
-            // When
-            Feature.triggerBackendRefreshForAllConfigs()
-            let request = self.sut.nextRequestIfAllowed(for: .v0)
-
-            // Then
-            XCTAssertNil(request)
-        }
-    }
-
-}
-
-// MARK: - Processing events
-
-extension FeatureConfigRequestStrategyTests {
-
-    func testThatItUpdatesApplockFeature_FromUpdateEvent() {
+    func test_ItProcessesEvent_AppLock() {
         syncMOC.performGroupedAndWait { _ in
             // Given
-            let appLock = Feature.AppLock(status: .disabled, config: .init(enforceAppLock: false, inactivityTimeoutSecs: 10))
+            let appLock = Feature.AppLock(
+                status: .disabled,
+                config: .init(enforceAppLock: false, inactivityTimeoutSecs: 10)
+            )
+
             self.featureService.storeAppLock(appLock)
 
             let data: NSDictionary = [
@@ -187,16 +84,16 @@ extension FeatureConfigRequestStrategyTests {
 
         // Then
         syncMOC.performGroupedAndWait { _ in
-            let appLock = self.featureService.fetchAppLock()
-            XCTAssertEqual(appLock.status, .enabled)
-            XCTAssertEqual(appLock.config.enforceAppLock, true)
-            XCTAssertEqual(appLock.config.inactivityTimeoutSecs, 60)
+            let existingFeature = self.featureService.fetchAppLock()
+            XCTAssertEqual(existingFeature.status, .enabled)
+            XCTAssertEqual(existingFeature.config.enforceAppLock, true)
+            XCTAssertEqual(existingFeature.config.inactivityTimeoutSecs, 60)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItUpdatesFileSharingFeature_FromUpdateEvent() {
+    func test_ItProcessesEvent_FileSharing() {
         syncMOC.performGroupedAndWait { _ in
             // Given
             self.featureService.storeFileSharing(.init(status: .disabled))
@@ -220,17 +117,21 @@ extension FeatureConfigRequestStrategyTests {
 
         // Then
         syncMOC.performGroupedAndWait { _ in
-            let fileSharing = self.featureService.fetchFileSharing()
-            XCTAssertEqual(fileSharing.status, .enabled)
+            let existingFeature = self.featureService.fetchFileSharing()
+            XCTAssertEqual(existingFeature.status, .enabled)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItUpdatesSelfDeletingMessagesFeature_FromUpdateEvent() {
+    func test_ItProcessesEvent_SelfDeletingMessages() {
         syncMOC.performGroupedAndWait { _ in
             // Given
-            let selfDeletingMessages = Feature.SelfDeletingMessages(status: .disabled, config: .init(enforcedTimeoutSeconds: 0))
+            let selfDeletingMessages = Feature.SelfDeletingMessages(
+                status: .disabled,
+                config: .init(enforcedTimeoutSeconds: 0)
+            )
+
             self.featureService.storeSelfDeletingMessages(selfDeletingMessages)
 
             let data: NSDictionary = [
@@ -256,75 +157,142 @@ extension FeatureConfigRequestStrategyTests {
 
         // Then
         syncMOC.performGroupedAndWait { _ in
-            let selfDeletingMessages = self.featureService.fetchSelfDeletingMesssages()
-            XCTAssertEqual(selfDeletingMessages.status, .enabled)
-            XCTAssertEqual(selfDeletingMessages.config.enforcedTimeoutSeconds, 60)
+            let existingfeature = self.featureService.fetchSelfDeletingMesssages()
+            XCTAssertEqual(existingfeature.status, .enabled)
+            XCTAssertEqual(existingfeature.config.enforcedTimeoutSeconds, 60)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItUpdatesConferenceCallingFeature_FromUpdateEvent() {
-        syncMOC.performGroupedAndWait { moc in
-            // given
-            FeatureService(context: moc).storeConferenceCalling(.init())
+    func test_ItProcessesEvent_ConferenceCalling() {
+        syncMOC.performGroupedAndWait { _ in
+            // Given
+            self.featureService.storeConferenceCalling(.init(status: .disabled))
+
             let dict: NSDictionary = [
                 "status": "enabled"
             ]
+
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": dict,
                 "name": "conferenceCalling"
             ]
+
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
-            // when
+            // When
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
+
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
-        syncMOC.performGroupedAndWait { moc in
-            let existingFeature = Feature.fetch(name: .conferenceCalling, context: moc)
+        // Then
+        syncMOC.performGroupedAndWait { _ in
+            let existingFeature = self.featureService.fetchConferenceCalling()
             XCTAssertNotNil(existingFeature)
-            XCTAssertEqual(existingFeature?.status, .enabled)
+            XCTAssertEqual(existingFeature.status, .enabled)
         }
     }
 
-}
+    func test_ItProcessesEvent_ConversationGuestLinks() {
+        syncMOC.performGroupedAndWait { _ in
+            // Given
+            self.featureService.storeConversationGuestLinks(.init(status: .disabled))
 
-// MARK: - Helpers
+            let dict: NSDictionary = [
+                "status": "enabled"
+            ]
 
-private extension FeatureConfigRequestStrategyTests {
+            let payload: NSDictionary = [
+                "type": "feature-config.update",
+                "data": dict,
+                "name": "conversationGuestLinks"
+            ]
 
-    @discardableResult
-    func createTeam(for user: ZMUser) -> Team {
-        let context = user.managedObjectContext!
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 
-        let team = Team.insertNewObject(in: context)
-        team.name = "Wire Amazing Team"
-        team.remoteIdentifier = .create()
-
-        let membership = Member.insertNewObject(in: context)
-        membership.team = team
-        membership.user = user
-
-        return team
-    }
-
-    private func createFeature(_ name: Feature.Name, in context: NSManagedObjectContext) -> Feature {
-        let feature = Feature.insertNewObject(in: context)
-        feature.name = name
-        feature.status = .enabled
-        feature.config = nil
-        return feature
-    }
-
-    func boostrapChangeTrackers(with objects: ZMManagedObject...) {
-        sut.contextChangeTrackers.forEach {
-            $0.objectsDidChange(Set(objects))
+            // When
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        syncMOC.performGroupedAndWait { _ in
+            let existingFeature = self.featureService.fetchConversationGuestLinks()
+            XCTAssertNotNil(existingFeature)
+            XCTAssertEqual(existingFeature.status, .enabled)
+        }
+    }
+
+    func test_ItProcessesEvent_DigitalSignature() {
+        syncMOC.performGroupedAndWait { _ in
+            // Given
+            self.featureService.storeDigitalSignature(.init(status: .disabled))
+
+            let dict: NSDictionary = [
+                "status": "enabled"
+            ]
+
+            let payload: NSDictionary = [
+                "type": "feature-config.update",
+                "data": dict,
+                "name": "digitalSignature"
+            ]
+
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+
+            // When
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        }
+
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        syncMOC.performGroupedAndWait { _ in
+            let existingFeature = self.featureService.fetchDigitalSignature()
+            XCTAssertNotNil(existingFeature)
+            XCTAssertEqual(existingFeature.status, .enabled)
+        }
+    }
+
+    func test_ItProcessesEvent_ClassifiedDomains() {
+        syncMOC.performGroupedAndWait { _ in
+            // Given
+            let classifiedDomains = Feature.ClassifiedDomains(status: .disabled, config: .init())
+            self.featureService.storeClassifiedDomains(classifiedDomains)
+
+            let data: NSDictionary = [
+                "status": "enabled",
+                "config": [
+                    "domains": ["a", "b", "c"]
+                ]
+            ]
+
+            let payload: NSDictionary = [
+                "type": "feature-config.update",
+                "data": data,
+                "name": "classifiedDomains"
+            ]
+
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+
+            // When
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        syncMOC.performGroupedAndWait { _ in
+            let classifiedDomains = self.featureService.fetchClassifiedDomains()
+            XCTAssertEqual(classifiedDomains.status, .enabled)
+            XCTAssertEqual(classifiedDomains.config.domains, ["a", "b", "c"])
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
 }
