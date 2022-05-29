@@ -481,6 +481,7 @@
 		EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75F252C713E00E6A44E /* ClassIdentifier.swift */; };
 		EEB5DE0A283784F9009B4741 /* Feature+DigitalSignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */; };
 		EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */; };
+		EEB803AB283F61E600412F62 /* Feature.MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB803AA283F61E600412F62 /* Feature.MLS.swift */; };
 		EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA425B9C243000210AC /* LAContextProtocol.swift */; };
 		EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA625B9C2C6000210AC /* AppLockType.swift */; };
 		EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */; };
@@ -1259,6 +1260,7 @@
 		EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+DigitalSignature.swift"; sourceTree = "<group>"; };
 		EEB5DE0B2837877A009B4741 /* zmessaging2.101.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.101.0.xcdatamodel; sourceTree = "<group>"; };
 		EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-101-0.wiredatabase"; sourceTree = "<group>"; };
+		EEB803AA283F61E600412F62 /* Feature.MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.MLS.swift; sourceTree = "<group>"; };
 		EEBACDA425B9C243000210AC /* LAContextProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAContextProtocol.swift; sourceTree = "<group>"; };
 		EEBACDA625B9C2C6000210AC /* AppLockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockType.swift; sourceTree = "<group>"; };
 		EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.Config.swift; sourceTree = "<group>"; };
@@ -1717,13 +1719,14 @@
 		54CB3FE824A3993400BA86DD /* FeatureConfig */ = {
 			isa = PBXGroup;
 			children = (
-				062FD8832756051000B9DE39 /* ConversationGuestLinks */,
-				06034B6B26A8D31F003624B4 /* FileSharing */,
 				0686649D256FB087001C8747 /* AppLock */,
-				EE28991C26B4420A00E7BAF0 /* ConferenceCalling */,
-				EECA830126EF34FB0087ECB0 /* SelfDeletingMessages */,
 				EEC47ED427A81ED70020B599 /* ClassifiedDomains */,
+				EE28991C26B4420A00E7BAF0 /* ConferenceCalling */,
+				062FD8832756051000B9DE39 /* ConversationGuestLinks */,
 				EEB5DE08283784DF009B4741 /* DigitalSignature */,
+				06034B6B26A8D31F003624B4 /* FileSharing */,
+				EEB803A9283F61CE00412F62 /* MLS */,
+				EECA830126EF34FB0087ECB0 /* SelfDeletingMessages */,
 				EE9AD9152696F01700DD5F51 /* FeatureService.swift */,
 				064F8E07255E04800040371D /* Feature.swift */,
 			);
@@ -1917,6 +1920,14 @@
 				EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */,
 			);
 			path = DigitalSignature;
+			sourceTree = "<group>";
+		};
+		EEB803A9283F61CE00412F62 /* MLS */ = {
+			isa = PBXGroup;
+			children = (
+				EEB803AA283F61E600412F62 /* Feature.MLS.swift */,
+			);
+			path = MLS;
 			sourceTree = "<group>";
 		};
 		EEC47ED427A81ED70020B599 /* ClassifiedDomains */ = {
@@ -3283,6 +3294,7 @@
 				EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */,
 				161E056A2667C4D100DADC3D /* AccountDeletedObserver.swift in Sources */,
 				F9A706B61CAEE01D00C2F5FE /* UserClientChangeInfo.swift in Sources */,
+				EEB803AB283F61E600412F62 /* Feature.MLS.swift in Sources */,
 				6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */,
 				BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */,
 				066328602428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift in Sources */,
