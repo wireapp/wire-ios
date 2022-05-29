@@ -31,6 +31,7 @@ public class Feature: ZMManagedObject {
     // of these cases may lead to a corrupt database.
 
     public enum Name: String, Codable, CaseIterable {
+
         case appLock
         case conferenceCalling
         case fileSharing
@@ -38,11 +39,15 @@ public class Feature: ZMManagedObject {
         case conversationGuestLinks
         case classifiedDomains
         case digitalSignature
+        case mls
+
     }
 
     public enum Status: String, Codable {
+
         case enabled
         case disabled
+
     }
 
     // MARK: - Properties
@@ -211,8 +216,8 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
-        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains, .digitalSignature:
-            return
+        case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains, .digitalSignature, .mls:
+            break
         }
     }
 }
