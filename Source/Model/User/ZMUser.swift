@@ -120,6 +120,20 @@ extension ZMUser: UserType {
         team?.refreshMetadata()
     }
 
+    // MARK: - MLS
+
+    public var canCreateMLSGroups: Bool {
+        guard
+            let id = remoteIdentifier,
+            let context = managedObjectContext
+        else {
+            return false
+        }
+
+        let featureService = FeatureService(context: context)
+        return featureService.fetchMLS().config.protocolToggleUsers.contains(id)
+    }
+
 }
 
 public struct AssetKey {
