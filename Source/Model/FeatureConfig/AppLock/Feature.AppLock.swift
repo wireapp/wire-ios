@@ -36,7 +36,7 @@ public extension Feature {
 
         // MARK: - Types
 
-        public struct Config: Codable {
+        public struct Config: Codable, Equatable {
 
             /// If `true` then app lock is mandatory and can not
             /// be disabled by by the user.
