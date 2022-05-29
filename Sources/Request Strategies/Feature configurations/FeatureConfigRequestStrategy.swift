@@ -120,6 +120,10 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         case .digitalSignature:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             featureService.storeDigitalSignature(.init(status: response.status))
+
+        case .mls:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
+            featureService.storeMLS(.init(status: response.status, config: response.config))
         }
     }
 

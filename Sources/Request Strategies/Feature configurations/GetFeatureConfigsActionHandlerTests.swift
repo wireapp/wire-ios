@@ -85,6 +85,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             conversationGuestLinks: .init(status: .enabled),
             digitalSignatures: .init(status: .enabled),
             fileSharing: .init(status: .enabled),
+            mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
             selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
         )
 
@@ -119,6 +120,10 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
             let fileSharing = featureService.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
+
+            let mls = featureService.fetchMLS()
+            XCTAssertEqual(mls.status, .enabled)
+            XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
             let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
