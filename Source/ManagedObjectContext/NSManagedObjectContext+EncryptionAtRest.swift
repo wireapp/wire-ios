@@ -25,7 +25,7 @@ extension Sequence where Element: NSManagedObject {
     /// objects in order to keep memory consumption low.
     ///
     /// - Parameters:
-    ///   - batchLimit: Number of changes we are performed before the context is saved
+    ///   - saveInterval: Number of changes we are performed before the context is saved
     ///   - block: Change which should be performed on the objects
     func modifyAndSaveInBatches(saveInterval: Int = 10000, _ block: (Element) throws -> Void) throws {
         var processed: [Element] = []
