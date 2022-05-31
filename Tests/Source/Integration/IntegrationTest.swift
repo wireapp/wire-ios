@@ -672,6 +672,10 @@ extension IntegrationTest: SessionManagerDelegate {
         userSessionCanBeTornDown()
     }
 
+    public func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+        // no op
+    }
+
 }
 
 @objcMembers
@@ -732,4 +736,16 @@ extension IntegrationTest {
         APIVersion.current = .v0
     }
 
+}
+
+// MARK: - Account Helper
+
+extension IntegrationTest {
+    func addAccount(name: String, userIdentifier: UUID) -> Account {
+        let account = Account(userName: name, userIdentifier: userIdentifier)
+        let cookie = NSData.secureRandomData(ofLength: 16)
+        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = cookie
+        sessionManager!.accountManager.addOrUpdate(account)
+        return account
+    }
 }
