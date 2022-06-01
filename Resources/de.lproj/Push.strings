@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
-
 // These strings form the alert body of a local notification. The alert title
 // be in the form "[Group Name]" or "[Sender Name]". If there is a team name available
 // then " in [Team Name]" will be appended to the title. If there is no information
 // available to construct the title (no conversation name, no team) then there will be
 // no title and the notification will only show the alert body.
-
 // Group Names are a shown in the title for group conversations with the sender name
 // and message content in the alert body.
-
 // Sender names are shown in the title for one to one conversations, with the message
 // content in the alert body.
+
+
+
 
 "push.notification.default" = "Neue Nachricht";
 
@@ -204,6 +204,9 @@
 
 "push.notification.alert.availability.away.message" = "Status wirkt sich jetzt auf Benachrichtigungen aus. Beim aktuellen Status \"Abwesend\" werden keine empfangen.";
 "push.notification.alert.availability.busy.message" = "Status wirkt sich jetzt auf Benachrichtigungen aus. Beim aktuellen Status \"Beschäftigt\" werden nur Benachrichtigungen über Erwähnungen oder Antworten angezeigt.";
+
+// BUNDLED MESSAGES
+"push.notification.bundled-messages" = "%d neue Nachrichten";
 
 // REACTIONS
 "push.notification.reaction.group" = "%1$@ %2$@ Ihre Nachricht";

@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
-
 // These strings form the alert body of a local notification. The alert title
 // be in the form "[Group Name]" or "[Sender Name]". If there is a team name available
 // then " in [Team Name]" will be appended to the title. If there is no information
 // available to construct the title (no conversation name, no team) then there will be
 // no title and the notification will only show the alert body.
-
 // Group Names are a shown in the title for group conversations with the sender name
 // and message content in the alert body.
-
 // Sender names are shown in the title for one to one conversations, with the message
 // content in the alert body.
+
+
+
 
 "push.notification.default" = "新消息";
 
@@ -174,8 +174,8 @@
 "push.notification.callkit.call.started.group.noconversationname" = "在对话中%@来电";
 
 // CONVERSATION CREATE
-"push.notification.conversation.create" = "%1$@ 创建了一个群组";
-"push.notification.conversation.create.nousername" = "有人创建了一个群组";
+"push.notification.conversation.create" = "%1$@ created a conversation";
+"push.notification.conversation.create.nousername" = "Someone created a conversation";
 
 // CONVERSATION DELETE
 "push.notification.conversation.delete" = "%1$@ 刪除了群组";
@@ -204,6 +204,9 @@
 
 "push.notification.alert.availability.away.message" = "状态影响通知。您已设置为“离开”并且将不会收到任何通知。";
 "push.notification.alert.availability.busy.message" = "状态现在影响通知。您已设置为“忙碌”，只会在有人提及您或回复您的消息时收到通知。";
+
+// BUNDLED MESSAGES
+"push.notification.bundled-messages" = "%d new messages";
 
 // REACTIONS
 "push.notification.reaction.group" = "%1$@ %2$@ 您的消息";
