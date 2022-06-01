@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
-
 // These strings form the alert body of a local notification. The alert title
 // be in the form "[Group Name]" or "[Sender Name]". If there is a team name available
 // then " in [Team Name]" will be appended to the title. If there is no information
 // available to construct the title (no conversation name, no team) then there will be
 // no title and the notification will only show the alert body.
-
 // Group Names are a shown in the title for group conversations with the sender name
 // and message content in the alert body.
-
 // Sender names are shown in the title for one to one conversations, with the message
 // content in the alert body.
+
+
+
 
 "push.notification.default" = "رسالة جديدة";
 
@@ -174,8 +174,8 @@
 "push.notification.callkit.call.started.group.noconversationname" = "%@ يتصل في مُحادثة";
 
 // CONVERSATION CREATE
-"push.notification.conversation.create" = "أنشأ %1$@ مجموعة";
-"push.notification.conversation.create.nousername" = "أنشأ أحدهم مجموعة";
+"push.notification.conversation.create" = "%1$@ created a conversation";
+"push.notification.conversation.create.nousername" = "Someone created a conversation";
 
 // CONVERSATION DELETE
 "push.notification.conversation.delete" = "%1$@ deleted the group";
@@ -204,6 +204,9 @@
 
 "push.notification.alert.availability.away.message" = "Status affects notifications now. You’re set to “Away” and won’t receive any notifications.";
 "push.notification.alert.availability.busy.message" = "Status affects notifications now. You’re set to “Busy” and will only receive notifications when someone mentions you or replies to one of your messages.";
+
+// BUNDLED MESSAGES
+"push.notification.bundled-messages" = "%d new messages";
 
 // REACTIONS
 "push.notification.reaction.group" = "%1$@ %2$@ رسالتك";
