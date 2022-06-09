@@ -53,7 +53,11 @@ extension Payload.UserProfile {
         }
 
         if SSOID != nil || authoritative {
-            user.usesCompanyLogin = SSOID != nil
+            if let subject = SSOID?.subject {
+                user.usesCompanyLogin = !subject.isEmpty
+            } else {
+                user.usesCompanyLogin = false
+            }
         }
 
         if isDeleted == true {
