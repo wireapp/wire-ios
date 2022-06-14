@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -215,6 +215,7 @@
 		EEB5DE05283773C3009B4741 /* GetFeatureConfigsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5DE04283773C3009B4741 /* GetFeatureConfigsAction.swift */; };
 		EEB5DE0728377635009B4741 /* GetFeatureConfigsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5DE0628377635009B4741 /* GetFeatureConfigsActionHandler.swift */; };
 		EEB5DE0F28379A19009B4741 /* GetFeatureConfigsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5DE0E28379A19009B4741 /* GetFeatureConfigsActionHandlerTests.swift */; };
+		EEE0EDB12858906500BBEE29 /* MLSRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */; };
 		F14B7AEA222009BA00458624 /* UserRichProfileRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14B7AE9222009BA00458624 /* UserRichProfileRequestStrategy.swift */; };
 		F14B7AEC222009C200458624 /* UserRichProfileRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14B7AEB222009C200458624 /* UserRichProfileRequestStrategyTests.swift */; };
 		F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EDC61F447B6C00CB8184 /* AppDelegate.swift */; };
@@ -583,6 +584,7 @@
 		EEB5DE04283773C3009B4741 /* GetFeatureConfigsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetFeatureConfigsAction.swift; sourceTree = "<group>"; };
 		EEB5DE0628377635009B4741 /* GetFeatureConfigsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetFeatureConfigsActionHandler.swift; sourceTree = "<group>"; };
 		EEB5DE0E28379A19009B4741 /* GetFeatureConfigsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetFeatureConfigsActionHandlerTests.swift; sourceTree = "<group>"; };
+		EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSRequestStrategy.swift; sourceTree = "<group>"; };
 		F14B7AE9222009BA00458624 /* UserRichProfileRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRichProfileRequestStrategy.swift; sourceTree = "<group>"; };
 		F14B7AEB222009C200458624 /* UserRichProfileRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRichProfileRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F154EDC41F447B6C00CB8184 /* WireRequestStrategyTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireRequestStrategyTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1093,6 +1095,14 @@
 			path = Actions;
 			sourceTree = "<group>";
 		};
+		EEE0EDAF2858905100BBEE29 /* MLS */ = {
+			isa = PBXGroup;
+			children = (
+				EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */,
+			);
+			path = MLS;
+			sourceTree = "<group>";
+		};
 		F12CD7932035FC4400EAAEBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1136,6 +1146,7 @@
 		F184014D2073BE0800E9F4CC /* Request Strategies */ = {
 			isa = PBXGroup;
 			children = (
+				EEE0EDAF2858905100BBEE29 /* MLS */,
 				EE90C29C282E782900474379 /* Push Token */,
 				16367F2926FDB5040028AF8B /* Connection */,
 				068084942563B6940047899C /* Feature configurations */,
@@ -1783,6 +1794,7 @@
 				0649D14B24F63C8F001DDC78 /* NotificationAction.swift in Sources */,
 				16DABDA225D69335005F4C3A /* Payload.swift in Sources */,
 				16E70F7E270EEA5400718E5D /* PayloadProcessing+UserProfile.swift in Sources */,
+				EEE0EDB12858906500BBEE29 /* MLSRequestStrategy.swift in Sources */,
 				168D7CB726FB0E9200789960 /* AddParticipantActionHandler.swift in Sources */,
 				70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */,
 				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
