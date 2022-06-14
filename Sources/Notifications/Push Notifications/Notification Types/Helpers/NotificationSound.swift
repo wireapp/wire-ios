@@ -21,6 +21,10 @@ import Foundation
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
 
+    /// Storage of the user's preferred notification sounds.
+
+    public static var storage: UserDefaults = .standard
+
     case call, ping, newMessage
 
     /// The name of the song.
@@ -47,7 +51,7 @@ public enum NotificationSound {
     }
 
     private var customFileName: String? {
-        guard let soundName = UserDefaults.standard.object(forKey: preferenceKey) as? String else { return nil }
+        guard let soundName = Self.storage.object(forKey: preferenceKey) as? String else { return nil }
         return ZMSound(rawValue: soundName)?.filename()
     }
 
