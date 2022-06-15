@@ -53,7 +53,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             apiVersion > .v0,
-            let domain  = action.domain ?? APIVersion.domain
+            let domain  = action.domain.nonEmptyValue ?? APIVersion.domain
         else {
             Logging.network.error("Can't create request for connection request")
             return nil
