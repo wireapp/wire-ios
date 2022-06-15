@@ -473,7 +473,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              apiVersion: apiVersion.rawValue)
 
             case .v1:
-                guard let domain = conversation.domain ?? APIVersion.domain else { return nil }
+                guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
@@ -506,7 +506,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              apiVersion: apiVersion.rawValue)
 
             case .v1:
-                guard let domain = conversation.domain ?? APIVersion.domain else { return nil }
+                guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
