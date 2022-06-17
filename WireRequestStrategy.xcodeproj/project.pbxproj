@@ -182,6 +182,9 @@
 		63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83DF285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift */; };
 		63CC83E4285C9C6C008549AD /* UploadSelfMLSKeyPackagesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83E1285C9C6C008549AD /* UploadSelfMLSKeyPackagesAction.swift */; };
 		63CC83E5285C9C72008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83E0285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift */; };
+		63CC83ED285CA2B0008549AD /* SendMLSWelcomeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EA285CA2B0008549AD /* SendMLSWelcomeAction.swift */; };
+		63CC83EE285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */; };
+		63CC83F0285CA2B8008549AD /* SendMLSWelcomeActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */; };
 		70C781FD2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */; };
 		70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */; };
 		8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */; };
@@ -558,6 +561,9 @@
 		63CC83DF285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesActionHandler.swift; sourceTree = "<group>"; };
 		63CC83E0285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83E1285C9C6C008549AD /* UploadSelfMLSKeyPackagesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesAction.swift; sourceTree = "<group>"; };
+		63CC83EA285CA2B0008549AD /* SendMLSWelcomeAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeAction.swift; sourceTree = "<group>"; };
+		63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeActionHandler.swift; sourceTree = "<group>"; };
+		63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeActionHandlerTests.swift; sourceTree = "<group>"; };
 		70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandlerTests.swift; sourceTree = "<group>"; };
 		70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandler.swift; sourceTree = "<group>"; };
 		8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyRequestStrategy.swift; sourceTree = "<group>"; };
@@ -1085,6 +1091,9 @@
 		63CC83AD2859D0A7008549AD /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				63CC83EA285CA2B0008549AD /* SendMLSWelcomeAction.swift */,
+				63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */,
+				63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */,
 				63CC83E1285C9C6C008549AD /* UploadSelfMLSKeyPackagesAction.swift */,
 				63CC83DF285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift */,
 				63CC83E0285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift */,
@@ -1763,6 +1772,7 @@
 				F18401D42073BE0800E9F4CC /* MessageExpirationTimer.swift in Sources */,
 				1622946B221C18BE00A98679 /* AssetV3UploadRequestStrategy.swift in Sources */,
 				1662ADB322B0E8B300D84071 /* VerifyLegalHoldRequestStrategy.swift in Sources */,
+				63CC83ED285CA2B0008549AD /* SendMLSWelcomeAction.swift in Sources */,
 				166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */,
 				F184019A2073BE0800E9F4CC /* ClientMessageRequestFactory.swift in Sources */,
 				168D7CB226FB0E3F00789960 /* EntityActionSync.swift in Sources */,
@@ -1791,6 +1801,7 @@
 				06CDDE9F282E9CC200F9360F /* RemovePushTokenAction.swift in Sources */,
 				062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
+				63CC83EE285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift in Sources */,
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
 				06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */,
 				06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */,
@@ -1872,6 +1883,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63CC83F0285CA2B8008549AD /* SendMLSWelcomeActionHandlerTests.swift in Sources */,
 				F18401E12073C25900E9F4CC /* OTREntityTests+Dependency.swift in Sources */,
 				547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */,
 				168D7CCE26FB303A00789960 /* AddParticipantActionHandlerTests.swift in Sources */,
