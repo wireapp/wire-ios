@@ -32,7 +32,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
-    private var eventProcessor: UpdateEventProcessor!
     private var moc: NSManagedObjectContext!
 
     weak var delegate: PushNotificationStrategyDelegate?
@@ -60,7 +59,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
             delegate: self
         )
 
-        self.eventProcessor = self
         self.pushNotificationStatus = pushNotificationStatus
         self.moc = managedObjectContext
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
@@ -131,7 +129,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             }
         }
 
-        eventProcessor.storeUpdateEvents(parsedEvents, ignoreBuffer: true)
+        storeUpdateEvents(parsedEvents, ignoreBuffer: true)
         pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
 
         if !hasMoreToFetch {
