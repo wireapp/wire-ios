@@ -32,6 +32,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus
     ) {
         entitySync = EntityActionSync(actionHandlers: [
+            SendMLSMessagesActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             SendMLSWelcomeActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
