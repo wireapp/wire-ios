@@ -1145,6 +1145,8 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle")
           /// Use MLS
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title")
+          /// MLS protocol status
+          internal static let status = L10n.tr("Localizable", "conversation.create.mls.status")
         }
         internal enum Options {
           /// Guests: %@, Services: %@, Read receipts: %@
