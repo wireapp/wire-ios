@@ -329,7 +329,8 @@
 "conversation.create.receipts.subtitle" = "When this is on, people can see when their messages in this conversation are read.";
 "conversation.create.mls.title" = "Protocol";
 "conversation.create.mls.subtitle" = "Select MLS to create a MLS conversation (Beta functionality, use at your own risk).";
-"conversation.create.mls.status" = "Select Protocol";
+"conversation.create.mls.picker_title" = "Select Protocol";
+"conversation.create.mls.cancel" = "Cancel";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";

@@ -412,7 +412,7 @@ extension ConversationCreationController {
     }
 
     func encryptionTypePicker(_ completion: @escaping (EncryptionType) -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "conversation.create.mls.status".localized, message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: L10n.Localizable.Conversation.Create.Mls.pickerTitle, message: nil, preferredStyle: .actionSheet)
 
         for encryptionType in EncryptionType.allCases {
             alert.addAction(UIAlertAction(title: encryptionType.rawValue, style: .default, handler: { _ in
@@ -421,7 +421,7 @@ extension ConversationCreationController {
         }
 
         alert.popoverPresentationController?.permittedArrowDirections = [ .up, .down ]
-        alert.addAction(UIAlertAction(title: "availability.message.cancel".localized, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Localizable.Conversation.Create.Mls.cancel, style: .cancel, handler: nil))
 
         return alert
     }
