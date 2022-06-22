@@ -296,4 +296,31 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             XCTAssertEqual(member1User2.remoteIdentifier, user2.remoteIdentifier)
         }
     }
+
+    func testThatItRefetchesSelfUserDomain() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let context = self.syncMOC
+
+            let selfUser = ZMUser.insertNewObject(in: context)
+            ZMUser.boxSelfUser(selfUser, inContextUserInfo: context)
+
+            selfUser.remoteIdentifier = .create()
+            selfUser.domain = "example.com"
+            selfUser.needsToBeUpdatedFromBackend = false
+
+            XCTAssertNotNil(selfUser.domain)
+            XCTAssertFalse(selfUser.needsToBeUpdatedFromBackend)
+            XCTAssert(context.saveOrRollback())
+
+            // When
+            PersistedDataPatch.applyAll(in: context, fromVersion: "290.0.0")
+            XCTAssert(context.saveOrRollback())
+
+            // Then
+            XCTAssertNil(selfUser.domain)
+            XCTAssertTrue(selfUser.needsToBeUpdatedFromBackend)
+        }
+    }
+
 }
