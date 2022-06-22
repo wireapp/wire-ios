@@ -322,6 +322,9 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
             Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")
             return false
         }
+        if ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID {
+            return false
+        }
 
         if let timeStamp = event.timestamp,
             let lastRead = conversation?.lastReadServerTimeStamp,
