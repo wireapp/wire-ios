@@ -19,11 +19,11 @@
 import Foundation
 import UIKit
 
-final class ConversationCreateMLSSectionController: ConversationCreateSectionController {
+final class ConversationEncryptionTypeSectionController: ConversationCreateSectionController {
 
-    typealias Cell = ConversationCreateMLSCell
+    typealias Cell = ConversationCreateEncryptionTypeCell
 
-    var toggleAction: ((Bool) -> Void)?
+    var tapAction: (() -> Void)?
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
@@ -33,15 +33,17 @@ final class ConversationCreateMLSSectionController: ConversationCreateSectionCon
     }
 }
 
-extension ConversationCreateMLSSectionController {
+extension ConversationEncryptionTypeSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         self.cell = cell
         cell.setUp()
         cell.configure(with: values)
-        cell.action = toggleAction
         return cell
     }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        tapAction?()
+    }
 }
