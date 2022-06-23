@@ -19,172 +19,63 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class CountSelfMLSKeyPackagesActionHandlerTests: MessagingTestBase {
+class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelfMLSKeyPackagesAction, CountSelfMLSKeyPackagesActionHandler> {
 
     let clientID = "clientID"
     let requestPath = "/v1/mls/key-package/self/clientID/count"
 
     typealias Payload = CountSelfMLSKeyPackagesActionHandler.ResponsePayload
 
-    func test_sut_GeneratesValidRequest() throws {
-        // Given
-        let sut  = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        let action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-        let apiVersion: APIVersion = .v1
-
-        // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
-
-        // Then
-        XCTAssertEqual(request.path, requestPath)
-        XCTAssertEqual(request.method, .methodGET)
+    override func setUp() {
+        super.setUp()
+        action = CountSelfMLSKeyPackagesAction(clientID: clientID)
     }
 
-    func test_sut_FailsToGeneratesRequestForUnsupportedAPIVersion() throws {
-        // Given
-        let sut  = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-        let apiVersion: APIVersion = .v0
+    // MARK: - Request Generation
 
-        // Expectation
-        let didFail = expectation(description: "didFail")
-
-        action.onResult { result in
-            guard case .failure(.endpointNotAvailable) = result else { return }
-            didFail.fulfill()
-        }
-
-        // When
-        let request = sut.request(for: action, apiVersion: apiVersion)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertNil(request)
+    func test_itGeneratesValidRequest() throws {
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: requestPath,
+            expectedMethod: .methodGET,
+            apiVersion: .v1
+        )
     }
 
-    func test_sut_FailsToGeneratesRequestForInvalidClientID() throws {
-        // Given
-        let sut  = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = CountSelfMLSKeyPackagesAction(clientID: "")
-        let apiVersion: APIVersion = .v1
+    func test_itDoesntGenerateRequests() {
+        // When the endpoint is not available
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v0,
+            expectedError: .endpointUnavailable
+        )
 
-        // Expectation
-        let didFail = expectation(description: "didFail")
-
-        action.onResult { result in
-            guard case .failure(.invalidClientID) = result else { return }
-            didFail.fulfill()
-        }
-
-        // When
-        let request = sut.request(for: action, apiVersion: apiVersion)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertNil(request)
+        // When the client ID is invalid
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v1,
+            expectedError: .invalidClientID
+        )
     }
 
-    func test_sut_HandlesResponse_200() throws {
+    // MARK: - Response Handling
+
+    func test_itHandlesSuccess() {
         // Given
-        let sut = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-
-        // Expectation
-        let didSucceed = expectation(description: "didSucceed")
-        var receivedKeyPackagesCount: Int = 0
-
-        action.onResult { result in
-            guard case .success(let count) = result else { return }
-            receivedKeyPackagesCount = count
-            didSucceed.fulfill()
-        }
-
-        // When
         let payload = Payload(count: 123456789)
 
-        sut.handleResponse(response(payload: payload, status: 200), action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        // When
+        let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
 
         // Then
         XCTAssertEqual(receivedKeyPackagesCount, payload.count)
     }
 
-    func test_sut_HandlesResponse_200_MalformedResponse() throws {
-        // Given
-        let sut = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-
-        // Expectation
-        let didFail = expectation(description: "didFail")
-
-        action.onResult { result in
-            guard case .failure(.malformedResponse) = result else { return }
-            didFail.fulfill()
-        }
-
-        // When
-        sut.handleResponse(response(status: 200), action: action)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func test_sut_HandlesResponse_404() throws {
-        // Given
-        let sut = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-
-        // Expectation
-        let didFail = expectation(description: "didFail")
-
-        action.onResult { result in
-            guard case .failure(.clientNotFound) = result else { return }
-            didFail.fulfill()
-        }
-
-        // When
-        sut.handleResponse(response(status: 404), action: action)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func test_sut_HandlesResponse_UnknownError() throws {
-        // Given
-        let sut = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-
-        // Expectation
-        let didFail = expectation(description: "didFail")
-
-        action.onResult { result in
-            guard case .failure(.unknown(status: 999)) = result else { return }
-            didFail.fulfill()
-        }
-
-        // When
-        sut.handleResponse(response(status: 999), action: action)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-    }
-}
-
-// MARK: - Helpers methods
-extension CountSelfMLSKeyPackagesActionHandlerTests {
-
-    func response(payload: Payload, status: Int) -> ZMTransportResponse {
-        let data = try! JSONEncoder().encode(payload)
-        let payloadAsString = String(bytes: data, encoding: .utf8)!
-        return response(payload: payloadAsString as ZMTransportData, status: status)
-    }
-
-    func response(payload: ZMTransportData? = nil, status: Int) -> ZMTransportResponse {
-        return ZMTransportResponse(
-            payload: payload,
-            httpStatus: status,
-            transportSessionError: nil,
-            apiVersion: APIVersion.v1.rawValue
-        )
+    func test_itHandlesFailures() {
+        test_itHandlesFailures([
+            .failure(status: 200, error: .malformedResponse),
+            .failure(status: 404, error: .clientNotFound),
+            .failure(status: 999, error: .unknown(status: 999))
+        ])
     }
 }

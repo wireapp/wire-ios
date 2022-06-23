@@ -24,7 +24,7 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
 
     public typealias Result = Void
 
-    public enum Failure: LocalizedError {
+    public enum Failure: LocalizedError, Equatable {
 
         case emptyParameters
         case endpointUnavailable

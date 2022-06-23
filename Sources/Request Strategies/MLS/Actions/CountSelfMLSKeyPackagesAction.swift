@@ -24,12 +24,12 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
 
     public typealias Result = Int
 
-    public enum Failure: Error {
+    public enum Failure: Error, Equatable {
 
         case clientNotFound
         case malformedResponse
         case invalidClientID
-        case endpointNotAvailable
+        case endpointUnavailable
         case unknown(status: Int)
 
         public var errorDescription: String? {
@@ -38,7 +38,7 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
                 return "Client not found"
             case .malformedResponse:
                 return "Malformed response"
-            case .endpointNotAvailable:
+            case .endpointUnavailable:
                 return "End point not available"
             case .invalidClientID:
                 return "Invalid clientID"

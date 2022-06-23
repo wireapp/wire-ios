@@ -25,7 +25,7 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     // Until we know what type is best for the result, we'll use [KeyPackage]
     public typealias Result = [KeyPackage]
 
-    public enum Failure: LocalizedError {
+    public enum Failure: LocalizedError, Equatable {
 
         case missingDomain
         case endpointUnavailable

@@ -19,156 +19,61 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class UploadSelfMLSKeyPackagesActionHandlerTests: MessagingTestBase {
+class UploadSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<UploadSelfMLSKeyPackagesAction, UploadSelfMLSKeyPackagesActionHandler> {
 
     let domain = "example.com"
     let clientId = UUID().transportString()
     let keyPackages = ["a2V5IHBhY2thZ2UgZGF0YQo="]
 
+    override func setUp() {
+        super.setUp()
+        action = UploadSelfMLSKeyPackagesAction(clientID: clientId, keyPackages: keyPackages)
+    }
+
     // MARK: - Request generation
 
-    func test_itGenerateARequest() throws {
-        // Given
-        let sut = UploadSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        let action = UploadSelfMLSKeyPackagesAction(clientID: clientId, keyPackages: keyPackages)
-
-        // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: .v1))
-
-        // Then
-        XCTAssertEqual(request.path, "/v1/mls/key-packages/self/\(clientId)")
-        XCTAssertEqual(request.method, .methodPOST)
-
-        let actualPayload = request.payload as? [String: [String]]
-        let expectedPayload = ["key_packages": keyPackages]
-
-        XCTAssertEqual(actualPayload, expectedPayload)
+    func test_itGeneratesARequest() throws {
+        try test_itGeneratesARequest(
+            for: UploadSelfMLSKeyPackagesAction(
+                clientID: clientId,
+                keyPackages: keyPackages
+            ),
+            expectedPath: "/v1/mls/key-packages/self/\(clientId)",
+            expectedPayload: ["key_packages": keyPackages],
+            expectedMethod: .methodPOST,
+            apiVersion: .v1
+        )
     }
 
-    func test_itDoesntGenerateARequest_WhenAPIVersionIsNotSupported() {
+    func test_itDoesntGenerateRequests() {
+        // when the endpoint is unavailable
         test_itDoesntGenerateARequest(
-            action: UploadSelfMLSKeyPackagesAction(clientID: clientId, keyPackages: keyPackages),
-            apiVersion: .v0
-        ) {
-            guard case .failure(.endpointUnavailable) = $0 else { return false }
-            return true
-        }
-    }
+            action: action,
+            apiVersion: .v0,
+            expectedError: .endpointUnavailable
+        )
 
-    func test_itDoesntGenerateARequest_WhenParametersAreEmpty() {
+        // when there are empty parameters
         test_itDoesntGenerateARequest(
             action: UploadSelfMLSKeyPackagesAction(clientID: "", keyPackages: []),
-            apiVersion: .v1
-        ) {
-            guard case .failure(.emptyParameters) = $0 else { return false }
-            return true
-        }
+            apiVersion: .v1,
+            expectedError: .emptyParameters
+        )
     }
 
     // MARK: - Response handling
 
-    func test_itHandlesResponse_201() {
-        test_itHandlesResponse(status: 201, label: nil, expectationDescription: "didSucceed") {
-            guard case .success = $0 else { return false }
-            return true
-        }
+    func test_itHandlesSuccess() {
+        test_itHandlesSuccess(status: 201)
     }
 
-    func test_itHandlesResponse_400() {
-        test_itHandlesFailure(status: 400) {
-            guard case .failure(.invalidBody) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_400_ProtocolError() {
-        test_itHandlesFailure(status: 400, label: "mls-protocol-error") {
-            guard case .failure(.mlsProtocolError) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_403_IdentityMismatch() {
-        test_itHandlesFailure(status: 403, label: "mls-identity-mismatch") {
-            guard case .failure(.identityMismatch) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_404() {
-        test_itHandlesFailure(status: 404) {
-            guard case .failure(.clientNotFound) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_UnkownError() {
-        test_itHandlesFailure(status: 999) {
-            guard case .failure(.unknown(status: 999)) = $0 else { return false }
-            return true
-        }
-    }
-
-    // MARK: - Helpers
-
-    private typealias Failure = UploadSelfMLSKeyPackagesAction.Failure
-
-    private func response(status: Int, label: String? = nil) -> ZMTransportResponse {
-        var payload: [String: String]?
-        if let label = label {
-            payload = ["label": label]
-        }
-
-        return ZMTransportResponse(
-            payload: payload as ZMTransportData?,
-            httpStatus: status,
-            transportSessionError: nil,
-            apiVersion: APIVersion.v1.rawValue
-        )
-    }
-
-    private func test_itHandlesFailure(status: Int, label: String? = nil, validateResult: @escaping (Swift.Result<Void, Failure>) -> Bool) {
-        test_itHandlesResponse(status: status, label: label, expectationDescription: "didFail", validateResult: validateResult)
-    }
-
-    private func test_itHandlesResponse(status: Int, label: String?, expectationDescription: String, validateResult: @escaping (Swift.Result<Void, Failure>) -> Bool) {
-        // Given
-        let sut = UploadSelfMLSKeyPackagesActionHandler(context: syncMOC)
-        var action = UploadSelfMLSKeyPackagesAction(clientID: clientId, keyPackages: keyPackages)
-
-        // Expectation
-        let expectation = self.expectation(description: expectationDescription)
-
-        action.onResult { result in
-            guard validateResult(result) else { return }
-            expectation.fulfill()
-        }
-
-        // When
-        sut.handleResponse(response(status: status, label: label), action: action)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    private func test_itDoesntGenerateARequest(action: UploadSelfMLSKeyPackagesAction, apiVersion: APIVersion, validateResult: @escaping (Swift.Result<Void, Failure>) -> Bool) {
-        // Given
-        var action = action
-        let sut = UploadSelfMLSKeyPackagesActionHandler(context: syncMOC)
-
-        // Expectation
-        let expectation = self.expectation(description: "didFail")
-
-        action.onResult { result in
-            guard validateResult(result) else { return }
-            expectation.fulfill()
-        }
-
-        // When
-        let request = sut.request(for: action, apiVersion: apiVersion)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertNil(request)
+    func test_itHandlesFailures() {
+        test_itHandlesFailures([
+            .failure(status: 400, error: .invalidBody),
+            .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
+            .failure(status: 403, error: .identityMismatch, label: "mls-identity-mismatch"),
+            .failure(status: 404, error: .clientNotFound),
+            .failure(status: 999, error: .unknown(status: 999))
+        ])
     }
 }
