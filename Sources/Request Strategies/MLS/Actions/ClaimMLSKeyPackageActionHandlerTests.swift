@@ -19,166 +19,86 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class ClaimMLSKeyPackageActionHandlerTests: MessagingTestBase {
+class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPackageAction, ClaimMLSKeyPackageActionHandler> {
+
+    private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
 
     let domain = "example.com"
     let userId = UUID()
     let excludedSelfCliendId = UUID().transportString()
     let clientId = UUID().transportString()
 
+    override func setUp() {
+        super.setUp()
+        action = ClaimMLSKeyPackageAction(
+            domain: domain,
+            userId: userId
+        )
+    }
+
     // MARK: - Request generation
 
-    func test_itGenerateARequest() throws {
-        // Given
-        let sut = ClaimMLSKeyPackageActionHandler(context: syncMOC)
-        let action = ClaimMLSKeyPackageAction(domain: domain, userId: userId, excludedSelfClientId: excludedSelfCliendId)
-
-        // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: .v1))
-
-        // Then
-        XCTAssertEqual(request.path, "/v1/mls/key-packages/claim/\(domain)/\(userId.transportString())")
-        XCTAssertEqual(request.method, .methodPOST)
-
-        let actualPayload = request.payload as? [String: String]
-        let expectedPayload = ["skip_own": excludedSelfCliendId]
-
-        XCTAssertEqual(actualPayload, expectedPayload)
+    func test_itGeneratesARequest() throws {
+        try test_itGeneratesARequest(
+            for: ClaimMLSKeyPackageAction(
+                domain: domain,
+                userId: userId,
+                excludedSelfClientId: excludedSelfCliendId
+            ),
+            expectedPath: "/v1/mls/key-packages/claim/\(domain)/\(userId.transportString())",
+            expectedPayload: ["skip_own": excludedSelfCliendId],
+            expectedMethod: .methodPOST,
+            apiVersion: .v1
+        )
     }
 
-    func test_itDoesntGenerateARequest_WhenAPIVersionIsNotSupported() {
+    func test_itDoesntGenerateRequests() {
+        // when the endpoint is unavailable
         test_itDoesntGenerateARequest(
-            action: ClaimMLSKeyPackageAction(domain: domain, userId: userId, excludedSelfClientId: excludedSelfCliendId),
-            apiVersion: .v0
-        ) {
-            guard case .failure(.endpointUnavailable) = $0 else { return false }
-            return true
-        }
-    }
+            action: action,
+            apiVersion: .v0,
+            expectedError: .endpointUnavailable
+        )
 
-    func test_itDoesntGenerateARequest_WhenDomainIsMissing() {
+        // when the domain is missing
         APIVersion.domain = nil
 
         test_itDoesntGenerateARequest(
             action: ClaimMLSKeyPackageAction(domain: "", userId: userId, excludedSelfClientId: excludedSelfCliendId),
-            apiVersion: .v1
-        ) {
-            guard case .failure(.missingDomain) = $0 else { return false }
-            return true
-        }
+            apiVersion: .v1,
+            expectedError: .missingDomain
+        )
     }
 
     // MARK: - Response handling
 
-    func test_itHandlesResponse_200() {
+    func test_itHandlesSuccess() {
         // Given
-        let sut = ClaimMLSKeyPackageActionHandler(context: syncMOC)
-        var action = ClaimMLSKeyPackageAction(domain: domain, userId: userId)
-        let keyPackage = KeyPackage(client: clientId, domain: domain, keyPackage: "a2V5IHBhY2thZ2UgZGF0YQo=", keyPackageRef: "string", userID: userId)
-
-        // Expectation
-        let didSucceed = expectation(description: "didSucceed")
-        var receivedKeyPackages = [KeyPackage]()
-
-        action.onResult { result in
-            guard case .success(let keyPackages) = result else { return }
-            receivedKeyPackages = keyPackages
-            didSucceed.fulfill()
-        }
+        let keyPackage = KeyPackage(
+            client: clientId,
+            domain: domain,
+            keyPackage: "a2V5IHBhY2thZ2UgZGF0YQo=",
+            keyPackageRef: "string",
+            userID: userId
+        )
 
         // When
-        let payload = Payload(keyPackages: [keyPackage])
-
-        sut.handleResponse(response(payload: payload, status: 200), action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-
-        // Then
-        XCTAssertEqual(receivedKeyPackages.count, 1)
-        XCTAssertEqual(receivedKeyPackages.first, keyPackage)
-    }
-
-    func test_itHandlesResponse_200_MalformedResponse() {
-        test_itHandlesResponse(status: 200) {
-            guard case .failure(.malformedResponse) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_400() {
-        test_itHandlesResponse(status: 400) {
-            guard case .failure(.invalidSelfClientId) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_404() {
-        test_itHandlesResponse(status: 404) {
-            guard case .failure(.userOrDomainNotFound) = $0 else { return false }
-            return true
-        }
-    }
-
-    func test_itHandlesResponse_UnkownError() {
-        test_itHandlesResponse(status: 999) {
-            guard case .failure(.unknown(status: 999)) = $0 else { return false }
-            return true
-        }
-    }
-
-    // MARK: - Helpers
-
-    private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
-    private typealias Result = ClaimMLSKeyPackageAction.Result
-    private typealias Failure = ClaimMLSKeyPackageAction.Failure
-
-    private func response(payload: Payload?, status: Int) -> ZMTransportResponse {
-        var payloadString: String?
-        if let payload = payload {
-            let data = try! JSONEncoder().encode(payload)
-            payloadString = String(bytes: data, encoding: .utf8)
-        }
-
-        return ZMTransportResponse(payload: payloadString as ZMTransportData?, httpStatus: status, transportSessionError: nil, apiVersion: APIVersion.v1.rawValue)
-    }
-
-    private func test_itHandlesResponse(status: Int, validateResult: @escaping (Swift.Result<Result, Failure>) -> Bool) {
-        // Given
-        let sut = ClaimMLSKeyPackageActionHandler(context: syncMOC)
-        var action = ClaimMLSKeyPackageAction(domain: domain, userId: userId)
-
-        // Expectation
-        let didFail = expectation(description: "didPassValidation")
-
-        action.onResult { result in
-            guard validateResult(result) else { return }
-            didFail.fulfill()
-        }
-
-        // When
-        sut.handleResponse(response(payload: nil, status: status), action: action)
+        let receivedKeyPackages = test_itHandlesSuccess(
+            status: 200,
+            payload: transportData(for: Payload(keyPackages: [keyPackage]))
+        )
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(receivedKeyPackages?.count, 1)
+        XCTAssertEqual(receivedKeyPackages?.first, keyPackage)
     }
 
-    private func test_itDoesntGenerateARequest(action: ClaimMLSKeyPackageAction, apiVersion: APIVersion, validateResult: @escaping (Swift.Result<Result, Failure>) -> Bool) {
-        // Given
-        var action = action
-        let sut = ClaimMLSKeyPackageActionHandler(context: syncMOC)
-
-        // Expectation
-        let expectation = self.expectation(description: "didFail")
-
-        action.onResult { result in
-            guard validateResult(result) else { return }
-            expectation.fulfill()
-        }
-
-        // When
-        let request = sut.request(for: action, apiVersion: apiVersion)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertNil(request)
+    func test_itHandlesFailures() {
+        test_itHandlesFailures([
+            .failure(status: 200, error: .malformedResponse),
+            .failure(status: 400, error: .invalidSelfClientId),
+            .failure(status: 404, error: .userOrDomainNotFound),
+            .failure(status: 999, error: .unknown(status: 999))
+        ])
     }
 }

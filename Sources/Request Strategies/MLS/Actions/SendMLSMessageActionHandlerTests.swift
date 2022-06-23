@@ -16,48 +16,44 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 @testable import WireRequestStrategy
 
-class SendMLSWelcomeActionHandlerTests: ActionHandlerTestBase<SendMLSWelcomeAction, SendMLSWelcomeActionHandler> {
+class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageAction, SendMLSMessageActionHandler> {
 
-    let body = "abc123"
+    let mlsMessage = "mlsMessage"
 
     override func setUp() {
         super.setUp()
-        action = SendMLSWelcomeAction(body: body)
+        action = SendMLSMessageAction(mlsMessage: mlsMessage)
     }
 
     // MARK: - Request generation
-
     func test_itGenerateARequest() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v1/mls/welcome",
-            expectedPayload: body,
+            expectedPath: "/v1/mls/messages",
+            expectedPayload: mlsMessage,
             expectedMethod: .methodPOST,
             apiVersion: .v1
         )
     }
 
-    func test_itDoesntGenerateRequests() {
-        // when the endpoint is unavailable
+    func test_itFailsToGenerateRequests() {
         test_itDoesntGenerateARequest(
             action: action,
             apiVersion: .v0,
             expectedError: .endpointUnavailable
         )
 
-        // when there are empty parameters
         test_itDoesntGenerateARequest(
-            action: SendMLSWelcomeAction(body: ""),
+            action: SendMLSMessageAction(mlsMessage: ""),
             apiVersion: .v1,
-            expectedError: .emptyParameters
+            expectedError: .invalidBody
         )
     }
 
     // MARK: - Response handling
-
     func test_itHandlesSuccess() {
         test_itHandlesSuccess(status: 201)
     }
@@ -65,7 +61,16 @@ class SendMLSWelcomeActionHandlerTests: ActionHandlerTestBase<SendMLSWelcomeActi
     func test_itHandlesFailures() {
         test_itHandlesFailures([
             .failure(status: 400, error: .invalidBody),
-            .failure(status: 404, error: .keyPackageRefNotFound, label: "mls-key-package-ref-not-found"),
+            .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
+            .failure(status: 403, error: .missingLegalHoldConsent, label: "missing-legalhold-consent"),
+            .failure(status: 403, error: .legalHoldNotEnabled, label: "legalhold-not-enabled"),
+            .failure(status: 404, error: .mlsProposalNotFound, label: "mls-proposal-not-found"),
+            .failure(status: 404, error: .mlsKeyPackageRefNotFound, label: "mls-key-package-ref-not-found"),
+            .failure(status: 404, error: .noConversation, label: "no-conversation"),
+            .failure(status: 409, error: .mlsStaleMessage, label: "mls-stale-message"),
+            .failure(status: 409, error: .mlsClientMismatch, label: "mls-client-mismatch"),
+            .failure(status: 422, error: .mlsUnsupportedProposal, label: "mls-unsupported-proposal"),
+            .failure(status: 422, error: .mlsUnsupportedMessage, label: "mls-unsupported-message"),
             .failure(status: 999, error: .unknown(status: 999))
         ])
     }

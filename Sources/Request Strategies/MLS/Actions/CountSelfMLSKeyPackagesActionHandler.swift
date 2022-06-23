@@ -30,7 +30,7 @@ class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackage
         var action = action
 
         guard apiVersion > .v0 else {
-            action.notifyResult(.failure(.endpointNotAvailable))
+            action.notifyResult(.failure(.endpointUnavailable))
             return nil
         }
 

@@ -18,13 +18,13 @@
 
 import Foundation
 
-public final class SendMLSMessagesAction: EntityAction {
+public final class SendMLSMessageAction: EntityAction {
 
     // MARK: - Types
 
     public typealias Result = Void
 
-    public enum Failure: LocalizedError {
+    public enum Failure: LocalizedError, Equatable {
 
         case invalidBody
         case mlsProtocolError

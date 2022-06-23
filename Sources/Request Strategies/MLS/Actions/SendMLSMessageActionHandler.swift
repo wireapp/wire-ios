@@ -18,12 +18,12 @@
 
 import Foundation
 
-class SendMLSMessagesActionHandler: ActionHandler<SendMLSMessagesAction> {
+class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
     // MARK: - Methods
 
     override func request(
-        for action: ActionHandler<SendMLSMessagesAction>.Action,
+        for action: SendMLSMessageAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
@@ -49,7 +49,7 @@ class SendMLSMessagesActionHandler: ActionHandler<SendMLSMessagesAction> {
 
     override func handleResponse(
         _ response: ZMTransportResponse,
-        action: ActionHandler<SendMLSMessagesAction>.Action
+        action: SendMLSMessageAction
     ) {
         var action = action
 
