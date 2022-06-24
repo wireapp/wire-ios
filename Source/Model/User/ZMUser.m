@@ -474,7 +474,8 @@ static NSString *const DomainKey = @"domain";
     
     if ([transportData optionalDictionaryForKey:@"sso_id"] || authoritative) {
         NSDictionary *ssoData = [transportData optionalDictionaryForKey:@"sso_id"];
-        self.usesCompanyLogin = nil != ssoData;
+        NSString *subject = [ssoData optionalStringForKey:@"subject"];
+        self.usesCompanyLogin = subject != nil && [subject length] > 0;
     }
     
     

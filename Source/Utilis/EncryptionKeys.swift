@@ -25,7 +25,7 @@ import LocalAuthentication
 ///
 public struct EncryptionKeys {
 
-    enum KeychainItem {
+    enum KeychainItem: KeychainItemProtocol, Equatable {
         case privateKey(_ account: Account, _ context: LAContext?, _ prompt: String?)
         case publicKey(Account)
         case databaseKey(Account)
@@ -115,9 +115,6 @@ public struct EncryptionKeys {
     }
 
     public enum EncryptionKeysError: Error {
-        case failedToStoreItemInKeychain(OSStatus)
-        case failedToFetchItemFromKeychain(OSStatus)
-        case failedToDeleteItemFromKeychain(OSStatus)
         case failedToGenerateDatabaseKey(OSStatus)
         case failedToCopyPublicAccountKey
         case failedToGenerateAccountKey(underlyingError: Error?)
@@ -206,94 +203,23 @@ public struct EncryptionKeys {
     }
 
     private static func generateAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
-        #if targetEnvironment(simulator)
-            return try generateSimulatorAccountKey(identifier: identifier)
-        #else
-            return try generateSecureEnclaveAccountKey(identifier: identifier)
-        #endif
-    }
-
-    private static func generateSecureEnclaveAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
-        var accessError: Unmanaged<CFError>?
-        guard let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-                                                     kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                                                     [.privateKeyUsage, .userPresence],
-                                                     &accessError)
-            else {
-                let error = accessError!.takeRetainedValue() as Error
-                throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
-        }
-
-        let attributes: [CFString: Any] = [
-          kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
-          kSecAttrKeySizeInBits: 256,
-          kSecAttrTokenID: kSecAttrTokenIDSecureEnclave,
-          kSecPrivateKeyAttrs: [
-            kSecAttrIsPermanent: true,
-            kSecAttrAccessControl: access,
-            kSecAttrLabel: identifier.tag
-          ]
-        ]
-
-        var error: Unmanaged<CFError>?
-        guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            let error = error!.takeRetainedValue() as Error
+        do {
+            return try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier.uniqueIdentifier)
+        } catch KeychainManager.Error.failedToGeneratePublicPrivateKey(let error) {
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
-        }
-
-        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
+        } catch KeychainManager.Error.failedToCopyPublicKey {
             throw EncryptionKeysError.failedToCopyPublicAccountKey
         }
-
-        return (privateKey, publicKey)
-    }
-
-    private static func generateSimulatorAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
-        var accessError: Unmanaged<CFError>?
-        guard let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-                                                           kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                                                           [.userPresence],
-                                                           &accessError)
-            else {
-                let error = accessError!.takeRetainedValue() as Error
-                throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
-        }
-
-        let attributes: [CFString: Any] = [
-          kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
-          kSecAttrKeySizeInBits: 256,
-          kSecPrivateKeyAttrs: [
-            kSecAttrIsPermanent: true,
-            kSecAttrAccessControl: access,
-            kSecAttrLabel: identifier.tag
-          ]
-        ]
-
-        var error: Unmanaged<CFError>?
-        guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            // Notice: accessError is nil when test with iOS 15 simulator. ref:https://wearezeta.atlassian.net/browse/SQCORE-1188
-            let error = accessError?.takeRetainedValue()
-            throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
-        }
-
-        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
-            throw EncryptionKeysError.failedToCopyPublicAccountKey
-        }
-
-        return (privateKey, publicKey)
     }
 
     // MARK: - Database key
 
     private static func generateDatabaseKey() throws -> Data {
-        var databaseKey = [UInt8](repeating: 0, count: 32)
-        let status = SecRandomCopyBytes(kSecRandomDefault, databaseKey.count, &databaseKey)
-
-        guard status == errSecSuccess else {
+        do {
+            return try KeychainManager.generateKey(numberOfBytes: 32)
+        } catch KeychainManager.Error.failedToGenerateKey(let status) {
             throw EncryptionKeysError.failedToGenerateDatabaseKey(status)
         }
-
-        return Data(databaseKey)
     }
 
     private static func encryptDatabaseKey(_ databaseKey: Data, publicKey: SecKey) throws -> Data {
@@ -325,30 +251,15 @@ public struct EncryptionKeys {
     // MARK: - Keychain access
 
     private static func storeItem<T>(_ item: KeychainItem, value: T) throws {
-        let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
-
-        guard status == errSecSuccess else {
-            throw EncryptionKeysError.failedToStoreItemInKeychain(status)
-        }
+        try KeychainManager.storeItem(item, value: value)
     }
 
     private static func fetchItem<T>(_ item: KeychainItem) throws -> T {
-        var value: CFTypeRef?
-        let status = SecItemCopyMatching(item.getQuery as CFDictionary, &value)
-
-        guard status == errSecSuccess else {
-            throw EncryptionKeysError.failedToFetchItemFromKeychain(status)
-        }
-
-        return value as! T
+        try KeychainManager.fetchItem(item)
     }
 
     private static func deleteItem(_ item: KeychainItem) throws {
-        let status = SecItemDelete(item.getQuery as CFDictionary)
-
-        guard status == errSecSuccess || status == errSecItemNotFound else {
-            throw EncryptionKeysError.failedToDeleteItemFromKeychain(status)
-        }
+        try KeychainManager.deleteItem(item)
     }
 
 }
