@@ -31,12 +31,8 @@ class ConversationEncryptionTypeCell: DetailsCollectionViewCell {
     }
 
     let label: UILabel = {
-        let label = UILabel()
-
-        label.textColor = .lightGray
-        label.font = UIFont.systemFont(ofSize: 16)
+        let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: .textDimmed)
         label.textAlignment = .right
-
         return label
     }()
 
