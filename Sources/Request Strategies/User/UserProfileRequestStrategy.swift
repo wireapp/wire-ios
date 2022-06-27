@@ -299,6 +299,14 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
+        // TODO: [John] proper federation error handling.
+        // This is a quick fix to make the app somewhat usable when
+        // a remote federated backend is down.
+        if response.httpStatus == 533 {
+            markUserProfilesAsUnavailable(identifiers)
+            return
+        }
+
         guard
             let rawData = response.rawData,
             let payload = Payload.UserProfiles(rawData, decoder: decoder)
@@ -316,6 +324,14 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private func markUserProfilesAsFetched(_ missingUsers: Set<QualifiedID>) {
         for qualifiedID in missingUsers {
             let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            user?.needsToBeUpdatedFromBackend = false
+        }
+    }
+
+    private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
+        for qualifiedID in users {
+            let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            user?.name = "Username unavailable"
             user?.needsToBeUpdatedFromBackend = false
         }
     }
