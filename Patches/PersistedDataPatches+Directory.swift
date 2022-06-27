@@ -40,7 +40,8 @@ extension PersistedDataPatch {
         PersistedDataPatch(version: "243.0.0", block: InvalidFeatureRemoval.removeInvalid),
         PersistedDataPatch(version: "273.2.0", block: InvalidDomainRemoval.removeDuplicatedEntitiesWithInvalidDomain),
         PersistedDataPatch(version: "279.0.4", block: InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig),
-        PersistedDataPatch(version: "285.0.0", block: ZMConversation.introduceAccessRoleV2)
+        PersistedDataPatch(version: "285.0.0", block: ZMConversation.introduceAccessRoleV2),
+        PersistedDataPatch(version: "290.0.1", block: ZMUser.refetchSelfUserDomain),
     ]
 
 }
