@@ -28,7 +28,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     private var notificationsTracker: NotificationsTracker?
     private var listPaginator: ZMSimpleListRequestPaginator!
     private var managedObjectContext: NSManagedObjectContext!
-    private var notificationStreamSyncDelegate: NotificationStreamSyncDelegate?
+    private weak var notificationStreamSyncDelegate: NotificationStreamSyncDelegate?
 
     public init(moc: NSManagedObjectContext,
                 notificationsTracker: NotificationsTracker?,

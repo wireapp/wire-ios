@@ -14,11 +14,6 @@
 
 files: [
  {
-  "source" : "/Resources/Base.lproj/ZMLocalizable.strings",
-  "dest" : "/SE/Resources/ZMLocalizable.strings",
-  "translation" : "/Resources/%osx_code%/%original_file_name%",
- },
- {
   "source" : "/Resources/Base.lproj/Push.strings",
   "dest" : "/SE/Resources/Push.strings",
   "translation" : "/Resources/%osx_code%/%original_file_name%",

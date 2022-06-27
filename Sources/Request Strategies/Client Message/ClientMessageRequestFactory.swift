@@ -52,7 +52,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 recipients: []
             )
         case .v1:
-            guard let domain = domain ?? APIVersion.domain else {
+            guard let domain = domain.nonEmptyValue ?? APIVersion.domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
             }
