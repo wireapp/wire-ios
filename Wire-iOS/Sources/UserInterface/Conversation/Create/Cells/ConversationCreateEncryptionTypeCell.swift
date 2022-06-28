@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCommonComponents
 import UIKit
 
-final class ConversationCreateMLSCell: IconToggleCell {
+final class ConversationCreateEncryptionTypeCell: ConversationEncryptionTypeCell {
 
     override func setUp() {
         super.setUp()
-        accessibilityIdentifier = "toggle.newgroup.mls"
         title = L10n.Localizable.Conversation.Create.Mls.title
         showSeparator = false
     }
 
+    override func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
+        super.applyColorScheme(colorSchemeVariant)
+        let color = UIColor.from(scheme: .textForeground, variant: colorSchemeVariant)
+        icon = StyleKitIcon.settingsAdvanced.makeImage(size: .tiny, color: color)
+    }
 }
 
-extension ConversationCreateMLSCell: ConversationCreationValuesConfigurable {
+extension ConversationCreateEncryptionTypeCell: ConversationCreationValuesConfigurable {
 
     func configure(with values: ConversationCreationValues) {
-        isOn = values.useMLS
+        encryptionType = values.encryptionType.rawValue
     }
 
 }
