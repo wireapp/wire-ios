@@ -46,6 +46,7 @@ public class AppRootRouter: NSObject {
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
     private let teamMetadataRefresher = TeamMetadataRefresher()
+    private let coreCryptoSetupManager: CoreCryptoSetupManager
 
     // MARK: - Private Set Property
     private(set) var sessionManager: SessionManager
@@ -69,6 +70,7 @@ public class AppRootRouter: NSObject {
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
 
+        coreCryptoSetupManager = CoreCryptoSetupManager(sessionManager: sessionManager)
         urlActionRouter.sessionManager = sessionManager
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
@@ -405,6 +407,13 @@ extension AppRootRouter {
         appStateTransitionGroup.enter()
         configureSelfUserProviderIfNeeded(for: appState)
         configureColorScheme()
+        createCoreCryptoIfNeeded(for: appState)
+    }
+
+    private func createCoreCryptoIfNeeded(for appState: AppState) {
+        guard case .authenticated = appState else { return }
+
+        coreCryptoSetupManager.setUpCoreCryptoIfNeeded()
     }
 
     private func applicationDidTransition(to appState: AppState) {
