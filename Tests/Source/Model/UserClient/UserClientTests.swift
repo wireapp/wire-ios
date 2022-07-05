@@ -80,11 +80,13 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItTracksCorrectKeys() {
-        let expectedKeys = Set(arrayLiteral: ZMUserClientMarkedToDeleteKey,
-                               ZMUserClientNumberOfKeysRemainingKey,
-                               ZMUserClientMissingKey,
-                               ZMUserClientNeedsToUpdateSignalingKeysKey,
-                               ZMUserClientNeedsToUpdateCapabilitiesKey)
+        let expectedKeys = Set([ZMUserClientMarkedToDeleteKey,
+            ZMUserClientNumberOfKeysRemainingKey,
+            ZMUserClientMissingKey,
+            ZMUserClientNeedsToUpdateSignalingKeysKey,
+            ZMUserClientNeedsToUpdateCapabilitiesKey,
+            UserClient.needsToUploadMLSPublicKeysKey
+        ])
 
         let client = UserClient.insertNewObject(in: self.uiMOC)
         XCTAssertEqual(client.keysTrackedForLocalModifications(), expectedKeys)
@@ -1027,4 +1029,40 @@ extension UserClientTests {
             }
         }
     }
+}
+
+// MARK: - MLS Public Keys
+
+extension UserClientTests {
+
+    func test_SettingNewMLSPublicKeys_MarksClientAsNeedingToUploadMLSPublicKeys() {
+        // Given
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        XCTAssertEqual(client.modifiedKeys, nil)
+
+        // When
+        client.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "foo")
+        uiMOC.saveOrRollback()
+
+        // Then
+        XCTAssertEqual(client.modifiedKeys, Set([UserClient.needsToUploadMLSPublicKeysKey]))
+    }
+
+    func test_SettingSameMLSPublicKeys_DoesNot_MarkClientAsNeedingToUploadMLSPublicKeys() {
+        // Given
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        client.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "foo")
+        uiMOC.saveOrRollback()
+
+        client.resetLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
+        XCTAssertNil(client.modifiedKeys)
+
+        // When
+        client.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "foo")
+        uiMOC.saveOrRollback()
+
+        // Then
+        XCTAssertNil(client.modifiedKeys)
+    }
+
 }

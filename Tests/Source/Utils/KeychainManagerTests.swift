@@ -73,12 +73,6 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testKeychainItemsStoreSuccessfully() throws {
-        #if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-        #endif
-
         do {
             // Given I have generated a key
             let item = EncryptionKeys.KeychainItem.databaseKey(account)
@@ -98,12 +92,6 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testKeychainItemsFetchedSuccessfully() throws {
-        #if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-        #endif
-
         do {
             // Given I have generated a key and successfully stored it
             let item = EncryptionKeys.KeychainItem.databaseKey(account)
@@ -111,11 +99,11 @@ class KeychainManagerTests: XCTestCase {
             try KeychainManager.storeItem(item, value: key)
 
             // When I fetch the key
-            let fetchItem: EncryptionKeys.KeychainItem = try KeychainManager.fetchItem(item)
+            let fetchedItem: Data = try KeychainManager.fetchItem(item)
 
             // Then the key is not nil and equal to the one I stored.
             XCTAssertNotNil(key, "Failed to generate the key.")
-            XCTAssertEqual(fetchItem, item)
+            XCTAssertEqual(fetchedItem, key)
 
         } catch let error {
             XCTFail("Failed to fetch the item with error: \(error).")
@@ -123,12 +111,6 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testKeychainItemsDeleteSuccessfully() throws {
-        #if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-        #endif
-
         // Given I have generated a key and successfully stored it.
         let item = EncryptionKeys.KeychainItem.databaseKey(account)
 
