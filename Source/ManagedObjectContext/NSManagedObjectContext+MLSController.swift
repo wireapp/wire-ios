@@ -19,16 +19,22 @@
 import Foundation
 
 extension NSManagedObjectContext {
-    private static let coreCrytpoUserInfoKey = "CoreCryptoKey"
 
-    public var coreCrypto: CoreCryptoProtocol? {
-        get {
-            precondition(zm_isSyncContext, "core crypto should only be accessed on the sync context")
-            return userInfo[Self.coreCrytpoUserInfoKey] as? CoreCryptoProtocol
-        }
-        set {
-            precondition(zm_isSyncContext, "core crypto should only be accessed on the sync context")
-            userInfo[Self.coreCrytpoUserInfoKey] = newValue
-        }
+    private static let mlsControllerUserInfoKey = "MLSControllerUserInfoKey"
+
+    public var isMLSControllerInitialized: Bool {
+        return mlsController != nil
     }
+
+    public var mlsController: MLSController? {
+        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
+        return userInfo[Self.mlsControllerUserInfoKey] as? MLSController
+    }
+
+    public func initializeMLSController(coreCrypto: CoreCryptoProtocol) {
+        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
+        let mlsController = MLSController(context: self, coreCrypto: coreCrypto)
+        userInfo[Self.mlsControllerUserInfoKey] = mlsController
+    }
+
 }
