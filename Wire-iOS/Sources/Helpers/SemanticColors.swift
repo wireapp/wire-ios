@@ -41,6 +41,7 @@ public enum SemanticColors {
         static let textHeaderLabelConversationDetails = UIColor(light: Asset.gray70, dark: Asset.gray50)
         static let textLabelCellTitleActive = UIColor(light: Asset.black, dark: Asset.white)
         static let textLabelCellSubtitleActive = UIColor(light: Asset.gray90, dark: Asset.white)
+        static let textLabelConversationSearchNoItems = UIColor(light: Asset.black, dark: Asset.gray20)
     }
     public enum SearchBarColor {
         public static let textSearchBarUserInput = UIColor(light: Asset.black, dark: Asset.white)
@@ -48,7 +49,6 @@ public enum SemanticColors {
 }
 
 extension UIColor {
-    
     convenience init(light: ColorAsset, dark: ColorAsset) {
         if #available(iOS 13.0, *) {
             self.init { traits in
@@ -63,11 +63,9 @@ extension UIColor {
             }
         }
     }
-    
 }
 
 public extension UIColor {
-    
     convenience init(for accentColor: AccentColor) {
         switch accentColor {
         case .blue:
@@ -86,10 +84,8 @@ public extension UIColor {
             self.init(light: Asset.purple500Light, dark: Asset.purple500Dark)
         }
     }
-    
     convenience init(fromZMAccentColor accentColor: ZMAccentColor) {
         let safeAccentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
         self.init(for: safeAccentColor)
     }
-    
 }
