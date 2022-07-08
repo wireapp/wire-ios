@@ -60,7 +60,7 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     public let userId: UUID
     public var resultHandler: ResultHandler?
 
-    init(domain: String?, userId: UUID, excludedSelfClientId: String? = nil, resultHandler: ResultHandler? = nil) {
+    public init(domain: String?, userId: UUID, excludedSelfClientId: String? = nil, resultHandler: ResultHandler? = nil) {
         self.domain = domain
         self.userId = userId
         self.excludedSelfClientId = excludedSelfClientId

@@ -82,7 +82,7 @@ public final class SendMLSMessageAction: EntityAction {
 
     // MARK: - Life cycle
 
-    init(mlsMessage: String,
+    public init(mlsMessage: String,
          resultHandler: ResultHandler? = nil) {
         self.mlsMessage = mlsMessage
         self.resultHandler = resultHandler

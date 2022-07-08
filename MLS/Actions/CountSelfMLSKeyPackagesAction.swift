@@ -55,7 +55,7 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
 
     // MARK: - Life cycle
 
-    init(clientID: String,
+    public init(clientID: String,
          resultHandler: ResultHandler? = nil) {
         self.clientID = clientID
         self.resultHandler = resultHandler
