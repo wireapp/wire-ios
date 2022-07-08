@@ -54,7 +54,7 @@ public class SendMLSWelcomeAction: EntityAction {
     public let body: String
     public var resultHandler: ResultHandler?
 
-    init(body: String, resultHandler: ResultHandler? = nil) {
+    public init(body: String, resultHandler: ResultHandler? = nil) {
         self.body = body
         self.resultHandler = resultHandler
     }

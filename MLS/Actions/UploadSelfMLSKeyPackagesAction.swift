@@ -60,7 +60,7 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
     public let keyPackages: [String]
     public var resultHandler: ResultHandler?
 
-    init(clientID: String, keyPackages: [String], resultHandler: ResultHandler? = nil) {
+    public init(clientID: String, keyPackages: [String], resultHandler: ResultHandler? = nil) {
         self.clientID = clientID
         self.keyPackages = keyPackages
         self.resultHandler = resultHandler
