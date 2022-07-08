@@ -83,4 +83,17 @@ public struct KeyPackage: Codable, Equatable {
         case keyPackageRef = "key_package_ref"
         case userID = "user"
     }
+
+    public init(client: String,
+                  domain: String,
+                  keyPackage: String,
+                  keyPackageRef: String,
+                  userID: UUID
+    ) {
+        self.client = client
+        self.domain = domain
+        self.keyPackage = keyPackage
+        self.keyPackageRef = keyPackageRef
+        self.userID = userID
+    }
 }
