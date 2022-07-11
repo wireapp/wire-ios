@@ -19,5 +19,69 @@
 import Foundation
 
 extension ZMConversation {
+
+    // MARK: - Keys
+
+    @objc
+    static let messageProtocolKey = "messageProtocol"
+
+    @objc
+    static let mlsGroupID = "mlsGroupID"
+
+    // MARK: - Properties
+
+    @NSManaged private var primitiveMessageProtocol: NSNumber
+
+    /// The message protocol used to exchange messages in this conversation.
+
+    public var messageProtocol: MessageProtocol {
+        get {
+            willAccessValue(forKey: Self.messageProtocolKey)
+            let value = primitiveMessageProtocol.int16Value
+            didAccessValue(forKey: Self.messageProtocolKey)
+
+            guard let result = MessageProtocol(rawValue: value) else {
+                fatalError("failed to init MessageProtocol from rawValue: \(value)")
+            }
+
+            return result
+        }
+
+        set {
+            willChangeValue(forKey: Self.messageProtocolKey)
+            primitiveMessageProtocol = NSNumber(value: newValue.rawValue)
+            didChangeValue(forKey: Self.messageProtocolKey)
+        }
+    }
+
+    @NSManaged private var primitiveMlsGroupId: Data?
+
+    /// The mls group identifer.
+    ///
+    /// If this conversation is an mls group (which it should be if the
+    /// `messageProtocol` is `mls`), then this identifier should exist.
+
+    public var mlsGroupID: MLSGroupID? {
+        get {
+            willAccessValue(forKey: Self.mlsGroupID)
+            let value = primitiveMlsGroupId
+            didAccessValue(forKey: Self.mlsGroupID)
+            return value.map(MLSGroupID.init(data:))
+        }
+
+        set {
+            willChangeValue(forKey: Self.mlsGroupID)
+            primitiveMlsGroupId = newValue?.data
+            didChangeValue(forKey: Self.mlsGroupID)
+        }
+    }
+
+    /// Whether the conversation is pending processing of an
+    /// mls welcome message.
+    ///
+    /// Until the welcome message is processed, this conversation
+    /// is not ready for communication.
+
     @NSManaged public var isPendingWelcomeMessage: Bool
+
 }
