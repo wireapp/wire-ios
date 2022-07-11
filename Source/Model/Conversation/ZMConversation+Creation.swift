@@ -125,17 +125,22 @@ extension ZMConversation {
     ///   - readReceipts: allow read receipts or not
     ///   - participantsRole: the participants' role
     ///   - type: the convo type want to be created (for permission check)
+    ///   - messageProtocol: the protocol used to exchange EE2E communication
+    ///
     /// - Returns: the created conversation, nullable
 
-    static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                               participants: [ZMUser],
-                                               name: String? = nil,
-                                               team: Team? = nil,
-                                               allowGuests: Bool = true,
-                                               allowServices: Bool = true,
-                                               readReceipts: Bool = false,
-                                               participantsRole: Role? = nil,
-                                               type: ZMConversationType = .group) -> ZMConversation? {
+    static public func insertGroupConversation(
+        moc: NSManagedObjectContext,
+        participants: [ZMUser],
+        name: String? = nil,
+        team: Team? = nil,
+        allowGuests: Bool = true,
+        allowServices: Bool = true,
+        readReceipts: Bool = false,
+        participantsRole: Role? = nil,
+        type: ZMConversationType = .group,
+        messageProtocol: MessageProtocol = .proteus
+    ) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
 
         if team != nil && !selfUser.canCreateConversation(type: type) {
@@ -143,6 +148,7 @@ extension ZMConversation {
         }
 
         let conversation = ZMConversation.insertNewObject(in: moc)
+        conversation.messageProtocol = messageProtocol
         conversation.lastModifiedDate = Date()
         conversation.conversationType = .group
         conversation.creator = selfUser
