@@ -122,4 +122,79 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
         XCTAssertNil(request)
     }
 
+    // MARK: - API V2
+
+    func test_GeneratesGetAssetRequestWithDomainForV2() throws {
+        // Given
+        let sut = AssetDownloadRequestFactory()
+
+        // When
+        let request = try XCTUnwrap(sut.requestToGetAsset(
+            withKey: "key",
+            token: nil,
+            domain: "domain",
+            apiVersion: .v2
+        ))
+
+        // Then
+        XCTAssertEqual(request.path, "/v2/assets/domain/key")
+        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.apiVersion, 2)
+    }
+
+    func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsNilForV2() throws {
+        // Given
+        let sut = AssetDownloadRequestFactory()
+        APIVersion.domain = "localDomain"
+
+        // When
+        let request = try XCTUnwrap(sut.requestToGetAsset(
+            withKey: "key",
+            token: nil,
+            domain: nil,
+            apiVersion: .v2
+        ))
+
+        // Then
+        XCTAssertEqual(request.path, "/v2/assets/localDomain/key")
+        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.apiVersion, 2)
+    }
+
+    func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsEmptyForV2() throws {
+        // Given
+        let sut = AssetDownloadRequestFactory()
+        APIVersion.domain = "localDomain"
+
+        // When
+        let request = try XCTUnwrap(sut.requestToGetAsset(
+            withKey: "key",
+            token: nil,
+            domain: "",
+            apiVersion: .v2
+        ))
+
+        // Then
+        XCTAssertEqual(request.path, "/v2/assets/localDomain/key")
+        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.apiVersion, 2)
+    }
+
+    func test_DoesNotGenerateGetAssetRequestIfNoDomainExistsForV2() throws {
+        // Given
+        let sut = AssetDownloadRequestFactory()
+        APIVersion.domain = nil
+
+        // When
+        let request = sut.requestToGetAsset(
+            withKey: "key",
+            token: nil,
+            domain: nil,
+            apiVersion: .v2
+        )
+
+        // Then
+        XCTAssertNil(request)
+    }
+
 }

@@ -30,7 +30,7 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            APIVersion.current = apiVersion
+            setCurrentAPIVersion(apiVersion)
         }
     }
 
@@ -62,22 +62,35 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
 
 extension FetchClientRequestStrategyTests {
 
-    func testThatItCreatesARequest_WhenUserClientNeedsToBeUpdatedFromBackend() {
-        syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            self.apiVersion = .v1
-            self.otherUser.domain = nil
-            let clientUUID = UUID()
-            let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
-            let clientSet: Set<NSManagedObject> = [client]
+    func testThatItCreatesARequestForV0_WhenUserClientNeedsToBeUpdatedFromBackend() {
+        // Given
+        let apiVersion: APIVersion = .v0
+        let clientUUID = UUID()
 
-            // WHEN
-            client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(clientSet)
+        createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion, clientUUID: clientUUID) { request in
+            XCTAssertEqual(request.path, "/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
+            XCTAssertEqual(request.method, .methodGET)
+        }
+    }
 
-            // THEN
-            let request = self.sut.nextRequest(for: self.apiVersion)
-            XCTAssertEqual(request?.path, "/v1/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
+    func testThatItCreatesARequestForV1_WhenUserClientNeedsToBeUpdatedFromBackend() {
+        // Given
+        let apiVersion: APIVersion = .v1
+        let clientUUID = UUID()
+
+        createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion, clientUUID: clientUUID) { request in
+            XCTAssertEqual(request.path, "/v1/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
+            XCTAssertEqual(request.method, .methodGET)
+        }
+    }
+
+    func testThatItCreatesARequestForV2_WhenUserClientNeedsToBeUpdatedFromBackend() {
+        // Given
+        let apiVersion: APIVersion = .v2
+
+        createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion) { request in
+            XCTAssertEqual(request.path, "/v2/users/list-clients")
+            XCTAssertEqual(request.method, .methodPOST)
         }
     }
 
@@ -90,9 +103,9 @@ extension FetchClientRequestStrategyTests {
             self.otherUser.domain = nil
             let clientUUID = UUID()
             let payload = [
-                    "id": clientUUID.transportString(),
-                    "class": "phone"
-                ]
+                "id": clientUUID.transportString(),
+                "class": "phone"
+            ]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             let clientSet: Set<NSManagedObject> = [client]
 
@@ -170,7 +183,7 @@ extension FetchClientRequestStrategyTests {
                 "example.com": [self.otherUser.remoteIdentifier.transportString(): [
                     Payload.UserClient(id: clientUUID.transportString(),
                                        deviceClass: "phone")
-                    ]]
+                ]]
             ]
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
@@ -242,7 +255,7 @@ extension FetchClientRequestStrategyTests {
                 "example.com": [userID.transportString(): [
                     Payload.UserClient(id: newClientID.transportString(),
                                        deviceClass: "phone")
-                    ]]
+                ]]
             ]
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             existingClient = UserClient.fetchUserClient(withRemoteId: UUID().transportString(), forUser: self.otherUser, createIfNeeded: true)!
@@ -436,6 +449,33 @@ extension FetchClientRequestStrategyTests {
             }
         }
     }
+
+    func testThatItCreatesBatchRequestForV2_WhenFederationEndpointIsAvailable() {
+        // GIVEN
+        apiVersion = .v2
+
+        var user: ZMUser!
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(self.selfClient.missingClients?.count, 0)
+            user = self.selfClient.user!
+            user.fetchUserClients()
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        self.syncMOC.performGroupedBlockAndWait {
+            // WHEN
+            let request = self.sut.nextRequest(for: self.apiVersion)
+
+            // THEN
+            if let request = request {
+                let path = "/v2/users/list-clients"
+                XCTAssertEqual(request.path, path)
+                XCTAssertEqual(request.method, .methodPOST)
+            } else {
+                XCTFail("Failed to create request")
+            }
+        }
+    }
 }
 
 // MARK: - Fetching other user's clients / RemoteIdentifierObjectSync
@@ -570,6 +610,33 @@ extension FetchClientRequestStrategyTests {
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertTrue(self.otherClient.isZombieObject)
+        }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension FetchClientRequestStrategyTests {
+    func createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for apiVersion: APIVersion, clientUUID: UUID = UUID(), completion: @escaping (ZMTransportRequest) -> Void) {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            self.apiVersion = apiVersion
+            self.otherUser.domain = nil
+            let clientUUID = clientUUID
+            let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            let clientSet: Set<NSManagedObject> = [client]
+
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(clientSet)
+
+            // THEN
+            let request = self.sut.nextRequest(for: self.apiVersion)
+            if let request = request {
+                completion(request)
+            } else {
+                XCTFail("Failed to create request")
+            }
         }
     }
 }

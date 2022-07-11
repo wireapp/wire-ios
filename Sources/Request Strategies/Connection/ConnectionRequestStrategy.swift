@@ -100,7 +100,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 }
             }
 
-        case .v1:
+        case .v1, .v2:
             connectionListSync.fetch { [weak self] result in
                 switch result {
                 case .success(let connectionList):
@@ -158,7 +158,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
                 connectionByIDSync.sync(identifiers: userIdSet)
             }
 
-        case .v1:
+        case .v1, .v2:
             if let qualifiedID = object.to.qualifiedID {
                 let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
                 connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)

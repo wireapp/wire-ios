@@ -39,17 +39,18 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
     override func request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
-            return nonFederatedRequest(for: action, apiVersion: apiVersion)
+            return v0Request(for: action)
         case .v1:
-            return federatedRequest(for: action, apiVersion: apiVersion)
+            return v1Request(for: action)
+        case .v2:
+            return v2Request(for: action)
         }
     }
 
-    func nonFederatedRequest(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+    private func v0Request(for action: AddParticipantAction) -> ZMTransportRequest? {
         var action = action
 
         guard
-            apiVersion == .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.remoteIdentifier?.transportString(),
             let users: [ZMUser] = action.userIDs.existingObjects(in: context),
@@ -63,29 +64,55 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: 0)
     }
 
-    func federatedRequest(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+    private func v1Request(for action: AddParticipantAction) -> ZMTransportRequest? {
         var action = action
 
         guard
-            apiVersion > .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.qualifiedID,
+            let payload = payload(for: action)
+        else {
+            action.notifyResult(.failure(.unknown))
+            // Log error
+            return nil
+        }
+
+        let path = "/conversations/\(conversationID.uuid)/members/v2"
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: 1)
+    }
+
+    private func v2Request(for action: AddParticipantAction) -> ZMTransportRequest? {
+        var action = action
+
+        guard
+            let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
+            let conversationID = conversation.qualifiedID,
+            let payload = payload(for: action)
+        else {
+            action.notifyResult(.failure(.unknown))
+            // Log error
+            return nil
+        }
+
+        let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members"
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: 2)
+    }
+
+    private func payload(for action: AddParticipantAction) -> ZMTransportData? {
+        guard
             let users: [ZMUser] = action.userIDs.existingObjects(in: context),
             let qualifiedUserIDs = users.qualifiedUserIDs,
             let payload = Payload.ConversationAddMember(qualifiedUserIDs: qualifiedUserIDs),
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
-            action.notifyResult(.failure(.unknown))
-            // Log error
             return nil
         }
-        let path = "/conversations/\(conversationID.uuid)/members/v2"
 
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return payloadAsString as ZMTransportData
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: AddParticipantAction) {
