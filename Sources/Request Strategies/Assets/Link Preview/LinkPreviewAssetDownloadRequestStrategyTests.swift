@@ -29,7 +29,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            APIVersion.current = apiVersion
+            setCurrentAPIVersion(apiVersion)
         }
     }
 

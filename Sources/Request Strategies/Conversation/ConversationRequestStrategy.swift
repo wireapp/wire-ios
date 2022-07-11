@@ -144,7 +144,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1:
+        case .v1, .v2:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             } else if let domain = APIVersion.domain {
@@ -177,10 +177,12 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 }
             }
 
-        case .v1:
+        case .v1, .v2:
             conversationQualifiedIDsSync.fetch { [weak self] (result) in
                 switch result {
                 case .success(let qualifiedConversationIDList):
+
+                    // here we could use a different sync, or do the switch inside.
                     self?.conversationByQualifiedIDListSync.sync(identifiers: qualifiedConversationIDList.conversations)
                 case .failure:
                     self?.syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
@@ -285,7 +287,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
             guard let identifier = object.remoteIdentifier else { return }
             synchronize(unqualifiedID: identifier)
 
-        case .v1:
+        case .v1, .v2:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
             } else if let identifier = object.remoteIdentifier, let domain = APIVersion.domain {
@@ -472,7 +474,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
 
-            case .v1:
+            case .v1, .v2:
                 guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
                                              method: .methodPUT,
@@ -504,8 +506,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
-
-            case .v1:
+            case .v1, .v2:
                 guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
                                              method: .methodPUT,
@@ -750,6 +751,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         // GET /conversations?ids=?
+        guard apiVersion < .v2 else { return nil }
         let converationIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/conversations?ids=\(converationIDs)", apiVersion: apiVersion.rawValue)
     }
@@ -795,8 +797,6 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        // GET /conversations?ids=?
-
         guard
             let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers)).payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
@@ -804,7 +804,9 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             return nil
         }
 
-        return ZMTransportRequest(path: "/conversations/list/v2", method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let path = apiVersion >= .v2 ? "/conversations/list" : "/conversations/list/v2"
+
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {

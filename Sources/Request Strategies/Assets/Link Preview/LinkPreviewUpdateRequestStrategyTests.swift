@@ -26,7 +26,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     private var apiVersion: APIVersion! {
         didSet {
-            APIVersion.current = apiVersion
+            setCurrentAPIVersion(apiVersion)
         }
     }
 
@@ -207,9 +207,9 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         case .v0:
             XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
 
-        case .v1:
+        case .v1, .v2:
             let domain = conversation.domain!
-            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
+            XCTAssertEqual(request?.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
         }
 
         return request

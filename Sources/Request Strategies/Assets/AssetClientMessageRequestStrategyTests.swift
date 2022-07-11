@@ -39,7 +39,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            APIVersion.current = apiVersion
+            setCurrentAPIVersion(apiVersion)
         }
     }
 
@@ -175,7 +175,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.method, .methodPOST, line: line)
             return request
 
-        case .v1:
+        case .v1, .v2:
             guard let request = sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("No request generated", line: line)
                 return nil
@@ -184,7 +184,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let domain = conversation.domain!
             let conversationID = conversation.remoteIdentifier!.transportString()
 
-            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID)/proteus/messages", line: line)
+            XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", line: line)
             XCTAssertEqual(request.method, .methodPOST, line: line)
             return request
         }

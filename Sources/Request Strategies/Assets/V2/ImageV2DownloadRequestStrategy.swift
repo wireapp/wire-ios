@@ -72,7 +72,7 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
 extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let message = object as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
 
         if let existingData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) {
@@ -80,12 +80,19 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
             managedObjectContext.enqueueDelayedSave()
             return nil
         } else {
-            if message.imageMessageData != nil {
-                guard let assetId = message.assetId?.transportString() else { return nil }
-                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
-            } else if message.fileMessageData != nil {
-                guard let assetId = message.fileMessageData?.thumbnailAssetID else { return nil }
-                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
+            switch apiVersion {
+            case .v0, .v1:
+                if message.imageMessageData != nil {
+                    guard let assetId = message.assetId?.transportString() else { return nil }
+                    return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
+                } else if message.fileMessageData != nil {
+                    guard let assetId = message.fileMessageData?.thumbnailAssetID else { return nil }
+                    return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
+                }
+
+            case .v2:
+                // v2 assets are legacy and no longer supported in API v2
+                return nil
             }
         }
 
