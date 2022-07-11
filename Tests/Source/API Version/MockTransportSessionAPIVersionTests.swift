@@ -24,6 +24,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         // Given
         let path = "/api-version"
         sut.supportedAPIVersions = [0, 1, 2, 3]
+        sut.developmentAPIVersions = [4]
         sut.domain = "foo.com"
         sut.federation = true
 
@@ -38,6 +39,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
 
         let payload = response?.payload?.asDictionary()
         XCTAssertEqual(payload?["supported"] as? [Int32], sut.supportedAPIVersions.map(\.int32Value))
+        XCTAssertEqual(payload?["development"] as? [Int32], sut.developmentAPIVersions.map(\.int32Value))
         XCTAssertEqual(payload?["domain"] as? String, sut.domain)
         XCTAssertEqual(payload?["federation"] as? Bool, sut.federation)
     }
@@ -57,20 +59,18 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         XCTAssertEqual(response?.httpStatus, 404)
     }
 
-    // TODO: [John] Uncomment when we add API version 1.
+    func testThatItReturns404IfAPIVersionIsNotZero() {
+        // Given
+        let path = "/api-version"
 
-//    func testThatItReturns404IfAPIVersionIsNotZero() {
-//        // Given
-//        let path = "/api-version"
-//
-//        // Then
-//        let response = self.response(forPayload: [:] as ZMTransportData,
-//                                     path: path,
-//                                     method: .methodGET,
-//                                     apiVersion: .v1)
-//
-//        // Then
-//        XCTAssertEqual(response?.httpStatus, 404)
-//    }
+        // Then
+        let response = self.response(forPayload: [:] as ZMTransportData,
+                                     path: path,
+                                     method: .methodGET,
+                                     apiVersion: .v1)
+
+        // Then
+        XCTAssertEqual(response?.httpStatus, 404)
+    }
 
 }

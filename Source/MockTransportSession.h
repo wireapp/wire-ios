@@ -71,6 +71,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 // What gets returned on GET /api-version
 @property (nonatomic) NSArray<NSNumber *> *supportedAPIVersions;
+@property (nonatomic) NSArray<NSNumber *> *developmentAPIVersions;
+
 @property (nonatomic) NSString *domain;
 @property (nonatomic) BOOL federation;
 @property (nonatomic) BOOL isAPIVersionEndpointAvailable;

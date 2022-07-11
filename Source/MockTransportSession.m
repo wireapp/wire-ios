@@ -135,6 +135,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         [MockRole createConversationRolesWithContext:self.managedObjectContext];
 
         self.supportedAPIVersions = [[NSArray alloc] initWithObjects:@0, @1, nil];
+        self.developmentAPIVersions = [[NSArray alloc] init];
         self.domain = @"wire.com";
         self.federation = false;
         self.isAPIVersionEndpointAvailable = true;
