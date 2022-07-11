@@ -732,8 +732,8 @@ extension MissingClientsRequestStrategyTests {
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/users/list-prekeys", file: file, line: line)
-        case .v1:
-            XCTAssertEqual(request.path, "/v1/users/list-prekeys", file: file, line: line)
+        case .v1, .v2:
+            XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/users/list-prekeys", file: file, line: line)
         }
 
         expectedClients.forEach {

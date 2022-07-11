@@ -94,7 +94,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1:
+        case .v1, .v2:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             } else if let domain = APIVersion.domain {

@@ -45,7 +45,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            APIVersion.current = apiVersion
+            setCurrentAPIVersion(apiVersion)
         }
     }
 

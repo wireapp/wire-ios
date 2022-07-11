@@ -26,7 +26,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            APIVersion.current = apiVersion
+            setCurrentAPIVersion(apiVersion)
         }
     }
 
@@ -48,7 +48,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
-        APIVersion.current = nil
+        apiVersion = nil
 
         super.tearDown()
     }

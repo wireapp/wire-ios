@@ -36,7 +36,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1:
+        case .v1, .v2:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -118,7 +118,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
     private func decodeResponse(data: Data, apiVersion: APIVersion) -> Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>? {
         switch apiVersion {
-        case .v0, .v1:
+        case .v0, .v1, .v2:
             return Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(data, decoder: .defaultDecoder)
         }
     }

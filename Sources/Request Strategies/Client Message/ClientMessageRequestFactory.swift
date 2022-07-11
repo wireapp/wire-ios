@@ -51,7 +51,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 nativePush: false,
                 recipients: []
             )
-        case .v1:
+        case .v1, .v2:
             guard let domain = domain.nonEmptyValue ?? APIVersion.domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
@@ -90,7 +90,7 @@ public final class ClientMessageRequestFactory: NSObject {
         switch apiVersion {
         case .v0:
             return upstreamRequestForEncryptedMessage(message, in: conversation, apiVersion: apiVersion)
-        case .v1:
+        case .v1, .v2:
             return upstreamRequestForQualifiedEncryptedMessage(message, in: conversation, apiVersion: apiVersion)
         }
     }
@@ -129,6 +129,7 @@ public final class ClientMessageRequestFactory: NSObject {
     }
 
     public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
+        guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }
         let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", assetId].joined(separator: "/")
         let request = ZMTransportRequest.imageGet(fromPath: path, apiVersion: apiVersion.rawValue)
         request.forceToBackgroundSession()
@@ -140,6 +141,7 @@ public final class ClientMessageRequestFactory: NSObject {
 // MARK: - Downloading
 extension ClientMessageRequestFactory {
     func downstreamRequestForEcryptedOriginalFileMessage(_ message: ZMAssetClientMessage, apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }
         guard let conversation = message.conversation, let identifier = conversation.remoteIdentifier else { return nil }
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
 
