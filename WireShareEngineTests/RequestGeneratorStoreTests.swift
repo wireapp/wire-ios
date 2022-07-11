@@ -62,7 +62,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
     override func setUp() {
         super.setUp()
-        APIVersion.current = .v0
+        APIVersion.setVersions(production: [.v0], development: [])
         mockStrategy = MockStrategy()
     }
 
@@ -83,7 +83,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         XCTAssertNotNil(sut.nextRequest())
 
         // When
-        APIVersion.current = nil
+        APIVersion.setVersions(production: [], development: [])
 
         // Then
         XCTAssertNil(sut.nextRequest())
