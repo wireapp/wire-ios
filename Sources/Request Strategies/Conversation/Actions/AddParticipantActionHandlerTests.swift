@@ -53,7 +53,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
 
     // MARK: - Request Generation
 
-    func testThatItCreatesARequestForAddingAParticipant_NonFederated() throws {
+    func testThatItCreatesARequestForAddingAParticipant_V0() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = self.user.remoteIdentifier!
@@ -70,7 +70,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
         }
     }
 
-    func testThatItCreatesARequestForAddingAParticipant_Federated() throws {
+    func testThatItCreatesARequestForAddingAParticipant_V1() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
             let conversationID = self.conversation.remoteIdentifier!
@@ -81,6 +81,23 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(conversationID)/members/v2")
+            let payload = Payload.ConversationAddMember(request)
+            XCTAssertEqual(payload?.qualifiedUserIDs, [self.user.qualifiedID!])
+        }
+    }
+
+    func testThatItCreatesARequestForAddingAParticipant_V2() throws {
+        try syncMOC.performGroupedAndWait { _ in
+            // given
+            let conversationDomain = self.conversation.domain!
+            let conversationID = self.conversation.remoteIdentifier!
+            let action = AddParticipantAction(users: [self.user], conversation: self.conversation)
+
+            // when
+            let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v2))
+
+            // then
+            XCTAssertEqual(request.path, "/v2/conversations/\(conversationDomain)/\(conversationID)/members")
             let payload = Payload.ConversationAddMember(request)
             XCTAssertEqual(payload?.qualifiedUserIDs, [self.user.qualifiedID!])
         }

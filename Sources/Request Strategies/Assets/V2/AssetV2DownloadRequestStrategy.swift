@@ -129,31 +129,38 @@ import WireTransport
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        if let assetClientMessage = object as? ZMAssetClientMessage {
+    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest? {
+        switch apiVersion {
+        case .v0, .v1:
+            if let assetClientMessage = object as? ZMAssetClientMessage {
 
-            let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
-                assetClientMessage.associatedTaskIdentifier = taskIdentifier
+                let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
+                    assetClientMessage.associatedTaskIdentifier = taskIdentifier
+                }
+
+                let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
+                    self.handleResponse(response, forMessage: assetClientMessage)
+                }
+
+                let progressHandler = ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+                    assetClientMessage.progress = progress
+                    self.managedObjectContext.enqueueDelayedSave()
+                }
+
+                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage, apiVersion: apiVersion) {
+                    request.add(taskCreationHandler)
+                    request.add(completionHandler)
+                    request.add(progressHandler)
+                    return request
+                }
             }
 
-            let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
-                self.handleResponse(response, forMessage: assetClientMessage)
-            }
+            fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
 
-            let progressHandler = ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
-                assetClientMessage.progress = progress
-                self.managedObjectContext.enqueueDelayedSave()
-            }
-
-            if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage, apiVersion: apiVersion) {
-                request.add(taskCreationHandler)
-                request.add(completionHandler)
-                request.add(progressHandler)
-                return request
-            }
+        case .v2:
+            return nil
         }
 
-        fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

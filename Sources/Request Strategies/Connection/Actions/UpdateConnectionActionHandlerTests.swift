@@ -36,7 +36,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
 
     // MARK: - Request Generation
 
-    func testThatItCreatesARequestForUpdatingConnection_NonFederated() throws {
+    func testThatItCreatesARequestForUpdatingConnection_APIV0() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = self.oneToOneConversation.connection!.to.remoteIdentifier!
@@ -54,7 +54,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
         }
     }
 
-    func testThatItCreatesARequestForUpdatingConnection_Federated() throws {
+    func testThatItCreatesARequestForUpdatingConnection_APIV1() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
             let userID = self.oneToOneConversation.connection!.to.qualifiedID!
