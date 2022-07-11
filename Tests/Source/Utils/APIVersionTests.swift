@@ -20,50 +20,72 @@ import XCTest
 
 final class APIVersionTests: XCTestCase {
 
-    private var lowestVersion: APIVersion!
-    private var highestVersion: APIVersion!
-
-    override func setUp() {
-        lowestVersion = APIVersion.allCases.first
-        highestVersion = APIVersion.allCases.last
-    }
-
     override func tearDown() {
-        lowestVersion = nil
-        highestVersion = nil
+        APIVersion.setVersions(production: [], development: [])
     }
 
-    func testThatTheCommonVersionIsNil_whenBackendSupportsHigherVersionsOnly() {
-        // given
-        let backendVersions = (1...5).map { highestVersion.rawValue + $0 }
+    // MARK: - Setting versions
 
-        // when
-        let commonVersion = APIVersion.highestSupportedVersion(in: backendVersions)
+    func test_SettingVersions_AlsoSetsHighestProductionVersion() {
+        // When
+        APIVersion.setVersions(production: [.v0, .v1], development: [])
 
-        // then
-        XCTAssertNil(commonVersion)
+        // Then
+        XCTAssertEqual(APIVersion.highestProductionVersion, .v1)
     }
 
-    func testThatTheCommonVersionIsNil_whenBackendSupportsLowerVersionsOnly() {
-        // given
-        let backendVersions = ((-5)...(-1)).map { lowestVersion.rawValue + $0 }
+    func test_SettingVersions_ClearsPreferredVersion_IfItIsNoLongerValid() {
+        // Given
+        APIVersion.preferredVersion = .v1
 
-        // when
-        let commonVersion = APIVersion.highestSupportedVersion(in: backendVersions)
+        // When
+        APIVersion.setVersions(production: [.v0], development: [])
 
-        // then
-        XCTAssertNil(commonVersion)
+        // Then
+        XCTAssertNil(APIVersion.preferredVersion)
     }
 
-    func testThatTheCommonVersionIsTheHighestVersion_whenBackendSupportsTheHighestVersion() {
-        // given
-        let backendVersions = APIVersion.allCases.map(\.rawValue)
+    func test_SettingVersions_DoesNotClearPreferredVersion_IfItIsStillValid() {
+        // Given
+        APIVersion.preferredVersion = .v1
 
-        // when
-        let commonVersion = APIVersion.highestSupportedVersion(in: backendVersions)
+        // When
+        APIVersion.setVersions(production: [.v0], development: [.v1])
 
-        // then
-        XCTAssertEqual(commonVersion, highestVersion)
+        // Then
+        XCTAssertEqual(APIVersion.preferredVersion, .v1)
+    }
+
+    // MARK: - Current version
+
+    func test_CurrentVersion_IsPreferredVersion() {
+        // Given
+        APIVersion.preferredVersion = .v1
+
+        // When
+        APIVersion.setVersions(production: [.v0], development: [.v1])
+
+        // Then
+        XCTAssertEqual(APIVersion.current, .v1)
+    }
+
+    func test_CurrentVersion_IsHighestProductionVersion_IfThereIsNoPreferredVersion() {
+        // Given
+        APIVersion.preferredVersion = nil
+
+        // When
+        APIVersion.setVersions(production: [.v0], development: [.v1])
+
+        // Then
+        XCTAssertEqual(APIVersion.current, .v0)
+    }
+
+    func test_CurrentVersion_IsNil_IfThereAreNoVersions() {
+        // When
+        APIVersion.setVersions(production: [], development: [])
+
+        // Then
+        XCTAssertNil(APIVersion.current)
     }
 
 }
