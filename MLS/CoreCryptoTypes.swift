@@ -28,17 +28,23 @@ public protocol CoreCryptoProtocol {
     func wire_setCallbacks(callbacks: CoreCryptoCallbacks) throws
     func wire_clientPublicKey() throws -> [UInt8]
     func wire_clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]]
-    func wire_createConversation(conversationId: [UInt8], config: ConversationConfiguration) throws -> MemberAddedMessages?
-    func wire_conversationExists(conversationId: [UInt8]) -> Bool
-    func wire_processWelcomeMessage(welcomeMessage: [UInt8]) throws -> [UInt8]
-    func wire_addClientsToConversation(conversationId: [UInt8], clients: [Invitee]) throws -> MemberAddedMessages?
-    func wire_removeClientsFromConversation(conversationId: [UInt8], clients: [[UInt8]]) throws -> [UInt8]?
-    func wire_leaveConversation(conversationId: [UInt8], otherClients: [[UInt8]]) throws -> ConversationLeaveMessages
-    func wire_decryptMessage(conversationId: [UInt8], payload: [UInt8]) throws -> [UInt8]?
-    func wire_encryptMessage(conversationId: [UInt8], message: [UInt8]) throws -> [UInt8]
-    func wire_newAddProposal(conversationId: [UInt8], keyPackage: [UInt8]) throws -> [UInt8]
-    func wire_newUpdateProposal(conversationId: [UInt8]) throws -> [UInt8]
-    func wire_newRemoveProposal(conversationId: [UInt8], clientId: [UInt8]) throws -> [UInt8]
+    func wire_createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws
+    func wire_conversationExists(conversationId: ConversationId) -> Bool
+    func wire_processWelcomeMessage(welcomeMessage: [UInt8]) throws -> ConversationId
+    func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages?
+    func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> [UInt8]?
+    func wire_leaveConversation(conversationId: ConversationId, otherClients: [ClientId]) throws -> ConversationLeaveMessages
+    func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> [UInt8]?
+    func wire_encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8]
+    func wire_newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> [UInt8]
+    func wire_newUpdateProposal(conversationId: ConversationId) throws -> [UInt8]
+    func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> [UInt8]
+    func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64, keyPackage: [UInt8]) throws -> [UInt8]
+    func wire_newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8]
+    func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle
+    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> MlsConversationInitMessage
+    func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8]
+    func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws
 
 }
 
@@ -49,19 +55,19 @@ public protocol CoreCryptoCallbacks: AnyObject {
 }
 
 public struct ConversationConfiguration {
-
-    public var extraMembers: [Invitee]
-    public var admins: [[UInt8]]
+    public var admins: [MemberId]
     public var ciphersuite: CiphersuiteName?
     public var keyRotationSpan: TimeInterval?
+    public var externalSenders: [[UInt8]]
 
-    public init(extraMembers: [Invitee], admins: [[UInt8]], ciphersuite: CiphersuiteName?, keyRotationSpan: TimeInterval? ) {
-        self.extraMembers = extraMembers
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(admins: [MemberId], ciphersuite: CiphersuiteName?, keyRotationSpan: TimeInterval?, externalSenders: [[UInt8]]) {
         self.admins = admins
         self.ciphersuite = ciphersuite
         self.keyRotationSpan = keyRotationSpan
+        self.externalSenders = externalSenders
     }
-
 }
 
 public enum CiphersuiteName {
@@ -101,38 +107,65 @@ public struct ConversationLeaveMessages {
 }
 
 public struct Invitee {
-
-    public var id: [UInt8]
+    public var id: ClientId
     public var kp: [UInt8]
 
-    public init(id: [UInt8], kp: [UInt8]) {
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(id: ClientId, kp: [UInt8]) {
         self.id = id
         self.kp = kp
     }
-
 }
 
 public enum CryptoError {
 
+    // Simple error enums only carry a message
     case ConversationNotFound(message: String)
+
+    // Simple error enums only carry a message
     case ClientNotFound(message: String)
+
+    // Simple error enums only carry a message
     case MalformedIdentifier(message: String)
-    case KeyStoreError(message: String)
+
+    // Simple error enums only carry a message
     case ClientSignatureNotFound(message: String)
-    case OutOfKeyPackage(message: String)
+
+    // Simple error enums only carry a message
+    case ClientSignatureMismatch(message: String)
+
+    // Simple error enums only carry a message
     case LockPoisonError(message: String)
-    case ConversationConfigurationError(message: String)
+
+    // Simple error enums only carry a message
+    case OutOfKeyPackage(message: String)
+
+    // Simple error enums only carry a message
+    case KeyStoreError(message: String)
+
+    // Simple error enums only carry a message
     case MlsError(message: String)
-    case UuidError(message: String)
+
+    // Simple error enums only carry a message
     case Utf8Error(message: String)
+
+    // Simple error enums only carry a message
     case StringUtf8Error(message: String)
+
+    // Simple error enums only carry a message
     case ParseIntError(message: String)
+
+    // Simple error enums only carry a message
+    case InvalidByteArrayError(message: String)
+
+    // Simple error enums only carry a message
     case IoError(message: String)
+
+    // Simple error enums only carry a message
     case Unauthorized(message: String)
-    case Other(message: String)
 
 }
-
 
 public enum CoreCryptoLifecycle {
     /**
@@ -142,5 +175,33 @@ public enum CoreCryptoLifecycle {
 
         // No initialization code needed
 
+    }
+}
+
+public typealias ConversationId = [UInt8]
+public typealias ClientId = [UInt8]
+public typealias MemberId = [UInt8]
+
+public struct CommitBundle {
+    public var welcome: [UInt8]?
+    public var message: [UInt8]
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(welcome: [UInt8]?, message: [UInt8]) {
+        self.welcome = welcome
+        self.message = message
+    }
+}
+
+public struct MlsConversationInitMessage {
+    public var group: [UInt8]
+    public var message: [UInt8]
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(group: [UInt8], message: [UInt8]) {
+        self.group = group
+        self.message = message
     }
 }
