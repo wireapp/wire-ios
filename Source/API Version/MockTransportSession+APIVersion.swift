@@ -35,6 +35,7 @@ extension MockTransportSession {
 
         let payload = [
             "supported": supportedAPIVersions,
+            "development": developmentAPIVersions,
             "domain": domain,
             "federation": federation
         ] as NSDictionary
