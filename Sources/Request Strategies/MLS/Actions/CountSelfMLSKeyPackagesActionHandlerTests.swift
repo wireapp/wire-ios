@@ -22,7 +22,7 @@ import XCTest
 class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelfMLSKeyPackagesAction, CountSelfMLSKeyPackagesActionHandler> {
 
     let clientID = "clientID"
-    let requestPath = "/v1/mls/key-package/self/clientID/count"
+    let requestPath = "/v1/mls/key-packages/self/clientID/count"
 
     typealias Payload = CountSelfMLSKeyPackagesActionHandler.ResponsePayload
 
