@@ -30,10 +30,10 @@ import UIKit
         let bracketsScanner = Scanner(string: normalizedAddress as String? ?? "")
         bracketsScanner.charactersToBeSkipped = CharacterSet()
         bracketsScanner.locale = Locale(identifier: "en_US_POSIX")
-        
-        if bracketsScanner.scanUpTo("<", into: nil) && bracketsScanner.scanString("<", into: nil) {
-            bracketsScanner.scanUpTo(">", into: &normalizedAddress)
-            if !bracketsScanner.scanString(">", into: nil) {
+
+        if bracketsScanner.scanUpToString("<") != nil && bracketsScanner.scanString("<") != nil {
+            normalizedAddress = bracketsScanner.scanUpToString(">") as NSString?
+            if bracketsScanner.scanString(">") == nil {
                 //if there is no > than it's not valid email, we do not need to change input value
                 normalizedAddress = nil
             }

@@ -21,9 +21,6 @@
 
 @interface NSData (ZMMessageDigest)
 
-/// Calculates MD5 digest of the data
-- (NSData *)zmMD5Digest;
-
 /// Calculates HMAC digest of the data using SHA256
 - (NSData *)zmHMACSHA256DigestWithKey:(NSData *)key;
 

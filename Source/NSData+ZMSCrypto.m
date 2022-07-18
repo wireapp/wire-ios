@@ -26,19 +26,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
 
 @implementation NSData (ZMMessageDigest)
 
-- (NSData *)zmMD5Digest;
-{
-    __block CC_MD5_CTX ctx;
-    CC_MD5_Init(&ctx);
-    [self enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
-        NOT_USED(stop);
-        CC_MD5_Update(&ctx, bytes, (CC_LONG) byteRange.length);
-    }];
-    NSMutableData *result = [NSMutableData dataWithLength:CC_MD5_DIGEST_LENGTH];
-    CC_MD5_Final(result.mutableBytes, &ctx);
-    return result;
-}
-
 - (NSData *)zmHMACSHA256DigestWithKey:(NSData *)key
 {
     uint8_t hmac[CC_SHA256_DIGEST_LENGTH];

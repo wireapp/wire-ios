@@ -18,6 +18,7 @@
 
 
 import Foundation
+import CryptoKit
 
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
 public extension Data {
@@ -30,7 +31,15 @@ public extension Data {
     }
     
     func zmMD5Digest() -> Data {
-        return (self as NSData).zmMD5Digest()
+        var md5Hash = Insecure.MD5()
+
+        // We may have a lot of data to hash, so compute in chunks of 512 bytes.
+        for range in (startIndex..<endIndex).chunked(by: 512) {
+            md5Hash.update(data: self[range])
+        }
+
+        let digest = md5Hash.finalize()
+        return Data(digest)
     }
     
     func zmHMACSHA256Digest(key: Data) -> Data {
@@ -86,4 +95,21 @@ public extension Data {
         return NSData.randomEncryptionKey()
     }
     
+}
+
+private extension Range where Index == Int {
+
+    func chunked(by chunkSize: Int) -> [Self] {
+        guard chunkSize > 0 else { return [] }
+
+        let numberOfWholeChunks = endIndex / chunkSize
+        let numberOfChunks = endIndex.isMultiple(of: chunkSize) ? numberOfWholeChunks : numberOfWholeChunks + 1
+
+        return (0..<numberOfChunks).map { chunkIndex in
+            let start = chunkIndex * chunkSize
+            let end = Swift.min(start + chunkSize, endIndex)
+            return start..<end
+        }
+    }
+
 }
