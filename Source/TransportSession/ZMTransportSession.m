@@ -112,8 +112,8 @@ static NSInteger const DefaultMaximumRequests = 6;
     // https://tools.ietf.org/html/rfc2616
     configuration.HTTPShouldUsePipelining = YES;
     configuration.HTTPMaximumConnectionsPerHost = 1;
-    
-    configuration.TLSMinimumSupportedProtocol = kTLSProtocol12;
+
+    configuration.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
     
     configuration.URLCache = nil;
 }
@@ -147,16 +147,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-+ (NSURLSessionConfiguration *)voipSessionConfiguration
-{
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    configuration.timeoutIntervalForRequest = 60; 
-    configuration.timeoutIntervalForResource = 12 * 60;
-    configuration.networkServiceType = NSURLNetworkServiceTypeVoIP;
-    [self setUpConfiguration:configuration];
-    return configuration;
-}
-
 + (NSString *)identifierWithPrefix:(NSString *)prefix userIdentifier:(NSUUID *)userIdentifier
 {
     return [NSString stringWithFormat:@"%@-%@", prefix, userIdentifier.transportString];
@@ -180,15 +170,12 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
     NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier userIdentifier:userIdentifier];
     ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration trustProvider:environment delegate:self delegateQueue:queue identifier:backgroundIdentifier  userAgent:userAgent];
-    NSString *voipIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionVoipIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *voipSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] voipSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:voipIdentifier  userAgent:userAgent];
 
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
     
     CurrentURLSessionsDirectory *sessionsDirectory = [[CurrentURLSessionsDirectory alloc]
                                                       initWithForegroundSession:foregroundSession
                                                       backgroundSession:backgroundSession
-                                                      voipSession:voipSession
                                                       ];
 
     return [self initWithURLSessionsDirectory:sessionsDirectory
@@ -422,7 +409,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     // TODO: Need to set up a timer such that we can fail expired requests before they hit this point of the code -> namely when offline
     
     ZMURLSession *session = request.shouldUseOnlyBackgroundSession ? self.sessionsDirectory.backgroundSession :
-                            request.shouldUseVoipSession ? self.sessionsDirectory.voipSession : self.sessionsDirectory.foregroundSession;
+                            self.sessionsDirectory.foregroundSession;
     
     if (session.configuration.timeoutIntervalForRequest < expirationDate.timeIntervalSinceNow) {
         ZMLogWarn(@"May not be able to time out request. timeoutIntervalForRequest (%g) is too low (%g).",
