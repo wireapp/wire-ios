@@ -95,7 +95,6 @@
 		A9F499E4279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499A9279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E5279A8ABD00969F4B /* crypto_generichash_blake2b.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AA279A8ABD00969F4B /* crypto_generichash_blake2b.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E6279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A9F499E8279AC5EC00969F4B /* ios-arm64Simulator.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A9F499E7279AC5EC00969F4B /* ios-arm64Simulator.xcconfig */; };
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
 		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
 		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
@@ -232,9 +231,10 @@
 		A9F499A9279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_box_curve25519xsalsa20poly1305.h; sourceTree = "<group>"; };
 		A9F499AA279A8ABD00969F4B /* crypto_generichash_blake2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_generichash_blake2b.h; sourceTree = "<group>"; };
 		A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign_edwards25519sha512batch.h; sourceTree = "<group>"; };
-		A9F499E7279AC5EC00969F4B /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EE18F3602869A01D004012FE /* ios-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-common.xcconfig"; sourceTree = "<group>"; };
+		EE18F3632869D236004012FE /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-arm64Simulator.xcconfig"; sourceTree = "<group>"; };
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
 		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
 		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
@@ -330,8 +330,9 @@
 		54B5E1DE1F0A482B001F43A6 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A9F499E7279AC5EC00969F4B /* ios-arm64Simulator.xcconfig */,
 				F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */,
+				EE18F3602869A01D004012FE /* ios-common.xcconfig */,
+				EE18F3632869D236004012FE /* ios-arm64Simulator.xcconfig */,
 				F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */,
 				F1E148D3207D06EF00F81833 /* tests.xcconfig */,
 				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
@@ -682,7 +683,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9F499E8279AC5EC00969F4B /* ios-arm64Simulator.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
