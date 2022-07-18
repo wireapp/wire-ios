@@ -65,6 +65,12 @@
                   Identifier = "IntegrationTests/testThatItParsesSampleDataInstagram()">
                </Test>
                <Test
+                  Identifier = "IntegrationTests/testThatItParsesSampleDataTwitter()">
+               </Test>
+               <Test
+                  Identifier = "IntegrationTests/testThatItParsesSampleDataTwitterWithImages()">
+               </Test>
+               <Test
                   Identifier = "IntegrationTests/testThatItParsesSampleDataYahooSports()">
                </Test>
             </SkippedTests>
