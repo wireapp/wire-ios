@@ -18,7 +18,12 @@
 
 import Foundation
 
-public final class MLSController {
+public protocol MLSControllerProtocol {
+    func conversationExists(groupID: MLSGroupID) -> Bool
+    @discardableResult func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
+}
+
+public final class MLSController: MLSControllerProtocol {
 
     // MARK: - Properties
 
@@ -187,4 +192,35 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
         let action = UploadSelfMLSKeyPackagesAction(clientID: clientID, keyPackages: keyPackages, resultHandler: resultHandler)
         action.send(in: context)
     }
+}
+
+// MARK: - Process Welcome Message
+
+extension MLSController {
+
+    public func conversationExists(groupID: MLSGroupID) -> Bool {
+        return coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
+    }
+
+    @discardableResult
+    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+        guard let messageBytes = welcomeMessage.base64EncodedBytes else {
+            logger.error("failed to convert welcome message to bytes")
+            throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
+        }
+
+        do {
+            let groupID = try coreCrypto.wire_processWelcomeMessage(welcomeMessage: messageBytes)
+            return MLSGroupID(bytes: groupID)
+        } catch {
+            logger.error("failed to process welcome message: \(String(describing: error))")
+            throw MLSWelcomeMessageProcessingError.failedToProcessMessage
+        }
+    }
+
+}
+
+public enum MLSWelcomeMessageProcessingError: Error {
+    case failedToConvertMessageToBytes
+    case failedToProcessMessage
 }

@@ -54,7 +54,7 @@ extension ZMConversation {
         }
     }
 
-    @NSManaged private var primitiveMlsGroupId: Data?
+    @NSManaged private var primitiveMlsGroupID: Data?
 
     /// The mls group identifer.
     ///
@@ -64,14 +64,14 @@ extension ZMConversation {
     public var mlsGroupID: MLSGroupID? {
         get {
             willAccessValue(forKey: Self.mlsGroupID)
-            let value = primitiveMlsGroupId
+            let value = primitiveMlsGroupID
             didAccessValue(forKey: Self.mlsGroupID)
             return value.map(MLSGroupID.init(data:))
         }
 
         set {
             willChangeValue(forKey: Self.mlsGroupID)
-            primitiveMlsGroupId = newValue?.data
+            primitiveMlsGroupID = newValue?.data
             didChangeValue(forKey: Self.mlsGroupID)
         }
     }
