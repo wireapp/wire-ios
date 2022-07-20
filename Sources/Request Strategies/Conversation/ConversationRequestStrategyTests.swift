@@ -362,11 +362,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             // given
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                               type: BackendConversationType.group.rawValue,
-                                               name: "Hello World",
-                                               members: .init(selfMember: Payload.ConversationMember(id: selfUserID),
-                                                              others: []))
+            let payload = Payload.Conversation.stub(
+                qualifiedID: qualifiedID,
+                type: .group,
+                name: "Hello World",
+                members: .init(selfMember: Payload.ConversationMember(id: selfUserID),
+                others: [])
+            )
             let event = updateEvent(from: payload,
                                     conversationID: .init(uuid: UUID(), domain: owningDomain),
                                     senderID: otherUser.qualifiedID!,
@@ -1099,20 +1101,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     func conversation(uuid: UUID, domain: String?, type: BackendConversationType = .group) -> Payload.Conversation {
-        return Payload.Conversation(qualifiedID: nil,
-                                    id: uuid,
-                                    type: type.rawValue,
-                                    creator: nil,
-                                    access: nil,
-                                    accessRole: nil,
-                                    accessRoleV2: nil,
-                                    name: nil,
-                                    members: nil,
-                                    lastEvent: nil,
-                                    lastEventTime: nil,
-                                    teamID: nil,
-                                    messageTimer: nil,
-                                    readReceiptMode: nil)
+        return Payload.Conversation.stub(
+            id: uuid,
+            type: type
+        )
     }
 
     func updateEvent(type: String,
