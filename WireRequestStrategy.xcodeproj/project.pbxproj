@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -183,6 +183,9 @@
 		63CC83EE285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */; };
 		63CC83F0285CA2B8008549AD /* SendMLSWelcomeActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */; };
 		63CC83F2285CB96A008549AD /* ActionHandlerTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83F1285CB96A008549AD /* ActionHandlerTestBase.swift */; };
+		63DA339F286DF6ED00818C3C /* MLSEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */; };
+		63DA33A8286F27DD00818C3C /* MLSEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */; };
+		63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */; };
 		70C781FD2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */; };
 		70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */; };
 		7A111DE8285C90A90085BF91 /* SendMLSMessageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */; };
@@ -568,6 +571,9 @@
 		63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeActionHandler.swift; sourceTree = "<group>"; };
 		63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83F1285CB96A008549AD /* ActionHandlerTestBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandlerTestBase.swift; sourceTree = "<group>"; };
+		63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEventProcessor.swift; sourceTree = "<group>"; };
+		63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEventProcessorTests.swift; sourceTree = "<group>"; };
+		63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSEventProcessor.swift; sourceTree = "<group>"; };
 		70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandlerTests.swift; sourceTree = "<group>"; };
 		70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandler.swift; sourceTree = "<group>"; };
 		7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMLSMessageActionHandler.swift; sourceTree = "<group>"; };
@@ -874,6 +880,7 @@
 			isa = PBXGroup;
 			children = (
 				06ADF693264B467E002E0C7A /* MockAnalytics.swift */,
+				63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1090,6 +1097,7 @@
 		16E70F5E270EE96200718E5D /* Processing */ = {
 			isa = PBXGroup;
 			children = (
+				63DA339D286DF6DA00818C3C /* Helpers */,
 				169BA1CC25E95DC900374343 /* Payload+Processing.swift */,
 				16367F2126FDB2A10028AF8B /* PayloadProcessing+Connection.swift */,
 				16E70F93270EEEEB00718E5D /* PayloadProcessing+ConnectionTests.swift */,
@@ -1101,6 +1109,15 @@
 				16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */,
 			);
 			path = Processing;
+			sourceTree = "<group>";
+		};
+		63DA339D286DF6DA00818C3C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */,
+				63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		7AEBB6732859E5F00090B524 /* Actions */ = {
@@ -1813,6 +1830,7 @@
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
 				F18401B52073BE0800E9F4CC /* OTREntityTranscoder.swift in Sources */,
 				16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */,
+				63DA339F286DF6ED00818C3C /* MLSEventProcessor.swift in Sources */,
 				1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */,
 				BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */,
 				0693115024F79E2500D14DF5 /* UserNotificationCenterMock.swift in Sources */,
@@ -1941,6 +1959,7 @@
 				F1956204202A1506005347C0 /* ZMRequestGeneratorTests.m in Sources */,
 				1621D2661D75C755007108C2 /* ZMLocallyModifiedObjectSyncStatusTests.m in Sources */,
 				0693115624F7B17300D14DF5 /* ZMLocalNotificationTests_SystemMessage.swift in Sources */,
+				63DA33A8286F27DD00818C3C /* MLSEventProcessorTests.swift in Sources */,
 				EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */,
 				F18401FE2073C2EA00E9F4CC /* MessagingTest+Encryption.swift in Sources */,
 				7AEBB679285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift in Sources */,
@@ -1990,6 +2009,7 @@
 				F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
 				EE90C2AA282E855B00474379 /* RegisterPushTokenActionHandlerTests.swift in Sources */,
 				5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */,
+				63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
 				EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */,
