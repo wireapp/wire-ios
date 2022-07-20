@@ -37,4 +37,14 @@ public enum MessageProtocol: Int16 {
 
     case mls
 
+    public init?(string: String) {
+        switch string {
+        case "mls":
+            self = .mls
+        case "proteus":
+            self = .proteus
+        default:
+            return nil
+        }
+    }
 }

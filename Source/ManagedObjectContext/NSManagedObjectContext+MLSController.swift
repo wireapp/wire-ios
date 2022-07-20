@@ -26,9 +26,9 @@ extension NSManagedObjectContext {
         return mlsController != nil
     }
 
-    public var mlsController: MLSController? {
+    public var mlsController: MLSControllerProtocol? {
         precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-        return userInfo[Self.mlsControllerUserInfoKey] as? MLSController
+        return userInfo[Self.mlsControllerUserInfoKey] as? MLSControllerProtocol
     }
 
     public func initializeMLSController(coreCrypto: CoreCryptoProtocol) {
@@ -37,4 +37,9 @@ extension NSManagedObjectContext {
         userInfo[Self.mlsControllerUserInfoKey] = mlsController
     }
 
+    /// Only for testing
+    public func setMock(mlsController: MLSControllerProtocol) {
+        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
+        userInfo[Self.mlsControllerUserInfoKey] = mlsController
+    }
 }
