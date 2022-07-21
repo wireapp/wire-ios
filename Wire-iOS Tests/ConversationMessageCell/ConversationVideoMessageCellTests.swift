@@ -20,7 +20,7 @@
 
 import XCTest
 
-final class ConversationVideoMessageCellTests: XCTestCase {
+final class ConversationVideoMessageCellTests: ZMSnapshotTestCase {
 
     var message: MockMessage!
     var mockSelfUser: MockUserType!
