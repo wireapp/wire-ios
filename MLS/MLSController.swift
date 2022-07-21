@@ -19,6 +19,7 @@
 import Foundation
 
 public protocol MLSControllerProtocol {
+    func uploadKeyPackagesIfNeeded()
     func conversationExists(groupID: MLSGroupID) -> Bool
     @discardableResult func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
 }
