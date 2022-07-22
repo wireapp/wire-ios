@@ -317,7 +317,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					3ECC350F1AD436750089FD4B = {
 						LastSwiftMigration = 1000;
@@ -335,6 +335,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 3ECC34C31AD430BB0089FD4B;
 			productRefGroup = 3ECC34E61AD433520089FD4B /* Products */;
