@@ -15,4 +15,4 @@ trigger:
 jobs:
   - template: Azure/framework-pipelines.yml@wire-ios-shared-resources
     parameters:
-       xcodeAppName: Xcode_12.4
+       xcodeAppName: Xcode_13.2.1
