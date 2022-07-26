@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCommonComponents
 
 @available(iOS 14, *)
 final class DeveloperFlagsViewModel: ObservableObject {
