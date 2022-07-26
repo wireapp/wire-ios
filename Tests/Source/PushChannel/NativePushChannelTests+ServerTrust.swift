@@ -74,7 +74,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         // when
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
         sut.urlSession(URLSession.shared,
-                       task: URLSessionTask(),
+                       task: URLSession.shared.dataTask(with: URL(string:"test")!),
                        didReceive: createMockAuthenticationChallenge()) { (disposition, credentials) in
             choosenDisposition = disposition
         }
@@ -91,7 +91,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         // when
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
         sut.urlSession(URLSession.shared,
-                       task: URLSessionTask(),
+                       task: URLSession.shared.dataTask(with: URL(string:"test")!),
                        didReceive: challenge) { (disposition, credentials) in
             choosenDisposition = disposition
         }
@@ -103,11 +103,12 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
     func testThatItCancelAuthenticationChallenge_WhenServerIsNotTrusted() throws {
         // given
         mockEnvironment.isServerTrusted = false
+        let session = URLSession.shared
 
         // when
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
-        sut.urlSession(URLSession.shared,
-                       task: URLSessionTask(),
+        sut.urlSession(session,
+                       task: session.dataTask(with: URL(string:"test")!),
                        didReceive: createMockAuthenticationChallenge()) { (disposition, credentials) in
             choosenDisposition = disposition
         }

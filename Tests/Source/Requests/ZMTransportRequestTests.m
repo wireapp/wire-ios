@@ -338,9 +338,11 @@
     XCTAssertEqualObjects(metadataItem.contentType, @"application/json; charset=utf-8");
     XCTAssertEqualObjects(metadataItem.data, metaDataData);
 
+    NSString *md5Digest = [[MD5DigestHelper md5DigestFor:data] base64EncodedStringWithOptions:0];
+
     ZMMultipartBodyItem *imageItem = items.lastObject;
     XCTAssertEqualObjects(imageItem.contentType, @"image/jpeg");
-    XCTAssertEqualObjects(imageItem.headers, @{@"Content-MD5": [[data zmMD5Digest] base64EncodedStringWithOptions:0]});
+    XCTAssertEqualObjects(imageItem.headers, @{@"Content-MD5": md5Digest});
     XCTAssertEqualObjects(imageItem.data, data);
     
     NSString *expectedContentType = [NSString stringWithFormat:@"multipart/mixed; boundary=%@", boundary];
@@ -376,9 +378,11 @@
     XCTAssertEqualObjects(metadataItem.contentType, @"application/json; charset=utf-8");
     XCTAssertEqualObjects(metadataItem.data, metaDataData);
 
+    NSString *md5Digest = [[MD5DigestHelper md5DigestFor:data] base64EncodedStringWithOptions:0];
+
     ZMMultipartBodyItem *imageItem = items.lastObject;
     XCTAssertEqualObjects(imageItem.contentType, @"image/jpeg");
-    XCTAssertEqualObjects(imageItem.headers, @{@"Content-MD5": [[data zmMD5Digest] base64EncodedStringWithOptions:0]});
+    XCTAssertEqualObjects(imageItem.headers, @{@"Content-MD5": md5Digest});
     XCTAssertEqualObjects(imageItem.data, data);
 
     NSString *expectedContentType = [NSString stringWithFormat:@"multipart/mixed; boundary=%@", boundary];
@@ -724,7 +728,6 @@
     
     // then
     XCTAssertFalse(request.shouldUseOnlyBackgroundSession);
-    XCTAssertFalse(request.shouldUseVoipSession);
 }
 
 - (void)testThatARequestShouldUseOnlyBackgroundSessionWhenForced
@@ -737,21 +740,6 @@
     
     // then
     XCTAssertTrue(request.shouldUseOnlyBackgroundSession);
-    XCTAssertFalse(request.shouldUseVoipSession);
-}
-
-- (void)testThatARequestShouldUseOnlyVoipSessionWhenForced
-{
-    // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo" apiVersion:0];
-    
-    // when
-    [request forceToVoipSession];
-    
-    // then
-    XCTAssertTrue(request.shouldUseVoipSession);
-    XCTAssertFalse(request.shouldUseOnlyBackgroundSession);
-
 }
 
 

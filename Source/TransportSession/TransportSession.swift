@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public protocol TransportSessionType: class, ZMBackgroundable, ZMRequestCancellation, TearDownCapable {
+public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, TearDownCapable {
     
     var reachability: ReachabilityProvider & TearDownCapable { get }
     

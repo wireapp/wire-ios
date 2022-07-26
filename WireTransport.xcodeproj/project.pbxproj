@@ -137,6 +137,7 @@
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
+		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EF1A09A41FF6AC7500F89634 /* ZMPersistentCookieStorage+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F108BCC821C3CB6D00E1BBE3 /* Backend.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */; };
 		F118CBBF1F432F25004DCF96 /* ZMTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F118CBBC1F432E75004DCF96 /* ZMTransportSessionTests.swift */; };
@@ -350,6 +351,7 @@
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
+		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMPersistentCookieStorage+Testing.h"; sourceTree = "<group>"; };
 		EF1A09A51FF6BEE300F89634 /* testing.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = testing.modulemap; sourceTree = "<group>"; };
 		F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Backend.bundle; sourceTree = "<group>"; };
@@ -745,6 +747,7 @@
 				54CA15391B32F2C1008D3787 /* ZMTransportResponse.m */,
 				54CA153A1B32F2C1008D3787 /* ZMUserAgent.m */,
 				54C3EC5E243E2988000B9230 /* RequestAvailableNotification.swift */,
+				E91D2221287429EE0030B481 /* MD5DigestHelper.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -1042,6 +1045,7 @@
 				871667FE1BB2CD1E009C6EEA /* ZMKeychain.m in Sources */,
 				54C3EC5F243E2988000B9230 /* RequestAvailableNotification.swift in Sources */,
 				5499FFD61B31C66D00835C8B /* ZMWebSocket.m in Sources */,
+				E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */,
 				F1D1282021C2665E0090045E /* BackendEndpoints.swift in Sources */,
 				870F5E671FBF24AD004841E3 /* NetworkSocket.swift in Sources */,
 				5499FFCA1B31C66D00835C8B /* ZMPushChannelConnection.m in Sources */,

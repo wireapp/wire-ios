@@ -135,7 +135,6 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 
 /// If true, the request should only be sent through background session
 @property (nonatomic, readonly) BOOL shouldUseOnlyBackgroundSession;
-@property (nonatomic, readonly) BOOL shouldUseVoipSession;
 
 @property (nonatomic, readonly, copy, nullable) NSDictionary *contentDisposition; ///< C.f. <https://tools.ietf.org/html/rfc2183>
 
@@ -154,9 +153,6 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 
 /// If this is called, the request is going to be executed only on a background session
 - (void)forceToBackgroundSession;
-
-/// If this is called, the request is going to be executed on the voip session only
-- (void)forceToVoipSession;
 
 @property (nonatomic, readonly) ZMTransportAccept acceptedResponseMediaTypes; ///< C.f. RFC 7231 section 5.3.2 <http://tools.ietf.org/html/rfc7231#section-5.3.2>
 
