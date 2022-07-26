@@ -230,8 +230,6 @@ extension PushToken.TokenType: CustomStringConvertible {
         case .voip:
             return "VoIP"
 
-        @unknown default:
-            return "Uknown type"
         }
     }
 
