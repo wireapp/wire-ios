@@ -62,11 +62,21 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
                 return action.fail(with: .malformedResponse)
             }
 
-            action.succeed(with: payload.keyPackages)
+            // The action shouldn't return a key package for the self client,
+            // but it does for some reason. As a temporary workaround, just
+            // filter it out here.
+            let keyPackagesExcludingSelfClient = payload.keyPackages.filter {
+                $0.client != action.excludedSelfClientId
+            }
+
+            action.succeed(with: keyPackagesExcludingSelfClient)
+
         case 400:
             action.fail(with: .invalidSelfClientId)
+
         case 404:
             action.fail(with: .userOrDomainNotFound)
+
         default:
             action.fail(with: .unknown(status: response.httpStatus))
         }

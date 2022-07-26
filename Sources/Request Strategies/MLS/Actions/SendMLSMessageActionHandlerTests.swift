@@ -21,11 +21,11 @@ import XCTest
 
 class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageAction, SendMLSMessageActionHandler> {
 
-    let mlsMessage = "mlsMessage"
+    let mlsMessage = "mlsMessage".data(using: .utf8)!
 
     override func setUp() {
         super.setUp()
-        action = SendMLSMessageAction(mlsMessage: mlsMessage)
+        action = SendMLSMessageAction(message: mlsMessage)
     }
 
     // MARK: - Request generation
@@ -33,8 +33,9 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v1/mls/messages",
-            expectedPayload: mlsMessage,
             expectedMethod: .methodPOST,
+            expectedData: mlsMessage,
+            expectedContentType: "message/mls",
             apiVersion: .v1
         )
     }
@@ -47,7 +48,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
         )
 
         test_itDoesntGenerateARequest(
-            action: SendMLSMessageAction(mlsMessage: ""),
+            action: SendMLSMessageAction(message: Data()),
             apiVersion: .v1,
             expectedError: .invalidBody
         )

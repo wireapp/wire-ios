@@ -54,6 +54,27 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         XCTAssertEqual(request.payload as? Payload, expectedPayload)
     }
 
+    func test_itGeneratesARequest(
+        for action: Action,
+        expectedPath: String,
+        expectedMethod: ZMTransportRequestMethod,
+        expectedData: Data,
+        expectedContentType: String,
+        apiVersion: APIVersion = .v1
+    ) throws {
+        // Given
+        let sut = Handler(context: syncMOC)
+
+        // When
+        let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
+
+        // Then
+        XCTAssertEqual(request.path, expectedPath)
+        XCTAssertEqual(request.method, expectedMethod)
+        XCTAssertEqual(request.binaryData, expectedData)
+        XCTAssertEqual(request.binaryDataType, expectedContentType)
+    }
+
     func test_itDoesntGenerateARequest(
         action: Action,
         apiVersion: APIVersion,

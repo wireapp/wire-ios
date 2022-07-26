@@ -401,10 +401,11 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return false
     }
 
-    public func updateInsertedObject(_ managedObject: ZMManagedObject,
-                                     request upstreamRequest: ZMUpstreamRequest,
-                                     response: ZMTransportResponse) {
-
+    public func updateInsertedObject(
+        _ managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse
+    ) {
         guard
             let newConversation = managedObject as? ZMConversation,
             let rawData = response.rawData,
@@ -416,16 +417,55 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         }
 
         var deletedDuplicate = false
-        if let existingConversation = ZMConversation.fetch(with: conversationID,
-                                                           domain: payload.qualifiedID?.domain,
-                                                           in: managedObjectContext) {
+
+        if let existingConversation = ZMConversation.fetch(
+            with: conversationID,
+            domain: payload.qualifiedID?.domain,
+            in: managedObjectContext
+        ) {
             managedObjectContext.delete(existingConversation)
             deletedDuplicate = true
         }
 
         newConversation.remoteIdentifier = conversationID
+
+        // If this is an mls conversation, then the initial participants won't have
+        // been added yet on the backend. This means that when we process response payload
+        // we'll actually overwrite the local participants with just the self user. We
+        // store the pending participants now so we can pass them to the mls controllr
+        // when we actually create the mls group.
+        let pendingParticipants = newConversation.localParticipants
         payload.updateOrCreate(in: managedObjectContext)
+
         newConversation.needsToBeUpdatedFromBackend = deletedDuplicate
+
+        if newConversation.messageProtocol == .mls {
+            guard let mlsController = managedObjectContext.mlsController else {
+                Logging.network.warn("Can't create mls group because mls controller doesn't exist.")
+                return
+            }
+
+            guard #available(iOS 15, *) else {
+                Logging.network.warn("iOS 15 required for creating an mls group.")
+                return
+            }
+
+            guard let groupID = newConversation.mlsGroupID else {
+                Logging.network.warn("Can't create mls group because it doesn't have a group id.")
+                return
+            }
+
+            let users = pendingParticipants.map(MLSUser.init(from:))
+
+            Task {
+                do {
+                    try await mlsController.createGroup(for: groupID, with: users)
+                } catch let error {
+                    Logging.network.error("Failed to create mls group: \(String(describing: error))")
+                    return
+                }
+            }
+        }
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
@@ -529,15 +569,20 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return nil
     }
 
-    public func request(forInserting managedObject: ZMManagedObject,
-                        forKeys keys: Set<String>?,
-                        apiVersion: APIVersion) -> ZMUpstreamRequest? {
-
-        guard let conversation = managedObject as? ZMConversation else {
+    public func request(
+        forInserting managedObject: ZMManagedObject,
+        forKeys keys: Set<String>?,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
+        guard
+            let conversation = managedObject as? ZMConversation,
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(),
+            let selfClientID = selfClient.remoteIdentifier
+        else {
             return nil
         }
 
-        let payload = Payload.NewConversation(conversation)
+        let payload = Payload.NewConversation(conversation, selfClientID: selfClientID)
 
         guard
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
@@ -546,10 +591,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             return nil
         }
 
-        let request = ZMTransportRequest(path: "/conversations",
-                                         method: .methodPOST,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/conversations",
+            method: .methodPOST,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         return ZMUpstreamRequest(transportRequest: request)
     }

@@ -68,7 +68,7 @@ extension MLSGroupID {
             return nil
         }
 
-        self.init(bytes: bytes)
+        self.init(bytes)
     }
 }
 

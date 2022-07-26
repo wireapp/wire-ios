@@ -17,6 +17,7 @@
 
 import Foundation
 import XCTest
+import WireDataModel
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -114,6 +115,38 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertEqual(payload?.name, conversation.userDefinedName)
             XCTAssertEqual(Set(payload!.qualifiedUsers!), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
+        }
+    }
+
+    func testThatRequestToCreateConversationIsGenerated_V2() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v2
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.userDefinedName = "Hello World"
+            conversation.messageProtocol = .mls
+            conversation.addParticipantAndUpdateConversationState(user: self.otherUser, role: nil)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
+
+            // when
+            let request = self.sut.nextRequest(for: self.apiVersion)!
+
+            guard let payload = Payload.NewConversation(request) else {
+                XCTFail("failed to create payload")
+                return
+            }
+
+            // then
+            XCTAssertEqual(request.path, "/v2/conversations")
+            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(payload.name, conversation.userDefinedName)
+            XCTAssertEqual(payload.messageProtocol, "mls")
+            XCTAssertNil(payload.qualifiedUsers)
+            XCTAssertNil(payload.users)
+            XCTAssertEqual(payload.creatorClient, self.selfClient.remoteIdentifier!)
         }
     }
 
@@ -311,6 +344,61 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     // MARK: - Response processing
+
+    func testThatMLSGroupIsCreated() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let mlsController = MLSControllerMock()
+            self.syncMOC.test_setMockMLSController(mlsController)
+
+            let id = UUID.create()
+            let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
+
+            let expectedUsers = self.groupConversation.localParticipants.map(MLSGroupID.init(from:))
+
+            guard let request = self.sut.request(
+                forInserting: self.groupConversation,
+                forKeys: nil,
+                apiVersion: .v2
+            ) else {
+                XCTFail("Failed to create request")
+                return
+            }
+
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                id: id,
+                type: BackendConversationType.group.rawValue,
+                messageProtocol: "mls"
+            )
+
+            let payloadData = payload.payloadData()!
+            let payloadString = String(bytes: payloadData, encoding: .utf8)!
+
+            let response = ZMTransportResponse(
+                payload: payloadString as ZMTransportData,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: 2
+            )
+
+            // when
+            self.sut.updateInsertedObject(
+                self.groupConversation,
+                request: request,
+                response: response
+            )
+
+            // then
+            XCTAssertEqual(mlsController.createGroupCalls.count, 1)
+
+            let createGroupCall = mlsController.createGroupCalls.element(atIndex: 0)
+            XCTAssertEqual(createGroupCall.0, self.groupConversation)
+            XCTAssertEqual(createGroupCall.1, expectedUsers)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
 
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
