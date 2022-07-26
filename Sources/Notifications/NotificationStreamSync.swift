@@ -56,7 +56,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             return nil
         }
 
-        request.forceToVoipSession()
         notificationsTracker?.registerStartStreamFetching()
         request.add(ZMCompletionHandler(on: self.managedObjectContext, block: { _ in
             self.notificationsTracker?.registerFinishStreamFetching()

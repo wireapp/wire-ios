@@ -108,7 +108,6 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
             request = requestsFactory.fetchPrekeysFederated(for: missing, apiVersion: apiVersion)
         }
 
-        request?.transportRequest.forceToVoipSession()
         return request
     }
 
