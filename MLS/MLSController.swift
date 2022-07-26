@@ -19,9 +19,17 @@
 import Foundation
 
 public protocol MLSControllerProtocol {
+
     func uploadKeyPackagesIfNeeded()
+
+    @available(iOS 15, *)
+    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
+
     func conversationExists(groupID: MLSGroupID) -> Bool
-    @discardableResult func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
+
+    @discardableResult
+    func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
+
 }
 
 public final class MLSController: MLSControllerProtocol {
@@ -34,18 +42,18 @@ public final class MLSController: MLSControllerProtocol {
 
     let targetUnclaimedKeyPackageCount = 100
 
-    let actionProvider: MLSActionsProviderProtocol
+    let actionsProvider: MLSActionsProviderProtocol
 
     // MARK: - Life cycle
 
     init(
         context: NSManagedObjectContext,
         coreCrypto: CoreCryptoProtocol,
-        actionProvider: MLSActionsProviderProtocol = MLSActionsProvider()
+        actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider()
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
-        self.actionProvider = actionProvider
+        self.actionsProvider = actionsProvider
 
         do {
             try generatePublicKeysIfNeeded()
@@ -74,6 +82,139 @@ public final class MLSController: MLSControllerProtocol {
 
         selfClient.mlsPublicKeys = keys
         context.saveOrRollback()
+    }
+
+    // MARK: - Group creation
+
+    enum MLSGroupCreationError: Error {
+
+        case noParticipantsToAdd
+        case failedToClaimKeyPackages
+        case failedToCreateGroup
+        case failedToAddMembers
+        case failedToSendHandshakeMessage
+        case failedToSendWelcomeMessage
+
+    }
+
+    /// Create an MLS group with the given conversation.
+    ///
+    /// - Parameters:
+    ///   - conversation the conversation representing the MLS group.
+    ///
+    /// - Throws:
+    ///   - MLSGroupCreationError if the group could not be created.
+
+    @available(iOS 15, *)
+    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        guard let context = context else { return }
+
+        guard !users.isEmpty else {
+            throw MLSGroupCreationError.noParticipantsToAdd
+        }
+
+        let keyPackages = try await claimKeyPackages(for: users)
+        let invitees = keyPackages.map(Invitee.init(from:))
+        let messagesToSend = try createGroup(id: groupID, invitees: invitees)
+
+        guard let messagesToSend = messagesToSend else { return }
+        try await sendMessage(messagesToSend.message)
+        try await sendWelcomeMessage(messagesToSend.welcome)
+    }
+
+    @available(iOS 15, *)
+    private func claimKeyPackages(for users: [MLSUser]) async throws -> [KeyPackage] {
+        do {
+            guard let context = context else { return [] }
+
+            var result = [KeyPackage]()
+
+            for try await keyPackages in claimKeyPackages(for: users, in: context) {
+                result.append(contentsOf: keyPackages)
+            }
+
+            return result
+        } catch let error {
+            logger.error("failed to claim key packages: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToClaimKeyPackages
+        }
+
+    }
+
+    @available(iOS 15, *)
+    private func claimKeyPackages(
+        for users: [MLSUser],
+        in context: NSManagedObjectContext
+    ) -> AsyncThrowingStream<([KeyPackage]), Error> {
+        var index = 0
+
+        return AsyncThrowingStream { [actionsProvider] in
+            guard let user = users.element(atIndex: index) else { return nil }
+
+            index += 1
+
+            return try await actionsProvider.claimKeyPackages(
+                userID: user.id,
+                domain: user.domain,
+                excludedSelfClientID: user.selfClientID,
+                in: context.notificationContext
+            )
+        }
+    }
+
+    private func createGroup(
+        id: MLSGroupID,
+        invitees: [Invitee]
+    ) throws -> MemberAddedMessages? {
+        let config = ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+
+        do {
+            try coreCrypto.wire_createConversation(
+                conversationId: id.bytes,
+                config: config
+            )
+        } catch let error {
+            logger.error("failed to create mls group: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToCreateGroup
+        }
+
+        do {
+            return try coreCrypto.wire_addClientsToConversation(
+                conversationId: id.bytes,
+                clients: invitees
+            )
+        } catch let error {
+            logger.error("failed to add members: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToAddMembers
+        }
+    }
+
+    @available(iOS 15, *)
+    private func sendMessage(_ bytes: Bytes) async throws {
+        do {
+            guard let context = context else { return }
+            try await actionsProvider.sendMessage(
+                bytes.data,
+                in: context.notificationContext
+            )
+        } catch let error {
+            logger.error("failed to send mls message: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToSendHandshakeMessage
+        }
+    }
+
+    @available(iOS 15, *)
+    private func sendWelcomeMessage(_ bytes:  Bytes) async throws {
+        do {
+            guard let context = context else { return }
+            try await actionsProvider.sendWelcomeMessage(
+                bytes.data,
+                in: context.notificationContext
+            )
+        } catch let error {
+            logger.error("failed to send welcome message: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToSendWelcomeMessage
+        }
     }
 
     // MARK: - Key packages
@@ -118,7 +259,7 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func countUnclaimedKeyPackages(clientID: String, context: NotificationContext, completion: @escaping (Int) -> Void) {
-        actionProvider.countUnclaimedKeyPackages(clientID: clientID, context: context) { result in
+        actionsProvider.countUnclaimedKeyPackages(clientID: clientID, context: context) { result in
             switch result {
             case .success(let count):
                 completion(count)
@@ -153,7 +294,7 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func uploadKeyPackages(clientID: String, keyPackages: [String], context: NotificationContext) {
-        actionProvider.uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context) { result in
+        actionsProvider.uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context) { result in
             switch result {
             case .success:
                 break
@@ -163,6 +304,107 @@ public final class MLSController: MLSControllerProtocol {
             }
         }
     }
+
+    // MARK: - Process welcome message
+
+    public enum MLSWelcomeMessageProcessingError: Error {
+
+        case failedToConvertMessageToBytes
+        case failedToProcessMessage
+        
+    }
+
+
+    public func conversationExists(groupID: MLSGroupID) -> Bool {
+        return coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
+    }
+
+    @discardableResult
+    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+        guard let messageBytes = welcomeMessage.base64EncodedBytes else {
+            logger.error("failed to convert welcome message to bytes")
+            throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
+        }
+
+        do {
+            let groupID = try coreCrypto.wire_processWelcomeMessage(welcomeMessage: messageBytes)
+            return MLSGroupID(groupID)
+        } catch {
+            logger.error("failed to process welcome message: \(String(describing: error))")
+            throw MLSWelcomeMessageProcessingError.failedToProcessMessage
+        }
+    }
+
+}
+
+// MARK: -  Helper types
+
+public struct MLSUser {
+
+    public let id: UUID
+    public let domain: String
+    public let selfClientID: String?
+
+    public init(
+        id: UUID,
+        domain: String,
+        selfClientID: String? = nil
+    ) {
+        self.id = id
+        self.domain = domain
+        self.selfClientID = selfClientID
+    }
+
+    public init(from user: ZMUser) {
+        id = user.remoteIdentifier
+        domain = user.domain?.selfOrNilIfEmpty ?? APIVersion.domain!
+
+        if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
+            self.selfClientID = selfClientID
+        } else {
+            selfClientID = nil
+        }
+    }
+
+}
+
+// MARK: - Helper Extensions
+
+private extension String {
+
+    var utf8Data: Data? {
+        return data(using: .utf8)
+    }
+
+    var base64DecodedData: Data? {
+        return Data(base64Encoded: self)
+    }
+
+}
+
+extension Invitee {
+
+    init(from keyPackage: KeyPackage) {
+        let id = MLSClientID(
+            userID: keyPackage.userID.uuidString,
+            clientID: keyPackage.client,
+            domain: keyPackage.domain
+        )
+
+        guard
+            let idData = id.string.utf8Data,
+            let keyPackageData = Data(base64Encoded: keyPackage.keyPackage)
+        else {
+            fatalError("Couldn't create Invitee from key package: \(keyPackage)")
+        }
+
+        self.init(
+            id: idData.bytes,
+            kp: keyPackageData.bytes
+        )
+    }
+
+
 }
 
 protocol MLSActionsProviderProtocol {
@@ -180,6 +422,26 @@ protocol MLSActionsProviderProtocol {
         resultHandler: @escaping UploadSelfMLSKeyPackagesAction.ResultHandler
     )
 
+    @available(iOS 15, *)
+    func claimKeyPackages(
+        userID: UUID,
+        domain: String?,
+        excludedSelfClientID: String?,
+        in context: NotificationContext
+    ) async throws -> [KeyPackage]
+
+    @available(iOS 15, *)
+    func sendMessage(
+        _ message: Data,
+        in context: NotificationContext
+    ) async throws
+
+    @available(iOS 15, *)
+    func sendWelcomeMessage(
+        _ welcomeMessage: Data,
+        in context: NotificationContext
+    ) async throws
+
 }
 
 private class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -193,35 +455,39 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
         let action = UploadSelfMLSKeyPackagesAction(clientID: clientID, keyPackages: keyPackages, resultHandler: resultHandler)
         action.send(in: context)
     }
-}
 
-// MARK: - Process Welcome Message
+    @available(iOS 15, *)
+    func claimKeyPackages(
+        userID: UUID,
+        domain: String?,
+        excludedSelfClientID: String?,
+        in context: NotificationContext
+    ) async throws -> [KeyPackage] {
+        var action = ClaimMLSKeyPackageAction(
+            domain: domain,
+            userId: userID,
+            excludedSelfClientId: excludedSelfClientID
+        )
 
-extension MLSController {
-
-    public func conversationExists(groupID: MLSGroupID) -> Bool {
-        return coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
+        return try await action.perform(in: context)
     }
 
-    @discardableResult
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
-        guard let messageBytes = welcomeMessage.base64EncodedBytes else {
-            logger.error("failed to convert welcome message to bytes")
-            throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
-        }
-
-        do {
-            let groupID = try coreCrypto.wire_processWelcomeMessage(welcomeMessage: messageBytes)
-            return MLSGroupID(bytes: groupID)
-        } catch {
-            logger.error("failed to process welcome message: \(String(describing: error))")
-            throw MLSWelcomeMessageProcessingError.failedToProcessMessage
-        }
+    @available(iOS 15, *)
+    func sendMessage(
+        _ message: Data,
+        in context: NotificationContext
+    ) async throws {
+        var action = SendMLSMessageAction(message: message)
+        try await action.perform(in: context)
     }
 
-}
+    @available(iOS 15, *)
+    func sendWelcomeMessage(
+        _ welcomeMessage: Data,
+        in context: NotificationContext
+    ) async throws {
+        var action = SendMLSWelcomeAction(welcomeMessage: welcomeMessage)
+        try await action.perform(in: context)
+    }
 
-public enum MLSWelcomeMessageProcessingError: Error {
-    case failedToConvertMessageToBytes
-    case failedToProcessMessage
 }

@@ -129,3 +129,42 @@ public extension EntityAction where Result == Void {
     }
 
 }
+
+// MARK: - Async / Await
+
+public extension EntityAction {
+
+    /// Perform the action with the given result handler.
+    ///
+    /// - Parameters:
+    ///   - context the notification context in which to send the action's notification.
+    ///   - resultHandler a closure to recieve the action's result.
+
+    @available(*, renamed: "perform(in:)")
+    mutating func perform(
+        in context: NotificationContext,
+        resultHandler: @escaping ResultHandler
+    ) {
+        self.resultHandler = resultHandler
+        send(in: context)
+    }
+
+    /// Perform the action with the given result handler.
+    ///
+    /// - Parameters:
+    ///   - context the notification context in which to send the action's notification.
+    ///
+    /// - Returns:
+    ///   The result of the action.
+    ///
+    /// - Throws:
+    ///   The action's error.
+
+    @available(iOS 15, *)
+    mutating func perform(in context: NotificationContext) async throws -> Result {
+        return try await withCheckedThrowingContinuation { continuation in
+            perform(in: context, resultHandler: continuation.resume(with:))
+        }
+    }
+
+}

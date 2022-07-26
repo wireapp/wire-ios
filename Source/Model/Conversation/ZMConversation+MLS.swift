@@ -66,7 +66,7 @@ extension ZMConversation {
             willAccessValue(forKey: Self.mlsGroupID)
             let value = primitiveMlsGroupID
             didAccessValue(forKey: Self.mlsGroupID)
-            return value.map(MLSGroupID.init(data:))
+            return value.map(MLSGroupID.init(_:))
         }
 
         set {
