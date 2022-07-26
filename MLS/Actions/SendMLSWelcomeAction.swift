@@ -50,12 +50,11 @@ public class SendMLSWelcomeAction: EntityAction {
 
     // MARK: - Properties
 
-    // TODO: Find out what type the body should be
-    public let body: String
+    public let welcomeMessage: Data
     public var resultHandler: ResultHandler?
 
-    public init(body: String, resultHandler: ResultHandler? = nil) {
-        self.body = body
+    public init(welcomeMessage: Data, resultHandler: ResultHandler? = nil) {
+        self.welcomeMessage = welcomeMessage
         self.resultHandler = resultHandler
     }
 }

@@ -70,11 +70,12 @@ public class ClaimMLSKeyPackageAction: EntityAction {
 
 // Temporary solution until we know what we need from the result. Once we do, this should move to the action handler extension.
 public struct KeyPackage: Codable, Equatable {
-    let client: String
-    let domain: String
-    let keyPackage: String
-    let keyPackageRef: String
-    let userID: UUID
+
+    public let client: String
+    public let domain: String
+    public let keyPackage: String
+    public let keyPackageRef: String
+    public let userID: UUID
 
     enum CodingKeys: String, CodingKey {
         case client
@@ -84,11 +85,12 @@ public struct KeyPackage: Codable, Equatable {
         case userID = "user"
     }
 
-    public init(client: String,
-                  domain: String,
-                  keyPackage: String,
-                  keyPackageRef: String,
-                  userID: UUID
+    public init(
+        client: String,
+        domain: String,
+        keyPackage: String,
+        keyPackageRef: String,
+        userID: UUID
     ) {
         self.client = client
         self.domain = domain

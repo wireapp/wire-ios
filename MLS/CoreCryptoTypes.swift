@@ -54,7 +54,7 @@ public protocol CoreCryptoCallbacks: AnyObject {
 
 }
 
-public struct ConversationConfiguration {
+public struct ConversationConfiguration: Equatable {
     public var admins: [MemberId]
     public var ciphersuite: CiphersuiteName?
     public var keyRotationSpan: TimeInterval?
@@ -62,7 +62,12 @@ public struct ConversationConfiguration {
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(admins: [MemberId], ciphersuite: CiphersuiteName?, keyRotationSpan: TimeInterval?, externalSenders: [[UInt8]]) {
+    public init(
+        admins: [MemberId] = [],
+        ciphersuite: CiphersuiteName? = nil,
+        keyRotationSpan: TimeInterval? = nil,
+        externalSenders: [[UInt8]] = []
+    ) {
         self.admins = admins
         self.ciphersuite = ciphersuite
         self.keyRotationSpan = keyRotationSpan
@@ -70,7 +75,7 @@ public struct ConversationConfiguration {
     }
 }
 
-public enum CiphersuiteName {
+public enum CiphersuiteName: Equatable {
 
     case mls128Dhkemx25519Aes128gcmSha256Ed25519
     case mls128Dhkemp256Aes128gcmSha256P256
@@ -106,7 +111,7 @@ public struct ConversationLeaveMessages {
 
 }
 
-public struct Invitee {
+public struct Invitee: Equatable {
     public var id: ClientId
     public var kp: [UInt8]
 

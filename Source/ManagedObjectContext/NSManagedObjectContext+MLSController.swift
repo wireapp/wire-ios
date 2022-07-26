@@ -37,9 +37,12 @@ extension NSManagedObjectContext {
         userInfo[Self.mlsControllerUserInfoKey] = mlsController
     }
 
-    /// Only for testing
-    public func setMock(mlsController: MLSControllerProtocol) {
-        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-        userInfo[Self.mlsControllerUserInfoKey] = mlsController
+    /// Test helper for setting a mock controller.
+    ///
+    /// Unfortunately this is necessary as we have test logic in other frameworks.
+
+    public func test_setMockMLSController(_ controller: MLSControllerProtocol) {
+        userInfo[Self.mlsControllerUserInfoKey] = controller
     }
+
 }
