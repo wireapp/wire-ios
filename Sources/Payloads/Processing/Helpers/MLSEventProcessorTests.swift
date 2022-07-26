@@ -33,7 +33,18 @@ class MLSControllerMock: MLSControllerProtocol {
     @discardableResult
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
         processedWelcomeMessage = welcomeMessage
-        return groupID ?? MLSGroupID(data: .init())
+        return groupID ?? MLSGroupID(Data())
+    }
+
+    func uploadKeyPackagesIfNeeded() {
+
+    }
+
+    var createGroupCalls = [(MLSGroupID, [MLSUser])]()
+
+    @available(iOS 15, *)
+    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        createGroupCalls.append((groupID, users))
     }
 }
 
@@ -48,9 +59,9 @@ class MLSEventProcessorTests: MessagingTestBase {
         super.setUp()
         syncMOC.performGroupedBlockAndWait {
             self.mlsControllerMock = MLSControllerMock()
-            self.syncMOC.setMock(mlsController: self.mlsControllerMock)
+            self.syncMOC.test_setMockMLSController(self.mlsControllerMock)
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            self.conversation.mlsGroupID = MLSGroupID(bytes: self.groupIdString.base64EncodedBytes!)
+            self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64EncodedBytes!)
             self.conversation.domain = self.domain
             self.conversation.messageProtocol = .mls
         }

@@ -21,11 +21,11 @@ import Foundation
 
 class SendMLSWelcomeActionHandlerTests: ActionHandlerTestBase<SendMLSWelcomeAction, SendMLSWelcomeActionHandler> {
 
-    let body = "abc123"
+    let welcomeMessage = "welcome!".data(using: .utf8)!
 
     override func setUp() {
         super.setUp()
-        action = SendMLSWelcomeAction(body: body)
+        action = SendMLSWelcomeAction(welcomeMessage: welcomeMessage)
     }
 
     // MARK: - Request generation
@@ -34,8 +34,9 @@ class SendMLSWelcomeActionHandlerTests: ActionHandlerTestBase<SendMLSWelcomeActi
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v1/mls/welcome",
-            expectedPayload: body,
             expectedMethod: .methodPOST,
+            expectedData: welcomeMessage,
+            expectedContentType: "message/mls",
             apiVersion: .v1
         )
     }
@@ -50,7 +51,7 @@ class SendMLSWelcomeActionHandlerTests: ActionHandlerTestBase<SendMLSWelcomeActi
 
         // when there are empty parameters
         test_itDoesntGenerateARequest(
-            action: SendMLSWelcomeAction(body: ""),
+            action: SendMLSWelcomeAction(welcomeMessage: Data()),
             apiVersion: .v1,
             expectedError: .emptyParameters
         )

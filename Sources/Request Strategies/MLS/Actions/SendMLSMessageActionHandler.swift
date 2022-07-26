@@ -34,7 +34,7 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
             return nil
         }
 
-        guard !action.mlsMessage.isEmpty else {
+        guard !action.message.isEmpty else {
             action.notifyResult(.failure(.invalidBody))
             return nil
         }
@@ -42,7 +42,10 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
         return ZMTransportRequest(
             path: "/mls/messages",
             method: .methodPOST,
-            payload: action.mlsMessage as ZMTransportData,
+            binaryData: action.message,
+            type: "message/mls",
+            contentDisposition: nil,
+            shouldCompress: false,
             apiVersion: apiVersion.rawValue
         )
     }

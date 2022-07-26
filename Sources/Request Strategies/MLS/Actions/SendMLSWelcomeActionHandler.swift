@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTransport
 
 class SendMLSWelcomeActionHandler: ActionHandler<SendMLSWelcomeAction> {
 
@@ -30,7 +31,7 @@ class SendMLSWelcomeActionHandler: ActionHandler<SendMLSWelcomeAction> {
             return nil
         }
 
-        guard !action.body.isEmpty else {
+        guard !action.welcomeMessage.isEmpty else {
             action.fail(with: .emptyParameters)
             return nil
         }
@@ -38,7 +39,10 @@ class SendMLSWelcomeActionHandler: ActionHandler<SendMLSWelcomeAction> {
         return ZMTransportRequest(
             path: "/mls/welcome",
             method: .methodPOST,
-            payload: action.body as ZMTransportData,
+            binaryData: action.welcomeMessage,
+            type: "message/mls",
+            contentDisposition: nil,
+            shouldCompress: false,
             apiVersion: apiVersion.rawValue
         )
     }
