@@ -39,7 +39,6 @@ const NSTimeInterval ZMTransportRequestReducedExpirationInterval = 25;
 typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     ZMTransportRequestSessionTypeUseDefaultSession,
     ZMTransportRequestSessionTypeUseBackgroundSessionOnly,
-    ZMTransportRequestSessionTypeUseVoipSessionOnly,
 };
 
 @interface ZMCompletionHandler ()
@@ -589,20 +588,9 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     return self.transportSessionType == ZMTransportRequestSessionTypeUseBackgroundSessionOnly;
 }
 
-- (BOOL)shouldUseVoipSession
-{
-    return self.transportSessionType == ZMTransportRequestSessionTypeUseVoipSessionOnly;
-}
-
-
 - (void)forceToBackgroundSession
 {
     self.transportSessionType = ZMTransportRequestSessionTypeUseBackgroundSessionOnly;
-}
-
-- (void)forceToVoipSession;
-{
-    self.transportSessionType = ZMTransportRequestSessionTypeUseVoipSessionOnly;
 }
 
 - (NSString *)completionHandlerDescription;
@@ -815,12 +803,12 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     ZMMultipartBodyItem *metaDataBodyItem = [[ZMMultipartBodyItem alloc] initWithData:metaData
                                                                           contentType:metaDataContentType
                                                                               headers:nil];
+
+    NSString *md5Digest = [[MD5DigestHelper md5DigestFor:imageData] base64EncodedStringWithOptions:0];
     
     ZMMultipartBodyItem *imageBodyItem = [[ZMMultipartBodyItem alloc] initWithData:imageData
                                                                        contentType:mediaType
-                                                                           headers:@{
-                                                                                     @"Content-MD5": [[imageData zmMD5Digest] base64EncodedStringWithOptions:0]
-                                                                                     }];
+                                                                           headers:@{@"Content-MD5": md5Digest}];
     
     return [NSData multipartDataWithItems:@[metaDataBodyItem, imageBodyItem] boundary:boundary];
 }

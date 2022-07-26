@@ -75,9 +75,9 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
             key = SecTrustCopyKey(trust)
         } else {
             var result: SecTrustResultType = SecTrustResultType.invalid
-            if SecTrustEvaluate(trust, &result) != noErr {
-                return nil
-            }
+            var error: CFError?
+            _ = SecTrustEvaluateWithError(trust, &error)
+            SecTrustGetTrustResult(trust, &result)
             
             key = SecTrustCopyPublicKey(trust)
         }

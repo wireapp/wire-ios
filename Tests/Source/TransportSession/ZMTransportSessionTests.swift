@@ -43,14 +43,12 @@ import WireTesting
 @objcMembers public class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDownCapable {
     public var foregroundSession: ZMURLSession
     public var backgroundSession: ZMURLSession
-    public var voipSession: ZMURLSession
     public var allSessions: [ZMURLSession]
     
-    public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession? = nil, voipSession: ZMURLSession? = nil) {
+    public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession? = nil) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession ?? foregroundSession
-        self.voipSession = voipSession ?? foregroundSession
-        allSessions = [foregroundSession, backgroundSession, voipSession].compactMap{ $0 }
+        allSessions = [foregroundSession, backgroundSession].compactMap{ $0 }
     }
     
     var tearDownCalled = false
@@ -112,13 +110,10 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     func testThatItConfiguresSessionsCorrectly() {
         // given
         let userID = userIdentifier.transportString()
-        let voipSession = sut.sessionsDirectory.voipSession
         let foregroundSession = sut.sessionsDirectory.foregroundSession
         let backgroundSession = sut.sessionsDirectory.backgroundSession
 
         // then
-        check(identifier: voipSession.identifier, contains: [ZMURLSessionVoipIdentifier, userID])
-        
         check(identifier: foregroundSession.identifier, contains: [ZMURLSessionForegroundIdentifier, userID])
         
         check(identifier: backgroundSession.identifier, contains: [ZMURLSessionBackgroundIdentifier, userID])
@@ -126,7 +121,7 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         check(identifier: backgroundConfiguration.identifier, contains: [userID])
         XCTAssertEqual(backgroundConfiguration.sharedContainerIdentifier, containerIdentifier)
         
-        XCTAssertEqual(Set<String>([voipSession.identifier, foregroundSession.identifier, backgroundSession.identifier]).count, 3, "All identifiers should be unique")
+        XCTAssertEqual(Set<String>([foregroundSession.identifier, backgroundSession.identifier]).count, 2, "All identifiers should be unique")
     }
     
 }
