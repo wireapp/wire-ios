@@ -339,7 +339,7 @@ public final class MLSController: MLSControllerProtocol {
 
 // MARK: -  Helper types
 
-public struct MLSUser {
+public struct MLSUser: Equatable {
 
     public let id: UUID
     public let domain: String
