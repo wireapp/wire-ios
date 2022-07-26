@@ -353,8 +353,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             let id = UUID.create()
             let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
+            let mlsGroupID = MLSGroupID([1, 2, 3])
 
-            let expectedUsers = self.groupConversation.localParticipants.map(MLSGroupID.init(from:))
+            let expectedUsers = self.groupConversation.localParticipants.map(MLSUser.init(from:))
 
             guard let request = self.sut.request(
                 forInserting: self.groupConversation,
@@ -369,7 +370,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                 qualifiedID: qualifiedID,
                 id: id,
                 type: BackendConversationType.group.rawValue,
-                messageProtocol: "mls"
+                messageProtocol: "mls",
+                mlsGroupID: mlsGroupID.base64EncodedString
             )
 
             let payloadData = payload.payloadData()!
@@ -393,8 +395,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mlsController.createGroupCalls.count, 1)
 
             let createGroupCall = mlsController.createGroupCalls.element(atIndex: 0)
-            XCTAssertEqual(createGroupCall.0, self.groupConversation)
-            XCTAssertEqual(createGroupCall.1, expectedUsers)
+            XCTAssertEqual(createGroupCall?.0, self.groupConversation.mlsGroupID)
+            XCTAssertEqual(createGroupCall?.1, expectedUsers)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
