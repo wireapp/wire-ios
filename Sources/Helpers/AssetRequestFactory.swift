@@ -66,7 +66,7 @@ public final class AssetRequestFactory: NSObject {
     }
 
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {
-        let fileDataHeader = [Constant.md5: (data as NSData).zmMD5Digest().base64String()]
+        let fileDataHeader = [Constant.md5: data.zmMD5Digest().base64String()]
         let jsonObject: [String: Any] = [
             Constant.accessLevel: shareable,
             Constant.retention: retention.rawValue
