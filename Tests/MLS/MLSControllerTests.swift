@@ -25,6 +25,7 @@ class MLSControllerTests: ZMConversationTestsBase {
     var sut: MLSController!
     var mockCoreCrypto: MockCoreCrypto!
     var mockActionsProvider: MockMLSActionsProvider!
+    let groupID = MLSGroupID([1, 2, 3])
 
     override func setUp() {
         super.setUp()
@@ -43,6 +44,77 @@ class MLSControllerTests: ZMConversationTestsBase {
         mockCoreCrypto = nil
         mockActionsProvider = nil
         super.tearDown()
+    }
+
+    // MARK: - Message Decryption
+
+    typealias DecryptionError = MLSController.MLSMessageDecryptionError
+
+    func test_Decrypt_ThrowsFailedToConvertMessageToBytes() {
+        syncMOC.performAndWait {
+            // Given
+            let invalidBase64String = "%"
+
+            // When / Then
+            assertItThrows(error: DecryptionError.failedToConvertMessageToBytes) {
+                try _ = sut.decrypt(message: invalidBase64String, for: groupID)
+            }
+        }
+    }
+
+    func test_Decrypt_ThrowsFailedToDecryptMessage() {
+        syncMOC.performAndWait {
+            // Given
+            let message = Data([1, 2, 3]).base64EncodedString()
+            self.mockCoreCrypto.mockDecryptError = CryptoError.ConversationNotFound(message: "conversation not found")
+
+            // When / Then
+            assertItThrows(error: DecryptionError.failedToDecryptMessage) {
+                try _ = sut.decrypt(message: message, for: groupID)
+            }
+        }
+    }
+
+    func test_Decrypt_ReturnsNil_WhenCoreCryptoReturnsNil() {
+        syncMOC.performAndWait {
+            // Given
+            let messageBytes: Bytes = [1, 2, 3]
+            self.mockCoreCrypto.mockDecryptMessage = .some(.none)
+
+            // When
+            var data: Data?
+            do {
+                data = try sut.decrypt(message: messageBytes.data.base64EncodedString(), for: groupID)
+            } catch {
+                XCTFail("Unexpected error: \(String(describing: error))")
+            }
+
+            // Then
+            XCTAssertNil(data)
+        }
+    }
+
+    func test_Decrypt_IsSuccessful() {
+        syncMOC.performAndWait {
+            // Given
+            let messageBytes: Bytes = [1, 2, 3]
+            self.mockCoreCrypto.mockDecryptMessage = .some(messageBytes)
+
+            // When
+            var data: Data?
+            do {
+                data = try sut.decrypt(message: messageBytes.data.base64EncodedString(), for: groupID)
+            } catch {
+                XCTFail("Unexpected error: \(String(describing: error))")
+            }
+
+            // Then
+            XCTAssertEqual(data, messageBytes.data)
+
+            let decryptMessageCalls = self.mockCoreCrypto.calls.decryptMessage
+            XCTAssertEqual(decryptMessageCalls.first?.0, self.groupID.bytes)
+            XCTAssertEqual(decryptMessageCalls.first?.1, messageBytes)
+        }
     }
 
     // MARK: - Create group

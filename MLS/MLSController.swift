@@ -29,6 +29,8 @@ public protocol MLSControllerProtocol {
     @discardableResult
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
 
+    func decrypt(message: String, for groupID: MLSGroupID) throws -> Data?
+
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
 }
@@ -133,7 +135,6 @@ public final class MLSController: MLSControllerProtocol {
             logger.warn("failed to claim key packages: \(String(describing: error))")
             throw MLSGroupCreationError.failedToClaimKeyPackages
         }
-
     }
 
     private func claimKeyPackages(
@@ -276,7 +277,7 @@ public final class MLSController: MLSControllerProtocol {
 
     private func generateKeyPackages(amountRequested: UInt32) throws -> [String] {
 
-        var keyPackages = [[UInt8]]()
+        var keyPackages = [Bytes]()
 
         do {
 
@@ -292,9 +293,7 @@ public final class MLSController: MLSControllerProtocol {
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
-        return keyPackages.map {
-            Data($0).base64EncodedString()
-        }
+        return keyPackages.map { $0.base64EncodedString } 
     }
 
     private func uploadKeyPackages(clientID: String, keyPackages: [String], context: NotificationContext) {
@@ -336,6 +335,45 @@ public final class MLSController: MLSControllerProtocol {
         } catch {
             logger.error("failed to process welcome message: \(String(describing: error))")
             throw MLSWelcomeMessageProcessingError.failedToProcessMessage
+        }
+    }
+
+    // MARK: - Decrypting Message
+
+    public enum MLSMessageDecryptionError: Error {
+
+        case failedToConvertMessageToBytes
+        case failedToDecryptMessage
+
+    }
+
+    /// Decrypts an MLS message for the given group
+    ///
+    /// - Parameters:
+    ///   - message: a base64 encoded encrypted message
+    ///   - groupID: the id of the MLS group
+    ///
+    /// - Returns:
+    ///   The data representing the decrypted message bytes.
+    ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
+    ///
+    /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted
+
+    public func decrypt(message: String, for groupID: MLSGroupID) throws -> Data? {
+
+        guard let messageBytes = message.base64EncodedBytes else {
+            throw MLSMessageDecryptionError.failedToConvertMessageToBytes
+        }
+
+        do {
+            let decryptedMessageBytes = try coreCrypto.wire_decryptMessage(
+                conversationId: groupID.bytes,
+                payload: messageBytes
+            )
+            return decryptedMessageBytes?.data
+        } catch {
+            logger.warn("failed to decrypt message: \(String(describing: error))")
+            throw MLSMessageDecryptionError.failedToDecryptMessage
         }
     }
 
@@ -407,7 +445,6 @@ extension Invitee {
             kp: keyPackageData.bytes
         )
     }
-
 
 }
 
