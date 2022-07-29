@@ -35,6 +35,7 @@ class MockMLSController: MLSControllerProtocol {
         var createGroup = [MLSGroupID]()
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
+        var decrypt = [(String, MLSGroupID)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
 
     }
@@ -70,6 +71,16 @@ class MockMLSController: MLSControllerProtocol {
         calls.processWelcomeMessage.append(welcomeMessage)
         guard let mock = processWelcomeMessageMock else { throw MockError.unmockedMethodCalled }
         return try mock(welcomeMessage)
+    }
+
+    typealias DecryptMock = (String, MLSGroupID) throws -> Data?
+
+    var decryptMock: DecryptMock?
+
+    func decrypt(message: String, for groupID: MLSGroupID) throws -> Data? {
+        calls.decrypt.append((message, groupID))
+        guard let mock = decryptMock else { throw MockError.unmockedMethodCalled }
+        return try mock(message, groupID)
     }
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) throws {

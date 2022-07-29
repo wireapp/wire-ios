@@ -116,9 +116,15 @@ class MockCoreCrypto: CoreCryptoProtocol {
     }
 
     var mockDecryptMessage: [UInt8]??
+    var mockDecryptError: CryptoError?
 
     func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> [UInt8]? {
         calls.decryptMessage.append((conversationId, payload))
+
+        if let error = mockDecryptError {
+            throw error
+        }
+
         return try XCTUnwrap(mockDecryptMessage, "return value not mocked")
     }
 
