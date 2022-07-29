@@ -395,8 +395,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mlsController.createGroupCalls.count, 1)
 
             let createGroupCall = mlsController.createGroupCalls.element(atIndex: 0)
-            XCTAssertEqual(createGroupCall?.0, self.groupConversation.mlsGroupID)
-            XCTAssertEqual(createGroupCall?.1, expectedUsers)
+            XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
