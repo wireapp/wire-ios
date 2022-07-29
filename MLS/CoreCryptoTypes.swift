@@ -123,7 +123,7 @@ public struct Invitee: Equatable {
     }
 }
 
-public enum CryptoError {
+public enum CryptoError: Error {
 
     // Simple error enums only carry a message
     case ConversationNotFound(message: String)

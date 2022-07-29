@@ -160,7 +160,6 @@ public extension EntityAction {
     /// - Throws:
     ///   The action's error.
 
-    @available(iOS 15, *)
     mutating func perform(in context: NotificationContext) async throws -> Result {
         return try await withCheckedThrowingContinuation { continuation in
             perform(in: context, resultHandler: continuation.resume(with:))
