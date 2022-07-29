@@ -355,8 +355,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
             let mlsGroupID = MLSGroupID([1, 2, 3])
 
-            let expectedUsers = self.groupConversation.localParticipants.map(MLSUser.init(from:))
-
             guard let request = self.sut.request(
                 forInserting: self.groupConversation,
                 forKeys: nil,
@@ -1073,6 +1071,37 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                 return XCTFail("No user in convo")
             }
             XCTAssertEqual(participant.role, newRole)
+        }
+    }
+
+    // MARK: - MLS Welcome
+
+    func testThatItProcessesMLSWelcomeEvents() {
+        syncMOC.performAndWait {
+            // GIVEN
+            let mlsEventProcessorMock = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mlsEventProcessorMock)
+
+            let message = "welcome message"
+            let event = Payload.UpdateConversationMLSWelcome(
+                id: self.groupConversation.remoteIdentifier!,
+                qualifiedID: self.groupConversation.qualifiedID,
+                from: self.otherUser.remoteIdentifier,
+                qualifiedFrom: self.otherUser.qualifiedID,
+                timestamp: Date(),
+                type: "conversation.mls-welcome",
+                data: message
+            )
+
+            let updateEvent = self.updateEvent(from: event.payloadData()!)
+
+            // WHEN
+            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
+
+            // THEN
+            XCTAssertEqual(mlsEventProcessorMock.processedMessage, message)
+
+            MLSEventProcessor.reset()
         }
     }
 

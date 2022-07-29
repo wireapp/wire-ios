@@ -513,12 +513,25 @@ extension Payload {
         }
     }
 
-    struct UpdateConversationMLSWelcome: EventData {
-        let message: String
+    struct UpdateConversationMLSWelcome: Codable {
 
-        static var eventType: ZMUpdateEventType {
-            return .conversationMLSWelcome
+        enum CodingKeys: String, CodingKey {
+            case id = "conversation"
+            case qualifiedID = "qualified_conversation"
+            case from
+            case qualifiedFrom = "qualified_from"
+            case timestamp = "time"
+            case type
+            case data
         }
+
+        let id: UUID
+        let qualifiedID: QualifiedID?
+        let from: UUID
+        let qualifiedFrom: QualifiedID?
+        let timestamp: Date
+        let type: String
+        let data: String
     }
 
 }

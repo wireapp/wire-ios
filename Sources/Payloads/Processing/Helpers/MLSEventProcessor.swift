@@ -30,16 +30,18 @@ class MLSEventProcessor: MLSEventProcessing {
     // MARK: - Update conversation
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) {
-        guard conversation.messageProtocol == .mls else { return }
+        guard conversation.messageProtocol == .mls else {
+            return Logging.eventProcessing.info("Message protocol is not mls")
+        }
 
         guard let mlsGroupID = MLSGroupID(from: groupID) else {
-            return Logging.eventProcessing.error("MLS group ID is missing or invalid")
+            return Logging.eventProcessing.warn("MLS group ID is missing or invalid")
         }
 
         conversation.mlsGroupID = mlsGroupID
 
         guard let mlsController = context.mlsController else {
-            return Logging.eventProcessing.error("Missing MLSController in context")
+            return Logging.eventProcessing.warn("Missing MLSController in context")
         }
 
         conversation.isPendingWelcomeMessage = !mlsController.conversationExists(groupID: mlsGroupID)
@@ -51,7 +53,7 @@ class MLSEventProcessor: MLSEventProcessing {
         do {
             try context.mlsController?.processWelcomeMessage(welcomeMessage: welcomeMessage)
         } catch {
-            return Logging.eventProcessing.error("Couldn't process welcome message")
+            return Logging.eventProcessing.warn("Couldn't process welcome message")
         }
 
         conversation?.isPendingWelcomeMessage = false

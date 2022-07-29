@@ -357,9 +357,11 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJo
         guard
             let conversation = fetchOrCreateConversation(in: context)
         else {
-            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
+            Logging.eventProcessing.warn("Member join update missing conversation, aborting...")
             return
         }
+
+        updateMessageProtocol(for: conversation)
 
         if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
             let selfUser = ZMUser.selfUser(in: context)
@@ -389,6 +391,18 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJo
             conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
         }
 
+    }
+
+    private func updateMessageProtocol(for conversation: ZMConversation) {
+        guard
+            let messageProtocolString = data.messageProtocol,
+            let messageProtocol = MessageProtocol(string: messageProtocolString)
+        else {
+            Logging.eventProcessing.warn("message protocol is missing or invalid")
+            return
+        }
+
+        conversation.messageProtocol = messageProtocol
     }
 
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) {
@@ -532,19 +546,18 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
 
 }
 
-extension Payload.ConversationEvent where T == Payload.UpdateConversationMLSWelcome {
+extension Payload.UpdateConversationMLSWelcome {
 
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
-            let identifier = id ?? qualifiedID?.uuid,
             let domain = qualifiedID?.domain.nilIfEmpty ?? APIVersion.domain
         else {
-            Logging.eventProcessing.error("Missing conversation id or domain, aborting...")
+            Logging.eventProcessing.error("Missing conversation domain, aborting...")
             return
         }
 
-        let conversation = ZMConversation.fetch(with: identifier, domain: domain, in: context)
-        MLSEventProcessor.shared.process(welcomeMessage: data.message, for: conversation, in: context)
+        let conversation = ZMConversation.fetch(with: id, domain: domain, in: context)
+        MLSEventProcessor.shared.process(welcomeMessage: data, for: conversation, in: context)
     }
 
 }
