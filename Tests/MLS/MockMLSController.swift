@@ -32,9 +32,10 @@ class MockMLSController: MLSControllerProtocol {
     struct Calls {
 
         var uploadKeyPackagesIfNeeded: [Void] = []
-        var createGroup = [(MLSGroupID, [MLSUser])]()
+        var createGroup = [MLSGroupID]()
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
+        var addMembersToConversation = [([MLSUser], MLSGroupID)]()
 
     }
 
@@ -48,8 +49,8 @@ class MockMLSController: MLSControllerProtocol {
         calls.uploadKeyPackagesIfNeeded.append(())
     }
 
-    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) throws {
-        calls.createGroup.append((groupID, users))
+    func createGroup(for groupID: MLSGroupID) throws {
+        calls.createGroup.append(groupID)
     }
 
     typealias ConversationExistsMock = (MLSGroupID) -> Bool
@@ -69,6 +70,10 @@ class MockMLSController: MLSControllerProtocol {
         calls.processWelcomeMessage.append(welcomeMessage)
         guard let mock = processWelcomeMessageMock else { throw MockError.unmockedMethodCalled }
         return try mock(welcomeMessage)
+    }
+
+    func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) throws {
+        calls.addMembersToConversation.append((users, groupID))
     }
 
 }

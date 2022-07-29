@@ -70,8 +70,14 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return try XCTUnwrap(mockClientKeyPackages, "return value not mocked")
     }
 
+    var mockCreateConversationError: CryptoError?
+
     func wire_createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
         calls.createConversation.append((conversationId, config))
+
+        if let error = mockCreateConversationError {
+            throw error
+        }
     }
 
     var mockConversationExists: Bool?

@@ -22,13 +22,14 @@ public protocol MLSControllerProtocol {
 
     func uploadKeyPackagesIfNeeded()
 
-    @available(iOS 15, *)
-    func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws
+    func createGroup(for groupID: MLSGroupID) throws
 
     func conversationExists(groupID: MLSGroupID) -> Bool
 
     @discardableResult
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
+
+    func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
 }
 
@@ -97,32 +98,26 @@ public final class MLSController: MLSControllerProtocol {
 
     }
 
-    /// Create an MLS group with the given conversation.
+    /// Create an MLS group with the given group id.
     ///
     /// - Parameters:
-    ///   - conversation the conversation representing the MLS group.
+    ///   - groupID the id representing the MLS group.
     ///
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    @available(iOS 15, *)
-    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
-        guard let context = context else { return }
-
-        guard !users.isEmpty else {
-            throw MLSGroupCreationError.noParticipantsToAdd
+    public func createGroup(for groupID: MLSGroupID) throws {
+        do {
+            try coreCrypto.wire_createConversation(
+                conversationId: groupID.bytes,
+                config: ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+            )
+        } catch let error {
+            logger.warn("failed to create mls group: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToCreateGroup
         }
-
-        let keyPackages = try await claimKeyPackages(for: users)
-        let invitees = keyPackages.map(Invitee.init(from:))
-        let messagesToSend = try createGroup(id: groupID, invitees: invitees)
-
-        guard let messagesToSend = messagesToSend else { return }
-        try await sendMessage(messagesToSend.message)
-        try await sendWelcomeMessage(messagesToSend.welcome)
     }
 
-    @available(iOS 15, *)
     private func claimKeyPackages(for users: [MLSUser]) async throws -> [KeyPackage] {
         do {
             guard let context = context else { return [] }
@@ -135,13 +130,12 @@ public final class MLSController: MLSControllerProtocol {
 
             return result
         } catch let error {
-            logger.error("failed to claim key packages: \(String(describing: error))")
+            logger.warn("failed to claim key packages: \(String(describing: error))")
             throw MLSGroupCreationError.failedToClaimKeyPackages
         }
 
     }
 
-    @available(iOS 15, *)
     private func claimKeyPackages(
         for users: [MLSUser],
         in context: NSManagedObjectContext
@@ -162,34 +156,6 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
-    private func createGroup(
-        id: MLSGroupID,
-        invitees: [Invitee]
-    ) throws -> MemberAddedMessages? {
-        let config = ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
-
-        do {
-            try coreCrypto.wire_createConversation(
-                conversationId: id.bytes,
-                config: config
-            )
-        } catch let error {
-            logger.error("failed to create mls group: \(String(describing: error))")
-            throw MLSGroupCreationError.failedToCreateGroup
-        }
-
-        do {
-            return try coreCrypto.wire_addClientsToConversation(
-                conversationId: id.bytes,
-                clients: invitees
-            )
-        } catch let error {
-            logger.error("failed to add members: \(String(describing: error))")
-            throw MLSGroupCreationError.failedToAddMembers
-        }
-    }
-
-    @available(iOS 15, *)
     private func sendMessage(_ bytes: Bytes) async throws {
         do {
             guard let context = context else { return }
@@ -198,12 +164,11 @@ public final class MLSController: MLSControllerProtocol {
                 in: context.notificationContext
             )
         } catch let error {
-            logger.error("failed to send mls message: \(String(describing: error))")
+            logger.warn("failed to send mls message: \(String(describing: error))")
             throw MLSGroupCreationError.failedToSendHandshakeMessage
         }
     }
 
-    @available(iOS 15, *)
     private func sendWelcomeMessage(_ bytes:  Bytes) async throws {
         do {
             guard let context = context else { return }
@@ -212,8 +177,47 @@ public final class MLSController: MLSControllerProtocol {
                 in: context.notificationContext
             )
         } catch let error {
-            logger.error("failed to send welcome message: \(String(describing: error))")
+            logger.warn("failed to send welcome message: \(String(describing: error))")
             throw MLSGroupCreationError.failedToSendWelcomeMessage
+        }
+    }
+
+    // MARK: - Add participants to mls group
+
+    /// Add users to MLS group in the given conversation.
+    /// - Parameters:
+    ///   - users: Users represents the MLS group to be added.
+    ///   - groupID: Represents the MLS conversation group ID in which users to be added
+
+    public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
+
+        guard !users.isEmpty else {
+            throw MLSGroupCreationError.noParticipantsToAdd
+        }
+
+        let keyPackages = try await claimKeyPackages(for: users)
+        let invitees = keyPackages.map(Invitee.init(from:))
+        let messagesToSend = try addMembers(id: groupID, invitees: invitees)
+
+        guard let messagesToSend = messagesToSend else { return }
+        try await sendMessage(messagesToSend.message)
+        try await sendWelcomeMessage(messagesToSend.welcome)
+
+    }
+
+    private func addMembers(
+        id: MLSGroupID,
+        invitees: [Invitee]
+    ) throws -> MemberAddedMessages? {
+
+        do {
+            return try coreCrypto.wire_addClientsToConversation(
+                conversationId: id.bytes,
+                clients: invitees
+            )
+        } catch let error {
+            logger.warn("failed to add members: \(String(describing: error))")
+            throw MLSGroupCreationError.failedToAddMembers
         }
     }
 
@@ -422,7 +426,6 @@ protocol MLSActionsProviderProtocol {
         resultHandler: @escaping UploadSelfMLSKeyPackagesAction.ResultHandler
     )
 
-    @available(iOS 15, *)
     func claimKeyPackages(
         userID: UUID,
         domain: String?,
@@ -430,13 +433,11 @@ protocol MLSActionsProviderProtocol {
         in context: NotificationContext
     ) async throws -> [KeyPackage]
 
-    @available(iOS 15, *)
     func sendMessage(
         _ message: Data,
         in context: NotificationContext
     ) async throws
 
-    @available(iOS 15, *)
     func sendWelcomeMessage(
         _ welcomeMessage: Data,
         in context: NotificationContext
@@ -456,7 +457,6 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
         action.send(in: context)
     }
 
-    @available(iOS 15, *)
     func claimKeyPackages(
         userID: UUID,
         domain: String?,
@@ -472,7 +472,6 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
         return try await action.perform(in: context)
     }
 
-    @available(iOS 15, *)
     func sendMessage(
         _ message: Data,
         in context: NotificationContext
@@ -481,7 +480,6 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
         try await action.perform(in: context)
     }
 
-    @available(iOS 15, *)
     func sendWelcomeMessage(
         _ welcomeMessage: Data,
         in context: NotificationContext

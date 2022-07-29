@@ -19,7 +19,6 @@
 import Foundation
 @testable import WireDataModel
 
-@available(iOS 15, *)
 class MockMLSActionsProvider: MLSActionsProviderProtocol {
 
     enum MockError: Error {
