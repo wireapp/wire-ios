@@ -125,7 +125,10 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
         return Set(events.compactMap {
             switch $0.type {
-            case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+            case .conversationClientMessageAdd,
+                 .conversationOtrMessageAdd,
+                 .conversationOtrAssetAdd,
+                 .conversationMLSMessageAdd:
                 return $0.messageNonce
             default:
                 return nil
@@ -133,23 +136,9 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
         })
     }
 
-    private func nonces(for updateEvents: [ZMUpdateEvent]) -> [UpdateEventWithNonce] {
-        return updateEvents.compactMap {
-            switch $0.type {
-            case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                if let nonce = $0.messageNonce {
-                    return UpdateEventWithNonce(event: $0, nonce: nonce)
-                }
-                return nil
-            default:
-                return nil
-            }
-        }
-    }
-
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
-        case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+        case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
 
             guard let message = ZMOTRMessage.createOrUpdate(from: event, in: managedObjectContext, prefetchResult: prefetchResult) else { return }
 

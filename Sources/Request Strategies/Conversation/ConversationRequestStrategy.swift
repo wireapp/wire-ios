@@ -221,8 +221,7 @@ extension ConversationRequestStrategy: ZMEventConsumer {
         for event in events {
             guard
                 eventsToProcess.contains(event.type),
-                let payloadAsDictionary = event.payload as? [String: Any],
-                let payloadData = try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: [])
+                let payloadData = event.payloadData
             else {
                 continue
             }

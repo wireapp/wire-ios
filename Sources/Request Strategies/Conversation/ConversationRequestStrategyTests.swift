@@ -348,7 +348,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatMLSGroupIsCreated() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            let mlsController = MLSControllerMock()
+            let mlsController = MockMLSController()
             self.syncMOC.test_setMockMLSController(mlsController)
 
             let id = UUID.create()
