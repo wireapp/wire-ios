@@ -52,7 +52,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
 
         // When the client ID is invalid
         test_itDoesntGenerateARequest(
-            action: action,
+            action: CountSelfMLSKeyPackagesAction(clientID: ""),
             apiVersion: .v1,
             expectedError: .invalidClientID
         )
