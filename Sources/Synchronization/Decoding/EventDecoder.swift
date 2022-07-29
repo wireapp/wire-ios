@@ -117,9 +117,12 @@ extension EventDecoder {
             guard let `self` = self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-                if event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd {
+                switch event.type {
+                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                     return sessionsDirectory.decryptAndAddClient(event, in: self.syncMOC)
-                } else {
+                case .conversationMLSMessageAdd:
+                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                default:
                     return event
                 }
             }
@@ -138,6 +141,46 @@ extension EventDecoder {
         }
 
         return decryptedEvents
+    }
+
+    func decryptMlsMessage(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> ZMUpdateEvent? {
+        guard let mlsController = context.mlsController else {
+            Logging.eventProcessing.info("MLS controller is missing from context")
+            return nil
+        }
+
+        guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
+            Logging.eventProcessing.warn("invalid update event payload")
+            return nil
+        }
+
+        guard let conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context) else {
+            Logging.eventProcessing.warn("MLS conversation does not exist")
+            return nil
+        }
+
+        guard !conversation.isPendingWelcomeMessage else {
+            Logging.eventProcessing.warn("MLS conversation is still pending welcome message")
+            return nil
+        }
+
+        guard let groupID = conversation.mlsGroupID else {
+            Logging.eventProcessing.warn("Missing MLS group ID")
+            return nil
+        }
+
+        do {
+            guard
+                let decryptedData = try mlsController.decrypt(message: payload.data, for: groupID)
+            else {
+                Logging.eventProcessing.info("No decrypted data returned, likely due to handshake message")
+                return nil
+            }
+            return updateEvent.decryptedMLSEvent(decryptedData: decryptedData)
+        } catch {
+            Logging.eventProcessing.warn("failed to decrypt message: \(String(describing: error))")
+            return nil
+        }
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.

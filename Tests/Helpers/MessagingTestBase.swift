@@ -354,13 +354,13 @@ extension MessagingTestBase {
 extension MessagingTestBase {
     public func payloadForMessage(in conversation: ZMConversation?,
                                   type: String,
-                                  data: NSDictionary) -> NSMutableDictionary? {
+                                  data: Any) -> NSMutableDictionary? {
         return payloadForMessage(in: conversation!, type: type, data: data, time: nil)
     }
 
     public func payloadForMessage(in conversation: ZMConversation,
                                   type: String,
-                                  data: NSDictionary,
+                                  data: Any,
                                   time: Date?) -> NSMutableDictionary? {
         //      {
         //         "conversation" : "8500be67-3d7c-4af0-82a6-ef2afe266b18",
@@ -381,7 +381,7 @@ extension MessagingTestBase {
 
     public func payloadForMessage(in conversation: ZMConversation,
                                   type: String,
-                                  data: NSDictionary,
+                                  data: Any,
                                   time: Date?,
                                   from: ZMUser) -> NSMutableDictionary? {
 
