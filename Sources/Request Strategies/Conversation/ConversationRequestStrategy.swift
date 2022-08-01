@@ -63,23 +63,13 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         ZMConversationSilencedChangedTimeStampKey
     ]
 
-    let eventsToProcess: [ZMUpdateEventType] = [
-        .conversationCreate,
-        .conversationDelete,
-        .conversationMemberLeave,
-        .conversationMemberJoin,
-        .conversationRename,
-        .conversationMemberUpdate,
-        .conversationAccessModeUpdate,
-        .conversationMessageTimerUpdate,
-        .conversationReceiptModeUpdate,
-        .conversationConnectRequest,
-        .conversationMLSWelcome
-    ]
+    let conversationEventProcessor: ConversationEventProcessor
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress
+    ) {
 
         self.syncProgress = syncProgress
         self.conversationIDsSync =
@@ -121,6 +111,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             removeParticipantActionHandler,
             updateRoleActionHandler
         ])
+
+        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -215,66 +207,12 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
 extension ConversationRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent],
-                              liveEvents: Bool,
-                              prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard
-                eventsToProcess.contains(event.type),
-                let payloadData = event.payloadData
-            else {
-                continue
-            }
-
-            switch event.type {
-            case .conversationCreate:
-                let conversationEvent = Payload.ConversationEvent<Payload.Conversation>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationDelete:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationDeleted>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMemberLeave:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMemberJoin:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationRename:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationName>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMemberUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.ConversationMember>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationAccessModeUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationAccess>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMessageTimerUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationReceiptModeUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationConnectRequest:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMLSWelcome:
-                let conversationEvent = Payload.UpdateConversationMLSWelcome(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            default:
-                break
-            }
-        }
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) {
+        conversationEventProcessor.processConversationEvents(events)
     }
 }
 
@@ -455,13 +393,22 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 return
             }
 
-            let users = pendingParticipants.map(MLSUser.init(from:))
-
             do {
                 try mlsController.createGroup(for: groupID)
             } catch let error {
                 Logging.network.error("Failed to create mls group: \(String(describing: error))")
                 return
+            }
+
+            let users = pendingParticipants.map(MLSUser.init(from:))
+
+            Task {
+                do {
+                    try await mlsController.addMembersToConversation(with: users, for: groupID)
+                } catch let error {
+                    Logging.network.error("Failed to add members to mls group: \(String(describing: error))")
+                    return
+                }
             }
         }
     }

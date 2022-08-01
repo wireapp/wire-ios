@@ -55,8 +55,36 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     }
 
     // MARK: - Response handling
-    func test_itHandlesSuccess() {
-        test_itHandlesSuccess(status: 201)
+    func test_itHandlesSuccess() throws {
+        // Given
+        let payload: [AnyHashable: Any] = [
+            "events": [
+                [
+                    "time": "2021-05-12T10:52:02.671Z",
+                    "type": "conversation.member-join",
+                    "from": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                    "qualified_conversation": [
+                        "domain": "example.com",
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                    ],
+                    "qualified_from": [
+                        "domain": "example.com",
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                    ],
+                    "data": []
+                ]
+            ],
+            "time": "2021-05-12T10:52:02.671Z"
+        ]
+
+        // When
+        let updateEvents = try XCTUnwrap(test_itHandlesSuccess(
+            status: 201,
+            payload: payload as ZMTransportData
+        ))
+
+        XCTAssertEqual(updateEvents.count, 1)
+        XCTAssertEqual(updateEvents.first?.type, .conversationMemberJoin)
     }
 
     func test_itHandlesFailures() {
