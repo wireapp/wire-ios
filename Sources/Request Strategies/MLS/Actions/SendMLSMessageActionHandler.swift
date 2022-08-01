@@ -20,6 +20,8 @@ import Foundation
 
 class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
+    typealias EventPayload = [AnyHashable: Any]
+
     // MARK: - Methods
 
     override func request(
@@ -58,7 +60,25 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (201, _):
-            action.succeed()
+            guard
+                let payload = response.payload?.asDictionary(),
+                let eventsData = payload["events"] as? [EventPayload]
+            else {
+                action.fail(with: .malformedResponse)
+                return
+            }
+
+            let updateEvents = eventsData.compactMap { eventData in
+                ZMUpdateEvent(
+                    uuid: nil,
+                    payload: eventData,
+                    transient: false,
+                    decrypted: false,
+                    source: .download
+                )
+            }
+
+            action.succeed(with: updateEvents)
 
         case (400, "mls-protocol-error"):
             action.fail(with: .mlsProtocolError)

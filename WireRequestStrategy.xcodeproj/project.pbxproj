@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -216,6 +216,7 @@
 		BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */; };
 		D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */; };
 		D5D65A072074C23D00D7F3C3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
+		EE0CEB462893E9390055ECE5 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */; };
 		EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */; };
 		EE3245FC2821D41000F2A84A /* VoIPPushHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */; };
 		EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */; };
@@ -607,6 +608,7 @@
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetRequestFactoryTests.swift; sourceTree = "<group>"; };
+		EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushPayload.swift; sourceTree = "<group>"; };
 		EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelper.swift; sourceTree = "<group>"; };
 		EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelperTests.swift; sourceTree = "<group>"; };
@@ -943,6 +945,7 @@
 			children = (
 				168D7CB526FB0E7000789960 /* Actions */,
 				1658EA6126DE22C0003D0090 /* ConversationRequestStrategy.swift */,
+				EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */,
 				16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */,
 				EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */,
 			);
@@ -1909,6 +1912,7 @@
 				F18401D02073BE0800E9F4CC /* PushMessageHandler.swift in Sources */,
 				16B5B33726FDDD8A001A3216 /* ConnectToUserActionHandler.swift in Sources */,
 				16B5B3462701A713001A3216 /* UpdateConnectionActionHandler.swift in Sources */,
+				EE0CEB462893E9390055ECE5 /* ConversationEventProcessor.swift in Sources */,
 				F14B7AEA222009BA00458624 /* UserRichProfileRequestStrategy.swift in Sources */,
 				16D0E07F1DF88B430075DF8F /* EntityTranscoder.swift in Sources */,
 				EE90C2AE282EA1E000474379 /* GetPushTokensActionHandler.swift in Sources */,
