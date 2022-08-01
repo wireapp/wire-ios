@@ -22,7 +22,7 @@ public final class SendMLSMessageAction: EntityAction {
 
     // MARK: - Types
 
-    public typealias Result = Void
+    public typealias Result = [ZMUpdateEvent]
 
     public enum Failure: LocalizedError, Equatable {
 
