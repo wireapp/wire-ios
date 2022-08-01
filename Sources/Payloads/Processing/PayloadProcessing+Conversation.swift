@@ -248,7 +248,7 @@ extension Payload.Conversation {
             let messageProtocolString = messageProtocol,
             let messageProtocol = MessageProtocol(string: messageProtocolString)
         else {
-            Logging.eventProcessing.error("message protocol is missing or invalid")
+            Logging.eventProcessing.warn("message protocol is missing or invalid")
             return
         }
 
