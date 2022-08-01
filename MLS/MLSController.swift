@@ -41,21 +41,23 @@ public final class MLSController: MLSControllerProtocol {
 
     private weak var context: NSManagedObjectContext?
     private let coreCrypto: CoreCryptoProtocol
+    private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let logger = ZMSLog(tag: "core-crypto")
 
-    let targetUnclaimedKeyPackageCount = 100
-
     let actionsProvider: MLSActionsProviderProtocol
+    let targetUnclaimedKeyPackageCount = 100
 
     // MARK: - Life cycle
 
     init(
         context: NSManagedObjectContext,
         coreCrypto: CoreCryptoProtocol,
+        conversationEventProcessor: ConversationEventProcessorProtocol,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider()
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
+        self.conversationEventProcessor = conversationEventProcessor
         self.actionsProvider = actionsProvider
 
         do {
@@ -158,9 +160,11 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func sendMessage(_ bytes: Bytes) async throws {
+        var updateEvents = [ZMUpdateEvent]()
+
         do {
             guard let context = context else { return }
-            try await actionsProvider.sendMessage(
+            updateEvents = try await actionsProvider.sendMessage(
                 bytes.data,
                 in: context.notificationContext
             )
@@ -168,6 +172,8 @@ public final class MLSController: MLSControllerProtocol {
             logger.warn("failed to send mls message: \(String(describing: error))")
             throw MLSGroupCreationError.failedToSendHandshakeMessage
         }
+
+        conversationEventProcessor.processConversationEvents(updateEvents)
     }
 
     private func sendWelcomeMessage(_ bytes:  Bytes) async throws {
@@ -473,7 +479,7 @@ protocol MLSActionsProviderProtocol {
     func sendMessage(
         _ message: Data,
         in context: NotificationContext
-    ) async throws
+    ) async throws -> [ZMUpdateEvent]
 
     func sendWelcomeMessage(
         _ welcomeMessage: Data,
@@ -512,9 +518,9 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
     func sendMessage(
         _ message: Data,
         in context: NotificationContext
-    ) async throws {
+    ) async throws -> [ZMUpdateEvent] {
         var action = SendMLSMessageAction(message: message)
-        try await action.perform(in: context)
+        return try await action.perform(in: context)
     }
 
     func sendWelcomeMessage(
@@ -524,5 +530,11 @@ private class MLSActionsProvider: MLSActionsProviderProtocol {
         var action = SendMLSWelcomeAction(welcomeMessage: welcomeMessage)
         try await action.perform(in: context)
     }
+
+}
+
+public protocol ConversationEventProcessorProtocol {
+
+    func processConversationEvents(_ events: [ZMUpdateEvent])
 
 }

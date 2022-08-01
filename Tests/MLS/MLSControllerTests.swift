@@ -25,16 +25,20 @@ class MLSControllerTests: ZMConversationTestsBase {
     var sut: MLSController!
     var mockCoreCrypto: MockCoreCrypto!
     var mockActionsProvider: MockMLSActionsProvider!
+    var mockConversationEventProcessor: MockConversationEventProcessor!
+
     let groupID = MLSGroupID([1, 2, 3])
 
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
         mockActionsProvider = MockMLSActionsProvider()
+        mockConversationEventProcessor = MockConversationEventProcessor()
 
         sut = MLSController(
             context: uiMOC,
             coreCrypto: mockCoreCrypto,
+            conversationEventProcessor: mockConversationEventProcessor,
             actionsProvider: mockActionsProvider
         )
     }
@@ -189,6 +193,9 @@ class MLSControllerTests: ZMConversationTestsBase {
         // Mock sending message.
         mockActionsProvider.sendMessageMocks.append({ message in
             XCTAssertEqual(message, Data([0, 0, 0, 0]))
+            // TODO: mock the update events for member join.
+            // TODO: assert that conversation event processor receives the events.
+            return []
         })
 
         // Mock sending welcome message.
@@ -333,6 +340,7 @@ class MLSControllerTests: ZMConversationTestsBase {
         // Mock sending message.
         mockActionsProvider.sendMessageMocks.append({ message in
             XCTAssertEqual(message, Data([0, 0, 0, 0]))
+            return []
         })
 
         do {

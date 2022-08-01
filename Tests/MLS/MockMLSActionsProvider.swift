@@ -62,13 +62,13 @@ class MockMLSActionsProvider: MLSActionsProviderProtocol {
         return mock(userID, domain, excludedSelfClientID)
     }
 
-    typealias SendMessageMock = (Data) -> Void
+    typealias SendMessageMock = (Data) -> [ZMUpdateEvent]
     var sendMessageMocks = [SendMessageMock]()
 
     func sendMessage(
         _ message: Data,
         in context: NotificationContext
-    ) async throws {
+    ) async throws -> [ZMUpdateEvent] {
         guard let mock = sendMessageMocks.first else { throw MockError.unmockedMethodInvoked }
         sendMessageMocks.removeFirst()
         return mock(message)
