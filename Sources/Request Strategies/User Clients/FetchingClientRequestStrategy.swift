@@ -266,10 +266,9 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     public func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-
         guard
             apiVersion > .v0,
-            let payloadData = identifiers.payloadData(encoder: encoder),
+            let payloadData = RequestPayload(qualifiedIDs: identifiers).payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil
@@ -283,28 +282,52 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
         guard
             let rawData = response.rawData,
-            let payload = Payload.UserClientByDomain(rawData, decoder: decoder),
+            let payload = ResponsePayload(rawData, decoder: decoder),
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else {
             Logging.network.warn("Can't process response, aborting.")
             return
         }
 
-        for (domain, users) in payload {
+        for (domain, users) in payload.qualifiedUsers {
             for (userID, clientPayloads) in users {
-                guard
-                    let userID = UUID(uuidString: userID)
-                else {
+                guard let userID = UUID(uuidString: userID) else {
                     continue
                 }
 
-                let user = ZMUser.fetchOrCreate(with: userID,
-                                                domain: domain,
-                                                in: managedObjectContext)
+                let user = ZMUser.fetchOrCreate(
+                    with: userID,
+                    domain: domain,
+                    in: managedObjectContext
+                )
 
                 clientPayloads.updateClients(for: user, selfClient: selfClient)
             }
         }
+    }
+
+    struct RequestPayload: Codable {
+
+        enum CodingKeys: String, CodingKey {
+
+            case qualifiedIDs = "qualified_users"
+
+        }
+
+        let qualifiedIDs: Set<QualifiedID>
+
+    }
+
+    struct ResponsePayload: Codable {
+
+        enum CodingKeys: String, CodingKey {
+
+            case qualifiedUsers = "qualified_user_map"
+
+        }
+
+        let qualifiedUsers: Payload.UserClientByDomain
+
     }
 }
 
