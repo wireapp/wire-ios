@@ -190,12 +190,21 @@ class MLSControllerTests: ZMConversationTestsBase {
             welcome: [1, 1, 1, 1]
         )
 
+        // Mock update event for member joins the conversation
+        var updateEvent: ZMUpdateEvent!
+
         // Mock sending message.
         mockActionsProvider.sendMessageMocks.append({ message in
             XCTAssertEqual(message, Data([0, 0, 0, 0]))
-            // TODO: mock the update events for member join.
-            // TODO: assert that conversation event processor receives the events.
-            return []
+
+            let mockPayload: NSDictionary = [
+                "type": "conversation.member-join",
+                "data": message
+            ]
+
+            updateEvent = ZMUpdateEvent(fromEventStreamPayload: mockPayload, uuid: nil)!
+
+            return [updateEvent]
         })
 
         // Mock sending welcome message.
@@ -210,6 +219,10 @@ class MLSControllerTests: ZMConversationTestsBase {
         } catch let error {
             XCTFail("Unexpected error: \(String(describing: error))")
         }
+
+        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        XCTAssertEqual(processConversationEventsCalls.count, 1)
+        XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
 
         let addClientsToConversationCalls = mockCoreCrypto.calls.addClientsToConversation
         XCTAssertEqual(addClientsToConversationCalls.count, 1)
@@ -337,10 +350,21 @@ class MLSControllerTests: ZMConversationTestsBase {
             welcome: [1, 1, 1, 1]
         )
 
+        // Mock update event for member joins the conversation
+        var updateEvent: ZMUpdateEvent!
+
         // Mock sending message.
         mockActionsProvider.sendMessageMocks.append({ message in
             XCTAssertEqual(message, Data([0, 0, 0, 0]))
-            return []
+
+            let mockPayload: NSDictionary = [
+                "type": "conversation.member-join",
+                "data": message
+            ]
+
+            updateEvent = ZMUpdateEvent(fromEventStreamPayload: mockPayload, uuid: nil)!
+
+            return [updateEvent]
         })
 
         do {
@@ -351,7 +375,10 @@ class MLSControllerTests: ZMConversationTestsBase {
             // Then
             switch error {
             case MLSController.MLSGroupCreationError.failedToSendWelcomeMessage:
-                break
+
+                let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+                XCTAssertEqual(processConversationEventsCalls.count, 1)
+                XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
 
             default:
                 XCTFail("Unexpected error: \(String(describing: error))")
