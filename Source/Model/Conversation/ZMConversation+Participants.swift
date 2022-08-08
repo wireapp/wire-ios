@@ -154,8 +154,14 @@ extension ZMConversation {
             action.send(in: context.notificationContext)
 
         case .mls:
+            var mlsController: MLSControllerProtocol?
+
+            context.zm_sync.performAndWait {
+                mlsController = context.zm_sync.mlsController
+            }
+
             guard
-                let mlsController = context.mlsController,
+                let mlsController = mlsController,
                 let groupID = mlsGroupID?.base64EncodedString,
                 let mlsGroupID = MLSGroupID(base64Encoded: groupID)
             else {
