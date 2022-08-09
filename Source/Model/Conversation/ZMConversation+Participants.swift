@@ -22,7 +22,8 @@ import WireProtos
 public enum ConversationRemoveParticipantError: Error {
    case unknown,
         invalidOperation,
-        conversationNotFound
+        conversationNotFound,
+        failedToRemoveMLSMembers
 }
 
 public enum ConversationAddParticipantsError: Error {
@@ -191,8 +192,10 @@ extension ZMConversation {
         }
     }
 
-    public func removeParticipant(_ participant: UserType,
-                                  completion: @escaping RemoveParticipantAction.ResultHandler) {
+    public func removeParticipant(
+        _ participant: UserType,
+        completion: @escaping RemoveParticipantAction.ResultHandler
+    ) {
         guard
             let context = managedObjectContext
         else {
@@ -206,9 +209,50 @@ extension ZMConversation {
             return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
         }
 
-        var action = RemoveParticipantAction(user: user, conversation: self)
-        action.onResult(resultHandler: completion)
-        action.send(in: context.notificationContext)
+        switch messageProtocol {
+
+        case .proteus:
+            var action = RemoveParticipantAction(user: user, conversation: self)
+            action.onResult(resultHandler: completion)
+            action.send(in: context.notificationContext)
+
+        case .mls:
+            var mlsController: MLSControllerProtocol?
+
+            context.zm_sync.performAndWait {
+                mlsController = context.zm_sync.mlsController
+            }
+
+            guard
+                let mlsController = mlsController,
+                let groupID = mlsGroupID
+
+            else {
+                completion(.failure(.invalidOperation))
+                return
+            }
+
+            let clientIDs = user.clients.compactMap( MLSClientID.init(userClient:))
+
+            Task {
+                do {
+
+                    try await mlsController.removeMembersFromConversation(with: clientIDs, for: groupID)
+
+                    context.perform {
+                        completion(.success(()))
+                    }
+
+                } catch {
+                    Logging.eventProcessing.warn("Failed to remove member to mls group: \(String(describing: error))")
+
+                    context.perform {
+                        completion(.failure(.failedToRemoveMLSMembers))
+                    }
+
+                }
+            }
+        }
     }
 
     // MARK: - Participants methods

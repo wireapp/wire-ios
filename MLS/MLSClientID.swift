@@ -20,7 +20,7 @@ import Foundation
 
 /// An ID representing a identifying a single user client.
 
-struct MLSClientID: Equatable {
+public struct MLSClientID: Equatable {
 
     // MARK: - Properties
 
