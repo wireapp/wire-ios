@@ -85,3 +85,34 @@ extension ZMConversation {
     @NSManaged public var isPendingWelcomeMessage: Bool
 
 }
+
+// MARK: - Fetch by group id
+
+public extension ZMConversation {
+
+    static func fetch(
+        with groupID: MLSGroupID,
+        domain: String,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
+        let request = Self.fetchRequest()
+        request.fetchLimit = 2
+
+        if APIVersion.isFederationEnabled {
+            request.predicate = NSPredicate(
+                format: "%K == %@ AND %K == %@",
+                argumentArray: [Self.mlsGroupID, groupID.data, Self.domainKey()!, domain]
+            )
+        } else {
+            request.predicate = NSPredicate(
+                format: "%K == %@",
+                argumentArray: [Self.mlsGroupID, groupID.data]
+            )
+        }
+
+        let result = context.executeFetchRequestOrAssert(request)
+        require(result.count <= 1, "More than one conversation found for a single group id")
+        return result.first as? ZMConversation
+    }
+
+}
