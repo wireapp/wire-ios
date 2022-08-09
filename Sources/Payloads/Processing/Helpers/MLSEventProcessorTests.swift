@@ -51,9 +51,11 @@ class MLSEventProcessorTests: MessagingTestBase {
             // Given
             let message = "welcome message"
             self.mlsControllerMock.groupID = self.conversation.mlsGroupID
+            self.conversation.isPendingWelcomeMessage = true
+            XCTAssertTrue(self.conversation.isPendingWelcomeMessage)
 
             // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, for: self.conversation, in: self.syncMOC)
+            MLSEventProcessor.shared.process(welcomeMessage: message, domain: self.domain, in: self.syncMOC)
 
             // Then
             XCTAssertEqual(message, self.mlsControllerMock.processedWelcomeMessage)

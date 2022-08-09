@@ -29,7 +29,7 @@ class MockMLSEventProcessor: MLSEventProcessing {
 
     var processedMessage: String?
 
-    func process(welcomeMessage: String, for conversation: ZMConversation?, in context: NSManagedObjectContext) {
+    func process(welcomeMessage: String, domain: String, in context: NSManagedObjectContext) {
         processedMessage = welcomeMessage
     }
 

@@ -44,4 +44,8 @@ public enum Logging {
 
     public static let EAR = ZMSLog(tag: "EAR")
 
+    /// For logs related to the mls.
+
+    public static let mls = ZMSLog(tag: "mls")
+
 }
