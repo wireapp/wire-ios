@@ -26,7 +26,6 @@ public protocol MLSControllerProtocol {
 
     func conversationExists(groupID: MLSGroupID) -> Bool
 
-    @discardableResult
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
 
     func decrypt(message: String, for groupID: MLSGroupID) throws -> Data?
@@ -328,7 +327,6 @@ public final class MLSController: MLSControllerProtocol {
         return coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
     }
 
-    @discardableResult
     public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
         guard let messageBytes = welcomeMessage.base64EncodedBytes else {
             logger.error("failed to convert welcome message to bytes")
