@@ -28,6 +28,8 @@ public protocol MLSControllerProtocol {
 
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
 
+    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes
+
     func decrypt(message: String, for groupID: MLSGroupID) throws -> Data?
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
@@ -42,7 +44,7 @@ public final class MLSController: MLSControllerProtocol {
     private weak var context: NSManagedObjectContext?
     private let coreCrypto: CoreCryptoProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
-    private let logger = ZMSLog(tag: "core-crypto")
+    private let logger = Logging.mls
 
     let actionsProvider: MLSActionsProviderProtocol
     let targetUnclaimedKeyPackageCount = 100
@@ -385,6 +387,24 @@ public final class MLSController: MLSControllerProtocol {
             throw MLSWelcomeMessageProcessingError.failedToProcessMessage
         }
     }
+
+    // MARK: - Encrypt message
+
+    public enum MLSMessageEncryptionError: Error {
+
+        case failedToEncryptMessage
+
+    }
+
+    public func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+        do {
+            return try coreCrypto.wire_encryptMessage(conversationId: groupID.bytes, message: message)
+        } catch let error {
+            logger.warn("failed to encrypt message: \(String(describing: error))")
+            throw MLSMessageEncryptionError.failedToEncryptMessage
+        }
+    }
+
 
     // MARK: - Decrypting Message
 

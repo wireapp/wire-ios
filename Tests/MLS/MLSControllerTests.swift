@@ -50,6 +50,49 @@ class MLSControllerTests: ZMConversationTestsBase {
         super.tearDown()
     }
 
+    // MARK: - Message Encryption
+
+    typealias EncryptionError = MLSController.MLSMessageEncryptionError
+
+    func test_Encrypt_IsSuccessful() {
+        do {
+            // Given
+            let groupID = MLSGroupID([1, 1, 1])
+            let unencryptedMessage: Bytes = [2, 2, 2]
+            let encryptedMessage: Bytes = [3, 3, 3]
+
+            // Mock
+            mockCoreCrypto.mockEncryptMessage = encryptedMessage
+
+            // When
+            let result = try sut.encrypt(message: unencryptedMessage, for: groupID)
+
+            // Then
+            let call = mockCoreCrypto.calls.encryptMessage.element(atIndex: 0)
+            XCTAssertEqual(mockCoreCrypto.calls.encryptMessage.count, 1)
+            XCTAssertEqual(call?.0, groupID.bytes)
+            XCTAssertEqual(call?.1, unencryptedMessage)
+            XCTAssertEqual(result, encryptedMessage)
+
+        } catch {
+            XCTFail("Unexpected error: \(String(describing: error))")
+        }
+    }
+
+    func test_Encrypt_Fails() {
+        // Given
+        let groupID = MLSGroupID([1, 1, 1])
+        let unencryptedMessage: Bytes = [2, 2, 2]
+
+        // Mock
+        mockCoreCrypto.mockEncryptError = CryptoError.InvalidByteArrayError(message: "bad bytes!")
+
+        // When / Then
+        assertItThrows(error: EncryptionError.failedToEncryptMessage) {
+            _ = try sut.encrypt(message: unencryptedMessage, for: groupID)
+        }
+    }
+
     // MARK: - Message Decryption
 
     typealias DecryptionError = MLSController.MLSMessageDecryptionError
