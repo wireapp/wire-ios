@@ -21,7 +21,7 @@ import Foundation
 public class LinkPreviewUpdateRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
-    let messageSync: ProteusMessageSync<ZMClientMessage>
+    let messageSync: MessageSync<ZMClientMessage>
 
     static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
         return NSPredicate(format: "%K == %@ AND %K == %d",
@@ -35,8 +35,11 @@ public class LinkPreviewUpdateRequestStrategy: AbstractRequestStrategy, ZMContex
         let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(context: managedObjectContext)
         self.modifiedKeysSync = ModifiedKeyObjectSync(trackedKey: ZMClientMessage.linkPreviewStateKey,
                                                       modifiedPredicate: modifiedPredicate)
-        self.messageSync = ProteusMessageSync<ZMClientMessage>(context: managedObjectContext,
-                                                               applicationStatus: applicationStatus)
+
+        self.messageSync = MessageSync<ZMClientMessage>(
+            context: managedObjectContext,
+            appStatus: applicationStatus
+        )
 
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)

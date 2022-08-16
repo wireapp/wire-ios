@@ -26,12 +26,16 @@ import Foundation
 public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
-    let messageSync: ProteusMessageSync<ZMAssetClientMessage>
+    let messageSync: MessageSync<ZMAssetClientMessage>
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
 
         self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
-        self.messageSync = ProteusMessageSync(context: managedObjectContext, applicationStatus: applicationStatus)
+
+        self.messageSync = MessageSync(
+            context: managedObjectContext,
+            appStatus: applicationStatus
+        )
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -70,6 +74,9 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 object.markAsSent()
             case .failure(let error):
                 switch error {
+                case .messageProtocolMissing:
+                    object.expire()
+
                 case .expired, .gaveUpRetrying:
                     object.expire()
 

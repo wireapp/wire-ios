@@ -28,6 +28,7 @@ import Foundation
 public enum EntitySyncError: Error {
     case expired
     case gaveUpRetrying
+    case messageProtocolMissing
 }
 
 public typealias EntitySyncHandler = (_ result: Swift.Result<Void, EntitySyncError>, _ response: ZMTransportResponse) -> Void

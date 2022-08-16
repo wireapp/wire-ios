@@ -62,4 +62,12 @@ class MockMLSController: MLSControllerProtocol {
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
 
     }
+
+    func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws {
+
+    }
+
+    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+        return message + [000]
+    }
 }

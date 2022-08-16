@@ -20,12 +20,6 @@ import Foundation
 
 public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
-    let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
-    let messageSync: ProteusMessageSync<ZMClientMessage>
-    let messageExpirationTimer: MessageExpirationTimer
-    let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
-    let localNotificationDispatcher: PushMessageHandler
-
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
@@ -33,56 +27,99 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf])
     }
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                localNotificationDispatcher: PushMessageHandler,
-                applicationStatus: ApplicationStatus) {
+    // MARK: - Properties
 
-        self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
-        self.messageSync = ProteusMessageSync<ZMClientMessage>(context: managedObjectContext,
-                                                               applicationStatus: applicationStatus)
+    let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
+    let messageSync: MessageSync<ZMClientMessage>
+    let messageExpirationTimer: MessageExpirationTimer
+    let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
+    let localNotificationDispatcher: PushMessageHandler
+
+    // MARK: - Life cycle
+
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        localNotificationDispatcher: PushMessageHandler,
+        applicationStatus: ApplicationStatus
+    ) {
+        insertedObjectSync = InsertedObjectSync(
+            insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext)
+        )
+
+        messageSync = MessageSync(
+            context: managedObjectContext,
+            appStatus: applicationStatus
+        )
+
         self.localNotificationDispatcher = localNotificationDispatcher
-        self.messageExpirationTimer = MessageExpirationTimer(moc: managedObjectContext, entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()], localNotificationDispatcher: localNotificationDispatcher)
-        self.linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(linkAttachmentDetector: LinkAttachmentDetectorHelper.defaultDetector(), managedObjectContext: managedObjectContext)
 
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+        messageExpirationTimer = MessageExpirationTimer(
+            moc: managedObjectContext,
+            entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()],
+            localNotificationDispatcher: localNotificationDispatcher
+        )
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsWhileInBackground]
+        linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(
+            linkAttachmentDetector: LinkAttachmentDetectorHelper.defaultDetector(),
+            managedObjectContext: managedObjectContext
+        )
 
-        self.insertedObjectSync.transcoder = self
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
 
-        self.messageSync.onRequestScheduled { [weak self] (message, _) in
+        configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsWhileInBackground
+        ]
+
+        insertedObjectSync.transcoder = self
+
+        messageSync.onRequestScheduled { [weak self] message, _ in
             self?.messageExpirationTimer.stop(for: message)
         }
-    }
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [insertedObjectSync, messageExpirationTimer, self.linkAttachmentsPreprocessor] + messageSync.contextChangeTrackers
-    }
-
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
     }
 
     deinit {
         self.messageExpirationTimer.tearDown()
     }
 
+    // MARK: - Methods
+
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        return [
+            insertedObjectSync,
+            messageExpirationTimer,
+            linkAttachmentsPreprocessor
+        ] + messageSync.contextChangeTrackers
+    }
+
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        return messageSync.nextRequest(for: apiVersion)
+    }
+
 }
+
+// MARK: - Inserted object sync transcoder
 
 extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
-        messageSync.sync(object) { [weak self] (result, response) in
+        messageSync.sync(object) { [weak self] result, response in
             switch result {
             case .success:
                 object.markAsSent()
                 self?.deleteMessageIfNecessary(object)
+
             case .failure(let error):
                 switch error {
+                case .messageProtocolMissing:
+                    object.expire()
+                    self?.localNotificationDispatcher.didFailToSend(object)
+
                 case .expired, .gaveUpRetrying:
                     object.expire()
                     self?.localNotificationDispatcher.didFailToSend(object)
@@ -96,30 +133,39 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     }
                 }
             }
+
+            completion()
         }
     }
 
     private func deleteMessageIfNecessary(_ message: ZMClientMessage) {
-        if let underlyingMessage = message.underlyingMessage {
-            if underlyingMessage.hasReaction {
-                managedObjectContext.delete(message)
-            }
-            if underlyingMessage.hasConfirmation {
-                // NOTE: this will only be read confirmations since delivery confirmations
-                // are not sent using the ClientMessageTranscoder
-                managedObjectContext.delete(message)
-            }
+        guard let underlyingMessage = message.underlyingMessage else { return }
+
+        if underlyingMessage.hasReaction {
+            managedObjectContext.delete(message)
+        }
+
+        if underlyingMessage.hasConfirmation {
+            // NOTE: this will only be read confirmations since delivery confirmations
+            // are not sent using the ClientMessageTranscoder
+            managedObjectContext.delete(message)
         }
     }
 
 }
 
-// MARK: - Update events
+// MARK: - Event processing
 
 extension ClientMessageRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        events.forEach { self.insertMessage(from: $0, prefetchResult: prefetchResult) }
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) {
+        events.forEach {
+            self.insertMessage(from: $0, prefetchResult: prefetchResult)
+        }
     }
 
     public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
@@ -130,6 +176,7 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
                  .conversationOtrAssetAdd,
                  .conversationMLSMessageAdd:
                 return $0.messageNonce
+
             default:
                 return nil
             }
@@ -139,9 +186,7 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
         case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
-
             guard let message = ZMOTRMessage.createOrUpdate(from: event, in: managedObjectContext, prefetchResult: prefetchResult) else { return }
-
             message.markAsSent()
 
         default:
@@ -153,7 +198,10 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
 }
 
 // MARK: - Helpers
+
 private struct UpdateEventWithNonce {
+
     let event: ZMUpdateEvent
     let nonce: UUID
+
 }

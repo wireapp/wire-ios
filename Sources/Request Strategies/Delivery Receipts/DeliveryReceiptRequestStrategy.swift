@@ -46,7 +46,7 @@ extension ZMUpdateEvent {
 @objcMembers
 public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy {
 
-    private let messageSync: ProteusMessageSync<GenericMessageEntity>
+    private let messageSync: MessageSync<GenericMessageEntity>
 
     // MARK: - Init
 
@@ -54,8 +54,10 @@ public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy {
                 applicationStatus: ApplicationStatus,
                 clientRegistrationDelegate: ClientRegistrationDelegate) {
 
-        self.messageSync = ProteusMessageSync(context: managedObjectContext,
-                                              applicationStatus: applicationStatus)
+        self.messageSync = MessageSync(
+            context: managedObjectContext,
+            appStatus: applicationStatus
+        )
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
