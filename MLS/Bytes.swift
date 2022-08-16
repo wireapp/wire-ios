@@ -20,7 +20,7 @@ import Foundation
 
 public typealias Bytes = [UInt8]
 
-extension Bytes {
+public extension Bytes {
 
     var data: Data {
         return .init(self)
@@ -39,7 +39,7 @@ extension Bytes {
 
 }
 
-extension Data {
+public extension Data {
 
     var bytes: Bytes {
         return .init(self)

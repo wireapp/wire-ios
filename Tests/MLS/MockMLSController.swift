@@ -35,6 +35,7 @@ class MockMLSController: MLSControllerProtocol {
         var createGroup = [MLSGroupID]()
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
+        var enccrypt = [(Bytes, MLSGroupID)]()
         var decrypt = [(String, MLSGroupID)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
@@ -45,15 +46,19 @@ class MockMLSController: MLSControllerProtocol {
 
     var calls = Calls()
 
-    // MARK: - Methods
+    // MARK: - Key packages
 
     func uploadKeyPackagesIfNeeded() {
         calls.uploadKeyPackagesIfNeeded.append(())
     }
 
+    // MARK: - Create group
+
     func createGroup(for groupID: MLSGroupID) throws {
         calls.createGroup.append(groupID)
     }
+
+    // MARK: - Conversation exists
 
     typealias ConversationExistsMock = (MLSGroupID) -> Bool
 
@@ -63,6 +68,8 @@ class MockMLSController: MLSControllerProtocol {
         calls.conversationExists.append(groupID)
         return conversationExistsMock?(groupID) ?? false
     }
+
+    // MARK: - Process welcome message
 
     typealias ProcessWelcomeMessageMock = (String) throws -> MLSGroupID
 
@@ -74,6 +81,20 @@ class MockMLSController: MLSControllerProtocol {
         return try mock(welcomeMessage)
     }
 
+    // MARK: - Encrypt
+
+    typealias EncryptMock = (Bytes, MLSGroupID) throws -> Bytes
+
+    var encryptMock: EncryptMock?
+
+    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+        calls.enccrypt.append((message, groupID))
+        guard let mock = encryptMock else { throw MockError.unmockedMethodCalled }
+        return try mock(message, groupID)
+    }
+
+    // MARK: - Decrypt
+
     typealias DecryptMock = (String, MLSGroupID) throws -> Data?
 
     var decryptMock: DecryptMock?
@@ -84,9 +105,13 @@ class MockMLSController: MLSControllerProtocol {
         return try mock(message, groupID)
     }
 
+    // MARK: - Add members
+
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) throws {
         calls.addMembersToConversation.append((users, groupID))
     }
+
+    // MARK: - Remove members
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) throws {
         calls.removeMembersFromConversation.append((clientIds, groupID))
