@@ -17,43 +17,19 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UserNotifications
 
-public class NotificationService: UNNotificationServiceExtension{
+final class SimpleNotificationService: UNNotificationServiceExtension {
 
-    // MARK: - Properties
-
-    let simpleService = SimpleNotificationService()
-    let legacyService = LegacyNotificationService()
-
-    // MARK: - Methods
-
-    public override func didReceive(
+    override func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        if DeveloperFlag.useSimpleNSE.isOn {
-            simpleService.didReceive(
-                request,
-                withContentHandler: contentHandler
-            )
-        } else {
-            legacyService.didReceive(
-                request,
-                withContentHandler: contentHandler
-            )
-        }
+        fatalError("not implemented")
     }
 
-    public override func serviceExtensionTimeWillExpire() {
-        if DeveloperFlag.useSimpleNSE.isOn {
-            simpleService.serviceExtensionTimeWillExpire()
-        } else {
-            legacyService.serviceExtensionTimeWillExpire()
-        }
+    override func serviceExtensionTimeWillExpire() {
+        fatalError("not implemented")
     }
-
-
 
 }
