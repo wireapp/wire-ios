@@ -1329,6 +1329,7 @@
 		EED92353278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */; };
 		EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */; };
 		EEE104052126F68A003C779B /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE104042126F68A003C779B /* CameraController.swift */; };
+		EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
 		EEE5D981287E1CDA004E2D2B /* DeveloperFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */; };
 		EEE60E2C2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */; };
 		EEE81E9223E028EA00A1D035 /* TopPeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */; };
@@ -3239,6 +3240,7 @@
 		EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccentColorPickerSnapshotTests.swift; path = "Wire-iOS Tests/AccentColorPickerSnapshotTests.swift"; sourceTree = SOURCE_ROOT; };
 		EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+Invite.swift"; sourceTree = "<group>"; };
 		EEE104042126F68A003C779B /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
+		EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceError.swift; sourceTree = "<group>"; };
 		EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlag.swift; sourceTree = "<group>"; };
 		EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsNotificationOptionsCellTests.swift; sourceTree = "<group>"; };
 		EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopPeopleCell.swift; sourceTree = "<group>"; };
@@ -3745,7 +3747,7 @@
 			children = (
 				EE7C919727B40EBD00595977 /* Wire Notification Extension.entitlements */,
 				065A5AE0279B07AC002D4D1E /* NotificationService.swift */,
-				EE3D7AE528AD4FC400D0A37E /* SimpleNotificationService.swift */,
+				EE3D7B0328AEF22A00D0A37E /* Simple */,
 				EE3D7AE328AD4FB500D0A37E /* LegacyNotificationService.swift */,
 				065A5AE2279B07AC002D4D1E /* Info.plist */,
 			);
@@ -7011,6 +7013,15 @@
 			path = PreferredAPIVersion;
 			sourceTree = "<group>";
 		};
+		EE3D7B0328AEF22A00D0A37E /* Simple */ = {
+			isa = PBXGroup;
+			children = (
+				EE3D7AE528AD4FC400D0A37E /* SimpleNotificationService.swift */,
+				EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */,
+			);
+			path = Simple;
+			sourceTree = "<group>";
+		};
 		EE430EBA25C208A90056BDE3 /* Screen Curtain */ = {
 			isa = PBXGroup;
 			children = (
@@ -8036,6 +8047,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE3D7AE628AD4FC400D0A37E /* SimpleNotificationService.swift in Sources */,
+				EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,
 				EE3D7AE428AD4FB500D0A37E /* LegacyNotificationService.swift in Sources */,
 			);
@@ -8066,7 +8078,6 @@
 				5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */,
 				06F9864625CC146B005572C5 /* UIView+ConstraintFactory.swift in Sources */,
 				BFBE45771E36205F009FBF60 /* Error+Logging.swift in Sources */,
-				E57917B228999A240063339D /* UIView+Borders.swift in Sources */,
 				543E0C681E23A7C3000E2161 /* NotSignedInViewController.swift in Sources */,
 				BF96A6CC1E2FD3BA0057974A /* NSItemProvider+Fetching.swift in Sources */,
 				06F9864225CBEEE6005572C5 /* StyleKitIcon+Const.swift in Sources */,
