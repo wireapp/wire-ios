@@ -23,5 +23,6 @@ enum NotificationServiceError: Error {
     case malformedPushPayload
     case userNotAuthenticated
     case noEvent
+    case cantAccessCookie
 
 }

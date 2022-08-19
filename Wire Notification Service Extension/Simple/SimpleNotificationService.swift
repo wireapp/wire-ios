@@ -103,9 +103,9 @@ final class SimpleNotificationService: UNNotificationServiceExtension {
         return (userID, eventID)
     }
 
-    private func isUserAuthenticated(userID: UUID) -> Bool {
+    private func isUserAuthenticated(userID: UUID) throws -> Bool {
         guard let serverName = environment.backendURL.host else {
-            return false
+            throw NotificationServiceError.cantAccessCookie
         }
 
         let cookieStorage = ZMPersistentCookieStorage(
