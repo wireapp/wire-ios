@@ -17,19 +17,11 @@
 //
 
 import Foundation
-import UserNotifications
 
-final class SimpleNotificationService: UNNotificationServiceExtension {
+enum NotificationServiceError: Error {
 
-    override func didReceive(
-        _ request: UNNotificationRequest,
-        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
-    ) {
-        fatalError("not implemented")
-    }
-
-    override func serviceExtensionTimeWillExpire() {
-        fatalError("not implemented")
-    }
+    case malformedPushPayload
+    case userNotAuthenticated
+    case noEvent
 
 }
