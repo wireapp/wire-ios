@@ -1330,6 +1330,11 @@
 		EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */; };
 		EEE104052126F68A003C779B /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE104042126F68A003C779B /* CameraController.swift */; };
 		EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
+		EEE455E228B2E11D005ACD74 /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E128B2E11D005ACD74 /* Job.swift */; };
+		EEE455E428B2E157005ACD74 /* NetworkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E328B2E157005ACD74 /* NetworkSession.swift */; };
+		EEE455E628B2E1D9005ACD74 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E528B2E1D9005ACD74 /* API.swift */; };
+		EEE455E828B2E210005ACD74 /* AccessAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */; };
+		EEE455EB28B2E470005ACD74 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
 		EEE5D981287E1CDA004E2D2B /* DeveloperFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */; };
 		EEE60E2C2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */; };
 		EEE81E9223E028EA00A1D035 /* TopPeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */; };
@@ -3241,6 +3246,11 @@
 		EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+Invite.swift"; sourceTree = "<group>"; };
 		EEE104042126F68A003C779B /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceError.swift; sourceTree = "<group>"; };
+		EEE455E128B2E11D005ACD74 /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
+		EEE455E328B2E157005ACD74 /* NetworkSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSession.swift; sourceTree = "<group>"; };
+		EEE455E528B2E1D9005ACD74 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessAPIClient.swift; sourceTree = "<group>"; };
+		EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPrimitives.swift; sourceTree = "<group>"; };
 		EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlag.swift; sourceTree = "<group>"; };
 		EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsNotificationOptionsCellTests.swift; sourceTree = "<group>"; };
 		EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopPeopleCell.swift; sourceTree = "<group>"; };
@@ -7018,6 +7028,9 @@
 			children = (
 				EE3D7AE528AD4FC400D0A37E /* SimpleNotificationService.swift */,
 				EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */,
+				EEE455E128B2E11D005ACD74 /* Job.swift */,
+				EEE455EC28B2E47E005ACD74 /* Network */,
+				EEE455E928B2E446005ACD74 /* API */,
 			);
 			path = Simple;
 			sourceTree = "<group>";
@@ -7104,6 +7117,24 @@
 				EECA90AB28744A060024B301 /* DeveloperFlagsViewModel.swift */,
 			);
 			path = DeveloperFlags;
+			sourceTree = "<group>";
+		};
+		EEE455E928B2E446005ACD74 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				EEE455E528B2E1D9005ACD74 /* API.swift */,
+				EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		EEE455EC28B2E47E005ACD74 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				EEE455E328B2E157005ACD74 /* NetworkSession.swift */,
+				EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		EEFF3E7321B6755D000834A6 /* Sections */ = {
@@ -8049,7 +8080,12 @@
 				EE3D7AE628AD4FC400D0A37E /* SimpleNotificationService.swift in Sources */,
 				EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,
+				EEE455E828B2E210005ACD74 /* AccessAPIClient.swift in Sources */,
+				EEE455E428B2E157005ACD74 /* NetworkSession.swift in Sources */,
 				EE3D7AE428AD4FB500D0A37E /* LegacyNotificationService.swift in Sources */,
+				EEE455E228B2E11D005ACD74 /* Job.swift in Sources */,
+				EEE455E628B2E1D9005ACD74 /* API.swift in Sources */,
+				EEE455EB28B2E470005ACD74 /* NetworkPrimitives.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

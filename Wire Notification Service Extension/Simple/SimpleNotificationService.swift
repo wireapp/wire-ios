@@ -25,11 +25,12 @@ func log(_ message: String) {
     print(message)
 }
 
+// TODO: add id to service and include in logs
+
 final class SimpleNotificationService: UNNotificationServiceExtension {
 
     // MARK: - Types
 
-    typealias PushPayload = (userID: UUID, eventID: UUID)
     typealias ContentHandler = (UNNotificationContent) -> Void
 
     // MARK: - Properties
@@ -48,84 +49,38 @@ final class SimpleNotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping ContentHandler
     ) {
-        do {
-            log("\(request.identifier): received request")
-            let content = try execute(request: request)
-            log("\(request.identifier): showing notification")
-            contentHandler(content)
-        } catch {
-            let message = "\(request.identifier): failed with error: \(String(describing: error))"
-            log(message)
-            contentHandler(.debugMessageIfNeeded(message: message))
-        }
-    }
-
-    func execute(request: UNNotificationRequest) throws -> UNNotificationContent {
-        log("\(request.identifier): executing request")
-
-        let (userID, eventID) = try pushPayload(from: request)
-
-        log("\(request.identifier): request is for user (\(userID)) and event (\(eventID)")
-
-        guard isUserAuthenticated(userID: userID) else {
-            throw NotificationServiceError.userNotAuthenticated
+        guard #available(iOS 15, *) else {
+            contentHandler(.debugMessageIfNeeded(message: "iOS 15 not available"))
+            return
         }
 
-        log("\(request.identifier): user (\(userID)) is authenticated")
-        log("\(request.identifier): fetching event with id: \(eventID)")
-
-        guard let event = fetchEvent(eventID: eventID) else {
-            throw NotificationServiceError.noEvent
+        // TODO: maybe keep a reference to the task so we
+        // can cancel it if the extension expires.
+        Task {
+            do {
+                log("\(request.identifier): received request")
+                let session = try Job(request: request)
+                let content = try await session.execute()
+                log("\(request.identifier): showing notification")
+                contentHandler(content)
+            } catch {
+                let message = "\(request.identifier): failed with error: \(String(describing: error))"
+                log(message)
+                contentHandler(.debugMessageIfNeeded(message: message))
+            }
         }
-
-        // Is new message? Which conv? Should show it? Show it.
-
-        // Is call message? Which conv? Should show it? Incoming or ended?
-
-        // Convert to notification
-
-        // Return content
-        fatalError("not implemented")
-    }
-
-    private func pushPayload(from request: UNNotificationRequest) throws -> PushPayload {
-        guard
-            let notificationData = request.content.userInfo["data"] as? [String: Any],
-            let userIDString = notificationData["user"] as? String,
-            let userID = UUID(uuidString: userIDString),
-            let data = notificationData["data"] as? [String: Any],
-            let eventIDString = data["id"] as? String,
-            let eventID = UUID(uuidString: eventIDString)
-        else {
-            throw NotificationServiceError.malformedPushPayload
-        }
-
-        return (userID, eventID)
-    }
-
-    private func isUserAuthenticated(userID: UUID) throws -> Bool {
-        guard let serverName = environment.backendURL.host else {
-            throw NotificationServiceError.cantAccessCookie
-        }
-
-        let cookieStorage = ZMPersistentCookieStorage(
-            forServerName: serverName,
-            userIdentifier: userID
-        )
-
-        return cookieStorage.isAuthenticated
-    }
-
-    private func fetchEvent(eventID: UUID) -> ZMUpdateEvent? {
-        // Get an access token.
-        // Fetch the event.
-        // Parse the response.
-
-        fatalError("not implemented")
     }
 
     override func serviceExtensionTimeWillExpire() {
         log("extension (\(self) is expiring")
+        fatalError("not implemented")
+    }
+
+}
+
+final class EventAPIClient {
+
+    func fetchEvent(with eventID: UUID) async throws -> ZMUpdateEvent {
         fatalError("not implemented")
     }
 

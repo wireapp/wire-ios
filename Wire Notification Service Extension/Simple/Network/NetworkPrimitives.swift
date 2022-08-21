@@ -18,12 +18,37 @@
 
 import Foundation
 
-enum NotificationServiceError: Error {
+struct NetworkRequest {
 
-    case invalidEnvironment
-    case malformedPushPayload
-    case userNotAuthenticated
-    case noEvent
-    case failedToFetchAccessToken
+    let path: String
+    let httpMethod: HTTPMethod
+    let contentType: ContentType
+    let acceptType: AcceptType
+
+}
+
+enum HTTPMethod: String {
+
+    case get = "GET"
+    case post = "POST"
+
+}
+
+enum ContentType: String {
+
+    case json = "application/json"
+
+}
+
+enum AcceptType: String {
+
+    case json = "application/json"
+
+}
+
+struct NetworkResponse {
+
+    let status: Int
+    let data: Data
 
 }
