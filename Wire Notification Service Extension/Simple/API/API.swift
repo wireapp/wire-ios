@@ -18,12 +18,28 @@
 
 import Foundation
 
-enum NotificationServiceError: Error {
+enum API {
 
-    case invalidEnvironment
-    case malformedPushPayload
-    case userNotAuthenticated
-    case noEvent
-    case failedToFetchAccessToken
+    static func fetchAccessToken() -> AccessTokenEndpoint {
+        return AccessTokenEndpoint()
+    }
 
 }
+
+protocol Endpoint {
+
+    associatedtype Output
+    associatedtype Failure: Error
+
+    var request: NetworkRequest { get }
+
+    func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure>
+
+}
+
+extension Endpoint {
+
+    typealias Result = Swift.Result<Output, Failure>
+
+}
+
