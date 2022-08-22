@@ -20,9 +20,17 @@ import Foundation
 import UserNotifications
 import WireTransport
 import WireCommonComponents
+import OSLog
+
+extension Logger {
+
+    private static var subsystem = Bundle.main.bundleIdentifier!
+
+    static let simpleNSE = Logger(subsystem: subsystem, category: "simple nse")
+}
 
 func log(_ message: String) {
-    print(message)
+    Logger.simpleNSE.debug("\(message, privacy: .public)")
 }
 
 // TODO: add id to service and include in logs
