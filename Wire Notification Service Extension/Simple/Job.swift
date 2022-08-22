@@ -70,7 +70,7 @@ final class Job: NSObject {
 
         log("\(request.identifier): fetching event with id: \(eventID)")
 
-        guard let event = fetchEvent(eventID: eventID) else {
+        guard let event = try fetchEvent(eventID: eventID) else {
             throw NotificationServiceError.noEvent
         }
 
@@ -81,7 +81,7 @@ final class Job: NSObject {
         // Convert to notification
 
         // Return content
-        fatalError("not implemented")
+        throw NotificationServiceError.notImplemented("returning content")
     }
 
     private class func pushPayload(from request: UNNotificationRequest) throws -> PushPayload {
@@ -108,11 +108,10 @@ final class Job: NSObject {
         return try await accessAPIClient.fetchAccessToken()
     }
 
-    private func fetchEvent(eventID: UUID) -> ZMUpdateEvent? {
+    private func fetchEvent(eventID: UUID) throws -> ZMUpdateEvent? {
         // Fetch the event.
         // Parse the response.
-
-        fatalError("not implemented")
+        throw NotificationServiceError.notImplemented("fetching events")
     }
 
 }
