@@ -46,9 +46,24 @@ enum AcceptType: String {
 
 }
 
-struct NetworkResponse {
+enum NetworkResponse {
+
+    case success(SuccessResponse)
+    case failure(ErrorResponse)
+
+}
+
+struct SuccessResponse {
 
     let status: Int
     let data: Data
+
+}
+
+struct ErrorResponse: Codable {
+
+    let code: Int
+    let label: String
+    let message: String
 
 }

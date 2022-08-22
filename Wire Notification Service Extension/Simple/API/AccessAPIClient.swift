@@ -57,7 +57,7 @@ struct AccessTokenEndpoint: Endpoint {
         case invalidResponse
         case failedToDecodePayload
         case authenticationError
-        case unknownError(status: Int, label: String)
+        case unknownError(ErrorResponse)
 
     }
 
@@ -80,8 +80,8 @@ struct AccessTokenEndpoint: Endpoint {
     }
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
-        switch response.status {
-        case 200:
+        switch response {
+        case .success(let response) where response.status == 200:
             do {
                 let payload = try JSONDecoder().decode(ResponsePayload.self, from: response.data)
 
@@ -94,13 +94,18 @@ struct AccessTokenEndpoint: Endpoint {
                 return .failure(.failedToDecodePayload)
             }
 
-        case 403:
-            return .failure(.authenticationError)
+        case .failure(let response):
+            switch (response.code, response.label) {
+            case (403, "invalid-credentials"):
+                return .failure(.authenticationError)
 
-        case let status:
-            return .failure(.unknownError(status: status, label: "TODO"))
+            default:
+                return .failure(.unknownError(response))
+            }
+
+        default:
+            return .failure(.invalidResponse)
         }
-
     }
 
 }

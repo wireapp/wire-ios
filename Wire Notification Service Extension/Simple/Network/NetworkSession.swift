@@ -86,14 +86,26 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
             delegate: self
         )
 
+        if let jsonPayload = String(data: data, encoding: .utf8) {
+            log("received response payload: \(jsonPayload)")
+        }
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
         }
 
-        return NetworkResponse(
-            status: httpResponse.statusCode,
-            data: data
-        )
+        if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+            log("received error response: \(String(describing: errorResponse))")
+            return .failure(errorResponse)
+        } else {
+            let successResponse = SuccessResponse(
+                status: httpResponse.statusCode,
+                data: data
+            )
+
+            log("received success response: \(String(describing: successResponse))")
+            return .success(successResponse)
+        }
     }
 
 }
