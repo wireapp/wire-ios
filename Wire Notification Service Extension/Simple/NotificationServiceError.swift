@@ -25,5 +25,6 @@ enum NotificationServiceError: Error {
     case userNotAuthenticated
     case noEvent
     case failedToFetchAccessToken
+    case notImplemented(String)
 
 }
