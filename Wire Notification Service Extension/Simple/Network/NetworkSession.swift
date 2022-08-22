@@ -81,13 +81,15 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
             urlRequest.addValue(accessToken.headerValue, forHTTPHeaderField: "Authorization")
         }
 
+        log("sending network request: \(urlRequest)")
+
         let (data, response) = try await urlSession.data(
             for: urlRequest as URLRequest,
             delegate: self
         )
 
         if let jsonPayload = String(data: data, encoding: .utf8) {
-            log("received response payload: \(jsonPayload)")
+            log("received response payload for request \(request.path): \(jsonPayload)")
         }
 
         guard let httpResponse = response as? HTTPURLResponse else {
