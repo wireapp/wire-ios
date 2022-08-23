@@ -85,11 +85,3 @@ final class SimpleNotificationService: UNNotificationServiceExtension {
     }
 
 }
-
-final class EventAPIClient {
-
-    func fetchEvent(with eventID: UUID) async throws -> ZMUpdateEvent {
-        fatalError("not implemented")
-    }
-
-}

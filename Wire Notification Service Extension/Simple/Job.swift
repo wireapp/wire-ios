@@ -42,6 +42,7 @@ final class Job: NSObject {
     private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
     private let networkSession: NetworkSession
     private let accessAPIClient: AccessAPIClient
+    private let notificationsAPIClient: NotificationsAPIClient
 
     // MARK: - Life cycle
 
@@ -51,6 +52,7 @@ final class Job: NSObject {
         (userID, eventID) = try Self.pushPayload(from: request)
         networkSession = try NetworkSession(userID: userID)
         accessAPIClient = AccessAPIClient(networkSession: networkSession)
+        notificationsAPIClient = NotificationsAPIClient(networkSession: networkSession)
         super.init()
     }
 
@@ -68,20 +70,21 @@ final class Job: NSObject {
 
         networkSession.accessToken = try await fetchAccessToken()
 
-        log("\(request.identifier): fetching event with id: \(eventID)")
-
-        guard let event = try fetchEvent(eventID: eventID) else {
+        guard let event = try await fetchEvent(eventID: eventID) else {
             throw NotificationServiceError.noEvent
         }
 
-        // Is new message? Which conv? Should show it? Show it.
+        switch event.type {
+        case .conversationOtrMessageAdd:
+            log("\(request.identifier): returning notification for new message")
+            let content = UNMutableNotificationContent()
+            content.body = "You received a new message"
+            return content
 
-        // Is call message? Which conv? Should show it? Incoming or ended?
-
-        // Convert to notification
-
-        // Return content
-        throw NotificationServiceError.notImplemented("returning content")
+        default:
+            log("\(request.identifier): ignoring event of type: \(String(describing: event.type))")
+            return .empty
+        }
     }
 
     private class func pushPayload(from request: UNNotificationRequest) throws -> PushPayload {
@@ -108,10 +111,9 @@ final class Job: NSObject {
         return try await accessAPIClient.fetchAccessToken()
     }
 
-    private func fetchEvent(eventID: UUID) throws -> ZMUpdateEvent? {
-        // Fetch the event.
-        // Parse the response.
-        throw NotificationServiceError.notImplemented("fetching events")
+    private func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent? {
+        log("\(request.identifier): fetching event (\(eventID))")
+        return try await notificationsAPIClient.fetchEvent(eventID: eventID)
     }
 
 }
