@@ -20,22 +20,10 @@ import Foundation
 import UserNotifications
 import WireTransport
 import WireCommonComponents
-import OSLog
-
-extension Logger {
-
-    private static var subsystem = Bundle.main.bundleIdentifier!
-
-    static let simpleNSE = Logger(subsystem: subsystem, category: "simple nse")
-}
-
-func log(_ message: String) {
-    Logger.simpleNSE.debug("\(message, privacy: .public)")
-}
 
 // TODO: add id to service and include in logs
 
-final class SimpleNotificationService: UNNotificationServiceExtension {
+final class SimpleNotificationService: UNNotificationServiceExtension, Loggable {
 
     // MARK: - Types
 
@@ -57,7 +45,10 @@ final class SimpleNotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping ContentHandler
     ) {
+        logger.trace("\(request.identifier): received request")
+
         guard #available(iOS 15, *) else {
+            logger.error("\(request.identifier): iOS 15 is not available")
             contentHandler(.debugMessageIfNeeded(message: "iOS 15 not available"))
             return
         }
@@ -66,21 +57,21 @@ final class SimpleNotificationService: UNNotificationServiceExtension {
         // can cancel it if the extension expires.
         Task {
             do {
-                log("\(request.identifier): received request")
-                let session = try Job(request: request)
-                let content = try await session.execute()
-                log("\(request.identifier): showing notification")
+                logger.trace("\(request.identifier): initializing job")
+                let job = try Job(request: request)
+                let content = try await job.execute()
+                logger.trace("\(request.identifier): showing notification")
                 contentHandler(content)
             } catch {
                 let message = "\(request.identifier): failed with error: \(String(describing: error))"
-                log(message)
+                logger.error("\(message)")
                 contentHandler(.debugMessageIfNeeded(message: message))
             }
         }
     }
 
     override func serviceExtensionTimeWillExpire() {
-        log("extension (\(self) is expiring")
+        logger.warning("extension (\(self) is expiring")
         fatalError("not implemented")
     }
 

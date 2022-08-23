@@ -20,7 +20,7 @@ import Foundation
 import WireTransport
 
 @available(iOS 15, *)
-final class NetworkSession: NSObject, URLSessionTaskDelegate {
+final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
 
     // MARK: - Types
 
@@ -61,12 +61,14 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
     }
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result {
+        logger.trace("executing endpoint: \(String(describing: endpoint))")
         let response = try await send(request: endpoint.request)
         // TODO: Check the headers
         return endpoint.parseResponse(response)
     }
 
     func send(request: NetworkRequest) async throws -> NetworkResponse {
+        logger.trace("sending request: \(String(describing: request))")
         guard let url = URL(string: request.path, relativeTo: environment.backendURL) else {
             throw NetworkError.invalidRequestURL
         }
@@ -82,7 +84,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
             urlRequest.addValue(accessToken.headerValue, forHTTPHeaderField: "Authorization")
         }
 
-        log("sending network request: \(urlRequest)")
+        logger.info("sending network request: \(urlRequest)")
 
         let (data, response) = try await urlSession.data(
             for: urlRequest as URLRequest,
@@ -90,7 +92,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
         )
 
         if let jsonPayload = String(data: data, encoding: .utf8) {
-            log("received response payload for request \(request.path): \(jsonPayload)")
+            logger.info("received response payload for request \(request.path): \(jsonPayload)")
         }
 
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -98,7 +100,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
         }
 
         if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-            log("received error response: \(String(describing: errorResponse))")
+            logger.info("received error response: \(String(describing: errorResponse))")
             return .failure(errorResponse)
         } else {
             let successResponse = SuccessResponse(
@@ -106,7 +108,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
                 data: data
             )
 
-            log("received success response: \(String(describing: successResponse))")
+            logger.info("received success response: \(String(describing: successResponse))")
             return .success(successResponse)
         }
     }

@@ -21,7 +21,7 @@ import UserNotifications
 import WireTransport
 
 @available(iOS 15, *)
-final class Job: NSObject {
+final class Job: NSObject, Loggable {
 
     // MARK: - Types
 
@@ -47,7 +47,6 @@ final class Job: NSObject {
     // MARK: - Life cycle
 
     init(request: UNNotificationRequest) throws {
-        log("\(request.identifier): initializing session")
         self.request = request
         (userID, eventID) = try Self.pushPayload(from: request)
         networkSession = try NetworkSession(userID: userID)
@@ -59,14 +58,12 @@ final class Job: NSObject {
     // MARK: - Methods
 
     func execute() async throws -> UNNotificationContent {
-        log("\(request.identifier): executing request")
-        log("\(request.identifier): request is for user (\(userID)) and event (\(eventID)")
+        logger.trace("\(self.request.identifier): executing job...")
+        logger.info("\(self.request.identifier): request is for user (\(self.userID)) and event (\(self.eventID)")
 
         guard isUserAuthenticated else {
             throw NotificationServiceError.userNotAuthenticated
         }
-
-        log("\(request.identifier): user (\(userID)) is authenticated")
 
         networkSession.accessToken = try await fetchAccessToken()
 
@@ -76,13 +73,13 @@ final class Job: NSObject {
 
         switch event.type {
         case .conversationOtrMessageAdd:
-            log("\(request.identifier): returning notification for new message")
+            logger.trace("\(self.request.identifier): returning notification for new message")
             let content = UNMutableNotificationContent()
             content.body = "You received a new message"
             return content
 
         default:
-            log("\(request.identifier): ignoring event of type: \(String(describing: event.type))")
+            logger.trace("\(self.request.identifier): ignoring event of type: \(String(describing: event.type))")
             return .empty
         }
     }
@@ -107,12 +104,12 @@ final class Job: NSObject {
     }
 
     private func fetchAccessToken() async throws -> AccessToken {
-        log("\(request.identifier): fetching access token")
+        logger.trace("\(self.request.identifier): fetching access token")
         return try await accessAPIClient.fetchAccessToken()
     }
 
     private func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent? {
-        log("\(request.identifier): fetching event (\(eventID))")
+        logger.trace("\(self.request.identifier): fetching event (\(eventID))")
         return try await notificationsAPIClient.fetchEvent(eventID: eventID)
     }
 
