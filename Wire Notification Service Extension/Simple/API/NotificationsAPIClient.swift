@@ -79,20 +79,6 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
 
     // MARK: - Response
 
-    private struct ResponsePayload: Codable {
-
-        let id: String
-        let payload: [NotificationEvent]
-
-        struct NotificationEvent: Codable {
-
-            // some dictionary here.
-            let type: String
-
-        }
-
-    }
-
     // Expected response payload:
     // { "id": UUID, "payload": <Some update event> }
 
