@@ -35,7 +35,7 @@ protocol Loggable {
 
 extension Logger {
 
-    private static var subsystem = Bundle.main.bundleIdentifier!
+    private static var subsystem = "simple nse"
 
     init(category: String) {
         self.init(subsystem: Self.subsystem, category: category)
