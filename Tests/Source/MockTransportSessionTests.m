@@ -263,7 +263,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
                                         create:YES
                                          error:&error];
         XCTAssertNil(error);
-        NSDictionary *headers = @{@"Content-MD5": [fileData.zmMD5Digest base64EncodedStringWithOptions:0]};
+        NSString *md5Digest = [[MD5DigestHelper md5DigestFor:fileData] base64EncodedStringWithOptions:0];
+        NSDictionary *headers = @{@"Content-MD5": md5Digest};
         NSArray <ZMMultipartBodyItem *> *items =
         @[
           [[ZMMultipartBodyItem alloc] initWithData:metadata contentType:@"application/x-protobuf" headers:nil],
