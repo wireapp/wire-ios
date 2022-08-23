@@ -62,6 +62,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate {
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result {
         let response = try await send(request: endpoint.request)
+        // TODO: Check the headers
         return endpoint.parseResponse(response)
     }
 

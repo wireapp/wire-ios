@@ -24,6 +24,10 @@ enum API {
         return AccessTokenEndpoint()
     }
 
+    static func fetchNotification(eventID: UUID) -> NotificationByIDEndpoint {
+        return NotificationByIDEndpoint(eventID: eventID)
+    }
+
 }
 
 protocol Endpoint {

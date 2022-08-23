@@ -1335,6 +1335,7 @@
 		EEE455E628B2E1D9005ACD74 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E528B2E1D9005ACD74 /* API.swift */; };
 		EEE455E828B2E210005ACD74 /* AccessAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */; };
 		EEE455EB28B2E470005ACD74 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
+		EEE455EE28B2E4CE005ACD74 /* NotificationsAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455ED28B2E4CE005ACD74 /* NotificationsAPIClient.swift */; };
 		EEE5D981287E1CDA004E2D2B /* DeveloperFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */; };
 		EEE60E2C2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */; };
 		EEE81E9223E028EA00A1D035 /* TopPeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */; };
@@ -3251,6 +3252,7 @@
 		EEE455E528B2E1D9005ACD74 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessAPIClient.swift; sourceTree = "<group>"; };
 		EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPrimitives.swift; sourceTree = "<group>"; };
+		EEE455ED28B2E4CE005ACD74 /* NotificationsAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsAPIClient.swift; sourceTree = "<group>"; };
 		EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlag.swift; sourceTree = "<group>"; };
 		EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsNotificationOptionsCellTests.swift; sourceTree = "<group>"; };
 		EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopPeopleCell.swift; sourceTree = "<group>"; };
@@ -7124,6 +7126,7 @@
 			children = (
 				EEE455E528B2E1D9005ACD74 /* API.swift */,
 				EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */,
+				EEE455ED28B2E4CE005ACD74 /* NotificationsAPIClient.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -8079,6 +8082,7 @@
 			files = (
 				EE3D7AE628AD4FC400D0A37E /* SimpleNotificationService.swift in Sources */,
 				EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */,
+				EEE455EE28B2E4CE005ACD74 /* NotificationsAPIClient.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,
 				EEE455E828B2E210005ACD74 /* AccessAPIClient.swift in Sources */,
 				EEE455E428B2E157005ACD74 /* NetworkSession.swift in Sources */,
