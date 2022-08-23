@@ -80,6 +80,7 @@
 		A9DABBBF2661208900D07588 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DABBB42661208900D07588 /* SwiftProtobuf.xcframework */; };
 		A9DABBCD2661211C00D07588 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DABBC3266120E500D07588 /* WireTesting.xcframework */; };
 		A9DABBD12661212400D07588 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DABBC4266120E500D07588 /* OCMock.xcframework */; };
+		E94F92652885421100C44964 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F92642885421100C44964 /* MD5DigestHelper.swift */; };
 		EE797454283D235700A0BB0C /* MockTransportSession+FeatureConfigs.h in Headers */ = {isa = PBXBuildFile; fileRef = EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */; };
 		EE797455283D235700A0BB0C /* MockTransportSession+FeatureConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */; };
 		EE797457283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */; };
@@ -253,6 +254,7 @@
 		A9DABBC3266120E500D07588 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		A9DABBC4266120E500D07588 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		A9FF19B527A014930067DC26 /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
+		E94F92642885421100C44964 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+FeatureConfigs.h"; sourceTree = "<group>"; };
 		EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+FeatureConfigs.m"; sourceTree = "<group>"; };
 		EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+FeatureConfigs.swift"; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */,
 				541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */,
 				54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */,
+				E94F92642885421100C44964 /* MD5DigestHelper.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1012,6 +1015,7 @@
 				54AE5AAB1B78FA62002757E9 /* MockTransportSessionRequestsTests.m in Sources */,
 				F157FE8C205FFFEC00BC25F1 /* MockTransportSessionSearchTests.m in Sources */,
 				F157FE95206000AC00BC25F1 /* MockTransportSessionBroadcastTests.swift in Sources */,
+				E94F92652885421100C44964 /* MD5DigestHelper.swift in Sources */,
 				F157FE89205FFF7900BC25F1 /* MockTransportSessionLoginTests.m in Sources */,
 				541797651CE1F86500C7646D /* MockTransportSessionCancelationTests.swift in Sources */,
 				F119FC1C2044551200969615 /* MockTransportSessionConversationAccessTests.swift in Sources */,
