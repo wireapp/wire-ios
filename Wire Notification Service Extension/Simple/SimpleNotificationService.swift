@@ -22,6 +22,8 @@ import WireTransport
 import WireCommonComponents
 
 // TODO: add id to service and include in logs
+// TODO: Fix category to only show class name and not object reference
+// TODO: Fix loggers to show public logs and not private logs.
 
 final class SimpleNotificationService: UNNotificationServiceExtension, Loggable {
 
