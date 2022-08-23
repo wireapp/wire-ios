@@ -46,24 +46,42 @@ enum AcceptType: String {
 
 }
 
-enum NetworkResponse {
+enum NetworkResponse: CustomStringConvertible {
 
     case success(SuccessResponse)
     case failure(ErrorResponse)
 
+    var description: String {
+        switch self {
+        case .success(let response):
+            return response.description
+
+        case .failure(let response):
+            return response.description
+        }
+    }
+
 }
 
-struct SuccessResponse {
+struct SuccessResponse: CustomStringConvertible {
 
     let status: Int
     let data: Data
 
+    var description: String {
+        return "status: \(status), data: \(data)"
+    }
+
 }
 
-struct ErrorResponse: Codable {
+struct ErrorResponse: Codable, CustomStringConvertible {
 
     let code: Int
     let label: String
     let message: String
+
+    var description: String {
+        return "code: \(code), label: \(label), message: \(message)"
+    }
 
 }

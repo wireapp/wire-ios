@@ -1287,6 +1287,7 @@
 		EE742AB8284DE66400A6B5F3 /* DeveloperToolsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */; };
 		EE75B774203C6F5300855099 /* MarkdownTextStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE75B773203C6F5300855099 /* MarkdownTextStorageTests.swift */; };
 		EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EE7C422728B47CFC00CE018B /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7C422628B47CFC00CE018B /* Logger.swift */; };
 		EE7E0E762109FE9200787C65 /* ParticipantsStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7E0E752109FE9200787C65 /* ParticipantsStringFormatter.swift */; };
 		EE7F464B25B072A9001B3EE4 /* AppLockChangeWarningViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F464A25B072A9001B3EE4 /* AppLockChangeWarningViewControllerTests.swift */; };
 		EE7F465725B0F6FC001B3EE4 /* AppLockModuleInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F465525B0F6EB001B3EE4 /* AppLockModuleInteractorTests.swift */; };
@@ -3204,6 +3205,7 @@
 		EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsView.swift; sourceTree = "<group>"; };
 		EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsViewModel.swift; sourceTree = "<group>"; };
 		EE75B773203C6F5300855099 /* MarkdownTextStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextStorageTests.swift; sourceTree = "<group>"; };
+		EE7C422628B47CFC00CE018B /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		EE7C919727B40EBD00595977 /* Wire Notification Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Wire Notification Extension.entitlements"; sourceTree = "<group>"; };
 		EE7E0E752109FE9200787C65 /* ParticipantsStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsStringFormatter.swift; sourceTree = "<group>"; };
 		EE7F464A25B072A9001B3EE4 /* AppLockChangeWarningViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewControllerTests.swift; sourceTree = "<group>"; };
@@ -3761,6 +3763,7 @@
 				065A5AE0279B07AC002D4D1E /* NotificationService.swift */,
 				EE3D7B0328AEF22A00D0A37E /* Simple */,
 				EE3D7AE328AD4FB500D0A37E /* LegacyNotificationService.swift */,
+				EE7C422628B47CFC00CE018B /* Logger.swift */,
 				065A5AE2279B07AC002D4D1E /* Info.plist */,
 			);
 			path = "Wire Notification Service Extension";
@@ -8081,6 +8084,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE3D7AE628AD4FC400D0A37E /* SimpleNotificationService.swift in Sources */,
+				EE7C422728B47CFC00CE018B /* Logger.swift in Sources */,
 				EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */,
 				EEE455EE28B2E4CE005ACD74 /* NotificationsAPIClient.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,

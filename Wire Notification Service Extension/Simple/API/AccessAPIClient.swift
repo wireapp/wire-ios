@@ -20,7 +20,7 @@ import Foundation
 import WireTransport
 
 @available(iOS 15, *)
-final class AccessAPIClient {
+final class AccessAPIClient: Loggable {
 
     // MARK: - Properties
 
@@ -35,6 +35,7 @@ final class AccessAPIClient {
     // MARK: - Methods
 
     func fetchAccessToken() async throws -> AccessToken {
+        logger.trace("fetching access token")
         switch try await networkSession.execute(endpoint: API.fetchAccessToken()) {
         case .success(let accessToken):
             return accessToken
@@ -46,7 +47,7 @@ final class AccessAPIClient {
 
 }
 
-struct AccessTokenEndpoint: Endpoint {
+struct AccessTokenEndpoint: Endpoint, Loggable {
 
     // MARK: - Types
 
@@ -80,9 +81,11 @@ struct AccessTokenEndpoint: Endpoint {
     }
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
+        logger.trace("parsing reponse: \(response)")
         switch response {
         case .success(let response) where response.status == 200:
             do {
+                logger.trace("decoding response payload")
                 let payload = try JSONDecoder().decode(ResponsePayload.self, from: response.data)
 
                 return .success(AccessToken(
