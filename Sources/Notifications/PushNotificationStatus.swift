@@ -24,8 +24,18 @@ private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 @objcMembers
 open class PushNotificationStatus: NSObject {
 
+    public enum FetchError: Error {
+
+        case invalidEventID
+        case alreadyFetchedEvent
+        case unknown
+
+    }
+
+    public typealias FetchCompletion = (Swift.Result<Void, FetchError>) -> Void
+
     private var eventIdRanking = NSMutableOrderedSet()
-    private var completionHandlers: [UUID: () -> Void] = [:]
+    private var completionHandlers: [UUID: FetchCompletion] = [:]
     private let managedObjectContext: NSManagedObjectContext
 
     public var hasEventsToFetch: Bool {
@@ -42,14 +52,30 @@ open class PushNotificationStatus: NSObject {
     /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
     @objc(fetchEventId:completionHandler:)
     public func fetch(eventId: UUID, completionHandler: @escaping () -> Void) {
+        fetch(eventId: eventId) { _ in
+            completionHandler()
+        }
+    }
+
+    /// Schedule to fetch an event with a given UUID
+    ///
+    /// - parameter eventId: UUID of the event to fetch
+    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
+
+    public func fetch(eventId: UUID, completionHandler: @escaping FetchCompletion) {
         guard eventId.isType1UUID else {
-            return zmLog.error("Attempt to fetch event id not conforming to UUID type1: \(eventId)")
+            zmLog.error("Attempt to fetch event id not conforming to UUID type1: \(eventId)")
+            completionHandler(.failure(.invalidEventID))
+            return
         }
 
-        if lastEventIdIsNewerThan(lastEventId: managedObjectContext.zm_lastNotificationID, eventId: eventId) {
-            // We have already fetched the event and will therefore immediately call the completion handler
+        if lastEventIdIsNewerThan(
+            lastEventId: managedObjectContext.zm_lastNotificationID,
+            eventId: eventId
+        ) {
             Logging.eventProcessing.info("Already fetched event with [\(eventId)]")
-            return completionHandler()
+            completionHandler(.failure(.alreadyFetchedEvent))
+            return
         }
 
         Logging.eventProcessing.info("Scheduling to fetch events notified by push [\(eventId)]")
@@ -83,14 +109,14 @@ open class PushNotificationStatus: NSObject {
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID
         for eventId in completionHandlers.keys.filter({  self.lastEventIdIsNewerThan(lastEventId: lastEventId, eventId: $0) || highestRankingEventId == $0 }) {
             let completionHandler = completionHandlers.removeValue(forKey: eventId)
-            completionHandler?()
+            completionHandler?(.success(()))
         }
     }
 
     /// Report that events couldn't be fetched due to a permanent error
     public func didFailToFetchEvents() {
         for completionHandler in completionHandlers.values {
-            completionHandler()
+            completionHandler(.failure(.unknown))
         }
 
         eventIdRanking.removeAllObjects()
