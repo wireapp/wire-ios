@@ -161,7 +161,7 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
-    private func sendMessage(_ bytes: Bytes) async throws {
+    private func sendMessage(_ bytes: Bytes, groupID: MLSGroupID) async throws {
         var updateEvents = [ZMUpdateEvent]()
 
         do {
@@ -175,6 +175,7 @@ public final class MLSController: MLSControllerProtocol {
             throw MLSGroupCreationError.failedToSendHandshakeMessage
         }
 
+        try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
         conversationEventProcessor.processConversationEvents(updateEvents)
     }
 
@@ -209,7 +210,7 @@ public final class MLSController: MLSControllerProtocol {
         let messagesToSend = try addMembers(id: groupID, invitees: invitees)
 
         guard let messagesToSend = messagesToSend else { return }
-        try await sendMessage(messagesToSend.message)
+        try await sendMessage(messagesToSend.commit, groupID: groupID)
         try await sendWelcomeMessage(messagesToSend.welcome)
 
     }
@@ -243,25 +244,19 @@ public final class MLSController: MLSControllerProtocol {
         with clientIds: [MLSClientID],
         for groupID: MLSGroupID
     ) async throws {
-
         guard !clientIds.isEmpty else {
             throw MLSRemoveParticipantsError.noClientsToRemove
         }
         
         let clientIds =  clientIds.compactMap { $0.string.utf8Data?.bytes }
-
         let messageToSend = try removeMembers(id: groupID, clientIds: clientIds)
-
-        guard let messageToSend = messageToSend else { return }
-        try await sendMessage(messageToSend)
-
+        try await sendMessage(messageToSend.commit, groupID: groupID)
     }
 
     private func removeMembers(
         id: MLSGroupID,
         clientIds: [ClientId]
-    ) throws -> Bytes? {
-
+    ) throws -> CommitBundle {
         do {
             return try coreCrypto.wire_removeClientsFromConversation(
                 conversationId: id.bytes,
@@ -434,11 +429,11 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         do {
-            let decryptedMessageBytes = try coreCrypto.wire_decryptMessage(
+            let decryptedMessage = try coreCrypto.wire_decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes
             )
-            return decryptedMessageBytes?.data
+            return decryptedMessage.message?.data
         } catch {
             logger.warn("failed to decrypt message: \(String(describing: error))")
             throw MLSMessageDecryptionError.failedToDecryptMessage

@@ -25,180 +25,388 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     struct Calls {
 
-        var setCallBacksCallCount = 0
+        var setCallbacksCount = 0
+        var clientPublicKey: [Void] = []
         var clientKeypackages = [UInt32]()
-        var createConversation = [(ConversationId, ConversationConfiguration)]()
+        var clientValidKeypackagesCount: [Void] = []
+        var createConversation = [(conversationId: ConversationId, config: ConversationConfiguration)]()
         var conversationExists = [ConversationId]()
         var processWelcomeMessage = [[UInt8]]()
-        var addClientsToConversation = [(ConversationId, [Invitee])]()
-        var removeClientsFromConversation = [(ConversationId, [ClientId])]()
-        var leaveConversation = [(ConversationId, [ClientId])]()
-        var decryptMessage = [(ConversationId, [UInt8])]()
-        var encryptMessage = [(ConversationId, [UInt8])]()
-        var newAddProposal = [(ConversationId, [UInt8])]()
+        var addClientsToConversation = [(conversationId: ConversationId, clients: [Invitee])]()
+        var removeClientsFromConversation = [(conversationId: ConversationId, clients: [ClientId])]()
+        var wipeConversation = [ConversationId]()
+        var decryptMessage = [(conversationId: ConversationId, payload: [UInt8])]()
+        var encryptMessage = [(conversationId: ConversationId, message: [UInt8])]()
+        var newAddProposal = [(conversationId: ConversationId, keyPackage: [UInt8])]()
         var newUpdateProposal = [ConversationId]()
-        var newRemoveProposal = [(ConversationId, ClientId)]()
-        var newExternalAddProposal = [(ConversationId, UInt64, [UInt8])]()
-        var newExternalRemoveProposal = [(ConversationId, UInt64, [UInt8])]()
+        var newRemoveProposal = [(conversationId: ConversationId, clientId: ClientId)]()
+        var newExternalAddProposal = [(conversationId: ConversationId, epoch: UInt64)]()
+        var newExternalRemoveProposal = [(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8])]()
         var updateKeyingMaterial = [ConversationId]()
         var joinByExternalCommit = [[UInt8]]()
         var exportGroupState = [ConversationId]()
-        var mergePendingGroupFromExternalCommit = [(ConversationId, ConversationConfiguration)]()
-
+        var mergePendingGroupFromExternalCommit = [(conversationId: ConversationId, config: ConversationConfiguration)]()
+        var randomBytes = [UInt32]()
+        var reseedRng = [[UInt8]]()
+        var commitAccepted = [ConversationId]()
+        var commitPendingProposals = [ConversationId]()
     }
 
     // MARK: - Properties
 
     var calls = Calls()
 
-    // MARK: - Methods
+    // MARK: - setCallbacks
+
+    var mockErrorForSetCallbacks: CryptoError?
 
     func wire_setCallbacks(callbacks: CoreCryptoCallbacks) throws {
-        calls.setCallBacksCallCount += 1
+        calls.setCallbacksCount += 1
+
+        if let error = mockErrorForSetCallbacks {
+            throw error
+        }
     }
 
-    var mockClientPublicKey: [UInt8]?
+    // MARK: - clientPublicKey
+
+    var mockResultForClientPublicKey: [UInt8]?
+    var mockErrorForClientPublicKey: CryptoError?
 
     func wire_clientPublicKey() throws -> [UInt8] {
-        return try XCTUnwrap(mockClientPublicKey, "return value not mocked")
+        calls.clientPublicKey.append(())
+
+        if let error = mockErrorForClientPublicKey {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForClientPublicKey, "no mocked result for `clientPublicKey`")
     }
 
-    var mockClientKeyPackages: [[UInt8]]?
+    // MARK: - clientKeypackages
+
+    var mockResultForClientKeypackages: [[UInt8]]?
+    var mockErrorForClientKeypackages: CryptoError?
 
     func wire_clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
         calls.clientKeypackages.append(amountRequested)
-        return try XCTUnwrap(mockClientKeyPackages, "return value not mocked")
+
+        if let error = mockErrorForClientKeypackages {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForClientKeypackages, "no mocked result for `clientKeypackages`")
     }
 
-    var mockCreateConversationError: CryptoError?
+    // MARK: - clientValidKeypackagesCount
+
+    var mockResultForClientValidKeypackagesCount: UInt64?
+    var mockErrorForClientValidKeypackagesCount: CryptoError?
+
+    func wire_clientValidKeypackagesCount() throws -> UInt64 {
+        calls.clientValidKeypackagesCount.append(())
+
+        if let error = mockErrorForClientValidKeypackagesCount {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForClientValidKeypackagesCount, "no mocked result for `clientValidKeypackagesCount`")
+    }
+
+    // MARK: - createConversation
+
+    var mockErrorForCreateConversation: CryptoError?
 
     func wire_createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
         calls.createConversation.append((conversationId, config))
 
-        if let error = mockCreateConversationError {
+        if let error = mockErrorForCreateConversation {
             throw error
         }
     }
 
-    var mockConversationExists: Bool?
+    // MARK: - conversationExists
+
+    var mockResultForConversationExists: Bool?
 
     func wire_conversationExists(conversationId: ConversationId) -> Bool {
         calls.conversationExists.append(conversationId)
-        return mockConversationExists ?? false
+
+        let result = try? XCTUnwrap(mockResultForConversationExists, "no mocked result for `conversationExists`")
+        return result ?? false
     }
 
-    var mockProcessWelcomeMessage: ConversationId?
+    // MARK: - processWelcomeMessage
+
+    var mockResultForProcessWelcomeMessage: ConversationId?
+    var mockErrorForProcessWelcomeMessage: CryptoError?
 
     func wire_processWelcomeMessage(welcomeMessage: [UInt8]) throws -> ConversationId {
         calls.processWelcomeMessage.append(welcomeMessage)
-        return try XCTUnwrap(mockProcessWelcomeMessage, "return value not mocked")
-    }
 
-    var mockAddClientsToConversation: MemberAddedMessages??
-
-    func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages? {
-        calls.addClientsToConversation.append((conversationId, clients))
-        return try XCTUnwrap(mockAddClientsToConversation, "return value not mocked")
-    }
-
-    var mockRemoveClientsFromConversation: [UInt8]??
-
-    func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> [UInt8]? {
-        calls.removeClientsFromConversation.append((conversationId, clients))
-        return try XCTUnwrap(mockRemoveClientsFromConversation, "return value not mocked")
-    }
-
-    var mockLeaveConversation: ConversationLeaveMessages?
-
-    func wire_leaveConversation(conversationId: ConversationId, otherClients: [ClientId]) throws -> ConversationLeaveMessages {
-        calls.leaveConversation.append((conversationId, otherClients))
-        return try XCTUnwrap(mockLeaveConversation, "return value not mocked")
-    }
-
-    var mockDecryptMessage: [UInt8]??
-    var mockDecryptError: CryptoError?
-
-    func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> [UInt8]? {
-        calls.decryptMessage.append((conversationId, payload))
-
-        if let error = mockDecryptError {
+        if let error = mockErrorForProcessWelcomeMessage {
             throw error
         }
 
-        return try XCTUnwrap(mockDecryptMessage, "return value not mocked")
+        return try XCTUnwrap(mockResultForProcessWelcomeMessage, "no mocked result for `processWelcomeMessage`")
     }
 
-    var mockEncryptMessage: [UInt8]?
-    var mockEncryptError: CryptoError?
+    // MARK: - addClientsToConversation
+
+    var mockResultForAddClientsToConversation: MemberAddedMessages?
+    var mockErrorForAddClientsToConversation: CryptoError?
+
+    func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
+        calls.addClientsToConversation.append((conversationId, clients))
+
+        if let error = mockErrorForAddClientsToConversation {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForAddClientsToConversation, "no mocked result for `addClientsToConversation`")
+    }
+
+    // MARK: - removeClientsFromConversation
+
+    var mockResultForRemoveClientsFromConversation: CommitBundle?
+    var mockErrorForRemoveClientsFromConversation: CryptoError?
+
+    func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle {
+        calls.removeClientsFromConversation.append((conversationId, clients))
+
+        if let error = mockErrorForRemoveClientsFromConversation {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForRemoveClientsFromConversation, "no mocked result for `removeClientsFromConversation`")
+    }
+
+    // MARK: - wipeConversation
+
+    var mockErrorForWipeConversation: CryptoError?
+
+    func wire_wipeConversation(conversationId: ConversationId) throws {
+        calls.wipeConversation.append(conversationId)
+
+        if let error = mockErrorForWipeConversation {
+            throw error
+        }
+    }
+
+    // MARK: - decryptMessage
+
+    var mockResultForDecryptMessage: DecryptedMessage?
+    var mockErrorForDecryptMessage: CryptoError?
+
+    func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage {
+        calls.decryptMessage.append((conversationId, payload))
+
+        if let error = mockErrorForDecryptMessage {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForDecryptMessage, "no mocked result for `decryptMessage`")
+    }
+
+    // MARK: - encryptMessage
+
+    var mockResultForEncryptMessage: [UInt8]?
+    var mockErrorForEncryptMessage: CryptoError?
 
     func wire_encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8] {
         calls.encryptMessage.append((conversationId, message))
 
-        if let error = mockEncryptError {
+        if let error = mockErrorForEncryptMessage {
             throw error
         }
 
-        return try XCTUnwrap(mockEncryptMessage, "return value not mocked")
+        return try XCTUnwrap(mockResultForEncryptMessage, "no mocked result for `encryptMessage`")
     }
 
-    var mockNewAddProposal: [UInt8]?
+    // MARK: - newAddProposal
+
+    var mockResultForNewAddProposal: [UInt8]?
+    var mockErrorForNewAddProposal: CryptoError?
 
     func wire_newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> [UInt8] {
         calls.newAddProposal.append((conversationId, keyPackage))
-        return try XCTUnwrap(mockNewAddProposal, "return value not mocked")
+
+        if let error = mockErrorForNewAddProposal {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForNewAddProposal, "no mocked result for `newAddProposal`")
     }
 
-    var mockNewUpdateProposal: [UInt8]?
+    // MARK: - newUpdateProposal
+
+    var mockResultForNewUpdateProposal: [UInt8]?
+    var mockErrorForNewUpdateProposal: CryptoError?
 
     func wire_newUpdateProposal(conversationId: ConversationId) throws -> [UInt8] {
         calls.newUpdateProposal.append(conversationId)
-        return try XCTUnwrap(mockNewUpdateProposal, "return value not mocked")
+
+        if let error = mockErrorForNewUpdateProposal {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForNewUpdateProposal, "no mocked result for `newUpdateProposal`")
     }
 
-    var mockNewRemoveProposal: [UInt8]?
+    // MARK: - newRemoveProposal
+
+    var mockResultForNewRemoveProposal: [UInt8]?
+    var mockErrorForNewRemoveProposal: CryptoError?
 
     func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> [UInt8] {
         calls.newRemoveProposal.append((conversationId, clientId))
-        return try XCTUnwrap(mockNewRemoveProposal, "return value not mocked")
+
+        if let error = mockErrorForNewRemoveProposal {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForNewRemoveProposal, "no mocked result for `newRemoveProposal`")
     }
 
-    var mockNewExternalAddProposal: [UInt8]?
+    // MARK: - newExternalAddProposal
 
-    func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64, keyPackage: [UInt8]) throws -> [UInt8] {
-        calls.newExternalAddProposal.append((conversationId, epoch, keyPackage))
-        return try XCTUnwrap(mockNewExternalAddProposal, "return value not mocked")
+    var mockResultForNewExternalAddProposal: [UInt8]?
+    var mockErrorForNewExternalAddProposal: CryptoError?
+
+    func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
+        calls.newExternalAddProposal.append((conversationId, epoch))
+
+        if let error = mockErrorForNewExternalAddProposal {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForNewExternalAddProposal, "no mocked result for `newExternalAddProposal`")
     }
 
-    var mockNewExternalRemoveProposal: [UInt8]?
+    // MARK: - newExternalRemoveProposal
+
+    var mockResultForNewExternalRemoveProposal: [UInt8]?
+    var mockErrorForNewExternalRemoveProposal: CryptoError?
 
     func wire_newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8] {
         calls.newExternalRemoveProposal.append((conversationId, epoch, keyPackageRef))
-        return try XCTUnwrap(mockNewExternalRemoveProposal, "return value not mocked")
+
+        if let error = mockErrorForNewExternalRemoveProposal {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForNewExternalRemoveProposal, "no mocked result for `newExternalRemoveProposal`")
     }
 
-    var mockUpdateKeyingMaterial: CommitBundle?
+    // MARK: - updateKeyingMaterial
+
+    var mockResultForUpdateKeyingMaterial: CommitBundle?
+    var mockErrorForUpdateKeyingMaterial: CryptoError?
 
     func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle {
         calls.updateKeyingMaterial.append(conversationId)
-        return try XCTUnwrap(mockUpdateKeyingMaterial, "return value not mocked")
+
+        if let error = mockErrorForUpdateKeyingMaterial {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForUpdateKeyingMaterial, "no mocked result for `updateKeyingMaterial`")
     }
 
-    var mockJoinByExternalCommit: MlsConversationInitMessage?
+    // MARK: - joinByExternalCommit
+
+    var mockResultForJoinByExternalCommit: MlsConversationInitMessage?
+    var mockErrorForJoinByExternalCommit: CryptoError?
 
     func wire_joinByExternalCommit(groupState: [UInt8]) throws -> MlsConversationInitMessage {
         calls.joinByExternalCommit.append(groupState)
-        return try XCTUnwrap(mockJoinByExternalCommit, "return value not mocked")
+
+        if let error = mockErrorForJoinByExternalCommit {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForJoinByExternalCommit, "no mocked result for `joinByExternalCommit`")
     }
 
-    var mockExportGroupState: [UInt8]?
+    // MARK: - exportGroupState
+
+    var mockResultForExportGroupState: [UInt8]?
+    var mockErrorForExportGroupState: CryptoError?
 
     func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8] {
         calls.exportGroupState.append(conversationId)
-        return try XCTUnwrap(mockExportGroupState, "return value not mocked")
+
+        if let error = mockErrorForExportGroupState {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForExportGroupState, "no mocked result for `exportGroupState`")
     }
+
+    // MARK: - mergePendingGroupFromExternalCommit
+
+    var mockErrorForMergePendingGroupFromExternalCommit: CryptoError?
 
     func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws {
         calls.mergePendingGroupFromExternalCommit.append((conversationId, config))
+
+        if let error = mockErrorForMergePendingGroupFromExternalCommit {
+            throw error
+        }
+    }
+
+    // MARK: - randomBytes
+
+    var mockResultForRandomBytes: [UInt8]?
+    var mockErrorForRandomBytes: CryptoError?
+
+    func wire_randomBytes(length: UInt32) throws -> [UInt8] {
+        calls.randomBytes.append(length)
+
+        if let error = mockErrorForRandomBytes {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForRandomBytes, "no mocked result for `randomBytes`")
+    }
+
+    // MARK: - reseedRng
+
+    var mockErrorForReseedRng: CryptoError?
+
+    func wire_reseedRng(seed: [UInt8]) throws {
+        calls.reseedRng.append(seed)
+
+        if let error = mockErrorForReseedRng {
+            throw error
+        }
+    }
+
+    // MARK: - commitAccepted
+
+    var mockErrorForCommitAccepted: CryptoError?
+
+    func wire_commitAccepted(conversationId: ConversationId) throws {
+        calls.commitAccepted.append(conversationId)
+
+        if let error = mockErrorForCommitAccepted {
+            throw error
+        }
+    }
+
+    // MARK: - commitPendingProposals
+
+    var mockResultForCommitPendingProposals: CommitBundle?
+    var mockErrorForCommitPendingProposals: CryptoError?
+
+    func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle {
+        calls.commitPendingProposals.append(conversationId)
+
+        if let error = mockErrorForCommitPendingProposals {
+            throw error
+        }
+
+        return try XCTUnwrap(mockResultForCommitPendingProposals, "no mocked result for `commitPendingProposals`")
     }
 
 }
