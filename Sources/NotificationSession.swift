@@ -20,10 +20,29 @@
 import Foundation
 import WireRequestStrategy
 
+public enum NotificationSessionError: Error {
+
+    case accountNotAuthenticated
+    case noEventID
+    case invalidEventID
+    case alreadyFetchedEvent
+    case unknown
+
+}
+
 public protocol NotificationSessionDelegate: AnyObject {
 
-    func notificationSessionDidGenerateNotification(_ notification: ZMLocalNotification?, unreadConversationCount: Int)
-    func reportCallEvent(_ event: ZMUpdateEvent, currentTimestamp: TimeInterval)
+    func notificationSessionDidFailWithError(error: NotificationSessionError)
+
+    func notificationSessionDidGenerateNotification(
+        _ notification: ZMLocalNotification?,
+        unreadConversationCount: Int
+    )
+
+    func reportCallEvent(
+        _ event: ZMUpdateEvent,
+        currentTimestamp: TimeInterval
+    )
 
 }
 
@@ -199,31 +218,41 @@ public class NotificationSession {
 
     // MARK: - Methods
     
-    public func processPushNotification(with payload: [AnyHashable: Any], completion: @escaping (Bool) -> Void) {
+    public func processPushNotification(with payload: [AnyHashable: Any]) {
         Logging.network.debug("Received push notification with payload: \(payload)")
 
         coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
                 Logging.push.safePublic("Not displaying notification because app is not authenticated")
-                completion(false)
+                self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
             }
-            
-            let completionHandler = {
-                completion(true)
-            }
-            
-            self.fetchEvents(fromPushChannelPayload: payload, completionHandler: completionHandler)
+
+            self.fetchEvents(fromPushChannelPayload: payload)
         }
     }
     
-    func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
+    func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any]) {
         guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
-            completionHandler()
+            delegate?.notificationSessionDidFailWithError(error: .noEventID)
             return
         }
 
-        applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce, completionHandler: completionHandler)
+        applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce) { result in
+            switch result {
+            case .success:
+                break
+
+            case .failure(.alreadyFetchedEvent):
+                self.delegate?.notificationSessionDidFailWithError(error: .alreadyFetchedEvent)
+
+            case .failure(.invalidEventID):
+                self.delegate?.notificationSessionDidFailWithError(error: .invalidEventID)
+
+            case .failure(.unknown):
+                self.delegate?.notificationSessionDidFailWithError(error: .unknown)
+            }
+        }
     }
 
     private func messageNonce(fromPushChannelData payload: [AnyHashable: Any]) -> UUID? {
