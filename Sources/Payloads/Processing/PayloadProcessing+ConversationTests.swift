@@ -249,10 +249,12 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let accessRole: ConversationAccessRole = .team
+            let accessMode: ConversationAccessMode = .teamOnly
             let qualifiedID = self.groupConversation.qualifiedID!
 
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.group.rawValue,
+                                                           access: accessMode.stringValue,
                                                            accessRole: accessRole.rawValue)
             // WHEN
             conversationPayload.updateOrCreate(in: self.syncMOC)
