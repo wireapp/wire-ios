@@ -46,6 +46,9 @@
 		0693115024F79E2500D14DF5 /* UserNotificationCenterMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0693114F24F79E2500D14DF5 /* UserNotificationCenterMock.swift */; };
 		0693115624F7B17300D14DF5 /* ZMLocalNotificationTests_SystemMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0693115524F7B17300D14DF5 /* ZMLocalNotificationTests_SystemMessage.swift */; };
 		0693115724F7B1A200D14DF5 /* ZMLocalNotificationTests_Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0693115124F7B15500D14DF5 /* ZMLocalNotificationTests_Message.swift */; };
+		06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */; };
+		06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */; };
+		06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */; };
 		06ADF694264B467E002E0C7A /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADF693264B467E002E0C7A /* MockAnalytics.swift */; };
 		06C394B6248E6FDA00AE736A /* ZMSimpleListRequestPaginator.h in Headers */ = {isa = PBXBuildFile; fileRef = 06025667248E617D00E060E1 /* ZMSimpleListRequestPaginator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		06C394B7248E6FDE00AE736A /* ZMSimpleListRequestPaginator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 06025669248E61BF00E060E1 /* ZMSimpleListRequestPaginator+Internal.h */; };
@@ -401,6 +404,9 @@
 		0693114F24F79E2500D14DF5 /* UserNotificationCenterMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterMock.swift; sourceTree = "<group>"; };
 		0693115124F7B15500D14DF5 /* ZMLocalNotificationTests_Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_Message.swift; sourceTree = "<group>"; };
 		0693115524F7B17300D14DF5 /* ZMLocalNotificationTests_SystemMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_SystemMessage.swift; sourceTree = "<group>"; };
+		06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesAction.swift; sourceTree = "<group>"; };
+		06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesActionHandler.swift; sourceTree = "<group>"; };
+		06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesActionHandlerTests.swift; sourceTree = "<group>"; };
 		06ADF693264B467E002E0C7A /* MockAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalytics.swift; sourceTree = "<group>"; };
 		06C394C4248E851000AE736A /* NotificationsTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTracker.swift; sourceTree = "<group>"; };
 		06CDDE9E282E9CC200F9360F /* RemovePushTokenAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovePushTokenAction.swift; sourceTree = "<group>"; };
@@ -1033,6 +1039,9 @@
 				168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */,
 				70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */,
 				70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */,
+				06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */,
+				06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */,
+				06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -1725,6 +1734,7 @@
 				16A4893F268B0C82001F9127 /* ClientMessageRequestStrategy.swift in Sources */,
 				F18401BD2073BE0800E9F4CC /* LinkPreviewAssetUploadRequestStrategy.swift in Sources */,
 				F18401AA2073BE0800E9F4CC /* FetchingClientRequestStrategy.swift in Sources */,
+				06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */,
 				EE4C5FBE27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift in Sources */,
 				EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */,
 				166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */,
@@ -1800,6 +1810,7 @@
 				70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */,
 				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
 				EEB5DE05283773C3009B4741 /* GetFeatureConfigsAction.swift in Sources */,
+				06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */,
 				16367F2226FDB2A10028AF8B /* PayloadProcessing+Connection.swift in Sources */,
 				EE90C2AC282EA1D200474379 /* GetPushTokensAction.swift in Sources */,
 				F18401B02073BE0800E9F4CC /* AbstractRequestStrategy.swift in Sources */,
@@ -1920,6 +1931,7 @@
 				16E70F94270EEEEB00718E5D /* PayloadProcessing+ConnectionTests.swift in Sources */,
 				16189D0A268B2C34004831BE /* ModifiedKeyObjectSyncTests.swift in Sources */,
 				F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
+				06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */,
 				EE90C2AA282E855B00474379 /* RegisterPushTokenActionHandlerTests.swift in Sources */,
 				5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
