@@ -61,14 +61,13 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
     }
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result {
-        logger.trace("executing endpoint: \(String(describing: endpoint))")
+        logger.trace("executing endpoint: \(String(describing: endpoint), privacy: .public)")
         let response = try await send(request: endpoint.request)
-        // TODO: Check the headers
         return endpoint.parseResponse(response)
     }
 
     func send(request: NetworkRequest) async throws -> NetworkResponse {
-        logger.trace("sending request: \(String(describing: request))")
+        logger.trace("sending request: \(String(describing: request), privacy: .public)")
         guard let url = URL(string: request.path, relativeTo: environment.backendURL) else {
             throw NetworkError.invalidRequestURL
         }
@@ -84,7 +83,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
             urlRequest.addValue(accessToken.headerValue, forHTTPHeaderField: "Authorization")
         }
 
-        logger.info("sending network request: \(urlRequest)")
+        logger.info("sending network request: \(urlRequest, privacy: .public)")
 
         let (data, response) = try await urlSession.data(
             for: urlRequest as URLRequest,
@@ -92,7 +91,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
         )
 
         if let jsonPayload = String(data: data, encoding: .utf8) {
-            logger.info("received response payload for request \(request.path): \(jsonPayload)")
+            logger.info("received response payload for request \(request.path, privacy: .public): \(jsonPayload, privacy: .public)")
         }
 
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -100,15 +99,18 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
         }
 
         if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-            logger.info("received error response: \(String(describing: errorResponse))")
+            logger.info("received error response: \(String(describing: errorResponse), privacy: .public)")
             return .failure(errorResponse)
         } else {
+            guard httpResponse.value(forHTTPHeaderField: "Content-Type") == request.acceptType.rawValue else {
+                throw NetworkError.invalidResponse
+            }
             let successResponse = SuccessResponse(
                 status: httpResponse.statusCode,
                 data: data
             )
 
-            logger.info("received success response: \(String(describing: successResponse))")
+            logger.info("received success response: \(String(describing: successResponse), privacy: .public)")
             return .success(successResponse)
         }
     }

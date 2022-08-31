@@ -35,7 +35,7 @@ final class NotificationsAPIClient: Loggable {
     // MARK: - Methods
 
     func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent {
-        logger.trace("fetching event with eventID (\(eventID))")
+        logger.trace("fetching event with eventID (\(eventID, privacy: .public))")
         switch try await networkSession.execute(endpoint: API.fetchNotification(eventID: eventID)) {
         case .success(let event):
             return event
@@ -58,6 +58,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
         case invalidResponse
         case failedToDecodePayload
         case notifcationNotFound
+        case incorrectEvent
         case unknownError(ErrorResponse)
 
     }
@@ -83,17 +84,15 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
     // { "id": UUID, "payload": <Some update event> }
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
-        logger.trace("parsing response: \(response)")
+        logger.trace("parsing response: \(response, privacy: .public)")
         switch response {
         case .success(let response) where response.status == 200:
-            // TODO: check the content type of the response matches what is expected
-            // TODO: get the id, make sure it matches the `eventID`.
             logger.trace("decoding response payload")
             guard let payload = try? JSONSerialization.jsonObject(with: response.data, options: []) as? [AnyHashable: Any] else {
                 return .failure(.failedToDecodePayload)
             }
 
-            logger.info("received event response payload: \(payload)")
+            logger.info("received event response payload: \(payload, privacy: .public)")
 
             guard let events = ZMUpdateEvent.eventsArray(
                 from: payload as ZMTransportData,
@@ -102,10 +101,13 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
                 return .failure(.failedToDecodePayload)
             }
 
-            logger.info("received events: \(events)")
+            logger.info("received events: \(events, privacy: .public)")
 
             guard let event = events.first else {
                 return .failure(.notifcationNotFound)
+            }
+            guard event.uuid == eventID else {
+                return .failure(.incorrectEvent)
             }
 
             return .success(event)

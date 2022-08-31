@@ -21,10 +21,6 @@ import UserNotifications
 import WireTransport
 import WireCommonComponents
 
-// TODO: add id to service and include in logs
-// TODO: Fix category to only show class name and not object reference
-// TODO: Fix loggers to show public logs and not private logs.
-
 final class SimpleNotificationService: UNNotificationServiceExtension, Loggable {
 
     // MARK: - Types
@@ -34,6 +30,8 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
     // MARK: - Properties
 
     private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
+    private var currentTasks: [String : Task<(), Never>] = [:]
+    private var latestContentHandler: ContentHandler?
 
     // MARK: - Life cycle
 
@@ -47,34 +45,39 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping ContentHandler
     ) {
-        logger.trace("\(request.identifier): received request")
+        logger.trace("\(request.identifier, privacy: .public): received request. Service is \(String(describing: self), privacy: .public)")
 
         guard #available(iOS 15, *) else {
-            logger.error("\(request.identifier): iOS 15 is not available")
+            logger.error("\(request.identifier, privacy: .public): iOS 15 is not available")
             contentHandler(.debugMessageIfNeeded(message: "iOS 15 not available"))
             return
         }
 
-        // TODO: maybe keep a reference to the task so we
-        // can cancel it if the extension expires.
-        Task {
+        let task = Task { [weak self] in
             do {
-                logger.trace("\(request.identifier): initializing job")
+                logger.trace("\(request.identifier, privacy: .public): initializing job")
                 let job = try Job(request: request)
                 let content = try await job.execute()
-                logger.trace("\(request.identifier): showing notification")
+                logger.trace("\(request.identifier, privacy: .public): showing notification")
                 contentHandler(content)
             } catch {
                 let message = "\(request.identifier): failed with error: \(String(describing: error))"
-                logger.error("\(message)")
+                logger.error("\(message, privacy: .public)")
                 contentHandler(.debugMessageIfNeeded(message: message))
             }
+            self?.currentTasks[request.identifier] = nil
         }
+        currentTasks[request.identifier] = task
+        latestContentHandler = contentHandler
     }
 
     override func serviceExtensionTimeWillExpire() {
-        logger.warning("extension (\(self) is expiring")
-        fatalError("not implemented")
+        logger.warning("extension (\(String(describing: self), privacy: .public) is expiring")
+        currentTasks.values.forEach { task in
+            task.cancel()
+        }
+        currentTasks = [:]
+        latestContentHandler?(.debugMessageIfNeeded(message: "extension (\(String(describing: self)) is expiring"))
     }
 
 }

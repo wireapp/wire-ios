@@ -18,11 +18,14 @@
 
 import Foundation
 import OSLog
+import UserNotifications
 
 extension Loggable {
 
     var logger: Logger {
-        return Logger(category: String(describing: self))
+        
+        return Logger(category: String(describing: type(of: self))
+)
     }
 
 }
@@ -39,6 +42,14 @@ extension Logger {
 
     init(category: String) {
         self.init(subsystem: Self.subsystem, category: category)
+    }
+
+}
+
+extension OSLogInterpolation {
+
+    mutating func appendInterpolation(_ request: UNNotificationRequest) {
+        appendInterpolation(String(request.identifier), align: .none, privacy: .public)
     }
 
 }
