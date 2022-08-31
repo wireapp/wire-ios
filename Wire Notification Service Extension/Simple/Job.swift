@@ -19,6 +19,8 @@
 import Foundation
 import UserNotifications
 import WireTransport
+import WireSyncEngine
+import WireCommonComponents
 
 @available(iOS 15, *)
 final class Job: NSObject, Loggable {
@@ -58,8 +60,8 @@ final class Job: NSObject, Loggable {
     // MARK: - Methods
 
     func execute() async throws -> UNNotificationContent {
-        logger.trace("\(self.request.identifier): executing job...")
-        logger.info("\(self.request.identifier): request is for user (\(self.userID)) and event (\(self.eventID)")
+        logger.trace("\(self.request.identifier, privacy: .public): executing job...")
+        logger.info("\(self.request.identifier, privacy: .public): request is for user (\(self.userID, privacy: .public)) and event (\(self.eventID, privacy: .public)")
 
         guard isUserAuthenticated else {
             throw NotificationServiceError.userNotAuthenticated
@@ -73,13 +75,13 @@ final class Job: NSObject, Loggable {
 
         switch event.type {
         case .conversationOtrMessageAdd:
-            logger.trace("\(self.request.identifier): returning notification for new message")
+            logger.trace("\(self.request.identifier, privacy: .public): returning notification for new message")
             let content = UNMutableNotificationContent()
             content.body = "You received a new message"
             return content
 
         default:
-            logger.trace("\(self.request.identifier): ignoring event of type: \(String(describing: event.type))")
+            logger.trace("\(self.request.identifier, privacy: .public): ignoring event of type: \(String(describing: event.type), privacy: .public)")
             return .empty
         }
     }
@@ -104,12 +106,12 @@ final class Job: NSObject, Loggable {
     }
 
     private func fetchAccessToken() async throws -> AccessToken {
-        logger.trace("\(self.request.identifier): fetching access token")
+        logger.trace("\(self.request.identifier, privacy: .public): fetching access token")
         return try await accessAPIClient.fetchAccessToken()
     }
 
     private func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent? {
-        logger.trace("\(self.request.identifier): fetching event (\(eventID))")
+        logger.trace("\(self.request.identifier, privacy: .public): fetching event (\(eventID, privacy: .public))")
         return try await notificationsAPIClient.fetchEvent(eventID: eventID)
     }
 

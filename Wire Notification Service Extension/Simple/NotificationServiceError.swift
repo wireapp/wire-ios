@@ -26,5 +26,7 @@ enum NotificationServiceError: Error {
     case noEvent
     case failedToFetchAccessToken
     case notImplemented(String)
+    case noAppGroupID
+    case noAccount
 
 }
