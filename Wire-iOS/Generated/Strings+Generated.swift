@@ -3962,6 +3962,14 @@ internal enum L10n {
         internal enum DeveloperOptions {
           /// Developer Options
           internal static let title = L10n.tr("Localizable", "self.settings.developer_options.title")
+          internal enum DatabaseStatistics {
+            /// Database Statistics
+            internal static let title = L10n.tr("Localizable", "self.settings.developer_options.database_statistics.title")
+          }
+          internal enum Loggin {
+            /// Options
+            internal static let title = L10n.tr("Localizable", "self.settings.developer_options.loggin.title")
+          }
         }
         internal enum DeviceDetails {
           internal enum Fingerprint {
