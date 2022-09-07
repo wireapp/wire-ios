@@ -18,18 +18,13 @@
 
 import Foundation
 
-/// A message that can be sent in an mls group.
+extension ZMTransportResponse {
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {}
-
-extension ZMClientMessage: MLSMessage {}
-
-extension ZMAssetClientMessage: MLSMessage {}
-
-extension GenericMessageEntity: MLSMessage {
-
-    public func encryptForTransport(using encrypt: (Data) throws -> Data) throws -> Data {
-        return try message.encryptForTransport(using: encrypt)
+    var errorInfo: (status: Int, label: String, message: String) {
+        let payload = self.payload?.asDictionary()
+        let label = payload?["label"] as? String
+        let message = payload?["message"] as? String
+        return (httpStatus, label ?? "?", message ?? "?")
     }
 
 }
