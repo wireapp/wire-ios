@@ -190,8 +190,8 @@ final class ConversationCreationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.from(scheme: .contentBackground, variant: colorSchemeVariant)
-        title = L10n.Localizable.Conversation.Create.GroupName.title.uppercased()
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+        title = "conversation.create.group_name.title".localized(uppercased: true)
 
         setupNavigationBar()
         setupViews()
@@ -246,9 +246,7 @@ final class ConversationCreationController: UIViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        let navBarBackgroundView = UIView()
-        navBarBackgroundView.backgroundColor = UIColor.from(scheme: .barBackground, variant: colorSchemeVariant)
+        navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(navBarBackgroundView)
 
         navBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
@@ -260,15 +258,12 @@ final class ConversationCreationController: UIViewController {
             navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
         ])
 
-        navigationController?.navigationBar.tintColor = UIColor.from(
-            scheme: .textForeground,
-            variant: colorSchemeVariant
-        )
-
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: colorSchemeVariant)
+    private func setupNavigationBar() {
+        self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
+        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: colorSchemeVariant)
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.closeItem()
+            navigationItem.leftBarButtonItem = navigationController?.updatedCloseItem()
         }
 
         let nextButtonItem = UIBarButtonItem(
