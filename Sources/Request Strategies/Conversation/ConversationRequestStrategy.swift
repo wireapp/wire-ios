@@ -370,6 +370,10 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
         newConversation.remoteIdentifier = conversationID
 
+        if newConversation.messageProtocol == .mls {
+            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
+        }
+
         // If this is an mls conversation, then the initial participants won't have
         // been added yet on the backend. This means that when we process response payload
         // we'll actually overwrite the local participants with just the self user. We
@@ -381,6 +385,9 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         newConversation.needsToBeUpdatedFromBackend = deletedDuplicate
 
         if newConversation.messageProtocol == .mls {
+            Logging.mls.info("resetting `isPendingWelcomeMessage` to `false` b/c self client is creator")
+            newConversation.isPendingWelcomeMessage = false
+
             guard let mlsController = managedObjectContext.mlsController else {
                 Logging.mls.warn("failed to create mls group: MLSController doesn't exist")
                 return
