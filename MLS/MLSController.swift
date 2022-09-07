@@ -82,6 +82,7 @@ public final class MLSController: MLSControllerProtocol {
         var keys = selfClient.mlsPublicKeys
 
         if keys.ed25519 == nil {
+            logger.info("generating ed25519 public key")
             let keyBytes = try coreCrypto.wire_clientPublicKey()
             let keyData = Data(keyBytes)
             keys.ed25519 = keyData.base64EncodedString()
@@ -113,18 +114,21 @@ public final class MLSController: MLSControllerProtocol {
     ///   - MLSGroupCreationError if the group could not be created.
 
     public func createGroup(for groupID: MLSGroupID) throws {
+        logger.info("creating group for id: \(groupID)")
+
         do {
             try coreCrypto.wire_createConversation(
                 conversationId: groupID.bytes,
                 config: ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
             )
         } catch let error {
-            logger.warn("failed to create mls group: \(String(describing: error))")
+            logger.warn("failed to create group (\(groupID)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToCreateGroup
         }
     }
 
     private func claimKeyPackages(for users: [MLSUser]) async throws -> [KeyPackage] {
+        logger.info("claiming key packages for users: \(users)")
         do {
             guard let context = context else { return [] }
 
@@ -162,6 +166,8 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func sendMessage(_ bytes: Bytes, groupID: MLSGroupID) async throws {
+        logger.info("sending handshake message in group (\(groupID))")
+
         var updateEvents = [ZMUpdateEvent]()
 
         do {
@@ -171,15 +177,18 @@ public final class MLSController: MLSControllerProtocol {
                 in: context.notificationContext
             )
         } catch let error {
-            logger.warn("failed to send mls message: \(String(describing: error))")
+            logger.warn("failed to send handshake message in group (\(groupID)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToSendHandshakeMessage
         }
 
+        logger.info("commit accepted in group (\(groupID)")
         try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
         conversationEventProcessor.processConversationEvents(updateEvents)
     }
 
     private func sendWelcomeMessage(_ bytes:  Bytes) async throws {
+        logger.info("sending welcome message")
+
         do {
             guard let context = context else { return }
             try await actionsProvider.sendWelcomeMessage(
@@ -200,6 +209,7 @@ public final class MLSController: MLSControllerProtocol {
     ///   - groupID: Represents the MLS conversation group ID in which users to be added
 
     public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
+        logger.info("adding members to group (\(groupID)) with users: \(users)")
 
         guard !users.isEmpty else {
             throw MLSGroupCreationError.noParticipantsToAdd
@@ -212,21 +222,19 @@ public final class MLSController: MLSControllerProtocol {
         guard let messagesToSend = messagesToSend else { return }
         try await sendMessage(messagesToSend.commit, groupID: groupID)
         try await sendWelcomeMessage(messagesToSend.welcome)
-
     }
 
     private func addMembers(
         id: MLSGroupID,
         invitees: [Invitee]
     ) throws -> MemberAddedMessages? {
-
         do {
             return try coreCrypto.wire_addClientsToConversation(
                 conversationId: id.bytes,
                 clients: invitees
             )
         } catch let error {
-            logger.warn("failed to add members: \(String(describing: error))")
+            logger.warn("failed to add members to group (\(id)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToAddMembers
         }
     }
@@ -244,6 +252,8 @@ public final class MLSController: MLSControllerProtocol {
         with clientIds: [MLSClientID],
         for groupID: MLSGroupID
     ) async throws {
+        logger.info("removing members from group (\(groupID)), members: \(clientIds)")
+
         guard !clientIds.isEmpty else {
             throw MLSRemoveParticipantsError.noClientsToRemove
         }
@@ -263,7 +273,7 @@ public final class MLSController: MLSControllerProtocol {
                 clients: clientIds
             )
         } catch let error {
-            logger.error("failed to remove members: \(String(describing: error))")
+            logger.warn("failed to remove members from group (\(id)): \(String(describing: error))")
             throw MLSRemoveParticipantsError.failedToRemoveMembers
         }
     }
@@ -282,6 +292,8 @@ public final class MLSController: MLSControllerProtocol {
     /// generates new ones if there are less than 50% of the target unclaimed key package count..
 
     public func uploadKeyPackagesIfNeeded() {
+        logger.info("uploading key packages if needed")
+
         guard let context = context else { return }
         let user = ZMUser.selfUser(in: context)
         guard let clientID = user.selfClient()?.remoteIdentifier else { return }
@@ -291,22 +303,24 @@ public final class MLSController: MLSControllerProtocol {
         /// For now temporarily we generate and upload at most 100 new key packages
 
          countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext) { unclaimedKeyPackageCount in
-            guard unclaimedKeyPackageCount <= self.targetUnclaimedKeyPackageCount / 2 else { return }
+             self.logger.info("there are \(unclaimedKeyPackageCount) uncliamed key packages")
 
-            do {
-                let amount = UInt32(self.targetUnclaimedKeyPackageCount - unclaimedKeyPackageCount)
-                let keyPackages = try self.generateKeyPackages(amountRequested: amount)
+             guard unclaimedKeyPackageCount <= self.targetUnclaimedKeyPackageCount / 2 else { return }
 
-                self.uploadKeyPackages(
+             do {
+                 let amount = UInt32(self.targetUnclaimedKeyPackageCount - unclaimedKeyPackageCount)
+                 let keyPackages = try self.generateKeyPackages(amountRequested: amount)
+
+                 self.uploadKeyPackages(
                     clientID: clientID,
                     keyPackages: keyPackages,
                     context: context.notificationContext
-                )
+                 )
 
-            } catch {
-                self.logger.error("failed to generate new key packages: \(String(describing: error))")
-            }
-        }
+             } catch {
+                 self.logger.error("failed to generate new key packages: \(String(describing: error))")
+             }
+         }
     }
 
     private func countUnclaimedKeyPackages(clientID: String, context: NotificationContext, completion: @escaping (Int) -> Void) {
@@ -322,20 +336,20 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func generateKeyPackages(amountRequested: UInt32) throws -> [String] {
+        logger.info("generating \(amountRequested) key packages")
 
         var keyPackages = [Bytes]()
 
         do {
-
             keyPackages = try coreCrypto.wire_clientKeypackages(amountRequested: amountRequested)
 
         } catch let error {
-            logger.error("failed to generate new key packages: \(String(describing: error))")
+            logger.warn("failed to generate new key packages: \(String(describing: error))")
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
         if keyPackages.isEmpty {
-            logger.error("CoreCrypto generated empty key packages array")
+            logger.warn("CoreCrypto generated empty key packages array")
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
@@ -343,13 +357,15 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func uploadKeyPackages(clientID: String, keyPackages: [String], context: NotificationContext) {
+        logger.info("uploading \(keyPackages.count) key packages for client: \(clientID)")
+
         actionsProvider.uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context) { result in
             switch result {
             case .success:
                 break
 
             case .failure(let error):
-                self.logger.error("failed to upload key packages: \(String(describing: error))")
+                self.logger.error("failed to upload key packages for client (\(clientID)): \(String(describing: error))")
             }
         }
     }
@@ -365,10 +381,14 @@ public final class MLSController: MLSControllerProtocol {
 
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
-        return coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
+        let result = coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
+        logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
+        return result
     }
 
     public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+        logger.info("processing welcome message")
+
         guard let messageBytes = welcomeMessage.base64EncodedBytes else {
             logger.error("failed to convert welcome message to bytes")
             throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
@@ -392,10 +412,12 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     public func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+        logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
+
         do {
             return try coreCrypto.wire_encryptMessage(conversationId: groupID.bytes, message: message)
         } catch let error {
-            logger.warn("failed to encrypt message: \(String(describing: error))")
+            logger.warn("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }
     }
@@ -423,6 +445,7 @@ public final class MLSController: MLSControllerProtocol {
     /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted
 
     public func decrypt(message: String, for groupID: MLSGroupID) throws -> Data? {
+        logger.info("decrypting message for group (\(groupID))")
 
         guard let messageBytes = message.base64EncodedBytes else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
@@ -435,7 +458,7 @@ public final class MLSController: MLSControllerProtocol {
             )
             return decryptedMessage.message?.data
         } catch {
-            logger.warn("failed to decrypt message: \(String(describing: error))")
+            logger.warn("failed to decrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageDecryptionError.failedToDecryptMessage
         }
     }
@@ -469,6 +492,14 @@ public struct MLSUser: Equatable {
         } else {
             selfClientID = nil
         }
+    }
+
+}
+
+extension MLSUser: CustomStringConvertible {
+
+    public var description: String {
+        return "\(id)@\(domain)"
     }
 
 }
