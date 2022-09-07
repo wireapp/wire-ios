@@ -62,3 +62,11 @@ public struct MLSClientID: Equatable {
     }
 
 }
+
+extension MLSClientID: CustomStringConvertible {
+
+    public var description: String {
+        return string
+    }
+
+}
