@@ -488,6 +488,12 @@ extension Payload {
         let access: [String]
         let accessRole: String?
         let accessRoleV2: [String]?
+
+        init(accessMode: ConversationAccessMode, accessRoles: Set<ConversationAccessRoleV2>) {
+            access = accessMode.stringValue
+            accessRole = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue
+            accessRoleV2 = accessRoles.map(\.rawValue)
+        }
     }
 
     struct UpdateConversationName: EventData {
