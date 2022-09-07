@@ -23,11 +23,9 @@ public struct CallEventContent: Decodable {
     private enum CodingKeys: String, CodingKey {
 
         case type
-
         case properties = "props"
-
-        case callerIdString = "src_userid"
-
+        case callerUserID = "src_userid"
+        case callerClientID = "src_clientid"
         case resp
 
     }
@@ -42,9 +40,9 @@ public struct CallEventContent: Decodable {
 
     let properties: Properties?
 
-    /// Caller Id.
+    let callerUserID: String
 
-    let callerIdString: String
+    public let callerClientID: String
 
     let resp: Bool
 
@@ -62,7 +60,7 @@ public struct CallEventContent: Decodable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return UUID(uuidString: callerIdString)
+        return UUID(uuidString: callerUserID)
     }
 
     public var callState: LocalNotificationType.CallState? {
@@ -85,6 +83,14 @@ public struct CallEventContent: Decodable {
 
     public var isRemoteMute: Bool {
         return type == "REMOTEMUTE"
+    }
+
+    public var isConferenceKey: Bool {
+        return type == "CONFKEY"
+    }
+
+    public var isReject: Bool {
+        return type == "REJECT"
     }
 
 }

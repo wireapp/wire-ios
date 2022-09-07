@@ -24,9 +24,9 @@ import Foundation
 /// This sync ensures that each message is sent to the backend using the appropriate
 /// protocol.
 
-class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMContextChangeTrackerSource, ZMRequestGenerator {
+public class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMContextChangeTrackerSource, ZMRequestGenerator {
 
-    typealias OnRequestScheduledHandler = (_ message: Message, _ request: ZMTransportRequest) -> Void
+    public typealias OnRequestScheduledHandler = (_ message: Message, _ request: ZMTransportRequest) -> Void
 
     // MARK: - Properties
 
@@ -35,7 +35,7 @@ class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMContextChan
 
     // MARK: - Life cycle
 
-    init(context: NSManagedObjectContext, appStatus: ApplicationStatus) {
+    public init(context: NSManagedObjectContext, appStatus: ApplicationStatus) {
         proteusMessageSync = ProteusMessageSync(
             context: context,
             applicationStatus: appStatus
@@ -46,24 +46,24 @@ class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMContextChan
 
     // MARK: - Change tracker
 
-    var contextChangeTrackers: [ZMContextChangeTracker] {
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
         return proteusMessageSync.contextChangeTrackers + mlsMessageSync.contextChangeTrackers
     }
 
     // MARK: - Request generator
 
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return [proteusMessageSync, mlsMessageSync].nextRequest(for: apiVersion)
     }
 
     // MARK: - Methods
 
-    func onRequestScheduled(_ handler: @escaping OnRequestScheduledHandler) {
+    public func onRequestScheduled(_ handler: @escaping OnRequestScheduledHandler) {
         proteusMessageSync.onRequestScheduled(handler)
         mlsMessageSync.onRequestScheduled(handler)
     }
 
-    func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
+    public func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
         guard let conversation = message.conversation else {
             Logging.messageProcessing.warn("failed to sync message b/c message protocol can't be determined")
             completion(.failure(.messageProtocolMissing), .init())
@@ -79,7 +79,7 @@ class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMContextChan
         }
     }
 
-    func expireMessages(withDependency dependency: NSObject) {
+    public func expireMessages(withDependency dependency: NSObject) {
         proteusMessageSync.expireMessages(withDependency: dependency)
         mlsMessageSync.expireMessages(withDependency: dependency)
     }
