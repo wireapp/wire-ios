@@ -157,7 +157,12 @@ extension ZMConversation: SwiftConversationLike {
 
     public internal(set) var accessRoles: Set<ConversationAccessRoleV2> {
         get {
-            guard let strings = accessRoleStringsV2 else { return [.teamMember] }
+            guard let strings = accessRoleStringsV2 else {
+                return [.teamMember,
+                        .nonTeamMember,
+                        .guest,
+                        .service]
+            }
             return Set(strings.compactMap(ConversationAccessRoleV2.init))
         }
         set {

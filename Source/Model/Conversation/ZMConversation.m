@@ -104,11 +104,11 @@ static NSString *const ClearedEventIDDataKey = @"clearedEventID_data";
 static NSString *const ArchivedEventIDDataKey = @"archivedEventID_data";
 static NSString *const LastReadEventIDDataKey = @"lastReadEventID_data";
 
-static NSString *const TeamKey = @"team";
+NSString *const TeamKey = @"team";
 
 static NSString *const AccessModeStringsKey = @"accessModeStrings";
 static NSString *const AccessRoleStringKey = @"accessRoleString";
-static NSString *const AccessRoleStringsKeyV2 = @"accessRoleStringsV2";
+NSString *const AccessRoleStringsKeyV2 = @"accessRoleStringsV2";
 
 
 NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 3.0;
