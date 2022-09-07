@@ -78,17 +78,17 @@ extension MLSMessageSync {
                 let conversation = message.conversation,
                 conversation.messageProtocol == .mls
             else {
-                Logging.mls.warn("can't encrypt message b/c it doesn't belong to an mls conversation.")
+                Logging.mls.warn("failed to encrypt message: it doesn't belong to an mls conversation.")
                 return nil
             }
 
             guard let groupID = conversation.mlsGroupID else {
-                Logging.mls.warn("can't encrypt message b/c mls group id is missing.")
+                Logging.mls.warn("failed to encrypt message: group id is missing.")
                 return nil
             }
 
             guard let mlsController = context.mlsController else {
-                Logging.mls.warn("can't encrypt message b/c mls controller is missing.")
+                Logging.mls.warn("failed to encrypt message: MLSController is missing.")
                 return nil
             }
 
@@ -98,7 +98,7 @@ extension MLSMessageSync {
                     return encryptedBytes.data
                 }
             } catch let error {
-                Logging.mls.warn("failed to encrypt message for transport: \(String(describing: error))")
+                Logging.mls.warn("failed to encrypt message: \(String(describing: error))")
                 return nil
             }
         }

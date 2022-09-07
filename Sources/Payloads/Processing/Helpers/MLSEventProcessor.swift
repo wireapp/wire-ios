@@ -32,40 +32,49 @@ class MLSEventProcessor: MLSEventProcessing {
     // MARK: - Update conversation
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) {
+        Logging.mls.info("MLS event processor updating conversation if needed")
+
         guard conversation.messageProtocol == .mls else {
-            return Logging.mls.info("Message protocol is not mls")
+            return Logging.mls.warn("MLS event processor aborting conversation update: not an MLS conversation")
         }
 
         guard let mlsGroupID = MLSGroupID(from: groupID) else {
-            return Logging.mls.warn("MLS group ID is missing or invalid")
+            return Logging.mls.warn("MLS event processor aborting conversation update: missing group ID")
         }
 
-        conversation.mlsGroupID = mlsGroupID
+        if conversation.mlsGroupID == nil {
+           conversation.mlsGroupID = mlsGroupID
+           Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
+        }
 
         guard let mlsController = context.mlsController else {
-            return Logging.mls.warn("Missing MLSController in context")
+            return Logging.mls.warn("MLS event processor aborting conversation update: missing MLSController")
         }
 
+        let previousIsPendingWelcomeMessage = conversation.isPendingWelcomeMessage
         conversation.isPendingWelcomeMessage = !mlsController.conversationExists(groupID: mlsGroupID)
+        Logging.mls.info("MLS event processor updated previous isPendingWelcomeMessage (\(previousIsPendingWelcomeMessage)) with new value (\(conversation.isPendingWelcomeMessage)) for conversation (\(String(describing: conversation.qualifiedID)))")
     }
 
     // MARK: - Process welcome message
 
     func process(welcomeMessage: String, domain: String, in context: NSManagedObjectContext) {
+        Logging.mls.info("MLS event processor is processing welcome message")
+
         guard let mlsController = context.mlsController else {
-            return Logging.mls.warn("Missing MLSController in context")
+            return Logging.mls.warn("MLS event processor aborting processing welcome message: missing MLSController")
         }
 
         do {
             let groupID = try mlsController.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
             guard let conversation = ZMConversation.fetch(with: groupID, domain: domain, in: context) else {
-                return Logging.mls.warn("Conversation does not exist")
+                return Logging.mls.warn("MLS event processor aborting processing welcome message: conversation does not exist in db")
             }
 
             conversation.isPendingWelcomeMessage = false
         } catch {
-            return Logging.mls.warn("Couldn't process welcome message for conversation: \(String(describing: error))")
+            return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }
     }
 }
