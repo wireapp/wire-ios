@@ -713,6 +713,34 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         }
     }
 
+    func testThatItNotifiesObserversWhenAConversationMlsStatusChanges() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mlsStatus = .pendingJoin
+        conversation.messageProtocol = .mls
+        conversation.conversationType = .group
+        uiMOC.saveOrRollback()
+
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
+        token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: uiMOC)
+
+        XCTAssertEqual(conversationList.count, 0)
+
+        // when
+        conversation.mlsStatus = .ready
+        uiMOC.saveOrRollback()
+
+        // then
+        XCTAssertEqual(conversationList.count, 1)
+
+        XCTAssertEqual(testObserver.changes.count, 1)
+        let change = try XCTUnwrap(testObserver.changes.first)
+        XCTAssertEqual(change.insertedIndexes, IndexSet(integer: 0))
+        XCTAssertEqual(change.deletedIndexes, IndexSet())
+        XCTAssertEqual(change.updatedIndexes, IndexSet())
+        XCTAssertEqual(movedIndexes(change), [])
+    }
+
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
 
         // given

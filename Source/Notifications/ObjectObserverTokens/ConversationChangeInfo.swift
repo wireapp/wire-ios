@@ -45,7 +45,8 @@ extension ZMConversation: ObjectInSnapshot {
                     ZMConversation.externalParticipantsStateKey,
                     #keyPath(ZMConversation.legalHoldStatus),
                     #keyPath(ZMConversation.labels),
-                    #keyPath(ZMConversation.localParticipants)
+                    #keyPath(ZMConversation.localParticipants),
+                    ZMConversation.mlsStatusKey
             ])
     }
 
@@ -160,6 +161,10 @@ extension ZMConversation: ObjectInSnapshot {
         return changedKeysContain(keys: #keyPath(ZMConversation.labels))
     }
 
+    public var mlsStatusChanged: Bool {
+        return changedKeysContain(keys: ZMConversation.mlsStatusKey)
+    }
+
     public var conversation: ZMConversation { return self.object as! ZMConversation }
 
     public override var description: String { return self.debugDescription }
@@ -184,7 +189,8 @@ extension ZMConversation: ObjectInSnapshot {
                 "hasReadReceiptsEnabledChanged \(hasReadReceiptsEnabledChanged)",
                 "externalParticipantsStateChanged \(externalParticipantsStateChanged)",
                 "legalHoldStatusChanged: \(legalHoldStatusChanged)",
-                "labelsChanged: \(labelsChanged)"
+                "labelsChanged: \(labelsChanged)",
+                "mlsStatusChanged: \(mlsStatusChanged)"
             ].joined(separator: ", ")
     }
 
