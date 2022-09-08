@@ -70,4 +70,14 @@ class MockMLSController: MLSControllerProtocol {
     func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
         return message + [000]
     }
+
+    var groupsPendingJoin = [MLSGroup]()
+
+    func addGroupPendingJoin(_ group: MLSGroup) {
+        groupsPendingJoin.append(group)
+    }
+
+    func joinGroupsStillPending() {
+
+    }
 }

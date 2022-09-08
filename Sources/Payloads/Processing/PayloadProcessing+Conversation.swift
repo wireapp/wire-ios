@@ -175,7 +175,7 @@ extension Payload.Conversation {
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
         updateMessageProtocol(for: conversation)
-        updateMLSStatus(for: conversation, context: context)
+        updateMLSStatus(for: conversation, context: context, source: source)
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -255,12 +255,18 @@ extension Payload.Conversation {
         conversation.messageProtocol = messageProtocol
     }
 
-    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) {
-        MLSEventProcessor.shared.updateConversationIfNeeded(
+    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext, source: Source) {
+        let mlsEventProcessor = MLSEventProcessor.shared
+
+        mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             groupID: mlsGroupID,
             context: context
         )
+
+        if source == .slowSync {
+            mlsEventProcessor.joinMLSGroupWhenReady(forConversation: conversation, context: context)
+        }
     }
 
 }

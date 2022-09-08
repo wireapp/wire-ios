@@ -506,6 +506,7 @@ extension EventDecoderTest {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         conversation.mlsGroupID = groupID
+        conversation.mlsStatus = .ready
 
         let payload = self.payloadForMessage(
             in: conversation,

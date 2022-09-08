@@ -394,7 +394,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             let createGroupCall = mlsController.createGroupCalls.element(atIndex: 0)
             XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
-            XCTAssertFalse(self.groupConversation.isPendingWelcomeMessage)
+            XCTAssertEqual(self.groupConversation.mlsStatus, .ready)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -1100,7 +1100,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertEqual(mlsEventProcessorMock.processedMessage, message)
+            XCTAssertEqual(mlsEventProcessorMock.calls.processWelcomeMessage.first?.message, message)
 
             MLSEventProcessor.reset()
         }

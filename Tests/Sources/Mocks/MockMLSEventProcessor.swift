@@ -21,16 +21,24 @@ import Foundation
 
 class MockMLSEventProcessor: MLSEventProcessing {
 
-    var didCallUpdateConversationIfNeeded: Bool = false
-
-    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) {
-        didCallUpdateConversationIfNeeded = true
+    struct Calls {
+        var updateConversationIfNeeded = [(conversation: ZMConversation, groupID: String?)]()
+        var processWelcomeMessage = [(message: String, domain: String)]()
+        var joinMLSGroupWhenReady = [ZMConversation]()
     }
 
-    var processedMessage: String?
+    var calls = Calls()
+
+    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) {
+        calls.updateConversationIfNeeded.append((conversation, groupID))
+    }
 
     func process(welcomeMessage: String, domain: String, in context: NSManagedObjectContext) {
-        processedMessage = welcomeMessage
+        calls.processWelcomeMessage.append((welcomeMessage, domain))
+    }
+
+    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+        calls.joinMLSGroupWhenReady.append(conversation)
     }
 
 }
