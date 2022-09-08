@@ -39,6 +39,8 @@ class MockMLSController: MLSControllerProtocol {
         var decrypt = [(String, MLSGroupID)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
+        var addGroupsPendingJoin = [MLSGroup]()
+        var joinGroupsStillPending: [Void] = []
 
     }
 
@@ -115,6 +117,16 @@ class MockMLSController: MLSControllerProtocol {
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) throws {
         calls.removeMembersFromConversation.append((clientIds, groupID))
+    }
+
+    // MARK: - Joining groups
+
+    func addGroupPendingJoin(_ group: MLSGroup) {
+        calls.addGroupsPendingJoin.append(group)
+    }
+
+    func joinGroupsStillPending() {
+        calls.joinGroupsStillPending.append(())
     }
 
 }

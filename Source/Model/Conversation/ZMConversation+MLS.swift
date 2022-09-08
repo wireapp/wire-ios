@@ -26,7 +26,10 @@ extension ZMConversation {
     static let messageProtocolKey = "messageProtocol"
 
     @objc
-    static let mlsGroupID = "mlsGroupID"
+    static let mlsGroupIdKey = "mlsGroupID"
+
+    @objc
+    static let mlsStatusKey = "mlsStatus"
 
     // MARK: - Properties
 
@@ -63,26 +66,51 @@ extension ZMConversation {
 
     public var mlsGroupID: MLSGroupID? {
         get {
-            willAccessValue(forKey: Self.mlsGroupID)
+            willAccessValue(forKey: Self.mlsGroupIdKey)
             let value = primitiveMlsGroupID
-            didAccessValue(forKey: Self.mlsGroupID)
+            didAccessValue(forKey: Self.mlsGroupIdKey)
             return value.map(MLSGroupID.init(_:))
         }
 
         set {
-            willChangeValue(forKey: Self.mlsGroupID)
+            willChangeValue(forKey: Self.mlsGroupIdKey)
             primitiveMlsGroupID = newValue?.data
-            didChangeValue(forKey: Self.mlsGroupID)
+            didChangeValue(forKey: Self.mlsGroupIdKey)
         }
     }
 
-    /// Whether the conversation is pending processing of an
-    /// mls welcome message.
-    ///
-    /// Until the welcome message is processed, this conversation
-    /// is not ready for communication.
+    @NSManaged private var primitiveMlsStatus: NSNumber?
 
-    @NSManaged public var isPendingWelcomeMessage: Bool
+    /// The mls group status
+    ///
+    /// If this conversation is an mls group (which it should be if the
+    /// `messageProtocol` is `mls`), then this status should exist.
+
+    public var mlsStatus: MLSGroupStatus? {
+        get {
+            willAccessValue(forKey: Self.mlsStatusKey)
+            let value = primitiveMlsStatus?.int16Value
+            didAccessValue(forKey: Self.mlsStatusKey)
+
+            guard let value = value else {
+                return nil
+            }
+
+            guard let status = MLSGroupStatus(rawValue: value) else {
+                fatalError("failed to init MLSGroupStatus from rawValue: \(value)")
+            }
+
+            return status
+        }
+
+        set {
+            guard let status = newValue else { return }
+
+            willChangeValue(forKey: Self.mlsStatusKey)
+            primitiveMlsStatus = NSNumber(value: status.rawValue)
+            didChangeValue(forKey: Self.mlsStatusKey)
+        }
+    }
 
 }
 
@@ -101,12 +129,12 @@ public extension ZMConversation {
         if APIVersion.isFederationEnabled {
             request.predicate = NSPredicate(
                 format: "%K == %@ AND %K == %@",
-                argumentArray: [Self.mlsGroupID, groupID.data, Self.domainKey()!, domain]
+                argumentArray: [Self.mlsGroupIdKey, groupID.data, Self.domainKey()!, domain]
             )
         } else {
             request.predicate = NSPredicate(
                 format: "%K == %@",
-                argumentArray: [Self.mlsGroupID, groupID.data]
+                argumentArray: [Self.mlsGroupIdKey, groupID.data]
             )
         }
 
