@@ -648,7 +648,47 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             conversation.updateOrCreate(in: syncMOC)
 
             // then
-            XCTAssertTrue(mockEventProcessor.didCallUpdateConversationIfNeeded)
+            let updateConversationCalls = mockEventProcessor.calls.updateConversationIfNeeded
+            XCTAssertEqual(updateConversationCalls.count, 1)
+            XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_MLS_AsksToJoinGroupWhenReady_DuringSlowSync() {
+        syncMOC.performAndWait {
+            // given
+            let mockEventProcessor = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mockEventProcessor)
+
+            let qualifiedID = groupConversation.qualifiedID!
+            let conversation = Payload.Conversation(qualifiedID: qualifiedID,
+                                                    type: BackendConversationType.group.rawValue,
+                                                    messageProtocol: "mls")
+            // when
+            conversation.updateOrCreate(in: syncMOC, source: .slowSync)
+
+            // then
+            let joinMLSGroupWhenReadyCalls = mockEventProcessor.calls.joinMLSGroupWhenReady
+            XCTAssertEqual(joinMLSGroupWhenReadyCalls.count, 1)
+            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first, groupConversation)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_MLS_DoesntAskToJoinGroupWhenReady_DuringQuickSync() {
+        syncMOC.performAndWait {
+            // given
+            let mockEventProcessor = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mockEventProcessor)
+
+            let qualifiedID = groupConversation.qualifiedID!
+            let conversation = Payload.Conversation(qualifiedID: qualifiedID,
+                                                    type: BackendConversationType.group.rawValue,
+                                                    messageProtocol: "mls")
+            // when
+            conversation.updateOrCreate(in: syncMOC, source: .eventStream)
+
+            // then
+            XCTAssertEqual(mockEventProcessor.calls.joinMLSGroupWhenReady.count, 0)
         }
     }
 
@@ -664,7 +704,9 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             processMemberJoinEvent()
 
             // then
-            XCTAssertTrue(mockEventProcessor.didCallUpdateConversationIfNeeded)
+            let updateConversationCalls = mockEventProcessor.calls.updateConversationIfNeeded
+            XCTAssertEqual(updateConversationCalls.count, 1)
+            XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
         }
     }
 
@@ -705,7 +747,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             event.process(in: syncMOC, originalEvent: updateEvent)
 
             // then
-            XCTAssertEqual(message, mockEventProcessor.processedMessage)
+            XCTAssertEqual(message, mockEventProcessor.calls.processWelcomeMessage.first?.message)
         }
     }
 

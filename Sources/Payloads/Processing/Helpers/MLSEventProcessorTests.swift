@@ -51,15 +51,15 @@ class MLSEventProcessorTests: MessagingTestBase {
             // Given
             let message = "welcome message"
             self.mlsControllerMock.groupID = self.conversation.mlsGroupID
-            self.conversation.isPendingWelcomeMessage = true
-            XCTAssertTrue(self.conversation.isPendingWelcomeMessage)
+            self.conversation.mlsStatus = .pendingJoin
+            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             // When
             MLSEventProcessor.shared.process(welcomeMessage: message, domain: self.domain, in: self.syncMOC)
 
             // Then
             XCTAssertEqual(message, self.mlsControllerMock.processedWelcomeMessage)
-            XCTAssertFalse(self.conversation.isPendingWelcomeMessage)
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }
 
@@ -82,46 +82,86 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
     }
 
-    func test_itUpdates_IsPendingWelcomeMessage_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() {
-        assert_isPendingWelcomeMessage(
-            originalValue: true,
-            expectedValue: false,
-            hasWelcomeMessageBeenProcessed: true,
-            messageProtocol: .mls
+    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() {
+        assert_mlsStatus(
+            originalValue: .pendingJoin,
+            expectedValue: .ready,
+            mockMessageProtocol: .mls,
+            mockHasWelcomeMessageBeenProcessed: true
         )
     }
 
-    func test_itUpdates_IsPendingWelcomeMessage_WhenProtocolIsMLS_AndWelcomeMessageWasNotProcessed() {
-        assert_isPendingWelcomeMessage(
-            originalValue: false,
-            expectedValue: true,
-            hasWelcomeMessageBeenProcessed: false,
-            messageProtocol: .mls
+    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasNotProcessed() {
+        assert_mlsStatus(
+            originalValue: .ready,
+            expectedValue: .pendingJoin,
+            mockMessageProtocol: .mls,
+            mockHasWelcomeMessageBeenProcessed: false
         )
     }
 
-    func test_itDoesntUpdate_IsPendingWelcomeMessage_WhenProtocolIsNotMLS() {
-        assert_isPendingWelcomeMessage(
-            originalValue: true,
-            expectedValue: true,
-            hasWelcomeMessageBeenProcessed: true,
-            messageProtocol: .proteus
+    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() {
+        assert_mlsStatus(
+            originalValue: .pendingJoin,
+            expectedValue: .pendingJoin,
+            mockMessageProtocol: .proteus
         )
+    }
+
+    // MARK: - Joining new conversations
+
+    func test_itAddsPendingGroupToGroupsPendingJoin() {
+        syncMOC.performAndWait {
+            // Given
+            self.conversation.mlsStatus = .pendingJoin
+
+            // When
+            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+                forConversation: self.conversation,
+                context: self.syncMOC
+            )
+
+            // Then
+            let expectedGroup = MLSGroup(from: self.conversation)
+            XCTAssertEqual(self.mlsControllerMock.groupsPendingJoin.first, expectedGroup)
+        }
+    }
+
+    func test_itDoesntAddNotPendingGroupsToGroupsPendingJoin() {
+        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .ready)
+        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .pendingLeave)
+        test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .outOfSync)
     }
 
     // MARK: - Helpers
 
-    func assert_isPendingWelcomeMessage(
-        originalValue: Bool,
-        expectedValue: Bool,
-        hasWelcomeMessageBeenProcessed: Bool,
-        messageProtocol: MessageProtocol
+    func test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus status: MLSGroupStatus) {
+        syncMOC.performAndWait {
+            // Given
+            self.conversation.mlsStatus = status
+
+            // When
+            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+                forConversation: self.conversation,
+                context: self.syncMOC
+            )
+
+            // Then
+            XCTAssertTrue(self.mlsControllerMock.groupsPendingJoin.isEmpty)
+        }
+    }
+
+    func assert_mlsStatus(
+        originalValue: MLSGroupStatus,
+        expectedValue: MLSGroupStatus,
+        mockMessageProtocol: MessageProtocol,
+        mockHasWelcomeMessageBeenProcessed: Bool = true
     ) {
         syncMOC.performGroupedBlockAndWait {
             // Given
-            self.conversation.isPendingWelcomeMessage = originalValue
-            self.conversation.messageProtocol = messageProtocol
-            self.mlsControllerMock.hasWelcomeMessageBeenProcessed = hasWelcomeMessageBeenProcessed
+            self.conversation.mlsStatus = originalValue
+            self.conversation.messageProtocol = mockMessageProtocol
+            self.mlsControllerMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
 
             // When
             MLSEventProcessor.shared.updateConversationIfNeeded(
@@ -131,7 +171,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.conversation.isPendingWelcomeMessage, expectedValue)
+            XCTAssertEqual(self.conversation.mlsStatus, expectedValue)
         }
     }
 }

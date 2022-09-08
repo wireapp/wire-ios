@@ -385,8 +385,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         newConversation.needsToBeUpdatedFromBackend = deletedDuplicate
 
         if newConversation.messageProtocol == .mls {
-            Logging.mls.info("resetting `isPendingWelcomeMessage` to `false` b/c self client is creator")
-            newConversation.isPendingWelcomeMessage = false
+            Logging.mls.info("resetting `mlsStatus` to `ready` b/c self client is creator")
+            newConversation.mlsStatus = .ready
 
             guard let mlsController = managedObjectContext.mlsController else {
                 Logging.mls.warn("failed to create mls group: MLSController doesn't exist")
