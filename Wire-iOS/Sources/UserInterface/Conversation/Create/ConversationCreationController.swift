@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 import WireDataModel
 
 protocol ConversationCreationValuesConfigurable: AnyObject {
@@ -96,6 +97,8 @@ final class ConversationCreationController: UIViewController {
     private let selfUser: UserType
     private let colorSchemeVariant = ColorScheme.default.variant
     private let collectionViewController = SectionCollectionViewController()
+
+    fileprivate var navBarBackgroundView = UIView()
 
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
@@ -244,7 +247,6 @@ final class ConversationCreationController: UIViewController {
         if selfUser.isTeamMember {
             collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
         }
-    }
 
         navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(navBarBackgroundView)
@@ -257,6 +259,7 @@ final class ConversationCreationController: UIViewController {
             navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
         ])
+    }
 
     private func setupNavigationBar() {
         self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault

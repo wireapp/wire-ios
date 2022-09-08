@@ -1310,7 +1310,6 @@
 		EE948F1923E17778000A663E /* ContactsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE948F1823E17778000A663E /* ContactsDataSource.swift */; };
 		EE94CA1925C2E490005F1155 /* ScreenCurtainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE94CA0B25C2E48B005F1155 /* ScreenCurtainTests.swift */; };
 		EE997A1A2507A851008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A192507A851008336D2 /* Logging.swift */; };
-		EE9BC5FD287C7C0100AF9AEE /* DeveloperFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BC5FC287C7C0100AF9AEE /* DeveloperFlag.swift */; };
 		EEA1ED7325BF430B006D07D3 /* AppLockModule.View.LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8736F1831E4B67F0001CBA62 /* AppLockModule.View.LockView.swift */; };
 		EEA2E57125B2386500E726C3 /* AppLockModulePresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2E56F25B2385D00E726C3 /* AppLockModulePresenterTests.swift */; };
 		EEA2E57425B23A3100E726C3 /* AppLockModuleViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2E57225B23A2B00E726C3 /* AppLockModuleViewTests.swift */; };
@@ -3243,7 +3242,6 @@
 		EE948F1823E17778000A663E /* ContactsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsDataSource.swift; sourceTree = "<group>"; };
 		EE94CA0B25C2E48B005F1155 /* ScreenCurtainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainTests.swift; sourceTree = "<group>"; };
 		EE997A192507A851008336D2 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
-		EE9BC5FC287C7C0100AF9AEE /* DeveloperFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlag.swift; sourceTree = "<group>"; };
 		EEA2E56F25B2385D00E726C3 /* AppLockModulePresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModulePresenterTests.swift; sourceTree = "<group>"; };
 		EEA2E57225B23A2B00E726C3 /* AppLockModuleViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModuleViewTests.swift; sourceTree = "<group>"; };
 		EEA4F47B2410054100DBEA3D /* HashBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashBox.swift; sourceTree = "<group>"; };
@@ -7143,7 +7141,6 @@
 			children = (
 				EECA90A9287449EC0024B301 /* DeveloperFlagsView.swift */,
 				EECA90AB28744A060024B301 /* DeveloperFlagsViewModel.swift */,
-				EE9BC5FC287C7C0100AF9AEE /* DeveloperFlag.swift */,
 			);
 			path = DeveloperFlags;
 			sourceTree = "<group>";
@@ -8143,7 +8140,6 @@
 				5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */,
 				06F9864625CC146B005572C5 /* UIView+ConstraintFactory.swift in Sources */,
 				BFBE45771E36205F009FBF60 /* Error+Logging.swift in Sources */,
-                E57917B228999A240063339D /* UIView+Borders.swift in Sources */,
 				543E0C681E23A7C3000E2161 /* NotSignedInViewController.swift in Sources */,
 				BF96A6CC1E2FD3BA0057974A /* NSItemProvider+Fetching.swift in Sources */,
 				06F9864225CBEEE6005572C5 /* StyleKitIcon+Const.swift in Sources */,
@@ -8189,7 +8185,6 @@
 				0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */,
 				5E8DA755211AF8E200360979 /* AuthenticationInitialSyncEventHandler.swift in Sources */,
 				5E672C922179C3E300522E61 /* BadgeUserImageView.swift in Sources */,
-				EE9BC5FD287C7C0100AF9AEE /* DeveloperFlag.swift in Sources */,
 				EEF71F6321B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift in Sources */,
 				1639A80F225F863000868AB9 /* ProfileHeaderViewController.swift in Sources */,
 				6305206024FFD68100ED295A /* UIEdgeInsets+DeviceOrientation.swift in Sources */,
@@ -8995,7 +8990,6 @@
 				637387C726443C31004FEF79 /* VideoKind.swift in Sources */,
 				1660F23A1FBF32D400A0EE54 /* MediaPlayerController.swift in Sources */,
 				167961AF20445FB400B72ACC /* ProfileTitleView.swift in Sources */,
-				EE6C212D284390FB0031EFB9 /* DeveloperFlagsView.swift in Sources */,
 				16FB2F6C20C0389800582137 /* Dictionary+Merge.swift in Sources */,
 				87A15FE11E08339500AED79B /* CollectionLinkCell.swift in Sources */,
 				A96E803224CB2AB60010CD80 /* PasscodeSetupViewController.swift in Sources */,
