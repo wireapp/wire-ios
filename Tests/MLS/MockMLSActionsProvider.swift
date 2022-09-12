@@ -27,6 +27,12 @@ class MockMLSActionsProvider: MLSActionsProviderProtocol {
 
     }
 
+    var mockReturnValueForFetchBackendPublicKeys: BackendMLSPublicKeys?
+
+    func fetchBackendPublicKeys(in context: NotificationContext) async throws -> BackendMLSPublicKeys {
+        return mockReturnValueForFetchBackendPublicKeys ?? BackendMLSPublicKeys()
+    }
+
     var mockCountUncliamedKeyPackagesResult: Swift.Result<CountSelfMLSKeyPackagesAction.Result, CountSelfMLSKeyPackagesAction.Failure>?
 
     func countUnclaimedKeyPackages(

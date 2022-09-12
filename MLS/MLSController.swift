@@ -51,8 +51,10 @@ public final class MLSController: MLSControllerProtocol {
     private let logger = Logging.mls
     private var groupsPendingJoin = Set<MLSGroup>()
 
-    let actionsProvider: MLSActionsProviderProtocol
+    var backendPublicKeys = BackendMLSPublicKeys()
+
     let targetUnclaimedKeyPackageCount = 100
+    let actionsProvider: MLSActionsProviderProtocol
 
     // MARK: - Life cycle
 
@@ -67,16 +69,13 @@ public final class MLSController: MLSControllerProtocol {
         self.conversationEventProcessor = conversationEventProcessor
         self.actionsProvider = actionsProvider
 
-        do {
-            try generatePublicKeysIfNeeded()
-        } catch {
-            logger.error("failed to generate public keys: \(String(describing: error))")
-        }
+        generateClientPublicKeysIfNeeded()
+        fetchBackendPublicKeys()
     }
 
     // MARK: - Public keys
 
-    private func generatePublicKeysIfNeeded() throws {
+    private func generateClientPublicKeysIfNeeded() {
         guard
             let context = context,
             let selfClient = ZMUser.selfUser(in: context).selfClient()
@@ -86,15 +85,36 @@ public final class MLSController: MLSControllerProtocol {
 
         var keys = selfClient.mlsPublicKeys
 
-        if keys.ed25519 == nil {
-            logger.info("generating ed25519 public key")
-            let keyBytes = try coreCrypto.wire_clientPublicKey()
-            let keyData = Data(keyBytes)
-            keys.ed25519 = keyData.base64EncodedString()
+        do {
+            if keys.ed25519 == nil {
+                logger.info("generating ed25519 public key")
+                let keyBytes = try coreCrypto.wire_clientPublicKey()
+                let keyData = Data(keyBytes)
+                keys.ed25519 = keyData.base64EncodedString()
+            }
+        } catch {
+            logger.error("failed to generate public keys: \(String(describing: error))")
         }
 
         selfClient.mlsPublicKeys = keys
         context.saveOrRollback()
+    }
+
+    private func fetchBackendPublicKeys() {
+        logger.info("fetching backend public keys")
+
+        guard let notificationContext = context?.notificationContext else {
+            logger.warn("can't fetch backend public keys: notification context is missing")
+            return
+        }
+
+        Task {
+            do {
+                backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
+            } catch {
+                logger.warn("failed to fetch backend public keys: \(String(describing: error))")
+            }
+        }
     }
 
     // MARK: - Group creation
@@ -122,9 +142,14 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("creating group for id: \(groupID)")
 
         do {
+            let config = ConversationConfiguration(
+                ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+                externalSenders: backendPublicKeys.ed25519Keys
+            )
+
             try coreCrypto.wire_createConversation(
                 conversationId: groupID.bytes,
-                config: ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+                config: config
             )
         } catch let error {
             logger.warn("failed to create group (\(groupID)): \(String(describing: error))")
@@ -594,6 +619,10 @@ extension Invitee {
 
 protocol MLSActionsProviderProtocol {
 
+    func fetchBackendPublicKeys(
+        in context: NotificationContext
+    ) async throws -> BackendMLSPublicKeys
+
     func countUnclaimedKeyPackages(
         clientID: String,
         context: NotificationContext,
@@ -627,6 +656,13 @@ protocol MLSActionsProviderProtocol {
 }
 
 private class MLSActionsProvider: MLSActionsProviderProtocol {
+
+    func fetchBackendPublicKeys(
+        in context: NotificationContext
+    ) async throws -> BackendMLSPublicKeys {
+        var action = FetchBackendMLSPublicKeysAction()
+        return try await action.perform(in: context)
+    }
 
     func countUnclaimedKeyPackages(clientID: String, context: NotificationContext, resultHandler: @escaping CountSelfMLSKeyPackagesAction.ResultHandler) {
         let action = CountSelfMLSKeyPackagesAction(clientID: clientID, resultHandler: resultHandler)
