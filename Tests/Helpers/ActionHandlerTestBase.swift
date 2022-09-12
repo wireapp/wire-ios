@@ -203,11 +203,25 @@ extension ActionHandlerTestBase where Failure: Equatable {
 
     func test_itHandlesFailure(
         status: Int,
+        payload: ZMTransportData? = nil,
+        expectedError: Failure
+    ) {
+        test_itHandlesResponse(
+            status: status,
+            payload: payload
+        ) {
+            guard case .failure(let error) = $0 else { return false }
+            return error == expectedError
+        }
+    }
+
+    func test_itHandlesFailure(
+        status: Int,
         label: String? = nil,
         expectedError: Failure
     ) {
         test_itHandlesResponse(status: status, label: label) {
-            guard case .failure(let error) = $0 else { return false}
+            guard case .failure(let error) = $0 else { return false }
             return error == expectedError
         }
     }
