@@ -50,6 +50,28 @@ class MLSControllerTests: ZMConversationTestsBase {
         super.tearDown()
     }
 
+    // MARK: - Public keys
+
+    func test_BackendPublicKeysAreFetched_WhenInitializing() throws {
+        // Mock
+        let keys = BackendMLSPublicKeys(
+            removal: .init(ed25519: Data([1, 2, 3]))
+        )
+
+        mockActionsProvider.mockReturnValueForFetchBackendPublicKeys = keys
+
+        // When
+        let sut = MLSController(
+            context: uiMOC,
+            coreCrypto: mockCoreCrypto,
+            conversationEventProcessor: mockConversationEventProcessor,
+            actionsProvider: mockActionsProvider
+        )
+
+        // Then
+        XCTAssertEqual(sut.backendPublicKeys, keys)
+    }
+
     // MARK: - Message Encryption
 
     typealias EncryptionError = MLSController.MLSMessageEncryptionError
@@ -183,6 +205,11 @@ class MLSControllerTests: ZMConversationTestsBase {
     func test_CreateGroup_IsSuccessful() throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKey = Data([1, 2, 3])
+
+        sut.backendPublicKeys = BackendMLSPublicKeys(
+            removal: .init(ed25519: removalKey)
+        )
 
         // When
         XCTAssertNoThrow(try sut.createGroup(for: groupID))
@@ -191,7 +218,10 @@ class MLSControllerTests: ZMConversationTestsBase {
         let createConversationCalls = mockCoreCrypto.calls.createConversation
         XCTAssertEqual(createConversationCalls.count, 1)
         XCTAssertEqual(createConversationCalls[0].0, groupID.bytes)
-        XCTAssertEqual(createConversationCalls[0].1, ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519))
+        XCTAssertEqual(createConversationCalls[0].1, ConversationConfiguration(
+            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            externalSenders: [removalKey.bytes]
+        ))
     }
 
     func test_CreateGroup_ThrowsError() throws {
