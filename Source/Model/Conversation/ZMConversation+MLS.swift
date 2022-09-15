@@ -31,7 +31,12 @@ extension ZMConversation {
     @objc
     static let mlsStatusKey = "mlsStatus"
 
+    @objc
+    static let epochKey = #keyPath(epoch)
+
     // MARK: - Properties
+
+    @NSManaged public var epoch: UInt64
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
@@ -104,10 +109,8 @@ extension ZMConversation {
         }
 
         set {
-            guard let status = newValue else { return }
-
             willChangeValue(forKey: Self.mlsStatusKey)
-            primitiveMlsStatus = NSNumber(value: status.rawValue)
+            primitiveMlsStatus = newValue.map { NSNumber(value: $0.rawValue) }
             didChangeValue(forKey: Self.mlsStatusKey)
         }
     }
@@ -120,23 +123,15 @@ public extension ZMConversation {
 
     static func fetch(
         with groupID: MLSGroupID,
-        domain: String,
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         let request = Self.fetchRequest()
         request.fetchLimit = 2
 
-        if APIVersion.isFederationEnabled {
-            request.predicate = NSPredicate(
-                format: "%K == %@ AND %K == %@",
-                argumentArray: [Self.mlsGroupIdKey, groupID.data, Self.domainKey()!, domain]
-            )
-        } else {
-            request.predicate = NSPredicate(
-                format: "%K == %@",
-                argumentArray: [Self.mlsGroupIdKey, groupID.data]
-            )
-        }
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            argumentArray: [Self.mlsGroupIdKey, groupID.data]
+        )
 
         let result = context.executeFetchRequestOrAssert(request)
         require(result.count <= 1, "More than one conversation found for a single group id")

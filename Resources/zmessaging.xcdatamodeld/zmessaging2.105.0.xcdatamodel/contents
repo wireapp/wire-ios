@@ -54,6 +54,7 @@
         <attribute name="domain" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="draftMessageData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="draftMessageNonce" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="epoch" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="hasReadReceiptsEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="hasUnreadUnsentMessage" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="internalEstimatedUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -345,7 +346,7 @@
         <element name="ButtonState" positionX="-225" positionY="36" width="128" height="105"/>
         <element name="ClientMessage" positionX="9" positionY="153" width="128" height="90"/>
         <element name="Connection" positionX="-133.4921875" positionY="424.80859375" width="128" height="163"/>
-        <element name="Conversation" positionX="785.66015625" positionY="332.30078125" width="128" height="809"/>
+        <element name="Conversation" positionX="785.66015625" positionY="332.30078125" width="128" height="824"/>
         <element name="Feature" positionX="-286.9609375" positionY="-65" width="128" height="119"/>
         <element name="GenericMessageData" positionX="18" positionY="162" width="128" height="103"/>
         <element name="ImageMessage" positionX="5.453125" positionY="-305.99609375" width="128" height="165"/>
