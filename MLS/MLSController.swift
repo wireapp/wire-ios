@@ -36,9 +36,9 @@ public protocol MLSControllerProtocol {
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws
 
-    func addGroupPendingJoin(_ group: MLSGroup)
+    func registerPendingJoin(_ group: MLSGroupID)
 
-    func joinGroupsStillPending()
+    func performPendingJoins()
 }
 
 public final class MLSController: MLSControllerProtocol {
@@ -50,7 +50,7 @@ public final class MLSController: MLSControllerProtocol {
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let userDefaults: UserDefaults
     private let logger = Logging.mls
-    private var groupsPendingJoin = Set<MLSGroup>()
+    private var groupsPendingJoin = Set<MLSGroupID>()
 
     var backendPublicKeys = BackendMLSPublicKeys()
 
@@ -128,7 +128,6 @@ public final class MLSController: MLSControllerProtocol {
         case failedToClaimKeyPackages
         case failedToCreateGroup
         case failedToAddMembers
-        case failedToSendHandshakeMessage
         case failedToSendWelcomeMessage
 
     }
@@ -198,8 +197,15 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
-    private func sendMessage(_ bytes: Bytes, groupID: MLSGroupID) async throws {
-        logger.info("sending handshake message in group (\(groupID))")
+    enum MLSSendMessageError: Error {
+
+        case failedToSendCommit
+        case failedToSendProposal
+
+    }
+
+    private func sendMessage(_ bytes: Bytes, groupID: MLSGroupID, kind: MessageKind) async throws {
+        logger.info("sending message in group (\(groupID))")
 
         var updateEvents = [ZMUpdateEvent]()
 
@@ -210,12 +216,15 @@ public final class MLSController: MLSControllerProtocol {
                 in: context.notificationContext
             )
         } catch let error {
-            logger.warn("failed to send handshake message in group (\(groupID)): \(String(describing: error))")
-            throw MLSGroupCreationError.failedToSendHandshakeMessage
+            logger.warn("failed to send \(String(describing: kind)) message in group (\(groupID)): \(String(describing: error))")
+            throw MLSSendMessageError(from: kind)
         }
 
-        logger.info("commit accepted in group (\(groupID)")
-        try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
+        if kind == .commit {
+            logger.info("commit accepted in group (\(groupID)")
+            try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
+        }
+
         conversationEventProcessor.processConversationEvents(updateEvents)
     }
 
@@ -253,7 +262,7 @@ public final class MLSController: MLSControllerProtocol {
         let messagesToSend = try addMembers(id: groupID, invitees: invitees)
 
         guard let messagesToSend = messagesToSend else { return }
-        try await sendMessage(messagesToSend.commit, groupID: groupID)
+        try await sendMessage(messagesToSend.commit, groupID: groupID, kind: .commit)
         try await sendWelcomeMessage(messagesToSend.welcome)
     }
 
@@ -293,7 +302,7 @@ public final class MLSController: MLSControllerProtocol {
         
         let clientIds =  clientIds.compactMap { $0.string.utf8Data?.bytes }
         let messageToSend = try removeMembers(id: groupID, clientIds: clientIds)
-        try await sendMessage(messageToSend.commit, groupID: groupID)
+        try await sendMessage(messageToSend.commit, groupID: groupID, kind: .commit)
     }
 
     private func removeMembers(
@@ -480,33 +489,65 @@ public final class MLSController: MLSControllerProtocol {
 
     // MARK: - Joining conversations
 
-    public func addGroupPendingJoin(_ group: MLSGroup) {
-        groupsPendingJoin.insert(group)
+    typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
+
+    /// Registers a group to be joined via external add proposal once the app has finished processing events
+    /// - Parameter groupID: the identifier for the MLS group
+    public func registerPendingJoin(_ groupID: MLSGroupID) {
+        groupsPendingJoin.insert(groupID)
     }
 
-    public func joinGroupsStillPending() {
-        while !groupsPendingJoin.isEmpty {
-            joinGroupIfNeeded(groupsPendingJoin.removeFirst())
-        }
-    }
 
-    private func joinGroupIfNeeded(_ group: MLSGroup) {
+    /// Request to join groups still pending
+    ///
+    /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
+    /// and sends external add proposals for these groups
+    public func performPendingJoins() {
         guard let context = context else {
             return
         }
 
-        guard let conversation = ZMConversation.fetch(with: group.groupID, domain: group.domain, in: context) else {
-            return
+        generatePendingJoins(in: context).forEach { pendingJoin in
+            Task {
+                await sendExternalAddProposal(pendingJoin.groupID, epoch: pendingJoin.epoch)
+            }
         }
 
-        guard let status = conversation.mlsStatus else {
-            return
-        }
+        groupsPendingJoin.removeAll()
+    }
 
-        if status == .pendingJoin {
-            // ask to join
-        }
+    private func generatePendingJoins(in context: NSManagedObjectContext) -> [PendingJoin] {
+        logger.info("generating list of groups pending join")
 
+        return groupsPendingJoin.compactMap { groupID in
+
+            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
+                logger.warn("conversation not found for group (\(groupID))")
+                return nil
+            }
+
+            guard let status = conversation.mlsStatus, status == .pendingJoin else {
+                logger.warn("group (\(groupID)) status is not pending join")
+                return nil
+            }
+
+            return (groupID, conversation.epoch)
+
+        }
+    }
+
+    private func sendExternalAddProposal(_ groupID: MLSGroupID, epoch: UInt64) async {
+        logger.info("requesting to join group (\(groupID)")
+
+        do {
+            let proposal = try coreCrypto.wire_newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch)
+            try await sendMessage(proposal, groupID: groupID, kind: .proposal)
+            logger.info("success: requested to join group (\(groupID)")
+        } catch {
+            logger.warn(
+                "failed to request join for group (\(groupID)): \(String(describing: error))"
+            )
+        }
     }
 
     // MARK: - Encrypt message
@@ -610,21 +651,40 @@ extension MLSUser: CustomStringConvertible {
 
 }
 
-public struct MLSGroup: Equatable, Hashable {
-    public let groupID: MLSGroupID
-    public let domain: String
+enum MessageKind {
 
-    public init?(from conversation: ZMConversation) {
-        guard let groupID = conversation.mlsGroupID else {
-            return nil
+    case commit
+    case proposal
+
+}
+
+extension MessageKind: CustomStringConvertible {
+
+    var description: String {
+        switch self {
+        case .commit:
+            return "commit"
+        case .proposal:
+            return "proposal"
         }
-
-        self.groupID = groupID
-        self.domain = conversation.domain ?? APIVersion.domain!
     }
+
 }
 
 // MARK: - Helper Extensions
+
+private extension MLSController.MLSSendMessageError {
+
+    init(from messageKind: MessageKind) {
+        switch messageKind {
+        case .commit:
+            self = .failedToSendCommit
+        case .proposal:
+            self = .failedToSendProposal
+        }
+    }
+
+}
 
 private extension String {
 

@@ -31,11 +31,10 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
             // Given
             APIVersion.isFederationEnabled = false
             let groupID = MLSGroupID([1, 2, 3])
-            let domain = "example.com"
-            let conversation = self.createConversation(groupID: groupID, domain: domain)
+            let conversation = self.createConversation(groupID: groupID)
 
             // When
-            let fetchedConversation = ZMConversation.fetch(with: groupID, domain: domain, in: syncMOC)
+            let fetchedConversation = ZMConversation.fetch(with: groupID, in: syncMOC)
 
             // Then
             XCTAssertEqual(fetchedConversation, conversation)
@@ -47,22 +46,20 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
             // Given
             APIVersion.isFederationEnabled = true
             let groupID = MLSGroupID([1, 2, 3])
-            let domain = "example.com"
-            let conversation = self.createConversation(groupID: groupID, domain: domain)
+            let conversation = self.createConversation(groupID: groupID)
 
             // When
-            let fetchedConversation = ZMConversation.fetch(with: groupID, domain: domain, in: syncMOC)
+            let fetchedConversation = ZMConversation.fetch(with: groupID, in: syncMOC)
 
             // Then
             XCTAssertEqual(fetchedConversation, conversation)
         }
     }
 
-    private func createConversation(groupID: MLSGroupID, domain: String) -> ZMConversation? {
+    private func createConversation(groupID: MLSGroupID) -> ZMConversation? {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = NSUUID.create()
         conversation.mlsGroupID = groupID
-        conversation.domain = domain
         XCTAssert(syncMOC.saveOrRollback())
         return conversation
     }
