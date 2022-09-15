@@ -426,6 +426,7 @@ extension Payload {
             case users
             case messageProtocol = "protocol"
             case mlsGroupID = "group_id"
+            case epoch
         }
 
         static var eventType: ZMUpdateEventType {
@@ -436,6 +437,7 @@ extension Payload {
         let users: [ConversationMember]?
         let messageProtocol: String?
         let mlsGroupID: String?
+        let epoch: UInt?
     }
 
     struct UpdateConversationConnectionRequest: EventData {
@@ -532,7 +534,6 @@ extension Payload {
         }
 
         // This is currently the id of the self conversation.
-        
         let id: UUID
 
         let qualifiedID: QualifiedID?

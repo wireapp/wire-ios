@@ -23,7 +23,7 @@ class MockMLSEventProcessor: MLSEventProcessing {
 
     struct Calls {
         var updateConversationIfNeeded = [(conversation: ZMConversation, groupID: String?)]()
-        var processWelcomeMessage = [(message: String, domain: String)]()
+        var processWelcomeMessage = [String]()
         var joinMLSGroupWhenReady = [ZMConversation]()
     }
 
@@ -33,8 +33,8 @@ class MockMLSEventProcessor: MLSEventProcessing {
         calls.updateConversationIfNeeded.append((conversation, groupID))
     }
 
-    func process(welcomeMessage: String, domain: String, in context: NSManagedObjectContext) {
-        calls.processWelcomeMessage.append((welcomeMessage, domain))
+    func process(welcomeMessage: String, in context: NSManagedObjectContext) {
+        calls.processWelcomeMessage.append(welcomeMessage)
     }
 
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {

@@ -169,6 +169,7 @@ extension Payload.Conversation {
         conversation.remoteIdentifier = conversationID
         conversation.domain = APIVersion.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.epoch = UInt64(epoch ?? 0)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -367,6 +368,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJo
             return
         }
 
+        conversation.epoch = UInt64(data.epoch ?? 0)
         updateMessageProtocol(for: conversation)
 
         if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
@@ -555,13 +557,8 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
 extension Payload.UpdateConversationMLSWelcome {
 
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        guard let domain = qualifiedID?.domain.nilIfEmpty ?? APIVersion.domain else {
-            return Logging.mls.warn("aborting processing `UpdateConversationMLSWelcome` payload: missing conversation domain")
-        }
-
         MLSEventProcessor.shared.process(
             welcomeMessage: data,
-            domain: domain,
             in: context
         )
     }
