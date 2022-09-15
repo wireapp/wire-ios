@@ -26,6 +26,7 @@ class MLSControllerTests: ZMConversationTestsBase {
     var mockCoreCrypto: MockCoreCrypto!
     var mockActionsProvider: MockMLSActionsProvider!
     var mockConversationEventProcessor: MockConversationEventProcessor!
+    var userDefaultsTestSuite: UserDefaults!
 
     let groupID = MLSGroupID([1, 2, 3])
 
@@ -34,12 +35,14 @@ class MLSControllerTests: ZMConversationTestsBase {
         mockCoreCrypto = MockCoreCrypto()
         mockActionsProvider = MockMLSActionsProvider()
         mockConversationEventProcessor = MockConversationEventProcessor()
+        userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
 
         sut = MLSController(
             context: uiMOC,
             coreCrypto: mockCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
-            actionsProvider: mockActionsProvider
+            actionsProvider: mockActionsProvider,
+            userDefaults: userDefaultsTestSuite
         )
     }
 
@@ -58,7 +61,13 @@ class MLSControllerTests: ZMConversationTestsBase {
             removal: .init(ed25519: Data([1, 2, 3]))
         )
 
-        mockActionsProvider.mockReturnValueForFetchBackendPublicKeys = keys
+        // expectation
+        let expectation = XCTestExpectation(description: "Fetch backend public keys")
+
+        mockActionsProvider.fetchBackendPublicKeysMocks.append({
+            expectation.fulfill()
+            return keys
+        })
 
         // When
         let sut = MLSController(
@@ -69,6 +78,7 @@ class MLSControllerTests: ZMConversationTestsBase {
         )
 
         // Then
+        wait(for: [expectation], timeout: 0.5)
         XCTAssertEqual(sut.backendPublicKeys, keys)
     }
 
@@ -598,4 +608,133 @@ class MLSControllerTests: ZMConversationTestsBase {
         XCTAssertTrue(mockCoreCrypto.calls.commitAccepted.isEmpty)
     }
 
+    // MARK: - Key Packages
+
+    func test_UploadKeyPackages_IsSuccessfull() {
+        // Given
+        let clientID = self.createSelfClient(onMOC: uiMOC).remoteIdentifier
+        let keyPackages: [Bytes] = [
+            [1, 2, 3],
+            [4, 5, 6]
+        ]
+
+        // we need more than half the target number to have a sufficient amount
+        let unsufficientKeyPackagesAmount = sut.targetUnclaimedKeyPackageCount / 3
+
+        // expectation
+        let countUnclaimedKeyPackages = self.expectation(description: "Count unclaimed key packages")
+        let uploadKeyPackages = self.expectation(description: "Upload key packages")
+
+        // mock that we queried kp count recently
+        userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
+
+        // mock that we don't have enough unclaimed kp locally
+        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(unsufficientKeyPackagesAmount)
+
+        // mock keyPackages returned by core cryto
+        mockCoreCrypto.mockResultForClientKeypackages = keyPackages
+
+        // mock return value for unclaimed key packages count
+        mockActionsProvider.countUnclaimedKeyPackagesMocks.append { cid in
+            XCTAssertEqual(cid, clientID)
+            countUnclaimedKeyPackages.fulfill()
+
+            return unsufficientKeyPackagesAmount
+        }
+
+        mockActionsProvider.uploadKeyPackagesMocks.append { cid, kp in
+            let keyPackages = keyPackages.map { $0.base64EncodedString }
+
+            XCTAssertEqual(cid, clientID)
+            XCTAssertEqual(kp, keyPackages)
+
+            uploadKeyPackages.fulfill()
+        }
+
+        // When
+        sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        let clientKeypackagesCalls = mockCoreCrypto.calls.clientKeypackages
+        XCTAssertEqual(clientKeypackagesCalls.count, 1)
+        XCTAssertEqual(clientKeypackagesCalls.first, UInt32(sut.targetUnclaimedKeyPackageCount))
+    }
+
+    func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() {
+        // Given
+        createSelfClient(onMOC: uiMOC)
+
+        // expectation
+        let countUnclaimedKeyPackages = XCTestExpectation(description: "Count unclaimed key packages")
+        countUnclaimedKeyPackages.isInverted = true
+
+        // mock that we queried kp count recently
+        userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
+
+        // mock that there are enough kp locally
+        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(sut.targetUnclaimedKeyPackageCount)
+
+        mockActionsProvider.countUnclaimedKeyPackagesMocks.append { _ in
+            countUnclaimedKeyPackages.fulfill()
+            return 0
+        }
+
+        // When
+        sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        wait(for: [countUnclaimedKeyPackages], timeout: 0.5)
+    }
+
+    func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() {
+        // Given
+        createSelfClient(onMOC: uiMOC)
+
+        // we need more than half the target number to have a sufficient amount
+        let unsufficientKeyPackagesAmount = sut.targetUnclaimedKeyPackageCount / 3
+
+        // expectation
+        let countUnclaimedKeyPackages = XCTestExpectation(description: "Count unclaimed key packages")
+        let uploadKeyPackages = XCTestExpectation(description: "Upload key packages")
+        uploadKeyPackages.isInverted = true
+
+        // mock that we didn't query kp count recently
+        userDefaultsTestSuite.test_setLastKeyPackageCountDate(.distantPast)
+
+        // mock that we don't have enough unclaimed kp locally
+        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(unsufficientKeyPackagesAmount)
+
+        // mock return value for unclaimed key packages count
+        mockActionsProvider.countUnclaimedKeyPackagesMocks.append { _ in
+            countUnclaimedKeyPackages.fulfill()
+            return self.sut.targetUnclaimedKeyPackageCount
+        }
+
+        mockActionsProvider.uploadKeyPackagesMocks.append { _, _ in
+            uploadKeyPackages.fulfill()
+        }
+
+        // When
+        sut.uploadKeyPackagesIfNeeded()
+
+        // Then
+        wait(for: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
+        XCTAssertEqual(mockCoreCrypto.calls.clientKeypackages.count, 0)
+    }
+
+    // MARK: - Welcome message
+
+    func test_ProcessWelcomeMessage_ChecksIfKeyPackagesNeedToBeUploaded() throws {
+        // Given
+        let message = Bytes.random().base64EncodedString
+        mockCoreCrypto.mockResultForProcessWelcomeMessage = .random()
+        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(sut.targetUnclaimedKeyPackageCount)
+
+        // When
+        _ = try sut.processWelcomeMessage(welcomeMessage: message)
+
+        // Then
+        XCTAssertEqual(mockCoreCrypto.calls.clientValidKeypackagesCount.count, 1)
+    }
 }
