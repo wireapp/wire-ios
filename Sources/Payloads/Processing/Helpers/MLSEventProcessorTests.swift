@@ -55,7 +55,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, domain: self.domain, in: self.syncMOC)
+            MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
 
             // Then
             XCTAssertEqual(message, self.mlsControllerMock.processedWelcomeMessage)
@@ -122,8 +122,8 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            let expectedGroup = MLSGroup(from: self.conversation)
-            XCTAssertEqual(self.mlsControllerMock.groupsPendingJoin.first, expectedGroup)
+            XCTAssertEqual(self.mlsControllerMock.groupsPendingJoin.count, 1)
+            XCTAssertEqual(self.mlsControllerMock.groupsPendingJoin.first, self.conversation.mlsGroupID)
         }
     }
 

@@ -142,7 +142,8 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 userIDs: [user.remoteIdentifier],
                 users: [member],
                 messageProtocol: "proteus",
-                mlsGroupID: nil
+                mlsGroupID: nil,
+                epoch: nil
             )
             let conversationEvent = conversationEventPayload(
                 from: memberJoined,
@@ -218,7 +219,8 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 userIDs: [user.remoteIdentifier],
                 users: [member],
                 messageProtocol: "proteus",
-                mlsGroupID: nil
+                mlsGroupID: nil,
+                epoch: nil
             )
             let conversationEvent = conversationEventPayload(
                 from: memberJoined,

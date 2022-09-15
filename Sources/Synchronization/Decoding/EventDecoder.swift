@@ -162,7 +162,7 @@ extension EventDecoder {
         }
 
         guard conversation.mlsStatus == .ready else {
-            Logging.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(conversation.mlsStatus))")
+            Logging.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))")
             return nil
         }
 

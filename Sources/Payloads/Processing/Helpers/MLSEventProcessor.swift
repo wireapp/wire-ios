@@ -21,7 +21,7 @@ import WireDataModel
 protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
-    func process(welcomeMessage: String, domain: String, in context: NSManagedObjectContext)
+    func process(welcomeMessage: String, in context: NSManagedObjectContext)
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
 
 }
@@ -70,30 +70,35 @@ class MLSEventProcessor: MLSEventProcessing {
     // MARK: - Joining new conversations
 
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+        Logging.mls.info("MLS event processor is adding group to join")
+
+        func logWarn(abortedWithReason reason: String) {
+            Logging.mls.warn("MLS event processor aborting joining group: \(reason)")
+        }
+
         guard conversation.messageProtocol == .mls else {
-            return Logging.mls.info("Message protocol is not mls")
+            return logWarn(abortedWithReason: "not an MLS conversation")
         }
 
-        guard let status = conversation.mlsStatus else {
-            return Logging.mls.warn("Conversation's MLS status is nil")
-        }
-
-        guard let mlsGroup = MLSGroup(from: conversation) else {
-            return Logging.mls.warn("Failed to create MLSGroup from conversation")
+        guard let groupID = conversation.mlsGroupID else {
+            return logWarn(abortedWithReason: "missing group ID")
         }
 
         guard let mlsController = context.mlsController else {
-            return Logging.mls.warn("Missing MLSController in context")
+            return logWarn(abortedWithReason: "missing MLSController")
         }
 
-        if status.isPendingJoin {
-            mlsController.addGroupPendingJoin(mlsGroup)
+        guard let status = conversation.mlsStatus, status.isPendingJoin else {
+            return logWarn(abortedWithReason: "MLS status is not .pendingJoin")
         }
+
+        mlsController.registerPendingJoin(groupID)
+        Logging.mls.info("MLS event processor added group (\(groupID)) to be joined")
     }
 
     // MARK: - Process welcome message
 
-    func process(welcomeMessage: String, domain: String, in context: NSManagedObjectContext) {
+    func process(welcomeMessage: String, in context: NSManagedObjectContext) {
         Logging.mls.info("MLS event processor is processing welcome message")
 
         guard let mlsController = context.mlsController else {
@@ -103,12 +108,16 @@ class MLSEventProcessor: MLSEventProcessing {
         do {
             let groupID = try mlsController.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
-            guard let conversation = ZMConversation.fetch(with: groupID, domain: domain, in: context) else {
+            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
                 return Logging.mls.warn("MLS event processor aborting processing welcome message: conversation does not exist in db")
             }
 
             conversation.mlsStatus = .ready
             context.saveOrRollback()
+
+            Logging.mls.info(
+                "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID))"
+            )
         } catch {
             return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }
