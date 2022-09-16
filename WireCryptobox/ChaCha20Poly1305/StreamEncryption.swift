@@ -125,7 +125,9 @@ public extension ChaCha20Poly1305 {
 
                 buffer.append(contentsOf: [UInt8](Header.platform))
                 buffer.append(0)
-                buffer.append(contentsOf: [UInt8](Data(buffer: UnsafeBufferPointer(start: &version, count: 1))))
+                withUnsafeBytes(of: &version) { versionBytes in
+                    buffer.append(contentsOf: versionBytes)
+                }
                 buffer.append(contentsOf: salt)
                 buffer.append(contentsOf: uuidHash)
 

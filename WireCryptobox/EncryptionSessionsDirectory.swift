@@ -566,7 +566,7 @@ extension EncryptionSession {
 }
 
 // MARK: - Encryption
-public protocol Encryptor: class {
+public protocol Encryptor: AnyObject {
     /// Encrypts data for a client
     /// It immediately saves the session
     /// - throws: EncryptionSessionError in case no session with given recipient
@@ -574,7 +574,7 @@ public protocol Encryptor: class {
 }
 
 // MARK: - Decryption
-public protocol Decryptor: class {
+public protocol Decryptor: AnyObject {
     /// Decrypts data from a client
     /// The session is not saved to disk until the cache is committed
     /// - throws: EncryptionSessionError in case no session with given recipient
