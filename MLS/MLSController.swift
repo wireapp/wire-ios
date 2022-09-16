@@ -18,6 +18,11 @@
 
 import Foundation
 
+public enum MLSDecryptResult: Equatable {
+    case message(_ messageData: Data)
+    case proposal(_ commitDelay: UInt64)
+}
+
 public protocol MLSControllerProtocol {
 
     func uploadKeyPackagesIfNeeded()
@@ -30,7 +35,7 @@ public protocol MLSControllerProtocol {
 
     func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> Data?
+    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult?
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -39,6 +44,32 @@ public protocol MLSControllerProtocol {
     func registerPendingJoin(_ group: MLSGroupID)
 
     func performPendingJoins()
+
+    func commitPendingProposals() async throws
+
+    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
+}
+
+/// We provide dummy callbacks because our BE is currently enforcing that these
+/// constraints are always true
+
+class DummyCoreCryptoCallbacks: CoreCryptoCallbacks {
+
+    init() {}
+
+    func authorize(conversationId: [UInt8], clientId: String) -> Bool {
+        return true
+    }
+
+    func isUserInGroup(identity: [UInt8], otherClients: [[UInt8]]) -> Bool {
+        return true
+    }
+}
+
+public protocol MLSControllerDelegate: AnyObject {
+
+    func mlsControllerDidCommitPendingProposal(groupID: MLSGroupID)
+
 }
 
 public final class MLSController: MLSControllerProtocol {
@@ -53,9 +84,12 @@ public final class MLSController: MLSControllerProtocol {
     private var groupsPendingJoin = Set<MLSGroupID>()
 
     var backendPublicKeys = BackendMLSPublicKeys()
+    var pendingProposalCommitTimers = [MLSGroupID: Timer]()
 
     let targetUnclaimedKeyPackageCount = 100
     let actionsProvider: MLSActionsProviderProtocol
+
+    weak var delegate: MLSControllerDelegate?
 
     // MARK: - Life cycle
 
@@ -71,6 +105,12 @@ public final class MLSController: MLSControllerProtocol {
         self.conversationEventProcessor = conversationEventProcessor
         self.actionsProvider = actionsProvider
         self.userDefaults = userDefaults
+
+        do {
+            try coreCrypto.wire_setCallbacks(callbacks: DummyCoreCryptoCallbacks())
+        } catch {
+            logger.error("failed to set callbacks: \(String(describing: error))")
+        }
 
         generateClientPublicKeysIfNeeded()
         fetchBackendPublicKeys()
@@ -591,7 +631,7 @@ public final class MLSController: MLSControllerProtocol {
     ///
     /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted
 
-    public func decrypt(message: String, for groupID: MLSGroupID) throws -> Data? {
+    public func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
         logger.info("decrypting message for group (\(groupID))")
 
         guard let messageBytes = message.base64EncodedBytes else {
@@ -603,10 +643,139 @@ public final class MLSController: MLSControllerProtocol {
                 conversationId: groupID.bytes,
                 payload: messageBytes
             )
-            return decryptedMessage.message?.data
+
+            if let commitDelay = decryptedMessage.commitDelay {
+                return MLSDecryptResult.proposal(commitDelay)
+            }
+
+            if let message = decryptedMessage.message {
+                return MLSDecryptResult.message(message.data)
+            }
+
+            return nil
         } catch {
             logger.warn("failed to decrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageDecryptionError.failedToDecryptMessage
+        }
+    }
+
+    // MARK: - Pending proposals
+
+    /// Schedule a date to commit all pending proposals for a group.
+    ///
+    /// - Parameters:
+    ///   - groupID: The group in which the propsal(s) should be commited.
+    ///   - commitDate: The date at which to commit the pending proposals.
+
+    public func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
+        guard let context = context else {
+            return
+        }
+
+        logger.info("schedule to commit pending proposals in \(groupID) at \(commitDate)")
+
+        let conversation = ZMConversation.fetch(with: groupID, in: context)
+        conversation?.commitPendingProposalDate = commitDate
+    }
+
+    enum MLSCommitPendingProposalsError: Error {
+
+        case failedToCommitPendingProposals
+
+    }
+
+    /// Commit all pending proposals for all groups.
+    ///
+    /// - Throws: `MLSCommitPendingProposalsError` if proposals couldn't be commited.
+
+    public func commitPendingProposals() async throws {
+        guard context != nil else {
+            return
+        }
+
+        logger.info("committing any scheduled pending proposals")
+
+        let groupsWithPendingCommits = self.groupsWithPendingCommits()
+
+        logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
+
+        for (groupID, timestamp) in groupsWithPendingCommits {
+            if timestamp.isInThePast {
+                logger.info("commit scheduled in the past, committing...")
+                try await commitPendingProposals(in: groupID)
+            } else {
+                // Wrap in another task so we don't block the loop.
+                Task {
+                    logger.info("commit scheduled in the future, waiting...")
+                    try await Task.sleep(nanoseconds: timestamp.timeIntervalSinceNow.nanoseconds)
+                    logger.info("scheduled commit is ready, committing...")
+                    try await commitPendingProposals(in: groupID)
+                }
+            }
+        }
+    }
+
+    private func groupsWithPendingCommits() -> [(MLSGroupID, Date)] {
+        guard let context = context else {
+            return []
+        }
+
+        var result: [(MLSGroupID, Date)] = []
+
+        context.performAndWait {
+            let conversations = ZMConversation.fetchConversationsWithPendingProposals(in: context)
+
+            result = conversations.compactMap { conversation in
+                guard
+                    let groupID = conversation.mlsGroupID,
+                    let timestamp = conversation.commitPendingProposalDate
+                else {
+                    return nil
+                }
+
+                return (groupID, timestamp)
+            }
+        }
+
+        return result
+    }
+
+    func commitPendingProposals(in groupID: MLSGroupID) async throws {
+        guard context != nil else {
+            return
+        }
+
+        logger.info("committing pending proposals in: \(groupID)")
+
+        do {
+            // TODO wire_commitPendingProposals will return an optional CommitBundle soon in the case
+            // when there are no pending proposals, then we could return early on an error.
+            let commitBundle = try coreCrypto.wire_commitPendingProposals(conversationId: groupID.bytes)
+            try await sendMessage(commitBundle.commit, groupID: groupID, kind: .commit)
+
+            if let welcome = commitBundle.welcome {
+                try await sendWelcomeMessage(welcome)
+            }
+
+            clearPendingProposalCommitDate(for: groupID)
+
+        } catch {
+            logger.info("failed to commit pending proposals in \(groupID): \(String(describing: error))")
+            clearPendingProposalCommitDate(for: groupID)
+            throw MLSCommitPendingProposalsError.failedToCommitPendingProposals
+        }
+
+        delegate?.mlsControllerDidCommitPendingProposal(groupID: groupID)
+    }
+
+    private func clearPendingProposalCommitDate(for groupID: MLSGroupID) {
+        guard let context = context else {
+            return
+        }
+
+        context.performAndWait {
+            let conversation = ZMConversation.fetch(with: groupID, in: context)
+            conversation?.commitPendingProposalDate = nil
         }
     }
 
@@ -672,6 +841,23 @@ extension MessageKind: CustomStringConvertible {
 }
 
 // MARK: - Helper Extensions
+
+private extension TimeInterval  {
+
+    var nanoseconds: UInt64 {
+        UInt64(self * 1_000_000_000)
+    }
+
+}
+
+private extension Date {
+
+    var isInThePast: Bool {
+        return compare(Date()) != .orderedDescending
+    }
+
+}
+        
 
 private extension MLSController.MLSSendMessageError {
 
