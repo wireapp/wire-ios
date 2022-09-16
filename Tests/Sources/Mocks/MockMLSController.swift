@@ -20,18 +20,25 @@ import Foundation
 import WireDataModel
 
 class MockMLSController: MLSControllerProtocol {
-    var mockDecryptedData: Data?
-    var mockDecryptionError: MLSController.MLSMessageDecryptionError?
-    var decryptCalls = [(String, MLSGroupID)]()
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> Data? {
-        decryptCalls.append((message, groupID))
+    var mockDecryptResult: MLSDecryptResult?
+    var mockDecryptionError: MLSController.MLSMessageDecryptionError?
+    var calls = Calls()
+
+    struct Calls {
+        var decrypt: [(String, MLSGroupID)] = []
+        var commitPendingProposals: [Void] = []
+        var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
+    }
+
+    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID))
 
         if let error = mockDecryptionError {
             throw error
         }
 
-        return mockDecryptedData
+        return mockDecryptResult
     }
 
     var hasWelcomeMessageBeenProcessed = false
@@ -79,5 +86,13 @@ class MockMLSController: MLSControllerProtocol {
 
     func performPendingJoins() {
 
+    }
+
+    func commitPendingProposals() async throws {
+        calls.commitPendingProposals.append(())
+    }
+
+    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
+        calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
 }
