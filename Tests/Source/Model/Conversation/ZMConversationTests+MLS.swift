@@ -26,7 +26,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
         super.tearDown()
     }
 
-    func testThatItFetchesConversationWithGroupID_FederationDisabled() {
+    func testThatItFetchesConversationWithGroupID() {
         syncMOC.performGroupedBlockAndWait { [self] in
             // Given
             APIVersion.isFederationEnabled = false

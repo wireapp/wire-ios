@@ -49,7 +49,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
         var randomBytes = [UInt32]()
         var reseedRng = [[UInt8]]()
         var commitAccepted = [ConversationId]()
-        var commitPendingProposals = [ConversationId]()
+        var commitPendingProposals = [(ConversationId, Date)]()
     }
 
     // MARK: - Properties
@@ -400,7 +400,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
     var mockErrorForCommitPendingProposals: CryptoError?
 
     func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle {
-        calls.commitPendingProposals.append(conversationId)
+        calls.commitPendingProposals.append((conversationId, Date()))
 
         if let error = mockErrorForCommitPendingProposals {
             throw error

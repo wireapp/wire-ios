@@ -480,6 +480,7 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
+		EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */; };
 		EE404EA2287317CB00B3653F /* MLSController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE404EA1287317CB00B3653F /* MLSController.swift */; };
 		EE42938A252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */; };
 		EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */; };
@@ -1298,6 +1299,7 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
+		EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMBaseTest+Async.swift"; sourceTree = "<group>"; };
 		EE404EA1287317CB00B3653F /* MLSController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSController.swift; sourceTree = "<group>"; };
 		EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+ManagedObjectObservation.swift"; sourceTree = "<group>"; };
 		EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectObserverToken.swift; sourceTree = "<group>"; };
@@ -2610,6 +2612,7 @@
 				16E70FA6270F212000718E5D /* ZMConnection+Helper.m */,
 				169FF3A427157B3800330C2E /* MockActionHandler.swift */,
 				633B396728917C9600208124 /* XCTestCase+ErrorAssertion.swift */,
+				EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */,
 			);
 			name = Helper;
 			path = Tests/Source/Helper;
@@ -3767,6 +3770,7 @@
 				EEC3BC742888403000BFDC35 /* MockCoreCrypto.swift in Sources */,
 				CEE525AA1CCA4C97001D06F9 /* NSString+RandomString.m in Sources */,
 				165E141825CC516B00F0B075 /* ZMClientMessageTests+Prefetching.swift in Sources */,
+				EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */,
 				A9FA524A23A1598B003AD4C6 /* ActionTests.swift in Sources */,
 				16E7DA2A1FDABE440065B6A6 /* ZMOTRMessage+SelfConversationUpdateTests.swift in Sources */,
 				87DF59C01F729FDA00C7B406 /* ZMMovedIndexTests.swift in Sources */,

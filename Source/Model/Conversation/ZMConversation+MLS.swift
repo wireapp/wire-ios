@@ -32,6 +32,9 @@ extension ZMConversation {
     static let mlsStatusKey = "mlsStatus"
 
     @objc
+    static let commitPendingProposalDateKey = "commitPendingProposalDate"
+
+    @objc
     static let epochKey = #keyPath(epoch)
 
     // MARK: - Properties
@@ -115,6 +118,11 @@ extension ZMConversation {
         }
     }
 
+    /// Point in time when the pending proposals in the conversation
+    /// should be committed. If nil there's no pending proposals
+    /// to commit.
+    @NSManaged public var commitPendingProposalDate: Date?
+
 }
 
 // MARK: - Fetch by group id
@@ -136,6 +144,19 @@ public extension ZMConversation {
         let result = context.executeFetchRequestOrAssert(request)
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
+    }
+
+    static func fetchConversationsWithPendingProposals(
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        let request = Self.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "%K != nil",
+            argumentArray: [Self.commitPendingProposalDateKey]
+        )
+
+        return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
     }
 
 }
