@@ -19,16 +19,22 @@
 import Foundation
 import WireTransport
 
+protocol NotificationsAPIClientProtocol {
+
+    func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent
+
+}
+
 @available(iOS 15, *)
-final class NotificationsAPIClient: Loggable {
+final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
 
     // MARK: - Properties
 
-    private let networkSession: NetworkSession
+    private let networkSession: NetworkSessionProtocol
 
     // MARK: - Life cycle
 
-    init(networkSession: NetworkSession) {
+    init(networkSession: NetworkSessionProtocol) {
         self.networkSession = networkSession
     }
 
@@ -36,6 +42,7 @@ final class NotificationsAPIClient: Loggable {
 
     func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent {
         logger.trace("fetching event with eventID (\(eventID, privacy: .public))")
+
         switch try await networkSession.execute(endpoint: API.fetchNotification(eventID: eventID)) {
         case .success(let event):
             return event
@@ -53,7 +60,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
 
     typealias Output = ZMUpdateEvent
 
-    enum Failure: Error {
+    enum Failure: Error, Equatable {
 
         case invalidResponse
         case failedToDecodePayload
@@ -85,14 +92,17 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
         logger.trace("parsing response: \(response, privacy: .public)")
+
         switch response {
         case .success(let response) where response.status == 200:
             logger.trace("decoding response payload")
+
             guard let payload = try? JSONSerialization.jsonObject(with: response.data, options: []) as? [AnyHashable: Any] else {
                 return .failure(.failedToDecodePayload)
             }
 
-            logger.info("received event response payload: \(payload, privacy: .public)")
+            let payloadString = String(data: response.data, encoding: .utf8) ?? "N/A"
+            logger.info("received event response payload: \(payloadString, privacy: .public)")
 
             guard let events = ZMUpdateEvent.eventsArray(
                 from: payload as ZMTransportData,
@@ -106,6 +116,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
             guard let event = events.first else {
                 return .failure(.notifcationNotFound)
             }
+
             guard event.uuid == eventID else {
                 return .failure(.incorrectEvent)
             }

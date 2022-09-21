@@ -19,16 +19,22 @@
 import Foundation
 import WireTransport
 
+protocol AccessAPIClientProtocol {
+
+    func fetchAccessToken() async throws -> AccessToken
+
+}
+
 @available(iOS 15, *)
-final class AccessAPIClient: Loggable {
+final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
 
     // MARK: - Properties
 
-    private let networkSession: NetworkSession
+    private let networkSession: NetworkSessionProtocol
 
     // MARK: - Life cycle
 
-    init(networkSession: NetworkSession) {
+    init(networkSession: NetworkSessionProtocol) {
         self.networkSession = networkSession
     }
 
@@ -53,7 +59,7 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
 
     typealias Output = AccessToken
 
-    enum Failure: Error {
+    enum Failure: Error, Equatable {
 
         case invalidResponse
         case failedToDecodePayload
@@ -82,6 +88,7 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure> {
         logger.trace("parsing reponse: \(response, privacy: .public)")
+        
         switch response {
         case .success(let response) where response.status == 200:
             do {
