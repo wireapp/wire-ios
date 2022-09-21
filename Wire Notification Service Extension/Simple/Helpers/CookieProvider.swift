@@ -17,15 +17,11 @@
 //
 
 import Foundation
+import WireTransport
 
-enum NotificationServiceError: Error, Equatable {
-
-    case invalidEnvironment
-    case malformedPushPayload
-    case userNotAuthenticated
-    case failedToFetchAccessToken
-    case notImplemented(String)
-    case noAppGroupID
-    case noAccount
-
+protocol CookieProvider {
+    var isAuthenticated: Bool { get }
+    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest)
 }
+
+extension ZMPersistentCookieStorage: CookieProvider {}

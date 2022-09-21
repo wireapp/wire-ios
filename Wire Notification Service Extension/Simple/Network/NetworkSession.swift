@@ -19,8 +19,17 @@
 import Foundation
 import WireTransport
 
+protocol NetworkSessionProtocol: AnyObject {
+
+    var accessToken: AccessToken? { get set }
+    var isAuthenticated: Bool { get }
+
+    func execute<E: Endpoint>(endpoint: E) async throws -> E.Result
+
+}
+
 @available(iOS 15, *)
-final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
+final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDelegate, Loggable {
 
     // MARK: - Types
 
@@ -35,21 +44,30 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
 
     var accessToken: AccessToken?
 
-    private let urlSession = URLSession(configuration: .ephemeral)
-    private let cookieStorage: ZMPersistentCookieStorage
-    private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
+    private let urlSession: URLRequestable
+    private let cookieProvider: CookieProvider
+    private let environment: BackendEnvironmentProvider
 
     // MARK: - Life cycle
 
-    init(userID: UUID) throws {
-        guard let serverName = environment.backendURL.host else {
+    init(
+        userID: UUID,
+        cookieProvider: CookieProvider? = nil,
+        urlRequestable: URLRequestable? = nil,
+        environment: BackendEnvironmentProvider? = nil
+    ) throws {
+        self.environment = environment ?? BackendEnvironment.shared
+
+        guard let serverName = self.environment.backendURL.host else {
             throw NotificationServiceError.invalidEnvironment
         }
 
-        cookieStorage = ZMPersistentCookieStorage(
+        self.cookieProvider = cookieProvider ?? ZMPersistentCookieStorage(
             forServerName: serverName,
             userIdentifier: userID
         )
+
+        self.urlSession = urlRequestable ?? URLSession(configuration: .ephemeral)
 
         super.init()
     }
@@ -57,7 +75,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
     // MARK: - Methods
 
     var isAuthenticated: Bool {
-        return cookieStorage.isAuthenticated
+        return cookieProvider.isAuthenticated
     }
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result {
@@ -68,6 +86,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
 
     func send(request: NetworkRequest) async throws -> NetworkResponse {
         logger.trace("sending request: \(String(describing: request), privacy: .public)")
+
         guard let url = URL(string: request.path, relativeTo: environment.backendURL) else {
             throw NetworkError.invalidRequestURL
         }
@@ -77,7 +96,7 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
         urlRequest.addValue(request.contentType.rawValue, forHTTPHeaderField: "Content-Type")
         urlRequest.addValue(request.acceptType.rawValue, forHTTPHeaderField: "Accept")
 
-        cookieStorage.setRequestHeaderFieldsOn(urlRequest)
+        cookieProvider.setRequestHeaderFieldsOn(urlRequest)
 
         if let accessToken = accessToken {
             urlRequest.addValue(accessToken.headerValue, forHTTPHeaderField: "Authorization")
@@ -105,12 +124,14 @@ final class NetworkSession: NSObject, URLSessionTaskDelegate, Loggable {
             guard httpResponse.value(forHTTPHeaderField: "Content-Type") == request.acceptType.rawValue else {
                 throw NetworkError.invalidResponse
             }
+
             let successResponse = SuccessResponse(
                 status: httpResponse.statusCode,
                 data: data
             )
 
             logger.info("received success response: \(String(describing: successResponse), privacy: .public)")
+
             return .success(successResponse)
         }
     }
