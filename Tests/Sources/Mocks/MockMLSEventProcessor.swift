@@ -25,6 +25,7 @@ class MockMLSEventProcessor: MLSEventProcessing {
         var updateConversationIfNeeded = [(conversation: ZMConversation, groupID: String?)]()
         var processWelcomeMessage = [String]()
         var joinMLSGroupWhenReady = [ZMConversation]()
+        var wipeGroup = [ZMConversation]()
     }
 
     var calls = Calls()
@@ -39,6 +40,10 @@ class MockMLSEventProcessor: MLSEventProcessing {
 
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
         calls.joinMLSGroupWhenReady.append(conversation)
+    }
+
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+        calls.wipeGroup.append(conversation)
     }
 
 }

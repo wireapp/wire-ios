@@ -133,6 +133,44 @@ class MLSEventProcessorTests: MessagingTestBase {
         test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus: .outOfSync)
     }
 
+    // MARK: - Wiping group
+
+    func test_itWipesGroup() {
+        syncMOC.performAndWait {
+            // Given
+            let groupID = MLSGroupID(.random())
+            conversation.messageProtocol = .mls
+            conversation.mlsGroupID = groupID
+
+            // When
+            MLSEventProcessor.shared.wipeMLSGroup(
+                forConversation: conversation,
+                context: syncMOC
+            )
+
+            // Then
+            XCTAssertEqual(mlsControllerMock.calls.wipeGroup.count, 1)
+            XCTAssertEqual(mlsControllerMock.calls.wipeGroup.first, groupID)
+        }
+    }
+
+    func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() {
+        syncMOC.performAndWait {
+            // Given
+            conversation.messageProtocol = .proteus
+            conversation.mlsGroupID = MLSGroupID(.random())
+
+            // When
+            MLSEventProcessor.shared.wipeMLSGroup(
+                forConversation: conversation,
+                context: syncMOC
+            )
+
+            // Then
+            XCTAssertEqual(mlsControllerMock.calls.wipeGroup.count, 0)
+        }
+    }
+
     // MARK: - Helpers
 
     func test_thatGroupIsNotAddedToGroupsPendingJoin(forStatus status: MLSGroupStatus) {
