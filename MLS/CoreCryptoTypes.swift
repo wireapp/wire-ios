@@ -34,33 +34,40 @@ public protocol CoreCryptoProtocol {
     func wire_clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]]
     func wire_clientValidKeypackagesCount() throws -> UInt64
     func wire_createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws
+    func wire_conversationEpoch(conversationId: ConversationId) throws -> UInt64
     func wire_conversationExists(conversationId: ConversationId)  -> Bool
     func wire_processWelcomeMessage(welcomeMessage: [UInt8]) throws -> ConversationId
     func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages
     func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle
+    func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle
+    func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle?
+    func wire_finalAddClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> TlsCommitBundle
+    func wire_finalRemoveClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> TlsCommitBundle
+    func wire_finalUpdateKeyingMaterial(conversationId: ConversationId) throws -> TlsCommitBundle
+    func wire_finalCommitPendingProposals(conversationId: ConversationId) throws -> TlsCommitBundle?
     func wire_wipeConversation(conversationId: ConversationId) throws
     func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage
     func wire_encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8]
-    func wire_newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> [UInt8]
-    func wire_newUpdateProposal(conversationId: ConversationId) throws -> [UInt8]
-    func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> [UInt8]
+    func wire_newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> ProposalBundle
+    func wire_newUpdateProposal(conversationId: ConversationId) throws -> ProposalBundle
+    func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> ProposalBundle
     func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8]
     func wire_newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8]
-    func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle
     func wire_joinByExternalCommit(groupState: [UInt8]) throws -> MlsConversationInitMessage
     func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8]
     func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws
     func wire_randomBytes(length: UInt32) throws -> [UInt8]
     func wire_reseedRng(seed: [UInt8]) throws
     func wire_commitAccepted(conversationId: ConversationId) throws
-    func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle
+    func wire_clearPendingProposal(conversationId: ConversationId, proposalRef: [UInt8]) throws
+    func wire_clearPendingCommit(conversationId: ConversationId) throws
 
 }
 
 public protocol CoreCryptoCallbacks : AnyObject {
 
-    func authorize(conversationId: [UInt8], clientId: String)  -> Bool
-    func isUserInGroup(identity: [UInt8], otherClients: [[UInt8]])  -> Bool
+    func authorize(conversationId: [UInt8], clientId: [UInt8])  -> Bool
+    func clientIdBelongsToOneOf(clientId: [UInt8], otherClients: [[UInt8]])  -> Bool
 
 }
 
@@ -106,21 +113,25 @@ public struct ConversationConfiguration: Equatable, Hashable {
 public struct DecryptedMessage: Equatable, Hashable {
 
     public var message: [UInt8]?
-    public var proposals: [[UInt8]]
+    public var proposals: [ProposalBundle]
     public var isActive: Bool
     public var commitDelay: UInt64?
+    public var senderClientId: ClientId?
 
     public init(
-        message: [UInt8]?,
-        proposals: [[UInt8]],
+        message: [UInt8]? = nil,
+        proposals: [ProposalBundle],
         isActive: Bool,
-        commitDelay: UInt64?
+        commitDelay: UInt64? = nil,
+        senderClientId: ClientId? = nil
     ) {
         self.message = message
         self.proposals = proposals
         self.isActive = isActive
         self.commitDelay = commitDelay
+        self.senderClientId = senderClientId
     }
+
 }
 
 public struct Invitee: Equatable, Hashable {
@@ -168,7 +179,20 @@ public struct MlsConversationInitMessage: Equatable, Hashable {
     }
 }
 
+public struct ProposalBundle: Equatable, Hashable {
 
+    public var proposal: [UInt8]
+    public var proposalRef: [UInt8]
+
+    public init(
+        proposal: [UInt8],
+        proposalRef: [UInt8]
+    ) {
+        self.proposal = proposal
+        self.proposalRef = proposalRef
+    }
+
+}
 
 // MARK: - Enums
 
@@ -191,6 +215,12 @@ public enum CryptoError: Error, Equatable, Hashable {
 
     // Simple error enums only carry a message
     case ClientNotFound(message: String)
+
+    // Simple error enums only carry a message
+    case PendingProposalNotFound(message: String)
+
+    // Simple error enums only carry a message
+    case PendingCommitNotFound(message: String)
 
     // Simple error enums only carry a message
     case MalformedIdentifier(message: String)
@@ -246,6 +276,12 @@ public enum CryptoError: Error, Equatable, Hashable {
     // Simple error enums only carry a message
     case ExternalAddProposalError(message: String)
 
+    // Simple error enums only carry a message
+    case InvalidHashReference(message: String)
+
+    // Simple error enums only carry a message
+    case GenerationOutOfBound(message: String)
+
 }
 
 // MARK: - Type aliases
@@ -253,3 +289,4 @@ public enum CryptoError: Error, Equatable, Hashable {
 public typealias ClientId = [UInt8]
 public typealias ConversationId = [UInt8]
 public typealias MemberId = [UInt8]
+public typealias TlsCommitBundle = [UInt8]

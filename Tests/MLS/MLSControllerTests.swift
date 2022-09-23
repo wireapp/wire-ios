@@ -107,16 +107,19 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             let encryptedMessage: Bytes = [3, 3, 3]
 
             // Mock
-            mockCoreCrypto.mockResultForEncryptMessage = encryptedMessage
+            var mockEncryptMessageCount = 0
+            mockCoreCrypto.mockEncryptMessage = {
+                mockEncryptMessageCount += 1
+                XCTAssertEqual($0, groupID.bytes)
+                XCTAssertEqual($1, unencryptedMessage)
+                return encryptedMessage
+            }
 
             // When
             let result = try sut.encrypt(message: unencryptedMessage, for: groupID)
 
             // Then
-            let call = mockCoreCrypto.calls.encryptMessage.element(atIndex: 0)
-            XCTAssertEqual(mockCoreCrypto.calls.encryptMessage.count, 1)
-            XCTAssertEqual(call?.0, groupID.bytes)
-            XCTAssertEqual(call?.1, unencryptedMessage)
+            XCTAssertEqual(mockEncryptMessageCount, 1)
             XCTAssertEqual(result, encryptedMessage)
 
         } catch {
@@ -130,7 +133,9 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let unencryptedMessage: Bytes = [2, 2, 2]
 
         // Mock
-        mockCoreCrypto.mockErrorForEncryptMessage = CryptoError.InvalidByteArrayError(message: "bad bytes!")
+        mockCoreCrypto.mockEncryptMessage = { (_, _) in
+            throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
+        }
 
         // When / Then
         assertItThrows(error: EncryptionError.failedToEncryptMessage) {
@@ -158,7 +163,9 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         syncMOC.performAndWait {
             // Given
             let message = Data([1, 2, 3]).base64EncodedString()
-            self.mockCoreCrypto.mockErrorForDecryptMessage = CryptoError.ConversationNotFound(message: "conversation not found")
+            self.mockCoreCrypto.mockDecryptMessage = { _, _ in
+                throw CryptoError.ConversationNotFound(message: "conversation not found")
+            }
 
             // When / Then
             assertItThrows(error: DecryptionError.failedToDecryptMessage) {
@@ -171,14 +178,14 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         syncMOC.performAndWait {
             // Given
             let messageBytes: Bytes = [1, 2, 3]
-            self.mockCoreCrypto.mockResultForDecryptMessage = .some(
+            self.mockCoreCrypto.mockDecryptMessage = { _, _ in
                 DecryptedMessage(
                     message: nil,
                     proposals: [],
                     isActive: false,
                     commitDelay: nil
                 )
-            )
+            }
 
             // When
             var result: MLSDecryptResult?
@@ -197,14 +204,21 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         syncMOC.performAndWait {
             // Given
             let messageBytes: Bytes = [1, 2, 3]
-            self.mockCoreCrypto.mockResultForDecryptMessage = .some(
-                DecryptedMessage(
+
+            var mockDecryptMessageCount = 0
+            self.mockCoreCrypto.mockDecryptMessage = {
+                mockDecryptMessageCount += 1
+
+                XCTAssertEqual($0, self.groupID.bytes)
+                XCTAssertEqual($1, messageBytes)
+
+                return DecryptedMessage(
                     message: messageBytes,
                     proposals: [],
                     isActive: false,
                     commitDelay: nil
                 )
-            )
+            }
 
             // When
             var result: MLSDecryptResult?
@@ -215,11 +229,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             }
 
             // Then
+            XCTAssertEqual(mockDecryptMessageCount, 1)
             XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data))
-
-            let decryptMessageCalls = self.mockCoreCrypto.calls.decryptMessage
-            XCTAssertEqual(decryptMessageCalls.first?.0, self.groupID.bytes)
-            XCTAssertEqual(decryptMessageCalls.first?.1, messageBytes)
         }
     }
 
@@ -234,23 +245,37 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             removal: .init(ed25519: removalKey)
         )
 
+        var mockCreateConversationCount = 0
+        mockCoreCrypto.mockCreateConversation = {
+            mockCreateConversationCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+            XCTAssertEqual($1, ConversationConfiguration(
+                ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+                externalSenders: [removalKey.bytes]
+            ))
+        }
+
         // When
         XCTAssertNoThrow(try sut.createGroup(for: groupID))
 
         // Then
-        let createConversationCalls = mockCoreCrypto.calls.createConversation
-        XCTAssertEqual(createConversationCalls.count, 1)
-        XCTAssertEqual(createConversationCalls[0].0, groupID.bytes)
-        XCTAssertEqual(createConversationCalls[0].1, ConversationConfiguration(
-            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
-            externalSenders: [removalKey.bytes]
-        ))
+        XCTAssertEqual(mockCreateConversationCount, 1)
     }
 
     func test_CreateGroup_ThrowsError() throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
-        mockCoreCrypto.mockErrorForCreateConversation = CryptoError.MalformedIdentifier(message: "bad id")
+
+        var mockCreateConversationCount = 0
+        mockCoreCrypto.mockCreateConversation = {
+            mockCreateConversationCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+            XCTAssertEqual($1, ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519))
+
+            throw CryptoError.MalformedIdentifier(message: "bad id")
+        }
 
         // when / then
         assertItThrows(error: MLSController.MLSGroupCreationError.failedToCreateGroup) {
@@ -258,10 +283,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // Then
-        let createConversationCalls = mockCoreCrypto.calls.createConversation
-        XCTAssertEqual(createConversationCalls.count, 1)
-        XCTAssertEqual(createConversationCalls[0].0, groupID.bytes)
-        XCTAssertEqual(createConversationCalls[0].1, ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519))
+        XCTAssertEqual(mockCreateConversationCount, 1)
     }
 
     // MARK: - Adding participants
@@ -289,11 +311,23 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         })
 
         // Mock return value for adding clients to conversation.
-        mockCoreCrypto.mockResultForAddClientsToConversation = MemberAddedMessages(
-            commit: [0, 0, 0, 0],
-            welcome: [1, 1, 1, 1],
-            publicGroupState: []
-        )
+        var mockAddClientsToConversationCount = 0
+        mockCoreCrypto.mockAddClientsToConversation = {
+            mockAddClientsToConversationCount += 1
+
+            XCTAssertEqual($0, mlsGroupID.bytes)
+            XCTAssertEqual($1, [Invitee(from: keyPackage)])
+
+            return MemberAddedMessages(
+                commit: [0, 0, 0, 0],
+                welcome: [1, 1, 1, 1],
+                publicGroupState: []
+            )
+        }
+
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, mlsGroupID.bytes)
+        }
 
         // Mock update event for member joins the conversation
         var updateEvent: ZMUpdateEvent!
@@ -328,17 +362,6 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
         XCTAssertEqual(processConversationEventsCalls.count, 1)
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
-
-        let addClientsToConversationCalls = mockCoreCrypto.calls.addClientsToConversation
-        XCTAssertEqual(addClientsToConversationCalls.count, 1)
-        XCTAssertEqual(addClientsToConversationCalls[0].0, mlsGroupID.bytes)
-
-        let invitee = Invitee(from: keyPackage)
-        let actualInvitees = addClientsToConversationCalls[0].1
-        XCTAssertEqual(actualInvitees.count, 1)
-        XCTAssertTrue(actualInvitees.contains(invitee))
-
-        XCTAssertEqual(mockCoreCrypto.calls.commitAccepted, [mlsGroupID.bytes])
     }
 
     func test_AddingMembersToConversation_ThrowsNoParticipantsToAdd() async {
@@ -346,12 +369,14 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsUser = [MLSUser]()
 
+        mockCoreCrypto.mockCommitAccepted = { _ in
+            XCTFail("commit should not be accepted")
+        }
+
         // when / then
         await assertItThrows(error: MLSController.MLSGroupCreationError.noParticipantsToAdd) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
-
-        XCTAssertTrue(mockCoreCrypto.calls.commitAccepted.isEmpty)
     }
 
     func test_AddingMembersToConversation_ThrowsFailedToClaimKeyPackages() async {
@@ -360,6 +385,10 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let id = UUID.create()
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsUser: [MLSUser] = [MLSUser(id: id, domain: domain)]
+
+        mockCoreCrypto.mockCommitAccepted = { _ in
+            XCTFail("commit should not be accepted")
+        }
 
         do {
             // When
@@ -375,8 +404,6 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
                 XCTFail("Unexpected error: \(String(describing: error))")
             }
         }
-
-        XCTAssertTrue(mockCoreCrypto.calls.commitAccepted.isEmpty)
     }
 
     func test_AddingMembersToConversation_ThrowsFailedToSendCommit() async {
@@ -402,18 +429,22 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         })
 
         // Mock return value for adding clients to conversation.
-        mockCoreCrypto.mockResultForAddClientsToConversation = MemberAddedMessages(
-            commit: [0, 0, 0, 0],
-            welcome: [1, 1, 1, 1],
-            publicGroupState: []
-        )
+        mockCoreCrypto.mockAddClientsToConversation = { _, _ in
+            MemberAddedMessages(
+                commit: [0, 0, 0, 0],
+                welcome: [1, 1, 1, 1],
+                publicGroupState: []
+            )
+        }
+
+        mockCoreCrypto.mockCommitAccepted = { _ in
+            XCTFail("commit should not be accepted")
+        }
 
         // when / then
         await assertItThrows(error: MLSController.MLSSendMessageError.failedToSendCommit) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
-
-        XCTAssertTrue(mockCoreCrypto.calls.commitAccepted.isEmpty)
     }
 
     func test_AddingMembersToConversation_ThrowsFailedToSendWelcomeMessage() async {
@@ -439,11 +470,17 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         })
 
         // Mock return value for adding clients to conversation.
-        mockCoreCrypto.mockResultForAddClientsToConversation = MemberAddedMessages(
-            commit: [0, 0, 0, 0],
-            welcome: [1, 1, 1, 1],
-            publicGroupState: []
-        )
+        mockCoreCrypto.mockAddClientsToConversation = { _, _ in
+            MemberAddedMessages(
+                commit: [0, 0, 0, 0],
+                welcome: [1, 1, 1, 1],
+                publicGroupState: []
+            )
+        }
+
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, mlsGroupID.bytes)
+        }
 
         // Mock update event for member joins the conversation
         var updateEvent: ZMUpdateEvent!
@@ -470,7 +507,6 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
         XCTAssertEqual(processConversationEventsCalls.count, 1)
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
-        XCTAssertEqual(mockCoreCrypto.calls.commitAccepted, [mlsGroupID.bytes])
     }
 
     // MARK: - Remove participants
@@ -484,11 +520,20 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsClientID = MLSClientID(userID: id, clientID: clientID, domain: domain)
 
         // Mock return value for removing clients to conversation.
-        mockCoreCrypto.mockResultForRemoveClientsFromConversation = CommitBundle(
-            welcome: nil,
-            commit: [0, 0, 0, 0],
-            publicGroupState: []
-        )
+        var mockRemoveClientsFromConversationCount = 0
+        mockCoreCrypto.mockRemoveClientsFromConversation = {
+            mockRemoveClientsFromConversationCount += 1
+
+            XCTAssertEqual($0, mlsGroupID.bytes)
+            let mlsClientIDBytes = mlsClientID.string.data(using: .utf8)!.bytes
+            XCTAssertEqual($1, [mlsClientIDBytes])
+
+            return CommitBundle(
+                welcome: nil,
+                commit: [0, 0, 0, 0],
+                publicGroupState: []
+            )
+        }
 
         // Mock update event for member leaves from conversation
         var updateEvent: ZMUpdateEvent!
@@ -507,6 +552,10 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             return [updateEvent]
         })
 
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, mlsGroupID.bytes)
+        }
+
         do {
             // When
             try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
@@ -520,26 +569,24 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         XCTAssertEqual(processConversationEventsCalls.count, 1)
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
 
-        let removeMembersFromConversationCalls = mockCoreCrypto.calls.removeClientsFromConversation
-        XCTAssertEqual(removeMembersFromConversationCalls.count, 1)
-        XCTAssertEqual(removeMembersFromConversationCalls[0].0, mlsGroupID.bytes)
-
-        let mlsClientIDBytes = mlsClientID.string.data(using: .utf8)!.bytes
-        XCTAssertEqual(removeMembersFromConversationCalls[0].1, [mlsClientIDBytes])
-
-        XCTAssertEqual(mockCoreCrypto.calls.commitAccepted, [mlsGroupID.bytes])
+        XCTAssertEqual(mockRemoveClientsFromConversationCount, 1)
     }
 
     func test_RemovingMembersToConversation_ThrowsNoClientsToRemove() async {
         // Given
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
 
+        var mockCommitAcceptedCount = 0
+        mockCoreCrypto.mockCommitAccepted = { _ in
+            mockCommitAcceptedCount += 1
+        }
+
         // When / Then
         await assertItThrows(error: MLSController.MLSRemoveParticipantsError.noClientsToRemove) {
             try await sut.removeMembersFromConversation(with: [], for: mlsGroupID)
         }
 
-        XCTAssertTrue(mockCoreCrypto.calls.commitAccepted.isEmpty)
+        XCTAssertEqual(mockCommitAcceptedCount, 0)
     }
 
     func test_RemovingMembersToConversation_FailsToSendCommit() async {
@@ -551,18 +598,22 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsClientID = MLSClientID(userID: id, clientID: clientID, domain: domain)
 
         // Mock return value for removing clients to conversation.
-        mockCoreCrypto.mockResultForRemoveClientsFromConversation = CommitBundle(
-            welcome: nil,
-            commit: [0, 0, 0, 0],
-            publicGroupState: []
-        )
+        mockCoreCrypto.mockRemoveClientsFromConversation = { _, _ in
+            CommitBundle(
+                welcome: nil,
+                commit: [0, 0, 0, 0],
+                publicGroupState: []
+            )
+        }
+
+        mockCoreCrypto.mockCommitAccepted = { _ in
+            XCTFail("commit should not be accepted")
+        }
 
         // When / Then
         await assertItThrows(error: MLSController.MLSSendMessageError.failedToSendCommit) {
             try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
         }
-
-        XCTAssertTrue(mockCoreCrypto.calls.commitAccepted.isEmpty)
     }
 
     // MARK: - Pending proposals
@@ -591,15 +642,20 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // A group with pending proposal in the past
         let conversation = createConversation(in: uiMOC)
-        conversation.mlsGroupID = MLSGroupID([1, 2, 3])
+        let groupID = MLSGroupID(.random())
+        conversation.mlsGroupID = groupID
         conversation.commitPendingProposalDate = overdueCommitDate
 
         // Mocks
-        mockCoreCrypto.mockResultForCommitPendingProposals = CommitBundle(
-            welcome: [1, 1, 1],
-            commit: [2, 2, 2],
-            publicGroupState: [3, 3, 3]
-        )
+        mockCoreCrypto.mockCommitPendingProposals = {
+            XCTAssertEqual($0, groupID.bytes)
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
 
         mockActionsProvider.sendMessageMocks.append({ data in
             // The message being sent is the one we expect
@@ -612,13 +668,16 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             XCTAssertEqual(data, Data([1, 1, 1]))
         })
 
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, groupID.bytes)
+        }
+
         // When
         wait {
             try await self.sut.commitPendingProposals()
         }
 
         // Then
-        XCTAssertEqual(mockCoreCrypto.calls.commitPendingProposals.map(\.0), [conversation.mlsGroupID?.bytes])
         XCTAssertNil(conversation.commitPendingProposalDate)
     }
 
@@ -628,15 +687,24 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // A group with pending proposal in the future
         let conversation = createConversation(in: uiMOC)
-        conversation.mlsGroupID = MLSGroupID([1, 2, 3])
+        let groupID = MLSGroupID([1, 2, 3])
+        conversation.mlsGroupID = groupID
         conversation.commitPendingProposalDate = futureCommitDate
 
         // Mocks
-        mockCoreCrypto.mockResultForCommitPendingProposals = CommitBundle(
-            welcome: [1, 1, 1],
-            commit: [2, 2, 2],
-            publicGroupState: [3, 3, 3]
-        )
+        var mockCommitPendingProposalsCount = 0
+        mockCoreCrypto.mockCommitPendingProposals = {
+            mockCommitPendingProposalsCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+            XCTAssertEqual(Date().timeIntervalSinceNow, futureCommitDate.timeIntervalSinceNow, accuracy: 0.1)
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
 
         mockActionsProvider.sendMessageMocks.append({ data in
             // The message being sent is the one we expect
@@ -648,6 +716,10 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             // The message being sent is the one we expect
             XCTAssertEqual(data, Data([1, 1, 1]))
         })
+
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, groupID.bytes)
+        }
 
         // This won't wait for the commit because it'll be scheduled in another
         // task in the future.
@@ -664,10 +736,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.5))
 
         // Then
-        let (groupID, commitedTimestamp) = try XCTUnwrap(mockCoreCrypto.calls.commitPendingProposals.first)
-        XCTAssertEqual(mockCoreCrypto.calls.commitPendingProposals.count, 1)
-        XCTAssertEqual(groupID, conversation.mlsGroupID?.bytes)
-        XCTAssertEqual(commitedTimestamp.timeIntervalSinceNow, futureCommitDate.timeIntervalSinceNow, accuracy: 0.1)
+        XCTAssertEqual(mockCommitPendingProposalsCount, 1)
         XCTAssertNil(conversation.commitPendingProposalDate)
     }
 
@@ -690,12 +759,27 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Mocks
 
-        // Just use the same commit bundle for both conversations
-        mockCoreCrypto.mockResultForCommitPendingProposals = CommitBundle(
-            welcome: [1, 1, 1],
-            commit: [2, 2, 2],
-            publicGroupState: [3, 3, 3]
-        )
+        // Mock for the first commit
+        var mockCommitPendingProposalsCount = 0
+        mockCoreCrypto.mockCommitPendingProposals = {
+            mockCommitPendingProposalsCount += 1
+
+            XCTAssertEqual($0, conversation1MLSGroupID.bytes)
+
+            // Since we don't commit in the past, we adjust the overdue date
+            // to the point the commit should have been made.
+            XCTAssertEqual(
+                Date().timeIntervalSinceNow,
+                overdueCommitDate.addingTimeInterval(5).timeIntervalSinceNow,
+                accuracy: 0.1
+            )
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
 
         // Mock for conversation 1
         mockActionsProvider.sendMessageMocks.append({ data in
@@ -722,6 +806,10 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             // The message being sent is the one we expect
             XCTAssertEqual(data, Data([1, 1, 1]))
         })
+
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, conversation1MLSGroupID.bytes)
+        }
 
         // This will only wait for overdue commits to be made.
         wait {
@@ -730,19 +818,31 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // Then pending proposals for conversation 1 were commited
-        var (groupID, commitedTimestamp) = try XCTUnwrap(mockCoreCrypto.calls.commitPendingProposals.first)
-        XCTAssertEqual(mockCoreCrypto.calls.commitPendingProposals.count, 1)
-        XCTAssertEqual(groupID, conversation1.mlsGroupID?.bytes)
-
-        // Since we don't commit in the past, we adjust the overdue date
-        // to the point the commit should have been made.
-        XCTAssertEqual(
-            commitedTimestamp.timeIntervalSinceNow,
-            overdueCommitDate.addingTimeInterval(5).timeIntervalSinceNow,
-            accuracy: 0.1
-        )
-
+        XCTAssertEqual(mockCommitPendingProposalsCount, 1)
         XCTAssertNil(conversation1.commitPendingProposalDate)
+
+        // Mock the pending proposal commit for conversation 2
+        mockCoreCrypto.mockCommitPendingProposals = {
+            mockCommitPendingProposalsCount += 1
+
+            XCTAssertEqual($0, conversation2MLSGroupID.bytes)
+
+            XCTAssertEqual(
+                Date().timeIntervalSinceNow,
+                futureCommitDate.timeIntervalSinceNow,
+                accuracy: 0.1
+            )
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
+
+        mockCoreCrypto.mockCommitAccepted = {
+            XCTAssertEqual($0, conversation2MLSGroupID.bytes)
+        }
 
         // We expect that the future commit will be commited in about 10 seconds
         pendingProposalCommitExpectations[conversation2MLSGroupID] = expectation(
@@ -752,10 +852,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 5.5))
 
         // Then pending proposals for conversation 2 were commited
-        (groupID, commitedTimestamp) = try XCTUnwrap(mockCoreCrypto.calls.commitPendingProposals.last)
-        XCTAssertEqual(mockCoreCrypto.calls.commitPendingProposals.count, 2)
-        XCTAssertEqual(groupID, conversation2.mlsGroupID?.bytes)
-        XCTAssertEqual(commitedTimestamp.timeIntervalSinceNow, futureCommitDate.timeIntervalSinceNow, accuracy: 0.1)
+        XCTAssertEqual(mockCommitPendingProposalsCount, 2)
         XCTAssertNil(conversation2.commitPendingProposalDate)
     }
 
@@ -764,11 +861,12 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     func test_PerformPendingJoins_IsSuccessful() {
         // Given
         let groupID = MLSGroupID(.random())
+        let epoch: UInt64 = 1
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.mlsGroupID = groupID
         conversation.mlsStatus = .pendingJoin
-        conversation.epoch = 1
+        conversation.epoch = epoch
 
         let addProposal = Bytes.random()
 
@@ -779,7 +877,15 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let expectation = XCTestExpectation(description: "Send Message")
 
         // mock the external add proposal returned by core crypto
-        mockCoreCrypto.mockResultForNewExternalAddProposal = addProposal
+        var mockNewExternalAddProposalCount = 0
+        mockCoreCrypto.mockNewExternalAddProposal = {
+            mockNewExternalAddProposalCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+            XCTAssertEqual($1, epoch)
+
+            return addProposal
+        }
 
         // mock the action for sending the proposal & fulfill expectation
         mockActionsProvider.sendMessageMocks.append({ message in
@@ -795,11 +901,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-
-        let addProposalCalls = mockCoreCrypto.calls.newExternalAddProposal
-        XCTAssertEqual(addProposalCalls.count, 1)
-        XCTAssertEqual(addProposalCalls.first?.conversationId, groupID.bytes)
-        XCTAssertEqual(addProposalCalls.first?.epoch, conversation.epoch)
+        XCTAssertEqual(mockNewExternalAddProposalCount, 1)
     }
 
     func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
@@ -818,7 +920,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         expectation.isInverted = true
 
         // mock the external add proposal returned by core crypto
-        mockCoreCrypto.mockResultForNewExternalAddProposal = .random()
+        var mockNewExternalAddProposalCount = 0
+        mockCoreCrypto.mockNewExternalAddProposal = { _, _ in
+            mockNewExternalAddProposalCount += 1
+            return Bytes.random()
+        }
 
         // mock the action for sending the proposal & fulfill expectation
         mockActionsProvider.sendMessageMocks.append({ _ in
@@ -831,7 +937,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(mockCoreCrypto.calls.newExternalAddProposal.count, 0)
+        XCTAssertEqual(mockNewExternalAddProposalCount, 0)
     }
 
     // MARK: - Key Packages
@@ -855,10 +961,17 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
 
         // mock that we don't have enough unclaimed kp locally
-        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(unsufficientKeyPackagesAmount)
+        mockCoreCrypto.mockClientValidKeypackagesCount = {
+            UInt64(unsufficientKeyPackagesAmount)
+        }
 
         // mock keyPackages returned by core cryto
-        mockCoreCrypto.mockResultForClientKeypackages = keyPackages
+        var mockClientKeypackagesCount = 0
+        mockCoreCrypto.mockClientKeypackages = {
+            mockClientKeypackagesCount += 1
+            XCTAssertEqual($0, UInt32(self.sut.targetUnclaimedKeyPackageCount))
+            return keyPackages
+        }
 
         // mock return value for unclaimed key packages count
         mockActionsProvider.countUnclaimedKeyPackagesMocks.append { cid in
@@ -882,9 +995,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-        let clientKeypackagesCalls = mockCoreCrypto.calls.clientKeypackages
-        XCTAssertEqual(clientKeypackagesCalls.count, 1)
-        XCTAssertEqual(clientKeypackagesCalls.first, UInt32(sut.targetUnclaimedKeyPackageCount))
+        XCTAssertEqual(mockClientKeypackagesCount, 1)
     }
 
     func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() {
@@ -899,7 +1010,9 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
 
         // mock that there are enough kp locally
-        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(sut.targetUnclaimedKeyPackageCount)
+        mockCoreCrypto.mockClientValidKeypackagesCount = {
+            UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
 
         mockActionsProvider.countUnclaimedKeyPackagesMocks.append { _ in
             countUnclaimedKeyPackages.fulfill()
@@ -929,7 +1042,9 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         userDefaultsTestSuite.test_setLastKeyPackageCountDate(.distantPast)
 
         // mock that we don't have enough unclaimed kp locally
-        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(unsufficientKeyPackagesAmount)
+        mockCoreCrypto.mockClientValidKeypackagesCount = {
+            return UInt64(unsufficientKeyPackagesAmount)
+        }
 
         // mock return value for unclaimed key packages count
         mockActionsProvider.countUnclaimedKeyPackagesMocks.append { _ in
@@ -941,12 +1056,16 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             uploadKeyPackages.fulfill()
         }
 
+        mockCoreCrypto.mockClientKeypackages = { _ in
+            XCTFail("shouldn't be generating key packages")
+            return []
+        }
+
         // When
         sut.uploadKeyPackagesIfNeeded()
 
         // Then
         wait(for: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
-        XCTAssertEqual(mockCoreCrypto.calls.clientKeypackages.count, 0)
     }
 
     // MARK: - Welcome message
@@ -954,14 +1073,22 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     func test_ProcessWelcomeMessage_ChecksIfKeyPackagesNeedToBeUploaded() throws {
         // Given
         let message = Bytes.random().base64EncodedString
-        mockCoreCrypto.mockResultForProcessWelcomeMessage = .random()
-        mockCoreCrypto.mockResultForClientValidKeypackagesCount = UInt64(sut.targetUnclaimedKeyPackageCount)
+
+        mockCoreCrypto.mockProcessWelcomeMessage = { _ in
+            Bytes.random()
+        }
+
+        var mockClientValidKeypackagesCountCount = 0
+        mockCoreCrypto.mockClientValidKeypackagesCount = {
+            mockClientValidKeypackagesCountCount += 1
+            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
+        }
 
         // When
         _ = try sut.processWelcomeMessage(welcomeMessage: message)
 
         // Then
-        XCTAssertEqual(mockCoreCrypto.calls.clientValidKeypackagesCount.count, 1)
+        XCTAssertEqual(mockClientValidKeypackagesCountCount, 1)
     }
 
 }
