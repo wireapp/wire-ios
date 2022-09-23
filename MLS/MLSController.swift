@@ -57,13 +57,14 @@ class DummyCoreCryptoCallbacks: CoreCryptoCallbacks {
 
     init() {}
 
-    func authorize(conversationId: [UInt8], clientId: String) -> Bool {
+    func authorize(conversationId: [UInt8], clientId: [UInt8]) -> Bool {
         return true
     }
 
-    func isUserInGroup(identity: [UInt8], otherClients: [[UInt8]]) -> Bool {
+    func clientIdBelongsToOneOf(clientId: [UInt8], otherClients: [[UInt8]]) -> Bool {
         return true
     }
+
 }
 
 public protocol MLSControllerDelegate: AnyObject {
@@ -748,23 +749,22 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("committing pending proposals in: \(groupID)")
 
         do {
-            // TODO wire_commitPendingProposals will return an optional CommitBundle soon in the case
-            // when there are no pending proposals, then we could return early on an error.
-            let commitBundle = try coreCrypto.wire_commitPendingProposals(conversationId: groupID.bytes)
-            try await sendMessage(commitBundle.commit, groupID: groupID, kind: .commit)
+            if let commitBundle = try coreCrypto.wire_commitPendingProposals(conversationId: groupID.bytes) {
+                try await sendMessage(commitBundle.commit, groupID: groupID, kind: .commit)
 
-            if let welcome = commitBundle.welcome {
-                try await sendWelcomeMessage(welcome)
+                if let welcome = commitBundle.welcome {
+                    try await sendWelcomeMessage(welcome)
+                }
+            } else {
+                logger.warn("no pending proposals to commit")
             }
-
-            clearPendingProposalCommitDate(for: groupID)
-
         } catch {
             logger.info("failed to commit pending proposals in \(groupID): \(String(describing: error))")
             clearPendingProposalCommitDate(for: groupID)
             throw MLSCommitPendingProposalsError.failedToCommitPendingProposals
         }
 
+        clearPendingProposalCommitDate(for: groupID)
         delegate?.mlsControllerDidCommitPendingProposal(groupID: groupID)
     }
 
