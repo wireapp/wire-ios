@@ -212,15 +212,15 @@ extension ZMConversation {
             return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
         }
 
-        switch messageProtocol {
+        switch (messageProtocol, user.isSelfUser) {
 
-        case .proteus:
+        case (.proteus, _), (.mls, true):
             var action = RemoveParticipantAction(user: user, conversation: self)
             action.onResult(resultHandler: completion)
             action.send(in: context.notificationContext)
 
-        case .mls:
-            Logging.mls.info("removing participant from conversation (\(qualifiedID))")
+        case (.mls, false):
+            Logging.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
             var mlsController: MLSControllerProtocol?
 
@@ -232,7 +232,7 @@ extension ZMConversation {
                 let mlsController = mlsController,
                 let groupID = mlsGroupID
             else {
-                Logging.mls.info("failed to remove participant from conversation (\(qualifiedID)): invalid operation")
+                Logging.mls.info("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
                 completion(.failure(.invalidOperation))
                 return
             }
@@ -248,12 +248,11 @@ extension ZMConversation {
                     }
 
                 } catch {
-                    Logging.mls.warn("failed to remove member from conversation (\(qualifiedID)): \(String(describing: error))")
+                    Logging.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
 
                     context.perform {
                         completion(.failure(.failedToRemoveMLSMembers))
                     }
-
                 }
             }
         }
@@ -424,9 +423,10 @@ extension ZMConversation {
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
 
-            guard existingUsers.contains(user),
+            guard
+                existingUsers.contains(user),
                 let existingRole = participantRoles.first(where: { $0.user == user })
-                else { return nil }
+            else { return nil }
 
             participantRoles.remove(existingRole)
             moc.delete(existingRole)

@@ -43,6 +43,8 @@ class MockMLSController: MLSControllerProtocol {
         var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var registerPendingJoin = [MLSGroupID]()
         var performPendingJoins: [Void] = []
+        var wipeGroup = [MLSGroupID]()
+
     }
 
     // MARK: - Properties
@@ -116,8 +118,14 @@ class MockMLSController: MLSControllerProtocol {
 
     // MARK: - Remove members
 
+    typealias RemoveMembersMock = ([MLSClientID], MLSGroupID) throws -> Void
+
+    var removeMembersMock: RemoveMembersMock?
+
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) throws {
         calls.removeMembersFromConversation.append((clientIds, groupID))
+        guard let mock = removeMembersMock else { throw MockError.unmockedMethodCalled }
+        try mock(clientIds, groupID)
     }
 
     // MARK: - Joining groups
@@ -128,6 +136,12 @@ class MockMLSController: MLSControllerProtocol {
 
     func performPendingJoins() {
         calls.performPendingJoins.append(())
+    }
+
+    // MARK: - Wiping group
+
+    func wipeGroup(_ groupID: MLSGroupID) {
+        calls.wipeGroup.append(groupID)
     }
 
     // MARK: - Pending Proposals
