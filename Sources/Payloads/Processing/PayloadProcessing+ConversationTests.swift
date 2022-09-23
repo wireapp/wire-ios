@@ -784,23 +784,122 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    // MARK: - MLS: Conversation Member Leave
+
+    func test_UpdateConversationMemberLeave_WipesMLSGroup() {
+        syncMOC.performAndWait {
+            // Given
+
+            // set mock event processor
+            let mockEventProcessor = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mockEventProcessor)
+
+            // create self user
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID.create()
+            selfUser.domain = groupConversation.domain
+
+            // set message protocol
+            groupConversation.messageProtocol = .mls
+
+            // create the event
+            let payload = Payload.UpdateConverationMemberLeave(
+                userIDs: [selfUser.remoteIdentifier],
+                qualifiedUserIDs: [selfUser.qualifiedID!]
+            )
+            let updateEvent = self.updateEvent(from: payload)
+            let event = conversationEvent(with: payload)
+
+            // When
+            event.process(in: syncMOC, originalEvent: updateEvent)
+
+            // Then
+            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 1)
+            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.first, groupConversation)
+        }
+    }
+
+    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() {
+        syncMOC.performAndWait {
+            // Given
+
+            // set mock event processor
+            let mockEventProcessor = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mockEventProcessor)
+
+            // create user
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            user.domain = groupConversation.domain
+
+            // set message protocol
+            groupConversation.messageProtocol = .mls
+
+            // create the event
+            let payload = Payload.UpdateConverationMemberLeave(
+                userIDs: [user.remoteIdentifier],
+                qualifiedUserIDs: [user.qualifiedID!]
+            )
+            let updateEvent = self.updateEvent(from: payload)
+            let event = conversationEvent(with: payload)
+
+            // When
+            event.process(in: syncMOC, originalEvent: updateEvent)
+
+            // Then
+            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
+        }
+    }
+
+    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() {
+        syncMOC.performAndWait {
+            // Given
+
+            // set mock event processor
+            let mockEventProcessor = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mockEventProcessor)
+
+            // create self user
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.remoteIdentifier = UUID.create()
+            selfUser.domain = groupConversation.domain
+
+            // set message protocol
+            groupConversation.messageProtocol = .proteus
+
+            // create the event
+            let payload = Payload.UpdateConverationMemberLeave(
+                userIDs: [selfUser.remoteIdentifier],
+                qualifiedUserIDs: [selfUser.qualifiedID!]
+            )
+            let updateEvent = self.updateEvent(from: payload)
+            let event = conversationEvent(with: payload)
+
+            // When
+            event.process(in: syncMOC, originalEvent: updateEvent)
+
+            // Then
+            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
+        }
+    }
+
     // MARK: - Helpers
 
     func updateEvent<T: EventData>(from payload: T) -> ZMUpdateEvent {
         return updateEvent(
             from: payload,
-            conversationID: self.groupConversation.qualifiedID,
-            senderID: self.otherUser.qualifiedID,
+            conversationID: groupConversation.qualifiedID,
+            senderID: otherUser.qualifiedID,
             timestamp: nil
         )
     }
 
     func conversationEvent<T: EventData>(with payload: T) -> Payload.ConversationEvent<T> {
         return Payload.ConversationEvent(
-            id: self.groupConversation.remoteIdentifier,
-            qualifiedID: self.groupConversation.qualifiedID,
-            from: self.otherUser.remoteIdentifier,
-            qualifiedFrom: self.otherUser.qualifiedID,
+            id: groupConversation.remoteIdentifier,
+            qualifiedID: groupConversation.qualifiedID,
+            from: otherUser.remoteIdentifier,
+            qualifiedFrom: otherUser.qualifiedID,
             timestamp: nil,
             type: nil,
             data: payload

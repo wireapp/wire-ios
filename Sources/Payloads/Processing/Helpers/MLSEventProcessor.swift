@@ -23,6 +23,7 @@ protocol MLSEventProcessing {
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
     func process(welcomeMessage: String, in context: NSManagedObjectContext)
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
 
 }
 
@@ -40,11 +41,11 @@ class MLSEventProcessor: MLSEventProcessing {
         Logging.mls.info("MLS event processor updating conversation if needed")
 
         guard conversation.messageProtocol == .mls else {
-            return Logging.mls.warn("MLS event processor aborting conversation update: not an MLS conversation")
+            return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
         }
 
         guard let mlsGroupID = MLSGroupID(from: groupID) else {
-            return Logging.mls.warn("MLS event processor aborting conversation update: missing group ID")
+            return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
         if conversation.mlsGroupID == nil {
@@ -53,7 +54,7 @@ class MLSEventProcessor: MLSEventProcessing {
         }
 
         guard let mlsController = context.mlsController else {
-            return Logging.mls.warn("MLS event processor aborting conversation update: missing MLSController")
+            return logWarn(aborting: .conversationUpdate, withReason: .missingMLSController)
         }
 
         let previousStatus = conversation.mlsStatus
@@ -63,7 +64,7 @@ class MLSEventProcessor: MLSEventProcessing {
         context.saveOrRollback()
 
         Logging.mls.info(
-            "MLS event processor updated previous mlsStatus (\(previousStatus)) with new value (\(conversation.mlsStatus)) for conversation (\(String(describing: conversation.qualifiedID)))"
+            "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
         )
     }
 
@@ -72,24 +73,20 @@ class MLSEventProcessor: MLSEventProcessing {
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
         Logging.mls.info("MLS event processor is adding group to join")
 
-        func logWarn(abortedWithReason reason: String) {
-            Logging.mls.warn("MLS event processor aborting joining group: \(reason)")
-        }
-
         guard conversation.messageProtocol == .mls else {
-            return logWarn(abortedWithReason: "not an MLS conversation")
+            return logWarn(aborting: .joiningGroup, withReason: .notMLSConversation)
         }
 
         guard let groupID = conversation.mlsGroupID else {
-            return logWarn(abortedWithReason: "missing group ID")
+            return logWarn(aborting: .joiningGroup, withReason: .missingGroupID)
         }
 
         guard let mlsController = context.mlsController else {
-            return logWarn(abortedWithReason: "missing MLSController")
+            return logWarn(aborting: .joiningGroup, withReason: .missingMLSController)
         }
 
         guard let status = conversation.mlsStatus, status.isPendingJoin else {
-            return logWarn(abortedWithReason: "MLS status is not .pendingJoin")
+            return logWarn(aborting: .joiningGroup, withReason: .other(reason: "MLS status is not .pendingJoin"))
         }
 
         mlsController.registerPendingJoin(groupID)
@@ -102,14 +99,14 @@ class MLSEventProcessor: MLSEventProcessing {
         Logging.mls.info("MLS event processor is processing welcome message")
 
         guard let mlsController = context.mlsController else {
-            return Logging.mls.warn("MLS event processor aborting processing welcome message: missing MLSController")
+            return logWarn(aborting: .processingWelcome, withReason: .missingMLSController)
         }
 
         do {
             let groupID = try mlsController.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
             guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                return Logging.mls.warn("MLS event processor aborting processing welcome message: conversation does not exist in db")
+                return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
             }
 
             conversation.mlsStatus = .ready
@@ -120,6 +117,59 @@ class MLSEventProcessor: MLSEventProcessing {
             )
         } catch {
             return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+        }
+    }
+
+    // MARK: - Wipe conversation
+
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+        Logging.mls.info("MLS event processor is wiping conversation")
+
+        guard conversation.messageProtocol == .mls else {
+            return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
+        }
+
+        guard let mlsGroupID = conversation.mlsGroupID else {
+            return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
+        }
+
+        guard let mlsController = context.mlsController else {
+            return logWarn(aborting: .conversationWipe, withReason: .missingMLSController)
+        }
+
+        mlsController.wipeGroup(mlsGroupID)
+    }
+
+    // MARK: Log Helpers
+
+    private func logWarn(aborting action: ActionLog, withReason reason: AbortReason) {
+        Logging.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
+    }
+
+    private enum ActionLog: String {
+        case conversationUpdate = "conversation update"
+        case conversationWipe = "conversation wipe"
+        case joiningGroup = "joining group"
+        case processingWelcome = "processing welcome message"
+    }
+
+    private enum AbortReason {
+        case notMLSConversation
+        case missingGroupID
+        case missingMLSController
+        case other(reason: String)
+
+        var stringValue: String {
+            switch self {
+            case .notMLSConversation:
+                return "not an MLS conversation"
+            case .missingGroupID:
+                return "missing group ID"
+            case .missingMLSController:
+                return "missing MLSController"
+            case .other(reason: let reason):
+                return reason
+            }
         }
     }
 }

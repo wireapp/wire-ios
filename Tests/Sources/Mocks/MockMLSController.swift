@@ -29,6 +29,7 @@ class MockMLSController: MLSControllerProtocol {
         var decrypt: [(String, MLSGroupID)] = []
         var commitPendingProposals: [Void] = []
         var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
+        var wipeGroup = [MLSGroupID]()
     }
 
     func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
@@ -86,6 +87,10 @@ class MockMLSController: MLSControllerProtocol {
 
     func performPendingJoins() {
 
+    }
+
+    func wipeGroup(_ groupID: MLSGroupID) {
+        calls.wipeGroup.append(groupID)
     }
 
     func commitPendingProposals() async throws {

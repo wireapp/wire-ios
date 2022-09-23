@@ -353,7 +353,14 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLe
         }
 
         let sender = fetchOrCreateSender(in: context)
+
+        // Idea for improvement, return removed users from this call to benefit from
+        // checking that the participants are in the conversation before being removed
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
+
+        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
+            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+        }
     }
 
 }
