@@ -52,23 +52,6 @@ public protocol MLSControllerProtocol {
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
 }
 
-/// We provide dummy callbacks because our BE is currently enforcing that these
-/// constraints are always true
-
-class DummyCoreCryptoCallbacks: CoreCryptoCallbacks {
-
-    init() {}
-
-    func authorize(conversationId: [UInt8], clientId: [UInt8]) -> Bool {
-        return true
-    }
-
-    func clientIdBelongsToOneOf(clientId: [UInt8], otherClients: [[UInt8]]) -> Bool {
-        return true
-    }
-
-}
-
 public protocol MLSControllerDelegate: AnyObject {
 
     func mlsControllerDidCommitPendingProposal(for groupID: MLSGroupID)
@@ -153,7 +136,7 @@ public final class MLSController: MLSControllerProtocol {
         self.delegate = delegate
 
         do {
-            try coreCrypto.wire_setCallbacks(callbacks: DummyCoreCryptoCallbacks())
+            try coreCrypto.wire_setCallbacks(callbacks: CoreCryptoCallbacksImpl())
         } catch {
             logger.error("failed to set callbacks: \(String(describing: error))")
         }
