@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="20G730" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.105.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21G83" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.105.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
@@ -198,6 +198,10 @@
         <relationship name="message" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="confirmations" inverseEntity="Message" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
     </entity>
+    <entity name="MLSGroup" representedClassName=".MLSGroup" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="lastKeyMaterialUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+    </entity>
     <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation" syncable="YES"/>
@@ -356,6 +360,7 @@
         <element name="Member" positionX="18" positionY="162" width="128" height="165"/>
         <element name="Message" positionX="490.6328125" positionY="-395.59765625" width="128" height="433"/>
         <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="105"/>
+        <element name="MLSGroup" positionX="-81" positionY="-234" width="128" height="59"/>
         <element name="ParticipantRole" positionX="-207" positionY="54" width="128" height="89"/>
         <element name="Reaction" positionX="18" positionY="162" width="128" height="103"/>
         <element name="Role" positionX="-198" positionY="63" width="128" height="120"/>
