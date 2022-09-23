@@ -24,9 +24,9 @@ public struct MLSClientID: Equatable {
 
     // MARK: - Properties
 
-    private let userID: String
-    private let clientID: String
-    private let domain: String
+    let userID: String
+    let clientID: String
+    let domain: String
 
     // The string representation of the id.
 
@@ -47,6 +47,29 @@ public struct MLSClientID: Equatable {
             userID: userID,
             clientID: clientID,
             domain: domain
+        )
+    }
+
+    init?(data: Data) {
+        guard let string = String(data: data, encoding: .utf8) else { return nil }
+        self.init(string: string)
+    }
+
+    init?(string: String) {
+        guard
+            let regex = try? NSRegularExpression(pattern: "(.+):(.+)@(.+)", options: []),
+            let result = regex.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)),
+            let userIDRange = Range(result.range(at: 1), in: string),
+            let clientIDRange = Range(result.range(at: 2), in: string),
+            let domainRange = Range(result.range(at: 3), in: string)
+        else {
+            return nil
+        }
+
+        self.init(
+            userID: String(string[userIDRange]),
+            clientID: String(string[clientIDRange]),
+            domain: String(string[domainRange])
         )
     }
 
