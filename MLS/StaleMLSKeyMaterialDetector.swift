@@ -55,11 +55,17 @@ final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
     }
 
     var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
-        let result = MLSGroup.fetchAllObjects(in: context).lazy
-            .filter(isKeyingMaterialStale)
-            .map(\.id)
+        var result = Set<MLSGroupID>()
 
-        return Set(result)
+        context.performAndWait {
+            result = Set(
+                MLSGroup.fetchAllObjects(in: context).lazy
+                .filter(isKeyingMaterialStale)
+                .map(\.id)
+            )
+        }
+
+        return result
     }
 
     func keyingMaterialUpdated(for groupID: MLSGroupID) {
