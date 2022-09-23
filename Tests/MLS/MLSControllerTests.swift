@@ -26,6 +26,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     var mockCoreCrypto: MockCoreCrypto!
     var mockActionsProvider: MockMLSActionsProvider!
     var mockConversationEventProcessor: MockConversationEventProcessor!
+    var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
     var userDefaultsTestSuite: UserDefaults!
 
     let groupID = MLSGroupID([1, 2, 3])
@@ -35,12 +36,14 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         mockCoreCrypto = MockCoreCrypto()
         mockActionsProvider = MockMLSActionsProvider()
         mockConversationEventProcessor = MockConversationEventProcessor()
+        mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
 
         sut = MLSController(
             context: uiMOC,
             coreCrypto: mockCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
+            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             actionsProvider: mockActionsProvider,
             userDefaults: userDefaultsTestSuite
         )
@@ -52,18 +55,24 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         sut = nil
         mockCoreCrypto = nil
         mockActionsProvider = nil
+        mockStaleMLSKeyDetector = nil
         super.tearDown()
     }
 
     // MARK: - MLSControllerDelegate
 
     var pendingProposalCommitExpectations = [MLSGroupID: XCTestExpectation]()
+    var keyMaterialUpdatedExpectation: XCTestExpectation?
 
     // Since SUT may schedule timers to commit pending proposals, we create expectations
     // and fulfill them when SUT informs us the commit was made.
 
-    func mlsControllerDidCommitPendingProposal(groupID: MLSGroupID) {
+    func mlsControllerDidCommitPendingProposal(for: MLSGroupID) {
         pendingProposalCommitExpectations[groupID]?.fulfill()
+    }
+
+    func mlsControllerDidUpdateKeyMaterialForAllGroups() {
+        keyMaterialUpdatedExpectation?.fulfill()
     }
 
     // MARK: - Public keys
@@ -87,6 +96,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             context: uiMOC,
             coreCrypto: mockCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
+            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             actionsProvider: mockActionsProvider
         )
 
@@ -261,6 +271,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
+        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
     }
 
     func test_CreateGroup_ThrowsError() throws {
@@ -636,15 +647,18 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         conversation.commitPendingProposalDate = commitDate
     }
 
-    func test_CommitPendingProposals_OneOverdueCommit() throws {
+    func test_CommitPendingProposals_OneOverdueCommit() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
-
-        // A group with pending proposal in the past
-        let conversation = createConversation(in: uiMOC)
         let groupID = MLSGroupID(.random())
-        conversation.mlsGroupID = groupID
-        conversation.commitPendingProposalDate = overdueCommitDate
+        var conversation: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the past
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = overdueCommitDate
+        }
 
         // Mocks
         mockCoreCrypto.mockCommitPendingProposals = {
@@ -673,23 +687,26 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // When
-        wait {
-            try await self.sut.commitPendingProposals()
-        }
+        try await self.sut.commitPendingProposals()
 
         // Then
-        XCTAssertNil(conversation.commitPendingProposalDate)
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
     }
 
-    func test_CommitPendingProposals_OneFutureCommit() throws {
+    func test_CommitPendingProposals_OneFutureCommit() async throws {
         // Given
         let futureCommitDate = Date().addingTimeInterval(2)
-
-        // A group with pending proposal in the future
-        let conversation = createConversation(in: uiMOC)
         let groupID = MLSGroupID([1, 2, 3])
-        conversation.mlsGroupID = groupID
-        conversation.commitPendingProposalDate = futureCommitDate
+        var conversation: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+        }
 
         // Mocks
         var mockCommitPendingProposalsCount = 0
@@ -721,58 +738,82 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             XCTAssertEqual($0, groupID.bytes)
         }
 
-        // This won't wait for the commit because it'll be scheduled in another
-        // task in the future.
-        wait(timeout: 2.5) {
-            // When
-            try await self.sut.commitPendingProposals()
-        }
-
-        // Instead, create an expectation and wait for it.
-        pendingProposalCommitExpectations[groupID] = expectation(
-            description: "future commit done"
-        )
-
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.5))
+        // When
+        try await self.sut.commitPendingProposals()
 
         // Then
         XCTAssertEqual(mockCommitPendingProposalsCount, 1)
-        XCTAssertNil(conversation.commitPendingProposalDate)
+
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
     }
 
-    func test_CommitPendingProposals_MultipleCommits() throws {
+    func test_CommitPendingProposals_MultipleCommits() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
-        let futureCommitDate = Date().addingTimeInterval(5)
+        let futureCommitDate1 = Date().addingTimeInterval(2)
+        let futureCommitDate2 = Date().addingTimeInterval(5)
 
-        // A group with pending proposal in the past
-        let conversation1 = createConversation(in: uiMOC)
         let conversation1MLSGroupID = MLSGroupID([1, 2, 3])
-        conversation1.mlsGroupID = conversation1MLSGroupID
-        conversation1.commitPendingProposalDate = overdueCommitDate
-
-        // A group with pending proposal in the future
-        let conversation2 = createConversation(in: uiMOC)
         let conversation2MLSGroupID = MLSGroupID([4, 5, 6])
-        conversation2.mlsGroupID = conversation2MLSGroupID
-        conversation2.commitPendingProposalDate = futureCommitDate
+        let conversation3MLSGroupID = MLSGroupID([7, 8, 9])
+
+        var conversation1: ZMConversation!
+        var conversation2: ZMConversation!
+        var conversation3: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the past
+            conversation1 = createConversation(in: uiMOC)
+            conversation1.mlsGroupID = conversation1MLSGroupID
+            conversation1.commitPendingProposalDate = overdueCommitDate
+
+            // A group with pending proposal in the future
+            conversation2 = createConversation(in: uiMOC)
+            conversation2.mlsGroupID = conversation2MLSGroupID
+            conversation2.commitPendingProposalDate = futureCommitDate1
+
+            // A group with pending proposal in the future
+            conversation3 = createConversation(in: uiMOC)
+            conversation3.mlsGroupID = conversation3MLSGroupID
+            conversation3.commitPendingProposalDate = futureCommitDate2
+        }
 
         // Mocks
 
         // Mock for the first commit
-        var mockCommitPendingProposalsCount = 0
-        mockCoreCrypto.mockCommitPendingProposals = {
-            mockCommitPendingProposalsCount += 1
+        var mockCommitPendingProposalsArguments = [Bytes]()
+        mockCoreCrypto.mockCommitPendingProposals = { groupID in
+            mockCommitPendingProposalsArguments.append(groupID)
 
-            XCTAssertEqual($0, conversation1MLSGroupID.bytes)
+            switch groupID {
+            case conversation1MLSGroupID.bytes:
+                // Since we don't commit in the past, we adjust the overdue date
+                // to the point the commit should have been made.
+                XCTAssertEqual(
+                    Date().timeIntervalSinceNow,
+                    overdueCommitDate.addingTimeInterval(5).timeIntervalSinceNow,
+                    accuracy: 0.1
+                )
 
-            // Since we don't commit in the past, we adjust the overdue date
-            // to the point the commit should have been made.
-            XCTAssertEqual(
-                Date().timeIntervalSinceNow,
-                overdueCommitDate.addingTimeInterval(5).timeIntervalSinceNow,
-                accuracy: 0.1
-            )
+            case conversation2MLSGroupID.bytes:
+                XCTAssertEqual(
+                    Date().timeIntervalSinceNow,
+                    futureCommitDate1.timeIntervalSinceNow,
+                    accuracy: 0.1
+                )
+
+            case conversation3MLSGroupID.bytes:
+                XCTAssertEqual(
+                    Date().timeIntervalSinceNow,
+                    futureCommitDate2.timeIntervalSinceNow,
+                    accuracy: 0.1
+                )
+
+            default:
+                XCTFail("Unexpected group id: \(groupID)")
+            }
 
             return CommitBundle(
                 welcome: [1, 1, 1],
@@ -795,6 +836,13 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             return []
         })
 
+        // Mock for conversation 3
+        mockActionsProvider.sendMessageMocks.append({ data in
+            // The message being sent is the one we expect
+            XCTAssertEqual(data, Data([2, 2, 2]))
+            return []
+        })
+
         // Mock for conversation 1
         mockActionsProvider.sendWelcomeMessageMocks.append({ data in
             // The message being sent is the one we expect
@@ -807,53 +855,37 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             XCTAssertEqual(data, Data([1, 1, 1]))
         })
 
-        mockCoreCrypto.mockCommitAccepted = {
-            XCTAssertEqual($0, conversation1MLSGroupID.bytes)
+        // Mock for conversation 3
+        mockActionsProvider.sendWelcomeMessageMocks.append({ data in
+            // The message being sent is the one we expect
+            XCTAssertEqual(data, Data([1, 1, 1]))
+        })
+
+        var mockCommitAcceptedArguments = [Bytes]()
+        mockCoreCrypto.mockCommitAccepted = { groupID in
+            mockCommitAcceptedArguments.append(groupID)
+
         }
 
-        // This will only wait for overdue commits to be made.
-        wait {
-            // When
-            try await self.sut.commitPendingProposals()
-        }
+        // When
+        try await sut.commitPendingProposals()
 
-        // Then pending proposals for conversation 1 were commited
-        XCTAssertEqual(mockCommitPendingProposalsCount, 1)
-        XCTAssertNil(conversation1.commitPendingProposalDate)
-
-        // Mock the pending proposal commit for conversation 2
-        mockCoreCrypto.mockCommitPendingProposals = {
-            mockCommitPendingProposalsCount += 1
-
-            XCTAssertEqual($0, conversation2MLSGroupID.bytes)
-
-            XCTAssertEqual(
-                Date().timeIntervalSinceNow,
-                futureCommitDate.timeIntervalSinceNow,
-                accuracy: 0.1
-            )
-
-            return CommitBundle(
-                welcome: [1, 1, 1],
-                commit: [2, 2, 2],
-                publicGroupState: [3, 3, 3]
-            )
-        }
-
-        mockCoreCrypto.mockCommitAccepted = {
-            XCTAssertEqual($0, conversation2MLSGroupID.bytes)
-        }
-
-        // We expect that the future commit will be commited in about 10 seconds
-        pendingProposalCommitExpectations[conversation2MLSGroupID] = expectation(
-            description: "future commit is done"
+        // Then pending proposals were committed in order
+        XCTAssertEqual(
+            mockCommitPendingProposalsArguments,
+            [conversation1MLSGroupID.bytes, conversation2MLSGroupID.bytes, conversation3MLSGroupID.bytes]
         )
 
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5.5))
+        XCTAssertEqual(
+            mockCommitAcceptedArguments,
+            [conversation1MLSGroupID.bytes, conversation2MLSGroupID.bytes, conversation3MLSGroupID.bytes]
+        )
 
-        // Then pending proposals for conversation 2 were commited
-        XCTAssertEqual(mockCommitPendingProposalsCount, 2)
-        XCTAssertNil(conversation2.commitPendingProposalDate)
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation1.commitPendingProposalDate)
+            XCTAssertNil(conversation2.commitPendingProposalDate)
+            XCTAssertNil(conversation3.commitPendingProposalDate)
+        }
     }
 
     // MARK: Joining conversations
@@ -1089,12 +1121,14 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
     // MARK: - Welcome message
 
-    func test_ProcessWelcomeMessage_ChecksIfKeyPackagesNeedToBeUploaded() throws {
+    func test_ProcessWelcomeMessage_Sucess() throws {
         // Given
+        let groupID = MLSGroupID(.random())
         let message = Bytes.random().base64EncodedString
 
+        // Mock
         mockCoreCrypto.mockProcessWelcomeMessage = { _ in
-            Bytes.random()
+            groupID.bytes
         }
 
         var mockClientValidKeypackagesCountCount = 0
@@ -1108,6 +1142,95 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Then
         XCTAssertEqual(mockClientValidKeypackagesCountCount, 1)
+        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+    }
+
+    // MARK: - Update key material
+
+    func test_UpdateKeyMaterial_WhenInitializing() throws {
+        // Given
+        let group1 = MLSGroupID(.random())
+        let group2 = MLSGroupID(.random())
+
+        // Expectation
+        let expectation = XCTestExpectation(description: "did update all keys")
+        keyMaterialUpdatedExpectation = expectation
+
+        // Mock
+        mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [group1, group2]
+
+        let commit = Bytes.random()
+
+        var mockUpdateKeyingMaterialArguments = Set<Bytes>()
+        mockCoreCrypto.mockUpdateKeyingMaterial = { groupID in
+            mockUpdateKeyingMaterialArguments.insert(groupID)
+
+            return CommitBundle(
+                welcome: nil,
+                commit: commit,
+                publicGroupState: .random()
+            )
+        }
+
+        // For the first group.
+        mockActionsProvider.sendMessageMocks.append({ message in
+            XCTAssertEqual(message.bytes, commit)
+            return []
+        })
+
+        // For the second group.
+        mockActionsProvider.sendMessageMocks.append({ message in
+            XCTAssertEqual(message.bytes, commit)
+            return []
+        })
+
+        var mockCommitAcceptedArguments = Set<Bytes>()
+        mockCoreCrypto.mockCommitAccepted = { groupID in
+            mockCommitAcceptedArguments.insert(groupID)
+        }
+
+        // When
+        let sut = MLSController(
+            context: uiMOC,
+            coreCrypto: mockCoreCrypto,
+            conversationEventProcessor: mockConversationEventProcessor,
+            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
+            actionsProvider: mockActionsProvider,
+            delegate: self
+        )
+
+        // Then
+        wait(for: [expectation], timeout: 5)
+
+        XCTAssertEqual(
+            mockUpdateKeyingMaterialArguments,
+            [group1.bytes, group2.bytes]
+        )
+
+        XCTAssertEqual(
+            mockCommitAcceptedArguments,
+            [group1.bytes, group2.bytes]
+        )
+
+        XCTAssertEqual(
+            Set(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated),
+            Set([group1, group2])
+        )
+
+        XCTAssertEqual(
+            sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
+            Date().timeIntervalSinceNow,
+            accuracy: 0.1
+        )
+
+        let timer = try XCTUnwrap(sut.keyMaterialUpdateCheckTimer)
+        XCTAssertTrue(timer.isValid)
+
+        XCTAssertEqual(
+            timer.fireDate.timeIntervalSinceNow,
+            Date().addingTimeInterval(.oneDay).timeIntervalSinceNow,
+            accuracy: 0.1
+        )
     }
 
 }
