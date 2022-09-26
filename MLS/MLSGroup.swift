@@ -30,6 +30,10 @@ public class MLSGroup: ZMManagedObject {
         return nil
     }
 
+    public override class func isTrackingLocalModifications() -> Bool {
+        return false
+    }
+
     // MARK: - Properties
 
     public var id: MLSGroupID {
