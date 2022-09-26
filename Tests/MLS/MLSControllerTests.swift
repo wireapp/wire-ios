@@ -44,8 +44,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             coreCrypto: mockCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
-            actionsProvider: mockActionsProvider,
-            userDefaults: userDefaultsTestSuite
+            userDefaults: userDefaultsTestSuite,
+            actionsProvider: mockActionsProvider
         )
 
         sut.delegate = self
@@ -97,6 +97,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             coreCrypto: mockCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
+            userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider
         )
 
@@ -1195,6 +1196,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             coreCrypto: mockCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
+            userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
             delegate: self
         )

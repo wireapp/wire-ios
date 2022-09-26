@@ -104,7 +104,8 @@ public final class MLSController: MLSControllerProtocol {
     convenience init(
         context: NSManagedObjectContext,
         coreCrypto: CoreCryptoProtocol,
-        conversationEventProcessor: ConversationEventProcessorProtocol
+        conversationEventProcessor: ConversationEventProcessorProtocol,
+        userDefaults: UserDefaults
     ) {
         self.init(
             context: context,
@@ -114,6 +115,7 @@ public final class MLSController: MLSControllerProtocol {
                 refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
                 context: context
             ),
+            userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider()
         )
     }
@@ -123,8 +125,8 @@ public final class MLSController: MLSControllerProtocol {
         coreCrypto: CoreCryptoProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
+        userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
-        userDefaults: UserDefaults = UserDefaults(suiteName: "com.wire.mls")!,
         delegate: MLSControllerDelegate? = nil
     ) {
         self.context = context
