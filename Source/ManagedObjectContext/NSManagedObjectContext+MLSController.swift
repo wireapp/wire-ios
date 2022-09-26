@@ -33,14 +33,16 @@ extension NSManagedObjectContext {
 
     public func initializeMLSController(
         coreCrypto: CoreCryptoProtocol,
-        conversationEventProcessor: ConversationEventProcessorProtocol
+        conversationEventProcessor: ConversationEventProcessorProtocol,
+        userDefaults: UserDefaults
     ) {
         precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
 
         userInfo[Self.mlsControllerUserInfoKey] = MLSController(
             context: self,
             coreCrypto: coreCrypto,
-            conversationEventProcessor: conversationEventProcessor
+            conversationEventProcessor: conversationEventProcessor,
+            userDefaults: userDefaults
         )
     }
 
