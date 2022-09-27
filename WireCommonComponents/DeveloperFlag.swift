@@ -24,7 +24,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
     case showCreateMLSGroupToggle
     case breakMyNotifications
-    case useSimpleNSE
+    case nseV2
     case nseDebugging
     case nseDebugEntryPoint
     case useDevelopmentBackendAPI
@@ -37,8 +37,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .breakMyNotifications:
             return "Turn on to get your app in a state where it no longer receives notifications."
 
-        case .useSimpleNSE:
-            return "Turn on to use the new and simple implementation of the notification service extension."
+        case .nseV2:
+            return "Turn on to use the new implementation of the notification service extension."
 
         case .nseDebugging:
             return "Turn on to make the notification service extension (NSE) display debug notifications."

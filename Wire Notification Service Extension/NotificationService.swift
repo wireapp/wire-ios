@@ -37,7 +37,7 @@ public class NotificationService: UNNotificationServiceExtension{
             // By doing nothing, we hope to get in a state where iOS will no
             // longer deliver pushes to us.
             return
-        } else if DeveloperFlag.useSimpleNSE.isOn {
+        } else if DeveloperFlag.nseV2.isOn {
             simpleService.didReceive(
                 request,
                 withContentHandler: contentHandler
@@ -55,7 +55,7 @@ public class NotificationService: UNNotificationServiceExtension{
             // By doing nothing, we hope to get in a state where iOS will no
             // longer deliver pushes to us.
             return
-        } else if DeveloperFlag.useSimpleNSE.isOn {
+        } else if DeveloperFlag.nseV2.isOn {
             simpleService.serviceExtensionTimeWillExpire()
         } else {
             legacyService.serviceExtensionTimeWillExpire()
