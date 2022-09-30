@@ -376,6 +376,139 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
     }
 
+    func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async {
+        // Given
+        let groupID = MLSGroupID(.random())
+        var conversation: ZMConversation!
+        let futureCommitDate = Date().addingTimeInterval(2)
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+        }
+
+        // Mocks
+        var mockCommitPendingProposalsCount = 0
+        mockCoreCrypto.mockCommitPendingProposals = {
+            mockCommitPendingProposalsCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+
+            // The pending proposal should be commited immediately, ignoring
+            // the future commit date.
+            XCTAssertEqual(Date().timeIntervalSinceNow, 0, accuracy: 0.1)
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
+
+        // Sending the commit for the pending proposal
+        mockActionsProvider.sendMessageMocks.append({ data in
+            XCTAssertEqual(data, Data([2, 2, 2]))
+            return []
+        })
+
+        // Sending the welcome message for the pending proposal
+        mockActionsProvider.sendWelcomeMessageMocks.append({ data in
+            // The message being sent is the one we expect
+            XCTAssertEqual(data, Data([1, 1, 1]))
+        })
+
+        var mockCommitAcceptedArguments = [Bytes]()
+        mockCoreCrypto.mockCommitAccepted = { groupID in
+            mockCommitAcceptedArguments.append(groupID)
+        }
+
+        // The user to add
+        let domain = "example.com"
+        let id = UUID.create()
+        let mlsUser: [MLSUser] = [MLSUser(id: id, domain: domain)]
+
+        // Mock key package.
+        var keyPackage: KeyPackage!
+
+        mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
+            keyPackage = KeyPackage(
+                client: "client",
+                domain: domain,
+                keyPackage: Data([1, 2, 3]).base64EncodedString(),
+                keyPackageRef: "keyPackageRef",
+                userID: userID
+            )
+
+            return [keyPackage]
+        })
+
+        // The commit to add the member
+        var mockAddClientsToConversationCount = 0
+        mockCoreCrypto.mockAddClientsToConversation = {
+            mockAddClientsToConversationCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+            XCTAssertEqual($1, [Invitee(from: keyPackage)])
+
+            return MemberAddedMessages(
+                commit: [0, 0, 0, 0],
+                welcome: [1, 1, 1, 1],
+                publicGroupState: []
+            )
+        }
+
+        // Mock update event for member joins the conversation
+        var updateEvent: ZMUpdateEvent!
+
+        // Mock sending message.
+        mockActionsProvider.sendMessageMocks.append({ message in
+            XCTAssertEqual(message, Data([0, 0, 0, 0]))
+
+            let mockPayload: NSDictionary = [
+                "type": "conversation.member-join",
+                "data": message
+            ]
+
+            updateEvent = ZMUpdateEvent(fromEventStreamPayload: mockPayload, uuid: nil)!
+
+            return [updateEvent]
+        })
+
+        // Mock sending welcome message.
+        mockActionsProvider.sendWelcomeMessageMocks.append({ message in
+            XCTAssertEqual(message, Data([1, 1, 1, 1]))
+        })
+
+        do {
+            // When
+            try await sut.addMembersToConversation(with: mlsUser, for: groupID)
+
+        } catch let error {
+            XCTFail("Unexpected error: \(String(describing: error))")
+        }
+
+        // Then
+        XCTAssertEqual(mockCommitPendingProposalsCount, 1)
+
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
+
+        // One for the proposal, one for the member add
+        XCTAssertEqual(mockCommitAcceptedArguments, [groupID.bytes, groupID.bytes])
+
+        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        XCTAssertEqual(processConversationEventsCalls.count, 2)
+
+        // No events to process when commiting the pending proposal
+        XCTAssertEqual(processConversationEventsCalls[0], [])
+
+        // One event to process when adding the member.
+        XCTAssertEqual(processConversationEventsCalls[1], [updateEvent])
+    }
+
     func test_AddingMembersToConversation_ThrowsNoParticipantsToAdd() async {
         // Given
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
@@ -580,6 +713,123 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
         XCTAssertEqual(processConversationEventsCalls.count, 1)
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
+
+        XCTAssertEqual(mockRemoveClientsFromConversationCount, 1)
+    }
+
+    func test_CommitPendingProposals_BeforeRemoveMembersFromConversation_IsSuccessful() async {
+        // Given
+        let groupID = MLSGroupID(.random())
+        var conversation: ZMConversation!
+        let futureCommitDate = Date().addingTimeInterval(2)
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+        }
+
+        // Mocks
+        var mockCommitPendingProposalsCount = 0
+        mockCoreCrypto.mockCommitPendingProposals = {
+            mockCommitPendingProposalsCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+
+            // The pending proposal should be commited immediately, ignoring
+            // the future commit date.
+            XCTAssertEqual(Date().timeIntervalSinceNow, 0, accuracy: 0.1)
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
+
+        // Sending the commit for the pending proposal
+        mockActionsProvider.sendMessageMocks.append({ data in
+            XCTAssertEqual(data, Data([2, 2, 2]))
+            return []
+        })
+
+        // Sending the welcome message for the pending proposal
+        mockActionsProvider.sendWelcomeMessageMocks.append({ data in
+            // The message being sent is the one we expect
+            XCTAssertEqual(data, Data([1, 1, 1]))
+        })
+
+        var mockCommitAcceptedArguments = [Bytes]()
+        mockCoreCrypto.mockCommitAccepted = { groupID in
+            mockCommitAcceptedArguments.append(groupID)
+        }
+
+        // The user to remove
+        let domain = "example.com"
+        let id = UUID.create().uuidString
+        let clientID = UUID.create().uuidString
+        let mlsClientID = MLSClientID(userID: id, clientID: clientID, domain: domain)
+
+        // Mock return value for removing clients to conversation.
+        var mockRemoveClientsFromConversationCount = 0
+        mockCoreCrypto.mockRemoveClientsFromConversation = {
+            mockRemoveClientsFromConversationCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+            let mlsClientIDBytes = mlsClientID.string.data(using: .utf8)!.bytes
+            XCTAssertEqual($1, [mlsClientIDBytes])
+
+            return CommitBundle(
+                welcome: nil,
+                commit: [0, 0, 0, 0],
+                publicGroupState: []
+            )
+        }
+
+        // Mock update event for member leaves from conversation
+        var updateEvent: ZMUpdateEvent!
+
+        // Mock sending message.
+        mockActionsProvider.sendMessageMocks.append({ message in
+            XCTAssertEqual(message, Data([0, 0, 0, 0]))
+
+            let mockPayload: NSDictionary = [
+                "type": "conversation.member-leave",
+                "data": message
+            ]
+
+            updateEvent = ZMUpdateEvent(fromEventStreamPayload: mockPayload, uuid: nil)!
+
+            return [updateEvent]
+        })
+
+        do {
+            // When
+            try await sut.removeMembersFromConversation(with: [mlsClientID], for: groupID)
+
+        } catch let error {
+            XCTFail("Unexpected error: \(String(describing: error))")
+        }
+
+        // Then
+        XCTAssertEqual(mockCommitPendingProposalsCount, 1)
+
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
+
+        // One for the proposal, one for the member add
+        XCTAssertEqual(mockCommitAcceptedArguments, [groupID.bytes, groupID.bytes])
+
+        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        XCTAssertEqual(processConversationEventsCalls.count, 2)
+
+        // No events to process for the proposal
+        XCTAssertEqual(processConversationEventsCalls[0], [])
+
+        // One event to process for the member remove
+        XCTAssertEqual(processConversationEventsCalls[1], [updateEvent])
 
         XCTAssertEqual(mockRemoveClientsFromConversationCount, 1)
     }
@@ -1217,6 +1467,129 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         XCTAssertEqual(
             Set(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated),
             Set([group1, group2])
+        )
+
+        XCTAssertEqual(
+            sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
+            Date().timeIntervalSinceNow,
+            accuracy: 0.1
+        )
+
+        let timer = try XCTUnwrap(sut.keyMaterialUpdateCheckTimer)
+        XCTAssertTrue(timer.isValid)
+
+        XCTAssertEqual(
+            timer.fireDate.timeIntervalSinceNow,
+            Date().addingTimeInterval(.oneDay).timeIntervalSinceNow,
+            accuracy: 0.1
+        )
+    }
+
+    func test_SendPendingProposal_BeforeUpdatingKeyMaterial_WhenInitializing() throws {
+        // Given
+        let futureCommitDate = Date().addingTimeInterval(2)
+        let groupID = MLSGroupID(.random())
+        var conversation: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+        }
+
+        // Mocks
+        var mockCommitPendingProposalsCount = 0
+        mockCoreCrypto.mockCommitPendingProposals = {
+            mockCommitPendingProposalsCount += 1
+
+            XCTAssertEqual($0, groupID.bytes)
+
+            // The pending proposal should be commited immediately, ignoring
+            // the future commit date.
+            XCTAssertEqual(Date().timeIntervalSinceNow, 0, accuracy: 0.1)
+
+            return CommitBundle(
+                welcome: [1, 1, 1],
+                commit: [2, 2, 2],
+                publicGroupState: [3, 3, 3]
+            )
+        }
+
+        // Sending the commit for the pending proposal
+        mockActionsProvider.sendMessageMocks.append({ data in
+            XCTAssertEqual(data, Data([2, 2, 2]))
+            return []
+        })
+
+        // Sending the welcome message for the pending proposal
+        mockActionsProvider.sendWelcomeMessageMocks.append({ data in
+            // The message being sent is the one we expect
+            XCTAssertEqual(data, Data([1, 1, 1]))
+        })
+
+        var mockCommitAcceptedArguments = [Bytes]()
+        mockCoreCrypto.mockCommitAccepted = { groupID in
+            mockCommitAcceptedArguments.append(groupID)
+        }
+
+        // Expectation
+        let expectation = XCTestExpectation(description: "did update key material")
+        keyMaterialUpdatedExpectation = expectation
+
+        // Mock
+        mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [groupID]
+
+        let commit = Bytes.random()
+
+        var mockUpdateKeyingMaterialArguments = Set<Bytes>()
+        mockCoreCrypto.mockUpdateKeyingMaterial = { groupID in
+            mockUpdateKeyingMaterialArguments.insert(groupID)
+
+            return CommitBundle(
+                welcome: nil,
+                commit: commit,
+                publicGroupState: .random()
+            )
+        }
+
+        // Send commit for key material update
+        mockActionsProvider.sendMessageMocks.append({ message in
+            XCTAssertEqual(message.bytes, commit)
+            return []
+        })
+
+        // When
+        let sut = MLSController(
+            context: uiMOC,
+            coreCrypto: mockCoreCrypto,
+            conversationEventProcessor: mockConversationEventProcessor,
+            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
+            userDefaults: userDefaultsTestSuite,
+            actionsProvider: mockActionsProvider,
+            delegate: self
+        )
+
+        // Then
+        wait(for: [expectation], timeout: 5)
+
+        XCTAssertEqual(mockCommitPendingProposalsCount, 1)
+
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
+
+        XCTAssertEqual(mockUpdateKeyingMaterialArguments, [groupID.bytes])
+
+        // One commit for the proposal, one for the key update
+        XCTAssertEqual(
+            mockCommitAcceptedArguments,
+            [groupID.bytes, groupID.bytes]
+        )
+
+        XCTAssertEqual(
+            Set(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated),
+            Set([groupID])
         )
 
         XCTAssertEqual(
