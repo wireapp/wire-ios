@@ -181,8 +181,8 @@ extension EventDecoder {
             }
 
             switch result {
-            case .message(let decryptedData):
-                return updateEvent.decryptedMLSEvent(decryptedData: decryptedData)
+            case .message(let decryptedData, let senderClientID):
+                return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
             case .proposal(let commitDelay):
                 let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
                 mlsController.scheduleCommitPendingProposals(groupID: groupID, at: scheduledDate)

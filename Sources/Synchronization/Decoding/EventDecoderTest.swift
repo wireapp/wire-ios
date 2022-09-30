@@ -388,7 +388,8 @@ extension EventDecoderTest {
         syncMOC.performAndWait {
             // Given
             let messageData = randomData
-            mockMLSController.mockDecryptResult = MLSDecryptResult.message(messageData)
+            let senderClientID = "clientID"
+            mockMLSController.mockDecryptResult = MLSDecryptResult.message(messageData, senderClientID)
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),
@@ -399,8 +400,12 @@ extension EventDecoderTest {
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
 
             // Then
-            let decryptedData = decryptedEvent?.payload["data"] as? String
+            let payloadData = decryptedEvent?.payload["data"] as? [String: Any]
+            let decryptedData = payloadData?["text"] as? String
+            let senderID = payloadData?["sender"] as? String
+
             XCTAssertEqual(decryptedData, messageData.base64EncodedString())
+            XCTAssertEqual(senderClientID, senderID)
             XCTAssertEqual(decryptedEvent?.uuid, event.uuid)
         }
     }
