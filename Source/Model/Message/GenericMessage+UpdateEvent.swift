@@ -23,9 +23,9 @@ extension GenericMessage {
         let base64Content: String?
 
         switch updateEvent.type {
-        case .conversationClientMessageAdd, .conversationMLSMessageAdd:
+        case .conversationClientMessageAdd:
             base64Content = updateEvent.payload.string(forKey: "data")
-        case .conversationOtrMessageAdd:
+        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
             base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "text")
         case .conversationOtrAssetAdd:
             base64Content = updateEvent.payload.dictionary(forKey: "data")?.string(forKey: "info")

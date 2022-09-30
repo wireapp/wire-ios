@@ -19,7 +19,7 @@
 import Foundation
 
 public enum MLSDecryptResult: Equatable {
-    case message(_ messageData: Data)
+    case message(_ messageData: Data, _ senderClientID: String?)
     case proposal(_ commitDelay: UInt64)
 }
 
@@ -794,7 +794,10 @@ public final class MLSController: MLSControllerProtocol {
             }
 
             if let message = decryptedMessage.message {
-                return MLSDecryptResult.message(message.data)
+                return MLSDecryptResult.message(
+                    message.data,
+                    senderClientId(from: decryptedMessage)
+                )
             }
 
             return nil
@@ -802,6 +805,14 @@ public final class MLSController: MLSControllerProtocol {
             logger.warn("failed to decrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageDecryptionError.failedToDecryptMessage
         }
+    }
+
+    private func senderClientId(from message: DecryptedMessage) -> String? {
+        guard let senderClientID = message.senderClientId else {
+            return nil
+        }
+
+        return MLSClientID(data: senderClientID.data)?.clientID
     }
 
     // MARK: - Pending proposals

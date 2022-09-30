@@ -215,6 +215,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         syncMOC.performAndWait {
             // Given
             let messageBytes: Bytes = [1, 2, 3]
+            let sender = MLSClientID(
+                userID: UUID.create().transportString(),
+                clientID: "client",
+                domain: "example.com"
+            )
 
             var mockDecryptMessageCount = 0
             self.mockCoreCrypto.mockDecryptMessage = {
@@ -227,7 +232,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
                     message: messageBytes,
                     proposals: [],
                     isActive: false,
-                    commitDelay: nil
+                    commitDelay: nil,
+                    senderClientId: sender.string.data(using: .utf8)!.bytes
                 )
             }
 
@@ -241,7 +247,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
             // Then
             XCTAssertEqual(mockDecryptMessageCount, 1)
-            XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data))
+            XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data, sender.clientID))
         }
     }
 
