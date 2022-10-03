@@ -712,50 +712,6 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
-    // MARK: - MLS: Conversation Member Join
-
-    func testUpdateConversationMemberJoin_MLS_AsksToUpdateConversationIfNeeded() {
-        syncMOC.performAndWait {
-            // given
-            let mockEventProcessor = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mockEventProcessor)
-
-            // when
-            processMemberJoinEvent()
-
-            // then
-            let updateConversationCalls = mockEventProcessor.calls.updateConversationIfNeeded
-            XCTAssertEqual(updateConversationCalls.count, 1)
-            XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
-        }
-    }
-
-    func testUpdateConversationMemberJoin_UpdatesMessageProtocol() {
-        syncMOC.performAndWait {
-            // given
-            groupConversation.messageProtocol = .proteus
-
-            // when
-            processMemberJoinEvent()
-
-            // then
-            XCTAssertEqual(self.groupConversation.messageProtocol, .mls)
-        }
-    }
-
-    func testUpdateConversationMemberJoin_UpdatesEpoch() {
-        syncMOC.performAndWait {
-            // given
-            groupConversation.epoch = 0
-
-            // when
-            processMemberJoinEvent(epoch: 1)
-
-            // then
-            XCTAssertEqual(groupConversation.epoch, 1)
-        }
-    }
-
     // MARK: - MLS: Welcome Message
 
     func testUpdateConversationMLSWelcome_AsksToProcessWelcomeMessage() {
@@ -906,25 +862,6 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         )
     }
 
-    private func processMemberJoinEvent(epoch: UInt? = nil) {
-        let payload = memberJoinPayload(epoch: epoch)
-        let event = conversationEvent(with: payload)
-        let updateEvent = updateEvent(from: payload)
-
-        event.process(in: syncMOC, originalEvent: updateEvent)
-    }
-
-    private func memberJoinPayload(epoch: UInt?) -> Payload.UpdateConverationMemberJoin {
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID)
-        return Payload.UpdateConverationMemberJoin(
-            userIDs: [],
-            users: [selfMember],
-            messageProtocol: "mls",
-            mlsGroupID: "id",
-            epoch: epoch
-        )
-    }
 }
 
 extension Payload.Conversation {

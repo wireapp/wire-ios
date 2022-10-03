@@ -245,11 +245,13 @@ extension Payload.Conversation {
     }
 
     private func updateMessageProtocol(for conversation: ZMConversation) {
-        guard
-            let messageProtocolString = messageProtocol,
-            let messageProtocol = MessageProtocol(string: messageProtocolString)
-        else {
-            Logging.eventProcessing.warn("message protocol is missing or invalid")
+        guard let messageProtocolString = messageProtocol else {
+            Logging.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let messageProtocol = MessageProtocol(string: messageProtocolString) else {
+            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
@@ -361,71 +363,6 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLe
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
             MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
         }
-    }
-
-}
-
-extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        guard
-            let conversation = fetchOrCreateConversation(in: context)
-        else {
-            Logging.eventProcessing.warn("Member join update missing conversation, aborting...")
-            return
-        }
-
-        conversation.epoch = UInt64(data.epoch ?? 0)
-        updateMessageProtocol(for: conversation)
-
-        if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
-            let selfUser = ZMUser.selfUser(in: context)
-            let users = Set(usersAndRoles.map { $0.0 })
-            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
-
-            if users.contains(selfUser) || newUsers {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-
-            if users.contains(selfUser) {
-                updateMLSStatus(for: conversation, context: context)
-            }
-
-            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
-            // NOTE: legacy code path for backwards compatibility with servers without role support
-
-            let users = Set(users)
-            let selfUser = ZMUser.selfUser(in: context)
-
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
-        }
-
-    }
-
-    private func updateMessageProtocol(for conversation: ZMConversation) {
-        guard
-            let messageProtocolString = data.messageProtocol,
-            let messageProtocol = MessageProtocol(string: messageProtocolString)
-        else {
-            Logging.eventProcessing.warn("message protocol is missing or invalid")
-            return
-        }
-
-        conversation.messageProtocol = messageProtocol
-    }
-
-    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) {
-        MLSEventProcessor.shared.updateConversationIfNeeded(
-            conversation: conversation,
-            groupID: data.mlsGroupID,
-            context: context
-        )
     }
 
 }

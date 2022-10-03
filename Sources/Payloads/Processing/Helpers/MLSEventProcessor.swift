@@ -44,7 +44,7 @@ class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = MLSGroupID(from: groupID) else {
+        guard let mlsGroupID = conversation.mlsGroupID ?? MLSGroupID(from: groupID) else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
