@@ -424,9 +424,6 @@ extension Payload {
         enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
             case users
-            case messageProtocol = "protocol"
-            case mlsGroupID = "group_id"
-            case epoch
         }
 
         static var eventType: ZMUpdateEventType {
@@ -435,9 +432,7 @@ extension Payload {
 
         let userIDs: [UUID]?
         let users: [ConversationMember]?
-        let messageProtocol: String?
-        let mlsGroupID: String?
-        let epoch: UInt?
+
     }
 
     struct UpdateConversationConnectionRequest: EventData {
