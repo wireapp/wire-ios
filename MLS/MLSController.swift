@@ -65,6 +65,7 @@ public final class MLSController: MLSControllerProtocol {
 
     private weak var context: NSManagedObjectContext?
     private let coreCrypto: CoreCryptoProtocol
+    private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: UserDefaults
@@ -123,6 +124,7 @@ public final class MLSController: MLSControllerProtocol {
     init(
         context: NSManagedObjectContext,
         coreCrypto: CoreCryptoProtocol,
+        mlsActionExecutor: MLSActionExecutorProtocol? = nil,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
@@ -131,6 +133,11 @@ public final class MLSController: MLSControllerProtocol {
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
+        self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
+            coreCrypto: coreCrypto,
+            context: context,
+            actionsProvider: actionsProvider
+        )
         self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
         self.actionsProvider = actionsProvider
@@ -234,15 +241,10 @@ public final class MLSController: MLSControllerProtocol {
     private func updateKeyMaterial(for groupID: MLSGroupID) async {
         do {
             Logging.mls.info("updating key material for group (\(groupID))")
-            let commit = try coreCrypto.wire_updateKeyingMaterial(conversationId: groupID.bytes)
-
-            try await sendMessageAfterCommitingPendingProposals(
-                message: commit.commit,
-                in: groupID,
-                kind: .commit
-            )
-
+            try await commitPendingProposalsIfNeeded(in: groupID)
+            let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+            conversationEventProcessor.processConversationEvents(events)
         } catch {
             Logging.mls.warn("failed to update key material for group (\(groupID)): \(String(describing: error))")
         }
@@ -334,21 +336,6 @@ public final class MLSController: MLSControllerProtocol {
 
     }
 
-    private func sendMessageAfterCommitingPendingProposals(
-        message: Bytes,
-        in groupID: MLSGroupID,
-        kind: MessageKind
-    ) async throws {
-        if existsPendingPropsals(in: groupID) {
-            // Sending a message while there are pending proposals will result in an error,
-            // so commit any first.
-            logger.info("preempively commiting pending proposals in group (\(groupID))")
-            try await commitPendingProposals(in: groupID)
-        }
-
-        try await sendMessage(message, groupID: groupID, kind: kind)
-    }
-
     private func existsPendingPropsals(in groupID: MLSGroupID) -> Bool {
         guard let context = context else { return false }
 
@@ -363,28 +350,23 @@ public final class MLSController: MLSControllerProtocol {
         return groupHasPendingProposals
     }
 
-    private func sendMessage(_ bytes: Bytes, groupID: MLSGroupID, kind: MessageKind) async throws {
-        logger.info("sending message in group (\(groupID))")
-
-        var updateEvents = [ZMUpdateEvent]()
-
+    private func sendProposal(_ bytes: Bytes, groupID: MLSGroupID) async throws {
         do {
+            logger.info("sending proposal in group (\(groupID))")
+
             guard let context = context else { return }
-            updateEvents = try await actionsProvider.sendMessage(
+
+            let updateEvents = try await actionsProvider.sendMessage(
                 bytes.data,
                 in: context.notificationContext
             )
+
+            conversationEventProcessor.processConversationEvents(updateEvents)
+
         } catch let error {
-            logger.warn("failed to send \(String(describing: kind)) message in group (\(groupID)): \(String(describing: error))")
-            throw MLSSendMessageError(from: kind)
+            logger.warn("failed to send proposal in group (\(groupID)): \(String(describing: error))")
+            throw MLSSendMessageError.failedToSendProposal
         }
-
-        if kind == .commit {
-            logger.info("commit accepted in group (\(groupID)")
-            try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
-        }
-
-        conversationEventProcessor.processConversationEvents(updateEvents)
     }
 
     private func sendWelcomeMessage(_ bytes:  Bytes) async throws {
@@ -402,9 +384,17 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
-    // MARK: - Add participants to mls group
+    // MARK: - Add member
+
+    enum MLSAddMembersError: Error {
+
+        case noMembersToAdd
+        case failedToAddMembers
+
+    }
 
     /// Add users to MLS group in the given conversation.
+    ///
     /// - Parameters:
     ///   - users: Users represents the MLS group to be added.
     ///   - groupID: Represents the MLS conversation group ID in which users to be added
@@ -413,36 +403,18 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("adding members to group (\(groupID)) with users: \(users)")
 
         guard !users.isEmpty else {
-            throw MLSGroupCreationError.noParticipantsToAdd
+            throw MLSAddMembersError.noMembersToAdd
         }
 
-        let keyPackages = try await claimKeyPackages(for: users)
-        let invitees = keyPackages.map(Invitee.init(from:))
-        let messagesToSend = try addMembers(id: groupID, invitees: invitees)
-
-        guard let messagesToSend = messagesToSend else { return }
-
-        try await sendMessageAfterCommitingPendingProposals(
-            message: messagesToSend.commit,
-            in: groupID,
-            kind: .commit
-        )
-
-        try await sendWelcomeMessage(messagesToSend.welcome)
-    }
-
-    private func addMembers(
-        id: MLSGroupID,
-        invitees: [Invitee]
-    ) throws -> MemberAddedMessages? {
         do {
-            return try coreCrypto.wire_addClientsToConversation(
-                conversationId: id.bytes,
-                clients: invitees
-            )
-        } catch let error {
-            logger.warn("failed to add members to group (\(id)): \(String(describing: error))")
-            throw MLSGroupCreationError.failedToAddMembers
+            try await commitPendingProposalsIfNeeded(in: groupID)
+            let keyPackages = try await claimKeyPackages(for: users)
+            let invitees = keyPackages.map(Invitee.init(from:))
+            let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
+            conversationEventProcessor.processConversationEvents(events)
+        } catch {
+            logger.warn("failed to add members to group (\(groupID)): \(String(describing: error))")
+            throw MLSAddMembersError.failedToAddMembers
         }
     }
 
@@ -464,28 +436,14 @@ public final class MLSController: MLSControllerProtocol {
         guard !clientIds.isEmpty else {
             throw MLSRemoveParticipantsError.noClientsToRemove
         }
-        
-        let clientIds =  clientIds.compactMap { $0.string.utf8Data?.bytes }
-        let messageToSend = try removeMembers(id: groupID, clientIds: clientIds)
 
-        try await sendMessageAfterCommitingPendingProposals(
-            message: messageToSend.commit,
-            in: groupID,
-            kind: .commit
-        )
-    }
-
-    private func removeMembers(
-        id: MLSGroupID,
-        clientIds: [ClientId]
-    ) throws -> CommitBundle {
         do {
-            return try coreCrypto.wire_removeClientsFromConversation(
-                conversationId: id.bytes,
-                clients: clientIds
-            )
-        } catch let error {
-            logger.warn("failed to remove members from group (\(id)): \(String(describing: error))")
+            try await commitPendingProposalsIfNeeded(in: groupID)
+            let clientIds =  clientIds.compactMap { $0.string.utf8Data?.bytes }
+            let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
+            conversationEventProcessor.processConversationEvents(events)
+        } catch {
+            logger.warn("failed to remove members from group (\(groupID)): \(String(describing: error))")
             throw MLSRemoveParticipantsError.failedToRemoveMembers
         }
     }
@@ -726,7 +684,7 @@ public final class MLSController: MLSControllerProtocol {
 
         do {
             let proposal = try coreCrypto.wire_newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch)
-            try await sendMessage(proposal, groupID: groupID, kind: .proposal)
+            try await sendProposal(proposal, groupID: groupID)
             logger.info("success: requested to join group (\(groupID)")
         } catch {
             logger.warn(
@@ -849,9 +807,6 @@ public final class MLSController: MLSControllerProtocol {
             return
         }
 
-        // Maybe we can split this... overdue.. .commit immediately.
-        // future... collect them all, find the newest, and try again
-
         logger.info("committing any scheduled pending proposals")
 
         let groupsWithPendingCommits = self.sortedGroupsWithPendingCommits()
@@ -899,6 +854,15 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
+    private func commitPendingProposalsIfNeeded(in groupID: MLSGroupID) async throws {
+        guard existsPendingPropsals(in: groupID) else { return }
+        // Sending a message while there are pending proposals will result in an error,
+        // so commit any first.
+        logger.info("preempively committing pending proposals in group (\(groupID))")
+        try await commitPendingProposals(in: groupID)
+        logger.info("success: committed pending proposals in group (\(groupID))")
+    }
+
     func commitPendingProposals(in groupID: MLSGroupID) async throws {
         guard context != nil else {
             return
@@ -907,23 +871,15 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("committing pending proposals in: \(groupID)")
 
         do {
-            if let commitBundle = try coreCrypto.wire_commitPendingProposals(conversationId: groupID.bytes) {
-                try await sendMessage(commitBundle.commit, groupID: groupID, kind: .commit)
-
-                if let welcome = commitBundle.welcome {
-                    try await sendWelcomeMessage(welcome)
-                }
-            } else {
-                logger.warn("no pending proposals to commit")
-            }
+            let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
+            conversationEventProcessor.processConversationEvents(events)
+            clearPendingProposalCommitDate(for: groupID)
+            delegate?.mlsControllerDidCommitPendingProposal(for: groupID)
         } catch {
             logger.info("failed to commit pending proposals in \(groupID): \(String(describing: error))")
             clearPendingProposalCommitDate(for: groupID)
             throw MLSCommitPendingProposalsError.failedToCommitPendingProposals
         }
-
-        clearPendingProposalCommitDate(for: groupID)
-        delegate?.mlsControllerDidCommitPendingProposal(for: groupID)
     }
 
     private func clearPendingProposalCommitDate(for groupID: MLSGroupID) {
@@ -1030,7 +986,7 @@ private extension MLSController.MLSSendMessageError {
 
 }
 
-private extension String {
+extension String {
 
     var utf8Data: Data? {
         return data(using: .utf8)
@@ -1102,7 +1058,7 @@ protocol MLSActionsProviderProtocol {
 
 }
 
-private class MLSActionsProvider: MLSActionsProviderProtocol {
+class MLSActionsProvider: MLSActionsProviderProtocol {
 
     func fetchBackendPublicKeys(
         in context: NotificationContext
