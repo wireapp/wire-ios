@@ -90,6 +90,10 @@ public class ZMUserSession: NSObject {
     let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
     let hotFix: ZMHotFix
 
+    public var syncStatus: SyncStatusProtocol? {
+        return applicationStatusDirectory?.syncStatus
+    }
+
     public lazy var featureService = FeatureService(context: syncContext)
 
     public var appLockController: AppLockType
