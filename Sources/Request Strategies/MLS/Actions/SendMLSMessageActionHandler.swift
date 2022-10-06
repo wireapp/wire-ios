@@ -37,7 +37,7 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
         }
 
         guard !action.message.isEmpty else {
-            action.notifyResult(.failure(.invalidBody))
+            action.notifyResult(.failure(.malformedRequest))
             return nil
         }
 
@@ -80,17 +80,32 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
             action.succeed(with: updateEvents)
 
+        case (400, "mls-group-conversation-mismatch"):
+            action.fail(with: .mlsGroupConversationMismatch)
+
+        case (400, "mls-client-sender-user-mismatch"):
+            action.fail(with: .mlsClientSenderUserMismatch)
+
+        case (400, "mls-self-removal-not-allowed"):
+            action.fail(with: .mlsSelfRemovalNotAllowed)
+
+        case (400, "mls-commit-missing-references"):
+            action.fail(with: .mlsCommitMissingReferences)
+
         case (400, "mls-protocol-error"):
             action.fail(with: .mlsProtocolError)
 
         case (400, _):
-            action.fail(with: .invalidBody)
+            action.fail(with: .invalidRequestBody)
 
         case (403, "missing-legalhold-consent"):
             action.fail(with: .missingLegalHoldConsent)
 
         case (403, "legalhold-not-enabled"):
             action.fail(with: .legalHoldNotEnabled)
+
+        case (403, "access-denied"):
+            action.fail(with: .accessDenied)
 
         case (404, "mls-proposal-not-found"):
             action.fail(with: .mlsProposalNotFound)
@@ -100,6 +115,9 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
         case (404, "no-conversation"):
             action.fail(with: .noConversation)
+
+        case (404, "no-conversation-member"):
+            action.fail(with: .noConversationMember)
 
         case (409, "mls-stale-message"):
             action.fail(with: .mlsStaleMessage)
@@ -114,7 +132,12 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
             action.fail(with: .mlsUnsupportedMessage)
 
         default:
-            action.notifyResult(.failure(.unknown(status: response.httpStatus)))
+            let errorInfo = response.errorInfo
+            action.notifyResult(.failure(.unknown(
+                status: response.httpStatus,
+                label: errorInfo.label,
+                message: errorInfo.message
+            )))
         }
     }
 }
