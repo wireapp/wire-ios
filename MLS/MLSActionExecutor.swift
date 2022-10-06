@@ -40,14 +40,52 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     }
 
-    enum MLSActionExecutorError: Error {
+    enum Error: Swift.Error, Equatable {
 
         case failedToGenerateCommit
-        case failedToSendCommit
+        case failedToSendCommit(recovery: ErrorRecovery)
         case failedToSendWelcome
         case failedToMergeCommit
         case failedToClearCommit
         case noPendingProposals
+
+    }
+
+    enum ErrorRecovery: Equatable {
+
+        /// Perform a quick sync, then commit pending proposals.
+        ///
+        /// Core Crypto can automatically recover if it processes all
+        /// incoming handshake messages. It will migrate any pending
+        /// commits/proposals, which can then be committed as pending
+        /// proposals.
+
+        case commitPendingProposalsAfterQuickSync
+
+        /// Perform a quick sync, then retry the action in its entirety.
+        ///
+        /// Core Crypto can not automatically recover by itself. It needs
+        /// to process incoming handshake messages then generate a new commit.
+
+        case retryAfterQuickSync
+
+        /// Abort the action and inform the user.
+        ///
+        /// There is no way to automatically recover from the error.
+
+        case giveUp
+
+        /// Whether the pending commit should be discarded.
+
+        var shouldDiscardCommit: Bool {
+            switch self {
+            case .commitPendingProposalsAfterQuickSync:
+                return false
+
+            case .retryAfterQuickSync, .giveUp:
+                return true
+            }
+        }
 
     }
 
@@ -121,13 +159,13 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 guard let bundle = try coreCrypto.wire_commitPendingProposals(
                     conversationId: groupID.bytes
                 ) else {
-                    throw MLSActionExecutorError.noPendingProposals
+                    throw Error.noPendingProposals
                 }
 
                 return bundle
             }
         } catch {
-            throw MLSActionExecutorError.failedToGenerateCommit
+            throw Error.failedToGenerateCommit
         }
     }
 
@@ -144,27 +182,24 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             return events
 
-        } catch MLSActionExecutorError.failedToSendCommit {
-            // TODO: [John] implement proper error handling
-            //try clearPendingCommit(in: groupID)
-            throw MLSActionExecutorError.failedToSendCommit
+        } catch let error as SendMLSMessageAction.Failure {
+            Logging.mls.warn("failed to send commit: \(String(describing: error))")
+
+            let recoveryStrategy = error.recoveryStrategy
+
+            if recoveryStrategy.shouldDiscardCommit {
+                try discardPendingCommit(in: groupID)
+            }
+
+            throw MLSActionExecutor.Error.failedToSendCommit(recovery: recoveryStrategy)
         }
     }
 
-
     private func sendCommit(_ bytes: Bytes) async throws -> [ZMUpdateEvent] {
-        var events = [ZMUpdateEvent]()
-
-        do {
-            events = try await actionsProvider.sendMessage(
-                bytes.data,
-                in: context.notificationContext
-            )
-        } catch {
-            throw MLSActionExecutorError.failedToSendCommit
-        }
-
-        return events
+        return try await actionsProvider.sendMessage(
+            bytes.data,
+            in: context.notificationContext
+        )
     }
 
     private func sendWelcome(_ message: Bytes) async throws {
@@ -174,7 +209,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 in: context.notificationContext
             )
         } catch {
-            throw MLSActionExecutorError.failedToSendWelcome
+            throw Error.failedToSendWelcome
         }
     }
 
@@ -184,15 +219,32 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         do {
             try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
         } catch {
-            throw MLSActionExecutorError.failedToMergeCommit
+            throw Error.failedToMergeCommit
         }
     }
 
-    private func clearPendingCommit(in groupID: MLSGroupID) throws {
+    private func discardPendingCommit(in groupID: MLSGroupID) throws {
         do {
             try coreCrypto.wire_clearPendingCommit(conversationId: groupID.bytes)
         } catch {
-            throw MLSActionExecutorError.failedToClearCommit
+            throw Error.failedToClearCommit
+        }
+    }
+
+}
+
+extension SendMLSMessageAction.Failure {
+
+    var recoveryStrategy: MLSActionExecutor.ErrorRecovery {
+        switch self {
+        case .mlsClientMismatch:
+            return .retryAfterQuickSync
+
+        case .mlsStaleMessage, .mlsCommitMissingReferences:
+            return .commitPendingProposalsAfterQuickSync
+
+        default:
+            return .giveUp
         }
     }
 

@@ -25,6 +25,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     var sut: MLSController!
     var mockCoreCrypto: MockCoreCrypto!
     var mockMLSActionExecutor: MockMLSActionExecutor!
+    var mockSyncStatus: MockSyncStatus!
     var mockActionsProvider: MockMLSActionsProvider!
     var mockConversationEventProcessor: MockConversationEventProcessor!
     var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
@@ -36,6 +37,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
         mockMLSActionExecutor = MockMLSActionExecutor()
+        mockSyncStatus = MockSyncStatus()
         mockActionsProvider = MockMLSActionsProvider()
         mockConversationEventProcessor = MockConversationEventProcessor()
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
@@ -48,7 +50,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider
+            actionsProvider: mockActionsProvider,
+            syncStatus: mockSyncStatus
         )
 
         sut.delegate = self
@@ -58,6 +61,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         sut = nil
         mockCoreCrypto = nil
         mockMLSActionExecutor = nil
+        mockSyncStatus = nil
         mockActionsProvider = nil
         mockStaleMLSKeyDetector = nil
         super.tearDown()
@@ -81,6 +85,16 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+    }
+
+    func createKeyPackage(userID: UUID, domain: String) -> KeyPackage {
+        return KeyPackage(
+            client: Bytes.random(length: 32).base64EncodedString,
+            domain: domain,
+            keyPackage: Bytes.random(length: 32).base64EncodedString,
+            keyPackageRef: Bytes.random(length: 32).base64EncodedString,
+            userID: userID
+        )
     }
 
     // MARK: - MLSControllerDelegate
@@ -122,7 +136,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider
+            actionsProvider: mockActionsProvider,
+            syncStatus: mockSyncStatus
         )
 
         // Then
@@ -337,17 +352,15 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsUser = [MLSUser(id: id, domain: domain)]
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // Mock claiming a key package.
         var keyPackage: KeyPackage!
         mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
-            keyPackage = KeyPackage(
-                client: "client",
-                domain: domain,
-                keyPackage: Data([1, 2, 3]).base64EncodedString(),
-                keyPackageRef: "keyPackageRef",
-                userID: userID
-            )
-
+            keyPackage = self.createKeyPackage(userID: userID, domain: domain)
             return [keyPackage]
         })
 
@@ -407,14 +420,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // Mock claiming a key package.
         var keyPackage: KeyPackage!
         mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
-            keyPackage = KeyPackage(
-                client: "client",
-                domain: domain,
-                keyPackage: Data([1, 2, 3]).base64EncodedString(),
-                keyPackageRef: "keyPackageRef",
-                userID: userID
-            )
-
+            keyPackage = self.createKeyPackage(userID: userID, domain: domain)
             return [keyPackage]
         })
 
@@ -456,6 +462,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // Given
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // when / then
         await assertItThrows(error: MLSController.MLSAddMembersError.noMembersToAdd) {
             try await sut.addMembersToConversation(with: [], for: mlsGroupID)
@@ -469,21 +480,17 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsUser: [MLSUser] = [MLSUser(id: id, domain: domain)]
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // No mock for claiming key packages.
 
-        do {
+        // Then
+        await assertItThrows(error: MLSController.MLSGroupCreationError.failedToClaimKeyPackages) {
             // When
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
-
-        } catch let error {
-            // Then
-            switch error {
-            case MLSController.MLSAddMembersError.failedToAddMembers:
-                break
-
-            default:
-                XCTFail("Unexpected error: \(String(describing: error))")
-            }
         }
     }
 
@@ -494,27 +501,25 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsUser: [MLSUser] = [MLSUser(id: id, domain: domain)]
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // Mock key package.
         var keyPackage: KeyPackage!
 
         mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
-            keyPackage = KeyPackage(
-                client: "client",
-                domain: domain,
-                keyPackage: Data([1, 2, 3]).base64EncodedString(),
-                keyPackageRef: "keyPackageRef",
-                userID: userID
-            )
-
+            keyPackage = self.createKeyPackage(userID: userID, domain: domain)
             return [keyPackage]
         })
 
         mockMLSActionExecutor.mockAddMembers = { _, _ in
-            throw MLSActionExecutor.MLSActionExecutorError.failedToGenerateCommit
+            throw MLSActionExecutor.Error.failedToGenerateCommit
         }
 
         // when / then
-        await assertItThrows(error: MLSController.MLSAddMembersError.failedToAddMembers) {
+        await assertItThrows(error: MLSActionExecutor.Error.failedToGenerateCommit) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
     }
@@ -528,6 +533,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let clientID = UUID.create().uuidString
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsClientID = MLSClientID(userID: id, clientID: clientID, domain: domain)
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
 
         // Mock removing clients from the group.
         var mockRemoveClientsArguments = [([ClientId], MLSGroupID)]()
@@ -623,6 +633,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // Given
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // When / Then
         await assertItThrows(error: MLSController.MLSRemoveParticipantsError.noClientsToRemove) {
             try await sut.removeMembersFromConversation(with: [], for: mlsGroupID)
@@ -637,13 +652,18 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
         let mlsClientID = MLSClientID(userID: id, clientID: clientID, domain: domain)
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // Mock executor error.
         mockMLSActionExecutor.mockRemoveClients = { _, _ in
-            throw MLSActionExecutor.MLSActionExecutorError.failedToSendCommit
+            throw MLSActionExecutor.Error.failedToGenerateCommit
         }
 
         // When / Then
-        await assertItThrows(error: MLSController.MLSRemoveParticipantsError.failedToRemoveMembers) {
+        await assertItThrows(error: MLSActionExecutor.Error.failedToGenerateCommit) {
             try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
         }
     }
@@ -1105,6 +1125,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let group1 = MLSGroupID(.random())
         let group2 = MLSGroupID(.random())
 
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // Mock stale groups.
         mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [group1, group2]
 
@@ -1128,7 +1153,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
-            delegate: self
+            delegate: self,
+            syncStatus: mockSyncStatus
         )
 
         // Then
@@ -1215,7 +1241,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
-            delegate: self
+            delegate: self,
+            syncStatus: mockSyncStatus
         )
 
         // Then
@@ -1263,6 +1290,236 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             Date().addingTimeInterval(.oneDay).timeIntervalSinceNow,
             accuracy: 0.1
         )
+    }
+
+    // MARK: - Rety on commit failure
+
+    // Note: these tests are asserting the behavior of the retry mechanism only, which
+    // is used in various operations, such as adding members or removing clients. For
+    // these tests, we will just pick one operation.
+
+    func test_RetryOnCommitFailure_SingleRetry() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
+        // Mock one failure to update key material, then a success.
+        var mockUpdateKeyMaterialCount = 0
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            defer { mockUpdateKeyMaterialCount += 1 }
+            switch mockUpdateKeyMaterialCount {
+            case 0:
+                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+            default:
+                return []
+            }
+        }
+
+        // Mock quick sync.
+        var mockPerformQuickSyncCount = 0
+        mockSyncStatus.mockPerformQuickSync = {
+            mockPerformQuickSyncCount += 1
+        }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it attempted to update key material twice.
+        XCTAssertEqual(mockUpdateKeyMaterialCount, 2)
+
+        // Then it performed a quick sync once.
+        XCTAssertEqual(mockPerformQuickSyncCount, 1)
+
+        // Then processed the result once.
+        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[]])
+    }
+
+    func test_RetryOnCommitFailure_MultipleRetries() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
+        // Mock three failures to update key material, then a success.
+        var mockUpdateKeyMaterialCount = 0
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            defer { mockUpdateKeyMaterialCount += 1 }
+            switch mockUpdateKeyMaterialCount {
+            case 0..<3:
+                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+            default:
+                return []
+            }
+        }
+
+        // Mock quick sync.
+        var mockPerformQuickSyncCount = 0
+        mockSyncStatus.mockPerformQuickSync = {
+            mockPerformQuickSyncCount += 1
+        }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it attempted to update key material 4 times (3 failed, 1 success).
+        XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
+
+        // Then it performed a quick sync 3 times (for 3 failures).
+        XCTAssertEqual(mockPerformQuickSyncCount, 3)
+
+        // Then processed the result once.
+        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[]])
+    }
+
+    func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Mock two failures to commit pending proposals, then a success.
+        var mockCommitPendingProposalsCount = 0
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            defer { mockCommitPendingProposalsCount += 1 }
+            switch mockCommitPendingProposalsCount {
+            case 0..<2:
+                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+            default:
+                return []
+            }
+        }
+
+        // Mock three failures to update key material, then a success.
+        var mockUpdateKeyMaterialCount = 0
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            defer { mockUpdateKeyMaterialCount += 1 }
+            switch mockUpdateKeyMaterialCount {
+            case 0..<3:
+                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+            default:
+                return []
+            }
+        }
+
+        // Mock quick sync.
+        var mockPerformQuickSyncCount = 0
+        mockSyncStatus.mockPerformQuickSync = {
+            mockPerformQuickSyncCount += 1
+        }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it attempted to commit pending proposals 3 times (2 failed, 1 success).
+        XCTAssertEqual(mockCommitPendingProposalsCount, 3)
+
+        // Then it attempted to update key material 4 times (3 failed, 1 success).
+        XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
+
+        // Then it performed a quick sync 5 times (for 2 + 3 failures).
+        XCTAssertEqual(mockPerformQuickSyncCount, 5)
+
+        // Then processed the results twice (1 for each success).
+        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[], []])
+    }
+
+    func test_RetryOnCommitFailure_CommitPendingProposalsAfterRetry() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Mock no pending proposals when first trying to update key material, but
+        // then a successful pending proposal commit after the failed commit is migrated
+        // by Core Crypto.
+        var mockCommitPendingProposalsCount = 0
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            defer { mockCommitPendingProposalsCount += 1 }
+            switch mockCommitPendingProposalsCount {
+            case 0:
+                throw MLSActionExecutor.Error.noPendingProposals
+            default:
+                return []
+            }
+        }
+
+        // Mock failures to update key material: but no success since the commit was
+        // migrated to a pending proposal.
+        var mockUpdateKeyMaterialCount = 0
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            defer { mockUpdateKeyMaterialCount += 1 }
+            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync)
+        }
+
+        // Mock quick sync.
+        var mockPerformQuickSyncCount = 0
+        mockSyncStatus.mockPerformQuickSync = {
+            mockPerformQuickSyncCount += 1
+        }
+
+        // When
+        try await sut.updateKeyMaterial(for: groupID)
+
+        // Then it attempted to commit pending proposals twice (1 no-op, 1 success).
+        XCTAssertEqual(mockCommitPendingProposalsCount, 2)
+
+        // Then it attempted to update key material once.
+        XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
+
+        // Then it performed a quick sync once.
+        XCTAssertEqual(mockPerformQuickSyncCount, 1)
+
+        // Then processed the result once.
+        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[]])
+    }
+
+    func test_RetryOnCommitFailure_ItGivesUp() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
+        // Mock failures to update key material, no successes.
+        var mockUpdateKeyMaterialCount = 0
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            defer { mockUpdateKeyMaterialCount += 1 }
+            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)
+        }
+
+        // Mock quick sync.
+        var mockPerformQuickSyncCount = 0
+        mockSyncStatus.mockPerformQuickSync = {
+            mockPerformQuickSyncCount += 1
+        }
+
+        // Then
+        await assertItThrows(error: MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)) {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        }
+
+        // Then it attempted to update key material once.
+        XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
+
+        // Then it didn't perform a quick sync.
+        XCTAssertEqual(mockPerformQuickSyncCount, 0)
+
+        // Then it didn't process any result.
+        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [])
+    }
+
+}
+
+extension MLSGroupID {
+
+    static func random() -> MLSGroupID {
+        return MLSGroupID(.random(length: 32))
     }
 
 }
