@@ -34,7 +34,8 @@ extension NSManagedObjectContext {
     public func initializeMLSController(
         coreCrypto: CoreCryptoProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
-        userDefaults: UserDefaults
+        userDefaults: UserDefaults,
+        syncStatus: SyncStatusProtocol
     ) {
         precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
 
@@ -42,7 +43,8 @@ extension NSManagedObjectContext {
             context: self,
             coreCrypto: coreCrypto,
             conversationEventProcessor: conversationEventProcessor,
-            userDefaults: userDefaults
+            userDefaults: userDefaults,
+            syncStatus: syncStatus
         )
     }
 

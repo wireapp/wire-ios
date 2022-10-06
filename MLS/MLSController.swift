@@ -72,6 +72,8 @@ public final class MLSController: MLSControllerProtocol {
     private let logger = Logging.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
 
+    private let syncStatus: SyncStatusProtocol
+
     var backendPublicKeys = BackendMLSPublicKeys()
     var pendingProposalCommitTimers = [MLSGroupID: Timer]()
 
@@ -106,7 +108,8 @@ public final class MLSController: MLSControllerProtocol {
         context: NSManagedObjectContext,
         coreCrypto: CoreCryptoProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
-        userDefaults: UserDefaults
+        userDefaults: UserDefaults,
+        syncStatus: SyncStatusProtocol
     ) {
         self.init(
             context: context,
@@ -117,7 +120,8 @@ public final class MLSController: MLSControllerProtocol {
                 context: context
             ),
             userDefaults: userDefaults,
-            actionsProvider: MLSActionsProvider()
+            actionsProvider: MLSActionsProvider(),
+            syncStatus: syncStatus
         )
     }
 
@@ -129,7 +133,8 @@ public final class MLSController: MLSControllerProtocol {
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
-        delegate: MLSControllerDelegate? = nil
+        delegate: MLSControllerDelegate? = nil,
+        syncStatus: SyncStatusProtocol
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
@@ -143,6 +148,7 @@ public final class MLSController: MLSControllerProtocol {
         self.actionsProvider = actionsProvider
         self.userDefaults = userDefaults
         self.delegate = delegate
+        self.syncStatus = syncStatus
 
         do {
             try coreCrypto.wire_setCallbacks(callbacks: CoreCryptoCallbacksImpl())
@@ -234,25 +240,32 @@ public final class MLSController: MLSControllerProtocol {
         Logging.mls.info("found \(staleGroups.count) groups with stale key material")
 
         for staleGroup in staleGroups {
-            await updateKeyMaterial(for: staleGroup)
+            try? await updateKeyMaterial(for: staleGroup)
         }
     }
 
-    private func updateKeyMaterial(for groupID: MLSGroupID) async {
+    func updateKeyMaterial(for groupID: MLSGroupID) async throws {
+        try await commitPendingProposals(in: groupID)
+        try await retryOnCommitFailure(for: groupID) { [weak self] in
+            try await self?.internalUpdateKeyMaterial(for: groupID)
+        }
+    }
+
+    private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
             Logging.mls.info("updating key material for group (\(groupID))")
-            try await commitPendingProposalsIfNeeded(in: groupID)
             let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
             Logging.mls.warn("failed to update key material for group (\(groupID)): \(String(describing: error))")
+            throw error
         }
     }
 
     // MARK: - Group creation
 
-    enum MLSGroupCreationError: Error {
+    enum MLSGroupCreationError: Error, Equatable {
 
         case noParticipantsToAdd
         case failedToClaimKeyPackages
@@ -400,21 +413,26 @@ public final class MLSController: MLSControllerProtocol {
     ///   - groupID: Represents the MLS conversation group ID in which users to be added
 
     public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
-        logger.info("adding members to group (\(groupID)) with users: \(users)")
-
-        guard !users.isEmpty else {
-            throw MLSAddMembersError.noMembersToAdd
+        try await commitPendingProposals(in: groupID)
+        try await retryOnCommitFailure(for: groupID) { [weak self] in
+            try await self?.internalAddMembersToConversation(with: users, for: groupID)
         }
+    }
 
+    private func internalAddMembersToConversation(
+        with users: [MLSUser],
+        for groupID: MLSGroupID
+    ) async throws {
         do {
-            try await commitPendingProposalsIfNeeded(in: groupID)
+            logger.info("adding members to group (\(groupID)) with users: \(users)")
+            guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
             let invitees = keyPackages.map(Invitee.init(from:))
             let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger.warn("failed to add members to group (\(groupID)): \(String(describing: error))")
-            throw MLSAddMembersError.failedToAddMembers
+            throw error
         }
     }
 
@@ -431,20 +449,25 @@ public final class MLSController: MLSControllerProtocol {
         with clientIds: [MLSClientID],
         for groupID: MLSGroupID
     ) async throws {
-        logger.info("removing members from group (\(groupID)), members: \(clientIds)")
-
-        guard !clientIds.isEmpty else {
-            throw MLSRemoveParticipantsError.noClientsToRemove
+        try await commitPendingProposals(in: groupID)
+        try await retryOnCommitFailure(for: groupID) { [weak self] in
+            try await self?.internalRemoveMembersFromConversation(with: clientIds, for: groupID)
         }
+    }
 
+    private func internalRemoveMembersFromConversation(
+        with clientIds: [MLSClientID],
+        for groupID: MLSGroupID
+    ) async throws {
         do {
-            try await commitPendingProposalsIfNeeded(in: groupID)
+            logger.info("removing members from group (\(groupID)), members: \(clientIds)")
+            guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
             let clientIds =  clientIds.compactMap { $0.string.utf8Data?.bytes }
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger.warn("failed to remove members from group (\(groupID)): \(String(describing: error))")
-            throw MLSRemoveParticipantsError.failedToRemoveMembers
+            throw error
         }
     }
 
@@ -864,21 +887,23 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws {
-        guard context != nil else {
-            return
+        try await retryOnCommitFailure(for: groupID) { [weak self] in
+            try await self?.internalCommitPendingProposals(in: groupID)
         }
+    }
 
-        logger.info("committing pending proposals in: \(groupID)")
-
+    private func internalCommitPendingProposals(in groupID: MLSGroupID) async throws {
         do {
+            logger.info("committing pending proposals in: \(groupID)")
             let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
             conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsControllerDidCommitPendingProposal(for: groupID)
+        } catch MLSActionExecutor.Error.noPendingProposals {
+            logger.info("no proposals to commit in group (\(groupID))...")
         } catch {
             logger.info("failed to commit pending proposals in \(groupID): \(String(describing: error))")
-            clearPendingProposalCommitDate(for: groupID)
-            throw MLSCommitPendingProposalsError.failedToCommitPendingProposals
+            throw error
         }
     }
 
@@ -890,6 +915,32 @@ public final class MLSController: MLSControllerProtocol {
         context.performAndWait {
             let conversation = ZMConversation.fetch(with: groupID, in: context)
             conversation?.commitPendingProposalDate = nil
+        }
+    }
+
+    // MARK: - Error recovery
+
+    private func retryOnCommitFailure(
+        for groupID: MLSGroupID,
+        operation: @escaping () async throws -> Void
+    ) async throws {
+        do {
+            try await operation()
+
+        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
+            logger.warn("failed to send commit, syncing then committing pending proposals...")
+            await syncStatus.performQuickSync()
+            try await commitPendingProposals(in: groupID)
+
+        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
+            logger.warn("failed to send commit, syncing then retrying operation...")
+            await syncStatus.performQuickSync()
+            try await retryOnCommitFailure(for: groupID, operation: operation)
+
+        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp) {
+            logger.warn("failed to send commit, giving up...")
+            // TODO: [John] inform user
+            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)
         }
     }
 
