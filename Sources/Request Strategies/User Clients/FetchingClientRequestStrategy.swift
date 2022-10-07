@@ -272,21 +272,88 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         return 100
     }
 
+    struct RequestPayload: Codable, Equatable {
+
+        enum CodingKeys: String, CodingKey {
+
+            case qualifiedIDs = "qualified_users"
+
+        }
+
+        let qualifiedIDs: Set<QualifiedID>
+
+    }
+
     public func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
+        switch apiVersion {
+        case .v0:
+            Logging.network.warn("fetching user clients by qualified id is not available on API V0.")
+            return nil
+
+        case .v1:
+            return v1Request(for: identifiers)
+
+        case .v2:
+            return v2Request(for: identifiers)
+        }
+    }
+
+    private func v1Request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
         guard
-            apiVersion > .v0,
             let payloadData = RequestPayload(qualifiedIDs: identifiers).payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil
         }
 
-        // POST /users/list-clients
-        let path = NSString.path(withComponents: ["/users/list-clients"])
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: "/users/list-clients/v2",
+            method: .methodPOST,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: 1
+        )
+    }
+
+    private func v2Request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
+        guard
+            let payloadData = RequestPayload(qualifiedIDs: identifiers).payloadData(encoder: encoder),
+            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
+        else {
+            return nil
+        }
+
+        return ZMTransportRequest(
+            path: "/users/list-clients",
+            method: .methodPOST,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: 2
+        )
+    }
+
+    struct ResponsePayload: Codable {
+
+        enum CodingKeys: String, CodingKey {
+
+            case qualifiedUsers = "qualified_user_map"
+
+        }
+
+        let qualifiedUsers: Payload.UserClientByDomain
+
     }
 
     public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        switch apiVersion {
+        case .v0:
+            return
+
+        case .v1, .v2:
+            commonResponseHandling(response: response, for: identifiers)
+        }
+    }
+
+    private func commonResponseHandling(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
         guard
             let rawData = response.rawData,
             let payload = ResponsePayload(rawData, decoder: decoder),
@@ -313,29 +380,6 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         }
     }
 
-    struct RequestPayload: Codable {
-
-        enum CodingKeys: String, CodingKey {
-
-            case qualifiedIDs = "qualified_users"
-
-        }
-
-        let qualifiedIDs: Set<QualifiedID>
-
-    }
-
-    struct ResponsePayload: Codable {
-
-        enum CodingKeys: String, CodingKey {
-
-            case qualifiedUsers = "qualified_user_map"
-
-        }
-
-        let qualifiedUsers: Payload.UserClientByDomain
-
-    }
 }
 
 final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
