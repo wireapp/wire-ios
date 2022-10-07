@@ -132,7 +132,8 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsGroupCellDescriptor(items: [SettingsSectionDescriptor(cellDescriptors: developerCellDescriptors)],
                                            title: L10n.Localizable.`Self`.Settings.DeveloperOptions.title,
-                                           icon: .robot)
+                                           icon: .robot,
+                                           accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description)
     }
 
 }
