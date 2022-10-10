@@ -110,29 +110,62 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Actions
 
     func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        let bundle = try commitBundle(for: .addMembers(invitees), in: groupID)
-        return try await sendCommitBundle(bundle, for: groupID)
+        do {
+            Logging.mls.info("adding members to group (\(groupID))...")
+            let bundle = try commitBundle(for: .addMembers(invitees), in: groupID)
+            let result = try await sendCommitBundle(bundle, for: groupID)
+            Logging.mls.info("success: adding members to group (\(groupID))")
+            return result
+        } catch {
+            Logging.mls.info("failed: adding members to group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
     }
 
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        let bundle = try commitBundle(for: .removeClients(clients), in: groupID)
-        return try await sendCommitBundle(bundle, for: groupID)
+        do {
+            Logging.mls.info("removing clients from group (\(groupID))...")
+            let bundle = try commitBundle(for: .removeClients(clients), in: groupID)
+            let result = try await sendCommitBundle(bundle, for: groupID)
+            Logging.mls.info("success: removing clients from group (\(groupID))")
+            return result
+        } catch {
+            Logging.mls.info("error: removing clients from group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
     }
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        let bundle = try commitBundle(for: .updateKeyMaterial, in: groupID)
-        return try await sendCommitBundle(bundle, for: groupID)
+        do {
+            Logging.mls.info("updating key material for group (\(groupID))...")
+            let bundle = try commitBundle(for: .updateKeyMaterial, in: groupID)
+            let result = try await sendCommitBundle(bundle, for: groupID)
+            Logging.mls.info("success: updating key material for group (\(groupID))")
+            return result
+        } catch {
+            Logging.mls.info("error: updating key material for group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
     }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
-        let bundle = try commitBundle(for: .proposal, in: groupID)
-        return try await sendCommitBundle(bundle, for: groupID)
+        do {
+            Logging.mls.info("committing pending proposals for group (\(groupID))...")
+            let bundle = try commitBundle(for: .proposal, in: groupID)
+            let result = try await sendCommitBundle(bundle, for: groupID)
+            Logging.mls.info("success: committing pending proposals for group (\(groupID))")
+            return result
+        } catch {
+            Logging.mls.info("error: committing pending proposals for group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
     }
 
     // MARK: - Commit generation
 
     private func commitBundle(for action: Action, in groupID: MLSGroupID) throws -> CommitBundle {
         do {
+            Logging.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID))...")
             switch action {
             case .addMembers(let clients):
                 let memberAddMessages = try coreCrypto.wire_addClientsToConversation(
@@ -164,7 +197,10 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
                 return bundle
             }
+        } catch Error.noPendingProposals {
+            throw Error.noPendingProposals
         } catch {
+            Logging.mls.warn("failed: generating commit for action (\(String(describing: action))) for group (\(groupID)): \(String(describing: error))")
             throw Error.failedToGenerateCommit
         }
     }
