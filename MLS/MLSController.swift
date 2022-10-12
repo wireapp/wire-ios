@@ -49,6 +49,8 @@ public protocol MLSControllerProtocol {
 
     func commitPendingProposals() async throws
 
+    func commitPendingProposals(in groupID: MLSGroupID) async throws
+
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
 }
 
@@ -725,9 +727,8 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     public func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
-        logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
-
         do {
+            logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
             return try coreCrypto.wire_encryptMessage(conversationId: groupID.bytes, message: message)
         } catch let error {
             logger.warn("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
@@ -809,10 +810,11 @@ public final class MLSController: MLSControllerProtocol {
             return
         }
 
-        logger.info("schedule to commit pending proposals in \(groupID) at \(commitDate)")
-
-        let conversation = ZMConversation.fetch(with: groupID, in: context)
-        conversation?.commitPendingProposalDate = commitDate
+        context.performAndWait {
+            logger.info("schedule to commit pending proposals in \(groupID) at \(commitDate)")
+            let conversation = ZMConversation.fetch(with: groupID, in: context)
+            conversation?.commitPendingProposalDate = commitDate
+        }
     }
 
     enum MLSCommitPendingProposalsError: Error {
@@ -881,12 +883,12 @@ public final class MLSController: MLSControllerProtocol {
         guard existsPendingPropsals(in: groupID) else { return }
         // Sending a message while there are pending proposals will result in an error,
         // so commit any first.
-        logger.info("preempively committing pending proposals in group (\(groupID))")
+        logger.info("preemptively committing pending proposals in group (\(groupID))")
         try await commitPendingProposals(in: groupID)
         logger.info("success: committed pending proposals in group (\(groupID))")
     }
 
-    func commitPendingProposals(in groupID: MLSGroupID) async throws {
+    public func commitPendingProposals(in groupID: MLSGroupID) async throws {
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalCommitPendingProposals(in: groupID)
         }
@@ -901,6 +903,7 @@ public final class MLSController: MLSControllerProtocol {
             delegate?.mlsControllerDidCommitPendingProposal(for: groupID)
         } catch MLSActionExecutor.Error.noPendingProposals {
             logger.info("no proposals to commit in group (\(groupID))...")
+            clearPendingProposalCommitDate(for: groupID)
         } catch {
             logger.info("failed to commit pending proposals in \(groupID): \(String(describing: error))")
             throw error
@@ -930,11 +933,13 @@ public final class MLSController: MLSControllerProtocol {
         } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
             await syncStatus.performQuickSync()
+            logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
         } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
+            logger.info("sync finished, retying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
         } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp) {
