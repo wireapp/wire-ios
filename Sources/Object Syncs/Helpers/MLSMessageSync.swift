@@ -26,12 +26,14 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
 
     // MARK: - Properties
 
+    let context: NSManagedObjectContext
     let dependencySync: DependencyEntitySync<Transcoder<Message>>
     let transcoder: Transcoder<Message>
 
     // MARK: - Life cycle
 
     init(context: NSManagedObjectContext) {
+        self.context = context
         transcoder = Transcoder(context: context)
         dependencySync = DependencyEntitySync(
             transcoder: transcoder,
@@ -60,8 +62,29 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
     }
 
     func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
-        dependencySync.synchronize(entity: message, completion: completion)
-        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        guard let mlsController = context.mlsController else {
+            Logging.mls.info("not syncing message b/c no mls controller")
+            return
+        }
+
+        guard let groupID = message.conversation?.mlsGroupID else {
+            Logging.mls.info("not syncing message b/c no mls group id")
+            return
+        }
+
+        Task {
+            do {
+                Logging.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID))")
+                try await mlsController.commitPendingProposals(in: groupID)
+            } catch {
+                Logging.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID)): \(String(describing: error))")
+            }
+
+            context.perform { [dependencySync] in
+                dependencySync.synchronize(entity: message, completion: completion)
+                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+            }
+        }
     }
 
     func expireMessages(withDependency dependency: NSObject) {
