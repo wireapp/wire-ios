@@ -49,23 +49,28 @@ final class MLSMessageSyncTests: MessagingTestBase {
         super.tearDown()
     }
 
-    // MARK: - Requests available
+    // MARK: - Message syncing
 
-    func test_ItNotifiesNewRequestAvailable_WhenSyncingMessage() {
-        // Expect
-        expectation(
-            forNotification: Notification.Name("RequestAvailableNotification"),
-            object: nil,
-            handler: nil
-        )
+    func test_SyncMessage() {
+        syncMOC.performGroupedBlockAndWait {
+            // Expect
+            self.expectation(
+                forNotification: Notification.Name("RequestAvailableNotification"),
+                object: nil,
+                handler: nil
+            )
 
-        // When
-        sut.sync(mockMessage) { _, _ in
-            // No op
+            // When
+            self.sut.sync(self.mockMessage) { _, _ in
+                // No op
+            }
         }
 
         // Then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then it preemptively commits pending proposals.
+        XCTAssertEqual(self.mockMLSController.calls.commitPendingProposalsInGroup, [MLSGroupID([1, 2, 3])])
     }
 
     // MARK: - Request generation

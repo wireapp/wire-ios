@@ -83,17 +83,17 @@ final class MessageSyncTests: MessagingTestBase {
             )
 
             // When
-            self.sut.sync(message) { _, _ in }
+            self.sut.sync(message) { _, _ in
+                // Then
+                guard let request = self.sut.nextRequest(for: .v2) else {
+                    XCTFail("no request generated")
+                    return
+                }
 
-            // Then
-            guard let request = self.sut.nextRequest(for: .v2) else {
-                XCTFail("no request generated")
-                return
+                XCTAssertEqual(request.path, "/v2/mls/messages")
+                XCTAssertEqual(request.method, .methodPOST)
+                XCTAssertEqual(request.binaryDataType, "message/mls")
             }
-
-            XCTAssertEqual(request.path, "/v2/mls/messages")
-            XCTAssertEqual(request.method, .methodPOST)
-            XCTAssertEqual(request.binaryDataType, "message/mls")
         }
     }
 
