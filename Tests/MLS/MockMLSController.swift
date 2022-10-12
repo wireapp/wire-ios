@@ -40,6 +40,7 @@ class MockMLSController: MLSControllerProtocol {
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
         var commitPendingProposals: [Void] = []
+        var commitPendingProposalsInGroup = [MLSGroupID]()
         var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var registerPendingJoin = [MLSGroupID]()
         var performPendingJoins: [Void] = []
@@ -148,6 +149,10 @@ class MockMLSController: MLSControllerProtocol {
 
     func commitPendingProposals() {
         calls.commitPendingProposals.append(())
+    }
+
+    func commitPendingProposals(in groupID: MLSGroupID) async throws {
+        calls.commitPendingProposalsInGroup.append(groupID)
     }
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {

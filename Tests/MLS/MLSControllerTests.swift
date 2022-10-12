@@ -688,6 +688,33 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         conversation.commitPendingProposalDate = commitDate
     }
 
+    func test_CommitPendingProposals_NoProposalsExist() async throws {
+        // Given
+        let overdueCommitDate = Date().addingTimeInterval(-5)
+        let groupID = MLSGroupID(.random())
+        var conversation: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the past.
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = overdueCommitDate
+        }
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
+        // When
+        try await self.sut.commitPendingProposals()
+
+        // Then we cleared the pending proposal date.
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
+    }
+
     func test_CommitPendingProposals_OneOverdueCommit() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
