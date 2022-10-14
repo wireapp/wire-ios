@@ -18,10 +18,22 @@ The wire-ios-protos framework contains precompiled protocol buffer definitions f
 
 ## How to build
 
-This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
+This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, run `carthage bootstrap --platform ios --use-xcframeworks --no-use-binaries`.
 
 You need the Swift Protocol Buffer compiler  to build the protobuf Swift files. Run `brew install swift-protobuf` to install it.
 
 Run `bash Scripts/compile-protos.sh` to generate the files from the protobuf definitions imported from Carthage.
 
 You can now open the Xcode project and build.
+
+## Troubleshooting
+
+```
+> bash Scripts/compile-swift-protos.sh 
+  File "Scripts/find-carthage.py", line 30
+    print("No Carthage folder found", file=sys.stderr)
+                                          ^
+SyntaxError: invalid syntax
+```
+
+If you encounter this error, you may need to update python to version 3
