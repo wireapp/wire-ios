@@ -159,6 +159,7 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         generateClientPublicKeysIfNeeded()
+        uploadKeyPackagesIfNeeded()
         fetchBackendPublicKeys()
         updateKeyMaterialForAllStaleGroupsIfNeeded()
         schedulePeriodicKeyMaterialUpdateCheck()
