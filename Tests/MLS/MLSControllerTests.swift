@@ -43,6 +43,10 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
 
+        mockCoreCrypto.mockClientValidKeypackagesCount = {
+            return 100
+        }
+
         sut = MLSController(
             context: uiMOC,
             coreCrypto: mockCoreCrypto,
