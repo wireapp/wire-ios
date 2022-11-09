@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTransport
 
 /// An ID representing a identifying a single user client.
 
@@ -36,7 +37,7 @@ public struct MLSClientID: Equatable {
 
     init?(userClient: UserClient) {
         guard
-            let userID = userClient.user?.remoteIdentifier.uuidString,
+            let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
             let domain = userClient.user?.domain ?? APIVersion.domain
         else {
