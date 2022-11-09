@@ -17,29 +17,27 @@
 //
 
 import Foundation
+import XCTest
+@testable import WireDataModel
 
-/// MLS qualified client identifier for initialising Corecrypto
-public struct MLSQualifiedClientID {
+class MLSClientIdTests: ZMConversationTestsBase {
 
-    // MARK: - Properties
+    func test_itCreatesALowercasedClientId() {
+        // GIVEN
+        let userID = "57ce2cb2-601f-11ed-9b6a-0242ac120002"
+        let clientID = "db151d3b837bb92"
+        let domain = "example.wire.com"
 
-    private let user: ZMUser
+        // WHEN
+        let sut = MLSClientID(
+            userID: userID.uppercased(),
+            clientID: clientID.uppercased(),
+            domain: domain.uppercased()
+        )
 
-    public var qualifiedClientId: String? {
-        guard
-            let clientId = user.selfClient()?.remoteIdentifier,
-            let userId = user.remoteIdentifier,
-            let domain = user.domain?.selfOrNilIfEmpty ?? APIVersion.domain
-        else {
-            return nil
-        }
-
-        return "\(userId.transportString()):\(clientId)@\(domain)".lowercased()
+        // THEN
+        let expectedID = "\(userID):\(clientID)@\(domain)"
+        XCTAssertEqual(sut.string, expectedID)
     }
 
-    // MARK: - Methods
-
-    public init(user: ZMUser) {
-        self.user = user
-    }
 }
