@@ -18,11 +18,7 @@
 
 import Foundation
 
-/// Represents the backend API versions supported by the client.
-///
-/// Remove versions to drop support, add versions to add support.
-/// Any changes made here are considered breaking and the compiler
-/// can then be used to ensure that changes can be accounted for.
+/// Represents the backend API versions implemented by the client.
 
 @objc
 public enum APIVersion: Int32 {
