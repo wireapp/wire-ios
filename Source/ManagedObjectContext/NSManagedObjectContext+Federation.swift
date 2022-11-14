@@ -45,7 +45,7 @@ extension NSManagedObjectContext {
         fetchRequest.predicate = T.predicateForObjectsNeedingFederationMigration
 
         try fetchRequest.execute().modifyAndSaveInBatches { instance in
-            instance.domain = APIVersion.domain
+            instance.domain = BackendInfo.domain
         }
     }
 }

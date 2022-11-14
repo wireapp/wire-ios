@@ -23,7 +23,7 @@ import Foundation
 final class ZMUserTests_Swift: ModelObjectsTests {
 
     override func tearDown() {
-        APIVersion.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -1139,7 +1139,7 @@ extension ZMUserTests_Swift {
 
         syncMOC.performGroupedBlockAndWait {
             // when
-            APIVersion.isFederationEnabled = false
+            BackendInfo.isFederationEnabled = false
             let created = ZMUser.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
 
             // then
@@ -1156,7 +1156,7 @@ extension ZMUserTests_Swift {
 
         syncMOC.performGroupedBlockAndWait {
             // when
-            APIVersion.isFederationEnabled = true
+            BackendInfo.isFederationEnabled = true
             let created = ZMUser.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
 
             // then
