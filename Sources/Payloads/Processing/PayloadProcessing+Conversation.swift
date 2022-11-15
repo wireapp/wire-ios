@@ -116,7 +116,7 @@ extension Payload.Conversation {
         }
 
         conversation.remoteIdentifier = conversationID
-        conversation.domain = APIVersion.isFederationEnabled ? qualifiedID?.domain : nil
+        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.conversationType = conversationType
 
         updateMetadata(for: conversation, context: context)
@@ -142,7 +142,7 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .`self`
-        conversation.domain = APIVersion.isFederationEnabled ? qualifiedID?.domain : nil
+        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 
         updateMetadata(for: conversation, context: context)
@@ -166,7 +166,7 @@ extension Payload.Conversation {
 
         conversation.conversationType = .group
         conversation.remoteIdentifier = conversationID
-        conversation.domain = APIVersion.isFederationEnabled ? qualifiedID?.domain : nil
+        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 
         updateMetadata(for: conversation, context: context)

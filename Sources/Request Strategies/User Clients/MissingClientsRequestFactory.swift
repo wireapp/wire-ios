@@ -42,7 +42,7 @@ extension Collection where Element == UserClient {
         return self.reduce(into: initial) { (result, client) in
             guard let userID = client.user?.remoteIdentifier.transportString(),
                   let clientID = client.remoteIdentifier,
-                  let domain = client.user?.domain.nonEmptyValue ?? APIVersion.domain
+                  let domain = client.user?.domain.nonEmptyValue ?? BackendInfo.domain
             else {
                 return
             }

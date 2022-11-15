@@ -28,10 +28,10 @@ public final class AssetDownloadRequestFactory: NSObject {
         case .v0:
             path = "/assets/v3/\(key)"
         case .v1:
-            guard let domain = domain.nonEmptyValue ?? APIVersion.domain else { return nil }
+            guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
             path = "/assets/v4/\(domain)/\(key)"
         case .v2:
-            guard let domain = domain.nonEmptyValue ?? APIVersion.domain else { return nil }
+            guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
             path = "/assets/\(domain)/\(key)"
         }
 

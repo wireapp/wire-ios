@@ -30,7 +30,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
     }
 
     override func tearDown() {
-        APIVersion.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -50,7 +50,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
     func testUpdateUserProfile_UpdatesQualifiedUserID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            APIVersion.isFederationEnabled = true
+            BackendInfo.isFederationEnabled = true
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
 
@@ -66,7 +66,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
     func testUpdateUserProfile_DoesntUpdatesQualifiedUserID_WhenFederationIsDisabled() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            APIVersion.isFederationEnabled = false
+            BackendInfo.isFederationEnabled = false
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(id: qualifiedID.uuid, qualifiedID: qualifiedID)
 
