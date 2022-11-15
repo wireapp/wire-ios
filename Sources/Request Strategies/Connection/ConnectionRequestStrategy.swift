@@ -149,7 +149,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = APIVersion.current else { return }
+        guard let apiVersion = BackendInfo.apiVersion else { return }
 
         switch apiVersion {
         case .v0:

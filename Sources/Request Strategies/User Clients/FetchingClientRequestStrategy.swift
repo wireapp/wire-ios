@@ -70,7 +70,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             guard let `self` = self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
-                    let apiVersion = APIVersion.current,
+                    let apiVersion = BackendInfo.apiVersion,
                     let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser,
                     let userID = user.remoteIdentifier
                 else {
@@ -92,7 +92,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                     }
 
                 case .v2:
-                    if let domain = user.domain.nonEmptyValue ?? APIVersion.domain {
+                    if let domain = user.domain.nonEmptyValue ?? BackendInfo.domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
                     }
@@ -135,7 +135,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func fetch(userClients: [UserClient]) {
-        guard let apiVersion = APIVersion.current else { return }
+        guard let apiVersion = BackendInfo.apiVersion else { return }
         let initialResult: ([QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
         let result = userClients.reduce(into: initialResult) { (result, userClient) in
             switch apiVersion {
@@ -187,7 +187,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
         guard
             let userID = userClient.user?.remoteIdentifier,
-            let domain = userClient.user?.domain.nonEmptyValue ?? APIVersion.domain
+            let domain = userClient.user?.domain.nonEmptyValue ?? BackendInfo.domain
         else { return nil }
 
         return .init(uuid: userID, domain: domain)

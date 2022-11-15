@@ -23,7 +23,7 @@ import XCTest
 final class AssetDownloadRequestFactoryTests: XCTestCase {
 
     override func tearDown() {
-        APIVersion.domain = nil
+        BackendInfo.domain = nil
         super.tearDown()
     }
 
@@ -70,7 +70,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsNil() throws {
         // Given
         let sut = AssetDownloadRequestFactory()
-        APIVersion.domain = "localDomain"
+        BackendInfo.domain = "localDomain"
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -89,7 +89,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsEmpty() throws {
         // Given
         let sut = AssetDownloadRequestFactory()
-        APIVersion.domain = "localDomain"
+        BackendInfo.domain = "localDomain"
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -108,7 +108,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
     func test_DoesNotGenerateGetAssetRequestIfNoDomainExists() throws {
         // Given
         let sut = AssetDownloadRequestFactory()
-        APIVersion.domain = nil
+        BackendInfo.domain = nil
 
         // When
         let request = sut.requestToGetAsset(
@@ -145,7 +145,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsNilForV2() throws {
         // Given
         let sut = AssetDownloadRequestFactory()
-        APIVersion.domain = "localDomain"
+        BackendInfo.domain = "localDomain"
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -164,7 +164,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
     func test_GeneratesGetAssetRequestWithLocalDomainIfDomainIsEmptyForV2() throws {
         // Given
         let sut = AssetDownloadRequestFactory()
-        APIVersion.domain = "localDomain"
+        BackendInfo.domain = "localDomain"
 
         // When
         let request = try XCTUnwrap(sut.requestToGetAsset(
@@ -183,7 +183,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
     func test_DoesNotGenerateGetAssetRequestIfNoDomainExistsForV2() throws {
         // Given
         let sut = AssetDownloadRequestFactory()
-        APIVersion.domain = nil
+        BackendInfo.domain = nil
 
         // When
         let request = sut.requestToGetAsset(

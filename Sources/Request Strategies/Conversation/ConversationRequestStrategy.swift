@@ -150,7 +150,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v1, .v2:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
-            } else if let domain = APIVersion.domain {
+            } else if let domain = BackendInfo.domain {
                 let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: domain)
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             }
@@ -283,7 +283,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = APIVersion.current else { return }
+        guard let apiVersion = BackendInfo.apiVersion else { return }
 
         switch apiVersion {
         case .v0:
@@ -293,7 +293,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
         case .v1, .v2:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
-            } else if let identifier = object.remoteIdentifier, let domain = APIVersion.domain {
+            } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
                 let qualifiedID = QualifiedID(uuid: identifier, domain: domain)
                 synchronize(qualifiedID: qualifiedID)
             }
@@ -478,7 +478,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              apiVersion: apiVersion.rawValue)
 
             case .v1, .v2:
-                guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
+                guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
@@ -510,7 +510,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
             case .v1, .v2:
-                guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
+                guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
