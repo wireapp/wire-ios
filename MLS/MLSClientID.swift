@@ -51,6 +51,14 @@ public struct MLSClientID: Equatable {
         )
     }
 
+    init(qualifiedClientID: QualifiedClientID) {
+        self.init(
+            userID: qualifiedClientID.userID.transportString(),
+            clientID: qualifiedClientID.clientID,
+            domain: qualifiedClientID.domain
+        )
+    }
+
     init?(data: Data) {
         guard let string = String(data: data, encoding: .utf8) else { return nil }
         self.init(string: string)

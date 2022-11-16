@@ -67,6 +67,19 @@ public class RemoveParticipantAction: EntityAction {
     }
 }
 
+class MLSClientIDsProvider {
+
+    func fetchUserClients(
+        for userID: QualifiedID,
+        in context: NotificationContext
+    ) async throws -> [MLSClientID] {
+        var action = FetchUserClientsAction(userIDs: [userID])
+        let userClients = try await action.perform(in: context)
+        return userClients.compactMap(MLSClientID.init(qualifiedClientID:))
+    }
+
+}
+
 extension ZMConversation {
 
     func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
@@ -203,6 +216,18 @@ extension ZMConversation {
         _ participant: UserType,
         completion: @escaping RemoveParticipantAction.ResultHandler
     ) {
+        internalRemoveParticipant(
+            participant,
+            completion: completion,
+            mlsClientIDsProvider: MLSClientIDsProvider()
+        )
+    }
+
+    func internalRemoveParticipant(
+        _ participant: UserType,
+        completion: @escaping RemoveParticipantAction.ResultHandler,
+        mlsClientIDsProvider provider: MLSClientIDsProvider
+    ) {
         guard
             let context = managedObjectContext
         else {
@@ -234,17 +259,17 @@ extension ZMConversation {
 
             guard
                 let mlsController = mlsController,
-                let groupID = mlsGroupID
+                let groupID = mlsGroupID,
+                let userID = user.qualifiedID
             else {
                 Logging.mls.info("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
                 completion(.failure(.invalidOperation))
                 return
             }
 
-            let clientIDs = user.clients.compactMap(MLSClientID.init(userClient:))
-
             Task {
                 do {
+                    let clientIDs = try await provider.fetchUserClients(for: userID, in: context.notificationContext)
                     try await mlsController.removeMembersFromConversation(with: clientIDs, for: groupID)
 
                     context.perform {
@@ -252,9 +277,8 @@ extension ZMConversation {
                     }
 
                 } catch {
-                    Logging.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
-
                     context.perform {
+                        Logging.mls.warn("failed to remove participant from conversation (\(String(describing: self.qualifiedID))): \(String(describing: error))")
                         completion(.failure(.failedToRemoveMLSMembers))
                     }
                 }
