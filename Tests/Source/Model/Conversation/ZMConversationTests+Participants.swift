@@ -19,6 +19,23 @@
 import Foundation
 @testable import WireDataModel
 
+class MLSClientIDsProviderMock: MLSClientIDsProvider {
+
+    enum MockError: Error {
+        case unmockedMethodCalled
+    }
+
+    typealias FetchUserClientsMock = (QualifiedID, NotificationContext) async throws -> [MLSClientID]
+    var fetchUserClientsMock: FetchUserClientsMock?
+
+    override func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
+        guard let mock = fetchUserClientsMock else {
+            throw MockError.unmockedMethodCalled
+        }
+        return try await mock(userID, context)
+    }
+}
+
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
 	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
@@ -646,10 +663,20 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             client2.remoteIdentifier = "client 2"
             client2.user = user
 
-            // expectations
+            // Fetch user clients expectations
+            let clientIDs = user.clients.compactMap(MLSClientID.init(userClient:))
+            let mlsClientsExpectation = XCTestExpectation(description: "Fetch User Clients")
+            let providerMock = MLSClientIDsProviderMock()
+
+            providerMock.fetchUserClientsMock = { _, _ in
+                mlsClientsExpectation.fulfill()
+                return clientIDs
+            }
+
+            // Remove member expectations
             let removeMemberExpectation = XCTestExpectation(description: "Remove Member")
             let expectedGroupID = conversation.mlsGroupID
-            let expectedClientIDs = user.clients.compactMap(MLSClientID.init(userClient:))
+            let expectedClientIDs = clientIDs
 
             XCTAssertEqual(expectedClientIDs.count, 2)
 
@@ -660,10 +687,10 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             }
 
             // WHEN
-            conversation.removeParticipant(user, completion: { _ in })
+            conversation.internalRemoveParticipant(user, completion: { _ in }, mlsClientIDsProvider: providerMock)
 
             // THEN
-            wait(for: [removeMemberExpectation], timeout: 0.5)
+            wait(for: [mlsClientsExpectation, removeMemberExpectation], timeout: 0.5)
         }
     }
 
@@ -689,20 +716,30 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             // create self user
             let selfUser = ZMUser.selfUser(in: syncMOC)
 
+            // expect that we don't call clients provider
+            let providerMock = MLSClientIDsProviderMock()
+            let mlsClientsExpectation = XCTestExpectation(description: "User Clients Not Fetched")
+            mlsClientsExpectation.isInverted = true
+
+            providerMock.fetchUserClientsMock = { _, _ in
+                mlsClientsExpectation.fulfill()
+                return []
+            }
+
             // expect that we dont call MLSController
-            let expectation = XCTestExpectation(description: "Remove Members Not Called")
-            expectation.isInverted = true
+            let removeMembersExpectation = XCTestExpectation(description: "Remove Members Not Called")
+            removeMembersExpectation.isInverted = true
 
             mockMLSController.removeMembersMock = { _, _ in
-                expectation.fulfill()
+                removeMembersExpectation.fulfill()
             }
 
             // WHEN
-            conversation.removeParticipant(selfUser, completion: { _ in })
+            conversation.internalRemoveParticipant(selfUser, completion: { _ in }, mlsClientIDsProvider: providerMock)
 
             // THEN
             XCTAssertTrue(mockActionHandler.didPerformAction)
-            wait(for: [expectation], timeout: 0.5)
+            wait(for: [mlsClientsExpectation, removeMembersExpectation], timeout: 0.5)
         }
     }
 
