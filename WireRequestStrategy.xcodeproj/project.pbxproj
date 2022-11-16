@@ -234,7 +234,6 @@
 		EE57BD9D28A52DD600C46660 /* MLSMessageSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57BD9C28A52DD600C46660 /* MLSMessageSyncTests.swift */; };
 		EE57BD9F28A52E3100C46660 /* MessageSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57BD9E28A52E3100C46660 /* MessageSyncTests.swift */; };
 		EE82318927D22D79008CD77B /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82318827D22D79008CD77B /* String+Random.swift */; };
-		EE8DC53528C0EF7800AC4E3D /* FetchUserClientsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53428C0EF7800AC4E3D /* FetchUserClientsAction.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
 		EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C29D282E785800474379 /* PushTokenStrategy.swift */; };
@@ -648,7 +647,6 @@
 		EE57BD9C28A52DD600C46660 /* MLSMessageSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageSyncTests.swift; sourceTree = "<group>"; };
 		EE57BD9E28A52E3100C46660 /* MessageSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSyncTests.swift; sourceTree = "<group>"; };
 		EE82318827D22D79008CD77B /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
-		EE8DC53428C0EF7800AC4E3D /* FetchUserClientsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsAction.swift; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE90C29D282E785800474379 /* PushTokenStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStrategy.swift; sourceTree = "<group>"; };
@@ -1328,7 +1326,6 @@
 				F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */,
 				F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */,
 				EEA2EE8928F021C100A2CBE1 /* UserClientByQualifiedUserIDTranscoderTests.swift */,
-				EE8DC53428C0EF7800AC4E3D /* FetchUserClientsAction.swift */,
 				EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */,
 				EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */,
 				166A22902577C06B00EF313D /* ResetSessionRequestStrategy.swift */,
@@ -1975,7 +1972,6 @@
 				F18401D22073BE0800E9F4CC /* OTREntity.swift in Sources */,
 				16A4893A268A080E001F9127 /* InsertedObjectSync.swift in Sources */,
 				1621D22F1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m in Sources */,
-				EE8DC53528C0EF7800AC4E3D /* FetchUserClientsAction.swift in Sources */,
 				062285C8276BB5B000B87C91 /* UpdateEventProcessor.swift in Sources */,
 				7A111DE8285C90A90085BF91 /* SendMLSMessageActionHandler.swift in Sources */,
 				0649D19F24F6717C001DDC78 /* ZMLocalNotificationSet.swift in Sources */,
