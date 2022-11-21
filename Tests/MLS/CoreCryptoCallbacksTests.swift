@@ -56,9 +56,9 @@ class CoreCryptoCallbacksTests: XCTestCase {
         }
 
         // When
-        let result = sut.clientIdBelongsToOneOf(
+        let result = sut.clientIsExistingGroupUser(
             clientId: clientID,
-            otherClients: otherClients
+            existingClients: otherClients
         )
 
         // Then
@@ -100,9 +100,9 @@ class CoreCryptoCallbacksTests: XCTestCase {
         }
 
         // When
-        let result = sut.clientIdBelongsToOneOf(
+        let result = sut.clientIsExistingGroupUser(
             clientId: clientID,
-            otherClients: otherClients
+            existingClients: otherClients
         )
 
         // Then

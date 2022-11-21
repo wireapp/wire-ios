@@ -41,10 +41,6 @@ public protocol CoreCryptoProtocol {
     func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle
     func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle
     func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle?
-    func wire_finalAddClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> TlsCommitBundle
-    func wire_finalRemoveClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> TlsCommitBundle
-    func wire_finalUpdateKeyingMaterial(conversationId: ConversationId) throws -> TlsCommitBundle
-    func wire_finalCommitPendingProposals(conversationId: ConversationId) throws -> TlsCommitBundle?
     func wire_wipeConversation(conversationId: ConversationId) throws
     func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage
     func wire_encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8]
@@ -53,21 +49,37 @@ public protocol CoreCryptoProtocol {
     func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> ProposalBundle
     func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8]
     func wire_newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8]
-    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> MlsConversationInitMessage
+    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> ConversationInitBundle
     func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8]
     func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws
+    func wire_clearPendingGroupFromExternalCommit(conversationId: ConversationId) throws
+    func wire_exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8]
+    func wire_getClientIds(conversationId: ConversationId) throws -> [ClientId]
     func wire_randomBytes(length: UInt32) throws -> [UInt8]
     func wire_reseedRng(seed: [UInt8]) throws
     func wire_commitAccepted(conversationId: ConversationId) throws
     func wire_clearPendingProposal(conversationId: ConversationId, proposalRef: [UInt8]) throws
     func wire_clearPendingCommit(conversationId: ConversationId) throws
 
+    func wire_proteusInit() throws
+    func wire_proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws
+    func wire_proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8]
+    func wire_proteusSessionSave(sessionId: String) throws
+    func wire_proteusSessionDelete(sessionId: String) throws
+    func wire_proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8]
+    func wire_proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8]
+    func wire_proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String: [UInt8]]
+    func wire_proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8]
+    func wire_proteusFingerprint() throws -> String
+    func wire_proteusCryptoboxMigrate(path: String) throws
+
 }
 
 public protocol CoreCryptoCallbacks : AnyObject {
 
-    func authorize(conversationId: [UInt8], clientId: [UInt8])  -> Bool
-    func clientIdBelongsToOneOf(clientId: [UInt8], otherClients: [[UInt8]])  -> Bool
+    func authorize(conversationId: ConversationId, clientId: ClientId)  -> Bool
+    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool
+    func clientIsExistingGroupUser(clientId: ClientId, existingClients: [ClientId]) -> Bool
 
 }
 
@@ -77,12 +89,12 @@ public struct CommitBundle: Equatable, Hashable {
 
     public var welcome: [UInt8]?
     public var commit: [UInt8]
-    public var publicGroupState: [UInt8]
+    public var publicGroupState: PublicGroupStateBundle
 
     public init(
         welcome: [UInt8]?,
         commit: [UInt8],
-        publicGroupState: [UInt8]
+        publicGroupState: PublicGroupStateBundle
     ) {
         self.welcome = welcome
         self.commit = commit
@@ -152,12 +164,12 @@ public struct MemberAddedMessages: Equatable, Hashable {
 
     public var commit: [UInt8]
     public var welcome: [UInt8]
-    public var publicGroupState: [UInt8]
+    public var publicGroupState: PublicGroupStateBundle
 
     public init(
         commit: [UInt8],
         welcome: [UInt8],
-        publicGroupState: [UInt8]
+        publicGroupState: PublicGroupStateBundle
     ) {
         self.commit = commit
         self.welcome = welcome
@@ -165,17 +177,37 @@ public struct MemberAddedMessages: Equatable, Hashable {
     }
 }
 
-public struct MlsConversationInitMessage: Equatable, Hashable {
+public struct ConversationInitBundle: Equatable, Hashable {
 
-    public var group: [UInt8]
+    public var conversationId: ConversationId
     public var commit: [UInt8]
+    public var publicGroupState: PublicGroupStateBundle
 
     public init(
-        group: [UInt8],
-        commit: [UInt8]
+        conversationId: ConversationId,
+        commit: [UInt8],
+        publicGroupState: PublicGroupStateBundle
     ) {
-        self.group = group
+        self.conversationId = conversationId
         self.commit = commit
+        self.publicGroupState = publicGroupState
+    }
+}
+
+public struct PublicGroupStateBundle: Equatable, Hashable {
+
+    public var encryptionType: PublicGroupStateEncryptionType
+    public var ratchetTreeType: RatchetTreeType
+    public var payload: [UInt8]
+
+    public init(
+        encryptionType: PublicGroupStateEncryptionType,
+        ratchetTreeType: RatchetTreeType,
+        payload: [UInt8]
+    ) {
+        self.encryptionType = encryptionType
+        self.ratchetTreeType = ratchetTreeType
+        self.payload = payload
     }
 }
 
@@ -195,6 +227,21 @@ public struct ProposalBundle: Equatable, Hashable {
 }
 
 // MARK: - Enums
+
+public enum PublicGroupStateEncryptionType: Equatable, Hashable {
+
+    case Plaintext
+    case JweEncrypted
+
+}
+
+public enum RatchetTreeType: Equatable, Hashable {
+
+    case Full
+    case Delta
+    case ByRef
+
+}
 
 public enum CiphersuiteName: Equatable, Hashable {
 

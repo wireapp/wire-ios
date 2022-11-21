@@ -23,24 +23,29 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
     init() {}
 
-    func authorize(conversationId: [UInt8], clientId: [UInt8]) -> Bool {
+    func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {
         // Currently not neccessary because backend is already validated proposals.
         // In the future, method may be useful for proposals that the backend can't
         // inspect.
         return true
     }
 
-    func clientIdBelongsToOneOf(clientId: [UInt8], otherClients: [[UInt8]]) -> Bool {
+    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool {
+        // TODO: Check with core crypto team what the implementation should be
+        return true
+    }
+
+    func clientIsExistingGroupUser(clientId: ClientId, existingClients: [ClientId]) -> Bool {
         guard let mlsClientID = MLSClientID(data: clientId.data) else {
             return false
         }
 
-        let otherMLSClientIDs = otherClients.compactMap {
+        let existingClientIDs = existingClients.compactMap {
             MLSClientID(data: $0.data)
         }
 
-        return otherMLSClientIDs.contains {
-            // Does `otherClients` contain a client belonging to the same owner of `clientId`?
+        return existingClientIDs.contains {
+            // Does `existingClients` contain a client belonging to the same owner of `clientId`?
             $0.userID == mlsClientID.userID && $0.domain == mlsClientID.domain
         }
     }
