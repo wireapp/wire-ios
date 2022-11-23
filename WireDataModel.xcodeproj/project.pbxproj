@@ -320,6 +320,7 @@
 		70E77B7D273188150021EE70 /* ZMConversation+Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B7C273188150021EE70 /* ZMConversation+Role.swift */; };
 		7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2778C5285223D90044A73F /* KeychainManager.swift */; };
 		7A2778C8285329210044A73F /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2778C7285329210044A73F /* KeychainManagerTests.swift */; };
+		7AA8560E28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8560D28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift */; };
 		7ABAD028287D92BF002071A1 /* MLSQualifiedClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABAD027287D92BF002071A1 /* MLSQualifiedClientID.swift */; };
 		7AFC6A2D2876E9BF000FF1A1 /* SendMLSWelcomeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC6A282876E9BF000FF1A1 /* SendMLSWelcomeAction.swift */; };
 		7AFC6A2E2876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC6A292876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift */; };
@@ -1132,6 +1133,7 @@
 		70E77B7C273188150021EE70 /* ZMConversation+Role.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Role.swift"; sourceTree = "<group>"; };
 		7A2778C5285223D90044A73F /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		7A2778C7285329210044A73F /* KeychainManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManagerTests.swift; sourceTree = "<group>"; };
+		7AA8560D28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPublicGroupStateAction.swift; sourceTree = "<group>"; };
 		7ABAD027287D92BF002071A1 /* MLSQualifiedClientID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSQualifiedClientID.swift; sourceTree = "<group>"; };
 		7AFC6A282876E9BF000FF1A1 /* SendMLSWelcomeAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeAction.swift; sourceTree = "<group>"; };
 		7AFC6A292876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesAction.swift; sourceTree = "<group>"; };
@@ -1927,6 +1929,7 @@
 				7AFC6A282876E9BF000FF1A1 /* SendMLSWelcomeAction.swift */,
 				7AFC6A292876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift */,
 				EEC8064928CF4BAD00DD58E9 /* FetchBackendMLSPublicKeysAction.swift */,
+				7AA8560D28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -3605,6 +3608,7 @@
 				5451DE351F5FFF8B00C82E75 /* NotificationInContext.swift in Sources */,
 				F179B5DA2062B77300C13DFD /* CoreDataStack+Backup.swift in Sources */,
 				F9A706A41CAEE01D00C2F5FE /* ConversationChangeInfo.swift in Sources */,
+				7AA8560E28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift in Sources */,
 				A943BBE825B5A59D003D66BA /* ConversationLike.swift in Sources */,
 				062FD8852756053800B9DE39 /* Feature.ConversationGuestLinks.swift in Sources */,
 				7AFC6A2D2876E9BF000FF1A1 /* SendMLSWelcomeAction.swift in Sources */,
