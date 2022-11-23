@@ -196,6 +196,8 @@
 		70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */; };
 		7A111DE8285C90A90085BF91 /* SendMLSMessageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */; };
 		7A111DEA285C90B70085BF91 /* SendMLSMessageActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A111DE9285C90B70085BF91 /* SendMLSMessageActionHandlerTests.swift */; };
+		7AA8560C28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8560B28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift */; };
+		7AA8561028FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8560F28FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift */; };
 		7AEBB677285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEBB676285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift */; };
 		7AEBB679285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEBB678285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift */; };
 		8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */; };
@@ -609,6 +611,8 @@
 		70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandler.swift; sourceTree = "<group>"; };
 		7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMLSMessageActionHandler.swift; sourceTree = "<group>"; };
 		7A111DE9285C90B70085BF91 /* SendMLSMessageActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMLSMessageActionHandlerTests.swift; sourceTree = "<group>"; };
+		7AA8560B28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPublicGroupStateActionHandler.swift; sourceTree = "<group>"; };
+		7AA8560F28FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPublicGroupStateActionHandlerTests.swift; sourceTree = "<group>"; };
 		7AEBB676285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountSelfMLSKeyPackagesActionHandler.swift; sourceTree = "<group>"; };
 		7AEBB678285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
 		8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyRequestStrategy.swift; sourceTree = "<group>"; };
@@ -1196,6 +1200,8 @@
 				63CC83B2285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift */,
 				EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */,
 				EE04084928C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift */,
+				7AA8560B28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift */,
+				7AA8560F28FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -1878,6 +1884,7 @@
 				EE4C5FBE27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift in Sources */,
 				EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */,
 				166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */,
+				7AA8560C28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift in Sources */,
 				16E70F8A270EEB2300718E5D /* PayloadProcessing+Conversation.swift in Sources */,
 				EE402C0328996C2500CA0E40 /* MLSMessageSync.Transcoder.swift in Sources */,
 				16E5F6D626EF1BE100F35FBA /* PaginatedSync.swift in Sources */,
@@ -2111,6 +2118,7 @@
 				5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */,
 				63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
+				7AA8561028FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
 				EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */,
 				06474D6024B310B6002C695D /* NotificationsTrackerTests.swift in Sources */,
