@@ -950,6 +950,30 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
+    // MARK: - Fetch Public Group State
+
+    enum MLSGroupStateError: Error, Equatable {
+        case failedToFetchGroupState
+    }
+
+    private func fetchPublicGroupState(
+        conversationID: UUID,
+        domain: String,
+        context: NotificationContext
+    ) async throws -> Data {
+        do {
+            return try await actionsProvider.fetchPublicGroupState(
+                conversationId: conversationID,
+                domain: domain,
+                context: context
+            )
+
+        } catch let error {
+            self.logger.warn("failed to fetch public group state with error: \(String(describing: error))")
+            throw MLSGroupStateError.failedToFetchGroupState
+        }
+    }
+
 }
 
 // MARK: -  Helper types
@@ -1113,6 +1137,12 @@ protocol MLSActionsProviderProtocol {
         in context: NotificationContext
     ) async throws
 
+    func fetchPublicGroupState(
+        conversationId: UUID,
+        domain: String,
+        context: NotificationContext
+    ) async throws -> Data
+
 }
 
 class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -1176,6 +1206,18 @@ class MLSActionsProvider: MLSActionsProviderProtocol {
         try await action.perform(in: context)
     }
 
+    func fetchPublicGroupState(
+        conversationId: UUID,
+        domain: String,
+        context: NotificationContext
+    ) async throws -> Data {
+        var action = FetchPublicGroupStateAction(
+            conversationId: conversationId,
+            domain: domain
+        )
+
+        return try await action.perform(in: context)
+    }
 }
 
 public protocol ConversationEventProcessorProtocol {
