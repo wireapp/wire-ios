@@ -137,7 +137,9 @@ final class InputBar: UIView {
 
     let markdownView = MarkdownBarView()
 
-    var editingBackgroundColor = SemanticColors.LegacyColors.brightYellow
+    var editingBackgroundColor: UIColor {
+        return overrideUserInterfaceStyle == .dark ? .accentDarken : .accent()
+    }
 
     var barBackgroundColor: UIColor? = SemanticColors.SearchBar.backgroundInputView
     var writingSeparatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
@@ -450,7 +452,7 @@ final class InputBar: UIView {
 
     fileprivate func backgroundColor(forInputBarState state: InputBarState) -> UIColor? {
         guard let writingColor = barBackgroundColor else { return nil }
-        return state.isWriting || state.isMarkingDown ? writingColor : writingColor.mix(editingBackgroundColor, amount: 0.16)
+        return state.isWriting || state.isMarkingDown ? writingColor : editingBackgroundColor
     }
 
     fileprivate func updatePlaceholderColors() {
@@ -472,6 +474,11 @@ final class InputBar: UIView {
 
         textView.tintColor = .accent()
         textView.updateTextColor(base: textColor)
+
+        if inputBarState.isEditing {
+            textView.textColor = SemanticColors.Label.textDefaultBlack
+            
+        }
 
         var buttons = self.buttonsView.buttons
 
