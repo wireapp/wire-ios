@@ -138,7 +138,7 @@ final class InputBar: UIView {
     let markdownView = MarkdownBarView()
 
     var editingBackgroundColor: UIColor {
-        return UIColor.lowAccentColor()
+        return .lowAccentColor()
     }
 
     var barBackgroundColor: UIColor? = SemanticColors.SearchBar.backgroundInputView
@@ -477,7 +477,6 @@ final class InputBar: UIView {
 
         if inputBarState.isEditing {
             textView.textColor = SemanticColors.Label.textDefaultBlack
-
         }
 
         var buttons = self.buttonsView.buttons
