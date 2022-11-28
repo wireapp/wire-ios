@@ -33,8 +33,8 @@ typealias IconColors = SemanticColors.Icon
 
     private static var iconButtonTemplate: IconButton {
         let iconButton = IconButton()
-        iconButton.setIconColor(IconColors.foregroundDefaultWhite, for: .normal)
-        iconButton.setIconColor(IconColors.foregroundDefaultWhite.withAlphaComponent(0.6), for: .highlighted)
+        iconButton.setIconColor(IconColors.foregroundDefaultBlack, for: .normal)
+        iconButton.setIconColor(IconColors.foregroundDefaultBlack.withAlphaComponent(0.6), for: .highlighted)
 
         return iconButton
     }
