@@ -138,7 +138,7 @@ final class InputBar: UIView {
     let markdownView = MarkdownBarView()
 
     var editingBackgroundColor: UIColor {
-        return overrideUserInterfaceStyle == .dark ? .accentDarken : .accent()
+        return UIColor.lowAccentColor()
     }
 
     var barBackgroundColor: UIColor? = SemanticColors.SearchBar.backgroundInputView

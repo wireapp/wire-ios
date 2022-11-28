@@ -119,6 +119,12 @@ public enum SemanticColors {
         static let borderAvailabilityIcon = UIColor(light: Asset.gray10, dark: Asset.gray90)
         static let borderConversationListTableViewCellBadgeReverted = UIColor(light: Asset.gray40, dark: Asset.gray70)
         static let borderInputBar = UIColor(light: Asset.gray40, dark: Asset.gray100)
+        static let backgroundBlue = UIColor(light: Asset.blue50Light, dark: Asset.blue900Dark)
+        static let backgroundGreen = UIColor(light: Asset.green50Light, dark: Asset.green900Dark)
+        static let backgroundAmber = UIColor(light: Asset.amber50Light, dark: Asset.amber900Dark)
+        static let backgroundRed = UIColor(light: Asset.red50Light, dark: Asset.red900Dark)
+        static let backgroundPurple = UIColor(light: Asset.purple50Light, dark: Asset.purple900Dark)
+        static let backgroundTurqoise = UIColor(light: Asset.turquoise50Light, dark: Asset.turquoise900Dark)
     }
 
     public enum TabBar {
