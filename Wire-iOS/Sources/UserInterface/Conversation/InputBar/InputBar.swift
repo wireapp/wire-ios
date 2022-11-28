@@ -474,11 +474,7 @@ final class InputBar: UIView {
         updatePlaceholderColors()
 
         textView.tintColor = .accent()
-        textView.updateTextColor(base: textColor)
-
-        textView.textColor = inputBarState.isEditing
-        ? SemanticColors.Label.textDefaultBlack
-        : textColor
+        textView.updateTextColor(base: isEditing ? SemanticColors.Label.textDefaultBlack : textColor)
 
         var buttons = self.buttonsView.buttons
 
