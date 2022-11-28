@@ -477,8 +477,8 @@ final class InputBar: UIView {
         textView.updateTextColor(base: textColor)
 
         textView.textColor = inputBarState.isEditing
-           ? SemanticColors.Label.textDefaultBlack
-           : textColor
+        ? SemanticColors.Label.textDefaultBlack
+        : textColor
 
         var buttons = self.buttonsView.buttons
 
