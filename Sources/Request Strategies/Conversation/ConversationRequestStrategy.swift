@@ -147,7 +147,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             } else if let domain = BackendInfo.domain {
@@ -180,7 +180,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 }
             }
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             conversationQualifiedIDsSync.fetch { [weak self] (result) in
                 switch result {
                 case .success(let qualifiedConversationIDList):
@@ -290,7 +290,7 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
             guard let identifier = object.remoteIdentifier else { return }
             synchronize(unqualifiedID: identifier)
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
             } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
@@ -477,7 +477,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
 
-            case .v1, .v2:
+            case .v1, .v2, .v3:
                 guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
                                              method: .methodPUT,
@@ -509,7 +509,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
-            case .v1, .v2:
+            case .v1, .v2, .v3:
                 guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
                                              method: .methodPUT,

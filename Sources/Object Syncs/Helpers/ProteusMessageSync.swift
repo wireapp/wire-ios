@@ -94,7 +94,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
         switch apiVersion {
         case .v0:
             _ = entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
             _ = payload?.updateClientsChanges(for: entity)
         }
@@ -110,7 +110,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             switch apiVersion {
             case .v0:
                 return entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate).contains(.missing)
-            case .v1, .v2:
+            case .v1, .v2, .v3:
                 let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
                 return payload?.updateClientsChanges(for: entity) ?? false
             }

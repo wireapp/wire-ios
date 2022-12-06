@@ -51,7 +51,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 nativePush: false,
                 recipients: []
             )
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
@@ -90,7 +90,7 @@ public final class ClientMessageRequestFactory: NSObject {
         switch apiVersion {
         case .v0:
             return upstreamRequestForEncryptedMessage(message, in: conversation, apiVersion: apiVersion)
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             return upstreamRequestForQualifiedEncryptedMessage(message, in: conversation, apiVersion: apiVersion)
         }
     }

@@ -26,7 +26,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }

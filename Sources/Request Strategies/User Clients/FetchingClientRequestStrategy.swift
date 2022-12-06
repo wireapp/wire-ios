@@ -91,7 +91,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2:
+                case .v2, .v3:
                     if let domain = user.domain.nonEmptyValue ?? BackendInfo.domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -151,7 +151,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     // Fallback.
                     result.1.append(userClientID)
                 }
-            case .v2:
+            case .v2, .v3:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -286,8 +286,8 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2:
-            return v2Request(for: identifiers)
+        case .v2, .v3:
+            return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
 
@@ -307,7 +307,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         )
     }
 
-    private func v2Request(for identifiers: Set<QualifiedID>) -> ZMTransportRequest? {
+    private func v2Request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let payloadData = RequestPayload(qualifiedIDs: identifiers).payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
@@ -319,7 +319,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             path: "/users/list-clients",
             method: .methodPOST,
             payload: payloadAsString as ZMTransportData?,
-            apiVersion: 2
+            apiVersion: apiVersion.rawValue
         )
     }
 
@@ -341,7 +341,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v0:
             return
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             commonResponseHandling(response: response, for: identifiers)
         }
     }
