@@ -60,20 +60,53 @@ class MockCoreCrypto: CoreCryptoProtocol {
     }
 
     func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
-        return .init(commit: [], welcome: [], publicGroupState: [])
+
+        return .init(
+            commit: [],
+            welcome: [],
+            publicGroupState: .init(
+                encryptionType: .Plaintext,
+                ratchetTreeType: .Full ,
+                payload: []
+            )
+        )
     }
 
     func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle {
-        return .init(welcome: nil, commit: [], publicGroupState: [])
+        return .init(
+            welcome: nil,
+            commit: [],
+            publicGroupState: .init(
+                encryptionType: .Plaintext,
+                ratchetTreeType: .Full ,
+                payload: []
+            )
+        )
     }
 
     func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle {
-        return .init(welcome: nil, commit: [], publicGroupState: [])
+        return .init(
+            welcome: nil,
+            commit: [],
+            publicGroupState: .init(
+                encryptionType: .Plaintext,
+                ratchetTreeType: .Full ,
+                payload: []
+            )
+        )
     }
 
     func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
         calls.wire_commitPendingProposals.append(conversationId)
-        return CommitBundle(welcome: nil, commit: [], publicGroupState: [])
+        return .init(
+            welcome: nil,
+            commit: [],
+            publicGroupState: .init(
+                encryptionType: .Plaintext,
+                ratchetTreeType: .Full ,
+                payload: []
+            )
+        )
     }
 
     func wire_finalAddClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> TlsCommitBundle {
@@ -124,8 +157,16 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return []
     }
 
-    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> MlsConversationInitMessage {
-        return .init(group: [], commit: [])
+    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> ConversationInitBundle {
+        return .init(
+            conversationId: [],
+            commit: [],
+            publicGroupState: .init(
+                encryptionType: .Plaintext,
+                ratchetTreeType: .Full,
+                payload: []
+            )
+        )
     }
 
     func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8] {
@@ -134,6 +175,18 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws {
 
+    }
+
+    func wire_clearPendingGroupFromExternalCommit(conversationId: ConversationId) throws {
+        
+    }
+
+    func wire_exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8] {
+        return []
+    }
+
+    func wire_getClientIds(conversationId: ConversationId) throws -> [ClientId] {
+        return []
     }
 
     func wire_randomBytes(length: UInt32) throws -> [UInt8] {
@@ -156,4 +209,47 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     }
 
+    func wire_proteusInit() throws {
+
+    }
+
+    func wire_proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws {
+
+    }
+
+    func wire_proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
+        return []
+    }
+
+    func wire_proteusSessionSave(sessionId: String) throws {
+
+    }
+
+    func wire_proteusSessionDelete(sessionId: String) throws {
+
+    }
+
+    func wire_proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8] {
+        return []
+    }
+
+    func wire_proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8] {
+        return []
+    }
+
+    func wire_proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String : [UInt8]] {
+        return [:]
+    }
+
+    func wire_proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8] {
+        return []
+    }
+
+    func wire_proteusFingerprint() throws -> String {
+        return ""
+    }
+
+    func wire_proteusCryptoboxMigrate(path: String) throws {
+
+    }
 }
