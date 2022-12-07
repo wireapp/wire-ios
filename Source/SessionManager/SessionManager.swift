@@ -294,6 +294,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private var coreCryptoSetup: CoreCryptoSetupClosure
 
+    let isDeveloperModeEnabled: Bool
+
     public override init() {
         fatal("init() not implemented")
     }
@@ -309,7 +311,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
         requiredPushTokenType: PushToken.TokenType,
-        coreCryptoSetup: @escaping CoreCryptoSetupClosure
+        coreCryptoSetup: @escaping CoreCryptoSetupClosure,
+        isDeveloperModeEnabled: Bool = false
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachability
@@ -344,7 +347,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             configuration: configuration,
             detector: detector,
             requiredPushTokenType: requiredPushTokenType,
-            coreCryptoSetup: coreCryptoSetup
+            coreCryptoSetup: coreCryptoSetup,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         )
 
         if configuration.blacklistDownloadInterval > 0 {
@@ -397,7 +401,8 @@ public final class SessionManager: NSObject, SessionManagerType {
          configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
          detector: JailbreakDetectorProtocol = JailbreakDetector(),
          requiredPushTokenType: PushToken.TokenType,
-         coreCryptoSetup: @escaping CoreCryptoSetupClosure
+         coreCryptoSetup: @escaping CoreCryptoSetupClosure,
+         isDeveloperModeEnabled: Bool = false
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -437,6 +442,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.reachability = reachability
         self.pushRegistry = pushRegistry
         self.maxNumberAccounts = maxNumberAccounts
+        self.isDeveloperModeEnabled = isDeveloperModeEnabled
 
         // we must set these before initializing the PushDispatcher b/c if the app
         // received a push from terminated state, it requires these properties to be
