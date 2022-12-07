@@ -13,6 +13,8 @@
 		5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807C21A30A9D004A646C /* otr.pb.swift */; };
 		5E13808021A30AB7004A646C /* ProtosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807F21A30AB7004A646C /* ProtosTests.swift */; };
 		5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		638BBCF129150CEF007491FF /* mls.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF029150CEE007491FF /* mls.pb.swift */; };
+		638BBCF329150D4C007491FF /* mls.proto in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF229150D4C007491FF /* mls.proto */; };
 		A9E869CD265FD26E00880C48 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E869CC265FD26E00880C48 /* SwiftProtobuf.xcframework */; };
 		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -63,6 +65,8 @@
 		5E13807B21A30A9D004A646C /* messages.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = messages.pb.swift; sourceTree = "<group>"; };
 		5E13807C21A30A9D004A646C /* otr.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = otr.pb.swift; sourceTree = "<group>"; };
 		5E13807F21A30AB7004A646C /* ProtosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtosTests.swift; sourceTree = "<group>"; };
+		638BBCF029150CEE007491FF /* mls.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mls.pb.swift; sourceTree = "<group>"; };
+		638BBCF229150D4C007491FF /* mls.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; name = mls.proto; path = "Carthage/Checkouts/generic-message-proto/proto/mls.proto"; sourceTree = SOURCE_ROOT; };
 		A9E869CC265FD26E00880C48 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		A9EF6A7323D76AC8002904B4 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F184BE851E65CADA0020EBB7 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -117,8 +121,10 @@
 			children = (
 				090838241B87347900629095 /* messages.proto */,
 				099223A61BED06E400668091 /* otr.proto */,
+				638BBCF229150D4C007491FF /* mls.proto */,
 				5E13807B21A30A9D004A646C /* messages.pb.swift */,
 				5E13807C21A30A9D004A646C /* otr.pb.swift */,
+				638BBCF029150CEE007491FF /* mls.pb.swift */,
 				F1FDF2DF21B043F400E037A1 /* WireProtos.h */,
 				090838011B872DBF00629095 /* Supporting Files */,
 			);
@@ -309,6 +315,8 @@
 			files = (
 				5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */,
 				5E13807D21A30A9D004A646C /* messages.pb.swift in Sources */,
+				638BBCF129150CEF007491FF /* mls.pb.swift in Sources */,
+				638BBCF329150D4C007491FF /* mls.proto in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
