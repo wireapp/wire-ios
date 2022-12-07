@@ -61,7 +61,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         )
 
         // when the domain is missing
-        APIVersion.domain = nil
+        BackendInfo.domain = nil
 
         test_itDoesntGenerateARequest(
             action: ClaimMLSKeyPackageAction(domain: "", userId: userId, excludedSelfClientId: excludedSelfCliendId),

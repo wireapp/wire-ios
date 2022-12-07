@@ -30,7 +30,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
-        guard let domain = action.domain?.nilIfEmpty ?? APIVersion.domain else {
+        guard let domain = action.domain?.nilIfEmpty ?? BackendInfo.domain else {
             action.fail(with: .missingDomain)
             return nil
         }

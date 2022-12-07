@@ -53,6 +53,20 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
 
     // MARK: - Request generation
 
+    func test_itGenerateARequest_APIV3() throws {
+        // Given
+        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs).payloadString())
+
+        // Then
+        try test_itGeneratesARequest(
+            for: action,
+               expectedPath: "/v3/users/list-clients",
+               expectedPayload: expectedPayload,
+               expectedMethod: .methodPOST,
+               apiVersion: .v3
+        )
+    }
+
     func test_itGenerateARequest_APIV2() throws {
         // Given
         let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs).payloadString())

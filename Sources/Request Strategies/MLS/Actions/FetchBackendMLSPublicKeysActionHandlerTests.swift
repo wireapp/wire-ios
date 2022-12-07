@@ -33,6 +33,15 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
     }
     // MARK: - Request generation
 
+    func test_itGeneratesARequest_APIV3() throws {
+        try test_itGeneratesARequest(
+            for: action,
+               expectedPath: "/v3/mls/public-keys",
+               expectedMethod: .methodGET,
+               apiVersion: .v3
+        )
+    }
+
     func test_itGeneratesARequest_APIV2() throws {
         try test_itGeneratesARequest(
             for: action,

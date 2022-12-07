@@ -75,10 +75,18 @@ final class MLSMessageSyncTests: MessagingTestBase {
 
     // MARK: - Request generation
 
-    func test_RequestGeneration_Success() throws {
+    func test_RequestGeneration_Success_v2() throws {
+        test_RequestGeneration_Success(apiVersion: .v2)
+    }
+
+    func test_RequestGeneration_Success_v3() throws {
+        test_RequestGeneration_Success(apiVersion: .v3)
+    }
+
+    func test_RequestGeneration_Success(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // When
-            let result = self.sut.transcoder.request(forEntity: self.mockMessage, apiVersion: .v2)
+            let result = self.sut.transcoder.request(forEntity: self.mockMessage, apiVersion: apiVersion)
 
             // Then
             guard let request = result else {
@@ -86,10 +94,10 @@ final class MLSMessageSyncTests: MessagingTestBase {
                 return
             }
 
-            XCTAssertEqual(request.path, "/v2/mls/messages")
+            XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/mls/messages")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertEqual(request.binaryDataType, "message/mls")
-            XCTAssertEqual(request.apiVersion, 2)
+            XCTAssertEqual(request.apiVersion, apiVersion.rawValue)
 
             let expectedEncryptedMessage = self.mockMessage.messageData + [000]
             XCTAssertEqual(request.binaryData, expectedEncryptedMessage)
