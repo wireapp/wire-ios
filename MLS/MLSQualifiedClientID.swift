@@ -29,7 +29,7 @@ public struct MLSQualifiedClientID {
         guard
             let clientId = user.selfClient()?.remoteIdentifier,
             let userId = user.remoteIdentifier,
-            let domain = user.domain?.selfOrNilIfEmpty ?? APIVersion.domain
+            let domain = user.domain?.selfOrNilIfEmpty ?? BackendInfo.domain
         else {
             return nil
         }

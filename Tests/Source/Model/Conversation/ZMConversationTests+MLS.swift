@@ -22,14 +22,14 @@ import Foundation
 final class ZMConversationTests_MLS: ZMConversationTestsBase {
 
     override func tearDown() {
-        APIVersion.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
     func testThatItFetchesConversationWithGroupID() {
         syncMOC.performGroupedBlockAndWait { [self] in
             // Given
-            APIVersion.isFederationEnabled = false
+            BackendInfo.isFederationEnabled = false
             let groupID = MLSGroupID([1, 2, 3])
             let conversation = self.createConversation(groupID: groupID)
 
@@ -44,7 +44,7 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
     func testThatItFetchesConversationWithGroupID_FederationEnabled() {
         syncMOC.performGroupedBlockAndWait { [self] in
             // Given
-            APIVersion.isFederationEnabled = true
+            BackendInfo.isFederationEnabled = true
             let groupID = MLSGroupID([1, 2, 3])
             let conversation = self.createConversation(groupID: groupID)
 

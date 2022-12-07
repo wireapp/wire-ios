@@ -39,7 +39,7 @@ public struct MLSClientID: Equatable {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
-            let domain = userClient.user?.domain ?? APIVersion.domain
+            let domain = userClient.user?.domain ?? BackendInfo.domain
         else {
             return nil
         }
