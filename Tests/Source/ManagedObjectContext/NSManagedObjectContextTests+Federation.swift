@@ -26,7 +26,7 @@ class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
     func testThatItMigratesUsersAndConversations() throws {
         // Given
         let domain = "example.domain.com"
-        APIVersion.domain = domain
+        BackendInfo.domain = domain
         let conversation = createConversation(in: uiMOC)
         let user = createUser(in: uiMOC)
         XCTAssertNil(conversation.domain)
