@@ -60,12 +60,12 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             path = "/assets/v3"
 
-        case .v2:
+        case .v2, .v3:
             path = "/assets"
         }
 
         let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: Constant.ContentType.multipart, apiVersion: apiVersion.rawValue)
-        request.addContentDebugInformation("Uploading full asset to /assets/v3")
+        request.addContentDebugInformation("Uploading full asset to \(path)")
         return request
     }
 
@@ -77,7 +77,7 @@ public final class AssetRequestFactory: NSObject {
         case .v0, .v1:
             path = "/assets/v3"
 
-        case .v2:
+        case .v2, .v3:
             path = "/assets"
         }
 

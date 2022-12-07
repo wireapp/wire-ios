@@ -27,7 +27,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
         case .v0:
             return v0Request(for: action)
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             return v1Request(for: action)
         }
     }

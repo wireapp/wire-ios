@@ -141,10 +141,10 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
-            } else if let domain = APIVersion.domain {
+            } else if let domain = BackendInfo.domain {
                 let qualifiedIDs = conversations.fallbackQualifiedIDs(localDomain: domain)
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             }
@@ -174,7 +174,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 }
             }
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             conversationQualifiedIDsSync.fetch { [weak self] (result) in
                 switch result {
                 case .success(let qualifiedConversationIDList):
@@ -226,17 +226,17 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = APIVersion.current else { return }
+        guard let apiVersion = BackendInfo.apiVersion else { return }
 
         switch apiVersion {
         case .v0:
             guard let identifier = object.remoteIdentifier else { return }
             synchronize(unqualifiedID: identifier)
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             if let qualifiedID = object.qualifiedID {
                 synchronize(qualifiedID: qualifiedID)
-            } else if let identifier = object.remoteIdentifier, let domain = APIVersion.domain {
+            } else if let identifier = object.remoteIdentifier, let domain = BackendInfo.domain {
                 let qualifiedID = QualifiedID(uuid: identifier, domain: domain)
                 synchronize(qualifiedID: qualifiedID)
             }
@@ -469,8 +469,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
 
-            case .v1, .v2:
-                guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
+            case .v1, .v2, .v3:
+                guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
@@ -501,8 +501,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
-            case .v1, .v2:
-                guard let domain = conversation.domain.nonEmptyValue ?? APIVersion.domain else { return nil }
+            case .v1, .v2, .v3:
+                guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
                                              method: .methodPUT,
                                              payload: payloadAsString as ZMTransportData?,

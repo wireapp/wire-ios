@@ -19,20 +19,7 @@
 import WireTesting
 @testable import WireRequestStrategy
 
-class AssetRequestFactoryTests: ZMTBaseTest {
-
-    var coreDataStack: CoreDataStack!
-
-    override func setUp() {
-        super.setUp()
-        self.coreDataStack = createCoreDataStack()
-    }
-
-    override func tearDown() {
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.coreDataStack = nil
-        super.tearDown()
-    }
+class AssetRequestFactoryTests: MessagingTestBase {
 
     func testThatItReturnsExpiringForRegularConversation() {
         // given
@@ -94,6 +81,137 @@ class AssetRequestFactoryTests: ZMTBaseTest {
         // then
         XCTAssert(conversation.containsTeamUser)
         XCTAssertEqual(AssetRequestFactory.Retention(conversation: conversation), .eternalInfrequentAccess)
+    }
+
+    // MARK: - Upstream requests
+
+    func test_UpstreamRequest_V0() throws {
+        // Given
+        let sut = AssetRequestFactory()
+        let data = Data([1, 2, 3])
+        let apiVersion = APIVersion.v0
+
+        // When
+        let request = try XCTUnwrap(sut.upstreamRequestForAsset(
+            withData: data,
+            retention: .eternal,
+            apiVersion: apiVersion
+        ))
+
+        // Then
+        XCTAssertEqual(request.path, "/assets/v3")
+    }
+
+    func test_UpstreamRequest_V1() throws {
+        // Given
+        let sut = AssetRequestFactory()
+        let data = Data([1, 2, 3])
+        let apiVersion = APIVersion.v1
+
+        // When
+        let request = try XCTUnwrap(sut.upstreamRequestForAsset(
+            withData: data,
+            retention: .eternal,
+            apiVersion: apiVersion
+        ))
+
+        // Then
+        XCTAssertEqual(request.path, "/v1/assets/v3")
+    }
+
+    func test_UpstreamRequest_V2() throws {
+        // Given
+        let sut = AssetRequestFactory()
+        let data = Data([1, 2, 3])
+        let apiVersion = APIVersion.v2
+
+        // When
+        let request = try XCTUnwrap(sut.upstreamRequestForAsset(
+            withData: data,
+            retention: .eternal,
+            apiVersion: apiVersion
+        ))
+
+        // Then
+        XCTAssertEqual(request.path, "/v2/assets")
+    }
+
+    @available(iOS 15, *)
+    func test_BackgroundUpstreamRequest_V0() throws {
+        try coreDataStack.syncContext.performAndWait {
+            // Given
+            let sut = AssetRequestFactory()
+            let sender = createUser()
+            let message = ZMAssetClientMessage(nonce: .create(), managedObjectContext: coreDataStack.syncContext)
+            message.sender = sender
+            message.visibleInConversation = createGroupConversation(with: sender)
+
+            let data = Data([1, 2, 3])
+            let apiVersion = APIVersion.v0
+
+            // When
+            let request = try XCTUnwrap(sut.backgroundUpstreamRequestForAsset(
+                message: message,
+                withData: data,
+                retention: .eternal,
+                apiVersion: apiVersion
+            ))
+
+            // Then
+            XCTAssertEqual(request.path, "/assets/v3")
+        }
+    }
+
+    @available(iOS 15, *)
+    func test_BackgroundUpstreamRequest_V1() throws {
+        try coreDataStack.syncContext.performAndWait {
+            // Given
+            let sut = AssetRequestFactory()
+            let sender = createUser()
+            let message = ZMAssetClientMessage(nonce: .create(), managedObjectContext: coreDataStack.syncContext)
+            message.sender = sender
+            message.visibleInConversation = createGroupConversation(with: sender)
+
+            let data = Data([1, 2, 3])
+            let apiVersion = APIVersion.v1
+
+            // When
+            let request = try XCTUnwrap(sut.backgroundUpstreamRequestForAsset(
+                message: message,
+                withData: data,
+                retention: .eternal,
+                apiVersion: apiVersion
+            ))
+
+            // Then
+            XCTAssertEqual(request.path, "/v1/assets/v3")
+        }
+    }
+
+    @available(iOS 15, *)
+    func test_BackgroundUpstreamRequest_V2() throws {
+        try coreDataStack.syncContext.performAndWait {
+            // Given
+            let sut = AssetRequestFactory()
+            let sender = createUser()
+            let message = ZMAssetClientMessage(nonce: .create(), managedObjectContext: coreDataStack.syncContext)
+            message.sender = sender
+            message.visibleInConversation = createGroupConversation(with: sender)
+
+            let data = Data([1, 2, 3])
+            let apiVersion = APIVersion.v2
+
+            // When
+            let request = try XCTUnwrap(sut.backgroundUpstreamRequestForAsset(
+                message: message,
+                withData: data,
+                retention: .eternal,
+                apiVersion: apiVersion
+            ))
+
+            // Then
+            XCTAssertEqual(request.path, "/v2/assets")
+        }
     }
 
 }
