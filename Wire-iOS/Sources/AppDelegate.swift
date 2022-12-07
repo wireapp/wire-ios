@@ -50,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AutomationHelperOperation(),
         MediaManagerOperation(),
         FileBackupExcluderOperation(),
-        APIVersionOperation(),
+        BackendInfoOperation(),
         FontSchemeOperation(),
         VoIPPushHelperOperation(),
         CleanUpDebugStateOperation()
@@ -276,7 +276,8 @@ private extension AppDelegate {
             configuration: configuration,
             detector: jailbreakDetector,
             requiredPushTokenType: requiredPushTokenType,
-            coreCryptoSetup: CoreCryptoWrapper.setup
+            coreCryptoSetup: CoreCryptoWrapper.setup,
+            isDeveloperModeEnabled: Bundle.developerModeEnabled
         )
     }
 

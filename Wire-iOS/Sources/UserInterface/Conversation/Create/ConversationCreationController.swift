@@ -94,8 +94,12 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Properties
 
+    typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
+
     private let selfUser: UserType
-    private let colorSchemeVariant = ColorScheme.default.variant
+    static let mainViewHeight: CGFloat = 56
+    fileprivate let colorSchemeVariant = ColorScheme.default.variant
+
     private let collectionViewController = SectionCollectionViewController()
 
     fileprivate var navBarBackgroundView = UIView()
@@ -206,7 +210,7 @@ final class ConversationCreationController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        title = "conversation.create.group_name.title".localized(uppercased: true)
+        navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
         setupNavigationBar()
         setupViews()
@@ -275,18 +279,13 @@ final class ConversationCreationController: UIViewController {
 
     private func setupNavigationBar() {
         self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: colorSchemeVariant)
+        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: SemanticColors.Label.textDefault)
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.updatedCloseItem()
+            navigationItem.leftBarButtonItem = navigationController?.closeItem()
         }
 
-        let nextButtonItem = UIBarButtonItem(
-            title: L10n.Localizable.General.next.uppercased(),
-            style: .plain,
-            target: self,
-            action: #selector(tryToProceed)
-        )
+        let nextButtonItem = UIBarButtonItem(title: L10n.Localizable.General.next.capitalized, style: .plain, target: self, action: #selector(tryToProceed))
 
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()

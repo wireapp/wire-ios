@@ -195,15 +195,15 @@ extension AppCenterOperation: CrashesDelegate {
 }
 #endif
 
-// MARK: - APIVersionOperation
+// MARK: - BackendInfoOperation
 
-final class APIVersionOperation: LaunchSequenceOperation {
+final class BackendInfoOperation: LaunchSequenceOperation {
 
     func execute() {
-        APIVersion.storage = .applicationGroup
+        BackendInfo.storage = .applicationGroup
 
         if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIversion {
-            APIVersion.preferredVersion = preferredVersion
+            BackendInfo.preferredAPIVersion = preferredVersion
         }
     }
 
@@ -238,7 +238,7 @@ final class CleanUpDebugStateOperation: LaunchSequenceOperation {
 
         // Clearing this ensures that the api version is negotiated with the backend
         // and not set explicitly.
-        APIVersion.preferredVersion = nil
+        BackendInfo.preferredAPIVersion = nil
 
         // Clearing all developer flags ensures that no custom behavior is
         // present in the app.

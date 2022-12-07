@@ -75,6 +75,18 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         didSet { }
     }
 
+    override var accessibilityLabel: String? {
+        get {
+            guard let title = title,
+                  let status = status else { return nil }
+            return "\(title), \(status)"
+        }
+
+        set {
+            super.accessibilityLabel = newValue
+        }
+    }
+
     // MARK: - Configuration - Override Methods
 
     override func setUp() {
@@ -123,6 +135,8 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
         contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8).isActive = true
         contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).isActive = true
+
+        setupAccessibility()
     }
 
     override func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
@@ -165,6 +179,11 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         } else {
             statusLabel.isHidden = true
         }
+    }
+
+    private func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .button
     }
 
     func redrawFont() {
