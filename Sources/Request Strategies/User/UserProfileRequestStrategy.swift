@@ -94,10 +94,10 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
-            } else if let domain = APIVersion.domain {
+            } else if let domain = BackendInfo.domain {
                 let qualifiedUserIDs = users.fallbackQualifiedIDs(localDomain: domain)
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             }
@@ -129,7 +129,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        guard let apiVersion = APIVersion.current else { return }
+        guard let apiVersion = BackendInfo.apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
             .compactMap { $0 as? ZMUser}
@@ -145,7 +145,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         guard
             let users = objects as? Set<ZMUser>,
-            let apiVersion = APIVersion.current
+            let apiVersion = BackendInfo.apiVersion
         else {
             return
         }

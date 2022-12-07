@@ -175,7 +175,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.method, .methodPOST, line: line)
             return request
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             guard let request = sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("No request generated", line: line)
                 return nil

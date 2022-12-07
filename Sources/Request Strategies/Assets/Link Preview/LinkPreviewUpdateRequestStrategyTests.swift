@@ -207,7 +207,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         case .v0:
             XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             let domain = conversation.domain!
             XCTAssertEqual(request?.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
         }

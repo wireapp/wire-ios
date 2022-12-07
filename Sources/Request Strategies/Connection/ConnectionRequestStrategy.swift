@@ -100,7 +100,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 }
             }
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             connectionListSync.fetch { [weak self] result in
                 switch result {
                 case .success(let connectionList):
@@ -149,7 +149,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
         defer { completion() }
-        guard let apiVersion = APIVersion.current else { return }
+        guard let apiVersion = BackendInfo.apiVersion else { return }
 
         switch apiVersion {
         case .v0:
@@ -158,7 +158,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
                 connectionByIDSync.sync(identifiers: userIdSet)
             }
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             if let qualifiedID = object.to.qualifiedID {
                 let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
                 connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)
