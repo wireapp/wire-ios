@@ -112,7 +112,7 @@ extension ZMConversationTests {
 
         syncMOC.performGroupedBlockAndWait {
             // when
-            APIVersion.isFederationEnabled = false
+            BackendInfo.isFederationEnabled = false
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: "a.com", in: self.syncMOC)
 
             // then
@@ -129,7 +129,7 @@ extension ZMConversationTests {
 
         syncMOC.performGroupedBlockAndWait {
             // when
-            APIVersion.isFederationEnabled = true
+            BackendInfo.isFederationEnabled = true
             let created = ZMConversation.fetchOrCreate(with: uuid, domain: domain, in: self.syncMOC)
 
             // then
@@ -138,7 +138,7 @@ extension ZMConversationTests {
             XCTAssertEqual(domain, created.domain)
 
             // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a swift enum
-            APIVersion.isFederationEnabled = false
+            BackendInfo.isFederationEnabled = false
         }
     }
 }
