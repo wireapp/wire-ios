@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -2608,6 +2608,62 @@ public struct TrackingIdentifier {
 
   fileprivate var _identifier: String? = nil
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+extension ClientAction: @unchecked Sendable {}
+extension EncryptionAlgorithm: @unchecked Sendable {}
+extension LegalHoldStatus: @unchecked Sendable {}
+extension GenericMessage: @unchecked Sendable {}
+extension GenericMessage.OneOf_Content: @unchecked Sendable {}
+extension QualifiedUserId: @unchecked Sendable {}
+extension QualifiedConversationId: @unchecked Sendable {}
+extension Composite: @unchecked Sendable {}
+extension Composite.Item: @unchecked Sendable {}
+extension Composite.Item.OneOf_Content: @unchecked Sendable {}
+extension Button: @unchecked Sendable {}
+extension ButtonAction: @unchecked Sendable {}
+extension ButtonActionConfirmation: @unchecked Sendable {}
+extension Availability: @unchecked Sendable {}
+extension Availability.TypeEnum: @unchecked Sendable {}
+extension Ephemeral: @unchecked Sendable {}
+extension Ephemeral.OneOf_Content: @unchecked Sendable {}
+extension Text: @unchecked Sendable {}
+extension Knock: @unchecked Sendable {}
+extension LinkPreview: @unchecked Sendable {}
+extension LinkPreview.OneOf_Preview: @unchecked Sendable {}
+extension LinkPreview.OneOf_MetaData: @unchecked Sendable {}
+extension Tweet: @unchecked Sendable {}
+extension Article: @unchecked Sendable {}
+extension Mention: @unchecked Sendable {}
+extension Mention.OneOf_MentionType: @unchecked Sendable {}
+extension LastRead: @unchecked Sendable {}
+extension Cleared: @unchecked Sendable {}
+extension MessageHide: @unchecked Sendable {}
+extension MessageDelete: @unchecked Sendable {}
+extension MessageEdit: @unchecked Sendable {}
+extension MessageEdit.OneOf_Content: @unchecked Sendable {}
+extension Quote: @unchecked Sendable {}
+extension Confirmation: @unchecked Sendable {}
+extension Confirmation.TypeEnum: @unchecked Sendable {}
+extension Location: @unchecked Sendable {}
+extension ImageAsset: @unchecked Sendable {}
+extension Asset: @unchecked Sendable {}
+extension Asset.OneOf_Status: @unchecked Sendable {}
+extension Asset.NotUploaded: @unchecked Sendable {}
+extension Asset.Original: @unchecked Sendable {}
+extension Asset.Original.OneOf_MetaData: @unchecked Sendable {}
+extension Asset.Preview: @unchecked Sendable {}
+extension Asset.Preview.OneOf_MetaData: @unchecked Sendable {}
+extension Asset.ImageMetaData: @unchecked Sendable {}
+extension Asset.VideoMetaData: @unchecked Sendable {}
+extension Asset.AudioMetaData: @unchecked Sendable {}
+extension Asset.RemoteData: @unchecked Sendable {}
+extension External: @unchecked Sendable {}
+extension Reaction: @unchecked Sendable {}
+extension Calling: @unchecked Sendable {}
+extension DataTransfer: @unchecked Sendable {}
+extension TrackingIdentifier: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

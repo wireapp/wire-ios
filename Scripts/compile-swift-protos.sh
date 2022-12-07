@@ -19,6 +19,7 @@ protoc "$2" \
 
 compile_proto $MESSAGES_PROTO_DIR "messages.proto"
 compile_proto $MESSAGES_PROTO_DIR "otr.proto"
+compile_proto $MESSAGES_PROTO_DIR "mls.proto"
 
 # 3) Insert Wire Header
 cd Protos

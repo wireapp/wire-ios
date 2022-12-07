@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -555,6 +555,25 @@ public struct Proteus_OtrAssetMeta {
   fileprivate var _isInline: Bool? = nil
   fileprivate var _nativePush: Bool? = nil
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+extension Proteus_Priority: @unchecked Sendable {}
+extension Proteus_UserId: @unchecked Sendable {}
+extension Proteus_QualifiedUserId: @unchecked Sendable {}
+extension Proteus_ClientId: @unchecked Sendable {}
+extension Proteus_ClientEntry: @unchecked Sendable {}
+extension Proteus_UserEntry: @unchecked Sendable {}
+extension Proteus_QualifiedUserEntry: @unchecked Sendable {}
+extension Proteus_NewOtrMessage: @unchecked Sendable {}
+extension Proteus_QualifiedNewOtrMessage: @unchecked Sendable {}
+extension Proteus_QualifiedNewOtrMessage.OneOf_ClientMismatchStrategy: @unchecked Sendable {}
+extension Proteus_ClientMismatchStrategy: @unchecked Sendable {}
+extension Proteus_ClientMismatchStrategy.ReportAll: @unchecked Sendable {}
+extension Proteus_ClientMismatchStrategy.IgnoreAll: @unchecked Sendable {}
+extension Proteus_ClientMismatchStrategy.ReportOnly: @unchecked Sendable {}
+extension Proteus_ClientMismatchStrategy.IgnoreOnly: @unchecked Sendable {}
+extension Proteus_OtrAssetMeta: @unchecked Sendable {}
+#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
