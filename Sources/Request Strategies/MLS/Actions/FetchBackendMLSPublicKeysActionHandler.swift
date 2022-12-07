@@ -32,7 +32,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v2:
+        case .v2, .v3:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
                 method: .methodGET,

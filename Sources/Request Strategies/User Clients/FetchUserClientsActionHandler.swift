@@ -40,7 +40,7 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             guard
                 let payloadData = RequestPayload(qualified_users: action.userIDs).payloadData(),
                 let payloadString = String(bytes: payloadData, encoding: .utf8)
@@ -80,7 +80,7 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
         case .v0:
             return
 
-        case .v1, .v2:
+        case .v1, .v2, .v3:
             switch response.httpStatus {
             case 200:
                 guard let rawData = response.rawData else {
