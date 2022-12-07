@@ -423,7 +423,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 // With MLS we will fetch all clients for each group participant at once
                 // directly from the backend.
                 let userIDs = conversation.localParticipants.map { user in
-                    QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? APIVersion.domain!)
+                    QualifiedID(uuid: user.remoteIdentifier, domain: user.domain ?? BackendInfo.domain!)
                 }
 
                 Task {
