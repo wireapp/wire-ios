@@ -46,11 +46,11 @@ extension MLSMessageSync {
                 return nil
 
             case .v2, .v3:
-                return v2Request(for: entity)
+                return internalRequest(for: entity, apiVersion: apiVersion)
             }
         }
 
-        private func v2Request(for message: Message) -> ZMTransportRequest? {
+        private func internalRequest(for message: Message, apiVersion: APIVersion) -> ZMTransportRequest? {
             guard let encryptedMessage = encryptMessage(message) else {
                 return nil
             }
@@ -61,7 +61,7 @@ extension MLSMessageSync {
                 binaryData: encryptedMessage,
                 type: "message/mls",
                 contentDisposition: nil,
-                apiVersion: 2
+                apiVersion: apiVersion.rawValue
             )
 
             if let expirationDate = message.expirationDate {
