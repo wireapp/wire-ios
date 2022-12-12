@@ -269,13 +269,7 @@ public final class MLSController: MLSControllerProtocol {
     // MARK: - Group creation
 
     enum MLSGroupCreationError: Error, Equatable {
-
-        case noParticipantsToAdd
-        case failedToClaimKeyPackages
         case failedToCreateGroup
-        case failedToAddMembers
-        case failedToSendWelcomeMessage
-
     }
 
     /// Create an MLS group with the given group id.
@@ -307,105 +301,12 @@ public final class MLSController: MLSControllerProtocol {
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
     }
 
-    private func claimKeyPackages(for users: [MLSUser]) async throws -> [KeyPackage] {
-        logger.info("claiming key packages for users: \(users)")
-        do {
-            guard let context = context else { return [] }
-
-            var result = [KeyPackage]()
-
-            for try await keyPackages in claimKeyPackages(for: users, in: context) {
-                result.append(contentsOf: keyPackages)
-            }
-
-            return result
-        } catch let error {
-            logger.warn("failed to claim key packages: \(String(describing: error))")
-            throw MLSGroupCreationError.failedToClaimKeyPackages
-        }
-    }
-
-    private func claimKeyPackages(
-        for users: [MLSUser],
-        in context: NSManagedObjectContext
-    ) -> AsyncThrowingStream<([KeyPackage]), Error> {
-        var index = 0
-
-        return AsyncThrowingStream { [actionsProvider] in
-            guard let user = users.element(atIndex: index) else { return nil }
-
-            index += 1
-
-            return try await actionsProvider.claimKeyPackages(
-                userID: user.id,
-                domain: user.domain,
-                excludedSelfClientID: user.selfClientID,
-                in: context.notificationContext
-            )
-        }
-    }
-
-    enum MLSSendMessageError: Error {
-
-        case failedToSendCommit
-        case failedToSendProposal
-
-    }
-
-    private func existsPendingPropsals(in groupID: MLSGroupID) -> Bool {
-        guard let context = context else { return false }
-
-        var groupHasPendingProposals = false
-
-        context.performAndWait {
-            if let conversation = ZMConversation.fetch(with: groupID, in: context) {
-                groupHasPendingProposals = conversation.commitPendingProposalDate != nil
-            }
-        }
-
-        return groupHasPendingProposals
-    }
-
-    private func sendProposal(_ bytes: Bytes, groupID: MLSGroupID) async throws {
-        do {
-            logger.info("sending proposal in group (\(groupID))")
-
-            guard let context = context else { return }
-
-            let updateEvents = try await actionsProvider.sendMessage(
-                bytes.data,
-                in: context.notificationContext
-            )
-
-            conversationEventProcessor.processConversationEvents(updateEvents)
-
-        } catch let error {
-            logger.warn("failed to send proposal in group (\(groupID)): \(String(describing: error))")
-            throw MLSSendMessageError.failedToSendProposal
-        }
-    }
-
-    private func sendWelcomeMessage(_ bytes:  Bytes) async throws {
-        logger.info("sending welcome message")
-
-        do {
-            guard let context = context else { return }
-            try await actionsProvider.sendWelcomeMessage(
-                bytes.data,
-                in: context.notificationContext
-            )
-        } catch let error {
-            logger.warn("failed to send welcome message: \(String(describing: error))")
-            throw MLSGroupCreationError.failedToSendWelcomeMessage
-        }
-    }
-
     // MARK: - Add member
 
     enum MLSAddMembersError: Error {
 
         case noMembersToAdd
-        case failedToAddMembers
+        case failedToClaimKeyPackages
 
     }
 
@@ -439,13 +340,48 @@ public final class MLSController: MLSControllerProtocol {
         }
     }
 
+    private func claimKeyPackages(for users: [MLSUser]) async throws -> [KeyPackage] {
+        logger.info("claiming key packages for users: \(users)")
+        do {
+            guard let context = context else { return [] }
+
+            var result = [KeyPackage]()
+
+            for try await keyPackages in claimKeyPackages(for: users, in: context) {
+                result.append(contentsOf: keyPackages)
+            }
+
+            return result
+        } catch let error {
+            logger.warn("failed to claim key packages: \(String(describing: error))")
+            throw MLSAddMembersError.failedToClaimKeyPackages
+        }
+    }
+
+    private func claimKeyPackages(
+        for users: [MLSUser],
+        in context: NSManagedObjectContext
+    ) -> AsyncThrowingStream<([KeyPackage]), Error> {
+        var index = 0
+
+        return AsyncThrowingStream { [actionsProvider] in
+            guard let user = users.element(atIndex: index) else { return nil }
+
+            index += 1
+
+            return try await actionsProvider.claimKeyPackages(
+                userID: user.id,
+                domain: user.domain,
+                excludedSelfClientID: user.selfClientID,
+                in: context.notificationContext
+            )
+        }
+    }
+
     // MARK: - Remove participants from mls group
 
     enum MLSRemoveParticipantsError: Error {
-
-        case failedToRemoveMembers
         case noClientsToRemove
-
     }
 
     public func removeMembersFromConversation(
@@ -628,7 +564,6 @@ public final class MLSController: MLSControllerProtocol {
         
     }
 
-
     public func conversationExists(groupID: MLSGroupID) -> Bool {
         let result = coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
@@ -665,7 +600,6 @@ public final class MLSController: MLSControllerProtocol {
     public func registerPendingJoin(_ groupID: MLSGroupID) {
         groupsPendingJoin.insert(groupID)
     }
-
 
     /// Request to join groups still pending
     ///
@@ -716,6 +650,29 @@ public final class MLSController: MLSControllerProtocol {
             logger.warn(
                 "failed to request join for group (\(groupID)): \(String(describing: error))"
             )
+        }
+    }
+
+    enum MLSSendProposalError: Error {
+        case failedToSendProposal
+    }
+
+    private func sendProposal(_ bytes: Bytes, groupID: MLSGroupID) async throws {
+        do {
+            logger.info("sending proposal in group (\(groupID))")
+
+            guard let context = context else { return }
+
+            let updateEvents = try await actionsProvider.sendMessage(
+                bytes.data,
+                in: context.notificationContext
+            )
+
+            conversationEventProcessor.processConversationEvents(updateEvents)
+
+        } catch let error {
+            logger.warn("failed to send proposal in group (\(groupID)): \(String(describing: error))")
+            throw MLSSendProposalError.failedToSendProposal
         }
     }
 
@@ -889,6 +846,20 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("success: committed pending proposals in group (\(groupID))")
     }
 
+    private func existsPendingPropsals(in groupID: MLSGroupID) -> Bool {
+        guard let context = context else { return false }
+
+        var groupHasPendingProposals = false
+
+        context.performAndWait {
+            if let conversation = ZMConversation.fetch(with: groupID, in: context) {
+                groupHasPendingProposals = conversation.commitPendingProposalDate != nil
+            }
+        }
+
+        return groupHasPendingProposals
+    }
+
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalCommitPendingProposals(in: groupID)
@@ -1015,26 +986,6 @@ extension MLSUser: CustomStringConvertible {
 
 }
 
-enum MessageKind {
-
-    case commit
-    case proposal
-
-}
-
-extension MessageKind: CustomStringConvertible {
-
-    var description: String {
-        switch self {
-        case .commit:
-            return "commit"
-        case .proposal:
-            return "proposal"
-        }
-    }
-
-}
-
 // MARK: - Helper Extensions
 
 private extension TimeInterval  {
@@ -1049,20 +1000,6 @@ private extension Date {
 
     var isInThePast: Bool {
         return compare(Date()) != .orderedDescending
-    }
-
-}
-        
-
-private extension MLSController.MLSSendMessageError {
-
-    init(from messageKind: MessageKind) {
-        switch messageKind {
-        case .commit:
-            self = .failedToSendCommit
-        case .proposal:
-            self = .failedToSendProposal
-        }
     }
 
 }
@@ -1103,130 +1040,11 @@ extension Invitee {
 
 }
 
-protocol MLSActionsProviderProtocol {
-
-    func fetchBackendPublicKeys(
-        in context: NotificationContext
-    ) async throws -> BackendMLSPublicKeys
-
-    func countUnclaimedKeyPackages(
-        clientID: String,
-        context: NotificationContext
-    ) async throws -> Int
-
-    func uploadKeyPackages(
-        clientID: String,
-        keyPackages: [String],
-        context: NotificationContext
-    ) async throws
-
-    func claimKeyPackages(
-        userID: UUID,
-        domain: String?,
-        excludedSelfClientID: String?,
-        in context: NotificationContext
-    ) async throws -> [KeyPackage]
-
-    func sendMessage(
-        _ message: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent]
-
-    func sendWelcomeMessage(
-        _ welcomeMessage: Data,
-        in context: NotificationContext
-    ) async throws
-
-    func fetchPublicGroupState(
-        conversationId: UUID,
-        domain: String,
-        context: NotificationContext
-    ) async throws -> Data
-
-}
-
-class MLSActionsProvider: MLSActionsProviderProtocol {
-
-    func fetchBackendPublicKeys(
-        in context: NotificationContext
-    ) async throws -> BackendMLSPublicKeys {
-        var action = FetchBackendMLSPublicKeysAction()
-        return try await action.perform(in: context)
-    }
-
-    func countUnclaimedKeyPackages(
-        clientID: String,
-        context: NotificationContext
-    ) async throws -> Int {
-        var action = CountSelfMLSKeyPackagesAction(clientID: clientID)
-        return try await action.perform(in: context)
-    }
-
-    func uploadKeyPackages(
-        clientID: String,
-        keyPackages: [String],
-        context: NotificationContext
-    ) async throws {
-        var action = UploadSelfMLSKeyPackagesAction(
-            clientID: clientID,
-            keyPackages: keyPackages
-        )
-
-        try await action.perform(in: context)
-    }
-
-    func claimKeyPackages(
-        userID: UUID,
-        domain: String?,
-        excludedSelfClientID: String?,
-        in context: NotificationContext
-    ) async throws -> [KeyPackage] {
-        var action = ClaimMLSKeyPackageAction(
-            domain: domain,
-            userId: userID,
-            excludedSelfClientId: excludedSelfClientID
-        )
-
-        return try await action.perform(in: context)
-    }
-
-    func sendMessage(
-        _ message: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent] {
-        var action = SendMLSMessageAction(message: message)
-        return try await action.perform(in: context)
-    }
-
-    func sendWelcomeMessage(
-        _ welcomeMessage: Data,
-        in context: NotificationContext
-    ) async throws {
-        var action = SendMLSWelcomeAction(welcomeMessage: welcomeMessage)
-        try await action.perform(in: context)
-    }
-
-    func fetchPublicGroupState(
-        conversationId: UUID,
-        domain: String,
-        context: NotificationContext
-    ) async throws -> Data {
-        var action = FetchPublicGroupStateAction(
-            conversationId: conversationId,
-            domain: domain
-        )
-
-        return try await action.perform(in: context)
-    }
-}
-
 public protocol ConversationEventProcessorProtocol {
 
     func processConversationEvents(_ events: [ZMUpdateEvent])
 
 }
-
-// MARK: - Helper
 
 private extension UserDefaults {
 

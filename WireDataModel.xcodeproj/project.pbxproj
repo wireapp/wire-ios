@@ -291,6 +291,9 @@
 		6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */; };
 		6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */; };
 		638805652410FE920043B641 /* ButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638805642410FE920043B641 /* ButtonState.swift */; };
+		6397F6E028F4447700298DB1 /* SendCommitBundleAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6DF28F4447700298DB1 /* SendCommitBundleAction.swift */; };
+		6397F6E428F481A700298DB1 /* MLSActionsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E328F481A700298DB1 /* MLSActionsProvider.swift */; };
+		6397F6E828F972F600298DB1 /* CommitBundle+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E728F972F600298DB1 /* CommitBundle+Protobuf.swift */; };
 		63AFE2D6244F49A90003F619 /* GenericMessage+MessageCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */; };
 		63B658DE243754E100EF463F /* GenericMessage+UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */; };
 		63B658E0243789DE00EF463F /* GenericMessage+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */; };
@@ -320,7 +323,6 @@
 		7A2778C8285329210044A73F /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2778C7285329210044A73F /* KeychainManagerTests.swift */; };
 		7AA8560E28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8560D28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift */; };
 		7ABAD028287D92BF002071A1 /* MLSQualifiedClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABAD027287D92BF002071A1 /* MLSQualifiedClientID.swift */; };
-		7AFC6A2D2876E9BF000FF1A1 /* SendMLSWelcomeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC6A282876E9BF000FF1A1 /* SendMLSWelcomeAction.swift */; };
 		7AFC6A2E2876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC6A292876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift */; };
 		7AFC6A2F2876E9BF000FF1A1 /* ClaimMLSKeyPackageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC6A2A2876E9BF000FF1A1 /* ClaimMLSKeyPackageAction.swift */; };
 		7AFC6A302876E9BF000FF1A1 /* CountSelfMLSKeyPackagesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFC6A2B2876E9BF000FF1A1 /* CountSelfMLSKeyPackagesAction.swift */; };
@@ -1100,6 +1102,9 @@
 		63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Composite.swift"; sourceTree = "<group>"; };
 		63880556240FFE7A0043B641 /* zmessaging2.80.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.80.0.xcdatamodel; sourceTree = "<group>"; };
 		638805642410FE920043B641 /* ButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonState.swift; sourceTree = "<group>"; };
+		6397F6DF28F4447700298DB1 /* SendCommitBundleAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleAction.swift; sourceTree = "<group>"; };
+		6397F6E328F481A700298DB1 /* MLSActionsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSActionsProvider.swift; sourceTree = "<group>"; };
+		6397F6E728F972F600298DB1 /* CommitBundle+Protobuf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommitBundle+Protobuf.swift"; sourceTree = "<group>"; };
 		63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+MessageCapable.swift"; sourceTree = "<group>"; };
 		63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GenericMessage+UpdateEvent.swift"; sourceTree = "<group>"; };
 		63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Assets.swift"; sourceTree = "<group>"; };
@@ -1131,7 +1136,6 @@
 		7A2778C7285329210044A73F /* KeychainManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManagerTests.swift; sourceTree = "<group>"; };
 		7AA8560D28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPublicGroupStateAction.swift; sourceTree = "<group>"; };
 		7ABAD027287D92BF002071A1 /* MLSQualifiedClientID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSQualifiedClientID.swift; sourceTree = "<group>"; };
-		7AFC6A282876E9BF000FF1A1 /* SendMLSWelcomeAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeAction.swift; sourceTree = "<group>"; };
 		7AFC6A292876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesAction.swift; sourceTree = "<group>"; };
 		7AFC6A2A2876E9BF000FF1A1 /* ClaimMLSKeyPackageAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageAction.swift; sourceTree = "<group>"; };
 		7AFC6A2B2876E9BF000FF1A1 /* CountSelfMLSKeyPackagesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountSelfMLSKeyPackagesAction.swift; sourceTree = "<group>"; };
@@ -1921,9 +1925,9 @@
 				7AFC6A2A2876E9BF000FF1A1 /* ClaimMLSKeyPackageAction.swift */,
 				7AFC6A2B2876E9BF000FF1A1 /* CountSelfMLSKeyPackagesAction.swift */,
 				7AFC6A2C2876E9BF000FF1A1 /* SendMLSMessageAction.swift */,
-				7AFC6A282876E9BF000FF1A1 /* SendMLSWelcomeAction.swift */,
 				7AFC6A292876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift */,
 				EEC8064928CF4BAD00DD58E9 /* FetchBackendMLSPublicKeysAction.swift */,
+				6397F6DF28F4447700298DB1 /* SendCommitBundleAction.swift */,
 				7AA8560D28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift */,
 			);
 			path = Actions;
@@ -2030,6 +2034,7 @@
 			children = (
 				7AFC6A272876E935000FF1A1 /* Actions */,
 				EE404EA1287317CB00B3653F /* MLSController.swift */,
+				6397F6E328F481A700298DB1 /* MLSActionsProvider.swift */,
 				EEDE7DB428EAFE45007DC6A3 /* MLSActionExecutor.swift */,
 				EE04084B28CA8283009E4B8D /* StaleMLSKeyMaterialDetector.swift */,
 				EEFAAC3128DDE1D7009940E7 /* CoreCryptoCallbacks.swift */,
@@ -2046,6 +2051,7 @@
 				63172F7A2906968000DBECC9 /* CoreCryptoConfiguration.swift */,
 				63121636288089E600FF9A56 /* Bytes.swift */,
 				633B396D2893BB2D00208124 /* Bytes+Random.swift */,
+				6397F6E728F972F600298DB1 /* CommitBundle+Protobuf.swift */,
 			);
 			path = MLS;
 			sourceTree = "<group>";
@@ -3564,6 +3570,7 @@
 				06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */,
 				87C1C25F207F7DA80083BF6B /* InvalidGenericMessageDataRemoval.swift in Sources */,
 				544E8C111E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift in Sources */,
+				6397F6E828F972F600298DB1 /* CommitBundle+Protobuf.swift in Sources */,
 				0649D1C524F6A542001DDC78 /* NSManagedObjectContext+ZMKeyValueStore.swift in Sources */,
 				63D9A19E282AA0050074C20C /* NSManagedObjectContext+Federation.swift in Sources */,
 				EEDD426A28633B2800C9EBC4 /* ZMUser+Patches.swift in Sources */,
@@ -3604,7 +3611,6 @@
 				7AA8560E28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift in Sources */,
 				A943BBE825B5A59D003D66BA /* ConversationLike.swift in Sources */,
 				062FD8852756053800B9DE39 /* Feature.ConversationGuestLinks.swift in Sources */,
-				7AFC6A2D2876E9BF000FF1A1 /* SendMLSWelcomeAction.swift in Sources */,
 				F9B71F0D1CB264DF001DB03F /* ZMConversationListDirectory.m in Sources */,
 				A949418F23E1DB79001B0373 /* ZMConnection+Fetch.swift in Sources */,
 				EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */,
@@ -3703,6 +3709,7 @@
 				54FB03AF1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift in Sources */,
 				70E77B7D273188150021EE70 /* ZMConversation+Role.swift in Sources */,
 				63370CC9242E3B990072C37F /* ZMMessage+Conversation.swift in Sources */,
+				6397F6E428F481A700298DB1 /* MLSActionsProvider.swift in Sources */,
 				163D01E02472DE6200984999 /* InvalidConnectionRemoval.swift in Sources */,
 				547E66491F7503A5008CB1FA /* ZMConversation+Notifications.swift in Sources */,
 				EF18C7E61F9E4F8A0085A832 /* ZMUser+Filename.swift in Sources */,
@@ -3740,6 +3747,7 @@
 				54F6CEAB1CE2972200A1276D /* ZMAssetClientMessage+Download.swift in Sources */,
 				F9B71F221CB264EF001DB03F /* ZMConversation.m in Sources */,
 				EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */,
+				6397F6E028F4447700298DB1 /* SendCommitBundleAction.swift in Sources */,
 				8767E85B216391DF00390F75 /* ZMConversation+Mute.swift in Sources */,
 				F18998A61E7BE03800E579A2 /* zmessaging.xcdatamodeld in Sources */,
 				06D48737241FB3F700881B08 /* ZMClientMessage+Obfuscate.swift in Sources */,

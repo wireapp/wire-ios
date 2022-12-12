@@ -44,7 +44,6 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
         case failedToGenerateCommit
         case failedToSendCommit(recovery: ErrorRecovery)
-        case failedToSendWelcome
         case failedToMergeCommit
         case failedToClearCommit
         case noPendingProposals
@@ -209,17 +208,11 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func sendCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
-            let events = try await sendCommit(bundle.commit)
+            let events = try await sendCommitBundle(bundle)
             try mergeCommit(in: groupID)
-
-            if let welcome = bundle.welcome {
-                try await sendWelcome(welcome)
-            }
-
             return events
-
-        } catch let error as SendMLSMessageAction.Failure {
-            Logging.mls.warn("failed to send commit: \(String(describing: error))")
+        } catch let error as SendCommitBundleAction.Failure {
+            Logging.mls.warn("failed to send commit bundle: \(String(describing: error))")
 
             let recoveryStrategy = error.recoveryStrategy
 
@@ -231,22 +224,11 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    private func sendCommit(_ bytes: Bytes) async throws -> [ZMUpdateEvent] {
-        return try await actionsProvider.sendMessage(
-            bytes.data,
+    private func sendCommitBundle(_ bundle: CommitBundle) async throws -> [ZMUpdateEvent] {
+        return try await actionsProvider.sendCommitBundle(
+            try bundle.protobufData(),
             in: context.notificationContext
         )
-    }
-
-    private func sendWelcome(_ message: Bytes) async throws {
-        do {
-            try await actionsProvider.sendWelcomeMessage(
-                message.data,
-                in: context.notificationContext
-            )
-        } catch {
-            throw Error.failedToSendWelcome
-        }
     }
 
     // MARK: - Post sending
@@ -269,7 +251,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
 }
 
-extension SendMLSMessageAction.Failure {
+extension SendCommitBundleAction.Failure {
 
     var recoveryStrategy: MLSActionExecutor.ErrorRecovery {
         switch self {

@@ -30,6 +30,8 @@ public final class SendMLSMessageAction: EntityAction {
         case malformedRequest
         case malformedResponse
 
+        // 400
+        case mlsWelcomeMismatch
         case mlsGroupConversationMismatch
         case mlsClientSenderUserMismatch
         case mlsSelfRemovalNotAllowed
@@ -37,17 +39,23 @@ public final class SendMLSMessageAction: EntityAction {
         case mlsProtocolError
         case invalidRequestBody
 
+        // 403
         case missingLegalHoldConsent
+        case mlsMissingSenderClient
         case legalHoldNotEnabled
         case accessDenied
 
+        // 404
         case mlsProposalNotFound
         case mlsKeyPackageRefNotFound
         case noConversation
         case noConversationMember
 
+        // 409
         case mlsStaleMessage
         case mlsClientMismatch
+
+        // 422
         case mlsUnsupportedProposal
         case mlsUnsupportedMessage
 
@@ -63,6 +71,9 @@ public final class SendMLSMessageAction: EntityAction {
 
             case .malformedResponse:
                 return "The response payload could not be decoded"
+
+            case .mlsWelcomeMismatch:
+                return "The list of targets of a welcome message does not match the list of new clients in a group"
 
             case .mlsGroupConversationMismatch:
                 return "Conversation ID resolved from group ID does not match submitted conversation ID"
@@ -84,6 +95,9 @@ public final class SendMLSMessageAction: EntityAction {
 
             case .missingLegalHoldConsent:
                 return "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent"
+
+            case .mlsMissingSenderClient:
+                return "The client has to refresh their access token and provide their client ID"
 
             case .legalHoldNotEnabled:
                 return "Legal hold is not enabled for this team"

@@ -492,7 +492,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // No mock for claiming key packages.
 
         // Then
-        await assertItThrows(error: MLSController.MLSGroupCreationError.failedToClaimKeyPackages) {
+        await assertItThrows(error: MLSController.MLSAddMembersError.failedToClaimKeyPackages) {
             // When
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
