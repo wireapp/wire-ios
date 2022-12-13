@@ -37,12 +37,20 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
     }
     // MARK: - Request generation
 
-    func test_itGeneratesARequest_APIV2() throws {
+    func test_itGeneratesARequest_APIV3() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v2/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
+            expectedPath: "/v3/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
             expectedMethod: .methodGET,
-            apiVersion: .v2
+            apiVersion: .v3
+        )
+    }
+
+    func test_itDoesntGenerateRequests_APIV2() {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v2,
+            expectedError: .endpointUnavailable
         )
     }
 
