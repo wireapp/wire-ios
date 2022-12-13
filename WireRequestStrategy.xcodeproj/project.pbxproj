@@ -181,13 +181,13 @@
 		631216392881D10100FF9A56 /* ZMUpdateEvent+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */; };
 		633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */; };
 		633B396C2892D53300208124 /* MockMLSController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B396B2892D53300208124 /* MockMLSController.swift */; };
+		6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */; };
+		6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */; };
 		63CC83B12859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */; };
 		63CC83B3285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B2285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift */; };
 		63CC83B9285B4845008549AD /* String+Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B8285B4845008549AD /* String+Empty.swift */; };
 		63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83DF285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift */; };
 		63CC83E5285C9C72008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83E0285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift */; };
-		63CC83EE285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */; };
-		63CC83F0285CA2B8008549AD /* SendMLSWelcomeActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */; };
 		63CC83F2285CB96A008549AD /* ActionHandlerTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83F1285CB96A008549AD /* ActionHandlerTestBase.swift */; };
 		63DA339F286DF6ED00818C3C /* MLSEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */; };
 		63DA33A8286F27DD00818C3C /* MLSEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */; };
@@ -596,13 +596,13 @@
 		631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Payload.swift"; sourceTree = "<group>"; };
 		633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Decryption.swift"; sourceTree = "<group>"; };
 		633B396B2892D53300208124 /* MockMLSController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSController.swift; sourceTree = "<group>"; };
+		6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandler.swift; sourceTree = "<group>"; };
+		6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageActionHandler.swift; sourceTree = "<group>"; };
 		63CC83B2285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83B8285B4845008549AD /* String+Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Empty.swift"; sourceTree = "<group>"; };
 		63CC83DF285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesActionHandler.swift; sourceTree = "<group>"; };
 		63CC83E0285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
-		63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeActionHandler.swift; sourceTree = "<group>"; };
-		63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMLSWelcomeActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83F1285CB96A008549AD /* ActionHandlerTestBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandlerTestBase.swift; sourceTree = "<group>"; };
 		63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEventProcessor.swift; sourceTree = "<group>"; };
 		63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEventProcessorTests.swift; sourceTree = "<group>"; };
@@ -1192,14 +1192,14 @@
 				7A111DE9285C90B70085BF91 /* SendMLSMessageActionHandlerTests.swift */,
 				7AEBB676285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift */,
 				7AEBB678285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift */,
-				63CC83EB285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift */,
-				63CC83EC285CA2B0008549AD /* SendMLSWelcomeActionHandlerTests.swift */,
 				63CC83DF285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift */,
 				63CC83E0285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift */,
 				63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */,
 				63CC83B2285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift */,
 				EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */,
 				EE04084928C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift */,
+				6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */,
+				6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */,
 				7AA8560B28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift */,
 				7AA8560F28FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift */,
 			);
@@ -1888,6 +1888,7 @@
 				16E70F8A270EEB2300718E5D /* PayloadProcessing+Conversation.swift in Sources */,
 				EE402C0328996C2500CA0E40 /* MLSMessageSync.Transcoder.swift in Sources */,
 				16E5F6D626EF1BE100F35FBA /* PaginatedSync.swift in Sources */,
+				6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */,
 				161E055026655E4500DADC3D /* UserProfileRequestStrategy.swift in Sources */,
 				F18401D42073BE0800E9F4CC /* MessageExpirationTimer.swift in Sources */,
 				1622946B221C18BE00A98679 /* AssetV3UploadRequestStrategy.swift in Sources */,
@@ -1924,7 +1925,6 @@
 				06CDDE9F282E9CC200F9360F /* RemovePushTokenAction.swift in Sources */,
 				062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
-				63CC83EE285CA2B0008549AD /* SendMLSWelcomeActionHandler.swift in Sources */,
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
 				633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */,
 				06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */,
@@ -2016,7 +2016,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63CC83F0285CA2B8008549AD /* SendMLSWelcomeActionHandlerTests.swift in Sources */,
 				F18401E12073C25900E9F4CC /* OTREntityTests+Dependency.swift in Sources */,
 				547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */,
 				168D7CCE26FB303A00789960 /* AddParticipantActionHandlerTests.swift in Sources */,
@@ -2113,6 +2112,7 @@
 				16E70F94270EEEEB00718E5D /* PayloadProcessing+ConnectionTests.swift in Sources */,
 				16189D0A268B2C34004831BE /* ModifiedKeyObjectSyncTests.swift in Sources */,
 				F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
+				6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */,
 				06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */,
 				EE90C2AA282E855B00474379 /* RegisterPushTokenActionHandlerTests.swift in Sources */,
 				5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */,

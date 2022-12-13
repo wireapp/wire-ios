@@ -19,34 +19,33 @@
 import Foundation
 import WireDataModel
 
-class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
-
+class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
     typealias EventPayload = [AnyHashable: Any]
 
     // MARK: - Methods
 
     override func request(
-        for action: SendMLSMessageAction,
+        for action: SendCommitBundleAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
         var action = action
 
-        guard apiVersion > .v0 else {
+        guard apiVersion > .v2 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
 
-        guard !action.message.isEmpty else {
+        guard !action.commitBundle.isEmpty else {
             action.fail(with: .malformedRequest)
             return nil
         }
 
         return ZMTransportRequest(
-            path: "/mls/messages",
+            path: "/mls/commit-bundles",
             method: .methodPOST,
-            binaryData: action.message,
-            type: "message/mls",
+            binaryData: action.commitBundle,
+            type: "application/x-protobuf",
             contentDisposition: nil,
             shouldCompress: false,
             apiVersion: apiVersion.rawValue
@@ -55,7 +54,7 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
     override func handleResponse(
         _ response: ZMTransportResponse,
-        action: SendMLSMessageAction
+        action: SendCommitBundleAction
     ) {
         var action = action
 
@@ -81,6 +80,9 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
             action.succeed(with: updateEvents)
 
+        case (400, "mls-welcome-mismatch"):
+            action.fail(with: .mlsWelcomeMismatch)
+
         case (400, "mls-group-conversation-mismatch"):
             action.fail(with: .mlsGroupConversationMismatch)
 
@@ -101,6 +103,9 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
         case (403, "missing-legalhold-consent"):
             action.fail(with: .missingLegalHoldConsent)
+
+        case (403, "mls-missing-sender-client"):
+            action.fail(with: .mlsMissingSenderClient)
 
         case (403, "legalhold-not-enabled"):
             action.fail(with: .legalHoldNotEnabled)
