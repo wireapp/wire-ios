@@ -140,7 +140,7 @@ extension ZMLocalNotificationSet {
     }
 }
 
-extension ZMConversation {
+public extension ZMConversation {
     func localizedCallerName(with user: ZMUser) -> String {
 
         let conversationName = self.userDefinedName

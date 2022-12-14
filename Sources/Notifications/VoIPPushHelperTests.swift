@@ -72,23 +72,4 @@ class VoIPPushHelperTests: XCTestCase {
         XCTAssertTrue(VoIPPushHelper.isAVSReady)
     }
 
-    func testOngoingCalls() {
-        // Given
-        let id1 = UUID.create()
-        let id2 = UUID.create()
-        let id3 = UUID.create()
-
-        XCTAssertFalse(VoIPPushHelper.existsOngoingCallInConversation(withID: id1))
-        XCTAssertFalse(VoIPPushHelper.existsOngoingCallInConversation(withID: id2))
-        XCTAssertFalse(VoIPPushHelper.existsOngoingCallInConversation(withID: id3))
-
-        // When
-        VoIPPushHelper.setOngoingCalls(conversationIDs: [id1, id2])
-
-        // Then
-        XCTAssertTrue(VoIPPushHelper.existsOngoingCallInConversation(withID: id1))
-        XCTAssertTrue(VoIPPushHelper.existsOngoingCallInConversation(withID: id2))
-        XCTAssertFalse(VoIPPushHelper.existsOngoingCallInConversation(withID: id3))
-    }
-
 }
