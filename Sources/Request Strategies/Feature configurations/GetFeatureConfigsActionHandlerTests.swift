@@ -59,44 +59,48 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     // MARK: - Response handling
 
     func test_ItHandlesResponse_200() throws {
-        // Given
-        let sut = GetFeatureConfigsActionHandler(context: syncMOC)
-        var action = GetFeatureConfigsAction()
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
+            var action = GetFeatureConfigsAction()
 
-        // Expectation
-        let gotResult = expectation(description: "gotResult")
+            // Expectation
+            let gotResult = self.expectation(description: "gotResult")
 
-        action.onResult { result in
-            switch result {
-            case .success:
-                break
+            action.onResult { result in
+                switch result {
+                case .success:
+                    break
 
-            default:
-                XCTFail("Expected 'success'")
+                default:
+                    XCTFail("Expected 'success'")
+                }
+
+                gotResult.fulfill()
             }
 
-            gotResult.fulfill()
-        }
+            let payload = GetFeatureConfigsActionHandler.ResponsePayload(
+                appLock: .init(status: .enabled, config: .init(enforceAppLock: true, inactivityTimeoutSecs: 11)),
+                classifiedDomains: .init(status: .enabled, config: .init(domains: ["foo"])),
+                conferenceCalling: .init(status: .enabled),
+                conversationGuestLinks: .init(status: .enabled),
+                digitalSignatures: .init(status: .enabled),
+                fileSharing: .init(status: .enabled),
+                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
+            )
 
-        let payload = GetFeatureConfigsActionHandler.ResponsePayload(
-            appLock: .init(status: .enabled, config: .init(enforceAppLock: true, inactivityTimeoutSecs: 11)),
-            classifiedDomains: .init(status: .enabled, config: .init(domains: ["foo"])),
-            conferenceCalling: .init(status: .enabled),
-            conversationGuestLinks: .init(status: .enabled),
-            digitalSignatures: .init(status: .enabled),
-            fileSharing: .init(status: .enabled),
-            selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
-        )
+            guard let payloadData = try? JSONEncoder().encode(payload) else {
+                XCTFail("failed to encode payload")
+                return
+            }
 
-        let payloadData = try JSONEncoder().encode(payload)
-        let payloadString = String(data: payloadData, encoding: .utf8)!
+            let payloadString = String(data: payloadData, encoding: .utf8)!
 
-        // When
-        sut.handleResponse(mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+            // When
+            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
-        // Then
-        syncMOC.performGroupedBlock {
+            // Then
             let featureService = FeatureService(context: self.syncMOC)
 
             let appLock = featureService.fetchAppLock()

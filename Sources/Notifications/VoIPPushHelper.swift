@@ -71,17 +71,7 @@ public enum VoIPPushHelper {
         }
     }
 
-    public static func setOngoingCalls(conversationIDs: [UUID]) {
-        callKitCalls = conversationIDs.map(\.uuidString)
-    }
-
-    public static func existsOngoingCallInConversation(withID id: UUID) -> Bool {
-        return callKitCalls
-            .compactMap(UUID.init(uuidString:))
-            .contains(id)
-    }
-
-    private static var callKitCalls: [String] {
+    public static var knownCallHandles: [String] {
         get {
             storage.object(forKey: Key.knownCalls.rawValue) as? [String] ?? []
         }

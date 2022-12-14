@@ -20,7 +20,7 @@ import Foundation
 
 public struct CallEventContent: Decodable {
 
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
 
         case type
 
@@ -36,7 +36,7 @@ public struct CallEventContent: Decodable {
 
     /// Call event type.
 
-    let type: String
+    public let type: String
 
     /// Properties containing info whether the incoming call has video or not.
 
@@ -46,9 +46,22 @@ public struct CallEventContent: Decodable {
 
     let callerIdString: String
 
-    let resp: Bool
+    public let resp: Bool
 
     // MARK: - Life cycle
+
+    public init?(from event: ZMUpdateEvent) {
+        guard
+            event.type == .conversationOtrMessageAdd,
+            let message = GenericMessage(from: event),
+            message.hasCalling,
+            let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
+        else {
+            return nil
+        }
+
+        self.init(from: payload)
+    }
 
     public init?(from data: Data, with decoder: JSONDecoder = .init()) {
         do {
@@ -66,13 +79,29 @@ public struct CallEventContent: Decodable {
     }
 
     public var callState: LocalNotificationType.CallState? {
-        if isStartCall && !resp {
+        if isIncomingCall {
             return .incomingCall(video: properties?.isVideo ?? false)
         } else if isEndCall {
             return .missedCall(cancelled: true)
         } else {
             return nil
         }
+    }
+
+    public var initiatesRinging: Bool {
+        return isIncomingCall
+    }
+
+    public var terminatesRinging: Bool {
+        return isEndCall || isAnsweredElsewhere || isRejected
+    }
+
+    public var isIncomingCall: Bool {
+        return isStartCall && !resp
+    }
+
+    public var isAnsweredElsewhere: Bool {
+        return isStartCall && resp
     }
 
     public var isStartCall: Bool {
@@ -83,8 +112,20 @@ public struct CallEventContent: Decodable {
         return type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
     }
 
+    public var isRejected: Bool {
+        return type == "REJECT"
+    }
+
     public var isRemoteMute: Bool {
         return type == "REMOTEMUTE"
+    }
+
+    public var isVideo: Bool {
+        guard let properties = properties else {
+            return false
+        }
+
+        return properties.isVideo
     }
 
 }
