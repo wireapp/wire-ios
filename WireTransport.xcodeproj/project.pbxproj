@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01D97AE5294CA6B9001A04BD /* RequestLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */; };
+		01D97B13294CBAC0001A04BD /* RequestLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97B0F294CB921001A04BD /* RequestLog.swift */; };
+		01D97B14294CBAC0001A04BD /* ResponseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97B11294CB98F001A04BD /* ResponseLog.swift */; };
+		01E1B793294B260100CEA021 /* RemoteLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E1B792294B260000CEA021 /* RemoteLogger.swift */; };
 		0928E2051BA023A30057232E /* NSData_MultipartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0928E2041BA023A30057232E /* NSData_MultipartTests.m */; };
 		095840201B9591F1004555F9 /* NSData+Multipart.m in Sources */ = {isa = PBXBuildFile; fileRef = 0958401E1B9591F1004555F9 /* NSData+Multipart.m */; };
 		095840221B959200004555F9 /* NSData+Multipart.h in Headers */ = {isa = PBXBuildFile; fileRef = 095840211B959200004555F9 /* NSData+Multipart.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -199,6 +203,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLogTests.swift; sourceTree = "<group>"; };
+		01D97B0F294CB921001A04BD /* RequestLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLog.swift; sourceTree = "<group>"; };
+		01D97B11294CB98F001A04BD /* ResponseLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseLog.swift; sourceTree = "<group>"; };
+		01E1B792294B260000CEA021 /* RemoteLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RemoteLogger.swift; path = Source/Public/RemoteLogger.swift; sourceTree = SOURCE_ROOT; };
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
@@ -564,6 +572,7 @@
 				546E89D21B33015000DD1042 /* ZMTransportRequestTests.m */,
 				546E89D31B33015000DD1042 /* ZMTransportResponseTests.m */,
 				54C3EC6E243E3516000B9230 /* RequestAvailableNotificationTests.swift */,
+				01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -689,6 +698,8 @@
 			isa = PBXGroup;
 			children = (
 				54CAD7081BB54097006FF8E9 /* ZMTLogging.h */,
+				01D97B0F294CB921001A04BD /* RequestLog.swift */,
+				01D97B11294CB98F001A04BD /* ResponseLog.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -735,6 +746,7 @@
 				F1D1281F21C2665E0090045E /* BackendEndpoints.swift */,
 				F1D1281621C1556D0090045E /* BackendEnvironmentProvider.swift */,
 				F1D1281721C1556E0090045E /* TrustData.swift */,
+				01E1B792294B260000CEA021 /* RemoteLogger.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1035,6 +1047,7 @@
 				54CA15BB1B32F2C1008D3787 /* ZMUserAgent.m in Sources */,
 				F186BD572265DD780072A85F /* BackendEnvironment+Fetching.swift in Sources */,
 				F1EDA286221AB6CB00DAF906 /* URLSessionsDirectory.swift in Sources */,
+				01D97B14294CBAC0001A04BD /* ResponseLog.swift in Sources */,
 				5499FFD21B31C66D00835C8B /* ZMTransportPushChannel.m in Sources */,
 				F1858A84226874C300FA2ACE /* Logging.swift in Sources */,
 				54CA15BF1B32F2C1008D3787 /* NSString+UUID.m in Sources */,
@@ -1071,6 +1084,7 @@
 				54CA15C31B32F2C1008D3787 /* ZMTransportData.m in Sources */,
 				54CA15C51B32F2C1008D3787 /* NSError+ZMTransportSession.m in Sources */,
 				7038D63E27D0D286004BE280 /* APIVersion.swift in Sources */,
+				01E1B793294B260100CEA021 /* RemoteLogger.swift in Sources */,
 				166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */,
 				87B2B79B20BC476E00799AB9 /* ZMTransportRequest.swift in Sources */,
 				54CA15C11B32F2C1008D3787 /* ZMTransportCodec.m in Sources */,
@@ -1090,6 +1104,7 @@
 				5EAC173521A44FB90014E671 /* BackgroundActivity.swift in Sources */,
 				54CA15531B32F2C1008D3787 /* ZMAccessTokenHandler.m in Sources */,
 				54CA15D71B32F2C1008D3787 /* ZMURLSession.m in Sources */,
+				01D97B13294CBAC0001A04BD /* RequestLog.swift in Sources */,
 				5E2C351021A554610034F1EE /* BackgroundActivityManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1112,6 +1127,7 @@
 				F1D1281C21C262280090045E /* ServerCertificateTrustTests.swift in Sources */,
 				546E89E11B33015000DD1042 /* ZMPersistentCookieStorageTests.m in Sources */,
 				F118CBBF1F432F25004DCF96 /* ZMTransportSessionTests.swift in Sources */,
+				01D97AE5294CA6B9001A04BD /* RequestLogTests.swift in Sources */,
 				5E2C352621A567600034F1EE /* MockBackgroundActivityManager.swift in Sources */,
 				546E8A071B33015000DD1042 /* ZMURLSessionTests.m in Sources */,
 				162F5806267150FC00337797 /* NativePushChannelTests+ServerTrust.swift in Sources */,
