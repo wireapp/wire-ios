@@ -1,0 +1,28 @@
+/*
+ *  Wire
+ *  Copyright (C) 2016 Wire Swiss GmbH
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+
+"NSContactsUsageDescription" = "Дозволити Wire доступ до ваших контактів, щоб іншим людям простіше було вас знайти. Ми анонімізуємо всю інформацію перед завантаженням на наш сервер і не ділимося нею з ніким іншим.";
+"NSMicrophoneUsageDescription" = "Дозволити Wire доступ до вашого мікрофону для здійснення дзвінків та надсилання аудіоповідомлень.";
+"NSLocationWhenInUseUsageDescription" = "Дозволити Wire доступ до визначення вашого розташування, щоб можна було поділитися ним з іншими користувачами.";
+"NSCameraUsageDescription" = "Дозволити Wire доступ до вашої камери для здійснення відеодзвінків та надсилання фотографій.";
+/* Showed after taking a picture with camera, but only when NSPhotoLibraryUsageDescription permission was declined. Asks permission for only writing to photo library. */
+"NSPhotoLibraryAddUsageDescription" = "Дозволити Wire зберігати картинки у вашій фототеці.";
+/* Showed when trying to send picture from conversaiton list. Asks permissions for reading and writing to photo library */
+"NSPhotoLibraryUsageDescription" = "Allow Wire to access pictures stored in photo library so you can send pictures and videos to others.";
+/* Is shown to the user when app is locked with AppLock feature on the phone that supports Face ID */
+"NSFaceIDUsageDescription" = "Дозволити Wire доступ до функції Face ID, щоб авторизуватися в додатку.";

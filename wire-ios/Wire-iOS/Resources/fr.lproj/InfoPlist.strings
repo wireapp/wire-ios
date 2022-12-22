@@ -1,0 +1,28 @@
+/*
+ *  Wire
+ *  Copyright (C) 2016 Wire Swiss GmbH
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+
+"NSContactsUsageDescription" = "Autorisez Wire à accéder à vos contactes pour vous connecter à d’autres personnes. Nous anonymisons toutes les informations avant de les envoyer à notre serveur et ne les partageons avec personne d'autre.";
+"NSMicrophoneUsageDescription" = "Autorisez Wire à accéder à votre microphone afin que vous puissiez téléphoner et envoyer des messages vocaux.";
+"NSLocationWhenInUseUsageDescription" = "Autorisez Wire à accéder à votre localisation afin que vous puissiez la partager avec vos contactes.";
+"NSCameraUsageDescription" = "Autorisez Wire à accéder à votre appareil photo afin que vous puissiez passer des appels vidéo et envoyer des photos.";
+/* Showed after taking a picture with camera, but only when NSPhotoLibraryUsageDescription permission was declined. Asks permission for only writing to photo library. */
+"NSPhotoLibraryAddUsageDescription" = "Autorisez Wire à enregistrer les photos que vous prenez dans la bibliothèque de photos.";
+/* Showed when trying to send picture from conversaiton list. Asks permissions for reading and writing to photo library */
+"NSPhotoLibraryUsageDescription" = "Allow Wire to access pictures stored in photo library so you can send pictures and videos to others.";
+/* Is shown to the user when app is locked with AppLock feature on the phone that supports Face ID */
+"NSFaceIDUsageDescription" = "Pour vous authentifier dans l'application, veuillez autoriser Wire à utiliser Face ID.";

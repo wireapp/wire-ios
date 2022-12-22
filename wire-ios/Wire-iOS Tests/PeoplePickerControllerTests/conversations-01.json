@@ -1,0 +1,10 @@
+[
+    {
+        "displayName": "Conversation",
+        "conversationType": 3
+    },
+    {
+        "displayName": "Other Conversation",
+        "conversationType": 3
+    }
+]
