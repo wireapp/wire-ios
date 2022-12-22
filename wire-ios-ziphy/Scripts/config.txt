@@ -1,0 +1,4 @@
+framework=Ziphy
+repository=wire-ios-ziphy
+organization=wireapp
+release-name-format=From {CITY} to {CITY}
