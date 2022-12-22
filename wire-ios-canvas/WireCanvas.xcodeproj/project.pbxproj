@@ -1,0 +1,448 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 52;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		165EA0CD1DB67C3B008ECC60 /* WireCanvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */; };
+		165EA0D21DB67C3B008ECC60 /* CanvasTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0D11DB67C3B008ECC60 /* CanvasTests.swift */; };
+		165EA0D41DB67C3B008ECC60 /* Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 165EA0C61DB67C3B008ECC60 /* Canvas.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0DD1DB67C6C008ECC60 /* Canvas.swift */; };
+		1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */; };
+		166390E41DC8EFC200D7BF1C /* unsplash_burger.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166390DE1DC8EFB600D7BF1C /* unsplash_burger.jpg */; };
+		166390E51DC8EFC600D7BF1C /* unsplash_matterhorn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166390DF1DC8EFB600D7BF1C /* unsplash_matterhorn.jpg */; };
+		166390E61DC8EFC600D7BF1C /* unsplash_small.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166390E01DC8EFB600D7BF1C /* unsplash_small.jpg */; };
+		166390E81DC8F08400D7BF1C /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166390E71DC8F08400D7BF1C /* TestHelper.swift */; };
+		16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A301DBA5B7300B5BC47 /* Stroke.swift */; };
+		16CB8A331DBA5BB800B5BC47 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A321DBA5BB800B5BC47 /* Image.swift */; };
+		A99EE23526667FDE00E713FC /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE23026667EFB00E713FC /* FBSnapshotTestCase.xcframework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		165EA0CE1DB67C3B008ECC60 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 165EA0BA1DB67C3B008ECC60 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 165EA0C21DB67C3B008ECC60;
+			remoteInfo = Canvas;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		166390DA1DC8EAC000D7BF1C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCanvas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		165EA0C61DB67C3B008ECC60 /* Canvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Canvas.h; sourceTree = "<group>"; };
+		165EA0C71DB67C3B008ECC60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		165EA0CC1DB67C3B008ECC60 /* WireCanvasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCanvasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		165EA0D11DB67C3B008ECC60 /* CanvasTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasTests.swift; sourceTree = "<group>"; };
+		165EA0D31DB67C3B008ECC60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		165EA0DD1DB67C6C008ECC60 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
+		1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Trimmed.swift"; sourceTree = "<group>"; };
+		166390DE1DC8EFB600D7BF1C /* unsplash_burger.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_burger.jpg; sourceTree = "<group>"; };
+		166390DF1DC8EFB600D7BF1C /* unsplash_matterhorn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_matterhorn.jpg; sourceTree = "<group>"; };
+		166390E01DC8EFB600D7BF1C /* unsplash_small.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small.jpg; sourceTree = "<group>"; };
+		166390E71DC8F08400D7BF1C /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
+		16CB8A301DBA5B7300B5BC47 /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
+		16CB8A321DBA5BB800B5BC47 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireCanvas.xcconfig; sourceTree = "<group>"; };
+		16CB8A381DBA73B900B5BC47 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		16CB8A3A1DBA73B900B5BC47 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		16CB8A3C1DBA73B900B5BC47 /* ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		16CB8A3F1DBA73B900B5BC47 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		16CB8A411DBA73B900B5BC47 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		16CB8A441DBA73B900B5BC47 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		A99EE23026667EFB00E713FC /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
+		EFF7A46B2271BFAF00F1AC33 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		EFF7A46C2271BFAF00F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		165EA0BF1DB67C3B008ECC60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		165EA0C91DB67C3B008ECC60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				165EA0CD1DB67C3B008ECC60 /* WireCanvas.framework in Frameworks */,
+				A99EE23526667FDE00E713FC /* FBSnapshotTestCase.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		165EA0B91DB67C3B008ECC60 = {
+			isa = PBXGroup;
+			children = (
+				EFF7A46B2271BFAF00F1AC33 /* Cartfile.private */,
+				EFF7A46C2271BFAF00F1AC33 /* Cartfile.resolved */,
+				16CB8A341DBA73B900B5BC47 /* Resources */,
+				165EA0C51DB67C3B008ECC60 /* Sources */,
+				165EA0D01DB67C3B008ECC60 /* Tests */,
+				165EA0C41DB67C3B008ECC60 /* Products */,
+				166390D71DC8E5EF00D7BF1C /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		165EA0C41DB67C3B008ECC60 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */,
+				165EA0CC1DB67C3B008ECC60 /* WireCanvasTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		165EA0C51DB67C3B008ECC60 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				165EA0DD1DB67C6C008ECC60 /* Canvas.swift */,
+				16CB8A301DBA5B7300B5BC47 /* Stroke.swift */,
+				16CB8A321DBA5BB800B5BC47 /* Image.swift */,
+				1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */,
+				165EA0C61DB67C3B008ECC60 /* Canvas.h */,
+				165EA0C71DB67C3B008ECC60 /* Info.plist */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		165EA0D01DB67C3B008ECC60 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				166390DD1DC8EFB600D7BF1C /* Resources */,
+				165EA0D11DB67C3B008ECC60 /* CanvasTests.swift */,
+				166390E71DC8F08400D7BF1C /* TestHelper.swift */,
+				165EA0D31DB67C3B008ECC60 /* Info.plist */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		166390D71DC8E5EF00D7BF1C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A99EE23026667EFB00E713FC /* FBSnapshotTestCase.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		166390DD1DC8EFB600D7BF1C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				166390DE1DC8EFB600D7BF1C /* unsplash_burger.jpg */,
+				166390DF1DC8EFB600D7BF1C /* unsplash_matterhorn.jpg */,
+				166390E01DC8EFB600D7BF1C /* unsplash_small.jpg */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		16CB8A341DBA73B900B5BC47 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				16CB8A351DBA73B900B5BC47 /* Configurations */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		16CB8A351DBA73B900B5BC47 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */,
+				16CB8A381DBA73B900B5BC47 /* version.xcconfig */,
+				16CB8A391DBA73B900B5BC47 /* zmc-config */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		16CB8A391DBA73B900B5BC47 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				16CB8A3A1DBA73B900B5BC47 /* ios-test-host.xcconfig */,
+				16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */,
+				16CB8A3C1DBA73B900B5BC47 /* ios.xcconfig */,
+				16CB8A3F1DBA73B900B5BC47 /* project-common.xcconfig */,
+				16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */,
+				16CB8A411DBA73B900B5BC47 /* project.xcconfig */,
+				16CB8A441DBA73B900B5BC47 /* tests.xcconfig */,
+				16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */,
+				16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		165EA0C01DB67C3B008ECC60 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				165EA0D41DB67C3B008ECC60 /* Canvas.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		165EA0C21DB67C3B008ECC60 /* WireCanvas */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 165EA0D71DB67C3B008ECC60 /* Build configuration list for PBXNativeTarget "WireCanvas" */;
+			buildPhases = (
+				165EA0BE1DB67C3B008ECC60 /* Sources */,
+				165EA0BF1DB67C3B008ECC60 /* Frameworks */,
+				165EA0C01DB67C3B008ECC60 /* Headers */,
+				66B66B63275A324C0020CF55 /* Run Swiftlint */,
+				165EA0C11DB67C3B008ECC60 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WireCanvas;
+			productName = Canvas;
+			productReference = 165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		165EA0CB1DB67C3B008ECC60 /* WireCanvasTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 165EA0DA1DB67C3B008ECC60 /* Build configuration list for PBXNativeTarget "WireCanvasTests" */;
+			buildPhases = (
+				165EA0C81DB67C3B008ECC60 /* Sources */,
+				165EA0C91DB67C3B008ECC60 /* Frameworks */,
+				165EA0CA1DB67C3B008ECC60 /* Resources */,
+				166390DA1DC8EAC000D7BF1C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				165EA0CF1DB67C3B008ECC60 /* PBXTargetDependency */,
+			);
+			name = WireCanvasTests;
+			productName = CanvasTests;
+			productReference = 165EA0CC1DB67C3B008ECC60 /* WireCanvasTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		165EA0BA1DB67C3B008ECC60 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0800;
+				LastUpgradeCheck = 1300;
+				ORGANIZATIONNAME = "Wire GmbH";
+				TargetAttributes = {
+					165EA0C21DB67C3B008ECC60 = {
+						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 1000;
+						ProvisioningStyle = Manual;
+					};
+					165EA0CB1DB67C3B008ECC60 = {
+						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 1000;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 165EA0BD1DB67C3B008ECC60 /* Build configuration list for PBXProject "WireCanvas" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 165EA0B91DB67C3B008ECC60;
+			productRefGroup = 165EA0C41DB67C3B008ECC60 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				165EA0C21DB67C3B008ECC60 /* WireCanvas */,
+				165EA0CB1DB67C3B008ECC60 /* WireCanvasTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		165EA0C11DB67C3B008ECC60 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		165EA0CA1DB67C3B008ECC60 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				166390E41DC8EFC200D7BF1C /* unsplash_burger.jpg in Resources */,
+				166390E51DC8EFC600D7BF1C /* unsplash_matterhorn.jpg in Resources */,
+				166390E61DC8EFC600D7BF1C /* unsplash_small.jpg in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		66B66B63275A324C0020CF55 /* Run Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		165EA0BE1DB67C3B008ECC60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */,
+				16CB8A331DBA5BB800B5BC47 /* Image.swift in Sources */,
+				1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */,
+				16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		165EA0C81DB67C3B008ECC60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				165EA0D21DB67C3B008ECC60 /* CanvasTests.swift in Sources */,
+				166390E81DC8F08400D7BF1C /* TestHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		165EA0CF1DB67C3B008ECC60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 165EA0C21DB67C3B008ECC60 /* WireCanvas */;
+			targetProxy = 165EA0CE1DB67C3B008ECC60 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		165EA0D51DB67C3B008ECC60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		165EA0D61DB67C3B008ECC60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16CB8A411DBA73B900B5BC47 /* project.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		165EA0D81DB67C3B008ECC60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Sources/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
+			};
+			name = Debug;
+		};
+		165EA0D91DB67C3B008ECC60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Sources/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
+			};
+			name = Release;
+		};
+		165EA0DB1DB67C3B008ECC60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Tests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.CanvasTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		165EA0DC1DB67C3B008ECC60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Tests/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.CanvasTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		165EA0BD1DB67C3B008ECC60 /* Build configuration list for PBXProject "WireCanvas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				165EA0D51DB67C3B008ECC60 /* Debug */,
+				165EA0D61DB67C3B008ECC60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		165EA0D71DB67C3B008ECC60 /* Build configuration list for PBXNativeTarget "WireCanvas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				165EA0D81DB67C3B008ECC60 /* Debug */,
+				165EA0D91DB67C3B008ECC60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		165EA0DA1DB67C3B008ECC60 /* Build configuration list for PBXNativeTarget "WireCanvasTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				165EA0DB1DB67C3B008ECC60 /* Debug */,
+				165EA0DC1DB67C3B008ECC60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 165EA0BA1DB67C3B008ECC60 /* Project object */;
+}
