@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>self.new_device_alert.title_prefix.devices</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@device_count@</string>
+      <key>device_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>un appareil</string>
+        <key>other</key>
+        <string>%lu appareils</string>
+      </dict>
+    </dict>
+    <key>participants.people.count</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@lu_number_of_people@</string>
+      <key>lu_number_of_people</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>%lu contact</string>
+        <key>other</key>
+        <string>%lu contacts</string>
+      </dict>
+    </dict>
+    <key>content.system.missing_messages.subtitle_added</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@ %#@lu_number_of_users@</string>
+      <key>lu_number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>a été ajouté</string>
+        <key>other</key>
+        <string>ont été ajoutés</string>
+      </dict>
+    </dict>
+    <key>content.system.missing_messages.subtitle_removed</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@ %#@lu_number_of_users@</string>
+      <key>lu_number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>a été supprimé</string>
+        <key>other</key>
+        <string>ont été supprimés</string>
+      </dict>
+    </dict>
+    <key>list.connect_request.people_waiting</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_people@ en attente</string>
+      <key>d_number_of_people</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d contact</string>
+        <key>other</key>
+        <string>%d contacts</string>
+      </dict>
+    </dict>
+    <key>content.system.participants_n_others</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@ %#@and_number_of_others@</string>
+      <key>and_number_of_others</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>et un autre</string>
+        <key>other</key>
+        <string>et %d autres</string>
+      </dict>
+    </dict>
+    <key>peoplepicker.suggested.knows_more</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>Connaît %@ et %#@d_number_of_others@</string>
+      <key>d_number_of_others</key>
+      <dict>
+        <key>one</key>
+        <string>%d autre</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%d autres</string>
+      </dict>
+    </dict>
+    <key>content.system.people_started_using</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@%#@d_number_of_others@ utilisent %#@d_new_devices@</string>
+      <key>d_number_of_others</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string> et %d autre</string>
+        <key>other</key>
+        <string> et %d autres</string>
+      </dict>
+      <key>d_new_devices</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>un nouvel appareil</string>
+        <key>other</key>
+        <string>de nouveaux appareils</string>
+      </dict>
+    </dict>
+    <key>content.system.new_devices</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_new_devices@</string>
+      <key>d_new_devices</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>un nouvel appareil</string>
+        <key>other</key>
+        <string>de nouveaux appareils</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.generic_message</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Un message</string>
+        <key>other</key>
+        <string>%d messages</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.mention</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 mention</string>
+        <key>other</key>
+        <string>%d mentions</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.reply</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 réponse</string>
+        <key>other</key>
+        <string>%d réponses</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.knock</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 ping</string>
+        <key>other</key>
+        <string>%d pings</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.missedcall</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 appel manqué</string>
+        <key>other</key>
+        <string>%d appels manqués</string>
+      </dict>
+    </dict>
+    <key>content.system.call.missed-call</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@missed_call@</string>
+      <key>missed_call</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Appel manqué</string>
+        <key>other</key>
+        <string>Appels manqués</string>
+      </dict>
+    </dict>
+    <key>content.system.call.missed-call.groups</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@missed_call_from@</string>
+      <key>missed_call_from</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Appel manqué de %2$@</string>
+        <key>other</key>
+        <string>Appels manqués de %2$@</string>
+      </dict>
+    </dict>
+    <key>content.system.call.missed-call.groups-you</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@missed_call_from@</string>
+      <key>missed_call_from</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Appel manqué de %2$@</string>
+        <key>other</key>
+        <string>Appels manqués de %2$@</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.min_length</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>au moins %#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>un caractère</string>
+        <key>other</key>
+        <string>%d caractères</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.lowercase</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>une lettre minuscule</string>
+        <key>other</key>
+        <string>%d lettres minuscules</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.uppercase</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>one</key>
+        <string>une lettre majuscule</string>
+        <key>other</key>
+        <string>%d lettres majuscules</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.number</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>un nombre</string>
+        <key>other</key>
+        <string>%d nombres</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.special</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>un caractère spécial</string>
+        <key>other</key>
+        <string>%d caractères spéciaux</string>
+      </dict>
+    </dict>
+  </dict>
+</plist>

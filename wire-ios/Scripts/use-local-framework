@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+
+#
+# Wire
+# Copyright (C) 2016 Wire Swiss GmbH
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see http://www.gnu.org/licenses/.
+#
+
+#
+# Replace the carthage framework with a locally build one
+# in the project file
+#
+
+import os
+import re
+import argparse
+from tempfile import mkstemp
+from shutil import move
+from os import remove, close
+
+PROJECT_FILE="Wire-iOS.xcodeproj/project.pbxproj"
+CARTHAGE_FRAMEWORK_TEMPLATE="$(SRCROOT)/Carthage/Build/iOS/{}.framework"
+LOCAL_FRAMEWORK_TEMPLATE="$(BUILT_PRODUCTS_DIR)/{}.framework"
+LOCAL_FRAMEWORK_REGEX="\\$\\(BUILT_PRODUCTS_DIR\\)/(\\w+)\\.framework"
+
+def list_local():
+    re_framework = re.compile(LOCAL_FRAMEWORK_REGEX)
+    with open(PROJECT_FILE) as old_file:
+        for line in old_file.readlines():
+            match = re_framework.search(line)
+            if match:
+                print "Framework", match.group(1), "is local:",line 
+
+def replace(framework):
+    original = CARTHAGE_FRAMEWORK_TEMPLATE.format(framework)
+    substitution = LOCAL_FRAMEWORK_TEMPLATE.format(framework)
+    
+    replace = framework is not None
+    replaced = False
+    
+    #Create temp file
+    fh, abs_path = mkstemp()
+    with open(abs_path,'w') as new_file:
+        with open(PROJECT_FILE) as old_file:
+            for line in old_file.readlines():
+                replace = line.replace(original, substitution)
+                new_file.write(replace)
+                if replace != line:
+                    print "Replaced framework", framework
+                    print "original line:", line
+                    replaced = True
+                    
+    close(fh)
+    #Move new file
+    if replace:
+        if replaced:
+            move(abs_path, PROJECT_FILE)
+        else:
+            print "Not replaced (not found)", framework
+
+if __name__ == "__main__":
+    
+    if not os.path.isfile(PROJECT_FILE):
+        print PROJECT_FILE, "not found, please run from the project root directory"
+        exit(1)
+        
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--list", action="store_true")
+    parser.add_argument("framework", default=None, nargs="?")
+    args = parser.parse_args()
+    
+    if args.list:
+        list_local()
+    else:
+        if args.framework is None:
+            print "Replacing WireSyncEngine by default"
+            args.framework = "WireSyncEngine"
+        replace(args.framework)
+    
+    

@@ -1,0 +1,32 @@
+disabled_rules:
+    - function_body_length
+    - type_body_length
+    - file_length
+    - generic_type_name
+    - force_cast
+    - force_try
+    - identifier_name
+    - type_name
+    - todo
+    - large_tuple
+    - unused_setter_value
+    - cyclomatic_complexity
+    - weak_delegate
+    - inclusive_language
+    - class_delegate_protocol
+    - nesting
+    - function_parameter_count
+
+included:
+    - Wire-iOS/Sources
+    - Wire-iOS Tests/
+    - WireCommonComponents
+    - Wire-iOS Share Extension
+
+# In order to deal with the huge number of violations, first set
+# very high limits then iteratively reduce the limits and resolve
+# the few violations. Repeat this until we find suitable limits.
+
+line_length:
+    warning: 270
+    error: 270

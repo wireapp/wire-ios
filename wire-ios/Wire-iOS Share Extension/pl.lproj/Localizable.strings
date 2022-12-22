@@ -1,0 +1,65 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+
+
+
+"general.ok" = "OK";
+
+"share_extension.conversation_selection.account" = "Konto:";
+"share_extension.conversation_selection.title" = "Rozmowa:";
+"share_extension.send_button.title" = "Wyślij";
+"share_extension.conversation_selection.empty.value" = "Wybierz";
+"share_extension.input.placeholder" = "Wpisz wiadomość";
+"share_extension.sending_progress.title" = "Wysyłanie…";
+"share_extension.preparing.title" = "Przygotowywanie...";
+"share_extension.no_internet_connection.title" = "Brak połączenia z Internetem";
+"share_extension.not_signed_in.title" = "Musisz się zalogować zanim coś udostępnisz";
+"share_extension.not_signed_in.close_button" = "Zamknij";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Wprowadź kod dostępu, aby odblokować Wire";
+"share_extension.unlock.submit_button.title" = "odblokuj";
+"share_extension.unlock.textfield.placeholder" = "Wprowadź kod dostępu";
+"share_extension.unlock.hint_label" = "Kod dostępu";
+"share_extension.unlock.error_label" = "Nieprawidłowy kod dostępu";
+"share_extension.unlock.alert.message" = "Otwórz Wire aby utworzyć kod dostępu";
+"share_extension.unlock.reveal_passcode" = "Odkryj kod dostępu";
+
+"share_extension.timeout.title" = "Przekroczono czas oczekiwania dla połączenia.";
+"share_extension.timeout.message" = "Sprawdź swoje połączenie internetowe i spróbuj ponownie. Załączniki zostały zapisane w konwersacji.";
+
+"content.file.too_big" = "Możesz wysyłać pliki do %@";
+"content.file.unsupported_attachment" = "Nieobsługiwany załącznik";
+"share_extension.error.conversation_does_not_exist.message" = "Wybierz konwersację do udostępnienia";
+
+"share_extension.privacy_security.lock_app.description" = "Odblokuj Wire";
+"share_extension.logged_out.title" = "Zostałeś wylogowany z tego konta.";
+"share_extension.logged_out.message" = "Proszę, wybierz inne konto.";
+
+"conversation.displayname.emptygroup" = "Pusta grupa konwersacji";
+"meta.degraded.degradation_reason_message.singular" = "%@ rozpoczął korzystanie z nowego urządzenia.";
+"meta.degraded.degradation_reason_message.plural" = "%@ rozpoczął korzystać z nowego urządzenia.";
+"meta.degraded.dialog_message" = "Czy nadal chcesz wysłać wiadomość?";
+"meta.degraded.cancel_sending_button" = "Nie wysyłaj";
+"meta.degraded.send_anyway_button" = "Wyślij mimo to";
+
+//Feature flag - File sharing
+"feature.flag.file_sharing.alert.title" = "Ograniczenia udostępniania plików";
+"feature.flag.file_sharing.alert.message" = "Nie możesz udostępnić tego pliku, ponieważ ta funkcja jest wyłączona.";

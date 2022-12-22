@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Arnold Schwarzenegger",
+        "displayName": "Arnold Schwarzenegger",
+        "initials": "AS",
+        "isSelfUser": false,
+        "isConnected": false,
+        "accentColorValue": 2,
+        "imageMediumData": null,
+        "imageSmallProfileData": null,
+        "imageSmallProfileIdentifier": null,
+        "imageMediumIdentifier": null,
+        "canBeConnected": false,
+        "connectionRequestMessage": "Hi! Let's connect on Wire!"
+    },
+    {
+        "name": "Brad Pitt",
+        "displayName": "Brad Pitt",
+        "initials": "BP",
+        "isSelfUser": false,
+        "isConnected": false,
+        "accentColorValue": 2,
+        "imageMediumData": null,
+        "imageSmallProfileData": null,
+        "imageSmallProfileIdentifier": null,
+        "imageMediumIdentifier": null,
+        "canBeConnected": false,
+        "connectionRequestMessage": "Hi! Let's connect on Wire!"
+    },
+    {
+        "name": "Angelina Jolie",
+        "displayName": "Angelina Jolie",
+        "initials": "AJ",
+        "isSelfUser": false,
+        "isConnected": false,
+        "accentColorValue": 2,
+        "imageMediumData": null,
+        "imageSmallProfileData": null,
+        "imageSmallProfileIdentifier": null,
+        "imageMediumIdentifier": null,
+        "canBeConnected": false,
+        "connectionRequestMessage": "Hi! Let's connect on Wire!"
+    },
+    {
+        "name": "Sarah Michelle Gellar",
+        "displayName": "Sarah Michelle Gellar",
+        "initials": "SMG",
+        "isSelfUser": false,
+        "isConnected": false,
+        "accentColorValue": 2,
+        "imageMediumData": null,
+        "imageSmallProfileData": null,
+        "imageSmallProfileIdentifier": null,
+        "imageMediumIdentifier": null,
+        "canBeConnected": false,
+        "connectionRequestMessage": "Hi! Let's connect on Wire!"
+    }
+]

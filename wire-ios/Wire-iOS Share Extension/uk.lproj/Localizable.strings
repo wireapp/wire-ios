@@ -1,0 +1,65 @@
+//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Share Extension
+
+
+
+"general.ok" = "OK";
+
+"share_extension.conversation_selection.account" = "Акаунт:";
+"share_extension.conversation_selection.title" = "Розмова:";
+"share_extension.send_button.title" = "Надіслати";
+"share_extension.conversation_selection.empty.value" = "Вибрати";
+"share_extension.input.placeholder" = "Напишіть повідомлення";
+"share_extension.sending_progress.title" = "Надсилання…";
+"share_extension.preparing.title" = "Підготовка…";
+"share_extension.no_internet_connection.title" = "Відстунє з'єднання з Інтернетом";
+"share_extension.not_signed_in.title" = "Ви повинні увійти в Wire, щоб поділитися чим-небудь";
+"share_extension.not_signed_in.close_button" = "Закрити";
+
+// Custom app lock - unlock
+"share_extension.unlock.title_label" = "Введіть код допуску, щоб розблокувати Wire";
+"share_extension.unlock.submit_button.title" = "розблокувати";
+"share_extension.unlock.textfield.placeholder" = "Введіть ваш код допуску";
+"share_extension.unlock.hint_label" = "Код допуску";
+"share_extension.unlock.error_label" = "Невірний код допуску";
+"share_extension.unlock.alert.message" = "Відкрити Wire, щоб створити код допуску";
+"share_extension.unlock.reveal_passcode" = "Показати код допуску";
+
+"share_extension.timeout.title" = "Перевищено термін очікування з’єднання.";
+"share_extension.timeout.message" = "Перевірте підключення до Інтернету і повторіть спробу. Вкладення були збережені в розмові.";
+
+"content.file.too_big" = "Ви можете надсилати файли до %@";
+"content.file.unsupported_attachment" = "Непідтримуване вкладення";
+"share_extension.error.conversation_does_not_exist.message" = "Будь ласка, виберіть розмову для надсилання";
+
+"share_extension.privacy_security.lock_app.description" = "Розблокувати Wire";
+"share_extension.logged_out.title" = "Ви вийшли з цього акаунту.";
+"share_extension.logged_out.message" = "Будь ласка, оберіть інший акаунт.";
+
+"conversation.displayname.emptygroup" = "Групова розмова без учасників";
+"meta.degraded.degradation_reason_message.singular" = "%@ почав(-ла) використовувати новий пристрій.";
+"meta.degraded.degradation_reason_message.plural" = "%@ почав(-ла) використовувати нові пристрої.";
+"meta.degraded.dialog_message" = "Усе одно надіслати ваше повідомлення?";
+"meta.degraded.cancel_sending_button" = "Не надсилати";
+"meta.degraded.send_anyway_button" = "Все одно надіслати";
+
+//Feature flag - File sharing
+"feature.flag.file_sharing.alert.title" = "Обмеження на обмін файлами";
+"feature.flag.file_sharing.alert.message" = "Ви не можете поділитися файлом, тому що ця функціональність вимкнена.";

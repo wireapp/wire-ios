@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>self.new_device_alert.title_prefix.devices</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@device_count@</string>
+      <key>device_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>устройство</string>
+        <key>few</key>
+        <string>%lu устройства</string>
+        <key>many</key>
+        <string>%lu устройств</string>
+        <key>other</key>
+        <string>%lu устройств</string>
+      </dict>
+    </dict>
+    <key>participants.people.count</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@lu_number_of_people@</string>
+      <key>lu_number_of_people</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>Один человек</string>
+        <key>few</key>
+        <string>%lu человека</string>
+        <key>many</key>
+        <string>%lu человек</string>
+        <key>other</key>
+        <string>%lu человек</string>
+      </dict>
+    </dict>
+    <key>content.system.missing_messages.subtitle_added</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@ %#@lu_number_of_users@</string>
+      <key>lu_number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>был добавлен</string>
+        <key>few</key>
+        <string>было добавлено</string>
+        <key>many</key>
+        <string>были добавлены</string>
+        <key>other</key>
+        <string>были добавлены</string>
+      </dict>
+    </dict>
+    <key>content.system.missing_messages.subtitle_removed</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@ %#@lu_number_of_users@</string>
+      <key>lu_number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>был удален</string>
+        <key>few</key>
+        <string>было удалено</string>
+        <key>many</key>
+        <string>были удалены</string>
+        <key>other</key>
+        <string>были удалены</string>
+      </dict>
+    </dict>
+    <key>list.connect_request.people_waiting</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_people@ ожидает</string>
+      <key>d_number_of_people</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Один пользователь</string>
+        <key>few</key>
+        <string>%d пользователя</string>
+        <key>many</key>
+        <string>%d пользователей</string>
+        <key>other</key>
+        <string>%d пользователей</string>
+      </dict>
+    </dict>
+    <key>content.system.participants_n_others</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@and_number_of_others@</string>
+      <key>and_number_of_others</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>и еще кто-то</string>
+        <key>few</key>
+        <string>и %d других</string>
+        <key>many</key>
+        <string>и %d других</string>
+        <key>other</key>
+        <string>и %d других</string>
+      </dict>
+    </dict>
+    <key>peoplepicker.suggested.knows_more</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>Знает %@ и %#@d_number_of_others@</string>
+      <key>d_number_of_others</key>
+      <dict>
+        <key>one</key>
+        <string>еще %d</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>еще %d</string>
+        <key>many</key>
+        <string>еще %d</string>
+        <key>other</key>
+        <string>еще %d</string>
+      </dict>
+    </dict>
+    <key>content.system.people_started_using</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%@%#@d_number_of_others@ начали использовать %#@d_new_devices@</string>
+      <key>d_number_of_others</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string> и еще %d</string>
+        <key>few</key>
+        <string> и еще %d</string>
+        <key>many</key>
+        <string> и еще %d</string>
+        <key>other</key>
+        <string> и еще %d</string>
+      </dict>
+      <key>d_new_devices</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>новое устройство</string>
+        <key>few</key>
+        <string>новых устройства</string>
+        <key>many</key>
+        <string>новых устройств</string>
+        <key>other</key>
+        <string>новых устройств</string>
+      </dict>
+    </dict>
+    <key>content.system.new_devices</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_new_devices@</string>
+      <key>d_new_devices</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>новое устройство</string>
+        <key>few</key>
+        <string>новых устройства</string>
+        <key>many</key>
+        <string>новых устройств</string>
+        <key>other</key>
+        <string>новых устройств</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.generic_message</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 сообщение</string>
+        <key>few</key>
+        <string>%d сообщения</string>
+        <key>many</key>
+        <string>%d сообщений</string>
+        <key>other</key>
+        <string>%d сообщений</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.mention</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 упоминание</string>
+        <key>few</key>
+        <string>%d упоминания</string>
+        <key>many</key>
+        <string>%d упоминаний</string>
+        <key>other</key>
+        <string>%d упоминаний</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.reply</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 ответ</string>
+        <key>few</key>
+        <string>%d ответа</string>
+        <key>many</key>
+        <string>%d ответов</string>
+        <key>other</key>
+        <string>%d ответов</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.knock</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 пинг</string>
+        <key>few</key>
+        <string>%d пинга</string>
+        <key>many</key>
+        <string>%d пингов</string>
+        <key>other</key>
+        <string>%d пингов</string>
+      </dict>
+    </dict>
+    <key>conversation.silenced.status.message.missedcall</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@d_number_of_new@</string>
+      <key>d_number_of_new</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 пропущенный вызов</string>
+        <key>few</key>
+        <string>%d пропущенных вызова</string>
+        <key>many</key>
+        <string>%d пропущенных вызовов</string>
+        <key>other</key>
+        <string>%d пропущенных вызовов</string>
+      </dict>
+    </dict>
+    <key>content.system.call.missed-call</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@missed_call@</string>
+      <key>missed_call</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Пропущенный вызов</string>
+        <key>few</key>
+        <string>Пропущенных вызова</string>
+        <key>many</key>
+        <string>Пропущенных вызовов</string>
+        <key>other</key>
+        <string>Пропущенных вызовов</string>
+      </dict>
+    </dict>
+    <key>content.system.call.missed-call.groups</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@missed_call_from@</string>
+      <key>missed_call_from</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Пропущенный вызов от %2$@</string>
+        <key>few</key>
+        <string>Пропущенные вызовы от %2$@</string>
+        <key>many</key>
+        <string>Пропущенные вызовы от %2$@</string>
+        <key>other</key>
+        <string>Пропущенные вызовы от %2$@</string>
+      </dict>
+    </dict>
+    <key>content.system.call.missed-call.groups-you</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@missed_call_from@</string>
+      <key>missed_call_from</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Пропущенный вызов от %2$@</string>
+        <key>few</key>
+        <string>Пропущенные вызовы от %2$@</string>
+        <key>many</key>
+        <string>Пропущенные вызовы от %2$@</string>
+        <key>other</key>
+        <string>Пропущенные вызовы от %2$@</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.min_length</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>не менее %#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>один символ</string>
+        <key>few</key>
+        <string>%d символа</string>
+        <key>many</key>
+        <string>%d символов</string>
+        <key>other</key>
+        <string>%d символов</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.lowercase</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>одна строчная буква</string>
+        <key>few</key>
+        <string>%d строчных буквы</string>
+        <key>many</key>
+        <string>%d строчных букв</string>
+        <key>other</key>
+        <string>%d строчных букв</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.uppercase</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>one</key>
+        <string>одна заглавная буква</string>
+        <key>few</key>
+        <string>%d заглавные буквы</string>
+        <key>many</key>
+        <string>%d заглавных букв</string>
+        <key>other</key>
+        <string>%d заглавных букв</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.number</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>цифра</string>
+        <key>few</key>
+        <string>%d цифры</string>
+        <key>many</key>
+        <string>%d цифр</string>
+        <key>other</key>
+        <string>%d цифр</string>
+      </dict>
+    </dict>
+    <key>registration.password.rules.special</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@character_count@</string>
+      <key>character_count</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>специальный символ</string>
+        <key>few</key>
+        <string>%d специальных символа</string>
+        <key>many</key>
+        <string>%d специальных символов</string>
+        <key>other</key>
+        <string>%d специальных символов</string>
+      </dict>
+    </dict>
+  </dict>
+</plist>

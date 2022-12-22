@@ -1,0 +1,28 @@
+/*
+ *  Wire
+ *  Copyright (C) 2016 Wire Swiss GmbH
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+
+"NSContactsUsageDescription" = "Permitir a Wire acceder a tus contactos te permite conectar con otros usuarios. Wire usa la información de manera anónima antes de subirla a nuestro servidor y no la compartimos con nadie.";
+"NSMicrophoneUsageDescription" = "Permite a Wire acceder al micrófono para poder hacer llamadas y enviar mensajes de audio.";
+"NSLocationWhenInUseUsageDescription" = "Permite a Wire acceder a tu ubicación para compartirla con tus contactos.";
+"NSCameraUsageDescription" = "Permite a Wire acceder a tu cámara para poder realizar videollamadas y enviar fotos.";
+/* Showed after taking a picture with camera, but only when NSPhotoLibraryUsageDescription permission was declined. Asks permission for only writing to photo library. */
+"NSPhotoLibraryAddUsageDescription" = "Permite a Wire que guarde las fotos que tomas en la galería de fotos.";
+/* Showed when trying to send picture from conversaiton list. Asks permissions for reading and writing to photo library */
+"NSPhotoLibraryUsageDescription" = "Allow Wire to access pictures stored in photo library so you can send pictures and videos to others.";
+/* Is shown to the user when app is locked with AppLock feature on the phone that supports Face ID */
+"NSFaceIDUsageDescription" = "Para autentificarse en la aplicación, permite a Wire acceder a la función Face ID.";
