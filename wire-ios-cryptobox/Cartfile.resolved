@@ -1,0 +1,4 @@
+github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
+github "wireapp/libsodium" "1.0.14"
+github "wireapp/wire-ios-system" "38.0.0"
+github "wireapp/wire-ios-utilities" "47.0.0"
