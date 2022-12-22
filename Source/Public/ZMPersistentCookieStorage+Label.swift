@@ -33,7 +33,7 @@ import UIKit
     }
 
     private override convenience init() {
-        self.init(value: UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString)
+        self.init(value: UUID().uuidString)
     }
 
     public var length: Int {
