@@ -22,7 +22,8 @@ extension NSManagedObjectContext {
 
     /// Applies the required patches for the current version of the persisted data
     public func applyPersistedDataPatchesForCurrentVersion() {
-        PersistedDataPatch.applyAll(in: self)
+        LegacyPersistedDataPatch.applyAll(in: self)
+        // When we move to the monorepo, run the 'PatchApplicator' here.
     }
 }
 

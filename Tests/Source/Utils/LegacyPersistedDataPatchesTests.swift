@@ -116,20 +116,20 @@ class FrameworkVersionTests: XCTestCase {
 }
 
 // MARK: - Test patches
-class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
+class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     func testThatItApplyPatchesWhenNoVersion() {
 
         // GIVEN
         var patchApplied = false
-        let patch = PersistedDataPatch(version: "9999.32.32") { (moc) in
+        let patch = LegacyPersistedDataPatch(version: "9999.32.32") { (moc) in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
         // THEN
@@ -140,18 +140,18 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = PersistedDataPatch(version: "10000000.32.32") { (moc) in
+        let patch = LegacyPersistedDataPatch(version: "10000000.32.32") { (moc) in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
         // this will bump last patched version to current version, which hopefully is less than 10000000.32.32
         self.syncMOC.performGroupedBlockAndWait {
-            PersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
         // THEN
@@ -162,18 +162,18 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = PersistedDataPatch(version: "0.0.1") { (_) in
+        let patch = LegacyPersistedDataPatch(version: "0.0.1") { (_) in
             XCTFail()
             patchApplied = true
         }
         // this will bump last patched version to current version, which is greater than 0.0.1
         self.syncMOC.performGroupedBlockAndWait {
-            PersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            PersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
         // THEN
@@ -209,7 +209,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(FileManager.default.fileExists(atPath: oldSession.path))
 
             // WHEN
-            PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
 
             // THEN
             let readData = try! Data(contentsOf: newSession)
@@ -235,7 +235,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             self.syncMOC.saveOrRollback()
 
             // WHEN
-            PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
             self.syncMOC.saveOrRollback()
 
             // THEN
@@ -259,7 +259,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             XCTAssert(moc.saveOrRollback())
 
             // when
-            PersistedDataPatch.applyAll(in: moc, fromVersion: "0.0.0")
+            LegacyPersistedDataPatch.applyAll(in: moc, fromVersion: "0.0.0")
             XCTAssert(moc.saveOrRollback())
 
             // then
@@ -287,7 +287,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             XCTAssert(moc.saveOrRollback())
 
             // when
-            PersistedDataPatch.applyAll(in: moc, fromVersion: "62.0.0")
+            LegacyPersistedDataPatch.applyAll(in: moc, fromVersion: "62.0.0")
             XCTAssert(moc.saveOrRollback())
 
             // then
@@ -314,7 +314,7 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             XCTAssert(context.saveOrRollback())
 
             // When
-            PersistedDataPatch.applyAll(in: context, fromVersion: "290.0.0")
+            LegacyPersistedDataPatch.applyAll(in: context, fromVersion: "290.0.0")
             XCTAssert(context.saveOrRollback())
 
             // Then

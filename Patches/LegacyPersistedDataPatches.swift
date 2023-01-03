@@ -22,7 +22,7 @@ private let zmLog = ZMSLog(tag: "Patches")
 
 /// Patches to apply to migrate some persisted data from a previous
 /// version of the app - database fixes, local files clean up, etc.
-public final class PersistedDataPatch {
+public final class LegacyPersistedDataPatch {
     
     /// Max version for which the patch needs to be applied
     let version: FrameworkVersion
@@ -36,7 +36,7 @@ public final class PersistedDataPatch {
     }
 
     /// Apply all patches to the MOC
-    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil) {
+    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [LegacyPersistedDataPatch]? = nil) {
         guard let currentVersion = Bundle(for: Self.self).infoDictionary!["FrameworkVersion"] as? String else {
             return zmLog.safePublic("Can't retrieve CFBundleShortVersionString for data model, skipping patches..")
         }
@@ -53,7 +53,7 @@ public final class PersistedDataPatch {
             return zmLog.safePublic("No previous patch version stored (expected on fresh installs), skipping patches..")
         }
         
-        (patches ?? PersistedDataPatch.allPatchesToApply).filter { $0.version > previousPatchVersion }.forEach {
+        (patches ?? LegacyPersistedDataPatch.allPatchesToApply).filter { $0.version > previousPatchVersion }.forEach {
             $0.block(moc)
         }
     }
@@ -115,7 +115,7 @@ public struct FrameworkVersion: Comparable, Equatable {
     }
 }
 
-public func==(lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
+public func ==(lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
     return lhs.components == rhs.components
 }
 
