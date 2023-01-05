@@ -115,7 +115,11 @@ final class ProxyCredentialsViewController: UIViewController {
             passwordInput.topAnchor.constraint(equalTo: usernameInput.bottomAnchor, constant: 36),
 
             bottomSeparator.topAnchor.constraint(equalTo: passwordInput.bottomAnchor, constant: 26),
-            bottomSeparator.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+            bottomSeparator.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
+
+
+            usernameInput.heightAnchor.constraint(equalToConstant: 48),
+            passwordInput.heightAnchor.constraint(equalToConstant: 48)
         ])
     }
 
