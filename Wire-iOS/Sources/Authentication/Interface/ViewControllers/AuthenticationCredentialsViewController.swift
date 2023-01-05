@@ -96,7 +96,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     private var emailFieldValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
     private var shouldUseScrollView = false
-    private var loginActiveField: UITextField? // used for login proxy case
+    private var loginActiveField: UIResponder? // used for login proxy case
 
     convenience init(flowType: FlowType, backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
         switch flowType {
@@ -206,8 +206,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        loginActiveField = self.proxyCredentialsViewController.usernameInput
-
+        loginActiveField = self.contextualFirstResponder
     }
 
     override var contentCenterYAnchor: NSLayoutYAxisAnchor {
@@ -215,15 +214,26 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     override func createMainView() -> UIView {
-        contentStack.axis = .vertical
-        contentStack.spacing = 24
+        let verticalSpacing: CGFloat = 24
+        let horizontalMargin: CGFloat = 31
 
-        contentStack.addArrangedSubview(tabBar)
-        contentStack.addArrangedSubview(emailInputField)
-        contentStack.addArrangedSubview(emailPasswordInputField)
-        contentStack.addArrangedSubview(phoneInputView)
-        contentStack.addArrangedSubview(forgotPasswordButton)
-        contentStack.addArrangedSubview(loginButton)
+        contentStack.axis = .vertical
+        contentStack.distribution = .fill
+
+        let innerTopStackView = UIStackView()
+        innerTopStackView.axis = .vertical
+        innerTopStackView.spacing = verticalSpacing
+
+        innerTopStackView.addArrangedSubview(tabBar)
+        innerTopStackView.addArrangedSubview(emailInputField)
+        innerTopStackView.addArrangedSubview(emailPasswordInputField)
+        innerTopStackView.addArrangedSubview(phoneInputView)
+        innerTopStackView.addArrangedSubview(forgotPasswordButton)
+//        innerTopStackView.setCustomSpacing(40, after: forgotPasswordButton)
+
+        let innerBottomStackView = UIStackView()
+        innerBottomStackView.axis = .vertical
+        innerBottomStackView.addArrangedSubview(loginButton)
 
         // log in button
         loginButton.setTitle(L10n.Localizable.Landing.Login.Button.title.capitalized, for: .normal)
@@ -238,8 +248,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         // Email Password Input View
         emailPasswordInputField.allowEditingPrefilledValue = !isReauthenticating
         emailPasswordInputField.passwordField.showConfirmButton = false
-        emailPasswordInputField.delegate = self
 
+        emailPasswordInputField.delegate = self
         // Email input view
         emailInputField.delegate = self
         emailInputField.textFieldValidationDelegate = self
@@ -251,13 +261,22 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             self?.emailFieldValidationError == nil
         }
 
-        contentStack.isLayoutMarginsRelativeArrangement = true
-        contentStack.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 31, bottom: 0, trailing: 31)
+        innerTopStackView.isLayoutMarginsRelativeArrangement = true
+        innerTopStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 0, trailing: horizontalMargin)
 
-        if isRegistering {
-            contentStack.isLayoutMarginsRelativeArrangement = true
-            contentStack.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 31, bottom: 0, trailing: 31)
+        innerBottomStackView.isLayoutMarginsRelativeArrangement = true
+        innerBottomStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 40, leading: horizontalMargin, bottom: 42, trailing: horizontalMargin)
+
+        addCustomBackendInfo()
+
+        contentStack.addArrangedSubview(innerTopStackView)
+        if isProxyCredentialsRequired {
+            addProxyCredentialsSection()
         }
+        contentStack.addArrangedSubview(innerBottomStackView)
+
+        contentStack.setCustomSpacing(40, after: innerTopStackView)
+        
         return contentStack
     }
 
@@ -309,7 +328,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             return super.updateKeyboard(with: keyboardFrame)
         }
 
-        guard let activeField = loginActiveField else {
+        guard let activeField = loginActiveField as? UIView else {
             scrollView.contentInset.bottom = 0
             scrollView.verticalScrollIndicatorInsets.bottom = 0
             return
@@ -326,16 +345,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     func updateViewsForProxy() {
-        addCustomBackendInfo()
         if case .custom = backendEnvironment.environmentType.value {
             tabBar.isHidden = true
         }
-
-        guard isProxyCredentialsRequired else {
-            return
-        }
-
-        addProxyCredentialsSection()
 
         emailPasswordInputField.passwordField.showConfirmButton = !isProxyCredentialsRequired
     }
@@ -521,8 +533,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         if info.superview == nil {
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(customBackendInfoViewTapped(sender:)))
             info.addGestureRecognizer(tapGesture)
-            let indexAfterTitle = (contentStack.arrangedSubviews.firstIndex(where: { $0 == tabBar }) ?? 0) + 1
-            contentStack.insertArrangedSubview(info, at: indexAfterTitle)
+            contentStack.addArrangedSubview(info)
             info.heightAnchor.constraint(equalToConstant: 30).isActive = true
         }
     }
@@ -530,8 +541,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     private func addProxyCredentialsSection() {
         guard proxyCredentialsViewController.parent == nil else { return }
         addChild(proxyCredentialsViewController)
-        let indexAfterPassword = (contentStack.arrangedSubviews.firstIndex(where: { $0 == emailPasswordInputField }) ?? 0) + 1
-        contentStack.insertArrangedSubview(proxyCredentialsViewController.view, at: indexAfterPassword)
+        contentStack.addArrangedSubview(proxyCredentialsViewController.view)
         proxyCredentialsViewController.didMove(toParent: self)
     }
 
