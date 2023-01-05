@@ -229,7 +229,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         innerTopStackView.addArrangedSubview(emailPasswordInputField)
         innerTopStackView.addArrangedSubview(phoneInputView)
         innerTopStackView.addArrangedSubview(forgotPasswordButton)
-//        innerTopStackView.setCustomSpacing(40, after: forgotPasswordButton)
+        innerTopStackView.setCustomSpacing(40, after: forgotPasswordButton)
 
         let innerBottomStackView = UIStackView()
         innerBottomStackView.axis = .vertical
@@ -264,8 +264,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         innerTopStackView.isLayoutMarginsRelativeArrangement = true
         innerTopStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 0, trailing: horizontalMargin)
 
+
         innerBottomStackView.isLayoutMarginsRelativeArrangement = true
-        innerBottomStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 40, leading: horizontalMargin, bottom: 42, trailing: horizontalMargin)
+        innerBottomStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 42, trailing: horizontalMargin)
 
         addCustomBackendInfo()
 
@@ -276,7 +277,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         contentStack.addArrangedSubview(innerBottomStackView)
 
         contentStack.setCustomSpacing(40, after: innerTopStackView)
-        
         return contentStack
     }
 
