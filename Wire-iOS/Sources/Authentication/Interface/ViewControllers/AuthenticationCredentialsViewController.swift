@@ -210,9 +210,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     }
 
-    override var contentCenterYAnchor: NSLayoutYAxisAnchor {
-        return tabBar.bottomAnchor
-    }
+//    override var contentCenterYAnchor: NSLayoutYAxisAnchor {
+//        return tabBar.bottomAnchor
+//    }
 
     override func createMainView() -> UIView {
         contentStack.axis = .vertical
