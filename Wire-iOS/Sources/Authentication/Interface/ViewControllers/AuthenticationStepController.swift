@@ -240,7 +240,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             contentStack.wr_addCustomSpacing(16, after: headlineLabelContainer)
             contentStack.wr_addCustomSpacing(44, after: subtextLabelContainer)
         } else {
-            contentStack.wr_addCustomSpacing(44, after: headlineLabelContainer)
+            contentStack.wr_addCustomSpacing(contentCenterConstraintActivation ? 44 : 0, after: headlineLabelContainer)
         }
 
         contentStack.wr_addCustomSpacing(16, after: mainView)

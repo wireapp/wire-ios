@@ -224,6 +224,11 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         innerTopStackView.axis = .vertical
         innerTopStackView.spacing = verticalSpacing
 
+        if let infoView = customBackendInfo() {
+            innerTopStackView.addArrangedSubview(infoView)
+            innerTopStackView.setCustomSpacing(66, after: infoView)
+        }
+
         innerTopStackView.addArrangedSubview(tabBar)
         innerTopStackView.addArrangedSubview(emailInputField)
         innerTopStackView.addArrangedSubview(emailPasswordInputField)
@@ -264,11 +269,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         innerTopStackView.isLayoutMarginsRelativeArrangement = true
         innerTopStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 0, trailing: horizontalMargin)
 
-
         innerBottomStackView.isLayoutMarginsRelativeArrangement = true
-        innerBottomStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 42, trailing: horizontalMargin)
-
-        addCustomBackendInfo()
+        innerBottomStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: isProxyCredentialsRequired ? 40 : 0, leading: horizontalMargin, bottom: 32, trailing: horizontalMargin)
 
         contentStack.addArrangedSubview(innerTopStackView)
         if isProxyCredentialsRequired {
@@ -523,19 +525,17 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     // MARK: - Proxy Credentials
-
-    private func addCustomBackendInfo() {
+    
+    private func customBackendInfo() -> CustomBackendView? {
         guard let url = backendEnvironment.environmentType.customUrl else {
-            return
+            return nil
         }
         let info = CustomBackendView()
         info.setBackendUrl(url)
-        if info.superview == nil {
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(customBackendInfoViewTapped(sender:)))
-            info.addGestureRecognizer(tapGesture)
-            contentStack.addArrangedSubview(info)
-            info.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        }
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(customBackendInfoViewTapped(sender:)))
+        info.addGestureRecognizer(tapGesture)
+        info.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        return info
     }
 
     private func addProxyCredentialsSection() {
