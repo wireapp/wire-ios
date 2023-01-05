@@ -101,7 +101,7 @@ final class ProxyCredentialsViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview($0)
 
-            let margin: CGFloat = 31
+            let margin: CGFloat = ($0 == usernameInput || $0 == passwordInput) ? 0 : 16
             $0.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
             $0.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
         }
@@ -109,7 +109,7 @@ final class ProxyCredentialsViewController: UIViewController {
         NSLayoutConstraint.activate([
             topSeparator.topAnchor.constraint(equalTo: view.topAnchor),
 
-            titleLabel.topAnchor.constraint(equalTo: topSeparator.bottomAnchor, constant: 30),
+            titleLabel.topAnchor.constraint(equalTo: topSeparator.bottomAnchor, constant: 16),
             captionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
             usernameInput.topAnchor.constraint(equalTo: captionLabel.bottomAnchor, constant: 30),
             passwordInput.topAnchor.constraint(equalTo: usernameInput.bottomAnchor, constant: 36),
