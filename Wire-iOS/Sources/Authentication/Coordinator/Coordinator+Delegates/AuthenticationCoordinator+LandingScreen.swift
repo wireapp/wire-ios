@@ -19,28 +19,77 @@
 import Foundation
 import UIKit
 import WireCommonComponents
+import WireTransport
 
 extension AuthenticationCoordinator: LandingViewControllerDelegate {
 
     func landingViewControllerDidChooseLogin() {
         if let fastloginCredentials = AutomationHelper.sharedHelper.automationEmailCredentials {
             let loginRequest = AuthenticationLoginRequest.email(address: fastloginCredentials.email, password: fastloginCredentials.password)
-            executeActions([.showLoadingView, .startLoginFlow(loginRequest)])
+            let proxyCredentials = BackendEnvironment.shared.proxy.flatMap { proxy in
+                ProxyCredentials.retrieve(for: proxy).flatMap { AuthenticationProxyCredentialsInput(username: $0.username, password: $0.password) }
+            }
+
+            executeActions([.showLoadingView, .startLoginFlow(loginRequest, proxyCredentials)])
         } else {
             stateController.transition(to: .provideCredentials(.email, nil))
         }
     }
 
     func landingViewControllerDidChooseCreateAccount() {
-        let unregisteredUser = makeUnregisteredUser()
-        stateController.transition(to: .createCredentials(unregisteredUser))
+        if !showAlertIfProxy(title: L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported.title,
+                                message: L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported.message) {
+            let unregisteredUser = makeUnregisteredUser()
+            stateController.transition(to: .createCredentials(unregisteredUser))
+        }
     }
 
     func landingViewControllerDidChooseEnterpriseLogin() {
-        executeActions([.startCompanyLogin(code: nil)])
+        if !showAlertIfProxy(title: L10n.Localizable.Landing.Alert.Sso.NotSupported.title,
+                                message: L10n.Localizable.Landing.Alert.Sso.NotSupported.message) {
+            executeActions([.startCompanyLogin(code: nil)])
+        }
     }
 
     func landingViewControllerDidChooseSSOLogin() {
         executeActions([.startSSOFlow])
+    }
+
+    func landingViewControllerDidChooseInfoBackend() {
+        let env = BackendEnvironment.shared
+
+        let info = [
+            L10n.Localizable.Landing.CustomBackend.Alert.Message.backendName,
+            env.title,
+            L10n.Localizable.Landing.CustomBackend.Alert.Message.backendUrl,
+            env.backendURL.absoluteString
+        ].joined(separator: "\n")
+
+        executeActions([.presentAlert(.init(title: L10n.Localizable.Landing.CustomBackend.Alert.title,
+                                            message: info,
+                                            actions: [.ok]))])
+    }
+
+    private func showAlertIfProxy(title: String, message: String) -> Bool {
+        guard BackendEnvironment.shared.proxy == nil else {
+            // not supported, show alert
+            let alert = AuthenticationCoordinatorAlert(title: title,
+                                                       message: message,
+                                                       actions: [.ok])
+            executeActions([.presentAlert(alert)])
+            return true
+        }
+        return false
+    }
+}
+
+extension EnvironmentTypeProvider {
+    var customUrl: URL? {
+        switch value {
+        case .custom(let url):
+            return url
+        default:
+            return nil
+        }
     }
 }

@@ -48,7 +48,7 @@ enum AuthenticationCoordinatorAction {
     case continueFlowWithLoginCode(String)
     case switchCredentialsType(AuthenticationCredentialsType)
     case startRegistrationFlow(UnverifiedCredentials)
-    case startLoginFlow(AuthenticationLoginRequest)
+    case startLoginFlow(AuthenticationLoginRequest, AuthenticationProxyCredentialsInput?)
     case setUserName(String)
     case setUserPassword(String)
     case updateBackendEnvironment(url: URL)
@@ -113,4 +113,9 @@ struct AuthenticationCoordinatorErrorAlert {
 enum AuthenticationLoginRequest {
     case email(address: String, password: String)
     case phoneNumber(String)
+}
+
+struct AuthenticationProxyCredentialsInput {
+    var username: String
+    var password: String
 }
