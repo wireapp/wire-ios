@@ -184,11 +184,11 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     override func loadView() {
         if self.shouldUseScrollView {
             self.view = UIScrollView()
-            // avoid constraint breaking on layout pass
-            self.view.frame = UIScreen.main.bounds
         } else {
             self.view = UIView()
         }
+        // avoid constraint breaking on layout pass
+        self.view.frame = UIScreen.main.bounds
     }
 
     override func viewDidLoad() {
