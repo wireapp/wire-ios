@@ -90,7 +90,6 @@ final class AuthenticationInterfaceBuilderTests: ZMSnapshotTestCase, CoreDataFix
     // MARK: - Login
 
     func testLoginScreen_Phone() throws {
-        throw XCTSkip("disable for now")
         runSnapshotTest(for: .provideCredentials(.phone, nil))
     }
 
