@@ -209,16 +209,13 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         loginActiveField = self.contextualFirstResponder
     }
 
-//    override var contentCenterYAnchor: NSLayoutYAxisAnchor {
-//        return tabBar.bottomAnchor
-//    }
+    override var contentCenterYAnchor: NSLayoutYAxisAnchor {
+        return tabBar.bottomAnchor
+    }
 
-    override func createMainView() -> UIView {
+    private func setupProxyView() {
         let verticalSpacing: CGFloat = 24
         let horizontalMargin: CGFloat = 31
-
-        contentStack.axis = .vertical
-        contentStack.distribution = .fill
 
         let innerTopStackView = UIStackView()
         innerTopStackView.axis = .vertical
@@ -240,32 +237,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         innerBottomStackView.axis = .vertical
         innerBottomStackView.addArrangedSubview(loginButton)
 
-        // log in button
-        loginButton.setTitle(L10n.Localizable.Landing.Login.Button.title.capitalized, for: .normal)
-        loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
-        updateLoginButtonState()
-
-        // Phone Number View
-        phoneInputView.delegate = self
-        phoneInputView.tintColor = .black
-        phoneInputView.allowEditingPrefilledValue = !isReauthenticating
-
-        // Email Password Input View
-        emailPasswordInputField.allowEditingPrefilledValue = !isReauthenticating
-        emailPasswordInputField.passwordField.showConfirmButton = false
-
-        emailPasswordInputField.delegate = self
-        // Email input view
-        emailInputField.delegate = self
-        emailInputField.textFieldValidationDelegate = self
-        emailInputField.placeholder = L10n.Localizable.Email.placeholder.capitalized
-        emailInputField.addTarget(self, action: #selector(emailTextInputDidChange), for: .editingChanged)
-        emailInputField.confirmButton.addTarget(self, action: #selector(emailConfirmButtonTapped), for: .touchUpInside)
-
-        emailInputField.enableConfirmButton = { [weak self] in
-            self?.emailFieldValidationError == nil
-        }
-
         innerTopStackView.isLayoutMarginsRelativeArrangement = true
         innerTopStackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 0, trailing: horizontalMargin)
 
@@ -279,6 +250,57 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         contentStack.addArrangedSubview(innerBottomStackView)
 
         contentStack.setCustomSpacing(40, after: innerTopStackView)
+    }
+
+    private func setupDefaultView() {
+        let horizontalMargin: CGFloat = 31
+        contentStack.spacing = 24
+
+        contentStack.addArrangedSubview(tabBar)
+        contentStack.addArrangedSubview(emailInputField)
+        contentStack.addArrangedSubview(emailPasswordInputField)
+        contentStack.addArrangedSubview(phoneInputView)
+        contentStack.addArrangedSubview(forgotPasswordButton)
+        contentStack.addArrangedSubview(loginButton)
+
+        contentStack.isLayoutMarginsRelativeArrangement = true
+        contentStack.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: horizontalMargin, bottom: 0, trailing: horizontalMargin)
+    }
+
+    override func createMainView() -> UIView {
+        contentStack.axis = .vertical
+        contentStack.distribution = .fill
+
+        // log in button
+        loginButton.setTitle(L10n.Localizable.Landing.Login.Button.title.capitalized, for: .normal)
+        loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        updateLoginButtonState()
+
+        // Phone Number View
+        phoneInputView.delegate = self
+        phoneInputView.tintColor = .black
+        phoneInputView.allowEditingPrefilledValue = !isReauthenticating
+
+        // Email Password Input View
+        emailPasswordInputField.allowEditingPrefilledValue = !isReauthenticating
+        emailPasswordInputField.passwordField.showConfirmButton = false
+        emailPasswordInputField.delegate = self
+
+        // Email input view
+        emailInputField.delegate = self
+        emailInputField.textFieldValidationDelegate = self
+        emailInputField.placeholder = L10n.Localizable.Email.placeholder.capitalized
+        emailInputField.addTarget(self, action: #selector(emailTextInputDidChange), for: .editingChanged)
+        emailInputField.confirmButton.addTarget(self, action: #selector(emailConfirmButtonTapped), for: .touchUpInside)
+        emailInputField.enableConfirmButton = { [weak self] in
+            self?.emailFieldValidationError == nil
+        }
+
+        if isProxyCredentialsRequired {
+            setupProxyView()
+        } else {
+            setupDefaultView()
+        }
         return contentStack
     }
 
@@ -350,8 +372,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         if case .custom = backendEnvironment.environmentType.value {
             tabBar.isHidden = true
         }
-
-        emailPasswordInputField.passwordField.showConfirmButton = !isProxyCredentialsRequired
     }
 
     func configure(with featureProvider: AuthenticationFeatureProvider) {
@@ -525,7 +545,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     // MARK: - Proxy Credentials
-    
+
     private func customBackendInfo() -> CustomBackendView? {
         guard let url = backendEnvironment.environmentType.customUrl else {
             return nil
