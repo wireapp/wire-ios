@@ -182,13 +182,13 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     // MARK: - Lifecycle
 
     override func loadView() {
-        if self.shouldUseScrollView {
-            self.view = UIScrollView()
+        if shouldUseScrollView {
+            view = UIScrollView()
         } else {
-            self.view = UIView()
+            view = UIView()
         }
         // avoid constraint breaking on layout pass
-        self.view.frame = UIScreen.main.bounds
+        view.frame = UIScreen.main.bounds
     }
 
     override func viewDidLoad() {
@@ -201,12 +201,12 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             updateViewsForProxy()
         }
 
-        (self.view as? UIScrollView)?.keyboardDismissMode = .onDrag
+        (view as? UIScrollView)?.keyboardDismissMode = .onDrag
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        loginActiveField = self.contextualFirstResponder
+        loginActiveField = contextualFirstResponder
     }
 
     override var contentCenterYAnchor: NSLayoutYAxisAnchor {
@@ -340,7 +340,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         }
     }
     override func updateConstraints(forRegularLayout isRegular: Bool) {
-        guard self.shouldUseScrollView else {
+        guard shouldUseScrollView else {
             return super.updateConstraints(forRegularLayout: isRegular)
         }
 
@@ -348,7 +348,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     override func updateKeyboard(with keyboardFrame: CGRect) {
-        guard let scrollView = self.view as? UIScrollView else {
+        guard let scrollView = view as? UIScrollView else {
             return super.updateKeyboard(with: keyboardFrame)
         }
 
