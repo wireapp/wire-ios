@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:wire-ios/Wire-iOS.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-canvas/WireCanvas.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-ziphy/Ziphy.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-notification-engine/WireNotificationEngine.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-share-engine/WireShareEngine.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-sync-engine/WireSyncEngine.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-mocktransport/WireMockTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-protos/WireProtos.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-cryptobox/WireCryptobox.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-transport/WireTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-link-preview/WireLinkPreview.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-utilities/../wire-ios-images/WireImages.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-utilities/WireUtilities.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-testing/WireTesting.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-system/WireSystem.xcodeproj">
+   </FileRef>
+</Workspace>

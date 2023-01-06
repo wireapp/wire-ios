@@ -18,7 +18,7 @@
 
 #include "warnings.xcconfig"
 #include "../version.xcconfig"
-#include "ios-arm64Simulator.xcconfig"
+#include "../../../../xcconfigs/ios-arm64Simulator.xcconfig"
 
 
 // info.plist

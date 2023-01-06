@@ -32,8 +32,6 @@
 		870121FD20F4D2FE001E6342 /* GenericHashBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */; };
 		87B43C2F20F3973F0031DE41 /* EncryptionContextCachingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */; };
 		87B43C5920F4AAA00031DE41 /* GenericHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C5820F4AAA00031DE41 /* GenericHash.swift */; };
-		A96E0115265FFA800034A057 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E0113265FFA800034A057 /* WireUtilities.xcframework */; };
-		A96E0117265FFA800034A057 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E0114265FFA800034A057 /* WireSystem.xcframework */; };
 		A9C97AEB27973F9500C3B9D3 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9C97AE927973F9500C3B9D3 /* Clibsodium.xcframework */; };
 		A9F4996F279A8A9600969F4B /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9F4996E279A8A9600969F4B /* cryptobox.xcframework */; };
 		A9F499AC279A8ABD00969F4B /* crypto_stream_salsa2012.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F49971279A8ABD00969F4B /* crypto_stream_salsa2012.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -95,6 +93,8 @@
 		A9F499E4279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499A9279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E5279A8ABD00969F4B /* crypto_generichash_blake2b.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AA279A8ABD00969F4B /* crypto_generichash_blake2b.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E6279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; };
+		EE97411E295493B9000C9340 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
 		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
 		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
@@ -126,6 +126,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE97411F295493B9000C9340 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE97411E295493B9000C9340 /* WireUtilities.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -168,8 +179,6 @@
 		870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHashBuilderTests.swift; sourceTree = "<group>"; };
 		87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionContextCachingTests.swift; sourceTree = "<group>"; };
 		87B43C5820F4AAA00031DE41 /* GenericHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHash.swift; sourceTree = "<group>"; };
-		A96E0113265FFA800034A057 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
-		A96E0114265FFA800034A057 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
 		A9C97AE927973F9500C3B9D3 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
 		A9F4996E279A8A9600969F4B /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
 		A9F49971279A8ABD00969F4B /* crypto_stream_salsa2012.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_salsa2012.h; sourceTree = "<group>"; };
@@ -233,8 +242,7 @@
 		A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign_edwards25519sha512batch.h; sourceTree = "<group>"; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EE18F3602869A01D004012FE /* ios-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-common.xcconfig"; sourceTree = "<group>"; };
-		EE18F3632869D236004012FE /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-arm64Simulator.xcconfig"; sourceTree = "<group>"; };
+		EE97411C295493B9000C9340 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
 		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
 		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
@@ -251,9 +259,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A96E0117265FFA800034A057 /* WireSystem.xcframework in Frameworks */,
-				A96E0115265FFA800034A057 /* WireUtilities.xcframework in Frameworks */,
 				A9F4996F279A8A9600969F4B /* cryptobox.xcframework in Frameworks */,
+				EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */,
 				A9C97AEB27973F9500C3B9D3 /* Clibsodium.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -331,8 +338,6 @@
 			isa = PBXGroup;
 			children = (
 				F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */,
-				EE18F3602869A01D004012FE /* ios-common.xcconfig */,
-				EE18F3632869D236004012FE /* ios-arm64Simulator.xcconfig */,
 				F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */,
 				F1E148D3207D06EF00F81833 /* tests.xcconfig */,
 				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
@@ -494,10 +499,9 @@
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE97411C295493B9000C9340 /* WireUtilities.framework */,
 				A9F4996E279A8A9600969F4B /* cryptobox.xcframework */,
 				A9C97AE927973F9500C3B9D3 /* Clibsodium.xcframework */,
-				A96E0114265FFA800034A057 /* WireSystem.xcframework */,
-				A96E0113265FFA800034A057 /* WireUtilities.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -585,6 +589,7 @@
 				0928E2301BA0777A0057232E /* Frameworks */,
 				0928E2311BA0777A0057232E /* Headers */,
 				0928E2321BA0777A0057232E /* Resources */,
+				EE97411F295493B9000C9340 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -808,6 +813,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";

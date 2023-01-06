@@ -110,9 +110,6 @@
 		5E8AA200223BC8CE005F5E07 /* NSFileHandle+SafeOperations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+SafeOperations.m"; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
-		A97E5AF026945B370030D045 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		A9948D1C2796D493003F4AAC /* ios-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-common.xcconfig"; sourceTree = "<group>"; };
-		A9948D1D2796D4D5003F4AAC /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-arm64Simulator.xcconfig"; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
 		F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedString.swift; sourceTree = "<group>"; };
@@ -162,9 +159,6 @@
 		5454D7481EF4022F00E3BBCB /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A97E5AF026945B370030D045 /* ios.xcconfig */,
-				A9948D1D2796D4D5003F4AAC /* ios-arm64Simulator.xcconfig */,
-				A9948D1C2796D493003F4AAC /* ios-common.xcconfig */,
 				546BC7D01EFD49B400DDB12A /* project-common.xcconfig */,
 				546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */,
 				546BC7D21EFD49B400DDB12A /* project.xcconfig */,
@@ -459,6 +453,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
