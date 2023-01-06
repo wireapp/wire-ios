@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -23,14 +23,10 @@
 		09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */; };
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
 		09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */; };
-		304C01E74556BFF56EB372D2 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D599521BDA7B163A187C42C4 /* WireTesting.xcframework */; };
-		41FFE97A7A1BE7CA6D4FB591 /* WireTesting.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D599521BDA7B163A187C42C4 /* WireTesting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4E531B50FB39CECCC2E21105 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8A911E8D5612F418FB865E4 /* WireUtilities.xcframework */; };
 		5405B0091BCEBDBF00C0C3BD /* ZMIImageProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5405B0081BCEBDBF00C0C3BD /* ZMIImageProperties.m */; };
 		54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54A5A6161E92A01100D56F2E /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
-		71BC271B1B3C0759721FAFF1 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE318EA7BB6A318C6CF551E /* WireSystem.xcframework */; };
 		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
 		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
 		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
@@ -74,12 +70,9 @@
 		87B91C4D1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */; };
 		87B91C4E1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */; };
 		A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */; };
-		EFF7A4722271E47500F1AC33 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A46F2271E47400F1AC33 /* Cartfile.resolved */; };
-		EFF7A4732271E47500F1AC33 /* Cartfile.private in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A4702271E47400F1AC33 /* Cartfile.private */; };
-		EFF7A4742271E47500F1AC33 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A4712271E47500F1AC33 /* Cartfile */; };
+		EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; };
+		EEB4197329548A3D00644D10 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F1E148CF207CE68100F81833 /* ceiling_rotated_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C0C1E5C7E5D00A5EC11 /* ceiling_rotated_1.jpg */; };
-		FB1057E02A25A171F05761DF /* OCMock.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		FCCA36E967810F6C9069B7AE /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,9 +99,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EEB4197329548A3D00644D10 /* WireUtilities.framework in CopyFiles */,
 				54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */,
-				41FFE97A7A1BE7CA6D4FB591 /* WireTesting.xcframework in CopyFiles */,
-				FB1057E02A25A171F05761DF /* OCMock.xcframework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,15 +184,8 @@
 		87B91C291E5C7E5D00A5EC11 /* unsplash_preview.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview.jpg; sourceTree = "<group>"; };
 		87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview_small_profile.jpg; sourceTree = "<group>"; };
 		87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small_profile.jpg; sourceTree = "<group>"; };
-		A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
-		A9226279279ECDA500D4CF72 /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
-		CFE318EA7BB6A318C6CF551E /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
-		D599521BDA7B163A187C42C4 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
-		EFF7A46F2271E47400F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
-		EFF7A4702271E47400F1AC33 /* Cartfile.private */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
-		EFF7A4712271E47500F1AC33 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		F8A911E8D5612F418FB865E4 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
+		EEB4197129548A3D00644D10 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,8 +193,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71BC271B1B3C0759721FAFF1 /* WireSystem.xcframework in Frameworks */,
-				4E531B50FB39CECCC2E21105 /* WireUtilities.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,9 +208,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */,
 				870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */,
-				304C01E74556BFF56EB372D2 /* WireTesting.xcframework in Frameworks */,
-				FCCA36E967810F6C9069B7AE /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,10 +229,7 @@
 		098CB1191B5FA6E100712DF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */,
-				D599521BDA7B163A187C42C4 /* WireTesting.xcframework */,
-				CFE318EA7BB6A318C6CF551E /* WireSystem.xcframework */,
-				F8A911E8D5612F418FB865E4 /* WireUtilities.xcframework */,
+				EEB4197129548A3D00644D10 /* WireUtilities.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -313,9 +292,6 @@
 		09DD1EA81B5D41E0005EBCC4 = {
 			isa = PBXGroup;
 			children = (
-				EFF7A4712271E47500F1AC33 /* Cartfile */,
-				EFF7A4702271E47400F1AC33 /* Cartfile.private */,
-				EFF7A46F2271E47400F1AC33 /* Cartfile.resolved */,
 				098CB1281B5FAD5A00712DF9 /* Sources */,
 				098CB1611B5FAD6300712DF9 /* Resources */,
 				098CB1651B5FAD6900712DF9 /* Tests */,
@@ -338,7 +314,6 @@
 		5471F8181B73E6E000460C35 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A9226279279ECDA500D4CF72 /* ios-arm64Simulator.xcconfig */,
 				5471F81F1B73E6E000460C35 /* project-common.xcconfig */,
 				5471F8201B73E6E000460C35 /* project-debug.xcconfig */,
 				5471F8211B73E6E000460C35 /* project.xcconfig */,
@@ -541,9 +516,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EFF7A4742271E47500F1AC33 /* Cartfile in Resources */,
-				EFF7A4722271E47500F1AC33 /* Cartfile.resolved in Resources */,
-				EFF7A4732271E47500F1AC33 /* Cartfile.private in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -679,6 +651,7 @@
 			baseConfigurationReference = 0927584A1B70C23B00AD5A78 /* WireImages.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -739,6 +712,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -749,6 +723,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;

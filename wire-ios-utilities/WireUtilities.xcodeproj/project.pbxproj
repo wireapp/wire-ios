@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -117,15 +117,10 @@
 		877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */ = {isa = PBXBuildFile; fileRef = 877F50201E729CCF00894C90 /* excessive_diacritics.txt */; };
 		87B6489C2076078A002FC9E7 /* Composition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B6489B2076078A002FC9E7 /* Composition.swift */; };
 		87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */; };
-		A944AEEA265E4D9C00164C79 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE7265E4D9B00164C79 /* WireSystem.xcframework */; };
 		A94DA30826BC239400CC626C /* Data+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94DA30726BC239400CC626C /* Data+Image.swift */; };
 		A94DA31626BC256E00CC626C /* NSData+ImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94DA31526BC256E00CC626C /* NSData+ImageTests.swift */; };
 		A94DA32726BC5DE700CC626C /* animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = A94DA32526BC5DE700CC626C /* animated.gif */; };
 		A94DA32826BC5DE700CC626C /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = A94DA32626BC5DE700CC626C /* not_animated.gif */; };
-		A96755D8265FE98A0062EDC5 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */; };
-		A96755D9265FE98A0062EDC5 /* WireTesting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		A96E00E0265FEF070034A057 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE8265E4D9C00164C79 /* OCMock.xcframework */; };
-		A96E00E1265FEF070034A057 /* OCMock.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE8265E4D9C00164C79 /* OCMock.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A98EC2A726B8169700D10C80 /* UTIHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */; };
 		A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1EF24D9814D001AF38E /* Keychain.swift */; };
 		A9C6EDE426B32E9D007F61C5 /* UTIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */; };
@@ -162,6 +157,8 @@
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
 		EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */; };
 		EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */; };
+		EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
+		EE712FC9295487A9006EA7B3 /* WireSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */; };
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
@@ -220,15 +217,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		EE712FCA295487A9006EA7B3 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE712FC9295487A9006EA7B3 /* WireSystem.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F1D567B4207BA4E800CCDD77 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A96E00E1265FEF070034A057 /* OCMock.xcframework in Embed Frameworks */,
 				F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */,
-				A96755D9265FE98A0062EDC5 /* WireTesting.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,9 +302,6 @@
 		546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+WireUtilitiesTests.m"; path = "Source/NSManagedObjectContext+WireUtilitiesTests.m"; sourceTree = "<group>"; };
 		546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FunctionalTests.swift; path = Source/FunctionalTests.swift; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
-		54BD49EB1D41FA16006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		54BD49EC1D41FA16006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
-		54BD49ED1D41FA16006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		54BD49EE1D41FA1D006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireUtilities.xcconfig; sourceTree = "<group>"; };
 		54C1B1001B31A1E400CB8CF3 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -357,9 +360,6 @@
 		877F50201E729CCF00894C90 /* excessive_diacritics.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = excessive_diacritics.txt; sourceTree = "<group>"; };
 		87B6489B2076078A002FC9E7 /* Composition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composition.swift; sourceTree = "<group>"; };
 		87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtremeCombiningCharactersValidator.swift; sourceTree = "<group>"; };
-		A944AEE7265E4D9B00164C79 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
-		A944AEE8265E4D9C00164C79 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
-		A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		A94DA30726BC239400CC626C /* Data+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Image.swift"; sourceTree = "<group>"; };
 		A94DA31526BC256E00CC626C /* NSData+ImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSData+ImageTests.swift"; sourceTree = "<group>"; };
 		A94DA32526BC5DE700CC626C /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animated.gif; sourceTree = "<group>"; };
@@ -372,7 +372,6 @@
 		A9CDCDC5237D9A6E008A9BC6 /* UIColor+Equatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Equatable.swift"; sourceTree = "<group>"; };
 		A9CDCDC8237D9AE3008A9BC6 /* ColorComponentsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorComponentsTests.swift; sourceTree = "<group>"; };
 		A9CDCDC9237D9AE3008A9BC6 /* UIColor+MixingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+MixingTests.swift"; sourceTree = "<group>"; };
-		A9F499E9279AC94B00969F4B /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+Containment.swift"; sourceTree = "<group>"; };
 		BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+ContainmentTests.swift"; sourceTree = "<group>"; };
 		BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparison.swift; sourceTree = "<group>"; };
@@ -403,6 +402,7 @@
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
+		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthInteger_RandomTests.swift; sourceTree = "<group>"; };
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
@@ -449,9 +449,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A96E00E0265FEF070034A057 /* OCMock.xcframework in Frameworks */,
 				F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */,
-				A96755D8265FE98A0062EDC5 /* WireTesting.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,7 +457,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A944AEEA265E4D9C00164C79 /* WireSystem.xcframework in Frameworks */,
+				EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,9 +516,6 @@
 		3E88BD291B1F3E8400232589 = {
 			isa = PBXGroup;
 			children = (
-				54BD49EB1D41FA16006E29D1 /* Cartfile */,
-				54BD49EC1D41FA16006E29D1 /* Cartfile.private */,
-				54BD49ED1D41FA16006E29D1 /* Cartfile.resolved */,
 				54BD49EE1D41FA1D006E29D1 /* README.md */,
 				3E88BD3A1B1F3EA300232589 /* Source */,
 				3E88BD471B1F3EA300232589 /* Tests */,
@@ -615,9 +610,7 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A944AEE8265E4D9C00164C79 /* OCMock.xcframework */,
-				A944AEE7265E4D9B00164C79 /* WireSystem.xcframework */,
-				A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */,
+				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -625,7 +618,6 @@
 		546E84FA1B73DCA300532F17 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				A9F499E9279AC94B00969F4B /* ios-arm64Simulator.xcconfig */,
 				F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */,
 				F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */,
 				F1E148C7207BAED000F81833 /* project-common.xcconfig */,
@@ -888,6 +880,7 @@
 				3E88BD341B1F3EA300232589 /* Frameworks */,
 				3E88BD351B1F3EA300232589 /* Headers */,
 				3E88BD361B1F3EA300232589 /* Resources */,
+				EE712FCA295487A9006EA7B3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1254,6 +1247,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Debug;

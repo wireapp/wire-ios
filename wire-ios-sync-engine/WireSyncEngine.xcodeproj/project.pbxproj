@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -78,7 +78,6 @@
 		16519D6D231EAAF300C9D76D /* Conversation+DeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16519D6C231EAAF300C9D76D /* Conversation+DeletionTests.swift */; };
 		1658C2371F503CF800889F22 /* FlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1658C2361F503CF800889F22 /* FlowManager.swift */; };
 		1658C23A1F5404F000889F22 /* FlowManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1658C2381F5404ED00889F22 /* FlowManagerMock.swift */; };
-		1658E91D26C53FDB003D0090 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1658E91C26C53FDB003D0090 /* Starscream.xcframework */; };
 		1659114F1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1659114E1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift */; };
 		165911531DEF38EC007FA847 /* CallStateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165911521DEF38EC007FA847 /* CallStateObserver.swift */; };
 		165BB94C2004D6490077EFD5 /* SessionManager+UserActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165BB94B2004D6490077EFD5 /* SessionManager+UserActivity.swift */; };
@@ -461,26 +460,11 @@
 		A97E4F56267CF681006FC545 /* ZMUserSessionTestsBase+ZMUserSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97E4F55267CF681006FC545 /* ZMUserSessionTestsBase+ZMUserSessionConfiguration.swift */; };
 		A97E4F5B267CFB2D006FC545 /* ZMUserSessionTests_NetworkState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97E4F5A267CFB2D006FC545 /* ZMUserSessionTests_NetworkState.swift */; };
 		A9A2394E268DEC3D004B1C22 /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A2393E268DEC3C004B1C22 /* avs.xcframework */; };
-		A9A23950268DEC3D004B1C22 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A2393F268DEC3C004B1C22 /* HTMLString.xcframework */; };
-		A9A23952268DEC3D004B1C22 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23940268DEC3C004B1C22 /* PINCache.xcframework */; };
-		A9A23954268DEC3D004B1C22 /* WireLinkPreview.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23941268DEC3C004B1C22 /* WireLinkPreview.xcframework */; };
-		A9A23956268DEC3D004B1C22 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23942268DEC3C004B1C22 /* WireRequestStrategy.xcframework */; };
 		A9A23958268DEC3D004B1C22 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23943268DEC3C004B1C22 /* ZipArchive.xcframework */; };
-		A9A2395A268DEC3D004B1C22 /* WireImages.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23944268DEC3C004B1C22 /* WireImages.xcframework */; };
 		A9A2395C268DEC3D004B1C22 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23945268DEC3C004B1C22 /* libPhoneNumberiOS.xcframework */; };
-		A9A2395E268DEC3D004B1C22 /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23946268DEC3C004B1C22 /* WireDataModel.xcframework */; };
-		A9A23960268DEC3D004B1C22 /* WireProtos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23947268DEC3C004B1C22 /* WireProtos.xcframework */; };
-		A9A23962268DEC3D004B1C22 /* WireCryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23948268DEC3C004B1C22 /* WireCryptobox.xcframework */; };
-		A9A23966268DEC3D004B1C22 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A2394A268DEC3C004B1C22 /* SwiftProtobuf.xcframework */; };
-		A9A23968268DEC3D004B1C22 /* WireTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A2394B268DEC3D004B1C22 /* WireTransport.xcframework */; };
-		A9A2396A268DEC3D004B1C22 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A2394C268DEC3D004B1C22 /* WireSystem.xcframework */; };
-		A9A2396C268DEC3D004B1C22 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A2394D268DEC3D004B1C22 /* WireUtilities.xcframework */; };
-		A9A23976268DEC53004B1C22 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23974268DEC53004B1C22 /* OCMock.xcframework */; };
-		A9A23978268DEC53004B1C22 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23975268DEC53004B1C22 /* WireTesting.xcframework */; };
 		A9B53AAA24E12E240066FCC6 /* ZMAccountDeletedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B53AA924E12E240066FCC6 /* ZMAccountDeletedReason.swift */; };
 		A9C02605266F5B4B002E542B /* ZMClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C02604266F5B4B002E542B /* ZMClientRegistrationStatus.swift */; };
 		A9C0260A266F5D1C002E542B /* ZMClientRegistrationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C02609266F5D1B002E542B /* ZMClientRegistrationStatusTests.swift */; };
-		A9CCBA952696631100122380 /* WireMockTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A23949268DEC3C004B1C22 /* WireMockTransport.xcframework */; };
 		AF6415A41C9C17FF00A535F5 /* EncryptedBase64EncondedExternalMessageTestFixture.txt in Resources */ = {isa = PBXBuildFile; fileRef = AF6415A01C9C151700A535F5 /* EncryptedBase64EncondedExternalMessageTestFixture.txt */; };
 		AF6415A51C9C180200A535F5 /* ExternalMessageTextFixture.txt in Resources */ = {isa = PBXBuildFile; fileRef = AF6415A11C9C151700A535F5 /* ExternalMessageTextFixture.txt */; };
 		BF158D2F1CE087D8007C6F8A /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BF158D2E1CE087D8007C6F8A /* video.mp4 */; };
@@ -533,6 +517,10 @@
 		EE5D9B62290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5D9B61290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift */; };
 		EE5FEF0521E8948F00E24F7F /* ZMUserSession+DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5FEF0421E8948F00E24F7F /* ZMUserSession+DarwinNotificationCenter.swift */; };
 		EE6654642445D4EE00CBF8D3 /* MockAddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6654632445D4EE00CBF8D3 /* MockAddressBook.swift */; };
+		EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */; };
+		EE668BB72954AA7F00D939E7 /* WireRequestStrategy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE668BBA2954AA9300D939E7 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB92954AA9300D939E7 /* WireMockTransport.framework */; };
+		EE668BBB2954AA9300D939E7 /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB92954AA9300D939E7 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE95DECD247C0049001EA010 /* SessionManagerConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE95DECC247C0049001EA010 /* SessionManagerConfigurationTests.swift */; };
 		EE9CDE8E27D9FF5900C4DAC8 /* APIVersionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE8D27D9FF5900C4DAC8 /* APIVersionResolver.swift */; };
 		EE9CDE9027DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */; };
@@ -666,6 +654,31 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		EE668BB82954AA7F00D939E7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE668BB72954AA7F00D939E7 /* WireRequestStrategy.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE668BBC2954AA9300D939E7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE668BBB2954AA9300D939E7 /* WireMockTransport.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
 		0625690E264AE6560041C17B /* CallClosedReason.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallClosedReason.swift; sourceTree = "<group>"; };
@@ -761,7 +774,6 @@
 		16519D7C2320087100C9D76D /* SlowSyncTests+ExistingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SlowSyncTests+ExistingData.swift"; sourceTree = "<group>"; };
 		1658C2361F503CF800889F22 /* FlowManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowManager.swift; sourceTree = "<group>"; };
 		1658C2381F5404ED00889F22 /* FlowManagerMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowManagerMock.swift; sourceTree = "<group>"; };
-		1658E91C26C53FDB003D0090 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		1659114E1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LocalNotificationDispatcher+Calling.swift"; sourceTree = "<group>"; };
 		165911521DEF38EC007FA847 /* CallStateObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CallStateObserver.swift; path = ../UserSession/CallStateObserver.swift; sourceTree = "<group>"; };
 		165BB94B2004D6490077EFD5 /* SessionManager+UserActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserActivity.swift"; sourceTree = "<group>"; };
@@ -1104,23 +1116,8 @@
 		A97E4F55267CF681006FC545 /* ZMUserSessionTestsBase+ZMUserSessionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTestsBase+ZMUserSessionConfiguration.swift"; sourceTree = "<group>"; };
 		A97E4F5A267CFB2D006FC545 /* ZMUserSessionTests_NetworkState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserSessionTests_NetworkState.swift; sourceTree = "<group>"; };
 		A9A2393E268DEC3C004B1C22 /* avs.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = avs.xcframework; path = Carthage/Build/avs.xcframework; sourceTree = "<group>"; };
-		A9A2393F268DEC3C004B1C22 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
-		A9A23940268DEC3C004B1C22 /* PINCache.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PINCache.xcframework; path = Carthage/Build/PINCache.xcframework; sourceTree = "<group>"; };
-		A9A23941268DEC3C004B1C22 /* WireLinkPreview.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireLinkPreview.xcframework; path = Carthage/Build/WireLinkPreview.xcframework; sourceTree = "<group>"; };
-		A9A23942268DEC3C004B1C22 /* WireRequestStrategy.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireRequestStrategy.xcframework; path = Carthage/Build/WireRequestStrategy.xcframework; sourceTree = "<group>"; };
 		A9A23943268DEC3C004B1C22 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
-		A9A23944268DEC3C004B1C22 /* WireImages.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireImages.xcframework; path = Carthage/Build/WireImages.xcframework; sourceTree = "<group>"; };
 		A9A23945268DEC3C004B1C22 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
-		A9A23946268DEC3C004B1C22 /* WireDataModel.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireDataModel.xcframework; path = Carthage/Build/WireDataModel.xcframework; sourceTree = "<group>"; };
-		A9A23947268DEC3C004B1C22 /* WireProtos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireProtos.xcframework; path = Carthage/Build/WireProtos.xcframework; sourceTree = "<group>"; };
-		A9A23948268DEC3C004B1C22 /* WireCryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCryptobox.xcframework; path = Carthage/Build/WireCryptobox.xcframework; sourceTree = "<group>"; };
-		A9A23949268DEC3C004B1C22 /* WireMockTransport.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireMockTransport.xcframework; path = Carthage/Build/WireMockTransport.xcframework; sourceTree = "<group>"; };
-		A9A2394A268DEC3C004B1C22 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
-		A9A2394B268DEC3D004B1C22 /* WireTransport.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTransport.xcframework; path = Carthage/Build/WireTransport.xcframework; sourceTree = "<group>"; };
-		A9A2394C268DEC3D004B1C22 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
-		A9A2394D268DEC3D004B1C22 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
-		A9A23974268DEC53004B1C22 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
-		A9A23975268DEC53004B1C22 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		A9B53AA924E12E240066FCC6 /* ZMAccountDeletedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccountDeletedReason.swift; sourceTree = "<group>"; };
 		A9C02604266F5B4B002E542B /* ZMClientRegistrationStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMClientRegistrationStatus.swift; sourceTree = "<group>"; };
 		A9C02609266F5D1B002E542B /* ZMClientRegistrationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMClientRegistrationStatusTests.swift; sourceTree = "<group>"; };
@@ -1219,6 +1216,8 @@
 		EE5D9B61290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+VoIPPushManagerDelegate.swift"; sourceTree = "<group>"; };
 		EE5FEF0421E8948F00E24F7F /* ZMUserSession+DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DarwinNotificationCenter.swift"; sourceTree = "<group>"; };
 		EE6654632445D4EE00CBF8D3 /* MockAddressBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockAddressBook.swift; sourceTree = "<group>"; };
+		EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE668BB92954AA9300D939E7 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE95DECC247C0049001EA010 /* SessionManagerConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerConfigurationTests.swift; sourceTree = "<group>"; };
 		EE9CDE8D27D9FF5900C4DAC8 /* APIVersionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIVersionResolver.swift; sourceTree = "<group>"; };
 		EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+APIVersionResolver.swift"; sourceTree = "<group>"; };
@@ -1380,9 +1379,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				544BA1571A43424F00D3B852 /* WireSyncEngine.framework in Frameworks */,
-				A9A23978268DEC53004B1C22 /* WireTesting.xcframework in Frameworks */,
-				A9CCBA952696631100122380 /* WireMockTransport.xcframework in Frameworks */,
-				A9A23976268DEC53004B1C22 /* OCMock.xcframework in Frameworks */,
+				EE668BBA2954AA9300D939E7 /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1398,22 +1395,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				A9A2394E268DEC3D004B1C22 /* avs.xcframework in Frameworks */,
 				A9A2395C268DEC3D004B1C22 /* libPhoneNumberiOS.xcframework in Frameworks */,
-				1658E91D26C53FDB003D0090 /* Starscream.xcframework in Frameworks */,
-				A9A23954268DEC3D004B1C22 /* WireLinkPreview.xcframework in Frameworks */,
-				A9A2396C268DEC3D004B1C22 /* WireUtilities.xcframework in Frameworks */,
-				A9A2395E268DEC3D004B1C22 /* WireDataModel.xcframework in Frameworks */,
-				A9A2395A268DEC3D004B1C22 /* WireImages.xcframework in Frameworks */,
-				A9A23960268DEC3D004B1C22 /* WireProtos.xcframework in Frameworks */,
 				A9A23958268DEC3D004B1C22 /* ZipArchive.xcframework in Frameworks */,
-				A9A23952268DEC3D004B1C22 /* PINCache.xcframework in Frameworks */,
-				A9A23956268DEC3D004B1C22 /* WireRequestStrategy.xcframework in Frameworks */,
-				A9A23962268DEC3D004B1C22 /* WireCryptobox.xcframework in Frameworks */,
-				A9A23950268DEC3D004B1C22 /* HTMLString.xcframework in Frameworks */,
-				A9A2396A268DEC3D004B1C22 /* WireSystem.xcframework in Frameworks */,
-				A9A23968268DEC3D004B1C22 /* WireTransport.xcframework in Frameworks */,
-				A9A23966268DEC3D004B1C22 /* SwiftProtobuf.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1730,24 +1715,10 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1658E91C26C53FDB003D0090 /* Starscream.xcframework */,
-				A9A23974268DEC53004B1C22 /* OCMock.xcframework */,
-				A9A23975268DEC53004B1C22 /* WireTesting.xcframework */,
+				EE668BB92954AA9300D939E7 /* WireMockTransport.framework */,
+				EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */,
 				A9A2393E268DEC3C004B1C22 /* avs.xcframework */,
-				A9A2393F268DEC3C004B1C22 /* HTMLString.xcframework */,
 				A9A23945268DEC3C004B1C22 /* libPhoneNumberiOS.xcframework */,
-				A9A23940268DEC3C004B1C22 /* PINCache.xcframework */,
-				A9A2394A268DEC3C004B1C22 /* SwiftProtobuf.xcframework */,
-				A9A23948268DEC3C004B1C22 /* WireCryptobox.xcframework */,
-				A9A23946268DEC3C004B1C22 /* WireDataModel.xcframework */,
-				A9A23944268DEC3C004B1C22 /* WireImages.xcframework */,
-				A9A23941268DEC3C004B1C22 /* WireLinkPreview.xcframework */,
-				A9A23949268DEC3C004B1C22 /* WireMockTransport.xcframework */,
-				A9A23947268DEC3C004B1C22 /* WireProtos.xcframework */,
-				A9A23942268DEC3C004B1C22 /* WireRequestStrategy.xcframework */,
-				A9A2394C268DEC3D004B1C22 /* WireSystem.xcframework */,
-				A9A2394B268DEC3D004B1C22 /* WireTransport.xcframework */,
-				A9A2394D268DEC3D004B1C22 /* WireUtilities.xcframework */,
 				A9A23943268DEC3C004B1C22 /* ZipArchive.xcframework */,
 			);
 			name = Frameworks;
@@ -2658,6 +2629,7 @@
 				3E186084191A56F6000FE027 /* Sources */,
 				3E186085191A56F6000FE027 /* Frameworks */,
 				3E186086191A56F6000FE027 /* Resources */,
+				EE668BBC2954AA9300D939E7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2697,6 +2669,7 @@
 				549815901A43232400A7CE2E /* Headers */,
 				667FC69E27356C3F00E82FEF /* Run SwiftLint */,
 				549815911A43232400A7CE2E /* Resources */,
+				EE668BB82954AA7F00D939E7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3597,6 +3570,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/iOS Test Host/Test-Host-Prefix.pch";
 				INFOPLIST_FILE = "Tests/iOS Test Host/Test-Host-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -3611,6 +3589,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/iOS Test Host/Test-Host-Prefix.pch";
 				INFOPLIST_FILE = "Tests/iOS Test Host/Test-Host-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -3672,6 +3654,7 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Source/WireSyncEngine-iOS.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSyncEngine-ios-Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Debug;
