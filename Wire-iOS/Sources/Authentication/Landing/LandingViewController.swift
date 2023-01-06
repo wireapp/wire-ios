@@ -241,8 +241,8 @@ final class LandingViewController: AuthenticationStepViewController {
 
         NotificationCenter.default.addObserver(forName: BackendEnvironment.backendSwitchNotification,
                                                object: nil,
-                                               queue: .main) { _ in
-            self.updateCustomBackendLabels()
+                                               queue: .main) { [weak self] _ in
+            self?.updateCustomBackendLabels()
         }
     }
 
