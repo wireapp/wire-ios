@@ -658,8 +658,7 @@ extension AuthenticationCoordinator {
             guard error == nil else {
                 self?.sessionManager.markNetworkSessionsAsReady(false)
                 self?.sessionManager.removeProxyCredentials()
-                self?.executeActions([.presentAlert(.init(title: L10n.Localizable.Credentials.GeneralError.Alert.title,
-                                                          message: L10n.Localizable.Credentials.GeneralError.Alert.message, actions: [.ok]))])
+                self?.showAlertWithGeneralError()
                 return
             }
             action()
@@ -813,4 +812,14 @@ extension AuthenticationCoordinator {
         stateController.unwindState()
     }
 
+
+    private func showAlertWithGeneralError() {
+        typealias Alert = L10n.Localizable.Credentials.GeneralError.Alert
+
+        executeActions(
+            [.presentAlert(.init(title: Alert.title,
+                                 message: Alert.message,
+                                 actions: [.ok]))]
+        )
+    }
 }

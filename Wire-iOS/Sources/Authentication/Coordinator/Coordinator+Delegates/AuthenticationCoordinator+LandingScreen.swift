@@ -26,9 +26,8 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
     func landingViewControllerDidChooseLogin() {
         if let fastloginCredentials = AutomationHelper.sharedHelper.automationEmailCredentials {
             let loginRequest = AuthenticationLoginRequest.email(address: fastloginCredentials.email, password: fastloginCredentials.password)
-            let proxyCredentials = BackendEnvironment.shared.proxy.flatMap { proxy in
-                ProxyCredentials.retrieve(for: proxy).flatMap { AuthenticationProxyCredentialsInput(username: $0.username, password: $0.password) }
-            }
+            let proxyCredentials = BackendEnvironment.shared.proxyCredentialsInput
+
 
             executeActions([.showLoadingView, .startLoginFlow(loginRequest, proxyCredentials)])
         } else {
@@ -37,18 +36,26 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
     }
 
     func landingViewControllerDidChooseCreateAccount() {
-        if !showAlertIfProxy(title: L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported.title,
-                                message: L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported.message) {
-            let unregisteredUser = makeUnregisteredUser()
-            stateController.transition(to: .createCredentials(unregisteredUser))
+        typealias Alert = L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported
+
+        guard !shouldShowProxyWarning else {
+            showProxyAlert(title: Alert.title, message: Alert.message)
+            return
         }
+
+        let unregisteredUser = makeUnregisteredUser()
+        stateController.transition(to: .createCredentials(unregisteredUser))
     }
 
     func landingViewControllerDidChooseEnterpriseLogin() {
-        if !showAlertIfProxy(title: L10n.Localizable.Landing.Alert.Sso.NotSupported.title,
-                                message: L10n.Localizable.Landing.Alert.Sso.NotSupported.message) {
-            executeActions([.startCompanyLogin(code: nil)])
+        typealias Alert = L10n.Localizable.Landing.Alert.Sso.NotSupported
+
+        guard !shouldShowProxyWarning else {
+            showProxyAlert(title: Alert.title, message: Alert.message)
+            return
         }
+
+        executeActions([.startCompanyLogin(code: nil)])
     }
 
     func landingViewControllerDidChooseSSOLogin() {
@@ -70,16 +77,16 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
                                             actions: [.ok]))])
     }
 
-    private func showAlertIfProxy(title: String, message: String) -> Bool {
-        guard BackendEnvironment.shared.proxy == nil else {
-            // not supported, show alert
-            let alert = AuthenticationCoordinatorAlert(title: title,
-                                                       message: message,
-                                                       actions: [.ok])
-            executeActions([.presentAlert(alert)])
-            return true
-        }
-        return false
+    private func showProxyAlert(title: String, message: String) {
+        // not supported, show alert
+        let alert = AuthenticationCoordinatorAlert(title: title,
+                                                   message: message,
+                                                   actions: [.ok])
+        executeActions([.presentAlert(alert)])
+    }
+
+    private var shouldShowProxyWarning: Bool {
+       BackendEnvironment.shared.proxy != nil
     }
 }
 
@@ -90,6 +97,19 @@ extension EnvironmentTypeProvider {
             return url
         default:
             return nil
+        }
+    }
+}
+
+extension BackendEnvironment {
+
+    var proxyCredentials: ProxyCredentials? {
+        return proxy.flatMap { proxy in
+            ProxyCredentials.retrieve(for: proxy) }
+    }
+
+    var proxyCredentialsInput: AuthenticationProxyCredentialsInput? {
+        proxyCredentials.flatMap { AuthenticationProxyCredentialsInput(username: $0.username, password: $0.password)
         }
     }
 }
