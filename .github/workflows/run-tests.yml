@@ -84,9 +84,9 @@ jobs:
         run: |
           echo "WireSystem has changes" |
           echo "Building WireSystem..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireSystem..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTesting
@@ -98,9 +98,9 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireTesting..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireTesting..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireUtilities
@@ -108,9 +108,9 @@ jobs:
         run: |
           echo "WireUtilities has changes" |
           echo "Building WireUtilities..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireUtilities..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireCryptobox
@@ -122,9 +122,9 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireCryptobox..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireCryptobox..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTransport
@@ -136,9 +136,9 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireTransport..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireTransport..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireLinkPreview
@@ -150,9 +150,9 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireLinkPreview..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireLinkPreview..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireImages
@@ -160,9 +160,9 @@ jobs:
         run: |
           echo "WireImages has changes" |
           echo "Building WireImages..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireImages..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}          
 
       - name: Test WireProtos
@@ -174,9 +174,9 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireProtos..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireProtos..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}          
           
       - name: Test WireMockTransport
@@ -184,9 +184,9 @@ jobs:
         run: |
           echo "WireMockTransport has changes" |
           echo "Building WireMockTransport..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireMockTransport..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireDataModel
@@ -198,9 +198,9 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireDataModel..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireDataModel..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireRequestStrategy
@@ -208,9 +208,9 @@ jobs:
         run: |
           echo "WireRequestStrategy has changes" |
           echo "Building WireRequestStrategy..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireRequestStrategy..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test WireNotificationEngine
@@ -218,9 +218,9 @@ jobs:
         run: |
           echo "WireNotificationEngine has changes" |
           echo "Building WireNotificationEngine..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireNotificationEngine..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
 
       - name: Test WireShareEngine
@@ -228,9 +228,9 @@ jobs:
         run: |
           echo "WireShareEngine has changes" |
           echo "Building WireShareEngine..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireShareEngine..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
 
       - name: Test WireSyncEngine
@@ -242,22 +242,22 @@ jobs:
           carthage bootstrap --platform ios --use-xcframeworks |
           cd .. |
           echo "Building WireSyncEngine..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireSyncEngine..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
           
       - name: Test Wire-iOS
         if: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
         run: |
-          echo "Wire-iOS has any changes ?" |
+          echo "Wire-iOS has changes" |
           echo "Setting up Wire-iOS..." |
           cd wire-ios |
           ./setup.sh |
           cd .. |
           echo "Building Wire-iOS..." |
-          xcodebuild build -workspace wire-ios.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing Wire-iOS..." |
-          xcodebuild test -workspace wire-ios.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
       
