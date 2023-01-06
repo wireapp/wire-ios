@@ -1,0 +1,268 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+      
+jobs:
+  # This job will tell us which frameworks have source code changes.
+  # We'll use the results to run tests only for changed frameworks.
+  detect-changes:
+    runs-on: ubuntu-latest
+    # Set job outputs to values from filter step
+    outputs:
+      ui: ${{ steps.filter.outputs.ui }}
+      syncEngine: ${{ steps.filter.outputs.syncEngine }}
+      dataModel: ${{ steps.filter.outputs.dataModel }}
+      system: ${{ steps.filter.outputs.system }}
+      requestStrategy: ${{ steps.filter.outputs.requestStrategy }}
+      transport: ${{ steps.filter.outputs.transport }}
+      shareEngine: ${{ steps.filter.outputs.shareEngine }}
+      cryptobox: ${{ steps.filter.outputs.cryptobox }}
+      mockTransport: ${{ steps.filter.outputs.mockTransport }}
+      notificationEngine: ${{ steps.filter.outputs.notificationEngine }}
+      protos: ${{ steps.filter.outputs.protos }}
+      images: ${{ steps.filter.outputs.images }}
+      linkPreview : ${{ steps.filter.outputs.linkPreview }}
+      utilities: ${{ steps.filter.outputs.utilities }}
+      testing : ${{ steps.filter.outputs.testing }}
+      
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            wire-ios:
+              - 'wire-ios/**'
+            wire-ios-share-engine:
+              - 'wire-ios-share-engine/**'
+            wire-ios-notification-engine:
+              - 'wire-ios-notification-engine/**'
+            wire-ios-sync-engine:
+              - 'wire-ios-sync-engine/**'
+            wire-ios-request-strategy:
+              - 'wire-ios-request-strategy/**'
+            wire-ios-data-model:
+              - 'wire-ios-data-model/**'
+            wire-ios-transport:
+              - 'wire-ios-transport/**'
+            wire-ios-cryptobox:
+              - 'wire-ios-cryptobox/**'
+            wire-ios-mock-transport:
+              - 'wire-ios-mock-transport/**'
+            wire-ios-protos:
+              -  'wire-ios-protos/**'
+            wire-ios-images:
+              - 'wire-ios-images/**'
+            wire-ios-link-preview:
+              - 'wire-ios-link-preview/**'
+            wire-ios-utilities:
+              - 'wire-ios-utilities/**'
+            wire-ios-testing:
+              - 'wire-ios-testing/**'
+            wire-ios-system:
+              - 'wire-ios-system/**'  
+            
+  run-tests:
+    needs: detect-changes
+    runs-on: macOS-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+    steps:
+      - uses: actions/checkout@v3
+      - name: List available Xcode versions
+        run: ls /Applications | grep Xcode
+      
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -switch /Applications/Xcode_13.1.app
+          /usr/bin/xcodebuild -version
+        
+      - name: Test WireSystem
+        if: ${{ needs.changes.outputs.wire-ios-system == 'true' }}
+        run: |
+          echo "WireSystem has changes" |
+          echo "Building WireSystem..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireSystem..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireTesting
+        if: ${{ needs.changes.outputs.wire-ios-testing == 'true' }}
+        run: |
+          echo "WireTesting has changes" |
+          echo "Fetching dependencies for WireTesting..." |
+          cd wire-ios-testing |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireTesting..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireTesting..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireUtilities
+        if: ${{ needs.changes.outputs.wire-ios-utilities == 'true' }}
+        run: |
+          echo "WireUtilities has changes" |
+          echo "Building WireUtilities..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireUtilities..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireCryptobox
+        if: ${{ needs.changes.outputs.wire-ios-cryptobox == 'true' }}
+        run: |
+          echo "WireCryptobox has changes" |
+          echo "Fetching dependencies for WireCryptobox..." |
+          cd wire-ios-cryptobox |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireCryptobox..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireCryptobox..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireTransport
+        if: ${{ needs.changes.outputs.wire-ios-transport == 'true' }}
+        run: |
+          echo "WireTransport has changes" |
+          echo "Fetching dependencies for WireTransport..." |
+          cd wire-ios-transport |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireTransport..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireTransport..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireLinkPreview
+        if: ${{ needs.changes.outputs.wire-ios-link-preview == 'true' }}
+        run: |
+          echo "WireLinkPreview has changes" |
+          echo "Fetching dependencies for WireLinkPreview..." |
+          cd wire-ios-link-preview |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireLinkPreview..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireLinkPreview..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireImages
+        if: ${{ needs.changes.outputs.wire-ios-images == 'true' }}
+        run: |
+          echo "WireImages has changes" |
+          echo "Building WireTesting..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Building WireImages..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireImages..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}          
+
+      - name: Test WireProtos
+        if: ${{ needs.changes.outputs.wire-ios-protos == 'true' }}
+        run: |
+          echo "WireProtos has changes" |
+          echo "Fetching dependencies for WireProtos..." |
+          cd wire-ios-protos |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireProtos..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireProtos..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}          
+          
+      - name: Test WireMockTransport
+        if: ${{ needs.changes.outputs.wire-ios-mocktransport == 'true' }}
+        run: |
+          echo "WireMockTransport has changes" |
+          echo "Building WireMockTransport..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireMockTransport..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireDataModel
+        if: ${{ needs.changes.outputs.wire-ios-data-model == 'true' }}
+        run: |
+          echo "WireDataModel has changes" |
+          echo "Fetching dependencies for WireDataModel..." |
+          cd wire-ios-data-model |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireDataModel..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireDataModel..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireRequestStrategy
+        if: ${{ needs.changes.outputs.wire-ios-request-strategy == 'true' }}
+        run: |
+          echo "WireRequestStrategy has changes" |
+          echo "Building WireRequestStrategy..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireRequestStrategy..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test WireNotificationEngine
+        if: ${{ needs.changes.outputs.wire-ios-notification-engine == 'true' }}
+        run: |
+          echo "WireNotificationEngine has changes" |
+          echo "Fetching dependencies for WireNotificationEngine..." |
+          echo "Building WireTesting..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Building WireNotificationEngine..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireNotificationEngine..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+
+      - name: Test WireShareEngine
+        if: ${{ needs.changes.outputs.wire-ios-share-engine == 'true' }}
+        run: |
+          echo "WireShareEngine has changes" |
+          echo "Building WireShareEngine..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireShareEngine..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+
+      - name: Test WireSyncEngine
+        if: ${{ needs.changes.outputs.wire-ios-sync-engine == 'true' }}
+        run: |
+          echo "WireSyncEngine has changes" |
+          echo "Fetching dependencies for WireSyncEngine..." |
+          cd wire-ios-sync-engine |
+          carthage bootstrap --platform ios --use-xcframeworks |
+          cd .. |
+          echo "Building WireSyncEngine..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireSyncEngine..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+          
+      - name: Test Wire-iOS
+        if: ${{ needs.changes.outputs.wire-ios == 'true' }}
+        run: |
+          echo "Wire-iOS has any changes ?" |
+          echo "Setting up Wire-iOS..." |
+          cd wire-ios |
+          ./setup.sh |
+          cd .. |
+          echo "Building WireUI..." |
+          xcodebuild build -workspace wire-ios.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          echo "Testing WireUI..." |
+          xcodebuild test -workspace wire-ios.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty
+          exit ${PIPESTATUS[0]}
+      
