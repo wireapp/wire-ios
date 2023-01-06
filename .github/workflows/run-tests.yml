@@ -250,14 +250,14 @@ jobs:
       - name: Test Wire-iOS
         if: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
         run: |
-          echo "Wire-iOS has changes" |
-          echo "Setting up Wire-iOS..." |
-          cd wire-ios |
-          ./setup.sh |
-          cd .. |
-          echo "Building Wire-iOS..." |
+          echo "Wire-iOS has changes"
+          echo "Setting up Wire-iOS..."
+          cd wire-ios
+          ./setup.sh
+          cd ..
+          echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          echo "Testing Wire-iOS..." |
+          echo "Testing Wire-iOS..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
       
