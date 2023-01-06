@@ -80,7 +80,7 @@ jobs:
           /usr/bin/xcodebuild -version
         
       - name: Test WireSystem
-        if: ${{ needs.changes.outputs.wire-ios-system == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
         run: |
           echo "WireSystem has changes" |
           echo "Building WireSystem..." |
@@ -90,7 +90,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTesting
-        if: ${{ needs.changes.outputs.wire-ios-testing == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
         run: |
           echo "WireTesting has changes" |
           echo "Fetching dependencies for WireTesting..." |
@@ -104,7 +104,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireUtilities
-        if: ${{ needs.changes.outputs.wire-ios-utilities == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
         run: |
           echo "WireUtilities has changes" |
           echo "Building WireUtilities..." |
@@ -114,7 +114,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireCryptobox
-        if: ${{ needs.changes.outputs.wire-ios-cryptobox == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
         run: |
           echo "WireCryptobox has changes" |
           echo "Fetching dependencies for WireCryptobox..." |
@@ -128,7 +128,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTransport
-        if: ${{ needs.changes.outputs.wire-ios-transport == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
         run: |
           echo "WireTransport has changes" |
           echo "Fetching dependencies for WireTransport..." |
@@ -142,7 +142,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireLinkPreview
-        if: ${{ needs.changes.outputs.wire-ios-link-preview == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
         run: |
           echo "WireLinkPreview has changes" |
           echo "Fetching dependencies for WireLinkPreview..." |
@@ -156,7 +156,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireImages
-        if: ${{ needs.changes.outputs.wire-ios-images == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
         run: |
           echo "WireImages has changes" |
           echo "Building WireImages..." |
@@ -166,7 +166,7 @@ jobs:
           exit ${PIPESTATUS[0]}          
 
       - name: Test WireProtos
-        if: ${{ needs.changes.outputs.wire-ios-protos == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
         run: |
           echo "WireProtos has changes" |
           echo "Fetching dependencies for WireProtos..." |
@@ -180,7 +180,7 @@ jobs:
           exit ${PIPESTATUS[0]}          
           
       - name: Test WireMockTransport
-        if: ${{ needs.changes.outputs.wire-ios-mocktransport == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-mocktransport == 'true' }}
         run: |
           echo "WireMockTransport has changes" |
           echo "Building WireMockTransport..." |
@@ -190,7 +190,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireDataModel
-        if: ${{ needs.changes.outputs.wire-ios-data-model == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
         run: |
           echo "WireDataModel has changes" |
           echo "Fetching dependencies for WireDataModel..." |
@@ -204,7 +204,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireRequestStrategy
-        if: ${{ needs.changes.outputs.wire-ios-request-strategy == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
         run: |
           echo "WireRequestStrategy has changes" |
           echo "Building WireRequestStrategy..." |
@@ -214,7 +214,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireNotificationEngine
-        if: ${{ needs.changes.outputs.wire-ios-notification-engine == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
         run: |
           echo "WireNotificationEngine has changes" |
           echo "Building WireNotificationEngine..." |
@@ -224,7 +224,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Test WireShareEngine
-        if: ${{ needs.changes.outputs.wire-ios-share-engine == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
         run: |
           echo "WireShareEngine has changes" |
           echo "Building WireShareEngine..." |
@@ -234,7 +234,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Test WireSyncEngine
-        if: ${{ needs.changes.outputs.wire-ios-sync-engine == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
         run: |
           echo "WireSyncEngine has changes" |
           echo "Fetching dependencies for WireSyncEngine..." |
@@ -248,7 +248,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test Wire-iOS
-        if: ${{ needs.changes.outputs.wire-ios == 'true' }}
+        if: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
         run: |
           echo "Wire-iOS has any changes ?" |
           echo "Setting up Wire-iOS..." |
