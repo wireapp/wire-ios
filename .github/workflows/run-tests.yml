@@ -257,6 +257,7 @@ jobs:
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Ziphy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing Wire-iOS..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
