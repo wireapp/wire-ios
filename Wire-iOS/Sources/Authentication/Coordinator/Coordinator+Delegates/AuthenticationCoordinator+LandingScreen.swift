@@ -28,7 +28,6 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
             let loginRequest = AuthenticationLoginRequest.email(address: fastloginCredentials.email, password: fastloginCredentials.password)
             let proxyCredentials = BackendEnvironment.shared.proxyCredentialsInput
 
-
             executeActions([.showLoadingView, .startLoginFlow(loginRequest, proxyCredentials)])
         } else {
             stateController.transition(to: .provideCredentials(.email, nil))

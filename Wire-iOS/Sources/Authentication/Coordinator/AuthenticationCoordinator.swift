@@ -812,7 +812,6 @@ extension AuthenticationCoordinator {
         stateController.unwindState()
     }
 
-
     private func showAlertWithGeneralError() {
         typealias Alert = L10n.Localizable.Credentials.GeneralError.Alert
 
