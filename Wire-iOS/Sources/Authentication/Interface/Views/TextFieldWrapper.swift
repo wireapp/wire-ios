@@ -25,7 +25,7 @@ final class TextFieldWrapper: UIView {
     var textField: ValidatedTextField
 
     init(label: String, textFieldBuilder: () -> ValidatedTextField, placeholder: String) {
-        self.label = DynamicFontLabel(text: label, fontSpec: .subheadlineFont, color: SemanticColors.Label.textFieldLabel)
+        self.label = DynamicFontLabel(text: label, fontSpec: .subheadlineFont, color: SemanticColors.Label.textFieldFloatingLabel)
         textField = textFieldBuilder()
         textField.placeholder = placeholder
         super.init(frame: .zero)
