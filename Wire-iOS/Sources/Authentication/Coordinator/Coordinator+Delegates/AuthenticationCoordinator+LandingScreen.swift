@@ -62,18 +62,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
     }
 
     func landingViewControllerDidChooseInfoBackend() {
-        let env = BackendEnvironment.shared
-
-        let info = [
-            L10n.Localizable.Landing.CustomBackend.Alert.Message.backendName,
-            env.title,
-            L10n.Localizable.Landing.CustomBackend.Alert.Message.backendUrl,
-            env.backendURL.absoluteString
-        ].joined(separator: "\n")
-
-        executeActions([.presentAlert(.init(title: L10n.Localizable.Landing.CustomBackend.Alert.title,
-                                            message: info,
-                                            actions: [.ok]))])
+        executeActions([.presentCustomBackendAlert])
     }
 
     private func showProxyAlert(title: String, message: String) {
@@ -104,11 +93,13 @@ extension BackendEnvironment {
 
     var proxyCredentials: ProxyCredentials? {
         return proxy.flatMap { proxy in
-            ProxyCredentials.retrieve(for: proxy) }
+            ProxyCredentials.retrieve(for: proxy)
+        }
     }
 
     var proxyCredentialsInput: AuthenticationProxyCredentialsInput? {
-        proxyCredentials.flatMap { AuthenticationProxyCredentialsInput(username: $0.username, password: $0.password)
+        proxyCredentials.flatMap {
+            AuthenticationProxyCredentialsInput(username: $0.username, password: $0.password)
         }
     }
 }

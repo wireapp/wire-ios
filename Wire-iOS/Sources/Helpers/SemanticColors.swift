@@ -124,7 +124,6 @@ public enum SemanticColors {
         static let backgroundRed = UIColor(light: Asset.Colors.red100Light, dark: Asset.Colors.red900Dark)
         static let backgroundPurple = UIColor(light: Asset.Colors.purple100Light, dark: Asset.Colors.purple900Dark)
         static let backgroundTurqoise = UIColor(light: Asset.Colors.turquoise100Light, dark: Asset.Colors.turquoise900Dark)
-        static let separator = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
     }
 
     public enum TabBar {
