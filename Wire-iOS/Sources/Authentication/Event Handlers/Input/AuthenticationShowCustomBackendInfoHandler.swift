@@ -19,7 +19,6 @@
 import Foundation
 import WireTransport
 
-
 /**
  * Handles showing custom backend information
  */
