@@ -120,22 +120,21 @@ struct AuthenticationProxyCredentialsInput {
     var password: String
 }
 
-
 extension AuthenticationCoordinatorAction {
 
     static var presentCustomBackendAlert: Self {
-        typealias CustomBackend = L10n.Localizable.Landing.CustomBackend.Alert
+        typealias Alert = L10n.Localizable.Landing.CustomBackend.Alert
 
         let env = BackendEnvironment.shared
 
         let info = [
-            CustomBackend.Message.backendName,
+            Alert.Message.backendName,
             env.title,
-            CustomBackend.Message.backendUrl,
+            Alert.Message.backendUrl,
             env.backendURL.absoluteString
         ].joined(separator: "\n")
 
-        return .presentAlert(.init(title: CustomBackend.title,
+        return .presentAlert(.init(title: Alert.title,
                                             message: info,
                                             actions: [.ok]))
     }
