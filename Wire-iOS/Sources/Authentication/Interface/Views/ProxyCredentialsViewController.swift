@@ -78,7 +78,7 @@ final class ProxyCredentialsViewController: UIViewController {
 
         let separator: () -> UIView = {
             let view = UIView()
-            view.backgroundColor = SemanticColors.View.separator
+            view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
             view.heightAnchor.constraint(equalToConstant: 1).isActive = true

@@ -34,18 +34,7 @@ final class AuthenticationShowCustomBackendInfoHandler: AuthenticationEventHandl
             return nil
         }
 
-        let env = BackendEnvironment.shared
-
-        let info = [
-            L10n.Localizable.Landing.CustomBackend.Alert.Message.backendName,
-            env.title,
-            L10n.Localizable.Landing.CustomBackend.Alert.Message.backendUrl,
-            env.backendURL.absoluteString
-        ].joined(separator: "\n")
-
-        return [.presentAlert(.init(title: L10n.Localizable.Landing.CustomBackend.Alert.title,
-                                    message: info,
-                                    actions: [.ok]))]
+        return [.presentCustomBackendAlert]
     }
 
 }
