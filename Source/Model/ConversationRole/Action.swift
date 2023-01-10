@@ -42,7 +42,6 @@ final public class Action: ZMManagedObject {
         })
     }
 
-    @objc
     @discardableResult
     private static func create(managedObjectContext: NSManagedObjectContext,
                                name: String) -> Action {
