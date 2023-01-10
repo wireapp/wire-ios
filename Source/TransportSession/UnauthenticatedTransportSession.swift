@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreFoundation
+import Security
+
 
 public enum EnqueueResult {
     case success, nilRequest, maximumNumberOfRequests
@@ -80,20 +83,37 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     private let remoteMonitoring: RemoteMonitoring
     
+    /// Property to accept requests
+    public let readyForRequests: Bool
+
     public init(environment: BackendEnvironmentProvider,
+                proxyUsername: String?,
+                proxyPassword: String?,
                 urlSession: SessionProtocol? = nil,
                 reachability: ReachabilityProvider,
-                applicationVersion: String) {
+                applicationVersion: String,
+                readyForRequests: Bool = false
+    ) {
         self.baseURL = environment.backendURL
         self.environment = environment
         self.reachability = reachability
         self.userAgent = ZMUserAgent()
         self.remoteMonitoring = RemoteMonitoring(level: .debug)
+        self.readyForRequests = readyForRequests
+        
         super.init()
 
         let configuration = URLSessionConfiguration.ephemeral
         configuration.httpAdditionalHeaders = ["User-Agent": ZMUserAgent.userAgent(withAppVersion: applicationVersion)]
-        
+
+
+        if let proxySettings = environment.proxy {
+            let proxyDictionary = proxySettings.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword)
+            configuration.connectionProxyDictionary = proxyDictionary
+            configuration.httpShouldUsePipelining = true
+            (urlSession as? URLSession)?.configuration.connectionProxyDictionary = proxyDictionary
+        }
+
         self.session = urlSession ?? URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
     
@@ -130,17 +150,22 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
         return .success
     }
-    
-    @discardableResult
-    private func enqueueRequest(_ request: ZMTransportRequest) -> DataTaskProtocol {
+
+    private func enqueueRequest(_ request: ZMTransportRequest) {
+        guard readyForRequests else {
+            zmLog.info("Dropping request \(request) as networkTransportSession not ready")
+            return
+        }
         guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init) else { preconditionFailure() }
         urlRequest.configure(with: request)
         remoteMonitoring.log(request: urlRequest)
         
+        request.log()
+
         let task = session.task(with: urlRequest as URLRequest) { [weak self] data, response, error in
             
             var transportResponse: ZMTransportResponse!
-            
+
             if let response = response as? HTTPURLResponse {
                 self?.remoteMonitoring.log(response: response)
                 transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
@@ -160,8 +185,6 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         }
         
         task.resume()
-        
-        return task
     }
 
     /// Decrements the number of running requests and posts a new

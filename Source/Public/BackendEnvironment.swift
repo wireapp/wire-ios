@@ -96,13 +96,20 @@ extension EnvironmentType {
 public class BackendEnvironment: NSObject {
     public let title: String
     let endpoints: BackendEndpointsProvider
+    let proxySettings: ProxySettingsProvider?
     let certificateTrust: BackendTrustProvider
     let type: EnvironmentType
     
-    init(title: String, environmentType: EnvironmentType, endpoints: BackendEndpointsProvider, certificateTrust: BackendTrustProvider) {
+    init(
+        title: String,environmentType: EnvironmentType,
+        endpoints: BackendEndpointsProvider,
+        proxySettings: ProxySettingsProvider?,
+        certificateTrust: BackendTrustProvider
+    ) {
         self.title = title
         self.type = environmentType
         self.endpoints = endpoints
+        self.proxySettings = proxySettings
         self.certificateTrust = certificateTrust
     }
     
@@ -110,6 +117,7 @@ public class BackendEnvironment: NSObject {
         struct SerializedData: Decodable {
             let title: String
             let endpoints: BackendEndpoints
+            let apiProxy: ProxySettings?
             let pinnedKeys: [TrustData]?
         }
 
@@ -119,7 +127,13 @@ public class BackendEnvironment: NSObject {
             let backendData = try decoder.decode(SerializedData.self, from: data)
             let pinnedKeys = backendData.pinnedKeys ?? []
             let certificateTrust = ServerCertificateTrust(trustData: pinnedKeys)
-            self.init(title: backendData.title, environmentType: environmentType, endpoints: backendData.endpoints, certificateTrust: certificateTrust)
+            self.init(
+                title: backendData.title,
+                environmentType: environmentType,
+                endpoints: backendData.endpoints,
+                proxySettings: backendData.apiProxy,
+                certificateTrust: certificateTrust
+            )
         } catch {
             Logging.backendEnvironment.error("Could not decode information from data: \(error)")
             return nil
@@ -162,5 +176,9 @@ extension BackendEnvironment: BackendEnvironmentProvider {
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
         return certificateTrust.verifyServerTrust(trust: trust, host: host)
+    }
+
+    public var proxy: ProxySettingsProvider? {
+        return proxySettings
     }
 }

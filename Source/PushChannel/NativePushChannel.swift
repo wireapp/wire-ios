@@ -62,13 +62,21 @@ class NativePushChannel: NSObject, PushChannelType {
     required init(scheduler: ZMTransportRequestScheduler,
                   userAgentString: String,
                   environment: BackendEnvironmentProvider,
+                  proxyUsername: String?,
+                  proxyPassword: String?,
                   queue: OperationQueue) {
         self.environment = environment
         self.scheduler = scheduler
         self.workQueue = queue
-
+        self.proxyUsername = proxyUsername
+        self.proxyPassword = proxyPassword
         super.init()
         self.session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: queue)
+
+        if let settings = environment.proxy?.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
+            self.session?.configuration.httpShouldUsePipelining = true
+            self.session?.configuration.connectionProxyDictionary = settings
+        }
     }
 
     func close() {
@@ -159,6 +167,11 @@ class NativePushChannel: NSObject, PushChannelType {
             self?.listen()
         })
     }
+
+    // MARK: - Private
+
+    private let proxyUsername: String?
+    private let proxyPassword: String?
 
     private func onClose() {
         websocketTask = nil
