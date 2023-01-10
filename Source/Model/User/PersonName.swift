@@ -131,7 +131,7 @@
     }
 
     static func splitNameComponents(fullName: String) -> [String] {
-        let fullRange = Range<String.Index>(uncheckedBounds: (lower:fullName.startIndex, upper:fullName.endIndex))
+        let fullRange = Range<String.Index>(uncheckedBounds: (lower: fullName.startIndex, upper: fullName.endIndex))
         var components = [String]()
         var component: String?
         var lastRange: Range<String.Index>?
