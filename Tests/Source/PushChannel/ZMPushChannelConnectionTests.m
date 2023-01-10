@@ -80,12 +80,14 @@
     
     [self verifyMockLater:self.webSocketMock];
     self.sut = [[ZMPushChannelConnection alloc] initWithEnvironment:self.environment
-                                                   consumer:self
-                                                      queue:self.fakeSyncContext
-                                                  webSocket:self.webSocketMock
-                                                accessToken:self.accessToken
-                                                   clientID:self.clientID
-                                            userAgentString:@"User-Agent: Mozilla/5.0"];
+                                                           consumer:self
+                                                              queue:self.fakeSyncContext
+                                                          webSocket:self.webSocketMock
+                                                        accessToken:self.accessToken
+                                                           clientID:self.clientID
+                                                      proxyUsername:nil
+                                                      proxyPassword:nil
+                                                    userAgentString:@"User-Agent: Mozilla/5.0"];
     
     self.receivedData = [NSMutableArray array];
     self.closeCounter = 0;
@@ -122,7 +124,7 @@
 {
     // given
     NSString* text = @"{\"foo\": \"bar\"}";
-   
+
     // when
     [self.sut webSocket:nil didReceiveFrameWithText:text];
     WaitForAllGroupsToBeEmpty(0.01);
@@ -204,11 +206,13 @@
     id userAgent = nil;
     
     self.sut = [[ZMPushChannelConnection alloc] initWithEnvironment:self.environment
-                                                   consumer:self
-                                                      queue:self.fakeSyncContext
-                                                accessToken:self.accessToken
-                                                   clientID:self.clientID
-                                            userAgentString:userAgent];
+                                                           consumer:self
+                                                              queue:self.fakeSyncContext
+                                                        accessToken:self.accessToken
+                                                           clientID:self.clientID
+                                                      proxyUsername:nil
+                                                      proxyPassword:nil
+                                                    userAgentString:userAgent];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // after

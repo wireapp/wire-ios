@@ -78,6 +78,8 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 @property (nonatomic, readonly) id<ReachabilityProvider, TearDownCapable> reachability;
 
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
+                      proxyUsername:(nullable NSString *)proxyUsername
+                      proxyPassword:(nullable NSString *)proxyPassword
                       cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(nullable ZMAccessToken *)initialAccessToken

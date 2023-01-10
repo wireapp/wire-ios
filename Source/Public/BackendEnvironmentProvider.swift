@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import Foundation
 // Wrapper around Swift-only EnvironmentType so that it would be useable in Objective-C
 @objc public class EnvironmentTypeProvider: NSObject {
     public var value: EnvironmentType
-    init(environmentType: EnvironmentType) {
+    public init(environmentType: EnvironmentType) {
         self.value = environmentType
     }
 }
@@ -51,4 +51,15 @@ import Foundation
     var title: String { get }
     
     var environmentType: EnvironmentTypeProvider { get }
+    var proxy: ProxySettingsProvider? { get }
+}
+
+@objc public protocol ProxySettingsProvider: NSObjectProtocol {
+
+    /// Host is expressed as domain name or an IP address **without** scheme
+    var host: String { get }
+    var port: Int { get }
+    var needsAuthentication: Bool { get }
+
+    func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable : Any]?
 }
