@@ -133,7 +133,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     let phoneInputView = PhoneNumberInputView()
     let loginButton = Button(style: .accentColorTextButtonStyle,
                              cornerRadius: 16,
-                             fontSpec: .normalSemiboldFont)
+                             fontSpec: .buttonBigSemibold)
 
     lazy var proxyCredentialsViewController = {
         ProxyCredentialsViewController(backendURL: backendEnvironment.backendURL,
