@@ -346,7 +346,9 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 switchCredentialsType(newType)
 
             case .startRegistrationFlow(let unverifiedCredential):
-                startRegistration(unverifiedCredential)
+                activateNetworkSessions { [weak self] _ in
+                    self?.startRegistration(unverifiedCredential)
+                }
 
             case .setUserName(let userName):
                 updateUnregisteredUser(\.name, userName)
@@ -651,12 +653,8 @@ extension AuthenticationCoordinator {
                                                 password: proxyCredentials.password)
         }
 
-        sessionManager.markNetworkSessionsAsReady(true)
-        self.presenter?.isLoadingViewVisible = true
-        sessionManager.resolveAPIVersion { [weak self] error in
-            self?.presenter?.isLoadingViewVisible = false
+        activateNetworkSessions { [weak self] error in
             guard error == nil else {
-                self?.sessionManager.markNetworkSessionsAsReady(false)
                 self?.sessionManager.removeProxyCredentials()
                 self?.showAlertWithGeneralError()
                 return
@@ -820,5 +818,18 @@ extension AuthenticationCoordinator {
                                  message: Alert.message,
                                  actions: [.ok]))]
         )
+    }
+
+    /// Call this method when ready to use network sessions : first login
+    private func activateNetworkSessions(before action: @escaping (Error?) -> Void) {
+        sessionManager.markNetworkSessionsAsReady(true)
+        self.presenter?.isLoadingViewVisible = true
+        sessionManager.resolveAPIVersion { [weak self] error in
+            self?.presenter?.isLoadingViewVisible = false
+            if error != nil {
+                self?.sessionManager.markNetworkSessionsAsReady(false)
+            }
+            action(error)
+        }
     }
 }
