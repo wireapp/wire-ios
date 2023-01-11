@@ -72,6 +72,8 @@
 		872A2EE01FFE761B00900B22 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EDF1FFE761B00900B22 /* MockService.swift */; };
 		872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */; };
 		E94F92652885421100C44964 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F92642885421100C44964 /* MD5DigestHelper.swift */; };
+		EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FF296F09D8001D7C88 /* WireTesting.framework */; };
+		EE67F701296F09D8001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FF296F09D8001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE797454283D235700A0BB0C /* MockTransportSession+FeatureConfigs.h in Headers */ = {isa = PBXBuildFile; fileRef = EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */; };
 		EE797455283D235700A0BB0C /* MockTransportSession+FeatureConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */; };
 		EE797457283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */; };
@@ -152,6 +154,7 @@
 			files = (
 				EE974126295498DA000C9340 /* WireCryptobox.framework in Embed Frameworks */,
 				EE974122295498D2000C9340 /* WireProtos.framework in Embed Frameworks */,
+				EE67F701296F09D8001D7C88 /* WireTesting.framework in Embed Frameworks */,
 				EE974129295498E2000C9340 /* WireTransport.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -252,6 +255,7 @@
 		872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Services.swift"; sourceTree = "<group>"; };
 		872A2EE31FFE85D000900B22 /* MockServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServicesTests.swift; sourceTree = "<group>"; };
 		E94F92642885421100C44964 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
+		EE67F6FF296F09D8001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+FeatureConfigs.h"; sourceTree = "<group>"; };
 		EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+FeatureConfigs.m"; sourceTree = "<group>"; };
 		EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+FeatureConfigs.swift"; sourceTree = "<group>"; };
@@ -297,6 +301,7 @@
 			files = (
 				EE974125295498DA000C9340 /* WireCryptobox.framework in Frameworks */,
 				EE974121295498D2000C9340 /* WireProtos.framework in Frameworks */,
+				EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */,
 				EE974128295498E2000C9340 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,6 +593,7 @@
 		54C902651B753419007162A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE67F6FF296F09D8001D7C88 /* WireTesting.framework */,
 				EE974127295498E2000C9340 /* WireTransport.framework */,
 				EE974124295498DA000C9340 /* WireCryptobox.framework */,
 				EE974120295498D2000C9340 /* WireProtos.framework */,

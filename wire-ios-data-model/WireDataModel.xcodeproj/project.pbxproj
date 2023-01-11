@@ -355,7 +355,6 @@
 		A995F05C23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */; };
 		A995F05E239690B300FAC3CF /* ParticipantRoleObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995F05D239690B300FAC3CF /* ParticipantRoleObserverTests.swift */; };
 		A99B8A72268221A6006B4D29 /* ZMImageMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99B8A71268221A6006B4D29 /* ZMImageMessage.swift */; };
-		A99B8A9E26824BD5006B4D29 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8C26824BD5006B4D29 /* PINCache.xcframework */; };
 		A9EEFEFA23A6D0CB0007828A /* RolesMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */; };
 		A9FA524823A14E2B003AD4C6 /* RoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA524723A14E2B003AD4C6 /* RoleTests.swift */; };
 		A9FA524A23A1598B003AD4C6 /* ActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA524923A1598B003AD4C6 /* ActionTests.swift */; };
@@ -448,6 +447,9 @@
 		EE5E2C1526DFC31900C3928A /* MessageDestructionTimeoutType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5E2C1426DFC31900C3928A /* MessageDestructionTimeoutType.swift */; };
 		EE5E2C1926DFC67900C3928A /* MessageDestructionTimeoutValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5E2C1826DFC67900C3928A /* MessageDestructionTimeoutValue.swift */; };
 		EE5F54CC259B22C400F11F3C /* Account+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */; };
+		EE67F6C3296F05FD001D7C88 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6C2296F05FD001D7C88 /* PINCache.xcframework */; };
+		EE67F728296F0C6A001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F727296F0C6A001D7C88 /* WireTesting.framework */; };
+		EE67F729296F0C6A001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F727296F0C6A001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE68EEC9252DC4450013B242 /* ChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE68EEC8252DC4450013B242 /* ChangeDetector.swift */; };
 		EE68EECB252DC4730013B242 /* ExplicitChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE68EECA252DC4720013B242 /* ExplicitChangeDetector.swift */; };
 		EE6A57DA25BAE0C900F848DD /* BiometricsStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6A57D925BAE0C900F848DD /* BiometricsStateTests.swift */; };
@@ -723,6 +725,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		EE67F72A296F0C6A001D7C88 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE67F729296F0C6A001D7C88 /* WireTesting.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EE8DA9652954A02400F58B79 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1088,9 +1101,6 @@
 		873B88FB204044AC00FBE254 /* ConversationCreationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreationOptions.swift; sourceTree = "<group>"; };
 		873B88FD2040470900FBE254 /* ConversationCreationOptionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreationOptionsTests.swift; sourceTree = "<group>"; };
 		874387B921E6404F00901B0F /* store2-59-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-59-0.wiredatabase"; path = "Tests/Resources/store2-59-0.wiredatabase"; sourceTree = SOURCE_ROOT; };
-		874B5DA81CEDB9E30010474C /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		874B5DA91CEDB9E40010474C /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
-		874B5DAA1CEDB9E40010474C /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		874D9797211064D300B07674 /* ZMConversationLastMessagesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMConversationLastMessagesTest.swift; sourceTree = "<group>"; };
 		8767E85A216391DF00390F75 /* ZMConversation+Mute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Mute.swift"; sourceTree = "<group>"; };
 		8767E85C2163AA4800390F75 /* zmessaging2.54.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.54.0.xcdatamodel; sourceTree = "<group>"; };
@@ -1138,7 +1148,6 @@
 		A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantRoleChangeInfo.swift; sourceTree = "<group>"; };
 		A995F05D239690B300FAC3CF /* ParticipantRoleObserverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantRoleObserverTests.swift; sourceTree = "<group>"; };
 		A99B8A71268221A6006B4D29 /* ZMImageMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMImageMessage.swift; sourceTree = "<group>"; };
-		A99B8A8C26824BD5006B4D29 /* PINCache.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PINCache.xcframework; path = Carthage/Build/PINCache.xcframework; sourceTree = "<group>"; };
 		A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolesMigrationTests.swift; sourceTree = "<group>"; };
 		A9FA524723A14E2B003AD4C6 /* RoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleTests.swift; sourceTree = "<group>"; };
 		A9FA524923A1598B003AD4C6 /* ActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTests.swift; sourceTree = "<group>"; };
@@ -1240,6 +1249,8 @@
 		EE5E2C1426DFC31900C3928A /* MessageDestructionTimeoutType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutType.swift; sourceTree = "<group>"; };
 		EE5E2C1826DFC67900C3928A /* MessageDestructionTimeoutValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutValue.swift; sourceTree = "<group>"; };
 		EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Keychain.swift"; sourceTree = "<group>"; };
+		EE67F6C2296F05FD001D7C88 /* PINCache.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PINCache.xcframework; path = ../Carthage/Build/PINCache.xcframework; sourceTree = "<group>"; };
+		EE67F727296F0C6A001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE68EEC8252DC4450013B242 /* ChangeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeDetector.swift; sourceTree = "<group>"; };
 		EE68EECA252DC4720013B242 /* ExplicitChangeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplicitChangeDetector.swift; sourceTree = "<group>"; };
 		EE6A57D925BAE0C900F848DD /* BiometricsStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricsStateTests.swift; sourceTree = "<group>"; };
@@ -1568,10 +1579,10 @@
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				F9C9A66F1CAD77930039E10C /* CoreData.framework in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
-				A99B8A9E26824BD5006B4D29 /* PINCache.xcframework in Frameworks */,
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
+				EE67F6C3296F05FD001D7C88 /* PINCache.xcframework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1588,6 +1599,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE67F728296F0C6A001D7C88 /* WireTesting.framework in Frameworks */,
 				F9C9A80C1CAED99F0039E10C /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2676,9 +2688,6 @@
 		F9C9A4F21CAD5DF10039E10C = {
 			isa = PBXGroup;
 			children = (
-				874B5DA81CEDB9E30010474C /* Cartfile */,
-				874B5DA91CEDB9E40010474C /* Cartfile.private */,
-				874B5DAA1CEDB9E40010474C /* Cartfile.resolved */,
 				543089B71D420165004D8AC4 /* README.md */,
 				F9A708641CAEF9BD00C2F5FE /* Default-568h@2x.png */,
 				F9C9A6771CAD7A790039E10C /* Resources */,
@@ -2729,12 +2738,13 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE67F727296F0C6A001D7C88 /* WireTesting.framework */,
+				EE67F6C2296F05FD001D7C88 /* PINCache.xcframework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
 				EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */,
 				EE8DA9692954A03100F58B79 /* WireTransport.framework */,
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA9622954A02400F58B79 /* WireProtos.framework */,
-				A99B8A8C26824BD5006B4D29 /* PINCache.xcframework */,
 				F9C9A66E1CAD77930039E10C /* CoreData.framework */,
 				F9C9A66C1CAD778C0039E10C /* Foundation.framework */,
 			);
@@ -3026,6 +3036,7 @@
 				F9C9A7EF1CAED9510039E10C /* Sources */,
 				F9C9A7F01CAED9510039E10C /* Frameworks */,
 				F9C9A7F11CAED9510039E10C /* Resources */,
+				EE67F72A296F0C6A001D7C88 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
