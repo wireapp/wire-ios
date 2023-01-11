@@ -157,19 +157,6 @@ final class LandingViewController: AuthenticationStepViewController {
         return button
     }()
 
-    private lazy var loginWithSSOButton: Button = {
-        let button = Button(style: .secondaryTextButtonStyle,
-                            cornerRadius: 16,
-                            fontSpec: .buttonBigSemibold)
-        button.accessibilityIdentifier = "Log in with SSO"
-        button.setTitle(Landing.Login.Sso.Button.title, for: .normal)
-        button.addTarget(self,
-                         action: #selector(ssoLoginButtonTapped(_:)),
-                         for: .touchUpInside)
-
-        return button
-    }()
-
     private let createAccountInfoLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(text: Landing.CreateAccount.infotitle,
                                      fontSpec: .mediumRegularFont,
