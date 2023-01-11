@@ -107,7 +107,6 @@ final class AuthenticationInterfaceBuilderTests: ZMSnapshotTestCase, CoreDataFix
     }
 
     func testLoginScreen_Email_WithConfig() {
-        recordMode = true
         let backendEnvironmentProvider = MockEnvironment()
         backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
         backendEnvironmentProvider.proxy = nil
