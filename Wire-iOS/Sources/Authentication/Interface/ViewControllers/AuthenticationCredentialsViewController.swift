@@ -325,6 +325,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         actioner?.executeAction(.openURL(.wr_passwordReset))
     }
 
+    private var scrollViewCompactConstraint: NSLayoutConstraint?
+    private var scrollViewRegularConstraint: NSLayoutConstraint?
+
     override func createConstraints() {
         super.createConstraints()
         loginButton.translatesAutoresizingMaskIntoConstraints = false
@@ -334,17 +337,28 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
         if shouldUseScrollView {
             NSLayoutConstraint.activate([
-                contentStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                contentStack.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+                contentStack.widthAnchor.constraint(equalToConstant: 375),
+                contentStack.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+//                contentStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//                contentStack.trailingAnchor.constraint(equalTo: view.trailingAnchor)
             ])
+//            scrollViewCompactConstraint = contentStack.widthAnchor.constraint(equalTo: view.widthAnchor)
+//            scrollViewRegularConstraint = contentStack.widthAnchor.constraint(equalToConstant: 375)
         }
     }
-    override func updateConstraints(forRegularLayout isRegular: Bool) {
-        guard shouldUseScrollView else {
-            return super.updateConstraints(forRegularLayout: isRegular)
-        }
 
-        contentStack.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+    override func updateConstraints(forRegularLayout isRegular: Bool) {
+        //guard shouldUseScrollView else {
+//            return
+        super.updateConstraints(forRegularLayout: isRegular)
+//        }
+//        if isRegular {
+//            // Adaptive Constraints
+//            mainViewWidthRegular = mainView.widthAnchor.constraint(equalToConstant: 375)
+//            mainViewWidthCompact = mainView.widthAnchor.constraint(equalTo: view.widthAnchor)
+//        }
+//        scrollViewCompactConstraint?.isActive = !isRegular
+//        scrollViewRegularConstraint?.isActive = isRegular
     }
 
     override func updateKeyboard(with keyboardFrame: CGRect) {
