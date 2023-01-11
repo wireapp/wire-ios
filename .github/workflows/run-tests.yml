@@ -78,6 +78,10 @@ jobs:
         run: |
           sudo xcode-select -switch /Applications/Xcode_13.2.1.app
           /usr/bin/xcodebuild -version
+
+      - name: Setup workspace
+        run: |
+          ./setup.sh
         
       - name: Test WireSystem
         if: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
@@ -93,10 +97,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
         run: |
           echo "WireTesting has changes"
-          echo "Fetching dependencies for WireTesting..."
-          cd wire-ios-testing
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireTesting..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireTesting..."
@@ -117,10 +117,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
         run: |
           echo "WireCryptobox has changes"
-          echo "Fetching dependencies for WireCryptobox..."
-          cd wire-ios-cryptobox
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireCryptobox..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireCryptobox..."
@@ -131,10 +127,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
         run: |
           echo "WireTransport has changes"
-          echo "Fetching dependencies for WireTransport..."
-          cd wire-ios-transport
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireTransport..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireTransport..."
@@ -145,10 +137,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
         run: |
           echo "WireLinkPreview has changes"
-          echo "Fetching dependencies for WireLinkPreview..."
-          cd wire-ios-link-preview
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireLinkPreview..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireLinkPreview..."
@@ -169,10 +157,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
         run: |
           echo "WireProtos has changes"
-          echo "Fetching dependencies for WireProtos..."
-          cd wire-ios-protos
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireProtos..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireProtos..."
@@ -193,10 +177,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
         run: |
           echo "WireDataModel has changes"
-          echo "Fetching dependencies for WireDataModel..."
-          cd wire-ios-data-model
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireDataModel..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireDataModel..."
@@ -237,10 +217,6 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
         run: |
           echo "WireSyncEngine has changes"
-          echo "Fetching dependencies for WireSyncEngine..."
-          cd wire-ios-sync-engine
-          carthage bootstrap --platform ios --use-xcframeworks
-          cd ..
           echo "Building WireSyncEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireSyncEngine..."
@@ -251,15 +227,7 @@ jobs:
         if: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
         run: |
           echo "Wire-iOS has changes"
-          echo "Setting up Wire-iOS..."
-          ./setup.sh
           echo "Building Wire-iOS..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireCanvas -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Ziphy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing Wire-iOS..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
