@@ -108,6 +108,7 @@ jobs:
         run: |
           echo "WireUtilities has changes"
           echo "Building WireUtilities..."
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing WireUtilities..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
