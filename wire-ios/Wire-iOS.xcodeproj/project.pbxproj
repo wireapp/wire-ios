@@ -1256,8 +1256,6 @@
 		EE67F6E6296F06F1001D7C88 /* AppCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E1296F06F1001D7C88 /* AppCenter.xcframework */; };
 		EE67F6E8296F06F1001D7C88 /* AppCenterCrashes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E2296F06F1001D7C88 /* AppCenterCrashes.xcframework */; };
 		EE67F6EA296F06F1001D7C88 /* AppCenterAnalytics.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E3296F06F1001D7C88 /* AppCenterAnalytics.xcframework */; };
-		EE67F731296F0DB5001D7C88 /* SnapshotTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72F296F0DB5001D7C88 /* SnapshotTesting.xcframework */; };
-		EE67F733296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */; };
 		EE67F73A296F0E28001D7C88 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
 		EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; };
 		EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1311,10 +1309,11 @@
 		EED92353278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */; };
 		EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */; };
 		EEE104052126F68A003C779B /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE104042126F68A003C779B /* CameraController.swift */; };
-		EEE25AFB296F11300008B894 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25AFA296F11300008B894 /* WireTesting.framework */; };
 		EEE25AFE2970346E0008B894 /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25AFD2970346E0008B894 /* Datadog.xcframework */; };
 		EEE25AFF2970346E0008B894 /* Datadog.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25AFD2970346E0008B894 /* Datadog.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B00297034810008B894 /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25AFD2970346E0008B894 /* Datadog.xcframework */; };
+		EEE25B032970363B0008B894 /* SnapshotTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72F296F0DB5001D7C88 /* SnapshotTesting.xcframework */; };
+		EEE25B04297036410008B894 /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */; };
 		EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
 		EEE455E228B2E11D005ACD74 /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E128B2E11D005ACD74 /* Job.swift */; };
 		EEE455E428B2E157005ACD74 /* NetworkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E328B2E157005ACD74 /* NetworkSession.swift */; };
@@ -3220,6 +3219,7 @@
 		EEE104042126F68A003C779B /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		EEE25AFA296F11300008B894 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25AFD2970346E0008B894 /* Datadog.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Datadog.xcframework; path = ../Carthage/Build/Datadog.xcframework; sourceTree = "<group>"; };
+		EEE25B052970369C0008B894 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceError.swift; sourceTree = "<group>"; };
 		EEE455E128B2E11D005ACD74 /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		EEE455E328B2E157005ACD74 /* NetworkSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSession.swift; sourceTree = "<group>"; };
@@ -3617,17 +3617,14 @@
 				872C99121DB0EA54006A3BDE /* Intents.framework in Frameworks */,
 				EE67F6D2296F0692001D7C88 /* DifferenceKit.xcframework in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
-				EE67F731296F0DB5001D7C88 /* SnapshotTesting.xcframework in Frameworks */,
 				874D0EB11D3E575E003DF418 /* Photos.framework in Frameworks */,
 				EE33C4902964860000C058D1 /* WireNotificationEngine.framework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
 				A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */,
-				EEE25AFB296F11300008B894 /* WireTesting.framework in Frameworks */,
 				EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */,
 				EE67F6DB296F06C2001D7C88 /* FormatterKit.xcframework in Frameworks */,
 				EE33C48A296485F400C058D1 /* WireSyncEngine.framework in Frameworks */,
 				87E0D6D51CD3978900C54196 /* AVKit.framework in Frameworks */,
-				EE67F733296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework in Frameworks */,
 				169FF9331C57CB2100C5BF90 /* VideoToolbox.framework in Frameworks */,
 				EE67F6D5296F06A3001D7C88 /* Down.xcframework in Frameworks */,
 			);
@@ -3637,6 +3634,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEE25B04297036410008B894 /* FBSnapshotTestCase.xcframework in Frameworks */,
+				EEE25B032970363B0008B894 /* SnapshotTesting.xcframework in Frameworks */,
 				873DC95C1D479A0500C1C9B0 /* AVFoundation.framework in Frameworks */,
 				873DC95A1D479A0000C1C9B0 /* Photos.framework in Frameworks */,
 				8741DB621C1EFE2D00BDB470 /* CoreLocation.framework in Frameworks */,
@@ -4786,6 +4785,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EEE25B052970369C0008B894 /* WireTesting.framework */,
 				EEE25AFD2970346E0008B894 /* Datadog.xcframework */,
 				EEE25AFA296F11300008B894 /* WireTesting.framework */,
 				EE67F743296F0FA6001D7C88 /* WireTesting.framework */,
