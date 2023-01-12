@@ -241,8 +241,12 @@ public class SharingSession {
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
+        let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
+
         let transportSession =  ZMTransportSession(
             environment: environment,
+            proxyUsername: credentials?.username,
+            proxyPassword: credentials?.password,
             cookieStorage: cookieStorage,
             reachability: reachability,
             initialAccessToken: nil,
