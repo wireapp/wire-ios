@@ -26,7 +26,6 @@
 		5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
 		5EDF03F4224A208E00C04007 /* HTMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03F3224A208E00C04007 /* HTMLDocument.swift */; };
 		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
-		A96755BB265FE2060062EDC5 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96755B7265FE2060062EDC5 /* HTMLString.xcframework */; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
 		BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */; };
 		BF21CC8F1E925AA300A874F5 /* instagram_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6F1E925A9E00A874F5 /* instagram_head.txt */; };
@@ -67,6 +66,7 @@
 		BF4F2B5D1E925AFE000B22D1 /* PreviewDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B531E925AFE000B22D1 /* PreviewDownloaderTests.swift */; };
 		BF4F2B5E1E925AFE000B22D1 /* StringXMLEntityParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B541E925AFE000B22D1 /* StringXMLEntityParserTests.swift */; };
 		BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */; };
+		EE67F6B2296F0548001D7C88 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */; };
 		EEE4AB2029548DE5004E26A3 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */; };
 		EEE4AB2129548DE5004E26A3 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F1202A761FA0830000296B4B /* crash.txt in Resources */ = {isa = PBXBuildFile; fileRef = F1202A751FA0830000296B4B /* crash.txt */; };
@@ -113,9 +113,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		54BD49F61D41FDE5006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		54BD49F71D41FDE5006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
-		54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		54BD49F91D41FDE5006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5E2BEC51214BA4A600E65B53 /* WireLinkPreviewTestsHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireLinkPreviewTestsHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2BEC53214BA4A600E65B53 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -137,7 +134,6 @@
 		5EDF03F02249287B00C04007 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		5EDF03F3224A208E00C04007 /* HTMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLDocument.swift; sourceTree = "<group>"; };
 		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
-		A96755B7265FE2060062EDC5 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = guardian_head.txt; path = WireLinkPreviewTests/guardian_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6F1E925A9E00A874F5 /* instagram_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = instagram_head.txt; path = WireLinkPreviewTests/instagram_head.txt; sourceTree = SOURCE_ROOT; };
@@ -192,6 +188,7 @@
 		BF4F2B621E926D5E000B22D1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WireLinkPreviewTests/Info.plist; sourceTree = SOURCE_ROOT; };
 		BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF057941D25434E004A2C29 /* WireLinkPreviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireLinkPreviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = ../Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
 		EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1202A751FA0830000296B4B /* crash.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -209,8 +206,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */,
+				EE67F6B2296F0548001D7C88 /* HTMLString.xcframework in Frameworks */,
 				EEE4AB2029548DE5004E26A3 /* WireUtilities.framework in Frameworks */,
-				A96755BB265FE2060062EDC5 /* HTMLString.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,8 +226,8 @@
 		16A5FE0F215A868700AEEBBD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */,
 				EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */,
-				A96755B7265FE2060062EDC5 /* HTMLString.xcframework */,
 				5EDF03F02249287B00C04007 /* libxml2.tbd */,
 			);
 			name = Frameworks;
@@ -323,9 +320,6 @@
 		BFF057801D25434D004A2C29 = {
 			isa = PBXGroup;
 			children = (
-				54BD49F61D41FDE5006E29D1 /* Cartfile */,
-				54BD49F71D41FDE5006E29D1 /* Cartfile.private */,
-				54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */,
 				54BD49F91D41FDE5006E29D1 /* README.md */,
 				16A5FE0F215A868700AEEBBD /* Frameworks */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,

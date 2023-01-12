@@ -15,7 +15,7 @@
 		5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		638BBCF129150CEF007491FF /* mls.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF029150CEE007491FF /* mls.pb.swift */; };
 		638BBCF329150D4C007491FF /* mls.proto in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF229150D4C007491FF /* mls.proto */; };
-		A9E869CD265FD26E00880C48 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E869CC265FD26E00880C48 /* SwiftProtobuf.xcframework */; };
+		EE67F6BF296F05DB001D7C88 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */; };
 		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -48,8 +48,6 @@
 		090838091B872DBF00629095 /* WireProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0908380F1B872DC000629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = messages.proto; path = "Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
-		099223A01BECF63800668091 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		099223A11BECF65A00668091 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = otr.proto; path = "Carthage/Checkouts/generic-message-proto/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
 		09B70B4D1B874390002667A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09B70B601B874390002667A6 /* WireProtos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireProtos.xcconfig; sourceTree = "<group>"; };
@@ -67,9 +65,8 @@
 		5E13807F21A30AB7004A646C /* ProtosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtosTests.swift; sourceTree = "<group>"; };
 		638BBCF029150CEE007491FF /* mls.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mls.pb.swift; sourceTree = "<group>"; };
 		638BBCF229150D4C007491FF /* mls.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; name = mls.proto; path = "Carthage/Checkouts/generic-message-proto/proto/mls.proto"; sourceTree = SOURCE_ROOT; };
-		A9E869CC265FD26E00880C48 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		A9EF6A7323D76AC8002904B4 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		F184BE851E65CADA0020EBB7 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = ../Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,7 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9E869CD265FD26E00880C48 /* SwiftProtobuf.xcframework in Frameworks */,
+				EE67F6BF296F05DB001D7C88 /* SwiftProtobuf.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,9 +93,6 @@
 		090837F41B872DBF00629095 = {
 			isa = PBXGroup;
 			children = (
-				099223A01BECF63800668091 /* Cartfile */,
-				F184BE851E65CADA0020EBB7 /* Cartfile.resolved */,
-				099223A11BECF65A00668091 /* Cartfile.private */,
 				09B70B4B1B874390002667A6 /* Resources */,
 				090838001B872DBF00629095 /* Protos */,
 				0908380D1B872DBF00629095 /* ProtosTests */,
@@ -194,7 +188,7 @@
 		67FFDFDA66F3EEA3F9461130 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A9E869CC265FD26E00880C48 /* SwiftProtobuf.xcframework */,
+				EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

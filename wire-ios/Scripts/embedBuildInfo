@@ -37,7 +37,7 @@ def update_and_merge_build_info(info, source_root, repositories):
 
 def parse_dependency_version_numbers(source_root):
     dependencies = {}
-    carfile_resolved_path = os.path.join(source_root, "Cartfile.resolved")
+    carfile_resolved_path = os.path.join(source_root, "../Cartfile.resolved")
     cartfile_resolved = open(carfile_resolved_path, "r")
     stripQuotes = lambda string: re.sub('"', '', string)
 
