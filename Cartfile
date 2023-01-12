@@ -13,4 +13,5 @@ github "wireapp/avs-ios-binaries" "7.2.259_xcframework"
 github "wireapp/ZipArchive" "v2.2.3_xcframework"
 github "wireapp/libPhoneNumber-iOS" "0.9.3_xcframework"
 github "wireapp/ocmock" "v3.4.3_xcframework"
-github "wireapp/Starscream" "4.0.4_Xcode12.4_module_stability"
+github "wireapp/Starscream" "4.0.4_proxy_mode"
+github "DataDog/dd-sdk-ios" ~> 1.14.0
