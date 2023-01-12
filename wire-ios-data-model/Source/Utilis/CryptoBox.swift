@@ -128,7 +128,7 @@ open class UserClientKeysStore: NSObject {
     open func generateMoreKeys(_ count: UInt16 = 1, start: UInt16 = 0) throws -> [(id: UInt16, prekey: String)] {
         if count > 0 {
             var error: Error?
-            var newPreKeys : [(id: UInt16, prekey: String)] = []
+            var newPreKeys: [(id: UInt16, prekey: String)] = []
 
             let range = preKeysRange(count, start: start)
             encryptionContext.perform({(sessionsDirectory) in

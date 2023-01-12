@@ -21,7 +21,7 @@ import WireUtilities
 
 /// A notification that is tied to a specific context. It mimics
 /// the behavior of a regular NSNotification but is always linked to
-/// a conxtext.
+/// a context.
 /// This is needed to allow for sending a notification for `nil` object,
 /// or to register an observer for any (`nil`) object, but still avoiding
 /// receiving notifications that are from a different context. We could not
