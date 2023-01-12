@@ -22,7 +22,6 @@
 #import <WireTransport/ZMTransportSession.h>
 #import "ZMPushChannelConnection.h"
 #import "ZMTransportRequestScheduler.h"
-#import "ZMTransportPushChannel.h"
 #import "ZMAccessTokenHandler.h"
 #import "ZMURLSession.h"
 
@@ -39,10 +38,12 @@
                                        queue:(NSOperationQueue *)queue
                                        group:(ZMSDispatchGroup *)group
                                  environment:(id<BackendEnvironmentProvider>)environment
+                               proxyUsername:(NSString *)proxyUsername
+                               proxyPassword:(NSString *)proxyPassword
                             pushChannelClass:(Class)pushChannelClass
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
-                                   userAgent:(NSString *)userAgent NS_DESIGNATED_INITIALIZER;
+                                   userAgent:(NSString *)userAgent;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

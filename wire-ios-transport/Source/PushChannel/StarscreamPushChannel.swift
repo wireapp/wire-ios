@@ -68,9 +68,14 @@ class StarscreamPushChannel: NSObject, PushChannelType {
 
     required init(scheduler: ZMTransportRequestScheduler,
                   userAgentString: String,
-                  environment: BackendEnvironmentProvider, queue: OperationQueue) {
+                  environment: BackendEnvironmentProvider,
+                  proxyUsername: String?,
+                  proxyPassword: String?,
+                  queue: OperationQueue) {
         self.environment = environment
         self.scheduler = scheduler
+        self.proxyUsername = proxyUsername
+        self.proxyPassword = proxyPassword
         self.workQueue = queue
     }
 
@@ -114,8 +119,19 @@ class StarscreamPushChannel: NSObject, PushChannelType {
         connectionRequest.setValue("\(accessToken.type) \(accessToken.token)", forHTTPHeaderField: "Authorization")
 
         let certificatePinning = StarscreamCertificatePinning(environment: environment)
-        webSocket = WebSocket(request: connectionRequest, certPinner: certificatePinning, useCustomEngine: true)
+        webSocket = WebSocket(request: connectionRequest, certPinner: certificatePinning, useCustomEngine: false)
         webSocket?.delegate = self
+
+        if let proxySettings = environment.proxy {
+            let proxyDictionary = proxySettings.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword)
+
+            let configuration = URLSessionConfiguration.default
+            configuration.connectionProxyDictionary = proxyDictionary
+            configuration.httpShouldUsePipelining = true
+
+            webSocket?.configuration = configuration
+        }
+
         if let queue = workQueue.underlyingQueue {
             webSocket?.callbackQueue = queue
         }
@@ -129,6 +145,11 @@ class StarscreamPushChannel: NSObject, PushChannelType {
             self?.scheduleOpenInternal()
         }
     }
+
+    // MARK: - Private
+
+    private let proxyUsername: String?
+    private let proxyPassword: String?
 
     private func scheduleOpenInternal() {
         guard canOpenConnection else {
@@ -190,8 +211,7 @@ extension StarscreamPushChannel: ZMTimerClient {
 
 @available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension StarscreamPushChannel: WebSocketDelegate {
-
-    func didReceive(event: WebSocketEvent, client: WebSocket) {
+    func didReceive(event: WebSocketEvent, client: WebSocketClient) {
         switch event {
 
         case .connected(_):
