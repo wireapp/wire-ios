@@ -20,11 +20,11 @@ import Foundation
 
 class ConversationObserverToken: NSObject, ZMConversationObserver {
 
-    let block : () -> Void
+    let block: () -> Void
     let filter: (ConversationChangeInfo) -> Bool
     var token: NSObjectProtocol?
 
-    init(filter:  @escaping (ConversationChangeInfo) -> Bool, block: @escaping () -> Void ) {
+    init(filter: @escaping (ConversationChangeInfo) -> Bool, block: @escaping () -> Void) {
         self.block = block
         self.filter = filter
     }
@@ -39,7 +39,7 @@ class ConversationObserverToken: NSObject, ZMConversationObserver {
 
 public extension ZMConversation {
 
-    func onCreatedRemotely(_ block : @escaping () -> Void) -> NSObjectProtocol? {
+    func onCreatedRemotely(_ block: @escaping () -> Void) -> NSObjectProtocol? {
         guard remoteIdentifier == nil else { block(); return nil }
 
         let observer = ConversationObserverToken(filter: { $0.createdRemotelyChanged }, block: block)
