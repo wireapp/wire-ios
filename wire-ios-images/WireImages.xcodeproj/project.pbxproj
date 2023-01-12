@@ -70,6 +70,10 @@
 		87B91C4D1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */; };
 		87B91C4E1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */; };
 		A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */; };
+		EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
+		EE98A0B2296EFD2F0055E981 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; };
+		EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; };
 		EEB4197329548A3D00644D10 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F1E148CF207CE68100F81833 /* ceiling_rotated_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C0C1E5C7E5D00A5EC11 /* ceiling_rotated_1.jpg */; };
@@ -100,8 +104,20 @@
 			dstSubfolderSpec = 10;
 			files = (
 				EEB4197329548A3D00644D10 /* WireUtilities.framework in CopyFiles */,
+				EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */,
 				54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE98A0B3296EFD2F0055E981 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE98A0B2296EFD2F0055E981 /* WireUtilities.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -185,6 +201,8 @@
 		87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview_small_profile.jpg; sourceTree = "<group>"; };
 		87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small_profile.jpg; sourceTree = "<group>"; };
 		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
+		EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE98A0B4296EFD3F0055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEB4197129548A3D00644D10 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -193,6 +211,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */,
+				EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */,
 				870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,6 +249,8 @@
 		098CB1191B5FA6E100712DF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE98A0B4296EFD3F0055E981 /* WireTesting.framework */,
+				EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */,
 				EEB4197129548A3D00644D10 /* WireUtilities.framework */,
 			);
 			name = Frameworks;
@@ -417,6 +439,7 @@
 				096960081B663E7B006DF53B /* Frameworks */,
 				096960091B663E7B006DF53B /* Headers */,
 				0969600A1B663E7B006DF53B /* Resources */,
+				EE98A0B3296EFD2F0055E981 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -712,7 +735,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -723,7 +746,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;

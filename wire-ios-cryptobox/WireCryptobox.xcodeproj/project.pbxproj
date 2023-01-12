@@ -32,8 +32,6 @@
 		870121FD20F4D2FE001E6342 /* GenericHashBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */; };
 		87B43C2F20F3973F0031DE41 /* EncryptionContextCachingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */; };
 		87B43C5920F4AAA00031DE41 /* GenericHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C5820F4AAA00031DE41 /* GenericHash.swift */; };
-		A9C97AEB27973F9500C3B9D3 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9C97AE927973F9500C3B9D3 /* Clibsodium.xcframework */; };
-		A9F4996F279A8A9600969F4B /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9F4996E279A8A9600969F4B /* cryptobox.xcframework */; };
 		A9F499AC279A8ABD00969F4B /* crypto_stream_salsa2012.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F49971279A8ABD00969F4B /* crypto_stream_salsa2012.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499AD279A8ABD00969F4B /* crypto_auth.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F49972279A8ABD00969F4B /* crypto_auth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499AE279A8ABD00969F4B /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F49973279A8ABD00969F4B /* utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -93,6 +91,8 @@
 		A9F499E4279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499A9279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E5279A8ABD00969F4B /* crypto_generichash_blake2b.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AA279A8ABD00969F4B /* crypto_generichash_blake2b.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E6279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EE67F6BA296F05BF001D7C88 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */; };
+		EE67F6BC296F05BF001D7C88 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */; };
 		EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; };
 		EE97411E295493B9000C9340 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
@@ -146,7 +146,7 @@
 		0928E36C1BA0908F0057232E /* WireCryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireCryptobox.h; sourceTree = "<group>"; };
 		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0928E3751BA17E300057232E /* WireCryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireCryptobox.xcconfig; sourceTree = "<group>"; };
-		16460B7E206D456F0096B616 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cbox.h; path = "../Carthage/Build/cryptobox.xcframework/ios-arm64/Headers/cbox.h"; sourceTree = "<group>"; };
+		16460B7E206D456F0096B616 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cbox.h; path = "../../Carthage/Build/cryptobox.xcframework/ios-arm64/Headers/cbox.h"; sourceTree = "<group>"; };
 		16460B80206D46CA0096B616 /* StreamEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEncryption.swift; sourceTree = "<group>"; };
 		16460B82206D47460096B616 /* ChaCha20StreamEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20StreamEncryptionTests.swift; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
@@ -179,8 +179,6 @@
 		870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHashBuilderTests.swift; sourceTree = "<group>"; };
 		87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionContextCachingTests.swift; sourceTree = "<group>"; };
 		87B43C5820F4AAA00031DE41 /* GenericHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHash.swift; sourceTree = "<group>"; };
-		A9C97AE927973F9500C3B9D3 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
-		A9F4996E279A8A9600969F4B /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
 		A9F49971279A8ABD00969F4B /* crypto_stream_salsa2012.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_salsa2012.h; sourceTree = "<group>"; };
 		A9F49972279A8ABD00969F4B /* crypto_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth.h; sourceTree = "<group>"; };
 		A9F49973279A8ABD00969F4B /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
@@ -242,13 +240,13 @@
 		A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign_edwards25519sha512batch.h; sourceTree = "<group>"; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = ../Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
+		EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = ../Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
 		EE97411C295493B9000C9340 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
 		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
 		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
 		EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20Poly1305.swift; sourceTree = "<group>"; };
-		EFF7A46D2271DBB100F1AC33 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		EFF7A46E2271DBB100F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F1E148D3207D06EF00F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
@@ -259,9 +257,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9F4996F279A8A9600969F4B /* cryptobox.xcframework in Frameworks */,
+				EE67F6BA296F05BF001D7C88 /* Clibsodium.xcframework in Frameworks */,
 				EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */,
-				A9C97AEB27973F9500C3B9D3 /* Clibsodium.xcframework in Frameworks */,
+				EE67F6BC296F05BF001D7C88 /* cryptobox.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,14 +411,12 @@
 				A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */,
 			);
 			name = sodium;
-			path = "Carthage/Build/Clibsodium.xcframework/ios-arm64_armv7_armv7s/Headers/sodium";
+			path = "../Carthage/Build/Clibsodium.xcframework/ios-arm64_armv7_armv7s/Headers/sodium";
 			sourceTree = SOURCE_ROOT;
 		};
 		BA7EF9551B7109B600204A8E = {
 			isa = PBXGroup;
 			children = (
-				EFF7A46D2271DBB100F1AC33 /* Cartfile */,
-				EFF7A46E2271DBB100F1AC33 /* Cartfile.resolved */,
 				BA7EF9601B7109B600204A8E /* WireCryptobox */,
 				0928E35A1BA090620057232E /* Resources */,
 				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
@@ -499,9 +495,9 @@
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */,
+				EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */,
 				EE97411C295493B9000C9340 /* WireUtilities.framework */,
-				A9F4996E279A8A9600969F4B /* cryptobox.xcframework */,
-				A9C97AE927973F9500C3B9D3 /* Clibsodium.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
