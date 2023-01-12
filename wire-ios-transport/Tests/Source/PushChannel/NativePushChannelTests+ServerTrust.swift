@@ -57,6 +57,8 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         sut = NativePushChannel(scheduler: scheduler,
                                 userAgentString: "user-agent",
                                 environment: mockEnvironment,
+                                proxyUsername: nil,
+                                proxyPassword: nil,
                                 queue: .main)
     }
 

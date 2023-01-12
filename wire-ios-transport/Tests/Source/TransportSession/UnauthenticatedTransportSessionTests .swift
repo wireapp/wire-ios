@@ -17,7 +17,7 @@
 //
 
 
-import WireTesting
+import  WireTesting
 @testable import WireTransport
 
 
@@ -83,6 +83,17 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     override func setUp() {
         super.setUp()
+        setupSut(readyForRequests: true)
+    }
+
+
+    override func tearDown() {
+        sessionMock = nil
+        sut = nil
+        super.tearDown()
+    }
+
+    private func setupSut(readyForRequests: Bool) {
         sessionMock = MockURLSession()
         let endpoints = BackendEndpoints(backendURL: url,
                                          backendWSURL: url,
@@ -92,19 +103,23 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
                                          websiteURL: url,
                                          countlyURL: url)
         let trust = MockCertificateTrust()
-        let environment = BackendEnvironment(title: name, environmentType: .production, endpoints: endpoints, certificateTrust: trust)
+        let environment = BackendEnvironment(
+            title: name,
+            environmentType: .production,
+            endpoints: endpoints,
+            proxySettings: nil,
+            certificateTrust: trust
+        )
         sut = UnauthenticatedTransportSession(environment: environment,
+                                              proxyUsername: nil,
+                                              proxyPassword: nil,
                                               urlSession: sessionMock,
                                               reachability: MockReachability(),
-                                              applicationVersion: "1.0")
+                                              applicationVersion: "1.0",
+                                              readyForRequests: readyForRequests)
     }
 
-    override func tearDown() {
-        sessionMock = nil
-        sut = nil
-        super.tearDown()
-    }
-    
+
     func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
         // when
         (0..<3).forEach { _ in
@@ -250,6 +265,35 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         
         // then
         XCTAssertEqual(result, .success)
+    }
+
+    func testEnqueueRequestWhenNotReady_DoesNothing() {
+        // GIVEN
+        setupSut(readyForRequests: false)
+
+        let task = MockTask()
+        sessionMock.nextMockTask = task
+
+        // WHEN
+        let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
+
+        // THEN
+        XCTAssertEqual(task.resumeCallCount, 0)
+        XCTAssertEqual(result, .success)
+    }
+
+    func testEnqueueOneTimeWhenNotReady_DoesNothing() {
+        // GIVEN
+        setupSut(readyForRequests: false)
+
+        let task = MockTask()
+        sessionMock.nextMockTask = task
+
+        // WHEN
+        sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
+
+        // THEN
+        XCTAssertEqual(task.resumeCallCount, 0)
     }
 }
 
