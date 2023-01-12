@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +17,24 @@
 //
 
 import Foundation
+import WireTransport
 
-extension ConversationListViewController: ConversationListBottomBarControllerDelegate {
-
-    func conversationListBottomBar(_ bar: ConversationListBottomBarController, didTapButtonWithType buttonType: ConversationListButtonType) {
-        switch buttonType {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
-        }
+/**
+ * Handles showing custom backend information
+ */
+final class AuthenticationShowCustomBackendInfoHandler: AuthenticationEventHandler {
+    enum Intent {
+        case showCustomBackendInfo
     }
+
+    weak var statusProvider: AuthenticationStatusProvider?
+
+    func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
+        guard (context as? Intent) == .showCustomBackendInfo else {
+            return nil
+        }
+
+        return [.presentCustomBackendAlert]
+    }
+
 }

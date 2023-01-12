@@ -116,6 +116,14 @@ public extension FontSpec {
     static var headerRegularFont: Self {
         return self.init(.header, .regular)
     }
+    static var subheadlineFont: Self {
+        return self.init(.subHeadline, .regular)
+    }
+
+    // MARK: - Body
+    static var body: Self {
+        return self.init(.body, .regular)
+    }
 
     // MARK: - Body Two
     static var bodyTwoSemibold: Self {
@@ -125,5 +133,10 @@ public extension FontSpec {
     // MARK: - Button Small
     static var buttonSmallBold: Self {
         return self.init(.buttonSmall, .bold)
+    }
+
+    // MARK: - Button Big
+    static var buttonBigSemibold: Self {
+        return self.init(.buttonBig, .semibold)
     }
 }

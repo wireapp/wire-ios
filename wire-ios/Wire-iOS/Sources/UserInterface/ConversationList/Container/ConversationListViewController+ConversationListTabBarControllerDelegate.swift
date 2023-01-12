@@ -1,4 +1,3 @@
-//
 // Wire
 // Copyright (C) 2019 Wire Swiss GmbH
 //
@@ -18,21 +17,19 @@
 
 import Foundation
 
-/**
- * The view that displays the log out button when there are too many devices.
- */
+extension ConversationListViewController: ConversationListTabBarControllerDelegate {
 
-class SignOutViewDescription: TeamCreationSecondaryViewDescription {
-
-    let views: [ViewDescriptor]
-    weak var actioner: AuthenticationActioner?
-
-    init() {
-        let logOutButton = ButtonDescription(title: "registration.signin.too_many_devices.sign_out_button.title".localized(uppercased: true), accessibilityIdentifier: "log_out")
-        views = [logOutButton]
-
-        logOutButton.buttonTapped = { [weak self] in
-            self?.actioner?.executeAction(.signOut)
+    func didChangeTab(with type: TabBarItemType) {
+        switch type {
+        case .archive:
+            setState(.archived, animated: true)
+        case .startUI:
+            presentPeoplePicker()
+        case .folder:
+            listContentController.listViewModel.folderEnabled = true
+        case .list:
+            listContentController.listViewModel.folderEnabled = false
         }
     }
+
 }
