@@ -22,7 +22,7 @@ set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/..
 
-POSTPROCESS_SCRIPT="Configuration/postprocess.sh"
+POSTPROCESS_SCRIPT="wire-ios/Configuration/postprocess.sh"
 
 if [ -e "${POSTPROCESS_SCRIPT}" ]; then
     echo "Running ${POSTPROCESS_SCRIPT}"

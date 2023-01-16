@@ -457,6 +457,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -470,6 +471,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

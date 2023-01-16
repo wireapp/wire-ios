@@ -91,13 +91,12 @@
 		A9F499E4279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499A9279A8ABD00969F4B /* crypto_box_curve25519xsalsa20poly1305.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E5279A8ABD00969F4B /* crypto_generichash_blake2b.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AA279A8ABD00969F4B /* crypto_generichash_blake2b.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9F499E6279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F499AB279A8ABD00969F4B /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EE67F6BA296F05BF001D7C88 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */; };
-		EE67F6BC296F05BF001D7C88 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */; };
 		EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; };
-		EE97411E295493B9000C9340 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
 		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
 		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
+		EEE25B2229719A240008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */; };
+		EEE25B2429719A250008B894 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */; };
 		EEF6714324E681DE00BDB9B9 /* ChaCha20Poly1305.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */; };
 /* End PBXBuildFile section */
 
@@ -126,17 +125,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EE97411F295493B9000C9340 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE97411E295493B9000C9340 /* WireUtilities.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -257,9 +245,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE67F6BA296F05BF001D7C88 /* Clibsodium.xcframework in Frameworks */,
 				EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */,
-				EE67F6BC296F05BF001D7C88 /* cryptobox.xcframework in Frameworks */,
+				EEE25B2229719A240008B894 /* cryptobox.xcframework in Frameworks */,
+				EEE25B2429719A250008B894 /* Clibsodium.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -585,7 +573,6 @@
 				0928E2301BA0777A0057232E /* Frameworks */,
 				0928E2311BA0777A0057232E /* Headers */,
 				0928E2321BA0777A0057232E /* Resources */,
-				EE97411F295493B9000C9340 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -813,6 +800,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -826,6 +814,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

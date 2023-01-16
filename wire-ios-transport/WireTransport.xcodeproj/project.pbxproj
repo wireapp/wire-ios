@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01C83762292CC75F009BB0BF /* ProxyCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83761292CC75F009BB0BF /* ProxyCredentials.swift */; };
+		01C83764292CC8DA009BB0BF /* ProxyCredentialsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */; };
 		01D97AE5294CA6B9001A04BD /* RequestLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */; };
 		01D97B13294CBAC0001A04BD /* RequestLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97B0F294CB921001A04BD /* RequestLog.swift */; };
 		01D97B14294CBAC0001A04BD /* ResponseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97B11294CB98F001A04BD /* ResponseLog.swift */; };
 		01E1B793294B260100CEA021 /* RemoteLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E1B792294B260000CEA021 /* RemoteLogger.swift */; };
-		01C83762292CC75F009BB0BF /* ProxyCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83761292CC75F009BB0BF /* ProxyCredentials.swift */; };
-		01C83764292CC8DA009BB0BF /* ProxyCredentialsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */; };
 		0928E2051BA023A30057232E /* NSData_MultipartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0928E2041BA023A30057232E /* NSData_MultipartTests.m */; };
 		095840201B9591F1004555F9 /* NSData+Multipart.m in Sources */ = {isa = PBXBuildFile; fileRef = 0958401E1B9591F1004555F9 /* NSData+Multipart.m */; };
 		095840221B959200004555F9 /* NSData+Multipart.h in Headers */ = {isa = PBXBuildFile; fileRef = 095840211B959200004555F9 /* NSData+Multipart.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -142,7 +142,6 @@
 		EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
-		EE67F6F2296F079E001D7C88 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; };
 		EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EF1A09A41FF6AC7500F89634 /* ZMPersistentCookieStorage+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -202,17 +201,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EE67F6F3296F079E001D7C88 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE67F6F2296F079E001D7C88 /* WireUtilities.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		EE7F3DED29548F89000D247D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -228,12 +216,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01C83761292CC75F009BB0BF /* ProxyCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentials.swift; sourceTree = "<group>"; };
+		01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsTests.swift; sourceTree = "<group>"; };
 		01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLogTests.swift; sourceTree = "<group>"; };
 		01D97B0F294CB921001A04BD /* RequestLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLog.swift; sourceTree = "<group>"; };
 		01D97B11294CB98F001A04BD /* ResponseLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseLog.swift; sourceTree = "<group>"; };
 		01E1B792294B260000CEA021 /* RemoteLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RemoteLogger.swift; path = Source/Public/RemoteLogger.swift; sourceTree = SOURCE_ROOT; };
-		01C83761292CC75F009BB0BF /* ProxyCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentials.swift; sourceTree = "<group>"; };
-		01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsTests.swift; sourceTree = "<group>"; };
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
@@ -939,7 +927,6 @@
 				3E88BCA31B1F35DF00232589 /* Frameworks */,
 				3E88BCA41B1F35DF00232589 /* Headers */,
 				3E88BCA51B1F35DF00232589 /* Resources */,
-				EE67F6F3296F079E001D7C88 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1272,6 +1259,7 @@
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -1282,6 +1270,7 @@
 				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

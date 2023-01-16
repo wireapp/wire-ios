@@ -486,6 +486,7 @@
 				INFOPLIST_FILE = Sources/Info.plist;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -495,6 +496,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

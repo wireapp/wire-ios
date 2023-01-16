@@ -37,7 +37,7 @@ DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
 
 // Search Paths
 //
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Carthage/Build
 HEADER_SEARCH_PATHS = $(inherited) "$(TARGET_TEMP_DIR)/DerivedSources"
 
 // LLVM compiler - Language
