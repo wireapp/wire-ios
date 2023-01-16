@@ -23,7 +23,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/..
 
-CONFIGURATION_LOCATION=Configuration
+CONFIGURATION_LOCATION=wire-ios/Configuration
 PUBLIC_CONFIGURATION_REPO=https://github.com/wireapp/wire-ios-build-configuration.git
 REPO_URL=$PUBLIC_CONFIGURATION_REPO
 BRANCH=master

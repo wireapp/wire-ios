@@ -71,7 +71,6 @@
 		87B91C4E1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */; };
 		A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */; };
 		EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
-		EE98A0B2296EFD2F0055E981 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; };
 		EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; };
@@ -107,17 +106,6 @@
 				EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */,
 				54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EE98A0B3296EFD2F0055E981 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE98A0B2296EFD2F0055E981 /* WireUtilities.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -439,7 +427,6 @@
 				096960081B663E7B006DF53B /* Frameworks */,
 				096960091B663E7B006DF53B /* Headers */,
 				0969600A1B663E7B006DF53B /* Resources */,
-				EE98A0B3296EFD2F0055E981 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -676,6 +663,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SKIP_INSTALL = YES;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
@@ -686,6 +674,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SKIP_INSTALL = YES;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;

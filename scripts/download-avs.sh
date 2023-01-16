@@ -67,7 +67,7 @@ echo "ℹ️  going to download file and save to AVS_FILENAME: ${AVS_FILENAME}"
 # SET UP FOLDERS
 ##################################
 LIBS_PATH=./Libraries
-CARTHAGE_BUILD_PATH=../Carthage/Build
+CARTHAGE_BUILD_PATH=./Carthage/Build
 
 pushd $CARTHAGE_BUILD_PATH > /dev/null
 

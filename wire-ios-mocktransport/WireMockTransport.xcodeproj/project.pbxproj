@@ -73,16 +73,12 @@
 		872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */; };
 		E94F92652885421100C44964 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F92642885421100C44964 /* MD5DigestHelper.swift */; };
 		EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FF296F09D8001D7C88 /* WireTesting.framework */; };
-		EE67F701296F09D8001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FF296F09D8001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE797454283D235700A0BB0C /* MockTransportSession+FeatureConfigs.h in Headers */ = {isa = PBXBuildFile; fileRef = EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */; };
 		EE797455283D235700A0BB0C /* MockTransportSession+FeatureConfigs.m in Sources */ = {isa = PBXBuildFile; fileRef = EE797453283D234700A0BB0C /* MockTransportSession+FeatureConfigs.m */; };
 		EE797457283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE797456283D23F900A0BB0C /* MockTransportSession+FeatureConfigs.swift */; };
 		EE974121295498D2000C9340 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE974120295498D2000C9340 /* WireProtos.framework */; };
-		EE974122295498D2000C9340 /* WireProtos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE974120295498D2000C9340 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE974125295498DA000C9340 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE974124295498DA000C9340 /* WireCryptobox.framework */; };
-		EE974126295498DA000C9340 /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE974124295498DA000C9340 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE974128295498E2000C9340 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE974127295498E2000C9340 /* WireTransport.framework */; };
-		EE974129295498E2000C9340 /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE974127295498E2000C9340 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEA5656427D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA5656327D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift */; };
 		EEA5656627D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA5656527D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m */; };
 		EEA5656827D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA5656727D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h */; };
@@ -144,20 +140,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EE974123295498D2000C9340 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE974126295498DA000C9340 /* WireCryptobox.framework in Embed Frameworks */,
-				EE974122295498D2000C9340 /* WireProtos.framework in Embed Frameworks */,
-				EE67F701296F09D8001D7C88 /* WireTesting.framework in Embed Frameworks */,
-				EE974129295498E2000C9340 /* WireTransport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -825,7 +807,6 @@
 				54C9022F1B7532DD007162A8 /* Frameworks */,
 				54C902301B7532DD007162A8 /* Headers */,
 				54C902311B7532DD007162A8 /* Resources */,
-				EE974123295498D2000C9340 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1049,6 +1030,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -1059,6 +1041,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

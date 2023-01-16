@@ -68,7 +68,6 @@
 		BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */; };
 		EE67F6B2296F0548001D7C88 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */; };
 		EEE4AB2029548DE5004E26A3 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */; };
-		EEE4AB2129548DE5004E26A3 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F1202A761FA0830000296B4B /* crash.txt in Resources */ = {isa = PBXBuildFile; fileRef = F1202A751FA0830000296B4B /* crash.txt */; };
 /* End PBXBuildFile section */
 
@@ -97,17 +96,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EEE4AB2229548DE5004E26A3 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EEE4AB2129548DE5004E26A3 /* WireUtilities.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -427,7 +415,6 @@
 				BFF057871D25434D004A2C29 /* Headers */,
 				E9EBFEE1276218B700F0DEBC /* Run SwiftLint */,
 				BFF057881D25434D004A2C29 /* Resources */,
-				EEE4AB2229548DE5004E26A3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -824,6 +811,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -838,6 +826,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};

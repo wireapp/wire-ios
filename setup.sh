@@ -49,19 +49,19 @@ echo "ℹ️  Carthage bootstrap. This might take a while..."
 carthage bootstrap --cache-builds --platform ios --use-xcframeworks
 echo ""
 
-cd wire-ios
-
 echo "ℹ️  Downloading AVS library..."
-Scripts/download-avs.sh
+scripts/download-avs.sh
 echo ""
 
 echo "ℹ️  Downloading additional assets..."
-Scripts/download-assets.sh "$@"
+scripts/download-assets.sh "$@"
 echo ""
 
 echo "ℹ️  Doing additional postprocessing..."
 Scripts/postprocess.sh
 echo ""
+
+cd wire-ios
 
 echo "ℹ️  [CodeGen] Update StyleKit Icons..."
 swift run --package-path Scripts/updateStylekit
