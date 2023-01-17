@@ -23,7 +23,7 @@ extension PINCache {
     // configures
     func configureLimits(_ bytes: UInt) {
         diskCache.byteLimit = bytes
-        memoryCache.ageLimit  = 60 * 60; // if we didn't use it in 1 hour, it can go from memory
+        memoryCache.ageLimit = 60 * 60 // if we didn't use it in 1 hour, it can go from memory
     }
 
     // disable backup of URL
