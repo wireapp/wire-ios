@@ -36,6 +36,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             mediaManager: mediaManager,
             flowManager: flowManager,
             environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
             reachability: reachability,
             analytics: nil
         )
@@ -66,7 +68,7 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
          environment: BackendEnvironmentProvider,
          reachability: ReachabilityProvider & TearDownCapable) {
         self.transportSession = transportSession
-        super.init(appVersion: "1.0", environment: environment, reachability: reachability)
+        super.init(appVersion: "1.0", environment: environment, proxyUsername: nil, proxyPassword: nil, reachability: reachability)
     }
 
     override func session(delegate: UnauthenticatedSessionDelegate,
@@ -209,7 +211,13 @@ extension IntegrationTest {
 
     @objc
     func createSessionManager() {
-        guard let application = application, let transportSession = mockTransportSession else { return XCTFail() }
+        guard
+            let application = application,
+            let transportSession = mockTransportSession
+        else {
+            return XCTFail()
+        }
+
         let reachability = MockReachability()
         let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession, environment: mockEnvironment, reachability: reachability)
         let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
@@ -221,11 +229,14 @@ extension IntegrationTest {
             reachability: reachability
         )
 
+        let pushTokenService: PushTokenServiceInterface = mockPushTokenService ?? PushTokenService()
+        application.pushTokenService = pushTokenService
+
         sessionManager = SessionManager(
             appVersion: "0.0.0",
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
-            reachability: reachability,
+            reachability: ReachabilityWrapper(enabled: true, reachabilityClosure: { reachability }),
             delegate: self,
             application: application,
             pushRegistry: pushRegistry,
@@ -234,6 +245,10 @@ extension IntegrationTest {
             configuration: sessionManagerConfiguration,
             detector: jailbreakDetector,
             requiredPushTokenType: shouldProcessLegacyPushes ? .voip : .standard,
+            pushTokenService: pushTokenService,
+            callKitManager: MockCallKitManager(),
+            proxyCredentials: nil,
+            isUnauthenticatedTransportSessionReady: true,
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -678,6 +693,9 @@ extension IntegrationTest: SessionManagerDelegate {
         // no op
     }
 
+    public func sessionManagerDidPerformAPIMigrations() {
+        // no op
+    }
 }
 
 @objcMembers

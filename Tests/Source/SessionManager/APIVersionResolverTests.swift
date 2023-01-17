@@ -85,7 +85,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it resolves to v0.
@@ -116,7 +116,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it's the highest common prod version.
@@ -144,7 +144,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it's the highest common prod version.
@@ -177,7 +177,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it's the preferred version.
@@ -208,7 +208,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it's the highest common prod version.
@@ -239,13 +239,38 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it's the highest common prod version.
         XCTAssertEqual(BackendInfo.apiVersion, .v1)
         XCTAssertEqual(BackendInfo.domain, "foo.com")
         XCTAssertEqual(BackendInfo.isFederationEnabled, true)
+    }
+
+    // MARK: - Delegate
+
+    func test_itReportsToDelegateWhenVersionIsResolved() {
+        // Given
+        let sut = createSUT(
+            clientProdVersions: [.v3],
+            clientDevVersions: []
+        )
+
+        mockBackendInfo(
+            productionVersions: 0...3,
+            developmentVersions: nil,
+            domain: "foo.com",
+            isFederationEnabled: false
+        )
+
+        // When
+        let done = expectation(description: "done")
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then
+        XCTAssertTrue(mockDelegate.didReportAPIVersionHasBeenResolved)
     }
 
     // MARK: - Blacklist
@@ -270,7 +295,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then no version could be resolved & blacklist reason is generated.
@@ -300,7 +325,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then no version could be resolved & blacklist reason is generated.
@@ -332,7 +357,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // When version is resolved.
         let done = expectation(description: "done")
-        sut.resolveAPIVersion(completion: done.fulfill)
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then federation is enabled and forwarded to delegate.
@@ -355,5 +380,10 @@ private class MockAPIVersionResolverDelegate: APIVersionResolverDelegate {
     var didReportFederationHasBeenEnabled: Bool = false
     func apiVersionResolverDetectedFederationHasBeenEnabled() {
         didReportFederationHasBeenEnabled = true
+    }
+
+    var didReportAPIVersionHasBeenResolved: Bool = false
+    func apiVersionResolverDidResolve(apiVersion: APIVersion) {
+        didReportAPIVersionHasBeenResolved = true
     }
 }
