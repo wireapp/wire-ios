@@ -240,6 +240,15 @@ static FakePushChannel *currentFakePushChannel;
     return self;
 }
 
+- (instancetype _Nonnull)initWithScheduler:(ZMTransportRequestScheduler * _Nonnull)scheduler
+                           userAgentString:(NSString * _Nonnull)userAgentString
+                               environment:(id<BackendEnvironmentProvider> _Nonnull)environment
+                             proxyUsername:(NSString * _Nullable)proxyUsername
+                             proxyPassword:(NSString * _Nullable)proxyPassword queue:(NSOperationQueue * _Nonnull)queue {
+    self = [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment queue:queue];
+    return self;
+}
+
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)groupQueue;
 {
     NOT_USED(consumer);
@@ -281,6 +290,9 @@ static FakePushChannel *currentFakePushChannel;
 {
     self.scheduleOpenPushChannelCount++;
 }
+
+
+
 
 - (void)reachabilityDidChange:(ZMReachability *)reachability;
 {
@@ -404,6 +416,8 @@ static XCTestCase *currentTestCase;
                 queue:self.queue
                 group:self.dispatchGroup
                 environment:self.environment
+                proxyUsername:nil
+                proxyPassword:nil
                 pushChannelClass:FakePushChannel.class
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
@@ -545,6 +559,8 @@ static XCTestCase *currentTestCase;
                 queue:self.queue
                 group:self.dispatchGroup
                 environment:self.environment
+                proxyUsername:nil
+                proxyPassword:nil
                 pushChannelClass:nil
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
@@ -767,6 +783,8 @@ static XCTestCase *currentTestCase;
                                queue:self.queue
                                group:self.dispatchGroup
                                environment:self.environment
+                               proxyUsername:nil
+                               proxyPassword:nil
                                pushChannelClass:nil
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil
