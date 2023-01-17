@@ -27,21 +27,21 @@ jobs:
       wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
       any: ${{ 
-          steps.filter.outputs.wire-ios ||
-          steps.filter.outputs.wire-ios-sync-engine ||
-          steps.filter.outputs.wire-ios-data-model ||
-          steps.filter.outputs.wire-ios-system ||
-          steps.filter.outputs.wire-ios-request-strategy ||
-          steps.filter.outputs.wire-ios-transport ||
-          steps.filter.outputs.wire-ios-share-engine ||
-          steps.filter.outputs.wire-ios-cryptobox ||
-          steps.filter.outputs.wire-ios-mocktransport ||
-          steps.filter.outputs.wire-ios-notification-engine ||
-          steps.filter.outputs.wire-ios-protos ||
-          steps.filter.outputs.wire-ios-images ||
-          steps.filter.outputs.wire-ios-link-preview ||
-          steps.filter.outputs.wire-ios-utilities ||
-          steps.filter.outputs.wire-ios-testing
+          steps.filter.outputs.wire-ios == 'true' ||
+          steps.filter.outputs.wire-ios-sync-engine == 'true' ||
+          steps.filter.outputs.wire-ios-data-model == 'true' ||
+          steps.filter.outputs.wire-ios-system == 'true' ||
+          steps.filter.outputs.wire-ios-request-strategy == 'true' ||
+          steps.filter.outputs.wire-ios-transport == 'true' ||
+          steps.filter.outputs.wire-ios-share-engine == 'true' ||
+          steps.filter.outputs.wire-ios-cryptobox == 'true' ||
+          steps.filter.outputs.wire-ios-mocktransport == 'true' ||
+          steps.filter.outputs.wire-ios-notification-engine == 'true' ||
+          steps.filter.outputs.wire-ios-protos == 'true' ||
+          steps.filter.outputs.wire-ios-images == 'true' ||
+          steps.filter.outputs.wire-ios-link-preview == 'true' ||
+          steps.filter.outputs.wire-ios-utilities == 'true' ||
+          steps.filter.outputs.wire-ios-testing == 'true'
         }}
       
     steps:
@@ -82,7 +82,7 @@ jobs:
             
   run-tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs != [] }}
+    if: ${{ needs.detect-changes.any == 'true' }}
     runs-on: macOS-latest
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
