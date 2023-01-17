@@ -48,16 +48,22 @@ final class APIVersionResolver {
 
     // MARK: - Methods
 
-    func resolveAPIVersion(completion: @escaping () -> Void = {}) {
+    func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
+        // TODO: check if it's been 24hours and proceed or not
+        sendRequest(completion: completion)
+    }
+
+    private func sendRequest(completion: @escaping (Error?) -> Void = {_ in }) {
         // This is endpoint isn't versioned, so it always version 0.
         let request = ZMTransportRequest(getFromPath: "/api-version", apiVersion: APIVersion.v0.rawValue)
         let completionHandler = ZMCompletionHandler(on: queue) { [weak self] response in
             self?.handleResponse(response)
-            completion()
+            completion(response.transportSessionError)
         }
 
         request.add(completionHandler)
         transportSession.enqueueOneTime(request)
+
     }
 
     private func handleResponse(_ response: ZMTransportResponse) {
@@ -102,6 +108,10 @@ final class APIVersionResolver {
         if !wasFederationEnabled && BackendInfo.isFederationEnabled {
             delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
         }
+
+        if let apiVersion = BackendInfo.apiVersion {
+            delegate?.apiVersionResolverDidResolve(apiVersion: apiVersion)
+        }
     }
 
     private func reportBlacklist(payload: APIVersionResponsePayload) {
@@ -143,6 +153,7 @@ protocol APIVersionResolverDelegate: AnyObject {
 
     func apiVersionResolverDetectedFederationHasBeenEnabled()
     func apiVersionResolverFailedToResolveVersion(reason: BlacklistReason)
+    func apiVersionResolverDidResolve(apiVersion: APIVersion)
 
 }
 

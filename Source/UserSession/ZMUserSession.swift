@@ -54,6 +54,8 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public class ZMUserSession: NSObject {
 
+    private static let logger = Logger(subsystem: "VoIP Push", category: "ZMUserSession")
+
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
@@ -88,7 +90,10 @@ public class ZMUserSession: NSObject {
     var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
-    let hotFix: ZMHotFix
+    let legacyHotFix: ZMHotFix
+    // When we move to the monorepo, uncomment hotFixApplicator
+    // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
+    var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
     public var syncStatus: SyncStatusProtocol? {
         return applicationStatusDirectory?.syncStatus
@@ -258,7 +263,7 @@ public class ZMUserSession: NSObject {
         self.userExpirationObserver = UserExpirationObserver(managedObjectContext: coreDataStack.viewContext)
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
-        self.hotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
+        self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
         self.coreCryptoSetup = coreCryptoSetup
         super.init()
@@ -302,6 +307,9 @@ public class ZMUserSession: NSObject {
         transportSession.setNetworkStateDelegate(self)
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] (response) in
             self?.transportSessionAccessTokenDidFail(response: response)
+        }
+        transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
+            self?.transportSessionAccessTokenDidSucceed()
         }
     }
 
@@ -434,13 +442,28 @@ public class ZMUserSession: NSObject {
         applicationStatusDirectory?.requestSlowSync()
     }
 
-    private func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard let strongRef = self else { return }
-            let selfUser = ZMUser.selfUser(in: strongRef.managedObjectContext)
-            let error = NSError.userSessionErrorWith(.accessTokenExpired, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
-            strongRef.notifyAuthenticationInvalidated(error)
+    private var onProcessedEvents: ((Bool) -> Void)?
+
+    public func requestQuickSync(completion: ((Bool) -> Void)? = nil) {
+        guard let applicationStatusDirectory = applicationStatusDirectory else {
+            completion?(false)
+            return
         }
+
+        applicationStatusDirectory.requestQuickSync()
+        onProcessedEvents = completion
+    }
+
+    // MARK: - Access Token
+
+    private func renewAccessTokenIfNeeded(for userClient: UserClient) {
+        guard
+            let apiVersion = BackendInfo.apiVersion,
+            apiVersion > .v2,
+            let clientID = userClient.remoteIdentifier
+        else { return }
+
+        renewAccessToken(with: clientID)
     }
 
     // MARK: - Perform changes
@@ -557,6 +580,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didStartQuickSync() {
+        Self.logger.trace("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -564,6 +588,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
+        Self.logger.trace("did finish quick sync")
         processEvents()
 
         syncContext.mlsController?.performPendingJoins()
@@ -586,13 +611,19 @@ extension ZMUserSession: ZMSyncStateDelegate {
         let isSyncing = applicationStatusDirectory?.syncStatus.isSyncing == true
 
         if !hasMoreEventsToProcess {
-            hotFix.applyPatches()
+            legacyHotFix.applyPatches()
+            // When we move to the monorepo, uncomment hotFixApplicator applyPatches
+            // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
         }
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = hasMoreEventsToProcess || isSyncing
             self?.updateNetworkState()
         }
+
+        let block = onProcessedEvents
+        onProcessedEvents = nil
+        block?(!hasMoreEventsToProcess)
     }
 
     private func commitPendingProposalsIfNeeded() {
@@ -623,6 +654,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier
         registerCurrentPushToken()
+        renewAccessTokenIfNeeded(for: userClient)
+
         UserClient.triggerSelfClientCapabilityUpdate(syncContext)
 
         managedObjectContext.performGroupedBlock { [weak self] in
@@ -655,7 +688,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    private func notifyAuthenticationInvalidated(_ error: Error) {
+    func notifyAuthenticationInvalidated(_ error: Error) {
         managedObjectContext.performGroupedBlock {  [weak self] in
             guard let accountId = self?.managedObjectContext.selfUserId else {
                 return

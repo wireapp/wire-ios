@@ -50,13 +50,15 @@ final class SessionManagerTests: IntegrationTest {
             environment: environment,
             reachability: reachability
         )
-
+        let reachabilityWrapper = ReachabilityWrapper(enabled: true, reachabilityClosure: {
+            reachability
+        })
         let sessionManager = SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             appVersion: "0.0.0",
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
-            reachability: reachability,
+            reachability: reachabilityWrapper,
             delegate: delegate,
             application: application,
             pushRegistry: pushRegistry,
@@ -65,6 +67,9 @@ final class SessionManagerTests: IntegrationTest {
             configuration: sessionManagerConfiguration,
             detector: jailbreakDetector,
             requiredPushTokenType: requiredTokenType,
+            callKitManager: MockCallKitManager(),
+            proxyCredentials: nil,
+            isUnauthenticatedTransportSessionReady: true,
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -159,6 +164,8 @@ final class SessionManagerTests: IntegrationTest {
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
+            callKitManager: MockCallKitManager(),
+            isUnauthenticatedTransportSessionReady: true,
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -248,6 +255,8 @@ final class SessionManagerTests: IntegrationTest {
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             detector: jailbreakDetector,
             requiredPushTokenType: .standard,
+            callKitManager: MockCallKitManager(),
+            isUnauthenticatedTransportSessionReady: true,
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -308,6 +317,8 @@ final class SessionManagerTests: IntegrationTest {
             configuration: configuration,
             detector: jailbreakDetector,
             requiredPushTokenType: .standard,
+            callKitManager: MockCallKitManager(),
+            isUnauthenticatedTransportSessionReady: true,
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -1032,6 +1043,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
+            callKitManager: MockCallKitManager(),
+            isUnauthenticatedTransportSessionReady: true,
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -1088,6 +1101,7 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
+            callKitManager: MockCallKitManager(),
             coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
@@ -1164,7 +1178,7 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
 
         // WHEN
         let pushCompleted = self.expectation(description: "Push completed")
-        pushRegistry.mockIncomingPushPayload(payload, completion: {
+        sessionManager?.processIncomingRealVoIPPush(payload: payload, completion: {
             DispatchQueue.main.async {
                 // THEN
                 XCTAssertNotNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
@@ -1196,11 +1210,11 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
         var userSession1: ZMUserSession!
         let pushCompleted2 = self.expectation(description: "Push completed 2")
         var userSession2: ZMUserSession!
-        pushRegistry.mockIncomingPushPayload(payload, completion: {
+        sessionManager?.processIncomingRealVoIPPush(payload: payload, completion: {
             pushCompleted1.fulfill()
             userSession1 = self.sessionManager!.backgroundUserSessions[account.userIdentifier]
         })
-        pushRegistry.mockIncomingPushPayload(payload, completion: {
+        sessionManager?.processIncomingRealVoIPPush(payload: payload, completion: {
             pushCompleted2.fulfill()
             userSession2 = self.sessionManager!.backgroundUserSessions[account.userIdentifier]
         })
@@ -1650,6 +1664,9 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
         // no op
     }
 
+    func sessionManagerDidPerformAPIMigrations() {
+        // no op
+    }
 }
 
 class SessionManagerObserverMock: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
