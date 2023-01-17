@@ -94,7 +94,7 @@ extension ZMMessage {
 
         let categoryPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: matchPairs.map {
             if $0.excluding != .none {
-                return NSPredicate(format: "((%K & %d) = %d) && ((%K & %d) = 0)" ,
+                return NSPredicate(format: "((%K & %d) = %d) && ((%K & %d) = 0)",
                                    ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue,
                                    ZMMessageCachedCategoryKey, $0.excluding.rawValue)
             }
@@ -200,10 +200,8 @@ extension ZMMessage {
             return .none
         }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        for reaction in self.reactions {
-            if reaction.users.contains(selfUser) {
-                return .liked
-            }
+        for reaction in self.reactions where reaction.users.contains(selfUser) {
+            return .liked
         }
         return .none
     }
