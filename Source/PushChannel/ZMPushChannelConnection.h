@@ -1,6 +1,6 @@
 // 
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
                               queue:(id<ZMSGroupQueue>)queue
                         accessToken:(ZMAccessToken *)accessToken
                            clientID:(NSString *)clientID
+                      proxyUsername:(nullable NSString *)proxyUsername
+                      proxyPassword:(nullable NSString *)proxyPassword
                     userAgentString:(NSString *)userAgentString;
 
 - (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment
@@ -56,6 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
                           webSocket:(nullable ZMWebSocket *)webSocket
                         accessToken:(ZMAccessToken *)accessToken
                            clientID:(nullable NSString *)clientID
+                      proxyUsername:(nullable NSString *)proxyUsername
+                      proxyPassword:(nullable NSString *)proxyPassword
                     userAgentString:(NSString *)userAgentString NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, readonly, weak) id<ZMPushChannelConnectionConsumer> consumer;

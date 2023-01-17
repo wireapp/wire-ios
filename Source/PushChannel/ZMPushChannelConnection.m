@@ -48,15 +48,45 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithEnvironment:nil consumer:nil queue:nil accessToken:nil clientID:nil userAgentString:nil];
+    return [self initWithEnvironment:nil
+                            consumer:nil
+                               queue:nil
+                         accessToken:nil
+                            clientID:nil
+                       proxyUsername:nil
+                       proxyPassword:nil
+                     userAgentString:nil];
 }
 
-- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConnectionConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment
+                           consumer:(id<ZMPushChannelConnectionConsumer>)consumer
+                              queue:(id<ZMSGroupQueue>)queue
+                        accessToken:(ZMAccessToken *)accessToken
+                           clientID:(NSString *)clientID
+                      proxyUsername:(nullable NSString *)proxyUsername
+                      proxyPassword:(nullable NSString *)proxyPassword
+                    userAgentString:(NSString *)userAgentString;
 {
-    return [self initWithEnvironment:environment consumer:consumer queue:queue webSocket:nil accessToken:accessToken clientID:clientID userAgentString:userAgentString];
+    return [self initWithEnvironment:environment
+                            consumer:consumer
+                               queue:queue
+                           webSocket:nil
+                         accessToken:accessToken
+                            clientID:clientID
+                       proxyUsername:proxyUsername
+                       proxyPassword:proxyPassword
+                     userAgentString:userAgentString];
 }
 
-- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConnectionConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment
+                           consumer:(id<ZMPushChannelConnectionConsumer>)consumer
+                              queue:(id<ZMSGroupQueue>)queue
+                          webSocket:(ZMWebSocket *)webSocket
+                        accessToken:(ZMAccessToken *)accessToken
+                           clientID:(NSString *)clientID
+                      proxyUsername:(nullable NSString *)proxyUsername
+                      proxyPassword:(nullable NSString *)proxyPassword
+                    userAgentString:(NSString *)userAgentString;
 {
     VerifyReturnNil(consumer != nil);
     VerifyReturnNil(queue != nil);

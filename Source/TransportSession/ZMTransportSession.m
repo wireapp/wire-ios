@@ -31,7 +31,6 @@
 #import "ZMTaskIdentifierMap.h"
 #import "ZMReachability.h"
 #import "Collections+ZMTSafeTypes.h"
-#import "ZMTransportPushChannel.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMURLSession.h"
@@ -84,22 +83,25 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
+@property (nonatomic, strong) RemoteMonitoring* remoteMonitoring;
 
 @end
 
 
 
 @implementation ZMTransportSession
-
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
     return [self initWithEnvironment:nil
+                       proxyUsername:nil
+                       proxyPassword:nil
                        cookieStorage:nil
                         reachability:nil
                   initialAccessToken:nil
           applicationGroupIdentifier:nil
-                  applicationVersion:@"1.0"];
+                  applicationVersion:@"1.0"
+    ];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -136,7 +138,8 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-+ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)sharedContainerIdentifier userIdentifier:(NSUUID *)userIdentifier
++ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)sharedContainerIdentifier
+                                                                            userIdentifier:(NSUUID *)userIdentifier
 {
     NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
     NSString *resolvedBundleIdentifier = bundleIdentifier ? bundleIdentifier : @"com.wire.background-session";
@@ -153,6 +156,8 @@ static NSInteger const DefaultMaximumRequests = 6;
 }
 
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
+                      proxyUsername:(NSString *) proxyUsername
+                      proxyPassword:(NSString *) proxyPassword
                       cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(ZMAccessToken *)initialAccessToken
@@ -163,20 +168,47 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
-    
-    NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] foregroundSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:foregroundIdentifier userAgent:userAgent];
-    
-    NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
-    NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration trustProvider:environment delegate:self delegateQueue:queue identifier:backgroundIdentifier  userAgent:userAgent];
 
-    ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
+    NSDictionary* proxyDictionary = [environment.proxy socks5SettingsWithProxyUsername:proxyUsername proxyPassword:proxyPassword];
+
+
+    // foregroundSession
+    NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
+
+    NSURLSessionConfiguration *foregroundConfiguration = [[self class] foregroundSessionConfiguration];
+    foregroundConfiguration.connectionProxyDictionary = proxyDictionary;
+
+    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:foregroundConfiguration
+                                                                    trustProvider:environment
+                                                                         delegate:self
+                                                                    delegateQueue:queue
+                                                                       identifier:foregroundIdentifier
+                                                                        userAgent:userAgent];
+
+    // backgroundSession
+    NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier
+                                                               userIdentifier:userIdentifier];
+
+    NSURLSessionConfiguration *backgroundConfiguration = [[self class]
+                                                                 backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier
+                                                                 userIdentifier:userIdentifier];
+    backgroundConfiguration.connectionProxyDictionary = proxyDictionary;
+
+
+    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundConfiguration
+                                                                    trustProvider:environment
+                                                                         delegate:self
+                                                                    delegateQueue:queue
+                                                                       identifier:backgroundIdentifier
+                                                                        userAgent:userAgent];
+
+    ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self
+                                                                                   operationQueue:queue
+                                                                                            group:group
+                                                                                     reachability:reachability];
     
-    CurrentURLSessionsDirectory *sessionsDirectory = [[CurrentURLSessionsDirectory alloc]
-                                                      initWithForegroundSession:foregroundSession
-                                                      backgroundSession:backgroundSession
-                                                      ];
+    CurrentURLSessionsDirectory *sessionsDirectory = [[CurrentURLSessionsDirectory alloc] initWithForegroundSession:foregroundSession
+                                                                                                  backgroundSession:backgroundSession];
 
     return [self initWithURLSessionsDirectory:sessionsDirectory
                              requestScheduler:scheduler
@@ -184,40 +216,22 @@ static NSInteger const DefaultMaximumRequests = 6;
                                         queue:queue
                                         group:group
                                   environment:environment
-                                cookieStorage:cookieStorage
-                           initialAccessToken:initialAccessToken
-                                    userAgent:userAgent];
-}
-
-- (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
-                            requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                                reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
-                                       queue:(NSOperationQueue *)queue
-                                       group:(ZMSDispatchGroup *)group
-                                 environment:(id<BackendEnvironmentProvider>)environment
-                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                          initialAccessToken:(ZMAccessToken *)initialAccessToken
-                                   userAgent:(NSString *)userAgent
-{
-    return [self initWithURLSessionsDirectory:directory
-                             requestScheduler:requestScheduler
-                                 reachability:reachability
-                                        queue:queue
-                                        group:group
-                                  environment:environment
+                                proxyUsername:proxyUsername
+                                proxyPassword:proxyPassword
                              pushChannelClass:nil
                                 cookieStorage:cookieStorage
                            initialAccessToken:initialAccessToken
                                     userAgent:userAgent];
 }
 
-
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
                             requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
                                 reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                        queue:(NSOperationQueue *)queue
                                        group:(ZMSDispatchGroup *)group
                                  environment:(id<BackendEnvironmentProvider>)environment
+                               proxyUsername:(NSString *)proxyUsername
+                               proxyPassword:(NSString *)proxyPassword
                             pushChannelClass:(Class)pushChannelClass
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
@@ -249,16 +263,14 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.maximumConcurrentRequests = DefaultMaximumRequests;
 
         if (pushChannelClass == nil) {
-            if (@available(iOS 13.0, *)) {
-                pushChannelClass = StarscreamPushChannel.class;
-            } else {
-                pushChannelClass = ZMTransportPushChannel.class;
-            }
+            pushChannelClass = StarscreamPushChannel.class;
         }
         self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler
-                                                                userAgentString:userAgent
-                                                                    environment:environment
-                                                                          queue:queue];
+                                                                     userAgentString:userAgent
+                                                                         environment:environment
+                                                                       proxyUsername:proxyUsername
+                                                                       proxyPassword:proxyPassword
+                                                                                queue:queue];
 
         self.firstRequestFired = NO;
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL
@@ -275,6 +287,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                 self.requestLoopDetectionCallback(path);
             }
         }];
+
+        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
     }
     return self;
 }
@@ -310,21 +324,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     return [NSString stringWithFormat:@"<%@: %p> %@ / %@",
             self.class, self,
             self.baseURL, self.websocketURL];
-}
-
-- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
-{
-    [self.accessTokenHandler setAccessTokenRenewalFailureHandler:handler];
-
-}
-
-- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler
-{
-    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:handler];
-}
-
-- (ZMAccessToken *)accessToken {
-    return self.accessTokenHandler.accessToken;
 }
 
 - (NSString *)tasksDescription;
@@ -442,8 +441,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
+    [self.remoteMonitoring logWithRequest:URLRequest];
     ZMLogPublic(@"Request: %@", request.safeForLoggingDescription);
     ZMLogInfo(@"----> Request: %@\n%@", URLRequest.allHTTPHeaderFields, request);
+
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
@@ -495,6 +496,9 @@ static NSInteger const DefaultMaximumRequests = 6;
     }
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
+    [self.remoteMonitoring logWithResponse:httpResponse];
+
+    ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
     ZMLogPublic(@"Response to %@: %@", request.safeForLoggingDescription,  response.safeForLoggingDescription);
     ZMLogInfo(@"<---- Response to %@ %@ (status %u): %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, response);
     ZMLogInfo(@"URL Session is %@", session.description);
@@ -809,6 +813,29 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (id<ZMPushChannel>)pushChannel
 {
     return self.transportPushChannel;
+}
+
+@end
+
+@implementation ZMTransportSession (AccessToken)
+
+- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
+{
+    [self.accessTokenHandler setAccessTokenRenewalFailureHandler:handler];
+}
+
+- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
+{
+    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:handler];
+}
+
+- (void)renewAccessTokenWithClientID:(NSString *)clientID
+{
+    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession clientID:clientID];
+}
+
+- (ZMAccessToken *)accessToken {
+    return self.accessTokenHandler.accessToken;
 }
 
 @end

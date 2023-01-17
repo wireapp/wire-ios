@@ -1,0 +1,17 @@
+{
+    "endpoints" : {
+        "backendURL" : "https://custom.backend.com",
+        "backendWSURL" : "https://custom.backend.com",
+        "blackListURL" : "https://clientblacklist.custom.backend.com/prod",
+        "teamsURL" : "https://teams.custom.backend.com",
+        "accountsURL" : "https://accounts.custom.backend.com",
+        "websiteURL" : "https://custom.backend.com",
+        "countlyURL" : "https://countly.custom.backend.com"
+    },
+    "title" : "Custom Backend",
+    "apiProxy" : {
+        "host" : "192.168.0.152",
+        "port": 1080,
+        "needsAuthentication" : false
+    }
+}
