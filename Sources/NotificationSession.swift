@@ -19,6 +19,31 @@
 
 import Foundation
 import WireRequestStrategy
+import OSLog
+
+struct WireLogger {
+
+    private var logger: Any?
+    private var infoBlock: ((String) -> Void)?
+
+    init(category: String) {
+        // Disabled for now, re-enable when you want to debug.
+        if false, #available(iOS 14, *) {
+            let logger = Logger(subsystem: "VoIP Push", category: category)
+            infoBlock = { message in
+                logger.info("\(message, privacy: .public)")
+            }
+            self.logger = logger
+        }
+    }
+
+    func info(_ message: String) {
+        infoBlock?(message)
+    }
+
+}
+
+let logger = WireLogger(category: "Notification Engine")
 
 public enum NotificationSessionError: Error {
 
@@ -40,7 +65,7 @@ public protocol NotificationSessionDelegate: AnyObject {
     )
 
     func reportCallEvent(
-        _ event: ZMUpdateEvent,
+        _ payload: CallEventPayload,
         currentTimestamp: TimeInterval
     )
 
@@ -78,7 +103,7 @@ public class NotificationSession {
 
     public let accountIdentifier: UUID
 
-    private var callEvent: ZMUpdateEvent?
+    private var callEvent: CallEventPayload?
     private var localNotifications = [ZMLocalNotification]()
 
     private var context: NSManagedObjectContext {
@@ -120,9 +145,13 @@ public class NotificationSession {
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
-        
+
+        let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
+
         let transportSession =  ZMTransportSession(
             environment: environment,
+            proxyUsername: credentials?.username,
+            proxyPassword: credentials?.password,
             cookieStorage: cookieStorage,
             reachability: reachability,
             initialAccessToken: nil,
@@ -277,94 +306,119 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
     func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) {
         for event in events {
-            if shouldHandleCallEvent(event) {
+            if let callEventPayload = callEventPayloadForCallKit(from: event) {
                 // Only store the last call event.
-                callEvent =  event
+                callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
                 localNotifications.append(notification)
             }
         }
     }
 
-    private func shouldHandleCallEvent(_ event: ZMUpdateEvent) -> Bool {
+    private func callEventPayloadForCallKit(from event: ZMUpdateEvent) -> CallEventPayload? {
         // The API to report VoIP pushes from the notification service extension
         // is only available from iOS 14.5.
         guard #available(iOSApplicationExtension 14.5, *) else {
-            return false
+            return nil
         }
 
         // Ensure this actually is a call event.
         guard let callContent = CallEventContent(from: event) else {
-            return false
-        }
-
-        // The sender is needed to report who the call is from.
-        guard isValidSender(in: event) else {
-            return false
-        }
-
-        // The conversation is needed to report where the call is taking place.
-        guard let conversation = conversation(in: event) else {
-                  return false
-              }
-
-        // The call event can be processed if the conversation is not muted
-        if conversation.mutedMessageTypesIncludingAvailability != .none {
-            return false
-        }
-
-        // AVS is ready to process call events.
-        guard VoIPPushHelper.isAVSReady else {
-            return false
-        }
-
-        // CallKit may not be available due to lack of permissions or because it
-        // is disabled by the user.
-        guard VoIPPushHelper.isCallKitAvailable else {
-            return false
-        }
-
-        // The user session is needed to process the call event.
-        guard VoIPPushHelper.isUserSessionLoaded(accountID: accountIdentifier) else {
-            return false
-        }
-
-        guard let conversationID = conversation.remoteIdentifier else {
-            return false
-        }
-
-        let callExistsForConversation = VoIPPushHelper.existsOngoingCallInConversation(
-            withID: conversationID
-        )
-
-        // We can't report an incoming call if it already exists.
-        if case .incomingCall = callContent.callState, callExistsForConversation {
-            return false
-        }
-
-        // We can't terminate a call if it doesn't exist.
-        if case .missedCall = callContent.callState, !callExistsForConversation {
-            return false
-        }
-
-        return true
-    }
-
-    private func isValidSender(in event: ZMUpdateEvent) -> Bool {
-        guard let id = event.senderUUID else { return false }
-        return ZMUser.fetch(with: id, domain: event.senderDomain, in: context) != nil
-    }
-
-    private func conversation(in event: ZMUpdateEvent) -> ZMConversation? {
-        guard
-            let id = event.conversationUUID,
-            let conversation = ZMConversation.fetch(with: id, domain: event.conversationDomain, in: context),
-            !conversation.needsToBeUpdatedFromBackend
-        else {
             return nil
         }
 
-        return conversation
+        logger.info("did receive call event: \(callContent)")
+
+        guard let callerID = event.senderUUID else {
+            logger.info("should not handle call event: senderUUID missing from event")
+            return nil
+        }
+
+        guard let caller = ZMUser.fetch(
+            with: callerID,
+            domain: event.senderDomain,
+            in: context
+        ) else {
+            logger.info("should not handle call event: caller not in db")
+            return nil
+        }
+
+        guard let conversationID = event.conversationUUID else {
+            logger.info("should not handle call event: conversationUUID missing from event")
+            return nil
+        }
+
+        guard let conversation = ZMConversation.fetch(
+            with: conversationID,
+            domain: event.conversationDomain,
+            in: context
+        ) else {
+            logger.info("should not handle call event: conversation not in db")
+            return nil
+        }
+
+        guard !conversation.needsToBeUpdatedFromBackend else {
+            logger.info("should not handle call event: conversation not synced")
+            return nil
+        }
+
+        if conversation.mutedMessageTypesIncludingAvailability != .none {
+            logger.info("should not handle call event: conversation is muted or user is not available")
+            return nil
+        }
+
+        guard VoIPPushHelper.isAVSReady else {
+            logger.info("should not handle call event: AVS is not ready")
+            return nil
+        }
+
+        guard VoIPPushHelper.isCallKitAvailable else {
+            logger.info("should not handle call event: CallKit is not available")
+            return nil
+        }
+
+        guard VoIPPushHelper.isUserSessionLoaded(accountID: accountIdentifier) else {
+            logger.info("should not handle call event: user session is not loaded")
+            return nil
+        }
+
+        let handle = "\(accountIdentifier.transportString())+\(conversationID.transportString())"
+        let wasCallHandleReported = VoIPPushHelper.knownCallHandles.contains(handle)
+
+        // Should not handle a call if the caller is a self user and it's an incoming call or call end.
+        // The caller can be the same as the self user if it's a rejected call or answered elsewhere.
+        if
+            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
+            let callerID = callContent.callerID,
+            callerID == selfUserID,
+            (callContent.isIncomingCall || callContent.isEndCall)
+        {
+            logger.info("should not handle call event: self call")
+            return nil
+        }
+
+        if callContent.initiatesRinging, !wasCallHandleReported {
+            logger.info("should initiate ringing")
+            return CallEventPayload(
+                accountID: accountIdentifier.uuidString,
+                conversationID: conversationID.uuidString,
+                shouldRing: true,
+                callerName: conversation.localizedCallerName(with: caller),
+                hasVideo: callContent.isVideo
+            )
+        } else if callContent.terminatesRinging, wasCallHandleReported {
+            logger.info("should terminate ringing")
+            return CallEventPayload(
+                accountID: accountIdentifier.uuidString,
+                conversationID: conversationID.uuidString,
+                shouldRing: false,
+                callerName: conversation.localizedCallerName(with: caller),
+                hasVideo: callContent.isVideo
+            )
+        } else {
+            logger.info("should not handle call event: nothing to report")
+            return nil
+        }
     }
 
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy) {
@@ -374,7 +428,11 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
     private func processCallEvent() {
         if let callEvent = callEvent {
-            delegate?.reportCallEvent(callEvent, currentTimestamp: context.serverTimeDelta)
+            delegate?.reportCallEvent(
+                callEvent,
+                currentTimestamp: context.serverTimeDelta
+            )
+
             self.callEvent = nil
         }
     }
@@ -443,21 +501,27 @@ extension NotificationSession {
 
 }
 
-// MARK: - Helpers
+public struct CallEventPayload {
 
-private extension CallEventContent {
+    public let accountID: String
+    public let conversationID: String
+    public let shouldRing: Bool
+    public let callerName: String
+    public let hasVideo: Bool
 
-    init?(from event: ZMUpdateEvent) {
-        guard
-            event.type == .conversationOtrMessageAdd,
-            let message = GenericMessage(from: event),
-            message.hasCalling,
-            let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
-        else {
-            return nil
-        }
-
-        self.init(from: payload)
+    public init(
+        accountID: String,
+        conversationID: String,
+        shouldRing: Bool,
+        callerName: String,
+        hasVideo: Bool
+    ) {
+        self.accountID = accountID
+        self.conversationID = conversationID
+        self.shouldRing = shouldRing
+        self.callerName = callerName
+        self.hasVideo = hasVideo
     }
 
 }
+
