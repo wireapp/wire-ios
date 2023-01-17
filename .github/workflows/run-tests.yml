@@ -82,7 +82,7 @@ jobs:
             
   run-tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.any == 'true' }}
+    if: ${{ needs.detect-changes.outputs != [] }}
     runs-on: macOS-latest
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
