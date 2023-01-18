@@ -41,14 +41,14 @@ final class AudioMessageView: UIView, TransferView {
     private let downloadProgressView = CircularProgressView()
     let playButton: IconButton = {
         let button = IconButton()
-        button.setIconColor(.white, for: .normal)
+        button.setIconColor(SemanticColors.Icon.foregroundDefaultWhite, for: .normal)
         return button
     }()
 
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.font = (UIFont.smallSemiboldFont).monospaced()
-        label.textColor = .from(scheme: .textForeground)
+        label.textColor = SemanticColors.Label.textDefault
         label.numberOfLines = 1
         label.textAlignment = .center
         label.accessibilityIdentifier = "AudioTimeLabel"
@@ -58,7 +58,7 @@ final class AudioMessageView: UIView, TransferView {
 
     private let playerProgressView: ProgressView = {
         let progressView = ProgressView()
-        progressView.backgroundColor = .from(scheme: .separator)
+        progressView.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         progressView.tintColor = .accent()
 
         return progressView
@@ -66,7 +66,7 @@ final class AudioMessageView: UIView, TransferView {
 
     private let waveformProgressView: WaveformProgressView = {
         let waveformProgressView = WaveformProgressView()
-        waveformProgressView.backgroundColor = .from(scheme: .placeholderBackground)
+        waveformProgressView.backgroundColor = SemanticColors.View.backgroundCollectionCell
 
         return waveformProgressView
     }()
@@ -90,7 +90,7 @@ final class AudioMessageView: UIView, TransferView {
         self.mediaPlaybackManager = mediaPlaybackManager
 
         super.init(frame: .zero)
-        backgroundColor = .from(scheme: .placeholderBackground)
+        backgroundColor = SemanticColors.View.backgroundCollectionCell
 
         playButton.addTarget(self, action: #selector(AudioMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
         playButton.accessibilityIdentifier = "AudioActionButton"
@@ -108,10 +108,6 @@ final class AudioMessageView: UIView, TransferView {
         allViews.forEach(addSubview)
 
         createConstraints()
-
-        var currentElements = accessibilityElements ?? []
-        currentElements.append(contentsOf: [playButton, timeLabel])
-        accessibilityElements = currentElements
 
         setNeedsLayout()
         layoutIfNeeded()
@@ -245,7 +241,7 @@ final class AudioMessageView: UIView, TransferView {
 
         if let viewsState = state.viewsStateForAudio() {
             playButton.setIcon(viewsState.playButtonIcon, size: .tiny, for: .normal)
-            playButton.backgroundColor = viewsState.playButtonBackgroundColor
+            playButton.setBackgroundImageColor(viewsState.playButtonBackgroundColor, for: .normal)
             playButton.accessibilityValue = viewsState.playButtonIcon == .play ? AudioMessage.Play.value : AudioMessage.Pause.value
         }
 
@@ -283,7 +279,7 @@ final class AudioMessageView: UIView, TransferView {
     private func updateActivePlayButton() {
         guard let audioTrackPlayer = audioTrackPlayer else { return }
 
-        playButton.backgroundColor = FileMessageViewState.normalColor
+        playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
 
         if audioTrackPlayer.isPlaying {
             playButton.setIcon(.pause, size: .tiny, for: [])
@@ -295,7 +291,6 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func updateInactivePlayer() {
-        playButton.backgroundColor = FileMessageViewState.normalColor
         playButton.setIcon(.play, size: .tiny, for: [])
         playButton.accessibilityValue = AudioMessage.Play.value
 
@@ -440,7 +435,7 @@ final class AudioMessageView: UIView, TransferView {
             updateTimeLabel()
             updateProximityObserverState()
         }
-        /// when state is completed, there is no info about it is own track or not. Update the time label in this case anyway (set to the length of own audio track)
+        // When state is completed, there is no info about it is own track or not. Update the time label in this case anyway (set to the length of own audio track)
         else if state == .completed {
             updateTimeLabel()
         } else {
@@ -516,9 +511,9 @@ extension AudioMessageView: AudioTrackPlayerDelegate {
     }
 
     func stateDidChange(_ audioTrackPlayer: AudioTrackPlayer, state: MediaPlayerState?) {
-        ///  Updates the visual progress of the audio, play button icon image, time label and proximity sensor's sate.
-        ///  Notice: when there are more then 1 instance of this class exists, this function will be called in every instance.
-        ///          This function may called from background thread (in case incoming call).
+        // Updates the visual progress of the audio, play button icon image, time label and proximity sensor's sate.
+        // Notice: when there are more then 1 instance of this class exists, this function will be called in every instance.
+        // This function may called from background thread (in case incoming call).
         DispatchQueue.main.async { [weak self] in
             self?.updateUI(state: state)
         }
