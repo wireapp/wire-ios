@@ -28,6 +28,8 @@ final class CollectionFileCell: CollectionCell {
     private let headerView = CollectionCellHeader()
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
+        typealias ConversationSearch = L10n.Accessibility.ConversationSearch
+
         super.updateForMessage(changeInfo: changeInfo)
 
         guard let message = self.message else {
@@ -44,6 +46,10 @@ final class CollectionFileCell: CollectionCell {
             setup(restrictionView)
             restrictionView.configure(for: message)
         }
+        accessibilityLabel = ConversationSearch.SentBy.description(message.senderName)
+                            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
+                            + (fileTransferView.accessibilityLabel ?? "")
+        accessibilityHint = ConversationSearch.Item.hint
     }
 
     @available(*, unavailable)
@@ -54,6 +60,7 @@ final class CollectionFileCell: CollectionCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         loadView()
+        setupAccessibility()
     }
 
     func loadView() {
@@ -82,9 +89,6 @@ final class CollectionFileCell: CollectionCell {
     }
 
     private func setup(_ view: UIView) {
-        view.layer.cornerRadius = 4
-        view.clipsToBounds = true
-
         containerView.removeSubviews()
         containerView.addSubview(view)
 
@@ -95,6 +99,18 @@ final class CollectionFileCell: CollectionCell {
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -4),
             view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4)
         ])
+
+        secureContentsView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
+        secureContentsView.layer.cornerRadius = 12
+        secureContentsView.layer.borderWidth = 1
+        obfuscationView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
+        obfuscationView.layer.cornerRadius = 12
+        obfuscationView.layer.borderWidth = 1
+    }
+
+    private func setupAccessibility() {
+        isAccessibilityElement = true
+        accessibilityTraits = .button
     }
 }
 

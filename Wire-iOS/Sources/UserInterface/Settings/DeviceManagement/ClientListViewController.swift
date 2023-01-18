@@ -79,7 +79,7 @@ final class ClientListViewController: UIViewController,
 
     var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {
-            return UIBarButtonItem.createNavigationBarButtonDoneItem(
+            return UIBarButtonItem.createNavigationRightBarButtonItem(
                 systemImage: true,
                 target: self,
                 action: #selector(ClientListViewController.backPressed(_:)))
@@ -87,7 +87,7 @@ final class ClientListViewController: UIViewController,
 
         if let rootViewController = self.navigationController?.viewControllers.first,
             self.isEqual(rootViewController) {
-            return UIBarButtonItem.createNavigationBarButtonDoneItem(
+            return UIBarButtonItem.createNavigationRightBarButtonItem(
                 systemImage: true,
                 target: self,
                 action: #selector(ClientListViewController.backPressed(_:)))
@@ -101,8 +101,7 @@ final class ClientListViewController: UIViewController,
                   credentials: ZMEmailCredentials? = .none,
                   detailedView: Bool = false,
                   showTemporary: Bool = true,
-                  showLegalHold: Bool = true,
-                  variant: ColorSchemeVariant? = .none) {
+                  showLegalHold: Bool = true) {
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
@@ -160,6 +159,7 @@ final class ClientListViewController: UIViewController,
         self.createConstraints()
 
         self.navigationItem.leftBarButtonItem = leftBarButtonItem
+        self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton.description
         setColor()
     }
 
@@ -426,17 +426,19 @@ final class ClientListViewController: UIViewController,
 
     func createRightBarButtonItem() {
         if self.editingList {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem.createNavigationBarButtonDoneItem(
-                systemImage: false,
-                target: self,
-                action: #selector(ClientListViewController.endEditing(_:)))
+            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.done.capitalized,
+                                                                                      systemImage: false,
+                                                                                      target: self,
+                                                                                      action: #selector(ClientListViewController.endEditing(_:)))
+            self.navigationItem.rightBarButtonItem = doneButtonItem
 
             self.navigationItem.setLeftBarButton(nil, animated: true)
         } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem.createNavigationBarEditItem(
-                target: self,
-                action: #selector(ClientListViewController.startEditing(_:)))
-
+            let editButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.edit.capitalized,
+                                                                                      systemImage: false,
+                                                                                      target: self,
+                                                                                      action: #selector(ClientListViewController.startEditing(_:)))
+            self.navigationItem.rightBarButtonItem = editButtonItem
             self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
         }
     }

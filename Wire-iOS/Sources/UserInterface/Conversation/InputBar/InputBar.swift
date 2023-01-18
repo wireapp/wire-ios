@@ -257,7 +257,6 @@ final class InputBar: UIView {
         textView.placeholderTextContainerInset = UIEdgeInsets(top: 21, left: 10, bottom: 21, right: 0)
         textView.keyboardType = .default
         textView.keyboardAppearance = .default
-        textView.placeholderTextTransform = .none
         textView.tintAdjustmentMode = .automatic
         textView.font = textViewFont
         textView.placeholderFont = textViewFont
@@ -466,7 +465,7 @@ final class InputBar: UIView {
         }
     }
 
-    fileprivate func updateColors() {
+     func updateColors() {
 
         backgroundColor = backgroundColor(forInputBarState: inputBarState)
         buttonRowSeparator.backgroundColor = isEditing ? editingSeparatorColor : writingSeparatorColor

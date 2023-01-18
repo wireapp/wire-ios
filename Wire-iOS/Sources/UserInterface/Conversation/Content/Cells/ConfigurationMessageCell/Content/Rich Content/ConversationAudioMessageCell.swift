@@ -51,8 +51,11 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 4)
-        backgroundColor = .from(scheme: .placeholderBackground)
+        shape = .rounded(radius: 12)
+        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.layer.cornerRadius = 12
+        containerView.layer.borderWidth = 1
+        containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         clipsToBounds = true
 
         addSubview(containerView)
@@ -139,10 +142,11 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
         return configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
     }
 
-    let accessibilityLabel: String? = nil
+    let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
         self.configuration = View.Configuration(message: message)
+        accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
     }
 
 }
