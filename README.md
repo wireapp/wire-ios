@@ -52,7 +52,7 @@ The setup script will automatically check for you that you satisfy these require
 ### How to build locally
 1. Check out the wire-ios-mono repository.
 2. From the checkout folder, run `./setup.sh`. This will pull in all the necessary dependencies with Carthage and verify that you have the right version of the tools installed.
-3. Open the project `wire-ios-mono.xcodeproj` in Xcode
+3. Open the project `wire-ios-mono.xcworkspace` in Xcode
 4. Make sure the `Wire-iOS` app scheme is selected.
 4. Click the "Run" button in Xcode
 
