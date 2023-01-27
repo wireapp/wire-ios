@@ -44,11 +44,11 @@ extension InputBarConversation {
         return timeoutImage(for: timeout, withColor: .lightGraphite)
     }
 
-    ///  With this method we create the icons for the timeout in ephimeral messages
+    ///  With this method we create the icons for the timeout in ephemeral messages
     /// - Parameters:
     ///   - timeout: Indicates the value for the timeout
     ///   - color: Indicates the color for the icons
-    /// - Returns: A UIimage as the icon with the proper icon
+    /// - Returns: An UIImage as the icon with the proper icon
     private func timeoutImage(for timeout: MessageDestructionTimeoutValue, withColor color: UIColor = UIColor.accent()) -> UIImage? {
         guard timeout != .none else { return nil }
         if timeout.isYears { return StyleKitIcon.timeoutYear.makeImage(size: 64, color: color) }
