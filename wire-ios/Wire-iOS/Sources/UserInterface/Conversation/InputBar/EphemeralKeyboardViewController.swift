@@ -44,6 +44,7 @@ extension InputBarConversation {
         return timeoutImage(for: timeout, withColor: .lightGraphite)
     }
 
+    ///  With this method we create the icons for the timeout in ephimeral messages
     /// - Parameters:
     ///   - timeout: Indicates the value for the timeout
     ///   - color: Indicates the color for the icons
