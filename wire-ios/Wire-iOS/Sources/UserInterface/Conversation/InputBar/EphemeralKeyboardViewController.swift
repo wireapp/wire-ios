@@ -67,9 +67,9 @@ extension UIAlertController {
         }
         let confirmAction = UIAlertAction(title: "OK", style: .default) { [weak alertController] _ in
             guard let input = alertController?.textFields?.first,
-                let inputText = input.text,
-                let selectedTimeInterval = TimeInterval(inputText) else {
-                    return
+                  let inputText = input.text,
+                  let selectedTimeInterval = TimeInterval(inputText) else {
+                return
             }
 
             completion(.success(selectedTimeInterval))
@@ -98,10 +98,12 @@ final class EphemeralKeyboardViewController: UIViewController {
 
     fileprivate let timeouts: [MessageDestructionTimeoutValue?]
 
-    public let titleLabel = UILabel()
+    public let titleLabel = DynamicFontLabel(text: "input.ephemeral.title".localized,
+                                             fontSpec: .mediumSemiboldFont,
+                                             color: SemanticColors.Label.textDefault)
     public var pickerFont: UIFont? = .normalSemiboldFont
-    public var pickerColor: UIColor? = UIColor.from(scheme: .textForeground, variant: .dark)
-    public var separatorColor: UIColor? = UIColor.from(scheme: .separator, variant: .light)
+    public var pickerColor: UIColor? = SemanticColors.Label.textDefault
+    public var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
 
     private let conversation: ZMConversation!
     private let picker = PickerView()
@@ -129,7 +131,7 @@ final class EphemeralKeyboardViewController: UIViewController {
         setupViews()
         createConstraints()
 
-        view.backgroundColor = UIColor.from(scheme: .textForeground, variant: .light)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         UIAccessibility.post(notification: .layoutChanged, argument: self)
     }
 
@@ -151,10 +153,6 @@ final class EphemeralKeyboardViewController: UIViewController {
         picker.didTapViewClosure = dismissKeyboardIfNeeded
 
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor.from(scheme: .textForeground, variant: .dark)
-        titleLabel.font = .smallSemiboldFont
-
-        titleLabel.text = "input.ephemeral.title".localized(uppercased: true)
         titleLabel.numberOfLines = 0
         [titleLabel, picker].forEach(view.addSubview)
     }
@@ -166,13 +164,13 @@ final class EphemeralKeyboardViewController: UIViewController {
     private func createConstraints() {
         [picker, titleLabel].prepareForLayout()
         NSLayoutConstraint.activate([
-          titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-          titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-          titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-          picker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
-          picker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
-          picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-          picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            picker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            picker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+            picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
         ])
     }
 
@@ -231,7 +229,7 @@ class PickerView: UIPickerView, UIGestureRecognizerDelegate {
 
     /// Used to determine if the recognizers touches are in the area
     /// of the selected row of the `UIPickerView`, this is done by asking the
-    /// delegate for the rowHeight and using it to caculate the rect 
+    /// delegate for the rowHeight and using it to caculate the rect
     /// of the center (selected) row.
     private func recognizerInSelectedRow(_ recognizer: UIGestureRecognizer) -> Bool {
         guard selectedRow(inComponent: 0) != -1 else { return false }
@@ -247,15 +245,18 @@ class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     // but need to make sure the scrolling behaviour and taps outside the selected row still
     // get propagated (other wise the scroll-to behaviour would break when tapping on another row) etc.
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
@@ -275,7 +276,9 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
         return timeouts.count
     }
 
-    public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+    public func pickerView(_ pickerView: UIPickerView,
+                           attributedTitleForRow row: Int,
+                           forComponent component: Int) -> NSAttributedString? {
         guard let font = pickerFont, let color = pickerColor else { return nil }
         let timeout = timeouts[row]
         if let actualTimeout = timeout, let title = actualTimeout.displayString {

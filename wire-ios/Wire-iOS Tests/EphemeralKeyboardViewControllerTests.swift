@@ -43,9 +43,8 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     }
 
     func testThatItRendersCorrectIntially_DarkMode() {
-        ColorScheme.default.variant = .dark
+        sut.overrideUserInterfaceStyle = .dark
         verify(view: sut.prepareForSnapshots())
-        ColorScheme.default.variant = .light
     }
 
 }
