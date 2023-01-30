@@ -27,6 +27,7 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+
         conversation = self.createGroupConversation()
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         sut = EphemeralKeyboardViewController(conversation: conversation)
@@ -43,9 +44,8 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     }
 
     func testThatItRendersCorrectIntially_DarkMode() {
-        ColorScheme.default.variant = .dark
+        sut.overrideUserInterfaceStyle = .dark
         verify(view: sut.prepareForSnapshots())
-        ColorScheme.default.variant = .light
     }
 
 }
