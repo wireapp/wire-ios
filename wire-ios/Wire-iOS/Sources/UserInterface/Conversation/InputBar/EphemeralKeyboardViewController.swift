@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
+// MARK: - EphemeralKeyboardViewControllerDelegate
 protocol EphemeralKeyboardViewControllerDelegate: AnyObject {
     func ephemeralKeyboardWantsToBeDismissed(_ keyboard: EphemeralKeyboardViewController)
 
@@ -29,8 +30,10 @@ protocol EphemeralKeyboardViewControllerDelegate: AnyObject {
     )
 }
 
+// MARK: - InputBarConversation Extension
 extension InputBarConversation {
 
+    // Properties
     var timeoutImage: UIImage? {
         guard let timeout = activeMessageDestructionTimeoutValue else { return nil }
         return timeoutImage(for: timeout)
@@ -41,6 +44,11 @@ extension InputBarConversation {
         return timeoutImage(for: timeout, withColor: .lightGraphite)
     }
 
+    ///  With this method we create the icons for the timeout in ephemeral messages
+    /// - Parameters:
+    ///   - timeout: Indicates the value for the timeout
+    ///   - color: Indicates the color for the icons
+    /// - Returns: An UIImage as the icon with the proper icon
     private func timeoutImage(for timeout: MessageDestructionTimeoutValue, withColor color: UIColor = UIColor.accent()) -> UIImage? {
         guard timeout != .none else { return nil }
         if timeout.isYears { return StyleKitIcon.timeoutYear.makeImage(size: 64, color: color) }
@@ -53,11 +61,13 @@ extension InputBarConversation {
     }
 }
 
+// MARK: - UIAlertController Extension
 extension UIAlertController {
     enum AlertError: Error {
         case userRejected
     }
 
+    /// We call this method when user decides to add a custom timeout for their messages
     static func requestCustomTimeInterval(over controller: UIViewController,
                                           with completion: @escaping (Result<TimeInterval>) -> Void) {
         let alertController = UIAlertController(title: "Custom timer", message: nil, preferredStyle: .alert)
@@ -67,9 +77,9 @@ extension UIAlertController {
         }
         let confirmAction = UIAlertAction(title: "OK", style: .default) { [weak alertController] _ in
             guard let input = alertController?.textFields?.first,
-                let inputText = input.text,
-                let selectedTimeInterval = TimeInterval(inputText) else {
-                    return
+                  let inputText = input.text,
+                  let selectedTimeInterval = TimeInterval(inputText) else {
+                return
             }
 
             completion(.success(selectedTimeInterval))
@@ -92,20 +102,25 @@ extension UIAlertController {
     }
 }
 
+// MARK: - EphemeralKeyboardViewController
 final class EphemeralKeyboardViewController: UIViewController {
 
+    // MARK: - Properties
     weak var delegate: EphemeralKeyboardViewControllerDelegate?
 
     fileprivate let timeouts: [MessageDestructionTimeoutValue?]
 
-    public let titleLabel = UILabel()
+    public let titleLabel = DynamicFontLabel(text: "input.ephemeral.title".localized,
+                                             fontSpec: .mediumSemiboldFont,
+                                             color: SemanticColors.Label.textDefault)
     public var pickerFont: UIFont? = .normalSemiboldFont
-    public var pickerColor: UIColor? = UIColor.from(scheme: .textForeground, variant: .dark)
-    public var separatorColor: UIColor? = UIColor.from(scheme: .separator, variant: .light)
+    public var pickerColor: UIColor? = SemanticColors.Label.textDefault
+    public var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
 
     private let conversation: ZMConversation!
     private let picker = PickerView()
 
+    // MARK: - Initialization
     /// Allow conversation argument is nil for testing
     ///
     /// - Parameter conversation: nil for testing only
@@ -124,12 +139,13 @@ final class EphemeralKeyboardViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Override methods
     override public func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         createConstraints()
 
-        view.backgroundColor = UIColor.from(scheme: .textForeground, variant: .light)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         UIAccessibility.post(notification: .layoutChanged, argument: self)
     }
 
@@ -141,8 +157,8 @@ final class EphemeralKeyboardViewController: UIViewController {
         picker.selectRow(index, inComponent: 0, animated: false)
     }
 
+    // MARK: - Setup views and constraints
     private func setupViews() {
-
         picker.delegate = self
         picker.dataSource = self
         picker.backgroundColor = .clear
@@ -151,29 +167,26 @@ final class EphemeralKeyboardViewController: UIViewController {
         picker.didTapViewClosure = dismissKeyboardIfNeeded
 
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor.from(scheme: .textForeground, variant: .dark)
-        titleLabel.font = .smallSemiboldFont
-
-        titleLabel.text = "input.ephemeral.title".localized(uppercased: true)
         titleLabel.numberOfLines = 0
         [titleLabel, picker].forEach(view.addSubview)
-    }
-
-    func dismissKeyboardIfNeeded() {
-        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
     }
 
     private func createConstraints() {
         [picker, titleLabel].prepareForLayout()
         NSLayoutConstraint.activate([
-          titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-          titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-          titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-          picker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
-          picker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
-          picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-          picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            picker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            picker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+            picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
         ])
+    }
+
+    // MARK: - Methods
+    func dismissKeyboardIfNeeded() {
+        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
     }
 
     fileprivate func displayCustomPicker() {
@@ -196,15 +209,18 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 }
 
+// MARK: - Picker View
 /// This class is a workaround to make the selector color
 /// of a `UIPickerView` changeable. It relies on the height of the selector
 /// views, which means that the behaviour could break in future iOS updates.
 class PickerView: UIPickerView, UIGestureRecognizerDelegate {
 
+    // MARK: - Properties
     var selectorColor: UIColor?
     var tapRecognizer: UIGestureRecognizer! = nil
     var didTapViewClosure: (() -> Void)?
 
+    // MARK: - Initialization
     init() {
         super.init(frame: .zero)
         tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
@@ -217,6 +233,7 @@ class PickerView: UIPickerView, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Override methods
     override func layoutSubviews() {
         super.layoutSubviews()
         for subview in subviews where subview.bounds.height <= 1.0 {
@@ -224,14 +241,16 @@ class PickerView: UIPickerView, UIGestureRecognizerDelegate {
         }
     }
 
-    @objc func didTapView(sender: UIGestureRecognizer) {
+    // MARK: - Actions
+    @objc
+    func didTapView(sender: UIGestureRecognizer) {
         guard recognizerInSelectedRow(sender) else { return }
         didTapViewClosure?()
     }
 
     /// Used to determine if the recognizers touches are in the area
     /// of the selected row of the `UIPickerView`, this is done by asking the
-    /// delegate for the rowHeight and using it to caculate the rect 
+    /// delegate for the rowHeight and using it to caculate the rect
     /// of the center (selected) row.
     private func recognizerInSelectedRow(_ recognizer: UIGestureRecognizer) -> Bool {
         guard selectedRow(inComponent: 0) != -1 else { return false }
@@ -247,20 +266,24 @@ class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     // but need to make sure the scrolling behaviour and taps outside the selected row still
     // get propagated (other wise the scroll-to behaviour would break when tapping on another row) etc.
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
 }
 
+// MARK: - UIPickerViewDelegate & UIPickerViewDataSource
 extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 
     public func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
@@ -275,7 +298,9 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
         return timeouts.count
     }
 
-    public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+    public func pickerView(_ pickerView: UIPickerView,
+                           attributedTitleForRow row: Int,
+                           forComponent component: Int) -> NSAttributedString? {
         guard let font = pickerFont, let color = pickerColor else { return nil }
         let timeout = timeouts[row]
         if let actualTimeout = timeout, let title = actualTimeout.displayString {
