@@ -87,7 +87,7 @@ class MockMLSActionsProvider: MLSActionsProviderProtocol {
         return mock(message)
     }
 
-    typealias SendCommitBundleMock = (Data) -> [ZMUpdateEvent]
+    typealias SendCommitBundleMock = (Data) throws -> [ZMUpdateEvent]
     var sendCommitBundleMocks = [SendCommitBundleMock]()
 
     func sendCommitBundle(
@@ -96,7 +96,7 @@ class MockMLSActionsProvider: MLSActionsProviderProtocol {
     ) async throws -> [ZMUpdateEvent] {
         guard let mock = sendCommitBundleMocks.first else { throw MockError.unmockedMethodInvoked }
         sendCommitBundleMocks.removeFirst()
-        return mock(bundle)
+        return try mock(bundle)
     }
 
     typealias FetchPublicGroupStateMock = (UUID, String) -> Data

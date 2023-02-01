@@ -612,7 +612,7 @@ public final class MLSController: MLSControllerProtocol {
 
         generatePendingJoins(in: context).forEach { pendingJoin in
             Task {
-                await sendExternalAddProposal(pendingJoin.groupID, epoch: pendingJoin.epoch)
+                try await sendExternalCommit(groupID: pendingJoin.groupID)
             }
         }
 
@@ -638,6 +638,8 @@ public final class MLSController: MLSControllerProtocol {
 
         }
     }
+
+    // MARK: - External Proposals
 
     private func sendExternalAddProposal(_ groupID: MLSGroupID, epoch: UInt64) async {
         logger.info("requesting to join group (\(groupID)")
@@ -674,6 +676,81 @@ public final class MLSController: MLSControllerProtocol {
             logger.warn("failed to send proposal in group (\(groupID)): \(String(describing: error))")
             throw MLSSendProposalError.failedToSendProposal
         }
+    }
+
+    // MARK: - External Commits
+
+    private func sendExternalCommit(groupID: MLSGroupID) async throws {
+        try await retryOnCommitFailure(for: groupID, operation: { [weak self] in
+            try await self?.internalSendExternalCommit(groupID: groupID)
+        })
+    }
+
+    enum MLSSendExternalCommitError: Error {
+        case conversationNotFound
+    }
+
+    private func internalSendExternalCommit(groupID: MLSGroupID) async throws {
+        do {
+            logger.info("sending external commit to join group (\(groupID)")
+
+            guard let context = context else { return }
+
+            guard let conversationInfo = fetchConversationInfo(
+                with: groupID,
+                in: context
+            ) else {
+                throw MLSSendExternalCommitError.conversationNotFound
+            }
+
+            let publicGroupState = try await actionsProvider.fetchPublicGroupState(
+                conversationId: conversationInfo.identifier,
+                domain: conversationInfo.domain,
+                context: context.notificationContext
+            )
+
+            let updateEvents = try await mlsActionExecutor.joinGroup(
+                groupID,
+                publicGroupState: publicGroupState
+            )
+
+            context.performAndWait {
+                conversationInfo.conversation.mlsStatus = .ready
+            }
+            
+            conversationEventProcessor.processConversationEvents(updateEvents)
+            logger.info("success: joined group (\(groupID)) with external commit")
+
+        } catch {
+            logger.warn("failed to send external commit to join group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
+    }
+
+    private func fetchConversationInfo(
+        with groupID: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) -> (conversation: ZMConversation, identifier: UUID, domain: String)? {
+
+        var conversation: ZMConversation?
+        var identifier: UUID?
+        var domain: String?
+
+        context.performAndWait {
+            conversation = ZMConversation.fetch(with: groupID, in: context)
+            identifier = conversation?.remoteIdentifier
+            domain = conversation?.domain
+        }
+
+        guard
+            let conversation = conversation,
+            let identifier = identifier,
+            let domain = domain?.selfOrNilIfEmpty ?? BackendInfo.domain
+        else {
+            return nil
+        }
+
+        return (conversation, identifier, domain)
     }
 
     // MARK: - Encrypt message
@@ -838,7 +915,7 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     private func commitPendingProposalsIfNeeded(in groupID: MLSGroupID) async throws {
-        guard existsPendingPropsals(in: groupID) else { return }
+        guard existsPendingProposals(in: groupID) else { return }
         // Sending a message while there are pending proposals will result in an error,
         // so commit any first.
         logger.info("preemptively committing pending proposals in group (\(groupID))")
@@ -846,7 +923,7 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("success: committed pending proposals in group (\(groupID))")
     }
 
-    private func existsPendingPropsals(in groupID: MLSGroupID) -> Bool {
+    private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
         guard let context = context else { return false }
 
         var groupHasPendingProposals = false
@@ -918,6 +995,15 @@ public final class MLSController: MLSControllerProtocol {
             logger.warn("failed to send commit, giving up...")
             // TODO: [John] inform user
             throw MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)
+
+        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .retry) {
+            logger.warn("failed to send external commit, retrying operation...")
+            try await retryOnCommitFailure(for: groupID, operation: operation)
+
+        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp) {
+            logger.warn("failed to send external commit, giving up...")
+            throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp)
+
         }
     }
 

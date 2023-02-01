@@ -314,4 +314,149 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(updateEvents, [mockUpdateEvent])
     }
 
+    // MARK: - Join Group
+
+    func test_JoinGroup() async throws {
+        // Given
+        let groupID = MLSGroupID(.random())
+        let mockCommit = Bytes.random()
+        let mockPublicGroupState = Bytes.random().data
+        let mockPublicGroupStateBundle = PublicGroupStateBundle(
+            encryptionType: .Plaintext,
+            ratchetTreeType: .Full,
+            payload: []
+        )
+        let mockCommitBundle = CommitBundle(
+            welcome: nil,
+            commit: mockCommit,
+            publicGroupState: mockPublicGroupStateBundle
+        )
+        // TODO: Mock properly
+        let mockUpdateEvents = [ZMUpdateEvent]()
+
+        // Mock join by external commit
+        var mockJoinByExternalCommitArguments = [Bytes]()
+        mockCoreCrypto.mockJoinByExternalCommit = {
+            mockJoinByExternalCommitArguments.append($0)
+            return .init(
+                conversationId: groupID.bytes,
+                commit: mockCommit,
+                publicGroupState: mockPublicGroupStateBundle
+            )
+        }
+
+        // Mock send commit bundle
+        var mockSendCommitBundleArguments = [Data]()
+        mockActionsProvider.sendCommitBundleMocks.append({
+            mockSendCommitBundleArguments.append($0)
+            return mockUpdateEvents
+        })
+
+        // Mock merge pending group
+        var mockMergePendingGroupArguments = [Bytes]()
+        mockCoreCrypto.mockMergePendingGroupFromExternalCommit = { conversationId, _ in
+            mockMergePendingGroupArguments.append(conversationId)
+        }
+
+        // When
+        let updateEvents = try await sut.joinGroup(groupID, publicGroupState: mockPublicGroupState)
+
+        // Then core crypto creates conversation init bundle
+        XCTAssertEqual(mockJoinByExternalCommitArguments.count, 1)
+        XCTAssertEqual(mockJoinByExternalCommitArguments.first, mockPublicGroupState.bytes)
+
+        // Then commit bundle was sent
+        XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
+        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+
+        // Then pending group is merged
+        XCTAssertEqual(mockMergePendingGroupArguments.count, 1)
+        XCTAssertEqual(mockMergePendingGroupArguments.first, groupID.bytes)
+
+        // Then the update event was returned
+        XCTAssertEqual(updateEvents, mockUpdateEvents)
+    }
+
+    func test_JoinGroup_ThrowsErrorWithRetryRecoveryStrategy() async throws {
+        // When
+        try await test_JoinGroupThrowsErrorWithRecoveryStrategy(
+            sendCommitBundleError: SendCommitBundleAction.Failure.mlsStaleMessage
+        ) { recovery, clearPendingGroupArguments in
+            // Then
+            XCTAssertEqual(recovery, .retry)
+            XCTAssertEqual(clearPendingGroupArguments.count, 0)
+        }
+    }
+
+    func test_JoinGroup_ThrowsErrorWithGiveUpRecoveryStrategy() async throws {
+        // Given
+        let groupID = MLSGroupID(.random())
+        let error = SendCommitBundleAction.Failure.unknown(
+            status: 999,
+            label: "unknown",
+            message: "unknown"
+        )
+
+        // When
+        try await test_JoinGroupThrowsErrorWithRecoveryStrategy(
+            groupID: groupID,
+            sendCommitBundleError: error
+        ) { recovery, clearPendingGroupArguments in
+            // Then
+            XCTAssertEqual(recovery, .giveUp)
+            XCTAssertEqual(clearPendingGroupArguments.count, 1)
+            XCTAssertEqual(clearPendingGroupArguments.first, groupID.bytes)
+        }
+    }
+
+    private typealias AssertRecoveryBlock = (
+        _ recovery: MLSActionExecutor.ExternalCommitErrorRecovery,
+        _ clearPendingGroupArguments: [Bytes]
+    ) -> Void
+
+    private func test_JoinGroupThrowsErrorWithRecoveryStrategy(
+        groupID: MLSGroupID = MLSGroupID(.random()),
+        sendCommitBundleError: Error,
+        assertRecovery: AssertRecoveryBlock
+    ) async throws {
+        // Given
+        let mockCommit = Bytes.random()
+        let mockPublicGroupStateBundle = PublicGroupStateBundle(
+            encryptionType: .Plaintext,
+            ratchetTreeType: .Full,
+            payload: []
+        )
+
+        // Mock join by external commit
+        var mockJoinByExternalCommitArguments = [Bytes]()
+        mockCoreCrypto.mockJoinByExternalCommit = {
+            mockJoinByExternalCommitArguments.append($0)
+            return .init(
+                conversationId: groupID.bytes,
+                commit: mockCommit,
+                publicGroupState: mockPublicGroupStateBundle
+            )
+        }
+
+        // Mock send commit bundle
+        mockActionsProvider.sendCommitBundleMocks.append({ _ in
+            throw sendCommitBundleError
+        })
+
+        // Mock clear pending group
+        var mockClearPendingGroupArguments = [Bytes]()
+        mockCoreCrypto.mockClearPendingGroupFromExternalCommit = {
+            mockClearPendingGroupArguments.append($0)
+        }
+
+        // When / Then
+        do {
+            _ = try await sut.joinGroup(groupID, publicGroupState: Data())
+            XCTFail("expected an error")
+        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: let recovery) {
+            assertRecovery(recovery, mockClearPendingGroupArguments)
+        } catch {
+            XCTFail("wrong error")
+        }
+    }
 }
