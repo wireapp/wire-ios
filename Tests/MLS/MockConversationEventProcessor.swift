@@ -35,8 +35,11 @@ class MockConversationEventProcessor: ConversationEventProcessorProtocol {
 
     // MARK: - Methods
 
+    var mockProcessConversationEvents: (([ZMUpdateEvent]) -> Void)?
+
     func processConversationEvents(_ events: [ZMUpdateEvent]) {
         calls.processConversationEvents.append(events)
+        mockProcessConversationEvents?(events)
     }
 
 }

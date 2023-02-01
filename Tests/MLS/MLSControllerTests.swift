@@ -892,19 +892,22 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         )
     }
 
-    // MARK: Joining conversations
+    // MARK: - Joining conversations
 
     func test_PerformPendingJoins_IsSuccessful() {
         // Given
         let groupID = MLSGroupID(.random())
-        let epoch: UInt64 = 1
-
+        let conversationID = UUID.create()
+        let domain = "example.domain.com"
+        let publicGroupState = Data()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = conversationID
+        conversation.domain = domain
         conversation.mlsGroupID = groupID
         conversation.mlsStatus = .pendingJoin
-        conversation.epoch = epoch
 
-        let addProposal = Bytes.random()
+        // TODO: Mock properly
+        let mockUpdateEvents = [ZMUpdateEvent]()
 
         // register the group to be joined
         sut.registerPendingJoin(groupID)
@@ -912,32 +915,124 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // expectation
         let expectation = XCTestExpectation(description: "Send Message")
 
-        // mock the external add proposal returned by core crypto
-        var mockNewExternalAddProposalCount = 0
-        mockCoreCrypto.mockNewExternalAddProposal = {
-            mockNewExternalAddProposalCount += 1
+        // mock fetching public group state
+        var fetchPublicGroupStateArguments = [(identifier: UUID, domain: String)]()
+        mockActionsProvider.fetchPublicGroupStateMock.append({
+            fetchPublicGroupStateArguments.append(($0, $1))
+            return publicGroupState
+        })
 
-            XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, epoch)
-
-            return addProposal
+        // mock joining group
+        var joinGroupArguments = [(groupID: MLSGroupID, groupState: Data)]()
+        mockMLSActionExecutor.mockJoinGroup = {
+            joinGroupArguments.append(($0, $1))
+            return mockUpdateEvents
         }
 
-        // mock the action for sending the proposal & fulfill expectation
-        mockActionsProvider.sendMessageMocks.append({ message in
-            XCTAssertEqual(addProposal.data, message)
-
+        // mock processing conversation events
+        var processConversationEventsArguments = [[ZMUpdateEvent]]()
+        mockConversationEventProcessor.mockProcessConversationEvents = {
+            processConversationEventsArguments.append($0)
             expectation.fulfill()
-
-            return []
-        })
+        }
 
         // When
         sut.performPendingJoins()
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(mockNewExternalAddProposalCount, 1)
+
+        // it fetches public group state
+        XCTAssertEqual(fetchPublicGroupStateArguments.count, 1)
+        XCTAssertEqual(fetchPublicGroupStateArguments.first?.identifier, conversationID)
+        XCTAssertEqual(fetchPublicGroupStateArguments.first?.domain, domain)
+
+        // it asks executor to join group
+        XCTAssertEqual(joinGroupArguments.count, 1)
+        XCTAssertEqual(joinGroupArguments.first?.groupID, groupID)
+        XCTAssertEqual(joinGroupArguments.first?.groupState, publicGroupState)
+
+        // it sets conversation state to ready
+        XCTAssertEqual(conversation.mlsStatus, .ready)
+
+        // it processes conversation events
+        XCTAssertEqual(processConversationEventsArguments.count, 1)
+        XCTAssertEqual(processConversationEventsArguments.first, mockUpdateEvents)
+    }
+
+    func test_PerformPendingJoins_Retries() {
+        test_PerformPendingJoinsRecovery(.retry)
+    }
+
+    func test_PerformPendingJoins_GivesUp() {
+        test_PerformPendingJoinsRecovery(.giveUp)
+    }
+
+    private func test_PerformPendingJoinsRecovery(_ recovery: MLSActionExecutor.ExternalCommitErrorRecovery) {
+        // Given
+        let shouldRetry = recovery == .retry
+        let groupID = MLSGroupID(.random())
+        let conversationID = UUID.create()
+        let domain = "example.domain.com"
+        let publicGroupState = Data()
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = conversationID
+        conversation.domain = domain
+        conversation.mlsGroupID = groupID
+        conversation.mlsStatus = .pendingJoin
+
+        // register the group to be joined
+        sut.registerPendingJoin(groupID)
+
+        // set up expectations
+        let expectation = XCTestExpectation(description: "Send Message")
+        expectation.isInverted = !shouldRetry
+
+        // mock fetching public group state
+        var fetchPublicGroupStateCount = 0
+        let fetchPublicGroupStateMock: MockMLSActionsProvider.FetchPublicGroupStateMock = { _, _ in
+            fetchPublicGroupStateCount += 1
+            return publicGroupState
+        }
+        mockActionsProvider.fetchPublicGroupStateMock.append(fetchPublicGroupStateMock)
+        mockActionsProvider.fetchPublicGroupStateMock.append(fetchPublicGroupStateMock)
+
+        // mock joining group
+        var joinGroupCount = 0
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in
+            joinGroupCount += 1
+
+            if joinGroupCount == 1 {
+                throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: recovery)
+            }
+
+            return []
+        }
+
+        // mock processing conversation events
+        var processConversationEventsCount = 0
+        mockConversationEventProcessor.mockProcessConversationEvents = { _ in
+            processConversationEventsCount += 1
+            expectation.fulfill()
+        }
+
+        // When
+        sut.performPendingJoins()
+
+        // Then
+        wait(for: [expectation], timeout: 0.5)
+
+        // it fetches public group state
+        XCTAssertEqual(fetchPublicGroupStateCount, shouldRetry ? 2 : 1)
+
+        // it asks executor to join group
+        XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1)
+
+        // it sets conversation state to ready
+        XCTAssertEqual(conversation.mlsStatus, shouldRetry ? .ready : .pendingJoin)
+
+        // it processes conversation events
+        XCTAssertEqual(processConversationEventsCount, shouldRetry ? 1 : 0)
     }
 
     func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
@@ -946,6 +1041,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.mlsGroupID = groupID
+        conversation.remoteIdentifier = UUID.create()
+        conversation.domain = "domain.com"
         conversation.mlsStatus = .ready
 
         // register the group to be joined
@@ -955,25 +1052,25 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let expectation = XCTestExpectation(description: "Send Message")
         expectation.isInverted = true
 
-        // mock the external add proposal returned by core crypto
-        var mockNewExternalAddProposalCount = 0
-        mockCoreCrypto.mockNewExternalAddProposal = { _, _ in
-            mockNewExternalAddProposalCount += 1
-            return Bytes.random()
-        }
+        // mock fetching public group state
+        var fetchPublicGroupStateCount = 0
+        mockActionsProvider.fetchPublicGroupStateMock.append({ _, _ in
+            fetchPublicGroupStateCount += 1
+            return Data()
+        })
 
-        // mock the action for sending the proposal & fulfill expectation
-        mockActionsProvider.sendMessageMocks.append({ _ in
+        // mock joining group
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in
             expectation.fulfill()
             return []
-        })
+        }
 
         // When
         sut.performPendingJoins()
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(mockNewExternalAddProposalCount, 0)
+        XCTAssertEqual(fetchPublicGroupStateCount, 0)
     }
 
     // MARK: - Wipe Groups

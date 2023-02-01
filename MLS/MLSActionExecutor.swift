@@ -24,6 +24,7 @@ protocol MLSActionExecutorProtocol {
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
+    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent]
 
 }
 
@@ -37,20 +38,27 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         case removeClients([ClientId])
         case updateKeyMaterial
         case proposal
+        case joinGroup(Data)
 
     }
 
     enum Error: Swift.Error, Equatable {
 
+        // Commits
         case failedToGenerateCommit
-        case failedToSendCommit(recovery: ErrorRecovery)
+        case failedToSendCommit(recovery: CommitErrorRecovery)
         case failedToMergeCommit
         case failedToClearCommit
         case noPendingProposals
 
+        // External Commits
+        case failedToSendExternalCommit(recovery: ExternalCommitErrorRecovery)
+        case failedToMergePendingGroup
+        case failedToClearPendingGroup
+
     }
 
-    enum ErrorRecovery: Equatable {
+    enum CommitErrorRecovery: Equatable {
 
         /// Perform a quick sync, then commit pending proposals.
         ///
@@ -86,6 +94,29 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             }
         }
 
+    }
+
+    enum ExternalCommitErrorRecovery {
+
+        /// Retry the action from the beginning
+
+        case retry
+
+        /// Abort the action and log the error
+
+        case giveUp
+
+        /// Whether the pending group should be cleared
+
+        var shouldClearPendingGroup: Bool {
+            switch self {
+            case .retry:
+                return false
+
+            case .giveUp:
+                return true
+            }
+        }
     }
 
     // MARK: - Properties
@@ -160,6 +191,19 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
+    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent] {
+        do {
+            Logging.mls.info("joining group (\(groupID)) via external commit")
+            let bundle = try commitBundle(for: .joinGroup(publicGroupState), in: groupID)
+            let result = try await sendExternalCommitBundle(bundle, for: groupID)
+            Logging.mls.info("success: joining group (\(groupID)) via external commit")
+            return result
+        } catch {
+            Logging.mls.info("error: joining group (\(groupID)) via external commit: \(String(describing: error))")
+            throw error
+        }
+    }
+
     // MARK: - Commit generation
 
     private func commitBundle(for action: Action, in groupID: MLSGroupID) throws -> CommitBundle {
@@ -195,6 +239,15 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
 
                 return bundle
+
+            case .joinGroup(let publicGroupState):
+                let conversationInitBundle = try coreCrypto.wire_joinByExternalCommit(groupState: publicGroupState.bytes)
+
+                return CommitBundle(
+                    welcome: nil,
+                    commit: conversationInitBundle.commit,
+                    publicGroupState: conversationInitBundle.publicGroupState
+                )
             }
         } catch Error.noPendingProposals {
             throw Error.noPendingProposals
@@ -214,13 +267,34 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         } catch let error as SendCommitBundleAction.Failure {
             Logging.mls.warn("failed to send commit bundle: \(String(describing: error))")
 
-            let recoveryStrategy = error.recoveryStrategy
+            let recoveryStrategy = error.commitRecoveryStrategy
 
             if recoveryStrategy.shouldDiscardCommit {
                 try discardPendingCommit(in: groupID)
             }
 
             throw MLSActionExecutor.Error.failedToSendCommit(recovery: recoveryStrategy)
+        }
+    }
+
+    private func sendExternalCommitBundle(
+        _ bundle: CommitBundle,
+        for groupID: MLSGroupID
+    ) async throws -> [ZMUpdateEvent] {
+        do {
+            let events = try await sendCommitBundle(bundle)
+            try mergePendingGroup(in: groupID)
+            return events
+        } catch let error as SendCommitBundleAction.Failure {
+            Logging.mls.warn("failed to send external commit bundle: \(String(describing: error))")
+
+            let recoveryStrategy = error.externalCommitRecoveryStrategy
+
+            if recoveryStrategy.shouldClearPendingGroup {
+                try clearPendingGroup(in: groupID)
+            }
+
+            throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: recoveryStrategy)
         }
     }
 
@@ -249,17 +323,45 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
+    private func mergePendingGroup(in groupID: MLSGroupID) throws {
+        do {
+            try coreCrypto.wire_mergePendingGroupFromExternalCommit(
+                conversationId: groupID.bytes,
+                config: .init(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+            )
+        } catch {
+            throw Error.failedToMergePendingGroup
+        }
+    }
+
+    private func clearPendingGroup(in groupID: MLSGroupID) throws {
+        do {
+            try coreCrypto.wire_clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
+        } catch {
+            throw Error.failedToClearPendingGroup
+        }
+    }
 }
 
 extension SendCommitBundleAction.Failure {
 
-    var recoveryStrategy: MLSActionExecutor.ErrorRecovery {
+    var commitRecoveryStrategy: MLSActionExecutor.CommitErrorRecovery {
         switch self {
         case .mlsClientMismatch:
             return .retryAfterQuickSync
 
         case .mlsStaleMessage, .mlsCommitMissingReferences:
             return .commitPendingProposalsAfterQuickSync
+
+        default:
+            return .giveUp
+        }
+    }
+
+    var externalCommitRecoveryStrategy: MLSActionExecutor.ExternalCommitErrorRecovery {
+        switch self {
+        case .mlsStaleMessage:
+            return .retry
 
         default:
             return .giveUp

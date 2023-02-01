@@ -293,10 +293,10 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - clearPendingGroupFromExternalCommit
 
-    var mockClearMergePendingGroupFromExternalCommit: ((ConversationId) throws -> Void)?
+    var mockClearPendingGroupFromExternalCommit: ((ConversationId) throws -> Void)?
 
     func wire_clearPendingGroupFromExternalCommit(conversationId: WireDataModel.ConversationId) throws {
-        guard let mock = mockClearMergePendingGroupFromExternalCommit else {
+        guard let mock = mockClearPendingGroupFromExternalCommit else {
             fatalError("no mock for `clearPendingGroupFromExternalCommit`")
         }
 
