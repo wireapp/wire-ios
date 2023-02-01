@@ -1302,7 +1302,6 @@
 		EE997A1A2507A851008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A192507A851008336D2 /* Logging.swift */; };
 		EE9A857629896B4D00064A9C /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		EE9A857729896B4D00064A9C /* CrashReporter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE9A857929896B9F00064A9C /* CrashReporter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A857F29896D2900064A9C /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		EE9A858029896D2900064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1838,7 +1837,6 @@
 				EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */,
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
-				EE9A857929896B9F00064A9C /* CrashReporter.xcframework in Embed Frameworks */,
 				EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */,
 				EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */,
 				EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */,
