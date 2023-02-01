@@ -25,7 +25,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     var showCheckmark: Bool = false {
         didSet {
-            updateCheckmark(forColor: ColorScheme.default.variant)
+            updateCheckmark()
 
             titleBolded = showCheckmark
         }
@@ -33,7 +33,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     override var disabled: Bool {
         didSet {
-            updateCheckmark(forColor: ColorScheme.default.variant)
+            updateCheckmark()
         }
     }
 
@@ -49,7 +49,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     override func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
         super.applyColorScheme(colorSchemeVariant)
-        updateCheckmark(forColor: colorSchemeVariant)
+        updateCheckmark()
     }
 
     override var isHighlighted: Bool {
@@ -60,7 +60,7 @@ final class CheckmarkCell: RightIconDetailsCell {
         }
     }
 
-    private func updateCheckmark(forColor colorSchemeVariant: ColorSchemeVariant) {
+    private func updateCheckmark() {
 
         guard showCheckmark else {
             accessory = nil
@@ -69,15 +69,11 @@ final class CheckmarkCell: RightIconDetailsCell {
 
         let color: UIColor
 
-        switch (colorSchemeVariant, disabled) {
-        case (.light, false):
+        switch disabled {
+        case false:
             color = SemanticColors.Icon.foregroundPlainCheckMark
-        case (.light, true):
-            color = UIColor.from(scheme: .textPlaceholder, variant: colorSchemeVariant)
-        case (.dark, false):
-            color = SemanticColors.Icon.foregroundPlainCheckMark
-        case (.dark, true):
-            color = UIColor.from(scheme: .textPlaceholder, variant: colorSchemeVariant)
+        case true:
+            color = SemanticColors.Icon.foregroundPlaceholder
         }
 
         accessory = StyleKitIcon.checkmark.makeImage(size: .tiny, color: color).withRenderingMode(.alwaysTemplate)
