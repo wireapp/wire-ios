@@ -1994,13 +1994,13 @@ internal enum L10n {
         }
         internal enum Mls {
           /// Cancel
-          internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel")
+          internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
           /// Select Protocol
-          internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title")
+          internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
           /// Select MLS to create a MLS conversation (Beta functionality, use at your own risk).
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle")
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a MLS conversation (Beta functionality, use at your own risk).")
           /// Protocol
-          internal static let title = L10n.tr("Localizable", "conversation.create.mls.title")
+          internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
         internal enum Options {
           /// Guests: %@, Services: %@, Read receipts: %@
@@ -2889,11 +2889,11 @@ internal enum L10n {
       }
       internal enum MessageProtocol {
         /// Cipher Suite
-        internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite")
+        internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite", fallback: "Cipher Suite")
         /// Protocol details (beta)
-        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile")
+        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details (beta)")
         /// Protocol
-        internal static let title = L10n.tr("Localizable", "group_details.message_protocol.title")
+        internal static let title = L10n.tr("Localizable", "group_details.message_protocol.title", fallback: "Protocol")
       }
       internal enum NotificationOptionsCell {
         /// You can be notified about everything (including audio and video calls) or only when someone mentions you or replies to one of your messages.
