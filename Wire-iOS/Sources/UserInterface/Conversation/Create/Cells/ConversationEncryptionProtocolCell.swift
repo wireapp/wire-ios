@@ -31,7 +31,7 @@ class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
     }
 
     let label: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: .textDimmed)
+        let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
         label.textAlignment = .right
         return label
     }()
