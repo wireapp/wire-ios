@@ -35,6 +35,8 @@ extension Payload {
             case messageTimer = "message_timer"
             case readReceiptMode = "receipt_mode"
             case conversationRole = "conversation_role"
+            case creatorClient = "creator_client"
+            case messageProtocol = "protocol"
         }
 
         let users: [UUID]?
@@ -48,13 +50,29 @@ extension Payload {
         let readReceiptMode: Int?
         let conversationRole: String?
 
-        init(_ conversation: ZMConversation) {
-            if let qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs {
-                self.qualifiedUsers = qualifiedUsers
-                self.users = nil
-            } else {
+        // API V2 only
+        let creatorClient: String?
+        let messageProtocol: String?
+
+        init(_ conversation: ZMConversation, selfClientID: String) {
+            switch conversation.messageProtocol {
+            case .mls:
+                messageProtocol = "mls"
+                creatorClient = selfClientID
                 qualifiedUsers = nil
-                users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
+                users = nil
+
+            case .proteus:
+                messageProtocol = "proteus"
+                creatorClient = nil
+
+                if let qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs {
+                    self.qualifiedUsers = qualifiedUsers
+                    self.users = nil
+                } else {
+                    qualifiedUsers = nil
+                    users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
+                }
             }
 
             name = conversation.userDefinedName
@@ -85,6 +103,10 @@ extension Payload {
             case teamID = "team"
             case messageTimer = "message_timer"
             case readReceiptMode = "receipt_mode"
+            case messageProtocol = "protocol"
+            case mlsGroupID = "group_id"
+            case epoch
+
         }
 
         static var eventType: ZMUpdateEventType {
@@ -105,6 +127,9 @@ extension Payload {
         let teamID: UUID?
         let messageTimer: TimeInterval?
         let readReceiptMode: Int?
+        let messageProtocol: String?
+        let mlsGroupID: String?
+        let epoch: UInt?
 
         init(qualifiedID: QualifiedID? = nil,
              id: UUID?  = nil,
@@ -119,8 +144,11 @@ extension Payload {
              lastEventTime: String? = nil,
              teamID: UUID? = nil,
              messageTimer: TimeInterval? = nil,
-             readReceiptMode: Int? = nil) {
-
+             readReceiptMode: Int? = nil,
+             messageProtocol: String? = nil,
+             mlsGroupID: String? = nil,
+             epoch: UInt? = nil
+        ) {
             self.qualifiedID = qualifiedID
             self.id = id
             self.type = type
@@ -135,6 +163,9 @@ extension Payload {
             self.teamID = teamID
             self.messageTimer = messageTimer
             self.readReceiptMode = readReceiptMode
+            self.messageProtocol = messageProtocol
+            self.mlsGroupID = mlsGroupID
+            self.epoch = epoch
         }
     }
 
@@ -401,6 +432,7 @@ extension Payload {
 
         let userIDs: [UUID]?
         let users: [ConversationMember]?
+
     }
 
     struct UpdateConversationConnectionRequest: EventData {
@@ -484,4 +516,47 @@ extension Payload {
         }
     }
 
+    struct UpdateConversationMLSWelcome: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case id = "conversation"
+            case qualifiedID = "qualified_conversation"
+            case from
+            case qualifiedFrom = "qualified_from"
+            case timestamp = "time"
+            case type
+            case data
+        }
+
+        // This is currently the id of the self conversation.
+        let id: UUID
+
+        let qualifiedID: QualifiedID?
+        let from: UUID
+        let qualifiedFrom: QualifiedID?
+        let timestamp: Date
+        let type: String
+        let data: String
+    }
+
+    struct UpdateConversationMLSMessageAdd: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case id = "conversation"
+            case qualifiedID = "qualified_conversation"
+            case from
+            case qualifiedFrom = "qualified_from"
+            case timestamp = "time"
+            case type
+            case data
+        }
+
+        let id: UUID
+        let qualifiedID: QualifiedID?
+        let from: UUID
+        let qualifiedFrom: QualifiedID?
+        let timestamp: Date
+        let type: String
+        let data: String
+    }
 }

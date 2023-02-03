@@ -64,22 +64,13 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         ZMConversationSilencedChangedTimeStampKey
     ]
 
-    let eventsToProcess: [ZMUpdateEventType] = [
-        .conversationCreate,
-        .conversationDelete,
-        .conversationMemberLeave,
-        .conversationMemberJoin,
-        .conversationRename,
-        .conversationMemberUpdate,
-        .conversationAccessModeUpdate,
-        .conversationMessageTimerUpdate,
-        .conversationReceiptModeUpdate,
-        .conversationConnectRequest
-    ]
+    let conversationEventProcessor: ConversationEventProcessor
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress
+    ) {
 
         self.syncProgress = syncProgress
         self.conversationIDsSync =
@@ -121,8 +112,11 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             addParticipantActionHandler,
             removeParticipantActionHandler,
             updateAccessRolesActionHandler,
-            updateRoleActionHandler
+            updateRoleActionHandler,
+            SyncConversationActionHandler(context: managedObjectContext)
         ])
+
+        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -217,63 +211,12 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
 extension ConversationRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent],
-                              liveEvents: Bool,
-                              prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard
-                eventsToProcess.contains(event.type),
-                let payloadAsDictionary = event.payload as? [String: Any],
-                let payloadData = try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: [])
-            else {
-                continue
-            }
-
-            switch event.type {
-            case .conversationCreate:
-                let conversationEvent = Payload.ConversationEvent<Payload.Conversation>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationDelete:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationDeleted>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMemberLeave:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMemberJoin:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationRename:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationName>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMemberUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.ConversationMember>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationAccessModeUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationAccess>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationMessageTimerUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationReceiptModeUpdate:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            case .conversationConnectRequest:
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>(payloadData)
-                conversationEvent?.process(in: managedObjectContext, originalEvent: event)
-
-            default:
-                break
-            }
-        }
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) {
+        conversationEventProcessor.processConversationEvents(events)
     }
 }
 
@@ -400,10 +343,11 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return false
     }
 
-    public func updateInsertedObject(_ managedObject: ZMManagedObject,
-                                     request upstreamRequest: ZMUpstreamRequest,
-                                     response: ZMTransportResponse) {
-
+    public func updateInsertedObject(
+        _ managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse
+    ) {
         guard
             let newConversation = managedObject as? ZMConversation,
             let rawData = response.rawData,
@@ -415,16 +359,64 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         }
 
         var deletedDuplicate = false
-        if let existingConversation = ZMConversation.fetch(with: conversationID,
-                                                           domain: payload.qualifiedID?.domain,
-                                                           in: managedObjectContext) {
+
+        if let existingConversation = ZMConversation.fetch(
+            with: conversationID,
+            domain: payload.qualifiedID?.domain,
+            in: managedObjectContext
+        ) {
             managedObjectContext.delete(existingConversation)
             deletedDuplicate = true
         }
 
         newConversation.remoteIdentifier = conversationID
+
+        if newConversation.messageProtocol == .mls {
+            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
+        }
+
+        // If this is an mls conversation, then the initial participants won't have
+        // been added yet on the backend. This means that when we process response payload
+        // we'll actually overwrite the local participants with just the self user. We
+        // store the pending participants now so we can pass them to the mls controllr
+        // when we actually create the mls group.
+        let pendingParticipants = newConversation.localParticipants
         payload.updateOrCreate(in: managedObjectContext)
+
         newConversation.needsToBeUpdatedFromBackend = deletedDuplicate
+
+        if newConversation.messageProtocol == .mls {
+            Logging.mls.info("resetting `mlsStatus` to `ready` b/c self client is creator")
+            newConversation.mlsStatus = .ready
+
+            guard let mlsController = managedObjectContext.mlsController else {
+                Logging.mls.warn("failed to create mls group: MLSController doesn't exist")
+                return
+            }
+
+            guard let groupID = newConversation.mlsGroupID else {
+                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
+                return
+            }
+
+            do {
+                try mlsController.createGroup(for: groupID)
+            } catch let error {
+                Logging.mls.error("failed to create mls group: \(String(describing: error))")
+                return
+            }
+
+            let users = pendingParticipants.map(MLSUser.init(from:))
+
+            Task {
+                do {
+                    try await mlsController.addMembersToConversation(with: users, for: groupID)
+                } catch let error {
+                    Logging.mls.error("failed to add members to new mls group: \(String(describing: error))")
+                    return
+                }
+            }
+        }
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
@@ -528,15 +520,20 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return nil
     }
 
-    public func request(forInserting managedObject: ZMManagedObject,
-                        forKeys keys: Set<String>?,
-                        apiVersion: APIVersion) -> ZMUpstreamRequest? {
-
-        guard let conversation = managedObject as? ZMConversation else {
+    public func request(
+        forInserting managedObject: ZMManagedObject,
+        forKeys keys: Set<String>?,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
+        guard
+            let conversation = managedObject as? ZMConversation,
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(),
+            let selfClientID = selfClient.remoteIdentifier
+        else {
             return nil
         }
 
-        let payload = Payload.NewConversation(conversation)
+        let payload = Payload.NewConversation(conversation, selfClientID: selfClientID)
 
         guard
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
@@ -545,10 +542,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             return nil
         }
 
-        let request = ZMTransportRequest(path: "/conversations",
-                                         method: .methodPOST,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/conversations",
+            method: .methodPOST,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         return ZMUpstreamRequest(transportRequest: request)
     }
