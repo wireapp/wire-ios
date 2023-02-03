@@ -55,7 +55,8 @@ final class SessionManagerTests_Proxy: IntegrationTest {
             pushTokenService: pushTokenService,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: false
+            isUnauthenticatedTransportSessionReady: false,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete

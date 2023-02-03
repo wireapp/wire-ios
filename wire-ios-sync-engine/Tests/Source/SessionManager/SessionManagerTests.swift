@@ -69,7 +69,8 @@ final class SessionManagerTests: IntegrationTest {
             requiredPushTokenType: requiredTokenType,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         sessionManager.start(launchOptions: launchOptions)
@@ -164,7 +165,8 @@ final class SessionManagerTests: IntegrationTest {
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         let environment = MockEnvironment()
@@ -254,7 +256,8 @@ final class SessionManagerTests: IntegrationTest {
             detector: jailbreakDetector,
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         let environment = MockEnvironment()
@@ -315,7 +318,8 @@ final class SessionManagerTests: IntegrationTest {
             detector: jailbreakDetector,
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         XCTAssertTrue(self.delegate.jailbroken)
@@ -1040,7 +1044,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         let environment = MockEnvironment()
@@ -1096,7 +1101,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
-            callKitManager: MockCallKitManager()
+            callKitManager: MockCallKitManager(),
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         let environment = MockEnvironment()
