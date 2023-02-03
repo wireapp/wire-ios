@@ -43,7 +43,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         )
     }
 
-    override func session(for account: Account, coreDataStack: CoreDataStack, configuration: ZMUserSession.Configuration = .init()) -> ZMUserSession? {
+    override func session(for account: Account, coreDataStack: CoreDataStack, configuration: ZMUserSession.Configuration = .init(), coreCryptoSetup: @escaping CoreCryptoSetupClosure = MockCoreCryptoSetup.default.setup) -> ZMUserSession? {
         return ZMUserSession(
             userId: account.userIdentifier,
             transportSession: transportSession,
@@ -53,7 +53,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
-            configuration: configuration
+            configuration: configuration,
+            coreCryptoSetup: coreCryptoSetup
         )
     }
 
@@ -247,7 +248,8 @@ extension IntegrationTest {
             pushTokenService: pushTokenService,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            coreCryptoSetup: MockCoreCryptoSetup.default.setup
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete

@@ -293,6 +293,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public var requiredPushTokenType: PushToken.TokenType
 
+    private var coreCryptoSetup: CoreCryptoSetupClosure
+
     let isDeveloperModeEnabled: Bool
 
     let pushTokenService: PushTokenServiceInterface
@@ -315,7 +317,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
-        isUnauthenticatedTransportSessionReady: Bool = false
+        isUnauthenticatedTransportSessionReady: Bool = false,
+        coreCryptoSetup: @escaping CoreCryptoSetupClosure
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -364,7 +367,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             callKitManager: callKitManager,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             proxyCredentials: proxyCredentials,
-            isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady
+            isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
+            coreCryptoSetup: coreCryptoSetup
         )
 
         configureBlacklistDownload()
@@ -425,7 +429,8 @@ public final class SessionManager: NSObject, SessionManagerType {
          callKitManager: CallKitManagerInterface,
          isDeveloperModeEnabled: Bool = false,
          proxyCredentials: ProxyCredentials?,
-         isUnauthenticatedTransportSessionReady: Bool = false
+         isUnauthenticatedTransportSessionReady: Bool = false,
+         coreCryptoSetup: @escaping CoreCryptoSetupClosure
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -440,6 +445,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.callKitManager = callKitManager
         self.proxyCredentials = proxyCredentials
         self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
+        self.coreCryptoSetup = coreCryptoSetup
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -909,11 +915,15 @@ public final class SessionManager: NSObject, SessionManagerType {
             useLegacyPushNotifications: shouldProcessLegacyPushes
         )
 
-        guard let newSession = authenticatedSessionFactory.session(for: account,
-                                                                      coreDataStack: coreDataStack,
-                                                                      configuration: sessionConfig) else {
+        guard let newSession = authenticatedSessionFactory.session(
+            for: account,
+            coreDataStack: coreDataStack,
+            configuration: sessionConfig,
+            coreCryptoSetup: coreCryptoSetup
+        ) else {
             preconditionFailure("Unable to create session for \(account)")
         }
+
         self.configure(session: newSession, for: account)
         self.deleteMessagesOlderThanRetentionLimit(contextProvider: coreDataStack)
         self.updateSystemBootTimeIfNeeded()

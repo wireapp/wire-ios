@@ -59,6 +59,7 @@ public class ZMUserSession: NSObject {
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
+    private let coreCryptoSetup: CoreCryptoSetupClosure
 
     var isNetworkOnline: Bool = true
     var isPerformingSync: Bool = true {
@@ -93,6 +94,10 @@ public class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
+
+    public var syncStatus: SyncStatusProtocol? {
+        return applicationStatusDirectory?.syncStatus
+    }
 
     public lazy var featureService = FeatureService(context: syncContext)
 
@@ -236,7 +241,8 @@ public class ZMUserSession: NSObject {
                 application: ZMApplication,
                 appVersion: String,
                 coreDataStack: CoreDataStack,
-                configuration: Configuration) {
+                configuration: Configuration,
+                coreCryptoSetup: @escaping CoreCryptoSetupClosure) {
 
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -259,6 +265,7 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.coreCryptoSetup = coreCryptoSetup
         super.init()
 
         appLockController.delegate = self
@@ -278,6 +285,10 @@ public class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
         }
+
+        // This should happen after the request strategies are created b/c
+        // it needs to make network requests upon initialization.
+        setupMLSControllerIfNeeded(coreCryptoSetup: coreCryptoSetup)
 
         updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
@@ -580,10 +591,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Self.logger.trace("did finish quick sync")
         processEvents()
 
+        syncContext.mlsController?.performPendingJoins()
+
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
 
+        commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
     }
 
@@ -612,6 +626,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
         block?(!hasMoreEventsToProcess)
     }
 
+    private func commitPendingProposalsIfNeeded() {
+        let mlsController = syncContext.mlsController
+        Task {
+            do {
+                try await mlsController?.commitPendingProposals()
+            } catch {
+                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+            }
+        }
+    }
+
     private func fetchFeatureConfigs() {
         let action = GetFeatureConfigsAction { result in
             if case let .failure(reason) = result {
@@ -623,6 +648,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+        setupMLSControllerIfNeeded(coreCryptoSetup: coreCryptoSetup)
+
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier
