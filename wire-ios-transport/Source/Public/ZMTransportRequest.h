@@ -107,8 +107,10 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 /// @link https://en.wikipedia.org/wiki/Uniform_Type_Identifier @/link
 /// @link https://developer.apple.com/library/ios/documentation/General/Conceptual/DevPedia-CocoaCore/UniformTypeIdentifier.html @/link
 - (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(nullable NSData *)data type:(nullable NSString *)type contentDisposition:(nullable NSDictionary *)contentDisposition apiVersion:(int)apiVersion;
+
 - (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(nullable NSData *)data type:(nullable NSString *)type contentDisposition:(nullable NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress apiVersion:(int)apiVersion;
 
+- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(nullable NSData *)data type:(nullable NSString *)type acceptHeaderType:(ZMTransportAccept)acceptHeaderType contentDisposition:(nullable NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress apiVersion:(int)apiVersion;
 
 @property (nonatomic, readonly) NSString *methodAsString;
 @property (nonatomic, readonly, copy, nullable) id<ZMTransportData> payload;

@@ -247,6 +247,11 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 - (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(NSData *)data type:(NSString *)type contentDisposition:(NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress apiVersion:(int)apiVersion;
 {
+    return [self initWithPath:path method:method binaryData:data type:type acceptHeaderType:ZMTransportAcceptTransportData contentDisposition:contentDisposition shouldCompress:NO apiVersion:apiVersion];
+}
+
+- (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(NSData *)data type:(NSString *)type acceptHeaderType:(ZMTransportAccept)acceptHeaderType contentDisposition:(NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress apiVersion:(int)apiVersion;
+{
     self = [super init];
     if (self != nil) {
         self.path = apiVersion == 0 ? path : [NSString stringWithFormat:@"/v%d%@", apiVersion, path];
@@ -256,7 +261,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         self.contentDisposition = contentDisposition;
         self.needsAuthentication = YES;
         self.responseWillContainAccessToken = NO;
-        self.acceptedResponseMediaTypes = ZMTransportAcceptTransportData;
+        self.acceptedResponseMediaTypes = acceptHeaderType;
         self.shouldCompress = shouldCompress;
         self.debugInformation = [NSMutableArray array];
         self.contentDebugInformationHash = data.hash;
@@ -498,7 +503,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                 [handlerGroup leave];
             }];
         }
-    }    
+    }
 }
 
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler;
@@ -541,7 +546,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                                    self.methodAsString,
                                    self.path,
                                    @(response.HTTPStatus)
-                                   ];
+                ];
                 ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
                 handler.block(response);
                 [tp warnIfLongerThanInterval];
