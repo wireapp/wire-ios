@@ -44,7 +44,7 @@ public extension Feature {
         // WARNING: This config is encoded and stored in the database, so any changes
         // to it will require some migration code.
 
-        public struct Config: Codable {
+        public struct Config: Codable, Equatable {
 
             /// The number of seconds after which all enforced self-deleting messages
             /// will delete.

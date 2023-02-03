@@ -19,6 +19,23 @@
 import Foundation
 @testable import WireDataModel
 
+class MLSClientIDsProviderMock: MLSClientIDsProvider {
+
+    enum MockError: Error {
+        case unmockedMethodCalled
+    }
+
+    typealias FetchUserClientsMock = (QualifiedID, NotificationContext) async throws -> [MLSClientID]
+    var fetchUserClientsMock: FetchUserClientsMock?
+
+    override func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
+        guard let mock = fetchUserClientsMock else {
+            throw MockError.unmockedMethodCalled
+        }
+        return try await mock(userID, context)
+    }
+}
+
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
 	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
@@ -615,4 +632,143 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             XCTAssertFalse(conversation.needsToDownloadRoles)
         }
     }
+
+    // Remove participant
+
+    func test_RemoveUser_FromMLSConversation() {
+        syncMOC.performAndWait {
+            // GIVEN
+            // set mock MLSController
+            let mockMLSController = MockMLSController()
+            syncMOC.test_setMockMLSController(mockMLSController)
+
+            // create conversation
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mls
+            conversation.mlsGroupID = MLSGroupID(.random())
+
+            // create user
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            user.domain = "domain.com"
+
+            // create user clients
+            let client1 = UserClient.insertNewObject(in: syncMOC)
+            client1.remoteIdentifier = "client 1"
+            client1.user = user
+
+            let client2 = UserClient.insertNewObject(in: syncMOC)
+            client2.remoteIdentifier = "client 2"
+            client2.user = user
+
+            // Fetch user clients expectations
+            let clientIDs = user.clients.compactMap(MLSClientID.init(userClient:))
+            let mlsClientsExpectation = XCTestExpectation(description: "Fetch User Clients")
+            let providerMock = MLSClientIDsProviderMock()
+
+            providerMock.fetchUserClientsMock = { _, _ in
+                mlsClientsExpectation.fulfill()
+                return clientIDs
+            }
+
+            // Remove member expectations
+            let removeMemberExpectation = XCTestExpectation(description: "Remove Member")
+            let expectedGroupID = conversation.mlsGroupID
+            let expectedClientIDs = clientIDs
+
+            XCTAssertEqual(expectedClientIDs.count, 2)
+
+            mockMLSController.removeMembersMock = { clientIDs, groupID in
+                XCTAssertEqual(groupID, expectedGroupID)
+                XCTAssertEqual(clientIDs, expectedClientIDs)
+                removeMemberExpectation.fulfill()
+            }
+
+            // WHEN
+            conversation.internalRemoveParticipant(user, completion: { _ in }, mlsClientIDsProvider: providerMock)
+
+            // THEN
+            wait(for: [mlsClientsExpectation, removeMemberExpectation], timeout: 0.5)
+        }
+    }
+
+    func test_RemoveSelfUser_FromMLSConversation() {
+        syncMOC.performAndWait {
+            // GIVEN
+            // set mock MLSController
+            let mockMLSController = MockMLSController()
+            syncMOC.test_setMockMLSController(mockMLSController)
+
+            // mock action handler
+            let mockActionHandler = MockActionHandler<RemoveParticipantAction>(
+                result: .success(()),
+                context: syncMOC.notificationContext
+            )
+
+            // create conversation
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mls
+
+            // create self user
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+
+            // expect that we don't call clients provider
+            let providerMock = MLSClientIDsProviderMock()
+            let mlsClientsExpectation = XCTestExpectation(description: "User Clients Not Fetched")
+            mlsClientsExpectation.isInverted = true
+
+            providerMock.fetchUserClientsMock = { _, _ in
+                mlsClientsExpectation.fulfill()
+                return []
+            }
+
+            // expect that we dont call MLSController
+            let removeMembersExpectation = XCTestExpectation(description: "Remove Members Not Called")
+            removeMembersExpectation.isInverted = true
+
+            mockMLSController.removeMembersMock = { _, _ in
+                removeMembersExpectation.fulfill()
+            }
+
+            // WHEN
+            conversation.internalRemoveParticipant(selfUser, completion: { _ in }, mlsClientIDsProvider: providerMock)
+
+            // THEN
+            XCTAssertTrue(mockActionHandler.didPerformAction)
+            wait(for: [mlsClientsExpectation, removeMembersExpectation], timeout: 0.5)
+        }
+    }
+
+    func test_RemoveUser_FromProteusConversation() {
+        syncMOC.performAndWait {
+            // GIVEN
+            // mock action handler
+            let mockActionHandler = MockActionHandler<RemoveParticipantAction>(
+                result: .success(()),
+                context: syncMOC.notificationContext
+            )
+
+            // create conversation
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.conversationType = .group
+            conversation.messageProtocol = .proteus
+
+            // create user
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            user.domain = "domain.com"
+
+            // WHEN
+            conversation.removeParticipant(selfUser, completion: { _ in })
+
+            // THEN
+            XCTAssertTrue(mockActionHandler.didPerformAction)
+        }
+    }
+
 }

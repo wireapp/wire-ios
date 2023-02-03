@@ -185,7 +185,8 @@ public class UserClient: ZMManagedObject, UserClientType {
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
             ZMUserClientNeedsToUpdateSignalingKeysKey,
-            ZMUserClientNeedsToUpdateCapabilitiesKey
+            ZMUserClientNeedsToUpdateCapabilitiesKey,
+            UserClient.needsToUploadMLSPublicKeysKey
         ]
     }
 

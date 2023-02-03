@@ -61,7 +61,7 @@
 
 - (NSString *)senderClientID
 {
-    if (self.type == ZMUpdateEventTypeConversationOtrMessageAdd || self.type == ZMUpdateEventTypeConversationOtrAssetAdd) {
+    if (self.type == ZMUpdateEventTypeConversationOtrMessageAdd || self.type == ZMUpdateEventTypeConversationOtrAssetAdd || self.type == ZMUpdateEventTypeConversationMLSMessageAdd) {
         return [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"sender"];
     }
     return nil;
@@ -79,7 +79,7 @@
 
 - (NSString *)recipientClientID
 {
-    if (self.type == ZMUpdateEventTypeConversationOtrMessageAdd || self.type == ZMUpdateEventTypeConversationOtrAssetAdd) {
+    if (self.type == ZMUpdateEventTypeConversationOtrMessageAdd || self.type == ZMUpdateEventTypeConversationOtrAssetAdd || self.type == ZMUpdateEventTypeConversationMLSMessageAdd) {
         return [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"recipient"];
     }
     return nil;
