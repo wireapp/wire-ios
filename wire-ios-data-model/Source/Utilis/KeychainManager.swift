@@ -32,6 +32,7 @@ public enum KeychainManager {
         case failedToGeneratePublicPrivateKey(underlyingError: Swift.Error?)
         case failedToCopyPublicKey
     }
+
     // MARK: - Keychain access
     static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
@@ -48,12 +49,14 @@ public enum KeychainManager {
         }
         return value as! T
     }
+
     static func deleteItem(_ item: KeychainItemProtocol) throws {
         let status = SecItemDelete(item.getQuery as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw Error.failedToDeleteItemFromKeychain(status)
         }
     }
+
     // MARK: - Key generation
     static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
         var key = [UInt8](repeating: 0, count: Int(numberOfBytes))
@@ -63,6 +66,7 @@ public enum KeychainManager {
         }
         return Data(key)
     }
+
     static func generatePublicPrivateKeyPair(identifier: String) throws -> (privateKey: SecKey, publicKey: SecKey) {
         #if targetEnvironment(simulator)
         return try generateSimulatorPublicPrivateKeyPair(identifier: identifier)
@@ -70,6 +74,7 @@ public enum KeychainManager {
         return try generateSecureEnclavePublicPrivateKeyPair(identifier: identifier)
         #endif
     }
+
     private static func generateSecureEnclavePublicPrivateKeyPair(identifier: String) throws -> (privateKey: SecKey, publicKey: SecKey) {
         var accessError: Unmanaged<CFError>?
         guard let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
@@ -101,6 +106,7 @@ public enum KeychainManager {
         }
         return (privateKey, publicKey)
     }
+
     private static func generateSimulatorPublicPrivateKeyPair(identifier: String) throws -> (privateKey: SecKey, publicKey: SecKey) {
         var accessError: Unmanaged<CFError>?
         guard let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,

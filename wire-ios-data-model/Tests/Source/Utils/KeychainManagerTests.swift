@@ -99,11 +99,11 @@ class KeychainManagerTests: XCTestCase {
             try KeychainManager.storeItem(item, value: key)
 
             // When I fetch the key
-            let fetchItem: Data = try KeychainManager.fetchItem(item)
+            let fetchedItem: Data = try KeychainManager.fetchItem(item)
 
             // Then the key is not nil and equal to the one I stored.
             XCTAssertNotNil(key, "Failed to generate the key.")
-            XCTAssertEqual(fetchItem, key)
+            XCTAssertEqual(fetchedItem, key)
 
         } catch let error {
             XCTFail("Failed to fetch the item with error: \(error).")

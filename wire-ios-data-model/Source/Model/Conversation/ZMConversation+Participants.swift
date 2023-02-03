@@ -22,7 +22,8 @@ import WireProtos
 public enum ConversationRemoveParticipantError: Error {
    case unknown,
         invalidOperation,
-        conversationNotFound
+        conversationNotFound,
+        failedToRemoveMLSMembers
 }
 
 public enum ConversationAddParticipantsError: Error {
@@ -32,7 +33,8 @@ public enum ConversationAddParticipantsError: Error {
         notConnectedToUser,
         conversationNotFound,
         tooManyMembers,
-        missingLegalHoldConsent
+        missingLegalHoldConsent,
+        failedToAddMLSMembers
 }
 
 public class AddParticipantAction: EntityAction {
@@ -63,6 +65,19 @@ public class RemoveParticipantAction: EntityAction {
         userID = user.objectID
         conversationID = conversation.objectID
     }
+}
+
+class MLSClientIDsProvider {
+
+    func fetchUserClients(
+        for userID: QualifiedID,
+        in context: NotificationContext
+    ) async throws -> [MLSClientID] {
+        var action = FetchUserClientsAction(userIDs: [userID])
+        let userClients = try await action.perform(in: context)
+        return userClients.compactMap(MLSClientID.init(qualifiedClientID:))
+    }
+
 }
 
 extension ZMConversation {
@@ -125,12 +140,13 @@ extension ZMConversation {
 
     // MARK: - Participant actions
 
-    public func addParticipants(_ participants: [UserType],
-                                completion: @escaping AddParticipantAction.ResultHandler) {
-        guard
-            let context = managedObjectContext
-        else {
-            return completion(.failure(ConversationAddParticipantsError.unknown))
+    public func addParticipants(
+        _ participants: [UserType],
+        completion: @escaping AddParticipantAction.ResultHandler
+    ) {
+        guard let context = managedObjectContext else {
+            completion(.failure(.unknown))
+            return
         }
 
         let users = participants.materialize(in: context)
@@ -140,16 +156,78 @@ extension ZMConversation {
             !users.isEmpty,
             !users.contains(ZMUser.selfUser(in: context))
         else {
-            return completion(.failure(ConversationAddParticipantsError.invalidOperation))
+            completion(.failure(.invalidOperation))
+            return
         }
 
-        var action = AddParticipantAction(users: users, conversation: self)
-        action.onResult(resultHandler: completion)
-        action.send(in: context.notificationContext)
+        switch messageProtocol {
+
+        case .proteus:
+            var action = AddParticipantAction(users: users, conversation: self)
+            action.onResult(resultHandler: completion)
+            action.send(in: context.notificationContext)
+
+        case .mls:
+            Logging.mls.info("adding \(participants.count) participants to conversation (\(String(describing: qualifiedID)))")
+
+            var mlsController: MLSControllerProtocol?
+
+            context.zm_sync.performAndWait {
+                mlsController = context.zm_sync.mlsController
+            }
+
+            guard
+                let mlsController = mlsController,
+                let groupID = mlsGroupID?.base64EncodedString,
+                let mlsGroupID = MLSGroupID(base64Encoded: groupID)
+            else {
+                Logging.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): invalid operation")
+                completion(.failure(.invalidOperation))
+                return
+            }
+
+            let mlsUsers = users.compactMap(MLSUser.init(from:))
+
+            // If we don't copy the id here (contexts thread), then the app will
+            // crash if we try to use it in the task (not on the contexts thread).
+            let qualifiedID = self.qualifiedID
+
+            Task {
+                do {
+                    try await mlsController.addMembersToConversation(with: mlsUsers, for: mlsGroupID)
+
+                    context.perform {
+                        completion(.success(()))
+                    }
+
+                } catch {
+                    Logging.mls.error("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+
+                    context.perform {
+                        completion(.failure(.failedToAddMLSMembers))
+                    }
+
+                }
+            }
+        }
     }
 
-    public func removeParticipant(_ participant: UserType,
-                                  completion: @escaping RemoveParticipantAction.ResultHandler) {
+    public func removeParticipant(
+        _ participant: UserType,
+        completion: @escaping RemoveParticipantAction.ResultHandler
+    ) {
+        internalRemoveParticipant(
+            participant,
+            completion: completion,
+            mlsClientIDsProvider: MLSClientIDsProvider()
+        )
+    }
+
+    func internalRemoveParticipant(
+        _ participant: UserType,
+        completion: @escaping RemoveParticipantAction.ResultHandler,
+        mlsClientIDsProvider provider: MLSClientIDsProvider
+    ) {
         guard
             let context = managedObjectContext
         else {
@@ -163,9 +241,49 @@ extension ZMConversation {
             return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
         }
 
-        var action = RemoveParticipantAction(user: user, conversation: self)
-        action.onResult(resultHandler: completion)
-        action.send(in: context.notificationContext)
+        switch (messageProtocol, user.isSelfUser) {
+
+        case (.proteus, _), (.mls, true):
+            var action = RemoveParticipantAction(user: user, conversation: self)
+            action.onResult(resultHandler: completion)
+            action.send(in: context.notificationContext)
+
+        case (.mls, false):
+            Logging.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
+
+            var mlsController: MLSControllerProtocol?
+
+            context.zm_sync.performAndWait {
+                mlsController = context.zm_sync.mlsController
+            }
+
+            guard
+                let mlsController = mlsController,
+                let groupID = mlsGroupID,
+                let userID = user.qualifiedID
+            else {
+                Logging.mls.info("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
+                completion(.failure(.invalidOperation))
+                return
+            }
+
+            Task {
+                do {
+                    let clientIDs = try await provider.fetchUserClients(for: userID, in: context.notificationContext)
+                    try await mlsController.removeMembersFromConversation(with: clientIDs, for: groupID)
+
+                    context.perform {
+                        completion(.success(()))
+                    }
+
+                } catch {
+                    context.perform {
+                        Logging.mls.warn("failed to remove participant from conversation (\(String(describing: self.qualifiedID))): \(String(describing: error))")
+                        completion(.failure(.failedToRemoveMLSMembers))
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Participants methods
@@ -265,6 +383,7 @@ extension ZMConversation {
             self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
             self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }), addedSelfUser: addedSelfUser)
         }
+
     }
 
     private enum FetchOrCreation {
@@ -332,9 +451,10 @@ extension ZMConversation {
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
 
-            guard existingUsers.contains(user),
+            guard
+                existingUsers.contains(user),
                 let existingRole = participantRoles.first(where: { $0.user == user })
-                else { return nil }
+            else { return nil }
 
             participantRoles.remove(existingRole)
             moc.delete(existingRole)

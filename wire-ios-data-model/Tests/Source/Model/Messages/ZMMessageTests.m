@@ -347,6 +347,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
                             @(ZMUpdateEventTypeConversationClientMessageAdd),
                             @(ZMUpdateEventTypeConversationOtrMessageAdd),
                             @(ZMUpdateEventTypeConversationOtrAssetAdd),
+                            @(ZMUpdateEventTypeConversationMLSMessageAdd),
                             @(ZMUpdateEventTypeConversationAssetAdd),
                             @(ZMUpdateEventTypeConversationKnock),
                             ];

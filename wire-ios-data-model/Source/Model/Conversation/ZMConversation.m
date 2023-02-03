@@ -350,7 +350,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationNeedsToDownloadRolesKey,
             @"isSelfAnActiveMember", // DEPRECATED
             @"lastServerSyncedActiveParticipants", // DEPRECATED
-            ZMConversationDomainKey
+            ZMConversationDomainKey,
+            ZMConversation.messageProtocolKey,
+            ZMConversation.mlsGroupIdKey,
+            ZMConversation.mlsStatusKey,
+            ZMConversation.commitPendingProposalDateKey,
+            ZMConversation.epochKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];

@@ -27,7 +27,8 @@ extension ZMUpdateEvent {
             return payload.dictionary(forKey: "data")?["nonce"] as? UUID
         case .conversationClientMessageAdd,
              .conversationOtrMessageAdd,
-             .conversationOtrAssetAdd:
+             .conversationOtrAssetAdd,
+             .conversationMLSMessageAdd:
             let message = GenericMessage(from: self)
             guard let messageID = message?.messageID else {
                 return nil
