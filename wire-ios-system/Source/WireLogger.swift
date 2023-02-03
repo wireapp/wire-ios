@@ -21,11 +21,13 @@ import Foundation
 public struct WireLogger: LoggerProtocol {
 
   public static var provider: LoggerProtocol?
+  public let payloadEncoder: JSONEncoder
 
   public let tag: String
 
-  public init(tag: String = "") {
+  public init(tag: String = "", payloadEncoder: JSONEncoder = JSONEncoder()) {
     self.tag = tag
+    self.payloadEncoder = payloadEncoder
   }
 
   public func debug(
@@ -74,6 +76,14 @@ public struct WireLogger: LoggerProtocol {
   ) {
     guard shouldLogMessage(message) else { return }
     log(level: .critical, message: message, attributes: attributes)
+  }
+
+  public func prepareMessage(title: String, payload: LoggablePayload) -> String {
+    guard let payloadData = try? payloadEncoder.encode(payload),
+          let payloadString = String(data: payloadData, encoding: .utf8) else {
+      return "\(title): PAYLOAD ENCODING ERROR"
+    }
+    return "\(title): \(payloadString)"
   }
 
   private func shouldLogMessage(_ message: String) -> Bool {
@@ -127,6 +137,8 @@ public struct WireLogger: LoggerProtocol {
 
 public typealias LogAttributes = [String: Encodable]
 
+public typealias LoggablePayload = Encodable
+
 public protocol LoggerProtocol {
 
   func debug(_ message: String, attributes: LogAttributes?)
@@ -136,4 +148,5 @@ public protocol LoggerProtocol {
   func error(_ message: String, attributes: LogAttributes?)
   func critical(_ message: String, attributes: LogAttributes?)
 
+  func prepareMessage(title: String, payload: LoggablePayload) -> String
 }
