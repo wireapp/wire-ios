@@ -1882,10 +1882,7 @@
 		010497D72940F4F40046124D /* CustomBackendView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBackendView.swift; sourceTree = "<group>"; };
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
 		010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationShowCustomBackendInfoHandler.swift; sourceTree = "<group>"; };
-		01A5E041297FDAB400624B65 /* Pluginfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Pluginfile; sourceTree = "<group>"; };
-		01A5E042297FDAB400624B65 /* Fastfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; path = Fastfile; sourceTree = "<group>"; };
-		01A5E043297FDAB500624B65 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		01A5E044297FDAB500624B65 /* report.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = report.xml; sourceTree = "<group>"; };
+		01A5E043297FDAB500624B65 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		01A5E046297FDAB500624B65 /* updateLicenses */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateLicenses; sourceTree = "<group>"; };
 		01A5E047297FDAB500624B65 /* updateStylekit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateStylekit; sourceTree = "<group>"; };
 		01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = copyExtraAudioNotifications; sourceTree = "<group>"; };
@@ -3813,17 +3810,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01A5E040297FDAB400624B65 /* fastlane */ = {
-			isa = PBXGroup;
-			children = (
-				01A5E041297FDAB400624B65 /* Pluginfile */,
-				01A5E042297FDAB400624B65 /* Fastfile */,
-				01A5E043297FDAB500624B65 /* README.md */,
-				01A5E044297FDAB500624B65 /* report.xml */,
-			);
-			path = fastlane;
-			sourceTree = "<group>";
-		};
 		01A5E045297FDAB500624B65 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
@@ -5804,7 +5790,7 @@
 		8F42C52F199244A700288E4D = {
 			isa = PBXGroup;
 			children = (
-				01A5E040297FDAB400624B65 /* fastlane */,
+				01A5E043297FDAB500624B65 /* README.md */,
 				01A5E045297FDAB500624B65 /* Scripts */,
 				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
 				87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */,
