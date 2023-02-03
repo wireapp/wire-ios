@@ -81,7 +81,17 @@ extension Decodable {
 
 extension Encodable {
 
-    /// Encode object to binary payload and log an error if it fails
+    /// Encode object to string payload and log an error if it fails.
+    ///
+    /// - parameter encoder: JSONEncoder to use
+
+    func payloadString(encoder: JSONEncoder = .defaultEncoder) -> String? {
+        return payloadData(encoder: encoder).flatMap {
+            String(data: $0, encoding: .utf8)
+        }
+    }
+
+    /// Encode object to binary payload and log an error if it fails.
     ///
     /// - parameter encoder: JSONEncoder to use
 

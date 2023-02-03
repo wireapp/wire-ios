@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // MARK: - Conversation
 
@@ -168,11 +169,14 @@ extension Payload.Conversation {
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.epoch = UInt64(epoch ?? 0)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
+        updateMessageProtocol(for: conversation)
+        updateMLSStatus(for: conversation, context: context, source: source)
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -237,6 +241,34 @@ extension Payload.Conversation {
         }
         if let messageTimer = messageTimer {
             conversation.updateMessageDestructionTimeout(timeout: messageTimer)
+        }
+    }
+
+    private func updateMessageProtocol(for conversation: ZMConversation) {
+        guard let messageProtocolString = messageProtocol else {
+            Logging.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let messageProtocol = MessageProtocol(string: messageProtocolString) else {
+            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        conversation.messageProtocol = messageProtocol
+    }
+
+    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext, source: Source) {
+        let mlsEventProcessor = MLSEventProcessor.shared
+
+        mlsEventProcessor.updateConversationIfNeeded(
+            conversation: conversation,
+            groupID: mlsGroupID,
+            context: context
+        )
+
+        if source == .slowSync {
+            mlsEventProcessor.joinMLSGroupWhenReady(forConversation: conversation, context: context)
         }
     }
 
@@ -323,45 +355,14 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLe
         }
 
         let sender = fetchOrCreateSender(in: context)
+
+        // Idea for improvement, return removed users from this call to benefit from
+        // checking that the participants are in the conversation before being removed
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
-    }
 
-}
-
-extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        guard
-            let conversation = fetchOrCreateConversation(in: context)
-        else {
-            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
-            return
+        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
+            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
         }
-
-        if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
-            let selfUser = ZMUser.selfUser(in: context)
-            let users = Set(usersAndRoles.map { $0.0 })
-            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
-
-            if users.contains(selfUser) || newUsers {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-
-            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
-            // NOTE: legacy code path for backwards compatibility with servers without role support
-
-            let users = Set(users)
-            let selfUser = ZMUser.selfUser(in: context)
-
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
-        }
-
     }
 
 }
@@ -493,6 +494,17 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         // TODO jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+    }
+
+}
+
+extension Payload.UpdateConversationMLSWelcome {
+
+    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+        MLSEventProcessor.shared.process(
+            welcomeMessage: data,
+            in: context
+        )
     }
 
 }

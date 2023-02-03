@@ -117,9 +117,12 @@ extension EventDecoder {
             guard let `self` = self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-                if event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd {
+                switch event.type {
+                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                     return sessionsDirectory.decryptAndAddClient(event, in: self.syncMOC)
-                } else {
+                case .conversationMLSMessageAdd:
+                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                default:
                     return event
                 }
             }
@@ -138,6 +141,68 @@ extension EventDecoder {
         }
 
         return decryptedEvents
+    }
+
+    func decryptMlsMessage(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> ZMUpdateEvent? {
+        Logging.mls.info("decrypting mls message")
+
+        guard let mlsController = context.mlsController else {
+            Logging.mls.warn("failed to decrypt mls message: MLSController is missing")
+            return nil
+        }
+
+        guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
+            Logging.mls.warn("failed to decrypt mls message: invalid update event payload")
+            return nil
+        }
+
+        guard let conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context) else {
+            Logging.mls.warn("failed to decrypt mls message: conversation not found in db")
+            return nil
+        }
+
+        guard conversation.mlsStatus == .ready else {
+            Logging.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))")
+            return nil
+        }
+
+        guard let groupID = conversation.mlsGroupID else {
+            Logging.mls.warn("failed to decrypt mls message: missing MLS group ID")
+            return nil
+        }
+
+        do {
+            guard
+                let result = try mlsController.decrypt(message: payload.data,
+                                                       for: groupID)
+            else {
+                Logging.mls.info("successfully decrypted mls message but no result was returned")
+                return nil
+            }
+
+            switch result {
+            case .message(let decryptedData, let senderClientID):
+                return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
+            case .proposal(let commitDelay):
+                let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
+                mlsController.scheduleCommitPendingProposals(groupID: groupID, at: scheduledDate)
+
+                if updateEvent.source == .webSocket {
+                    Task {
+                        do {
+                            try await mlsController.commitPendingProposals()
+                        } catch {
+                            Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+                        }
+                    }
+                }
+                return nil
+            }
+
+        } catch {
+            Logging.mls.warn("failed to decrypt mls message: \(String(describing: error))")
+            return nil
+        }
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.

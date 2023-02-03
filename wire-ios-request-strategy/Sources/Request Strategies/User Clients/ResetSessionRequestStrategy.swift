@@ -21,15 +21,18 @@ import Foundation
 public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
-    fileprivate let messageSync: ProteusMessageSync<GenericMessageEntity>
+    fileprivate let messageSync: MessageSync<GenericMessageEntity>
 
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 clientRegistrationDelegate: ClientRegistrationDelegate) {
 
         self.keyPathSync = KeyPathObjectSync(entityName: UserClient.entityName(), \.needsToNotifyOtherUserAboutSessionReset)
-        self.messageSync = ProteusMessageSync(context: managedObjectContext,
-                                              applicationStatus: applicationStatus)
+
+        self.messageSync = MessageSync(
+            context: managedObjectContext,
+            appStatus: applicationStatus
+        )
 
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)

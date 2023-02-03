@@ -17,6 +17,7 @@
 
 import Foundation
 import XCTest
+import WireDataModel
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -114,6 +115,38 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertEqual(payload?.name, conversation.userDefinedName)
             XCTAssertEqual(Set(payload!.qualifiedUsers!), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
+        }
+    }
+
+    func testThatRequestToCreateConversationIsGenerated_V2() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v2
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.userDefinedName = "Hello World"
+            conversation.messageProtocol = .mls
+            conversation.addParticipantAndUpdateConversationState(user: self.otherUser, role: nil)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
+
+            // when
+            let request = self.sut.nextRequest(for: self.apiVersion)!
+
+            guard let payload = Payload.NewConversation(request) else {
+                XCTFail("failed to create payload")
+                return
+            }
+
+            // then
+            XCTAssertEqual(request.path, "/v2/conversations")
+            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(payload.name, conversation.userDefinedName)
+            XCTAssertEqual(payload.messageProtocol, "mls")
+            XCTAssertNil(payload.qualifiedUsers)
+            XCTAssertNil(payload.users)
+            XCTAssertEqual(payload.creatorClient, self.selfClient.remoteIdentifier!)
         }
     }
 
@@ -312,6 +345,61 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Response processing
 
+    func testThatMLSGroupIsCreated() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            let mlsController = MockMLSController()
+            self.syncMOC.test_setMockMLSController(mlsController)
+
+            let id = UUID.create()
+            let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
+            let mlsGroupID = MLSGroupID([1, 2, 3])
+
+            guard let request = self.sut.request(
+                forInserting: self.groupConversation,
+                forKeys: nil,
+                apiVersion: .v2
+            ) else {
+                XCTFail("Failed to create request")
+                return
+            }
+
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                id: id,
+                type: BackendConversationType.group.rawValue,
+                messageProtocol: "mls",
+                mlsGroupID: mlsGroupID.base64EncodedString
+            )
+
+            let payloadData = payload.payloadData()!
+            let payloadString = String(bytes: payloadData, encoding: .utf8)!
+
+            let response = ZMTransportResponse(
+                payload: payloadString as ZMTransportData,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: 2
+            )
+
+            // when
+            self.sut.updateInsertedObject(
+                self.groupConversation,
+                request: request,
+                response: response
+            )
+
+            // then
+            XCTAssertEqual(mlsController.createGroupCalls.count, 1)
+
+            let createGroupCall = mlsController.createGroupCalls.element(atIndex: 0)
+            XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
+            XCTAssertEqual(self.groupConversation.mlsStatus, .ready)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
@@ -362,11 +450,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             // given
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                               type: BackendConversationType.group.rawValue,
-                                               name: "Hello World",
-                                               members: .init(selfMember: Payload.ConversationMember(id: selfUserID),
-                                                              others: []))
+            let payload = Payload.Conversation.stub(
+                qualifiedID: qualifiedID,
+                type: .group,
+                name: "Hello World",
+                members: .init(selfMember: Payload.ConversationMember(id: selfUserID),
+                others: [])
+            )
             let event = updateEvent(from: payload,
                                     conversationID: .init(uuid: UUID(), domain: owningDomain),
                                     senderID: otherUser.qualifiedID!,
@@ -985,6 +1075,37 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    // MARK: - MLS Welcome
+
+    func testThatItProcessesMLSWelcomeEvents() {
+        syncMOC.performAndWait {
+            // GIVEN
+            let mlsEventProcessorMock = MockMLSEventProcessor()
+            MLSEventProcessor.setMock(mlsEventProcessorMock)
+
+            let message = "welcome message"
+            let event = Payload.UpdateConversationMLSWelcome(
+                id: self.groupConversation.remoteIdentifier!,
+                qualifiedID: self.groupConversation.qualifiedID,
+                from: self.otherUser.remoteIdentifier,
+                qualifiedFrom: self.otherUser.qualifiedID,
+                timestamp: Date(),
+                type: "conversation.mls-welcome",
+                data: message
+            )
+
+            let updateEvent = self.updateEvent(from: event.payloadData()!)
+
+            // WHEN
+            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
+
+            // THEN
+            XCTAssertEqual(mlsEventProcessorMock.calls.processWelcomeMessage.first, message)
+
+            MLSEventProcessor.reset()
+        }
+    }
+
     // MARK: - Helpers
 
     func qualifiedID(for conversation: ZMConversation) -> QualifiedID {
@@ -1099,20 +1220,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     func conversation(uuid: UUID, domain: String?, type: BackendConversationType = .group) -> Payload.Conversation {
-        return Payload.Conversation(qualifiedID: nil,
-                                    id: uuid,
-                                    type: type.rawValue,
-                                    creator: nil,
-                                    access: nil,
-                                    accessRole: nil,
-                                    accessRoleV2: nil,
-                                    name: nil,
-                                    members: nil,
-                                    lastEvent: nil,
-                                    lastEventTime: nil,
-                                    teamID: nil,
-                                    messageTimer: nil,
-                                    readReceiptMode: nil)
+        return Payload.Conversation.stub(
+            id: uuid,
+            type: type
+        )
     }
 
     func updateEvent(type: String,
