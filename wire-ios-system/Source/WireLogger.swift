@@ -78,7 +78,7 @@ public struct WireLogger: LoggerProtocol {
     log(level: .critical, message: message, attributes: attributes)
   }
 
-  public func prepareMessage(title: String, payload: LoggablePayload) -> String {
+  public func prepareMessage<Payload: LoggablePayload>(title: String, payload: Payload) -> String {
     guard let payloadData = try? payloadEncoder.encode(payload),
           let payloadString = String(data: payloadData, encoding: .utf8) else {
       return "\(title): PAYLOAD ENCODING ERROR"
@@ -148,5 +148,5 @@ public protocol LoggerProtocol {
   func error(_ message: String, attributes: LogAttributes?)
   func critical(_ message: String, attributes: LogAttributes?)
 
-  func prepareMessage(title: String, payload: LoggablePayload) -> String
+  func prepareMessage<Payload: LoggablePayload>(title: String, payload: Payload) -> String
 }
