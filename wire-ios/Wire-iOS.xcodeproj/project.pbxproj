@@ -1301,8 +1301,6 @@
 		EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98A09D296ED46D0055E981 /* DeviceConfigurationEventHandler.swift */; };
 		EE997A1A2507A851008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A192507A851008336D2 /* Logging.swift */; };
 		EE9A857629896B4D00064A9C /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		EE9A857729896B4D00064A9C /* CrashReporter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE9A857929896B9F00064A9C /* CrashReporter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A857F29896D2900064A9C /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		EE9A858029896D2900064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1330,7 +1328,6 @@
 		EECA835426F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECA835326F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift */; };
 		EECA90AA287449EC0024B301 /* DeveloperFlagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECA90A9287449EC0024B301 /* DeveloperFlagsView.swift */; };
 		EECA90AC28744A060024B301 /* DeveloperFlagsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECA90AB28744A060024B301 /* DeveloperFlagsViewModel.swift */; };
-		EECC5232297AC0D300177AB5 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EECC522F297AC0A800177AB5 /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		EECDB2562029F5AB00D0D268 /* MarkdownTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECDB2552029F5AB00D0D268 /* MarkdownTextStorage.swift */; };
 		EED92353278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */; };
 		EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */; };
@@ -1840,7 +1837,6 @@
 				EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */,
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
-				EE9A857929896B9F00064A9C /* CrashReporter.xcframework in Embed Frameworks */,
 				EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */,
 				EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */,
 				EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */,
@@ -1872,7 +1868,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EE9A857729896B4D00064A9C /* CrashReporter.xcframework in Embed Frameworks */,
 				EE9A858029896D2900064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */,
 				EE8297202971A30700F12CAA /* Datadog.xcframework in Embed Frameworks */,
 			);
@@ -3336,7 +3331,6 @@
 		EECA835326F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAlertControllerFeatureConfigSnapshotTests.swift; sourceTree = "<group>"; };
 		EECA90A9287449EC0024B301 /* DeveloperFlagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlagsView.swift; sourceTree = "<group>"; };
 		EECA90AB28744A060024B301 /* DeveloperFlagsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlagsViewModel.swift; sourceTree = "<group>"; };
-		EECC522F297AC0A800177AB5 /* CrashReporter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CrashReporter.xcframework; path = Carthage/Build/CrashReporter.xcframework; sourceTree = "<group>"; };
 		EECDB2552029F5AB00D0D268 /* MarkdownTextStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextStorage.swift; sourceTree = "<group>"; };
 		EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccentColorPickerSnapshotTests.swift; path = "Wire-iOS Tests/AccentColorPickerSnapshotTests.swift"; sourceTree = SOURCE_ROOT; };
 		EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+Invite.swift"; sourceTree = "<group>"; };
