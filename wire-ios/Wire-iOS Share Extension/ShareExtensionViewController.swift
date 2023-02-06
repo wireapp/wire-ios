@@ -331,18 +331,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 self.present(alert, animated: true)
 
             case .error(let error):
-                logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .error)
-                    )
-                )
                 if let errorDescription = (error as? UnsentSendableError )?.errorDescription {
                     let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription)
-                    logger.info("we hit an error: \(errorDescription)")
                     self.present(alert, animated: true) {
                         self.popConfigurationViewController()
                     }
+                    logger.info(
+                        logger.prepareMessage(
+                            title: "SHARING",
+                            payload: SharingLogPayload(status: .error, errorDescription: errorDescription)
+                        )
+                    )
                 }
             case .fileSharingRestriction:
                 logger.info(

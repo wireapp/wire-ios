@@ -21,7 +21,7 @@ import Foundation
 public struct WireLogger: LoggerProtocol {
 
   public static var provider: LoggerProtocol?
-  public let payloadEncoder: JSONEncoder
+  private let payloadEncoder: JSONEncoder
 
   public let tag: String
 
