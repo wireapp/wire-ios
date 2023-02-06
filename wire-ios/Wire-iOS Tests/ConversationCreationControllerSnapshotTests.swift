@@ -64,8 +64,7 @@ final class ConversationCreationControllerSnapshotTests: ZMSnapshotTestCase {
 
     func testTeamGroupOptionsExpanded() {
         createSut(isTeamMember: true)
-
-        sut.optionsExpanded = true
+        sut.expandOptions()
 
         verify(matching: sut)
     }

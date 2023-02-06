@@ -114,6 +114,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             header: "Actions",
             items: [
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
+                .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -149,7 +150,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
                     .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None"))
+                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
                 ]
             ))
         }
@@ -198,6 +200,13 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func sendDebugLogs() {
         DebugLogSender.sendLogsByEmail(message: "Send logs")
+    }
+
+    private func performQuickSync() {
+        Task {
+            guard let session = ZMUserSession.shared() else { return }
+            await session.syncStatus?.performQuickSync()
+        }
     }
 
     private func checkRegisteredTokens() {
