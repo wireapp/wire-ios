@@ -19,31 +19,6 @@
 
 import Foundation
 import WireRequestStrategy
-import OSLog
-
-struct WireLogger {
-
-    private var logger: Any?
-    private var infoBlock: ((String) -> Void)?
-
-    init(category: String) {
-        // Disabled for now, re-enable when you want to debug.
-        if false, #available(iOS 14, *) {
-            let logger = Logger(subsystem: "VoIP Push", category: category)
-            infoBlock = { message in
-                logger.info("\(message, privacy: .public)")
-            }
-            self.logger = logger
-        }
-    }
-
-    func info(_ message: String) {
-        infoBlock?(message)
-    }
-
-}
-
-let logger = WireLogger(category: "Notification Engine")
 
 public enum NotificationSessionError: Error {
 
@@ -111,6 +86,8 @@ public class NotificationSession {
     }
 
     public weak var delegate: NotificationSessionDelegate?
+
+    private let logger = WireLogger(tag: "Notification Engine")
 
     // MARK: - Life cycle
         
@@ -248,11 +225,11 @@ public class NotificationSession {
     // MARK: - Methods
     
     public func processPushNotification(with payload: [AnyHashable: Any]) {
-        Logging.network.debug("Received push notification with payload: \(payload)")
+        logger.debug("Received push notification with payload: \(payload)")
 
         coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
-                Logging.push.safePublic("Not displaying notification because app is not authenticated")
+                self.logger.info("Not displaying notification because app is not authenticated")
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
             }
