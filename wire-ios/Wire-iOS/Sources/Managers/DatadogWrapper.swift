@@ -85,7 +85,6 @@ public class DatadogWrapper {
             .build()
 
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
-
         WireLogger.provider = self
     }
 
@@ -190,6 +189,7 @@ extension DatadogWrapper: WireSystem.LoggerProtocol {
     }
 
 }
+
 // MARK: - Crypto helper
 
 import CryptoKit
