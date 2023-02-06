@@ -347,7 +347,10 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 - (BOOL)shouldParseErrorForResponse:(ZMTransportResponse *)response
 {
     [self.pushNotificationStatus didFailToFetchEvents];
-    
+
+    if (response.apiVersion >= APIVersionV3) {
+        return NO;
+    }
     if (response.HTTPStatus == 404) {
         return YES;
     }
