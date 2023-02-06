@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 import avs
+import CoreCrypto
 
 enum ApplicationLaunchType {
     case unknown
@@ -292,7 +293,8 @@ private extension AppDelegate {
             requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
-            isDeveloperModeEnabled: Bundle.developerModeEnabled
+            isDeveloperModeEnabled: Bundle.developerModeEnabled,
+            coreCryptoSetup: CoreCryptoWrapper.setup
         )
 
         voIPPushManager.delegate = sessionManager

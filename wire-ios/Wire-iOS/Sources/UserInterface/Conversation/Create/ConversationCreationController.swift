@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 import WireDataModel
 
 protocol ConversationCreationValuesConfigurable: AnyObject {
@@ -29,10 +30,12 @@ final class ConversationCreationValues {
     private var unfilteredParticipants: UserSet
     private let selfUser: UserType
 
+    var name: String
     var allowGuests: Bool
     var allowServices: Bool
     var enableReceipts: Bool
-    var name: String
+    var encryptionProtocol: EncryptionProtocol
+
     var participants: UserSet {
         get {
             var result = unfilteredParticipants
@@ -54,33 +57,42 @@ final class ConversationCreationValues {
         }
     }
 
-    init (name: String = "",
-          participants: UserSet = UserSet(),
-          allowGuests: Bool = true,
-          allowServices: Bool = true,
-          enableReceipts: Bool = true,
-          selfUser: UserType) {
+    init(
+        name: String = "",
+        participants: UserSet = UserSet(),
+        allowGuests: Bool = true,
+        allowServices: Bool = true,
+        enableReceipts: Bool = true,
+        encryptionProtocol: EncryptionProtocol = .proteus,
+        selfUser: UserType
+    ) {
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
         self.allowServices = allowServices
         self.enableReceipts = enableReceipts
+        self.encryptionProtocol = encryptionProtocol
         self.selfUser = selfUser
     }
 }
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 
-    func conversationCreationController(_ controller: ConversationCreationController,
-                                        didSelectName name: String,
-                                        participants: UserSet,
-                                        allowGuests: Bool,
-                                        allowServices: Bool,
-                                        enableReceipts: Bool)
+    func conversationCreationController(
+        _ controller: ConversationCreationController,
+        didSelectName name: String,
+        participants: UserSet,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        encryptionProtocol: EncryptionProtocol
+    )
 
 }
 
 final class ConversationCreationController: UIViewController {
+
+    // MARK: - Properties
 
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
@@ -90,20 +102,45 @@ final class ConversationCreationController: UIViewController {
 
     private let collectionViewController = SectionCollectionViewController()
 
-    private lazy var nameSection: ConversationCreateNameSectionController = ConversationCreateNameSectionController(selfUser: selfUser, delegate: self)
+    fileprivate var navBarBackgroundView = UIView()
 
-    private lazy var errorSection: ConversationCreateErrorSectionController = {
-        return ConversationCreateErrorSectionController()
-    }()
+    private var preSelectedParticipants: UserSet?
+    private var values: ConversationCreationValues
 
-    private lazy var optionsSection: ConversationCreateOptionsSectionController = {
-        let section = ConversationCreateOptionsSectionController(values: self.values)
-        section.tapHandler = self.optionsTapped
+    weak var delegate: ConversationCreationControllerDelegate?
+
+    // MARK: - Sections
+
+    private lazy var nameSection = ConversationCreateNameSectionController(selfUser: selfUser, delegate: self)
+    private lazy var errorSection = ConversationCreateErrorSectionController()
+
+    private lazy var optionsToggle: ConversationCreateOptionsSectionController = {
+        let section = ConversationCreateOptionsSectionController(values: values)
+        section.tapHandler = optionsTapped
         return section
     }()
 
+    private lazy var optionsSections = [
+        guestsSection,
+        servicesSection,
+        receiptsSection,
+        shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
+    ].compactMap(\.self)
+
+    private var shouldIncludeEncryptionProtocolSection: Bool {
+        if DeveloperFlag.showCreateMLSGroupToggle.isOn {
+            return true
+        }
+
+        if AutomationHelper.sharedHelper.allowMLSGroupCreation == true {
+            return true
+        }
+
+        return selfUser.canCreateMLSGroups
+    }
+
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
-        let section = ConversationCreateGuestsSectionController(values: self.values)
+        let section = ConversationCreateGuestsSectionController(values: values)
         section.isHidden = true
 
         section.toggleAction = { [unowned self] allowGuests in
@@ -115,7 +152,7 @@ final class ConversationCreationController: UIViewController {
     }()
 
     private lazy var servicesSection: ConversationCreateServicesSectionController = {
-        let section = ConversationCreateServicesSectionController(values: self.values)
+        let section = ConversationCreateServicesSectionController(values: values)
         section.isHidden = true
 
         section.toggleAction = { [unowned self] allowServices in
@@ -126,7 +163,7 @@ final class ConversationCreationController: UIViewController {
     }()
 
     private lazy var receiptsSection: ConversationCreateReceiptsSectionController = {
-        let section = ConversationCreateReceiptsSectionController(values: self.values)
+        let section = ConversationCreateReceiptsSectionController(values: values)
         section.isHidden = true
 
         section.toggleAction = { [unowned self] enableReceipts in
@@ -137,20 +174,21 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    var optionsExpanded: Bool = false {
-        didSet {
-            self.guestsSection.isHidden = !optionsExpanded
-            self.servicesSection.isHidden = !optionsExpanded
-            self.receiptsSection.isHidden = !optionsExpanded
+    private lazy var encryptionProtocolSection: ConversationEncryptionProtocolSectionController = {
+        let section = ConversationEncryptionProtocolSectionController(values: values)
+        section.isHidden = true
+
+        section.tapAction = {
+            self.presentEncryptionProtocolPicker { [weak self] encryptionProtocol in
+                self?.values.encryptionProtocol = encryptionProtocol
+                self?.updateOptions()
+            }
         }
-    }
 
-    fileprivate var navBarBackgroundView = UIView()
+        return section
+    }()
 
-    fileprivate lazy var values = ConversationCreationValues(selfUser: selfUser)
-
-    weak var delegate: ConversationCreationControllerDelegate?
-    private var preSelectedParticipants: UserSet?
+    // MARK: - Life cycle
 
     convenience init() {
         self.init(preSelectedParticipants: nil, selfUser: ZMUser.selfUser())
@@ -158,17 +196,14 @@ final class ConversationCreationController: UIViewController {
 
     init(preSelectedParticipants: UserSet?, selfUser: UserType) {
         self.selfUser = selfUser
-        super.init(nibName: nil, bundle: nil)
+        self.values = ConversationCreationValues(selfUser: selfUser)
         self.preSelectedParticipants = preSelectedParticipants
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override var prefersStatusBarHidden: Bool {
-        return false
     }
 
     override func viewDidLoad() {
@@ -189,6 +224,16 @@ final class ConversationCreationController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         nameSection.becomeFirstResponder()
+    }
+
+    // MARK: - Methods
+
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ColorScheme.default.statusBarStyle
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -216,12 +261,7 @@ final class ConversationCreationController: UIViewController {
         collectionViewController.sections = [nameSection, errorSection]
 
         if selfUser.isTeamMember {
-            collectionViewController.sections.append(contentsOf: [
-                optionsSection,
-                guestsSection,
-                servicesSection,
-                receiptsSection
-            ])
+            collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
         }
 
         navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
@@ -245,10 +285,12 @@ final class ConversationCreationController: UIViewController {
             navigationItem.leftBarButtonItem = navigationController?.closeItem()
         }
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.next.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(tryToProceed))
+        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
+            title: L10n.Localizable.General.next.capitalized,
+            systemImage: false,
+            target: self,
+            action: #selector(tryToProceed)
+        )
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
@@ -260,6 +302,7 @@ final class ConversationCreationController: UIViewController {
         switch value {
         case let .error(error):
             errorSection.displayError(error)
+
         case let .valid(name):
             let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
             nameSection.resignFirstResponder()
@@ -275,16 +318,17 @@ final class ConversationCreationController: UIViewController {
         }
     }
 
-    @objc fileprivate func tryToProceed() {
+    @objc
+    private func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
     }
 
     private func updateOptions() {
-        self.optionsSection.configure(with: values)
+        self.optionsToggle.configure(with: values)
         self.guestsSection.configure(with: values)
         self.servicesSection.configure(with: values)
-        self.receiptsSection.configure(with: values)
+        self.encryptionProtocolSection.configure(with: values)
     }
 }
 
@@ -307,7 +351,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 participants: values.participants,
                 allowGuests: values.allowGuests,
                 allowServices: values.allowServices,
-                enableReceipts: values.enableReceipts
+                enableReceipts: values.enableReceipts,
+                encryptionProtocol: values.encryptionProtocol
             )
         }
     }
@@ -348,17 +393,63 @@ extension ConversationCreationController {
             return
         }
 
-        optionsExpanded = expanded
-
         let changes: () -> Void
+        let indexSet = IndexSet(integersIn: 3..<(3+optionsSections.count))
 
         if expanded {
             nameSection.resignFirstResponder()
-            changes = { collectionView.insertSections([3, 4, 5]) }
+            expandOptions()
+            changes = { collectionView.insertSections(indexSet) }
         } else {
-            changes = { collectionView.deleteSections([3, 4, 5]) }
+            collapseOptions()
+            changes = { collectionView.deleteSections(indexSet) }
         }
 
         collectionView.performBatchUpdates(changes)
     }
+
+    func expandOptions() {
+        optionsSections.forEach {
+            $0.isHidden = false
+        }
+    }
+
+    func collapseOptions() {
+        optionsSections.forEach {
+            $0.isHidden = true
+        }
+    }
+
+}
+
+extension ConversationCreationController {
+
+    func presentEncryptionProtocolPicker(_ completion: @escaping (EncryptionProtocol) -> Void) {
+        let alertViewController = encryptionProtocolPicker { type in
+            completion(type)
+        }
+
+        alertViewController.configPopover(pointToView: view)
+        present(alertViewController, animated: true)
+    }
+
+    func encryptionProtocolPicker(_ completion: @escaping (EncryptionProtocol) -> Void) -> UIAlertController {
+        let alert = UIAlertController(title: L10n.Localizable.Conversation.Create.Mls.pickerTitle, message: nil, preferredStyle: .actionSheet)
+
+        for encryptionProtocol in EncryptionProtocol.allCases {
+            alert.addAction(UIAlertAction(title: encryptionProtocol.rawValue, style: .default, handler: { _ in
+                completion(encryptionProtocol)
+            }))
+        }
+
+        alert.popoverPresentationController?.permittedArrowDirections = [ .up, .down ]
+        alert.addAction(UIAlertAction(title: L10n.Localizable.Conversation.Create.Mls.cancel, style: .cancel, handler: nil))
+
+        return alert
+    }
+}
+
+enum EncryptionProtocol: String, CaseIterable {
+    case proteus = "Proteus (default)"
+    case mls = "MLS"
 }
