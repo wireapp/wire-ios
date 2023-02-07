@@ -48,12 +48,14 @@ public class DatadogWrapper {
 
     var logger: Logger?
     var defaultLevel: LogLevel
+    private let payloadEncoder: JSONEncoder
 
     private init(
         appID: String,
         clientToken: String,
         environment: BackendEnvironmentProvider = BackendEnvironment.shared,
-        level: LogLevel = .debug
+        level: LogLevel = .debug,
+        payloadEncoder: JSONEncoder = JSONEncoder()
     ) {
         Datadog.initialize(
             appContext: .init(),
@@ -85,6 +87,7 @@ public class DatadogWrapper {
             .build()
 
         datadogUserId = UIDevice.current.identifierForVendor?.uuidString.sha256String ?? "none"
+        self.payloadEncoder = payloadEncoder
         WireLogger.provider = self
     }
 
@@ -163,6 +166,14 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
+
+    public func prepareMessage<Payload>(title: String, payload: Payload) -> String where Payload : Encodable {
+        guard let payloadData = try? payloadEncoder.encode(payload),
+              let payloadString = String(data: payloadData, encoding: .utf8) else {
+          return "\(title): PAYLOAD ENCODING ERROR"
+        }
+        return "\(title): \(payloadString)"
+    }
 
     public func debug(_ message: String, attributes: LogAttributes?) {
         log(level: .debug, message: message, attributes: attributes)
