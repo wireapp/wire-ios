@@ -28,5 +28,6 @@ enum Logging {
     static let localStorage = ZMSLog(tag: "local-storage")
     static let eventProcessing = ZMSLog(tag: "event-processing")
     static let mls = ZMSLog(tag: "mls")
+    static let proteus = ZMSLog(tag: "proteus")
 
 }

@@ -293,6 +293,7 @@
         63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63709F642993E7A600577D4B /* libcore_crypto_ffi.a */; };
 		63709F6B2994108700577D4B /* CoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6A2994108700577D4B /* CoreCrypto */; };
 		63709F6D2994108700577D4B /* LibCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6C2994108700577D4B /* LibCoreCrypto */; };
+		63709F612991680B00577D4B /* ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63709F602991680B00577D4B /* ProteusService.swift */; };
 		6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */; };
 		638805652410FE920043B641 /* ButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638805642410FE920043B641 /* ButtonState.swift */; };
 		6397F6E028F4447700298DB1 /* SendCommitBundleAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6DF28F4447700298DB1 /* SendCommitBundleAction.swift */; };
@@ -1115,6 +1116,7 @@
 		6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Federation.swift"; sourceTree = "<group>"; };
 		63709F632993E70B00577D4B /* CoreCrypto */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CoreCrypto; sourceTree = "<group>"; };
 		63709F642993E7A600577D4B /* libcore_crypto_ffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcore_crypto_ffi.a; path = CoreCrypto/lib/libcore_crypto_ffi.a; sourceTree = "<group>"; };
+		63709F602991680B00577D4B /* ProteusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusService.swift; sourceTree = "<group>"; };
 		63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Composite.swift"; sourceTree = "<group>"; };
 		63880556240FFE7A0043B641 /* zmessaging2.80.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.80.0.xcdatamodel; sourceTree = "<group>"; };
 		638805642410FE920043B641 /* ButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonState.swift; sourceTree = "<group>"; };
@@ -2064,6 +2066,7 @@
 				63121636288089E600FF9A56 /* Bytes.swift */,
 				633B396D2893BB2D00208124 /* Bytes+Random.swift */,
 				6397F6E728F972F600298DB1 /* CommitBundle+Protobuf.swift */,
+				63709F602991680B00577D4B /* ProteusService.swift */,
 			);
 			path = MLS;
 			sourceTree = "<group>";
@@ -3680,6 +3683,7 @@
 				1600D93C267A80D700970F99 /* ZMManagedObject+Fetching.swift in Sources */,
 				EE2B874624D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift in Sources */,
 				165124D62188CF66006A3C75 /* ZMClientMessage+Editing.swift in Sources */,
+				63709F612991680B00577D4B /* ProteusService.swift in Sources */,
 				165D3A2D1E1D47AB0052E654 /* ZMCallState.swift in Sources */,
 				F9A706731CAEE01D00C2F5FE /* AssetEncryption.swift in Sources */,
 				F9FD75731E2E6A2100B4558B /* ConversationListObserverCenter.swift in Sources */,
