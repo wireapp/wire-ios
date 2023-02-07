@@ -110,6 +110,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        DatadogWrapper.shared?.startMonitoring()
         setupObserver()
     }
 
