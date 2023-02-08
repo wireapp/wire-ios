@@ -21,6 +21,8 @@ import WireDataModel
 
 extension NSManagedObjectContext {
 
+    // TODO: [John] use flag here
+
     @objc
     public func deleteAndCreateNewEncryptionContext() {
         zm_cryptKeyStore.deleteAndCreateNewBox()

@@ -567,6 +567,7 @@ extension FetchClientRequestStrategyTests {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
+            // TODO: [John] use flag here
             self.selfClient.keysStore.encryptionContext.perform {
                 try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.selfClient.keysStore.lastPreKey()) // just a bogus key is OK
             }
