@@ -121,6 +121,7 @@ platform :ios do
         end
 
         build = Build.new(options: options)
+        export_method = options[:export_method] || build.export_method
 
         if build.for_simulator
             Dir.chdir("..") do
@@ -137,7 +138,7 @@ platform :ios do
             build_app(
                 scheme: "Wire-iOS",
                 configuration: build.configuration,
-                export_method: build.export_method,
+                export_method: export_method,
                 export_options: {"iCloudContainerEnvironment": "Production"},
                 derived_data_path: "DerivedData",
                 archive_path: build.archive_path(with_filename: true),
@@ -160,11 +161,12 @@ platform :ios do
         end
 
         build = Build.new(options: options)
+        export_method = options[:export_method] || build.export_method
 
         build_app(
             scheme: "Wire-iOS",
             configuration: build.configuration,
-            export_method: build.export_method,
+            export_method: export_method,
             export_options: {"iCloudContainerEnvironment": "Production"},
             derived_data_path: "DerivedData",
             archive_path: build.archive_path(with_filename: true),
@@ -193,6 +195,18 @@ platform :ios do
             skip_app_version_update: true,
             skip_metadata: true,
             skip_screenshots: true
+        )
+    end
+
+    desc "Upload to TestFlight"
+    lane :upload_testflight do |options|
+        build = Build.new(options: options)
+
+        sh "cp ../Configuration/Appfile ."
+
+        upload_to_testflight(
+            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
+            skip_waiting_for_build_processing: true
         )
     end
 
