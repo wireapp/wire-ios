@@ -413,6 +413,10 @@ class Build
         @build_type == "RC"
     end
 
+    def beta_build
+        @build_type == "Beta"
+    end
+
     def debug_build
         @configuration == "Debug"
     end
@@ -424,7 +428,7 @@ class Build
     def export_method
         if debug_build
             "development"
-        elsif appstore_build
+        elsif appstore_build || beta_build
             "app-store"
         else 
             "ad-hoc"
@@ -476,6 +480,8 @@ class Build
             "avs-experimental/#{suffix}"
         when "RC"
             "release/#{suffix}"
+        when "Beta"
+            "release/testflight"
         else
             UI.user_error! "Unknown build type: #{@build_type}"
         end
@@ -553,6 +559,8 @@ class Build
             "Wire-iOS-App-Store"
         elsif rc_build
             "Wire-iOS-Release-Candidate"
+        elsif beta_build
+            "Wire-iOS-Beta"
         end
     end
 end
