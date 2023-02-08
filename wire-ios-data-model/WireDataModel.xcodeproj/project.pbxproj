@@ -515,6 +515,7 @@
 		EE9AD9162696F01700DD5F51 /* FeatureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9AD9152696F01700DD5F51 /* FeatureService.swift */; };
 		EE9ADC47286F38D1002B2148 /* store2-102-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE9ADC46286F38D1002B2148 /* store2-102-0.wiredatabase */; };
 		EE9B9F532993DF5D00A257BC /* ProteusServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F522993DF5D00A257BC /* ProteusServiceInterface.swift */; };
+		EE9B9F552993E16500A257BC /* ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F542993E16500A257BC /* ProteusService.swift */; };
 		EE9BC5CC287C6D5000AF9AEE /* MLSClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BC5CB287C6D5000AF9AEE /* MLSClientID.swift */; };
 		EEA985982555668A002BEF02 /* ZMUser+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA985972555668A002BEF02 /* ZMUser+AnalyticsIdentifier.swift */; };
 		EEAAD75A252C6D2700E6A44E /* UnreadMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */; };
@@ -1361,6 +1362,7 @@
 		EE9ADC45286F31E9002B2148 /* zmessaging2.102.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.102.0.xcdatamodel; sourceTree = "<group>"; };
 		EE9ADC46286F38D1002B2148 /* store2-102-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-102-0.wiredatabase"; sourceTree = "<group>"; };
 		EE9B9F522993DF5D00A257BC /* ProteusServiceInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusServiceInterface.swift; sourceTree = "<group>"; };
+		EE9B9F542993E16500A257BC /* ProteusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusService.swift; sourceTree = "<group>"; };
 		EE9BC5CB287C6D5000AF9AEE /* MLSClientID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSClientID.swift; sourceTree = "<group>"; };
 		EEA2B84524DA943100C6659E /* CoreDataStackTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CoreDataStackTests+EncryptionAtRest.swift"; path = "Tests/Source/ManagedObjectContext/CoreDataStackTests+EncryptionAtRest.swift"; sourceTree = SOURCE_ROOT; };
 		EEA2B87524DD7B8B00C6659E /* zmessaging2.83.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.83.0.xcdatamodel; sourceTree = "<group>"; };
@@ -2103,6 +2105,7 @@
 			isa = PBXGroup;
 			children = (
 				EE9B9F522993DF5D00A257BC /* ProteusServiceInterface.swift */,
+				EE9B9F542993E16500A257BC /* ProteusService.swift */,
 			);
 			path = Proteus;
 			sourceTree = "<group>";
@@ -3460,6 +3463,7 @@
 				EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */,
 				638805652410FE920043B641 /* ButtonState.swift in Sources */,
 				060ED6E4249BB09200412C4A /* NSManagedObjectContext+LastNotificationID.swift in Sources */,
+				EE9B9F552993E16500A257BC /* ProteusService.swift in Sources */,
 				16460A46206544B00096B616 /* PersistentMetadataKeys.swift in Sources */,
 				5E67168E2174B9AF00522E61 /* LoginCredentials.swift in Sources */,
 				7AFC6A2E2876E9BF000FF1A1 /* UploadSelfMLSKeyPackagesAction.swift in Sources */,
