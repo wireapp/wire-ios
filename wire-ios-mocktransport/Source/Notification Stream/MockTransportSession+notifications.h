@@ -19,6 +19,7 @@
 #import "MockTransportSession.h"
 #import "MockTransportSession+internal.h"
 
+
 @interface MockTransportSession (Notifications)
 
 - (ZMTransportResponse *)processNotificationFallbackRequest:(ZMTransportRequest *)request;

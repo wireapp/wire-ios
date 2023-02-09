@@ -166,3 +166,29 @@ extension MockTransportSession: TransportSessionType {
     }
         
 }
+//- (NSUUID *)invalidSinceParameter400
+//{
+//    return [[NSUUID alloc] initWithUUIDString:@"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"];
+//}
+//
+//- (NSUUID *)unknownSinceParameter404
+//{
+//    return [[NSUUID alloc] initWithUUIDString:@"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"];
+//}
+//
+
+public extension MockTransportSession {
+
+    func addNextPushEvent(_ event: MockPushEvent) {
+
+    }
+
+
+    @objc var invalidSinceParameter400: UUID {
+        return UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
+    }
+
+    @objc var unknownSinceParameter404: UUID {
+        return UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
+    }
+}

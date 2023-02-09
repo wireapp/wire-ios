@@ -68,5 +68,8 @@
 
 @optional
 - (void)startSlowSync;
+
+@optional
+- (BOOL)shouldStartSlowSync:(ZMTransportResponse *)response;
 @end
 

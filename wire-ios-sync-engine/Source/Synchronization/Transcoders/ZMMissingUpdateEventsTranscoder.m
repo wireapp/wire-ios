@@ -358,10 +358,15 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return NO;
 }
 
+- (BOOL)shouldStartSlowSync:(ZMTransportResponse *)response
+{
+    return self.operationStatus.operationState == SyncEngineOperationStateForeground &&
+            response.apiVersion >= APIVersionV3 &&
+            (response.HTTPStatus == 404 || response.HTTPStatus == 400);
+}
+
 - (void)startSlowSync
 {
-
-    // TODO: check if on foreground operationState
     self.lastUpdateEventID = nil;
     SyncStatus* status = self.syncStatus;
     [status removeLastUpdateEventID];
