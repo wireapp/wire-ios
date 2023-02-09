@@ -358,4 +358,13 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return NO;
 }
 
+- (void)startSlowSync
+{
+
+    // TODO: check if on foreground operationState
+    self.lastUpdateEventID = nil;
+    SyncStatus* status = self.syncStatus;
+    [status removeLastUpdateEventID];
+    [status forceSlowSync];
+}
 @end

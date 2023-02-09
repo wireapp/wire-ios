@@ -121,6 +121,9 @@ ZM_EMPTY_ASSERTING_INIT()
             }
         }
         self.hasMoreToFetch = NO;
+        if ([strongTranscoder respondsToSelector:@selector(startSlowSync)]) {
+            [strongTranscoder startSlowSync];
+        }
     }
     [self.singleRequestSync readyForNextRequest];
 }
