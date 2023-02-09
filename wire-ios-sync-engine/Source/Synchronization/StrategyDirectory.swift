@@ -87,6 +87,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
         let syncMOC = contextProvider.syncContext
         let strategies: [Any] = [
+            // TODO: [John] use flag here
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,

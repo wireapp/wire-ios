@@ -251,6 +251,7 @@
         UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
         [self performPretendingUiMocIsSyncMoc:^{
             NSError *error;
+            // TODO: [John] use flag here
             NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
             NOT_USED([selfClient establishSessionWithClient:userClient usingPreKey:key]);
         }];

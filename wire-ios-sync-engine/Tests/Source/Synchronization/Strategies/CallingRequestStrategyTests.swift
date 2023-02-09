@@ -559,6 +559,7 @@ class CallingRequestStrategyTests: MessagingTest {
         client.remoteIdentifier = NSString.createAlphanumerical() as String
         client.user = user
 
+        // TODO: [John] use flag here
         XCTAssertTrue(userClient.establishSessionWithClient(client, usingPreKey: try! userClient.keysStore.lastPreKey()))
 
         return client

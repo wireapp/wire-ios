@@ -135,6 +135,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             var preKeys : [(id: UInt16, prekey: String)] = []
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
@@ -167,6 +168,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             var preKeys : [(id: UInt16, prekey: String)] = []
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
@@ -289,6 +291,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             var preKeys : [(id: UInt16, prekey: String)] = []
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
@@ -304,6 +307,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
                     XCTFail("could not generate prekeys")
                     return }
 
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 try! sessionsDirectory.createClientSession(otherClient.sessionIdentifier!, base64PreKeyString: preKey.prekey)
             })
@@ -639,6 +643,8 @@ extension UserClientTests {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
             selfClient.fingerprint = .none
 
+            // TODO: [John] use flag here
+
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
                 newFingerprint = sessionsDirectory.localFingerprint
             }
@@ -669,6 +675,7 @@ extension UserClientTests {
 
             var preKeys : [(id: UInt16, prekey: String)] = []
 
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
@@ -684,6 +691,7 @@ extension UserClientTests {
             client.user = otherUser
             client.remoteIdentifier = "badf00d"
 
+            // TODO: [John] use flag here
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
                 try! sessionsDirectory.createClientSession(client.sessionIdentifier!, base64PreKeyString: preKey.prekey)
             }
@@ -945,6 +953,7 @@ extension UserClientTests {
             otherClient.needsSessionMigration = true
 
             var preKeys : [(id: UInt16, prekey: String)] = []
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }
@@ -1000,6 +1009,7 @@ extension UserClientTests {
             otherClient.needsSessionMigration = true
 
             var preKeys : [(id: UInt16, prekey: String)] = []
+            // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }

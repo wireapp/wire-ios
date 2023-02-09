@@ -32,6 +32,7 @@ extension UserClient {
                 return
         }
 
+        // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { (session) in
             for client in allClients {
                 client.migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: session)
@@ -49,6 +50,7 @@ extension UserClient {
                 return
         }
 
+        // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { (session) in
             for client in allClients {
                 client.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: session)

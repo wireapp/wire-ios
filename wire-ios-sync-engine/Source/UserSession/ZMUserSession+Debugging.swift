@@ -203,6 +203,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         let subject = arguments[1]
 
         userSession.syncManagedObjectContext.perform {
+            // TODO: [John] use flag here
             guard let context = ZMUser
                 .selfUser(in: userSession.syncManagedObjectContext)
                 .selfClient()?.keysStore.encryptionContext else {
@@ -246,6 +247,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
             EncryptionSessionIdentifier(string: $0)
         })
         userSession.syncManagedObjectContext.performAsync {
+            // TODO: [John] use flag here
             guard let context = ZMUser.selfUser(in: userSession.syncManagedObjectContext).selfClient()?.keysStore.encryptionContext
                 else {
                     return

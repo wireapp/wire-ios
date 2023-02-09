@@ -247,6 +247,8 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let existingClient = self.createSelfClient()
 
+            // TODO: [John] use flag here
+
             var fingerprint: Data?
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
                 fingerprint = sessionsDirectory.localFingerprint

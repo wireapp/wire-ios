@@ -167,6 +167,7 @@ extension MessagingTestBase {
         let event = ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: source)!.first!
 
         var decryptedEvent: ZMUpdateEvent?
+        // TODO: [John] use flag here
         self.selfClient.keysStore.encryptionContext.perform { session in
             decryptedEvent = session.decryptAndAddClient(event, in: self.syncMOC)
         }

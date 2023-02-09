@@ -192,6 +192,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             newClient.user = newUser
             newClient.remoteIdentifier = "aabb2d32ab"
 
+            // TODO: [John] use flag here
             let otrURL = selfClient.keysStore.cryptoboxDirectory
             XCTAssertTrue(selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey))
             self.syncMOC.saveOrRollback()

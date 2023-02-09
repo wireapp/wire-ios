@@ -284,6 +284,7 @@ extension GenericMessage {
             return nil
         }
 
+        // TODO: [John] use flag here
         let encryptionContext = selfClient.keysStore.encryptionContext
         var messageData: Data?
 

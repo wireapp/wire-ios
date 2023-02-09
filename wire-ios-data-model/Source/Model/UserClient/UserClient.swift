@@ -320,6 +320,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             return false
         }
         var hasSession = false
+        // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { [weak self](sessionsDirectory) in
             guard let strongSelf = self, let sessionIdentifier = strongSelf.sessionIdentifier else {return}
             hasSession = sessionsDirectory.hasSession(for: sessionIdentifier)
@@ -447,6 +448,7 @@ public extension UserClient {
 
             // We could already set local fingerprint if user is self
             if client.remoteIdentifier == selfClient.remoteIdentifier {
+                // TODO: [John] use flag here
                 client.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                     client.fingerprint = sessionsDirectory.localFingerprint
                     if client.fingerprint == nil {
@@ -505,6 +507,7 @@ public extension UserClient {
             else { return }
 
             if syncSelfClient == syncClient {
+                // TODO: [John] use flag here
                 syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                     syncClient.fingerprint = sessionsDirectory.localFingerprint
                     syncMOC.saveOrRollback()
@@ -517,6 +520,7 @@ public extension UserClient {
                     syncMOC.saveOrRollback()
                 }
                 else {
+                    // TODO: [John] use flag here
                     syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                         syncClient.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
                         if syncClient.fingerprint == nil {
@@ -587,6 +591,7 @@ public extension UserClient {
         guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(), selfClient.sessionIdentifier != clientID
         else { return }
 
+        // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
             sessionsDirectory.delete(clientID)
         }
@@ -600,6 +605,7 @@ public extension UserClient {
 
         var didEstablishSession = false
 
+        // TODO: [John] use flag here
         keysStore.encryptionContext.perform { (sessionsDirectory) in
 
             // Session is already established?
@@ -614,6 +620,7 @@ public extension UserClient {
         // if at the end of the block the session is still there. Just to be safe, I split the operations
         // in two separate `perform` blocks.
 
+        // TODO: [John] use flag here
         keysStore.encryptionContext.perform { (sessionsDirectory) in
             do {
                 try sessionsDirectory.createClientSession(sessionIdentifier, base64PreKeyString: preKey)
@@ -629,6 +636,7 @@ public extension UserClient {
 
     fileprivate func fetchFingerprint() -> Data? {
         var fingerprint: Data?
+        // TODO: [John] use flag here
         keysStore.encryptionContext.perform { [weak self] (sessionsDirectory) in
             guard let strongSelf = self, let sessionIdentifier = strongSelf.sessionIdentifier else { return }
             fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)

@@ -90,6 +90,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let event = ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: .download)!.first!
 
             // WHEN
+            // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
                     _ = session.decryptAndAddClient(event, in: self.syncMOC)
@@ -132,6 +133,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let event = ZMUpdateEvent.eventsArray(from: wrapper, source: .download)!.first!
 
             // When
+            // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
                     _ = session.decryptAndAddClient(event, in: self.syncMOC)
@@ -174,6 +176,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let event = ZMUpdateEvent.eventsArray(from: wrapper, source: .download)!.first!
 
             // When
+            // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
                     _ = session.decryptAndAddClient(event, in: self.syncMOC)
