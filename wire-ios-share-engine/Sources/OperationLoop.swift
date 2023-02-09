@@ -43,7 +43,9 @@ final class RequestGeneratorStore {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append({
                         guard let apiVersion = BackendInfo.apiVersion else { return nil }
-                        return requestGenerator.nextRequest(for: apiVersion)
+                        let request = requestGenerator.nextRequest(for: apiVersion)
+                        print("SHARING: generated request from strategy \(String(describing: requestGenerator)), request: \(String(describing: request))")
+                        return request
                     })
                 }
             }
@@ -59,7 +61,9 @@ final class RequestGeneratorStore {
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append({
                     guard let apiVersion = BackendInfo.apiVersion else { return nil }
-                    return requestStrategy.nextRequest(for: apiVersion)
+                    let request = requestStrategy.nextRequest(for: apiVersion)
+                    print("SHARING: generated request from strategy \(String(describing: requestStrategy)), request: \(String(describing: request))")
+                    return request
                 })
             }
         }

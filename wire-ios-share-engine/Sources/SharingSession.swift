@@ -369,11 +369,13 @@ public class SharingSession {
     }
 
     public func enqueue(changes: @escaping () -> Void) {
+        print("SHARING: Session enqueue sendable")
         enqueue(changes: changes, completionHandler: nil)
     }
 
     public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
         userInterfaceContext.performGroupedBlock { [weak self] in
+            print("SHARING: Enqueing changes")
             changes()
             self?.userInterfaceContext.saveOrRollback()
             completionHandler?()

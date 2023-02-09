@@ -110,7 +110,10 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        DatadogWrapper.shared?.startMonitoring()
+        if let dd = DatadogWrapper.shared {
+            print("SHARING: dd start monitoring")
+            dd.startMonitoring()
+        }
         setupObserver()
     }
 
@@ -271,6 +274,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     self.presentSendingProgress(mode: .preparing)
                 }
 
+                print("SHARING: Preparing state")
+
             case .startingSending:
                 logger.info(
                     logger.prepareMessage(
@@ -283,6 +288,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     self.presentSendingProgress(mode: .sending)
                 }
 
+                print("SHARING: Starting sending state")
+
             case .sending(let progress):
                 logger.info(
                     logger.prepareMessage(
@@ -292,6 +299,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 )
                 self.progressViewController?.progress = progress
 
+                print("SHARING: Sending state")
             case .done:
                 logger.info(
                     logger.prepareMessage(
@@ -305,6 +313,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }, completion: { _ in
                     self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
                 })
+
+                print("SHARING: done state")
 
             case .conversationDidDegrade((let users, let strategyChoice)):
                 logger.info(
@@ -331,6 +341,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
                 self.present(alert, animated: true)
 
+                print("SHARING: timeout state")
+
             case .error(let error):
                 if let errorDescription = (error as? UnsentSendableError )?.errorDescription {
                     let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription)
@@ -343,6 +355,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                             payload: SharingLogPayload(status: .error, errorDescription: errorDescription)
                         )
                     )
+
+                    print("SHARING: error state \(errorDescription)")
                 }
             case .fileSharingRestriction:
                 logger.info(

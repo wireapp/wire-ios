@@ -239,18 +239,22 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (ZMTransportRequest *)processNextUpdateWithAPIVersion:(APIVersion)apiVersion
 {
+    NSLog(@"SHARING process next update");
     ZMObjectWithKeys *objectWithKeys = [self nextObjectToSync];
     if (objectWithKeys == nil) {
+        NSLog(@"SHARING process next update: returning early");
         return nil;
     }
 
+    NSLog(@"SHARING will ask if should create request");
     id<ZMUpstreamTranscoder> transcoder = self.transcoder;
     if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:)]) {
         if (![transcoder shouldCreateRequestToSyncObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync withSync:self]) {
+            NSLog(@"SHARING should not create request");
             return nil;
         }
     }
-
+    NSLog(@"SHARING will ask for request");
     ZMUpstreamRequest *request = [transcoder requestForUpdatingObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync apiVersion:apiVersion];
     [request.transportRequest setDebugInformationTranscoder:transcoder];
     
