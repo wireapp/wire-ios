@@ -113,6 +113,7 @@ extension EventDecoder {
         let publicKey = try? EncryptionKeys.publicKey(for: account)
         var decryptedEvents: [ZMUpdateEvent] = []
 
+        // TODO: [John] use flag here
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) -> Void in
             guard let `self` = self else { return }
 

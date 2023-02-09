@@ -23,6 +23,7 @@ public enum DeveloperFlag: String, CaseIterable {
     private static let storage = UserDefaults.applicationGroup
 
     case showCreateMLSGroupToggle
+    case proteusViaCoreCrypto
     case breakMyNotifications
     case nseV2
     case nseDebugging
@@ -34,6 +35,9 @@ public enum DeveloperFlag: String, CaseIterable {
         switch self {
         case .showCreateMLSGroupToggle:
             return "Turn on to show the MLS toggle when creating a new group."
+
+        case .proteusViaCoreCrypto:
+            return "Turn on to use CoreCrypto for proteus messaging."
 
         case .breakMyNotifications:
             return "Turn on to get your app in a state where it no longer receives notifications."
