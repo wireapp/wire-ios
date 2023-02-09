@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -402,8 +402,6 @@
 		63CD5959296442D800385037 /* AccessTokenMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */; };
 		63CF4000276B4D110079FF2B /* AVSIdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */; };
 		63D5654D28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift */; };
-		63D5655228B52AF200BDFB49 /* MockCoreCryptoSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5655128B52AF200BDFB49 /* MockCoreCryptoSetup.swift */; };
-		63D5655328B52AF200BDFB49 /* MockCoreCryptoSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5655128B52AF200BDFB49 /* MockCoreCryptoSetup.swift */; };
 		63D5655528B52D0300BDFB49 /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */; };
 		63D5655628B52D0300BDFB49 /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */; };
 		63DA3343286A03B500818C3C /* ZMUserSession+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA3342286A03B500818C3C /* ZMUserSession+MLS.swift */; };
@@ -1045,7 +1043,6 @@
 		63CF3FFD2768DF8C0079FF2B /* AVSIdentifier+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSIdentifier+Stub.swift"; sourceTree = "<group>"; };
 		63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSIdentifierTests.swift; sourceTree = "<group>"; };
 		63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTests+MLS.swift"; sourceTree = "<group>"; };
-		63D5655128B52AF200BDFB49 /* MockCoreCryptoSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCryptoSetup.swift; sourceTree = "<group>"; };
 		63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCrypto.swift; sourceTree = "<group>"; };
 		63DA3342286A03B500818C3C /* ZMUserSession+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+MLS.swift"; sourceTree = "<group>"; };
 		63E313D527553CA0002EAF1D /* ZMConversation+AVSIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+AVSIdentifier.swift"; sourceTree = "<group>"; };
@@ -2243,11 +2240,10 @@
 		63D5655028B52ADA00BDFB49 /* MLS */ = {
 			isa = PBXGroup;
 			children = (
-				63D5655128B52AF200BDFB49 /* MockCoreCryptoSetup.swift */,
 				63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */,
 			);
 			path = MLS;
-            sourceTree = "<group>";
+			sourceTree = "<group>";
 		};
 		63F1DF22294B69E10061565E /* APIMigration */ = {
 			isa = PBXGroup;
@@ -2995,7 +2991,6 @@
 				63D5655628B52D0300BDFB49 /* MockCoreCrypto.swift in Sources */,
 				EECE27C829436DC000419A8B /* SessionManager+PushTokenTests.swift in Sources */,
 				169BA24A25EF744400374343 /* SessionManagerTests+URLActions.swift in Sources */,
-				63D5655328B52AF200BDFB49 /* MockCoreCryptoSetup.swift in Sources */,
 				169BA22325ED0FC400374343 /* ConversationTests+Archiving.swift in Sources */,
 				169BA20B25ED0F5400374343 /* ConnectionTests.m in Sources */,
 				169BA23425ED101300374343 /* SlowSyncTests+ExistingData.swift in Sources */,
@@ -3135,7 +3130,6 @@
 				A938BDCA23A7966700D4C208 /* ConversationRoleDownstreamRequestStrategyTests.swift in Sources */,
 				0920C4DA1B305FF500C55728 /* UserSessionGiphyRequestStateTests.swift in Sources */,
 				63A8F576276B7B3100513750 /* AVSClientTests.swift in Sources */,
-				63D5655228B52AF200BDFB49 /* MockCoreCryptoSetup.swift in Sources */,
 				169BC10F22BD17FF0003159B /* LegalHoldRequestStrategyTests.swift in Sources */,
 				87AEA67D1EFBF46600C94BF3 /* DiskDatabaseTest.swift in Sources */,
 				F9F846351ED307F70087C1A4 /* CallParticipantsSnapshotTests.swift in Sources */,
@@ -3723,7 +3717,7 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/Source/WireSyncEngine-iOS.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSyncEngine-ios-Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};

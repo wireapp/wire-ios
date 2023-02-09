@@ -18,238 +18,263 @@
 
 import Foundation
 import WireDataModel
+import CoreCryptoSwift
 
 class MockCoreCrypto: CoreCryptoProtocol {
 
     var calls = Calls()
 
     struct Calls {
-        var wire_commitPendingProposals: [ConversationId] = []
+        var commitPendingProposals: [ConversationId] = []
     }
 
-    func wire_setCallbacks(callbacks: CoreCryptoCallbacks) throws {
+    func mlsInit(clientId: ClientId) throws {
 
     }
 
-    func wire_clientPublicKey() throws -> [UInt8] {
+    func restoreFromDisk() throws {
+
+    }
+
+    func setCallbacks(callbacks: CoreCryptoCallbacks) throws {
+
+    }
+
+    func clientPublicKey() throws -> [UInt8] {
         return []
     }
 
-    func wire_clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
+    func clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
         return []
     }
 
-    func wire_clientValidKeypackagesCount() throws -> UInt64 {
+    func clientValidKeypackagesCount() throws -> UInt64 {
         return 0
     }
 
-    func wire_createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
+    func createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
 
     }
 
-    func wire_conversationEpoch(conversationId: ConversationId) throws -> UInt64 {
+    func conversationEpoch(conversationId: ConversationId) throws -> UInt64 {
         return 0
     }
 
-    func wire_conversationExists(conversationId: ConversationId) -> Bool {
+    func conversationExists(conversationId: ConversationId) -> Bool {
         return false
     }
 
-    func wire_processWelcomeMessage(welcomeMessage: [UInt8]) throws -> ConversationId {
+    func processWelcomeMessage(welcomeMessage: [UInt8], customConfiguration: CustomConfiguration) throws -> ConversationId {
         return []
     }
 
-    func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
+    func addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
 
         return .init(
             commit: [],
             welcome: [],
             publicGroupState: .init(
-                encryptionType: .Plaintext,
-                ratchetTreeType: .Full ,
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
                 payload: []
             )
         )
     }
 
-    func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle {
+    func removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle {
         return .init(
             welcome: nil,
             commit: [],
             publicGroupState: .init(
-                encryptionType: .Plaintext,
-                ratchetTreeType: .Full ,
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
                 payload: []
             )
         )
     }
 
-    func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle {
+    func updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle {
         return .init(
             welcome: nil,
             commit: [],
             publicGroupState: .init(
-                encryptionType: .Plaintext,
-                ratchetTreeType: .Full ,
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
                 payload: []
             )
         )
     }
 
-    func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
-        calls.wire_commitPendingProposals.append(conversationId)
+    func commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
+        calls.commitPendingProposals.append(conversationId)
         return .init(
             welcome: nil,
             commit: [],
             publicGroupState: .init(
-                encryptionType: .Plaintext,
-                ratchetTreeType: .Full ,
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
                 payload: []
             )
         )
     }
 
-    func wire_finalAddClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> TlsCommitBundle {
-        return .init()
-    }
-
-    func wire_finalRemoveClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> TlsCommitBundle {
-        return .init()
-    }
-
-    func wire_finalUpdateKeyingMaterial(conversationId: ConversationId) throws -> TlsCommitBundle {
-        return .init()
-    }
-
-    func wire_finalCommitPendingProposals(conversationId: ConversationId) throws -> TlsCommitBundle? {
-        return nil
-    }
-
-    func wire_wipeConversation(conversationId: ConversationId) throws {
+    func wipeConversation(conversationId: ConversationId) throws {
 
     }
 
-    func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage {
-        return .init(message: nil, proposals: [], isActive: false, commitDelay: nil, senderClientId: nil)
+    func decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage {
+        return .init(message: nil, proposals: [], isActive: false, commitDelay: nil, senderClientId: nil, hasEpochChanged: false)
     }
 
-    func wire_encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8] {
+    func encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8] {
         return []
     }
 
-    func wire_newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> ProposalBundle {
+    func newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> ProposalBundle {
         return .init(proposal: [], proposalRef: [])
     }
 
-    func wire_newUpdateProposal(conversationId: ConversationId) throws -> ProposalBundle {
+    func newUpdateProposal(conversationId: ConversationId) throws -> ProposalBundle {
         return .init(proposal: [], proposalRef: [])
     }
 
-    func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> ProposalBundle {
+    func newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> ProposalBundle {
         return .init(proposal: [], proposalRef: [])
     }
 
-    func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
+    func newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
         return []
     }
 
-    func wire_newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8] {
+    func newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8] {
         return []
     }
 
-    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> ConversationInitBundle {
+    func joinByExternalCommit(
+        publicGroupState: [UInt8],
+        customConfiguration: CustomConfiguration
+    ) throws -> ConversationInitBundle {
         return .init(
             conversationId: [],
             commit: [],
             publicGroupState: .init(
-                encryptionType: .Plaintext,
-                ratchetTreeType: .Full,
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
                 payload: []
             )
         )
     }
 
-    func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8] {
+    func exportGroupState(conversationId: ConversationId) throws -> [UInt8] {
         return []
     }
 
-    func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws {
+    func mergePendingGroupFromExternalCommit(conversationId: ConversationId) throws {
 
     }
 
-    func wire_clearPendingGroupFromExternalCommit(conversationId: ConversationId) throws {
+    func clearPendingGroupFromExternalCommit(conversationId: ConversationId) throws {
         
     }
 
-    func wire_exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8] {
+    func exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8] {
         return []
     }
 
-    func wire_getClientIds(conversationId: ConversationId) throws -> [ClientId] {
+    func getClientIds(conversationId: ConversationId) throws -> [ClientId] {
         return []
     }
 
-    func wire_randomBytes(length: UInt32) throws -> [UInt8] {
+    func randomBytes(length: UInt32) throws -> [UInt8] {
         return []
     }
 
-    func wire_reseedRng(seed: [UInt8]) throws {
+    func reseedRng(seed: [UInt8]) throws {
 
     }
 
-    func wire_commitAccepted(conversationId: ConversationId) throws {
+    func commitAccepted(conversationId: ConversationId) throws {
 
     }
 
-    func wire_clearPendingProposal(conversationId: ConversationId, proposalRef: [UInt8]) throws {
+    func clearPendingProposal(conversationId: ConversationId, proposalRef: [UInt8]) throws {
 
     }
 
-    func wire_clearPendingCommit(conversationId: ConversationId) throws {
+    func clearPendingCommit(conversationId: ConversationId) throws {
 
     }
 
-    func wire_proteusInit() throws {
+    func proteusInit() throws {
 
     }
 
-    func wire_proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws {
+    func proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws {
 
     }
 
-    func wire_proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
+    func proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
         return []
     }
 
-    func wire_proteusSessionSave(sessionId: String) throws {
+    func proteusSessionSave(sessionId: String) throws {
 
     }
 
-    func wire_proteusSessionDelete(sessionId: String) throws {
+    func proteusSessionDelete(sessionId: String) throws {
 
     }
 
-    func wire_proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8] {
+    func proteusSessionExists(sessionId: String) throws -> Bool {
+        return false
+    }
+
+    func proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8] {
         return []
     }
 
-    func wire_proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8] {
+    func proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8] {
         return []
     }
 
-    func wire_proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String : [UInt8]] {
+    func proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String : [UInt8]] {
         return [:]
     }
 
-    func wire_proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8] {
+    func proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8] {
         return []
     }
 
-    func wire_proteusFingerprint() throws -> String {
+    func proteusNewPrekeyAuto() throws -> [UInt8] {
+        return []
+    }
+
+    func proteusFingerprint() throws -> String {
         return ""
     }
 
-    func wire_proteusCryptoboxMigrate(path: String) throws {
+    func proteusFingerprintLocal(sessionId: String) throws -> String {
+        return ""
+    }
+
+    func proteusFingerprintRemote(sessionId: String) throws -> String {
+        return ""
+    }
+
+    func proteusFingerprintPrekeybundle(prekey: [UInt8]) throws -> String {
+        return ""
+    }
+
+    func proteusCryptoboxMigrate(path: String) throws {
 
     }
+
+    func newAcmeEnrollment(ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
+        fatalError("not implemented")
+    }
+
+    func proteusLastErrorCode() -> UInt32 {
+        return 0
+    }
+
 }

@@ -17,8 +17,7 @@
 //
 
 import Foundation
-
-public typealias CoreCryptoSetupClosure = (CoreCryptoConfiguration) throws -> CoreCryptoProtocol
+import CoreCryptoSwift
 
 public struct CoreCryptoConfiguration {
     public let path: String
@@ -45,17 +44,34 @@ public class CoreCryptoFactory {
     }
 
     public enum ConfigurationError: Error, Equatable {
-        case failedToGetQualifiedClientId
+        case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
 
     public func coreCrypto(
         sharedContainerURL: URL,
-        syncContext: NSManagedObjectContext,
-        coreCryptoSetup: CoreCryptoSetupClosure
+        syncContext: NSManagedObjectContext
     ) throws -> CoreCryptoProtocol {
-        let configuration = try configuration(sharedContainerURL: sharedContainerURL, syncContext: syncContext)
-        return try coreCryptoSetup(configuration)
+
+        let configuration = try configuration(
+            sharedContainerURL: sharedContainerURL,
+            syncContext: syncContext
+        )
+
+        return try coreCrypto(configuration: configuration)
+    }
+
+    public func coreCrypto(configuration: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
+        guard let clientId = configuration.clientIDBytes() else {
+            throw ConfigurationError.failedToGetClientId
+        }
+
+        return try CoreCrypto(
+            path: configuration.path,
+            key: configuration.key,
+            clientId: clientId,
+            entropySeed: nil
+        )
     }
 
     public func configuration(sharedContainerURL: URL, syncContext: NSManagedObjectContext) throws -> CoreCryptoConfiguration {
@@ -64,7 +80,7 @@ public class CoreCryptoFactory {
         let selfUser = ZMUser.selfUser(in: syncContext)
 
         guard let qualifiedClientId = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
-            throw ConfigurationError.failedToGetQualifiedClientId
+            throw ConfigurationError.failedToGetClientId
         }
 
         let accountDirectory = CoreDataStack.accountDataFolder(
@@ -85,6 +101,13 @@ public class CoreCryptoFactory {
             Logging.mls.warn("Failed to get core crypto key \(String(describing: error))")
             throw ConfigurationError.failedToGetCoreCryptoKey
         }
+    }
+
+}
+
+public extension CoreCryptoConfiguration {
+    func clientIDBytes() -> ClientId? {
+        return clientId.base64EncodedBytes
     }
 }
 

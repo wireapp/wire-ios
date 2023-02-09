@@ -293,8 +293,7 @@ private extension AppDelegate {
             requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
-            isDeveloperModeEnabled: Bundle.developerModeEnabled,
-            coreCryptoSetup: CoreCryptoWrapper.setup
+            isDeveloperModeEnabled: Bundle.developerModeEnabled
         )
 
         voIPPushManager.delegate = sessionManager

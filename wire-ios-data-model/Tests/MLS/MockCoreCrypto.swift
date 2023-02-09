@@ -18,12 +18,25 @@
 
 import Foundation
 import WireDataModel
+import CoreCryptoSwift
 
 class MockCoreCrypto: CoreCryptoProtocol {
 
+    // MARK: - mlsInit
+
+    var mockMlsInit: ((ClientId) throws -> Void)?
+
+    func mlsInit(clientId: ClientId) throws {
+        guard let mock = mockMlsInit else {
+            fatalError("no mock for `mlsInit`")
+        }
+
+        try mock(clientId)
+    }
+
     // MARK: - setCallbacks
 
-    func wire_setCallbacks(callbacks: CoreCryptoCallbacks) throws {
+    func setCallbacks(callbacks: CoreCryptoCallbacks) throws {
 
     }
 
@@ -31,7 +44,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockClientPublicKey: (() throws -> [UInt8])?
 
-    func wire_clientPublicKey() throws -> [UInt8] {
+    func clientPublicKey() throws -> [UInt8] {
         guard let mock = mockClientPublicKey else {
             fatalError("no mock for `clientPublicKey`")
         }
@@ -43,7 +56,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockClientKeypackages: ((UInt32) throws -> [[UInt8]])?
 
-    func wire_clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
+    func clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
         guard let mock = mockClientKeypackages else {
             fatalError("no mock for `clientKeypackages`")
         }
@@ -55,7 +68,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockClientValidKeypackagesCount: (() throws -> UInt64)?
 
-    func wire_clientValidKeypackagesCount() throws -> UInt64 {
+    func clientValidKeypackagesCount() throws -> UInt64 {
         guard let mock = mockClientValidKeypackagesCount else {
             fatalError("no mock for `clientValidKeypackagesCount`")
         }
@@ -67,7 +80,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockCreateConversation: ((ConversationId, ConversationConfiguration) throws -> Void)?
 
-    func wire_createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
+    func createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
         guard let mock = mockCreateConversation else {
             fatalError("no mock for `createConversation`")
         }
@@ -79,7 +92,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockConversationEpoch: ((ConversationId) throws -> UInt64)?
 
-    func wire_conversationEpoch(conversationId: ConversationId) throws -> UInt64 {
+    func conversationEpoch(conversationId: ConversationId) throws -> UInt64 {
         guard let mock = mockConversationEpoch else {
             fatalError("no mock for `conversationEpoch`")
         }
@@ -91,7 +104,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockConversationExists: ((ConversationId) -> Bool)?
 
-    func wire_conversationExists(conversationId: ConversationId) -> Bool {
+    func conversationExists(conversationId: ConversationId) -> Bool {
         guard let mock = mockConversationExists else {
             fatalError("no mock for `conversationExists`")
         }
@@ -101,21 +114,21 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - processWelcomeMessage
 
-    var mockProcessWelcomeMessage: (([UInt8]) throws -> ConversationId)?
+    var mockProcessWelcomeMessage: (([UInt8], CustomConfiguration) throws -> ConversationId)?
 
-    func wire_processWelcomeMessage(welcomeMessage: [UInt8]) throws -> ConversationId {
+    func processWelcomeMessage(welcomeMessage: [UInt8], customConfiguration: CustomConfiguration) throws -> ConversationId {
         guard let mock = mockProcessWelcomeMessage else {
             fatalError("no mock for `processWelcomeMessage`")
         }
 
-        return try mock(welcomeMessage)
+        return try mock(welcomeMessage, customConfiguration)
     }
 
     // MARK: - addClientsToConversation
 
     var mockAddClientsToConversation: ((ConversationId, [Invitee]) throws -> MemberAddedMessages)?
 
-    func wire_addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
+    func addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
         guard let mock = mockAddClientsToConversation else {
             fatalError("no mock for `addClientsToConversation`")
         }
@@ -127,7 +140,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockRemoveClientsFromConversation: ((ConversationId, [ClientId]) throws -> CommitBundle)?
 
-    func wire_removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle {
+    func removeClientsFromConversation(conversationId: ConversationId, clients: [ClientId]) throws -> CommitBundle {
         guard let mock = mockRemoveClientsFromConversation else {
             fatalError("no mock for `removeClientsFromConversation`")
         }
@@ -139,7 +152,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockUpdateKeyingMaterial: ((ConversationId) throws -> CommitBundle)?
 
-    func wire_updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle {
+    func updateKeyingMaterial(conversationId: ConversationId) throws -> CommitBundle {
         guard let mock = mockUpdateKeyingMaterial else {
             fatalError("no mock for `updateKeyingMaterial`")
         }
@@ -151,7 +164,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockCommitPendingProposals: ((ConversationId) throws -> CommitBundle?)?
 
-    func wire_commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
+    func commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
         guard let mock = mockCommitPendingProposals else {
             fatalError("no mock for `commitPendingProposals`")
         }
@@ -163,7 +176,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockWipeConversation: ((ConversationId) throws -> Void)?
 
-    func wire_wipeConversation(conversationId: ConversationId) throws {
+    func wipeConversation(conversationId: ConversationId) throws {
         guard let mock = mockWipeConversation else {
             fatalError("no mock for `wipeConversation`")
         }
@@ -175,7 +188,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockDecryptMessage: ((ConversationId, [UInt8]) throws -> DecryptedMessage)?
 
-    func wire_decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage {
+    func decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage {
         guard let mock = mockDecryptMessage else {
             fatalError("no mock for `decryptMessage`")
         }
@@ -187,7 +200,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockEncryptMessage: ((ConversationId, [UInt8]) throws -> [UInt8])?
 
-    func wire_encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8] {
+    func encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8] {
         guard let mock = mockEncryptMessage else {
             fatalError("no mock for `encryptMessage`")
         }
@@ -199,7 +212,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockNewAddProposal: ((ConversationId, [UInt8]) throws -> ProposalBundle)?
 
-    func wire_newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> ProposalBundle {
+    func newAddProposal(conversationId: ConversationId, keyPackage: [UInt8]) throws -> ProposalBundle {
         guard let mock = mockNewAddProposal else {
             fatalError("no mock for `newAddProposal`")
         }
@@ -211,7 +224,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockNewUpdateProposal: ((ConversationId) throws -> ProposalBundle)?
 
-    func wire_newUpdateProposal(conversationId: ConversationId) throws -> ProposalBundle {
+    func newUpdateProposal(conversationId: ConversationId) throws -> ProposalBundle {
         guard let mock = mockNewUpdateProposal else {
             fatalError("no mock for `newUpdateProposal`")
         }
@@ -223,7 +236,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockNewRemoveProposal: ((ConversationId, ClientId) throws -> ProposalBundle)?
 
-    func wire_newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> ProposalBundle {
+    func newRemoveProposal(conversationId: ConversationId, clientId: ClientId) throws -> ProposalBundle {
         guard let mock = mockNewRemoveProposal else {
             fatalError("no mock for `newRemoveProposal`")
         }
@@ -235,7 +248,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockNewExternalAddProposal: ((ConversationId, UInt64) throws -> [UInt8])?
 
-    func wire_newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
+    func newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
         guard let mock = mockNewExternalAddProposal else {
             fatalError("no mock for `newExternalAddProposal`")
         }
@@ -247,7 +260,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockNewExternalRemoveProposal: ((ConversationId, UInt64, [UInt8]) throws -> [UInt8])?
 
-    func wire_newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8] {
+    func newExternalRemoveProposal(conversationId: ConversationId, epoch: UInt64, keyPackageRef: [UInt8]) throws -> [UInt8] {
         guard let mock = mockNewExternalRemoveProposal else {
             fatalError("no mock for `newExternalRemoveProposal`")
         }
@@ -257,21 +270,24 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - joinByExternalCommit
 
-    var mockJoinByExternalCommit: ((Bytes) throws -> ConversationInitBundle)?
+    var mockJoinByExternalCommit: ((Bytes, CustomConfiguration) throws -> ConversationInitBundle)?
 
-    func wire_joinByExternalCommit(groupState: [UInt8]) throws -> ConversationInitBundle {
+    func joinByExternalCommit(
+        publicGroupState: [UInt8],
+        customConfiguration: CustomConfiguration
+    ) throws -> ConversationInitBundle {
         guard let mock = mockJoinByExternalCommit else {
             fatalError("no mock for `joinByExternalCommit`")
         }
 
-        return try mock(groupState)
+        return try mock(publicGroupState, customConfiguration)
     }
 
     // MARK: - exportGroupState
 
     var mockExportGroupState: ((ConversationId) throws -> [UInt8])?
 
-    func wire_exportGroupState(conversationId: ConversationId) throws -> [UInt8] {
+    func exportGroupState(conversationId: ConversationId) throws -> [UInt8] {
         guard let mock = mockExportGroupState else {
             fatalError("no mock for `exportGroupState`")
         }
@@ -281,21 +297,21 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - mergePendingGroupFromExternalCommit
 
-    var mockMergePendingGroupFromExternalCommit: ((ConversationId, ConversationConfiguration) throws -> Void)?
+    var mockMergePendingGroupFromExternalCommit: ((ConversationId) throws -> Void)?
 
-    func wire_mergePendingGroupFromExternalCommit(conversationId: ConversationId, config: ConversationConfiguration) throws {
+    func mergePendingGroupFromExternalCommit(conversationId: ConversationId) throws {
         guard let mock = mockMergePendingGroupFromExternalCommit else {
             fatalError("no mock for `mergePendingGroupFromExternalCommit`")
         }
 
-        return try mock(conversationId, config)
+        return try mock(conversationId)
     }
 
     // MARK: - clearPendingGroupFromExternalCommit
 
     var mockClearPendingGroupFromExternalCommit: ((ConversationId) throws -> Void)?
 
-    func wire_clearPendingGroupFromExternalCommit(conversationId: WireDataModel.ConversationId) throws {
+    func clearPendingGroupFromExternalCommit(conversationId: ConversationId) throws {
         guard let mock = mockClearPendingGroupFromExternalCommit else {
             fatalError("no mock for `clearPendingGroupFromExternalCommit`")
         }
@@ -307,7 +323,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockExportSecretKey: ((ConversationId, UInt32) throws -> Bytes)?
 
-    func wire_exportSecretKey(conversationId: WireDataModel.ConversationId, keyLength: UInt32) throws -> [UInt8] {
+    func exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8] {
         guard let mock = mockExportSecretKey else {
             fatalError("no mock for `exportSecretKey`")
         }
@@ -319,7 +335,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockGetClientIds: ((ConversationId) throws -> [ClientId])?
 
-    func wire_getClientIds(conversationId: WireDataModel.ConversationId) throws -> [WireDataModel.ClientId] {
+    func getClientIds(conversationId: ConversationId) throws -> [ClientId] {
         guard let mock = mockGetClientIds else {
             fatalError("no mock for `getClientIds`")
         }
@@ -331,7 +347,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockRandomBytes: ((UInt32) throws -> [UInt8])?
 
-    func wire_randomBytes(length: UInt32) throws -> [UInt8] {
+    func randomBytes(length: UInt32) throws -> [UInt8] {
         guard let mock = mockRandomBytes else {
             fatalError("no mock for `randomBytes`")
         }
@@ -343,7 +359,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockReseedRng: (([UInt8]) throws -> Void)?
 
-    func wire_reseedRng(seed: [UInt8]) throws {
+    func reseedRng(seed: [UInt8]) throws {
         guard let mock = mockReseedRng else {
             fatalError("no mock for `reseedRng`")
         }
@@ -355,7 +371,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockCommitAccepted: ((ConversationId) throws -> Void)?
 
-    func wire_commitAccepted(conversationId: ConversationId) throws {
+    func commitAccepted(conversationId: ConversationId) throws {
         guard let mock = mockCommitAccepted else {
             fatalError("no mock for `commitAccepted`")
         }
@@ -367,7 +383,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockClearPendingProposal: ((ConversationId, [UInt8]) throws -> Void)?
 
-    func wire_clearPendingProposal(conversationId: ConversationId, proposalRef: [UInt8]) throws {
+    func clearPendingProposal(conversationId: ConversationId, proposalRef: [UInt8]) throws {
         guard let mock = mockClearPendingProposal else {
             fatalError("no mock for `clearPendingProposal`")
         }
@@ -379,7 +395,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockClearPendingCommit: ((ConversationId) throws -> Void)?
 
-    func wire_clearPendingCommit(conversationId: ConversationId) throws {
+    func clearPendingCommit(conversationId: ConversationId) throws {
         guard let mock = mockClearPendingCommit else {
             fatalError("no mock for `clearPendingCommit`")
         }
@@ -391,7 +407,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusInit: (() throws -> Void)?
 
-    func wire_proteusInit() throws {
+    func proteusInit() throws {
         guard let mock = mockProteusInit else {
             fatalError("no mock for `proteusInit`")
         }
@@ -403,7 +419,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusSessionFromPrekey: ((String, Bytes) throws -> Void)?
 
-    func wire_proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws {
+    func proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws {
         guard let mock = mockProteusSessionFromPrekey else {
             fatalError("no mock for `proteusSessionFromPrekey`")
         }
@@ -415,7 +431,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusSessionFromMessage: ((String, Bytes) throws -> Bytes)?
 
-    func wire_proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
+    func proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
         guard let mock = mockProteusSessionFromMessage else {
             fatalError("no mock for `proteusSessionFromMessage`")
         }
@@ -427,7 +443,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusSessionSave: ((String) throws -> Void)?
 
-    func wire_proteusSessionSave(sessionId: String) throws {
+    func proteusSessionSave(sessionId: String) throws {
         guard let mock = mockProteusSessionSave else {
             fatalError("no mock for `proteusSessionSave`")
         }
@@ -439,7 +455,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusSessionDelete: ((String) throws -> Void)?
 
-    func wire_proteusSessionDelete(sessionId: String) throws {
+    func proteusSessionDelete(sessionId: String) throws {
         guard let mock = mockProteusSessionDelete else {
             fatalError("no mock for `proteusSessionDelete`")
         }
@@ -451,7 +467,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusDecrypt: ((String, Bytes) throws -> Bytes)?
 
-    func wire_proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8] {
+    func proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8] {
         guard let mock = mockProteusDecrypt else {
             fatalError("no mock for `proteusDecrypt`")
         }
@@ -463,7 +479,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusEncrypt: ((String, Bytes) throws -> Bytes)?
 
-    func wire_proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8] {
+    func proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8] {
         guard let mock = mockProteusEncrypt else {
             fatalError("no mock for `proteusEncrypt`")
         }
@@ -475,7 +491,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusEncryptBatched: (([String], Bytes) throws -> [String: Bytes])?
 
-    func wire_proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String : [UInt8]] {
+    func proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String: [UInt8]] {
         guard let mock = mockProteusEncryptBatched else {
             fatalError("no mock for `proteusEncryptBatched`")
         }
@@ -487,7 +503,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusNewPrekey: ((UInt16) throws -> Bytes)?
 
-    func wire_proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8] {
+    func proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8] {
         guard let mock = mockProteusNewPrekey else {
             fatalError("no mock for `proteusNewPrekey`")
         }
@@ -499,7 +515,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusFingerprint: (() throws -> String)?
 
-    func wire_proteusFingerprint() throws -> String {
+    func proteusFingerprint() throws -> String {
         guard let mock = mockProteusFingerprint else {
             fatalError("no mock for `proteusFingerprint`")
         }
@@ -511,7 +527,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockProteusCryptoboxMigrate: ((String) throws -> Void)?
 
-    func wire_proteusCryptoboxMigrate(path: String) throws {
+    func proteusCryptoboxMigrate(path: String) throws {
         guard let mock = mockProteusCryptoboxMigrate else {
             fatalError("no mock for `proteusCryptoboxMigrate`")
         }
@@ -519,5 +535,99 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return try mock(path)
     }
 
-}
+    // MARK: - proteusSessionExists
 
+    var mockProteusSessionExists: ((String) throws -> Bool)?
+
+    func proteusSessionExists(sessionId: String) throws -> Bool {
+        guard let mock = mockProteusSessionExists else {
+            fatalError("no mock for `proteusSessionExists`")
+        }
+
+        return try mock(sessionId)
+    }
+
+    // MARK: - proteusNewPrekeyAuto
+
+    var mockProteusNewPrekeyAuto: (() throws -> [UInt8])?
+
+    func proteusNewPrekeyAuto() throws -> [UInt8] {
+        guard let mock = mockProteusNewPrekeyAuto else {
+            fatalError("no mock for `proteusNewPrekeyAuto`")
+        }
+
+        return try mock()
+    }
+
+    // MARK: - proteusFingerprintLocal
+
+    var mockProteusFingerprintLocal: ((String) throws -> String)?
+
+    func proteusFingerprintLocal(sessionId: String) throws -> String {
+        guard let mock = mockProteusFingerprintLocal else {
+            fatalError("no mock for `proteusFingerprintLocal`")
+        }
+
+        return try mock(sessionId)
+    }
+
+    // MARK: - proteusFingerprintRemote
+
+    var mockProteusFingerprintRemote: ((String) throws -> String)?
+
+    func proteusFingerprintRemote(sessionId: String) throws -> String {
+        guard let mock = mockProteusFingerprintRemote else {
+            fatalError("no mock for `proteusFingerprintRemote`")
+        }
+
+        return try mock(sessionId)
+    }
+
+    // MARK: - proteusFingerprintPrekeybundle
+
+    var mockProteusFingerprintPrekeybundle: (([UInt8]) throws -> String)?
+
+    func proteusFingerprintPrekeybundle(prekey: [UInt8]) throws -> String {
+        guard let mock = mockProteusFingerprintPrekeybundle else {
+            fatalError("no mock for `proteusFingerprintPrekeybundle`")
+        }
+
+        return try mock(prekey)
+    }
+
+    // MARK: - proteusLastErrorCode
+
+    var mockProteusLastErrorCode: (() -> (UInt32))?
+
+    func proteusLastErrorCode() -> UInt32 {
+        guard let mock = mockProteusLastErrorCode else {
+            fatalError("no mock for `proteusLastErrorCode`")
+        }
+
+        return mock()
+    }
+
+    // MARK: - newAcmeEnrollment
+
+    var mockNewAcmeEnrollment: ((CiphersuiteName) throws -> WireE2eIdentity)?
+
+    func newAcmeEnrollment(ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
+        guard let mock = mockNewAcmeEnrollment else {
+            fatalError("no mock for `newAcmeEnrollment`")
+        }
+
+        return try mock(ciphersuite)
+    }
+
+    // MARK: - restoreFromDisk
+
+    var mockRestoreFromDisk: (() throws -> Void)?
+
+    func restoreFromDisk() throws {
+        guard let mock = mockRestoreFromDisk else {
+            fatalError("no mock for `restoreFromDisk`")
+        }
+
+        try mock()
+    }
+}

@@ -66,8 +66,9 @@ class MockMLSController: MLSControllerProtocol {
         didCallPerformPendingJoins = true
     }
 
+    var didCallCommitPendingProposals: Bool = false
     func commitPendingProposals() async throws {
-        fatalError("not implemented")
+        didCallCommitPendingProposals = true
     }
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
