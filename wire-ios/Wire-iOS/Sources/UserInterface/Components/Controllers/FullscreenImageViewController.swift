@@ -144,10 +144,6 @@ final class FullscreenImageViewController: UIViewController {
 
     // MARK: - Overrides
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ColorScheme.default.statusBarStyle
-    }
-
     override var prefersStatusBarHidden: Bool {
         return false
     }
