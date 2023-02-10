@@ -273,8 +273,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
             let shareButton = iconButton(messageAction: .forward)
 
-            let sketchButton = iconButton(messageAction:
-                    .sketchDraw)
+            let sketchButton = iconButton(messageAction: .sketchDraw)
 
             let emojiSketchButton = iconButton(messageAction: .sketchEmoji)
 
