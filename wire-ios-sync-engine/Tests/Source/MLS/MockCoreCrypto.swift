@@ -32,6 +32,14 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     }
 
+    func mlsGenerateKeypair() throws -> [UInt8] {
+        return []
+    }
+
+    func mlsInitWithClientId(clientId: ClientId, signaturePublicKey: [UInt8]) throws {
+
+    }
+
     func restoreFromDisk() throws {
 
     }
@@ -174,7 +182,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
     }
 
     func clearPendingGroupFromExternalCommit(conversationId: ConversationId) throws {
-        
+
     }
 
     func exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8] {
@@ -237,7 +245,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return []
     }
 
-    func proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String : [UInt8]] {
+    func proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String: [UInt8]] {
         return [:]
     }
 
@@ -247,6 +255,14 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     func proteusNewPrekeyAuto() throws -> [UInt8] {
         return []
+    }
+
+    func proteusLastResortPrekey() throws -> [UInt8] {
+        return []
+    }
+
+    func proteusLastResortPrekeyId() throws -> UInt16 {
+        return 0
     }
 
     func proteusFingerprint() throws -> String {

@@ -34,6 +34,30 @@ class MockCoreCrypto: CoreCryptoProtocol {
         try mock(clientId)
     }
 
+    // MARK: - mlsGenerateKeypair
+
+    var mockMlsGenerateKeypair: (() throws -> [UInt8])?
+
+    func mlsGenerateKeypair() throws -> [UInt8] {
+        guard let mock = mockMlsGenerateKeypair else {
+            fatalError("no mock for `mlsGenerateKeypair`")
+        }
+
+        return try mock()
+    }
+
+    // MARK: - mlsInitWithClientId
+
+    var mockMlsInitWithClientId: ((ClientId, Bytes) throws -> Void)?
+
+    func mlsInitWithClientId(clientId: ClientId, signaturePublicKey: [UInt8]) throws {
+        guard let mock = mockMlsInitWithClientId else {
+            fatalError("no mock for `mlsInitWithClientId`")
+        }
+
+        try mock(clientId, signaturePublicKey)
+    }
+
     // MARK: - setCallbacks
 
     func setCallbacks(callbacks: CoreCryptoCallbacks) throws {
@@ -554,6 +578,30 @@ class MockCoreCrypto: CoreCryptoProtocol {
     func proteusNewPrekeyAuto() throws -> [UInt8] {
         guard let mock = mockProteusNewPrekeyAuto else {
             fatalError("no mock for `proteusNewPrekeyAuto`")
+        }
+
+        return try mock()
+    }
+
+    // MARK: - proteusLastResortPrekey
+
+    var mockProteusLastResortPrekey: (() throws -> [UInt8])?
+
+    func proteusLastResortPrekey() throws -> [UInt8] {
+        guard let mock = mockProteusLastResortPrekey else {
+            fatalError("no mock for `proteusLastResortPrekey`")
+        }
+
+        return try mock()
+    }
+
+    // MARK: - proteusLastResortPrekeyId
+
+    var mockProteusLastResortPrekeyId: (() throws -> UInt16)?
+
+    func proteusLastResortPrekeyId() throws -> UInt16 {
+        guard let mock = mockProteusLastResortPrekeyId else {
+            fatalError("no mock for `proteusLastResortPrekeyId`")
         }
 
         return try mock()
