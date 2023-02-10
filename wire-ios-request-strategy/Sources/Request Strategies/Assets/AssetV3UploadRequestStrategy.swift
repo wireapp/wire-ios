@@ -108,6 +108,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
+        print("SHARING: Request is called")
         guard let message = managedObject as? AssetMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
         guard let asset = message.assets.first(where: { !$0.isUploaded}) else { return nil } // TODO jacob are we sure we only have one upload per message active?
 
@@ -115,6 +116,8 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     private func requestForUploadingAsset(_ asset: AssetType, for message: ZMAssetClientMessage, apiVersion: APIVersion) -> ZMUpstreamRequest {
+        // add log
+        print("SHARING: Request for uploading Asset is called")
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
 

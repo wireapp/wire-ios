@@ -107,6 +107,7 @@ class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
             completion(message)
+            print("SHARING: Text is being send")
         }
     }
 
@@ -141,6 +142,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
     func prepare(completion: @escaping () -> Void) {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
         needsPreparation = false
+        print("Sharing: Getting image prepared")
 
         let longestDimension: CGFloat = 1024
 
@@ -155,6 +157,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
         attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (url, error) in
             error?.log(message: "Unable to load image from attachment")
+            print("SHARING: Unable to load image from attachment")
 
             // Tries to load the content from local URL...
 
@@ -170,6 +173,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                     self?.imageData = UIImage(cgImage: scaledImage).jpegData(compressionQuality: 0.9)
                 }
 
+                print("SHARING: Image scaled")
                 completion()
 
             } else {
@@ -179,11 +183,13 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                 self?.attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (image, error) in
 
                     error?.log(message: "Unable to load image from attachment")
+                    print("SHARING: Unable to load image from attachment")
 
                     if let image = image as? UIImage {
                         self?.imageData = image.jpegData(compressionQuality: 0.9)
                     }
 
+                    print("SHARING: Image converted")
                     completion()
                 }
             }
@@ -196,6 +202,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         sharingSession.enqueue { [weak self] in
             guard let `self` = self else { return }
             completion(self.imageData.flatMap(self.conversation.appendImage))
+            print("SHARING: Image is being send")
         }
     }
 

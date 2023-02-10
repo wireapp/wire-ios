@@ -54,6 +54,8 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
+        print("SHARING: Predicates: \(notDelivered), \(notExpired),\(isUploaded), \(isAssetV3),\(fromSelf)")
+
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
     }
 
@@ -64,13 +66,17 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMAssetClientMessage
 
     func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
+        print("SHARING AssetClientMessageRequestStrategy insert object")
         messageSync.sync(object) { [weak self] (result, response) in
             switch result {
             case .success:
+                print("SHARING AssetClientMessageRequestStrategy insert object: success")
                 object.markAsSent()
             case .failure(let error):
+                print("SHARING AssetClientMessageRequestStrategy insert object: error: \(String(describing: error))")
                 switch error {
                 case .expired, .gaveUpRetrying:
+                    print("SHARING AssetClientMessageRequestStrategy insert object: error expiring object")
                     object.expire()
 
                     let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
