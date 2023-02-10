@@ -105,16 +105,20 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupObserver()
+        setup()
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        setup()
+    }
+
+    private func setup() {
+        setupObserver()
         if let dd = DatadogWrapper.shared {
             print("SHARING: dd start monitoring")
             dd.startMonitoring()
         }
-        setupObserver()
     }
 
     private func setupObserver() {
