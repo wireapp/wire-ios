@@ -516,6 +516,8 @@
 		EE9ADC47286F38D1002B2148 /* store2-102-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE9ADC46286F38D1002B2148 /* store2-102-0.wiredatabase */; };
 		EE9B9F532993DF5D00A257BC /* ProteusServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F522993DF5D00A257BC /* ProteusServiceInterface.swift */; };
 		EE9B9F552993E16500A257BC /* ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F542993E16500A257BC /* ProteusService.swift */; };
+		EE9B9F572993E57900A257BC /* NSManagedObjectContext+ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */; };
+		EE9B9F5929964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */; };
 		EE9BC5CC287C6D5000AF9AEE /* MLSClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BC5CB287C6D5000AF9AEE /* MLSClientID.swift */; };
 		EEA985982555668A002BEF02 /* ZMUser+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA985972555668A002BEF02 /* ZMUser+AnalyticsIdentifier.swift */; };
 		EEAAD75A252C6D2700E6A44E /* UnreadMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */; };
@@ -1363,6 +1365,8 @@
 		EE9ADC46286F38D1002B2148 /* store2-102-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-102-0.wiredatabase"; sourceTree = "<group>"; };
 		EE9B9F522993DF5D00A257BC /* ProteusServiceInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusServiceInterface.swift; sourceTree = "<group>"; };
 		EE9B9F542993E16500A257BC /* ProteusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusService.swift; sourceTree = "<group>"; };
+		EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+ProteusService.swift"; sourceTree = "<group>"; };
+		EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+CoreCrypto.swift"; sourceTree = "<group>"; };
 		EE9BC5CB287C6D5000AF9AEE /* MLSClientID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSClientID.swift; sourceTree = "<group>"; };
 		EEA2B84524DA943100C6659E /* CoreDataStackTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CoreDataStackTests+EncryptionAtRest.swift"; path = "Tests/Source/ManagedObjectContext/CoreDataStackTests+EncryptionAtRest.swift"; sourceTree = SOURCE_ROOT; };
 		EEA2B87524DD7B8B00C6659E /* zmessaging2.83.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.83.0.xcdatamodel; sourceTree = "<group>"; };
@@ -2219,6 +2223,8 @@
 				16AD86B91F75426C00E4C797 /* NSManagedObjectContext+NotificationContext.swift */,
 				163C92A92630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift */,
 				63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSController.swift */,
+				EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */,
+				EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */,
 				F9A705D01CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.h */,
 				F9A705D11CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m */,
 				D5FA30C42063DC2D00716618 /* BackupMetadata.swift */,
@@ -3661,6 +3667,7 @@
 				F9A706811CAEE01D00C2F5FE /* ZMMessage.m in Sources */,
 				631A0578240420380062B387 /* UserClient+SafeLogging.swift in Sources */,
 				165DC52121491D8700090B7B /* ZMClientMessage+TextMessageData.swift in Sources */,
+				EE9B9F572993E57900A257BC /* NSManagedObjectContext+ProteusService.swift in Sources */,
 				BF491CCF1F02A6CF0055EE44 /* Member+Patches.swift in Sources */,
 				EE9BC5CC287C6D5000AF9AEE /* MLSClientID.swift in Sources */,
 				16E6F26424B614DC0015B249 /* EncryptionKeys.swift in Sources */,
@@ -3787,6 +3794,7 @@
 				167BCC96260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift in Sources */,
 				F9331C881CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.m in Sources */,
 				063D292A24212AFD00FA6FEE /* ZMClientMessage.swift in Sources */,
+				EE9B9F5929964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift in Sources */,
 				BF1B98091EC31A4200DE033B /* Permissions.swift in Sources */,
 				7AFC6A312876E9BF000FF1A1 /* SendMLSMessageAction.swift in Sources */,
 				06D33FCB2524E402004B9BC1 /* ZMConversation+UnreadCount.swift in Sources */,
