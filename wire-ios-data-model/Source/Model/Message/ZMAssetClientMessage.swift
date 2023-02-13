@@ -326,6 +326,14 @@ extension ZMAssetClientMessage {
     case done = 0
     case preprocessing
     case uploading
+    
+    public var name: String {
+        switch self {
+            case .done: return "done"
+            case .preprocessing: return "prepocessing"
+            case .uploading: return "uploading"
+        }
+    }
 }
 
 struct CacheAsset: AssetType {
