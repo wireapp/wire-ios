@@ -17,9 +17,11 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
 
 final class AnalyticsDecryptionFailedObserver: NSObject {
     private let analytics: Analytics
+    private let logger = WireLogger(tag: "decryption")
 
     init(analytics: Analytics) {
         self.analytics = analytics
@@ -42,7 +44,7 @@ final class AnalyticsDecryptionFailedObserver: NSObject {
                 trackingInfo[$0] = value
             }
         }
-
+        logger.info("Message Cannot Be Decrypted \(trackingInfo)")
         analytics.tagCannotDecryptMessage(withAttributes: trackingInfo, conversation: note?.object as? ZMConversation)
     }
 }
