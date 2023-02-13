@@ -21,7 +21,7 @@ import WireSystem
 
 final class AnalyticsDecryptionFailedObserver: NSObject {
     private let analytics: Analytics
-    private let logger = WireLogger(tag: "decryption")
+    private let logger = WireLogger(tag: "analytics-decryption")
 
     init(analytics: Analytics) {
         self.analytics = analytics
