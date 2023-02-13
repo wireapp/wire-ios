@@ -107,7 +107,7 @@ public class CoreCryptoFactory {
 
 public extension CoreCryptoConfiguration {
     func clientIDBytes() -> ClientId? {
-        return clientId.base64EncodedBytes
+        return clientId.data(using: .utf8)?.bytes
     }
 }
 

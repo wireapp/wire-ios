@@ -24,36 +24,14 @@ import WireMockTransport
 import CoreCryptoSwift
 @testable import WireShareEngine
 
-class SharingSessionTestsMLS: ZMTBaseTest {
+class SharingSessionTestsMLS: BaseTest {
+
     func test_ItSetsUpMLSController_OnInit() throws {
         // GIVEN
-        let accountIdentifier = UUID.create()
-        let applicationContainer = try! FileManager.default.url(
-            for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
-        )
-
-        let coreDataStack = CoreDataStack(
-            account: Account(userName: "", userIdentifier: accountIdentifier),
-            applicationContainer: applicationContainer
-        )
-
-        let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
-        let transportSession = mockTransport.mockedTransportSession()
-
         XCTAssertNil(coreDataStack.syncContext.mlsController)
 
         // WHEN
-        _ = try SharingSession(
-            accountIdentifier: accountIdentifier,
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: applicationContainer,
-            accountContainer: applicationContainer,
-            appLockConfig: nil
-        )
+        _ = try createSharingSession()
 
         // THEN
         XCTAssertNotNil(coreDataStack.syncContext.mlsController)
