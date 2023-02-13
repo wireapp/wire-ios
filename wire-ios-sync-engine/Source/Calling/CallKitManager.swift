@@ -82,7 +82,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
 
-    private let logger = WireLogger(tag: "VoIP Push CallKitManager")
+    private let logger = WireLogger(tag: "call-kit")
 
     // MARK: - Life cycle
 
