@@ -87,7 +87,7 @@ public class NotificationSession {
 
     public weak var delegate: NotificationSessionDelegate?
 
-    private let logger = WireLogger(tag: "Notification Engine")
+    private let logger = WireLogger(tag: "notification-engine")
 
     // MARK: - Life cycle
         
@@ -225,11 +225,11 @@ public class NotificationSession {
     // MARK: - Methods
     
     public func processPushNotification(with payload: [AnyHashable: Any]) {
-        logger.debug("Received push notification with payload: \(payload)")
+        logger.info("Received push notification with payload: \(payload)")
 
         coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
-                self.logger.info("Not displaying notification because app is not authenticated")
+                self.logger.error("Not displaying notification because app is not authenticated")
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
             }
@@ -307,7 +307,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         logger.info("did receive call event: \(callContent)")
 
         guard let callerID = event.senderUUID else {
-            logger.info("should not handle call event: senderUUID missing from event")
+            logger.error("should not handle call event: senderUUID missing from event")
             return nil
         }
 
@@ -316,12 +316,12 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             domain: event.senderDomain,
             in: context
         ) else {
-            logger.info("should not handle call event: caller not in db")
+            logger.warn("should not handle call event: caller not in db")
             return nil
         }
 
         guard let conversationID = event.conversationUUID else {
-            logger.info("should not handle call event: conversationUUID missing from event")
+            logger.error("should not handle call event: conversationUUID missing from event")
             return nil
         }
 
@@ -330,12 +330,12 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             domain: event.conversationDomain,
             in: context
         ) else {
-            logger.info("should not handle call event: conversation not in db")
+            logger.warn("should not handle call event: conversation not in db")
             return nil
         }
 
         guard !conversation.needsToBeUpdatedFromBackend else {
-            logger.info("should not handle call event: conversation not synced")
+            logger.warn("should not handle call event: conversation not synced")
             return nil
         }
 
@@ -345,7 +345,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
 
         guard VoIPPushHelper.isAVSReady else {
-            logger.info("should not handle call event: AVS is not ready")
+            logger.warn("should not handle call event: AVS is not ready")
             return nil
         }
 
@@ -355,7 +355,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
 
         guard VoIPPushHelper.isUserSessionLoaded(accountID: accountIdentifier) else {
-            logger.info("should not handle call event: user session is not loaded")
+            logger.warn("should not handle call event: user session is not loaded")
             return nil
         }
 
