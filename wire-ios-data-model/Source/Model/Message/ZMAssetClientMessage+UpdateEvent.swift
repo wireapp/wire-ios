@@ -38,6 +38,7 @@ extension ZMAssetClientMessage {
             return
         }
 
+        print("SHARING: Asset Update Event on asset: \(String(describing: self)) with status: \(String(reflecting: status))")
         switch status {
         case .uploaded(let data) where data.hasAssetID:
             updateTransferState(.uploaded, synchronize: false)

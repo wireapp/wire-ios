@@ -67,6 +67,10 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     // WHEN the user cancels a file upload
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         let assetClientMessages = object.compactMap { object -> ZMAssetClientMessage? in
+            if let message = object as? ZMAssetClientMessage {
+                print("SHARING: Objects did change on request strategy for message: \(String(describing: message)) with transfer state: \(message.transferState.name)")
+            }
+
             guard let message = object as? ZMAssetClientMessage,
                 message.version >= 3,
                 message.transferState == .uploadingCancelled
