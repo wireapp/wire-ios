@@ -72,21 +72,21 @@ extension Payload {
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
-            try container.encode(users, forKey: .users)
-            try container.encode(qualifiedUsers, forKey: .qualifiedUsers)
-            try container.encode(access, forKey: .access)
-            try container.encode(name, forKey: .name)
-            try container.encode(team, forKey: .team)
-            try container.encode(messageTimer, forKey: .messageTimer)
-            try container.encode(readReceiptMode, forKey: .readReceiptMode)
-            try container.encode(conversationRole, forKey: .conversationRole)
+            try container.encodeIfPresent(users, forKey: .users)
+            try container.encodeIfPresent(qualifiedUsers, forKey: .qualifiedUsers)
+            try container.encodeIfPresent(access, forKey: .access)
+            try container.encodeIfPresent(name, forKey: .name)
+            try container.encodeIfPresent(team, forKey: .team)
+            try container.encodeIfPresent(messageTimer, forKey: .messageTimer)
+            try container.encodeIfPresent(readReceiptMode, forKey: .readReceiptMode)
+            try container.encodeIfPresent(conversationRole, forKey: .conversationRole)
 
             switch apiVersion {
             case .v0, .v1, .v2:
-                try container.encode(legacyAccessRole, forKey: .accessRole)
-                try container.encode(accessRoles, forKey: .accessRoleV2)
+                try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
+                try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
             case .v3:
-                try container.encode(accessRoles, forKey: .accessRole)
+                try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }
         }
     }
