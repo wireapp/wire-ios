@@ -12,33 +12,35 @@ import WireTesting
 import WireMockTransport
 
 class SlowSyncTests_NotificationsV3: IntegrationTest {
-    var previousAPIVersion: APIVersion?
+
+    override func _setUp() {
+        setCurrentAPIVersion(.v3)
+        super._setUp()
+    }
 
     override func setUp() {
-        // v3
-        previousAPIVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = .v3
-
+        setCurrentAPIVersion(.v3)
         super.setUp()
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
     }
 
-    override func tearDown() {
-        super.tearDown()
-        BackendInfo.apiVersion = previousAPIVersion
-    }
-
     // MARK: - Slow sync with error
 
     func test_WhenSinceIdParam404DuringQuickSyncItTriggersASlowSync() {
+        internalTestSlowSyncIsPerformedDuringQuickSync(withSinceParameterId: self.mockTransportSession.invalidSinceParameter400)
+    }
+
+    func test_WhenSinceIdParam400DuringQuickSyncItTriggersASlowSync() {
+        internalTestSlowSyncIsPerformedDuringQuickSync(withSinceParameterId: self.mockTransportSession.unknownSinceParameter404)
+    }
+
+    func internalTestSlowSyncIsPerformedDuringQuickSync(withSinceParameterId sinceParameter: UUID) {
         // GIVEN
         XCTAssertTrue(login())
 
-        // add an invalid notifications/since
-        let payload = ["id": "000", "time": Date().transportString()] as ZMTransportData
-        let pushEvent = MockPushEvent(with: payload, uuid: self.mockTransportSession.invalidSinceParameter400)
-        self.mockTransportSession.register(pushEvent)
+        // add an invalid /notifications/since
+        self.mockTransportSession.overrideNextSinceParameter = sinceParameter
 
         // WHEN
         self.performQuickSync()

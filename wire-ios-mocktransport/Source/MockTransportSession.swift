@@ -164,25 +164,10 @@ extension MockTransportSession: TransportSessionType {
     public func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {
         
     }
-        
+
 }
-//- (NSUUID *)invalidSinceParameter400
-//{
-//    return [[NSUUID alloc] initWithUUIDString:@"BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"];
-//}
-//
-//- (NSUUID *)unknownSinceParameter404
-//{
-//    return [[NSUUID alloc] initWithUUIDString:@"AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"];
-//}
-//
 
 public extension MockTransportSession {
-
-    func addNextPushEvent(_ event: MockPushEvent) {
-
-    }
-
 
     @objc var invalidSinceParameter400: UUID {
         return UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
@@ -190,5 +175,39 @@ public extension MockTransportSession {
 
     @objc var unknownSinceParameter404: UUID {
         return UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
+    }
+}
+
+
+public extension NSString {
+
+    @objc
+    func removingAPIVersion() -> NSString {
+        for version in APIVersion.allCases {
+            if version == .v0 {
+                continue
+            }
+            let prefix = "/v\(version.rawValue)"
+            if self.hasPrefix(prefix) {
+                return self.replacingOccurrences(of: prefix, with: "") as NSString
+            }
+        }
+        return self
+    }
+}
+
+public extension String {
+
+    var removingAPIVersion: String {
+        for version in APIVersion.allCases {
+            if version == .v0 {
+                continue
+            }
+            let prefix = "/v\(version.rawValue)"
+            if self.hasPrefix(prefix) {
+                return self.replacingOccurrences(of: prefix, with: "")
+            }
+        }
+        return self
     }
 }

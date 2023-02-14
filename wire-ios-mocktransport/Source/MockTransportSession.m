@@ -42,7 +42,7 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 #endif
 
 
-#define ENABLE_LOG_ALL_REQUESTS 0
+#define ENABLE_LOG_ALL_REQUESTS 1
 
 #if ! ENABLE_LOG_ALL_REQUESTS
     #define LogNetwork(x, ...) ZMLogDebug(x, ##__VA_ARGS__)
@@ -490,7 +490,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         NSAssert(pair.count == 2, @"Unexpected pair count in method map");
         NSString *path = pair[0];
         NSString *selectorString = pair[1];
-        if ([request.path hasPrefix:path])
+
+
+        NSString* requestPathWithoutVersion = [request.path removingAPIVersion];
+        if ([requestPathWithoutVersion hasPrefix:path])
         {
             matchedSelector = NSSelectorFromString(selectorString);
             break;

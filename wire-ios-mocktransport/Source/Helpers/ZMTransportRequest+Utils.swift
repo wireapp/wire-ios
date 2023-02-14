@@ -77,7 +77,7 @@ public extension ZMTransportRequest {
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     func matches(path: String) -> Bool {
-        let pathComponents = self.pathComponents
+        let pathComponents = self.pathComponents.removeAPIVersionComponent()
         let expectedComponents = path.components(separatedBy: "/").filter { !$0.isEmpty }
         
         guard pathComponents.count == expectedComponents.count else {
@@ -91,5 +91,15 @@ public extension ZMTransportRequest {
 
     static func ~=(path: String, request: ZMTransportRequest) -> Bool {
         return request.matches(path: path)
+    }
+}
+
+
+private extension Array<String> {
+    mutating func removeAPIVersionComponent() {
+        let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
+        if let version = self.first, versions.contains(version) {
+            self.removeFirst()
+        }
     }
 }
