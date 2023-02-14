@@ -182,8 +182,8 @@ platform :ios do
     desc "Upload to AppStore"
     lane :upload_app_store do |options|
         build = Build.new(options: options)
+        sh "cp ../wire-ios/Configuration/Appfile ."
 
-        sh "cp ../Configuration/Appfile ."
         deliver(
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             submit_for_review: false,
@@ -201,8 +201,8 @@ platform :ios do
     desc "Upload to TestFlight"
     lane :upload_testflight do |options|
         build = Build.new(options: options)
+        sh "cp ../wire-ios/Configuration/Appfile ."
 
-        sh "cp ../Configuration/Appfile ."
 
         upload_to_testflight(
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
