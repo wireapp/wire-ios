@@ -238,6 +238,7 @@ class CallingRequestStrategyTests: MessagingTest {
         // A conversation with both users and self.
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = .create()
+        conversation.domain = "foo.com"
         conversation.messageProtocol = .proteus
         conversation.addParticipantsAndUpdateConversationState(
             users: [ZMUser.selfUser(in: syncMOC), user1, user2],
