@@ -65,27 +65,26 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
                 print("SHARING: InsertedObjectSync Removed objects: \(String(describing: removedObjects))")
                 print("SHARING: Index of Second Partition: \(indexOfSecondPartition)")
                 let predicates = (insertPredicate as! NSCompoundPredicate).subpredicates
-                if transcoder is AssetClientMessageRequestStrategy {
-                    print("SHARING: Evaluating removed object on transcoder \(String(describing: transcoder)) with removed object count: \(removedObjects.count)")
-                    for predicate in predicates {
-                        guard let predicate = predicate as? NSPredicate else {
-                            print("SHARING: Failed to cast predicate")
-                            continue
-                        }
-                        for removedObject in removedObjects {
-                            if removedObject is ZMAssetClientMessage {
-                                let evaluationResult = predicate.evaluate(with: removedObject)
-                                print("SHARING: Evaluating \(String(describing: removedObject)) with predicate \(predicate) result: \(evaluationResult)")
-                               }
-                            }
-                        }
-
+        if transcoder is AssetClientMessageRequestStrategy {
+            print("SHARING: Evaluating removed object on transcoder \(String(describing: transcoder)) with removed object count: \(removedObjects.count)")
+            for predicate in predicates {
+                guard let predicate = predicate as? NSPredicate else {
+                    print("SHARING: Failed to cast predicate")
+                    continue
+                }
+                for removedObject in removedObjects {
+                    if removedObject is ZMAssetClientMessage {
+                        let evaluationResult = predicate.evaluate(with: removedObject)
+                        print("SHARING: Evaluating \(String(describing: removedObject)) with predicate \(predicate) result: \(evaluationResult)")
+                    }
+                }
+            }
+        }
         // We never  insert any objects on the AssetClientMessageRequestStrategy (transcoder) why?
         addInsertedObjects(Array(insertedObjects))
         removeNoLongerMatchingObjects(Array(removedObjects))
     }
 
-}
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         return Transcoder.Object.sortedFetchRequest(with: insertPredicate)
     }
