@@ -21,8 +21,10 @@ import WireDataModel
 
 // Temporary Mock until we find a way to use a single mocked `MLSControllerProcotol` accross frameworks
 class MockMLSController: MLSControllerProtocol {
-    func commitPendingProposals(in groupID: WireDataModel.MLSGroupID) async throws {
 
+    var onCommitPendingProposals: (() -> Void)?
+    func commitPendingProposals(in groupID: WireDataModel.MLSGroupID) async throws {
+        onCommitPendingProposals?()
     }
 
     func uploadKeyPackagesIfNeeded() {

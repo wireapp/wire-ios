@@ -682,6 +682,13 @@ class CallingRequestStrategyTests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        let didCommitPendingProposals = expectation(description: "didCommitPendingProposals")
+        mockMLSController.onCommitPendingProposals = {
+            didCommitPendingProposals.fulfill()
+        }
+
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
         syncMOC.performGroupedBlock {
             nextRequest = self.sut.nextRequest(for: .v2)
         }
