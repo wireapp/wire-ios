@@ -106,7 +106,10 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
-        return (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
+        print("SHARING: dependent object needitn update? \(dependant)")
+        var needsUpdate = (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
+        print("SHARING: needs update? \(String(describing: needsUpdate))")
+        return needsUpdate
     }
 
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {

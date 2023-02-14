@@ -46,8 +46,13 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 
     /// Removes from dependencies those objects for which the `block` returns true
     public func enumerateAndRemoveObjects(for dependency: Dependency, block: (Object) -> Bool) {
+        print("SHARING: enumerateAndRemoveObjects for dependency: \(dependency)")
+        print("SHARING: enumerateAndRemoveObjects dependenciesToDependents: \(self.dependenciesToDependents)")
+        print("SHARING: enumerateAndRemoveObjects dependentsToDependencies: \(self.dependentsToDependencies)")
         guard let objects = self.dependenciesToDependents[dependency] else { return }
+        print("SHARING: enumerateAndRemoveObjects for dependency: \(dependency) found dependenciesToDependents: \(objects)")
         let objectsToRemove = objects.filter { block($0) }
+        print("SHARING: enumerateAndRemoveObjects for dependency: \(dependency) removing for dependents: \(objectsToRemove)")
         guard !objectsToRemove.isEmpty else { return }
         objectsToRemove.forEach {
             self.remove(dependency: dependency, for: $0)
