@@ -195,19 +195,3 @@ public extension NSString {
         return self
     }
 }
-
-public extension String {
-
-    var removingAPIVersion: String {
-        for version in APIVersion.allCases {
-            if version == .v0 {
-                continue
-            }
-            let prefix = "/v\(version.rawValue)"
-            if self.hasPrefix(prefix) {
-                return self.replacingOccurrences(of: prefix, with: "")
-            }
-        }
-        return self
-    }
-}

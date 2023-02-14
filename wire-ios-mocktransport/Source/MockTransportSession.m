@@ -42,7 +42,7 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 #endif
 
 
-#define ENABLE_LOG_ALL_REQUESTS 1
+#define ENABLE_LOG_ALL_REQUESTS 0
 
 #if ! ENABLE_LOG_ALL_REQUESTS
     #define LogNetwork(x, ...) ZMLogDebug(x, ##__VA_ARGS__)
