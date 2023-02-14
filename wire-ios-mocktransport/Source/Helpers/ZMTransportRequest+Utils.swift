@@ -57,7 +57,9 @@ import Foundation
     }
     
     fileprivate var pathComponents : [String] {
-        return self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
+        var components = self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
+        components.removeAPIVersionComponent()
+        return components
     }
 
 }
@@ -77,7 +79,7 @@ public extension ZMTransportRequest {
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     func matches(path: String) -> Bool {
-        let pathComponents = self.pathComponents.removeAPIVersionComponent()
+        let pathComponents = self.pathComponents
         let expectedComponents = path.components(separatedBy: "/").filter { !$0.isEmpty }
         
         guard pathComponents.count == expectedComponents.count else {
