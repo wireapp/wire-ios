@@ -675,18 +675,16 @@ class CallingRequestStrategyTests: MessagingTest {
 
         var nextRequest: ZMTransportRequest?
 
+        let didEnqueueMessage = expectation(description: "didEnqueueMessage")
+
         // When we schedule the message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: self.callMessage(withType: "CONFKEY"), conversationId: conversation.avsIdentifier!, targets: targets) { _ in }
+            self.sut.send(data: self.callMessage(withType: "CONFKEY"), conversationId: conversation.avsIdentifier!, targets: targets) { _ in
+                didEnqueueMessage.fulfill()
+            }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        let didCommitPendingProposals = expectation(description: "didCommitPendingProposals")
-        mockMLSController.onCommitPendingProposals = {
-            didCommitPendingProposals.fulfill()
-        }
-
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
