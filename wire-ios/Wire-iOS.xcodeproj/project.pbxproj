@@ -12,6 +12,10 @@
 		010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D72940F4F40046124D /* CustomBackendView.swift */; };
 		010497DB2940F4F40046124D /* ProxyCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */; };
 		010497E12940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */; };
+		0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; };
+		01E29C8C2996A2710024E1A7 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */; };
 		061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */; };
 		061282632379C25500C1A53C /* UITextView+ReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */; };
@@ -476,8 +480,6 @@
 		6316C4062654209C00D7E806 /* CallParticipantViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6391628B24F6A39D0054962E /* CallParticipantViewTests.swift */; };
 		6316C415265556C700D7E806 /* CallParticipantDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634273EA24B60D4B00EC2976 /* CallParticipantDetailsViewTests.swift */; };
 		6316C42F2657F0CE00D7E806 /* RoundedBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6316C42E2657F0CE00D7E806 /* RoundedBlurView.swift */; };
-		63172F912906C57F00DBECC9 /* CoreCrypto+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631D5EA228AE4AA700641551 /* CoreCrypto+Setup.swift */; };
-		63172F932906CA9900DBECC9 /* CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08B347284E33290022830B /* CoreCrypto.swift */; };
 		631D27A2255ADEBF00BCF8C4 /* CallStateExtending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631D27A1255ADEBF00BCF8C4 /* CallStateExtending.swift */; };
 		631ED088257558A400EFDD05 /* PulsingIconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631ED087257558A400EFDD05 /* PulsingIconImageView.swift */; };
 		63256D8224D46456009FC58B /* BitRateLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63256D8124D46455009FC58B /* BitRateLabel.swift */; };
@@ -534,10 +536,6 @@
 		63B9F5B825E7D7190059020D /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B9F5B725E7D7190059020D /* ToastView.swift */; };
 		63CE88A42506A83300E457C7 /* OrientationDeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */; };
 		63D17D6B268E142100B0CC4F /* MockCallGridViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */; };
-		63D2A43A292D0B8F003A287D /* CoreCryptoCallbacksWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D2A439292D0B8F003A287D /* CoreCryptoCallbacksWrapper.swift */; };
-		63D2A43D292D16A2003A287D /* libcore_crypto_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63688B57291D0F4E00F630F2 /* libcore_crypto_ffi.a */; };
-		63D2A43F292D1B67003A287D /* CoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63D2A43E292D1B67003A287D /* CoreCrypto */; };
-		63D2A441292D1B79003A287D /* LibCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63D2A440292D1B79003A287D /* LibCoreCrypto */; };
 		63E128B726208BAD009D9AF2 /* CallGridHintNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */; };
 		63E128BB26208DDC009D9AF2 /* CallGridEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */; };
 		63F239352694A151000BFFC6 /* Array+Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D70268F52A300B0CC4F /* Array+Prefix.swift */; };
@@ -1299,8 +1297,6 @@
 		EE82971029719F9A00F12CAA /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82970F29719F9A00F12CAA /* Starscream.xcframework */; };
 		EE82971129719F9A00F12CAA /* Starscream.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE82970F29719F9A00F12CAA /* Starscream.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
-		EE82971F2971A30700F12CAA /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		EE8297202971A30700F12CAA /* Datadog.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE876CAE23F2FCB100040D75 /* SwiftMockLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE876CAC23F2FCA900040D75 /* SwiftMockLoader.swift */; };
 		EE88E00623FAC9EA00D24703 /* SelfUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88E00523FAC9EA00D24703 /* SelfUser.swift */; };
@@ -1310,10 +1306,7 @@
 		EE94CA1925C2E490005F1155 /* ScreenCurtainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE94CA0B25C2E48B005F1155 /* ScreenCurtainTests.swift */; };
 		EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98A09D296ED46D0055E981 /* DeviceConfigurationEventHandler.swift */; };
 		EE997A1A2507A851008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A192507A851008336D2 /* Logging.swift */; };
-		EE9A857629896B4D00064A9C /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE9A857F29896D2900064A9C /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		EE9A858029896D2900064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		EE9EE24028DB12920009F144 /* JobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9EE23F28DB12920009F144 /* JobTests.swift */; };
 		EEA1ED7325BF430B006D07D3 /* AppLockModule.View.LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8736F1831E4B67F0001CBA62 /* AppLockModule.View.LockView.swift */; };
@@ -1348,9 +1341,7 @@
 		EEE25B20297199FC0008B894 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */; };
 		EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2629719A730008B894 /* Clibsodium.xcframework */; };
-		EEE25B2929719A730008B894 /* Clibsodium.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2629719A730008B894 /* Clibsodium.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; };
-		EEE25B2B29719A730008B894 /* cryptobox.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; };
 		EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3729719C170008B894 /* WireDataModel.framework */; };
@@ -1854,10 +1845,8 @@
 				EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */,
 				A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
-				EEE25B2929719A730008B894 /* Clibsodium.xcframework in Embed Frameworks */,
 				EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */,
 				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
-				EEE25B2B29719A730008B894 /* cryptobox.xcframework in Embed Frameworks */,
 				EE82970E29719F6C00F12CAA /* PINCache.xcframework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
 			);
@@ -1873,18 +1862,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EE8297212971A30700F12CAA /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE9A858029896D2900064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */,
-				EE8297202971A30700F12CAA /* Datadog.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -1897,16 +1874,13 @@
 		01A5E046297FDAB500624B65 /* updateLicenses */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateLicenses; sourceTree = "<group>"; };
 		01A5E047297FDAB500624B65 /* updateStylekit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateStylekit; sourceTree = "<group>"; };
 		01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = copyExtraAudioNotifications; sourceTree = "<group>"; };
-		01A5E049297FDAB500624B65 /* download-assets.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "download-assets.sh"; sourceTree = "<group>"; };
 		01A5E04A297FDAB500624B65 /* install-templates.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-templates.sh"; sourceTree = "<group>"; };
 		01A5E04B297FDAB500624B65 /* embed-internal-resources */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "embed-internal-resources"; sourceTree = "<group>"; };
 		01A5E04C297FDAB500624B65 /* embedBuildInfo */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = embedBuildInfo; sourceTree = "<group>"; };
-		01A5E04D297FDAB500624B65 /* download-avs.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "download-avs.sh"; sourceTree = "<group>"; };
 		01A5E04E297FDAB500624B65 /* use-local-framework */ = {isa = PBXFileReference; lastKnownFileType = text; path = "use-local-framework"; sourceTree = "<group>"; };
 		01A5E04F297FDAB500624B65 /* convertLocalNotificationSounds */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = convertLocalNotificationSounds; sourceTree = "<group>"; };
 		01A5E050297FDAB500624B65 /* remove-bitcode.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "remove-bitcode.sh"; sourceTree = "<group>"; };
 		01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "datadog-conditional-framework.sh"; sourceTree = "<group>"; };
-		01A5E052297FDAB500624B65 /* postprocess.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postprocess.sh; sourceTree = "<group>"; };
 		060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPropertyFactory+AppLock.swift"; sourceTree = "<group>"; };
 		061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragInteractionRestrictionTextView.swift; sourceTree = "<group>"; };
 		061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+ReplaceTests.swift"; sourceTree = "<group>"; };
@@ -2396,7 +2370,6 @@
 		6314DC5B266F68D8005E3139 /* RoundedPageIndicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedPageIndicatorTests.swift; sourceTree = "<group>"; };
 		6316C42E2657F0CE00D7E806 /* RoundedBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBlurView.swift; sourceTree = "<group>"; };
 		631D27A1255ADEBF00BCF8C4 /* CallStateExtending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStateExtending.swift; sourceTree = "<group>"; };
-		631D5EA228AE4AA700641551 /* CoreCrypto+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreCrypto+Setup.swift"; sourceTree = "<group>"; };
 		631ED087257558A400EFDD05 /* PulsingIconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsingIconImageView.swift; sourceTree = "<group>"; };
 		63256D8124D46455009FC58B /* BitRateLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitRateLabel.swift; sourceTree = "<group>"; };
 		6328283B24A1100F000748D2 /* IconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImageView.swift; sourceTree = "<group>"; };
@@ -2445,7 +2418,6 @@
 		639290A1252633E600046171 /* UIAlertController+DegradedCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+DegradedCall.swift"; sourceTree = "<group>"; };
 		639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputType.swift; sourceTree = "<group>"; };
 		639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputTypeTests.swift; sourceTree = "<group>"; };
-		639FEC56291E712B0085DEC6 /* CoreCrypto */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CoreCrypto; sourceTree = "<group>"; };
 		63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+Advanced.swift"; sourceTree = "<group>"; };
 		63A5E6F524C87DFF00F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+SoundAlert.swift"; sourceTree = "<group>"; };
 		63A874FB26CBAF2A000D3F27 /* CallingConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingConfiguration.swift; sourceTree = "<group>"; };
@@ -2457,7 +2429,6 @@
 		63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationDeltaTests.swift; sourceTree = "<group>"; };
 		63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCallGridViewControllerDelegate.swift; sourceTree = "<group>"; };
 		63D17D70268F52A300B0CC4F /* Array+Prefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Prefix.swift"; sourceTree = "<group>"; };
-		63D2A439292D0B8F003A287D /* CoreCryptoCallbacksWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreCryptoCallbacksWrapper.swift; sourceTree = "<group>"; };
 		63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGridHintNotificationLabel.swift; sourceTree = "<group>"; };
 		63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGridEvent.swift; sourceTree = "<group>"; };
 		63F2398D269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoGridPresentationMode+CallActions.swift"; sourceTree = "<group>"; };
@@ -2632,7 +2603,6 @@
 		8775BF1D2007CFB200A8AD93 /* UIControlBlockAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlBlockAPI.swift; sourceTree = "<group>"; };
 		8775BF202008CF3500A8AD93 /* ServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceView.swift; sourceTree = "<group>"; };
 		8775BF222008E0A400A8AD93 /* ServiceDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceDetailViewController.swift; sourceTree = "<group>"; };
-		87775AB21D95138D000CAD4F /* avs-versions */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "avs-versions"; sourceTree = "<group>"; };
 		877798AB205A8EF500898A5E /* ZClientViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZClientViewController.swift; sourceTree = "<group>"; };
 		8778AAEC1F6BC6AD0022F53F /* AppLock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLock.swift; sourceTree = "<group>"; };
 		87797C0A1FF3C849009FC9A9 /* SearchServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchServicesSectionController.swift; sourceTree = "<group>"; };
@@ -3241,7 +3211,6 @@
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
 		EE01D08325ADA3D5001DB205 /* AppLockModule.Interactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Interactor.swift; sourceTree = "<group>"; };
 		EE01D08425ADA3D5001DB205 /* AppLockModule.View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.View.swift; sourceTree = "<group>"; };
-		EE08B347284E33290022830B /* CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCrypto.swift; sourceTree = "<group>"; };
 		EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModuleRouterTests.swift; sourceTree = "<group>"; };
 		EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateGuestsSectionController.swift; sourceTree = "<group>"; };
 		EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
@@ -3791,6 +3760,7 @@
 				EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */,
 				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
+				0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */,
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				87E0D6D51CD3978900C54196 /* AVKit.framework in Frameworks */,
@@ -3817,17 +3787,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE9A857629896B4D00064A9C /* CrashReporter.xcframework in Frameworks */,
-				EE82971F2971A30700F12CAA /* Datadog.xcframework in Frameworks */,
+				01E29C8C2996A2710024E1A7 /* CrashReporter.xcframework in Frameworks */,
+				01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */,
+				01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */,
 				EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */,
 				EE67F6E8296F06F1001D7C88 /* AppCenterCrashes.xcframework in Frameworks */,
 				EE67F6E6296F06F1001D7C88 /* AppCenter.xcframework in Frameworks */,
-				EE9A857F29896D2900064A9C /* DatadogCrashReporting.xcframework in Frameworks */,
 				EE67F6E4296F06F1001D7C88 /* AppCenterDistribute.xcframework in Frameworks */,
 				EE67F6EA296F06F1001D7C88 /* AppCenterAnalytics.xcframework in Frameworks */,
-				63D2A43F292D1B67003A287D /* CoreCrypto in Frameworks */,
-				63D2A43D292D16A2003A287D /* libcore_crypto_ffi.a in Frameworks */,
-				63D2A441292D1B79003A287D /* LibCoreCrypto in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3840,16 +3807,13 @@
 				01A5E046297FDAB500624B65 /* updateLicenses */,
 				01A5E047297FDAB500624B65 /* updateStylekit */,
 				01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */,
-				01A5E049297FDAB500624B65 /* download-assets.sh */,
 				01A5E04A297FDAB500624B65 /* install-templates.sh */,
 				01A5E04B297FDAB500624B65 /* embed-internal-resources */,
 				01A5E04C297FDAB500624B65 /* embedBuildInfo */,
-				01A5E04D297FDAB500624B65 /* download-avs.sh */,
 				01A5E04E297FDAB500624B65 /* use-local-framework */,
 				01A5E04F297FDAB500624B65 /* convertLocalNotificationSounds */,
 				01A5E050297FDAB500624B65 /* remove-bitcode.sh */,
 				01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */,
-				01A5E052297FDAB500624B65 /* postprocess.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -4844,16 +4808,6 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		63172F922906CA7D00DBECC9 /* MLS */ = {
-			isa = PBXGroup;
-			children = (
-				63D2A439292D0B8F003A287D /* CoreCryptoCallbacksWrapper.swift */,
-				EE08B347284E33290022830B /* CoreCrypto.swift */,
-				631D5EA228AE4AA700641551 /* CoreCrypto+Setup.swift */,
-			);
-			path = MLS;
-			sourceTree = "<group>";
-		};
 		6328283D24A110AC000748D2 /* IconImageView */ = {
 			isa = PBXGroup;
 			children = (
@@ -4945,14 +4899,6 @@
 				63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */,
 			);
 			path = Mocks;
-			sourceTree = "<group>";
-		};
-		639FEC55291E712B0085DEC6 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				639FEC56291E712B0085DEC6 /* CoreCrypto */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		63B9F5B625E7D7040059020D /* Toast */ = {
@@ -5850,7 +5796,6 @@
 				065A5ADF279B07AC002D4D1E /* Wire Notification Service Extension */,
 				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
-				639FEC55291E712B0085DEC6 /* Packages */,
 				87775AB21D95138D000CAD4F /* avs-versions */,
 				5EDD254221412ED200C0E254 /* EmbeddedDependencies.plist */,
 				EE00ACE225E44506005FEC14 /* .swiftlint.yml */,
@@ -7865,7 +7810,6 @@
 		F1FEA14B21DCEB1700790A54 /* WireCommonComponents */ = {
 			isa = PBXGroup;
 			children = (
-				63172F922906CA7D00DBECC9 /* MLS */,
 				1E5E0CE71B6B8EDB003B0CAC /* Icons */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
 				06F9864825CC1518005572C5 /* AccessoryTextField.swift */,
@@ -8031,7 +7975,6 @@
 				F1FEA14521DCEB1700790A54 /* Headers */,
 				F1FEA14621DCEB1700790A54 /* Sources */,
 				F1FEA14721DCEB1700790A54 /* Frameworks */,
-				EE8297212971A30700F12CAA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -8039,8 +7982,6 @@
 			);
 			name = WireCommonComponents;
 			packageProductDependencies = (
-				63D2A43E292D1B67003A287D /* CoreCrypto */,
-				63D2A440292D1B79003A287D /* LibCoreCrypto */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -9971,17 +9912,14 @@
 				A98370BC2488101500515687 /* URL+FileSize.swift in Sources */,
 				E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */,
 				EEE5D981287E1CDA004E2D2B /* DeveloperFlag.swift in Sources */,
-				63D2A43A292D0B8F003A287D /* CoreCryptoCallbacksWrapper.swift in Sources */,
 				5E3E1B732260DA200053AC59 /* StyleKitIcons.generated.swift in Sources */,
 				F15650C621DD0C5500210504 /* CGFloat+Hairline.swift in Sources */,
 				F15650A321DCF63300210504 /* FilePreviewGenerator.swift in Sources */,
-				63172F912906C57F00DBECC9 /* CoreCrypto+Setup.swift in Sources */,
 				5E39FC6F2260BAEC00C682B8 /* UIImage+StyleKit.swift in Sources */,
 				E9EBE0D9281958BE0058C793 /* FontSpec.swift in Sources */,
 				A92E731E2407F587007C1FFE /* String+Localized.swift in Sources */,
 				E9EBE0D428194F890058C793 /* FontScheme+DynamicType.swift in Sources */,
 				F15650A221DCF60E00210504 /* FileMetaDataGenerator.swift in Sources */,
-				63172F932906CA9900DBECC9 /* CoreCrypto.swift in Sources */,
 				F15650B321DD025A00210504 /* URL+Backup.swift in Sources */,
 				A9BBD8CE26A5D47C00C768B1 /* UIEdgeInsets+directionAware.swift in Sources */,
 				A9CF5F58242B98B300920877 /* NetworkStatus.swift in Sources */,
@@ -10549,17 +10487,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		63D2A43E292D1B67003A287D /* CoreCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CoreCrypto;
-		};
-		63D2A440292D1B79003A287D /* LibCoreCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LibCoreCrypto;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8F42C530199244A700288E4D /* Project object */;
 }

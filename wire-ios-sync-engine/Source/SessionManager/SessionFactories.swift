@@ -55,8 +55,7 @@ open class AuthenticatedSessionFactory {
     func session(
         for account: Account,
         coreDataStack: CoreDataStack,
-        configuration: ZMUserSession.Configuration,
-        coreCryptoSetup: @escaping CoreCryptoSetupClosure
+        configuration: ZMUserSession.Configuration
     ) -> ZMUserSession? {
 
         let transportSession = ZMTransportSession(
@@ -79,8 +78,7 @@ open class AuthenticatedSessionFactory {
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
-            configuration: configuration,
-            coreCryptoSetup: coreCryptoSetup
+            configuration: configuration
         )
 
         userSession.startRequestLoopTracker()
@@ -105,7 +103,7 @@ open class UnauthenticatedSessionFactory {
 
     var environment: BackendEnvironmentProvider
     var reachability: Reachability
-    
+
     var readyForRequests: Bool = false
     let appVersion: String
 

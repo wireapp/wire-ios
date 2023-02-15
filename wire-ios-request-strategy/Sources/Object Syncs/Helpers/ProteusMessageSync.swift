@@ -133,6 +133,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
         guard let selfClient = ZMUser.selfUser(in: context).selfClient() else {
             return
         }
+        // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { (session) in
             session.purgeEncryptedPayloadCache()
         }

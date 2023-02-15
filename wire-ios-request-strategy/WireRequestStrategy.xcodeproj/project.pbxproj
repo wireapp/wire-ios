@@ -143,7 +143,7 @@
 		168D7CF626FC6D3400789960 /* RemoveParticipantActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */; };
 		168D7D0C26FC81AD00789960 /* ActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */; };
 		16972DED2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */; };
-		169BA1CB25E9507600374343 /* Payload+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1CA25E9507600374343 /* Payload+Decoding.swift */; };
+		169BA1CB25E9507600374343 /* Payload+Coding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1CA25E9507600374343 /* Payload+Coding.swift */; };
 		169BA1CD25E95DC900374343 /* Payload+Processing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1CC25E95DC900374343 /* Payload+Processing.swift */; };
 		16A4891A2685CECD001F9127 /* ProteusMessageSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A489192685CECC001F9127 /* ProteusMessageSync.swift */; };
 		16A48936268A0665001F9127 /* ModifiedKeyObjectSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A48935268A0665001F9127 /* ModifiedKeyObjectSync.swift */; };
@@ -191,6 +191,8 @@
 		63DA339F286DF6ED00818C3C /* MLSEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */; };
 		63DA33A8286F27DD00818C3C /* MLSEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */; };
 		63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */; };
+		63F5AAC7298A96C000712528 /* Payload+CodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */; };
+		63F5AAC9298A974F00712528 /* Payload+ConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */; };
 		70C781FD2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */; };
 		70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */; };
 		7A111DE8285C90A90085BF91 /* SendMLSMessageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */; };
@@ -558,7 +560,7 @@
 		168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveParticipantActionHandlerTests.swift; sourceTree = "<group>"; };
 		168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandlerTests.swift; sourceTree = "<group>"; };
 		16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRequestStrategyTests.swift; sourceTree = "<group>"; };
-		169BA1CA25E9507600374343 /* Payload+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Decoding.swift"; sourceTree = "<group>"; };
+		169BA1CA25E9507600374343 /* Payload+Coding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Coding.swift"; sourceTree = "<group>"; };
 		169BA1CC25E95DC900374343 /* Payload+Processing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Processing.swift"; sourceTree = "<group>"; };
 		16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+MessageSendingStatusTests.swift"; sourceTree = "<group>"; };
 		16A489192685CECC001F9127 /* ProteusMessageSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageSync.swift; sourceTree = "<group>"; };
@@ -606,6 +608,8 @@
 		63DA339E286DF6ED00818C3C /* MLSEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEventProcessor.swift; sourceTree = "<group>"; };
 		63DA33A7286F27DD00818C3C /* MLSEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEventProcessorTests.swift; sourceTree = "<group>"; };
 		63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSEventProcessor.swift; sourceTree = "<group>"; };
+		63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Payload+CodingTests.swift"; sourceTree = "<group>"; };
+		63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationTests.swift"; sourceTree = "<group>"; };
 		70C781FC2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandlerTests.swift; sourceTree = "<group>"; };
 		70E77B78273187660021EE70 /* UpdateRoleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRoleActionHandler.swift; sourceTree = "<group>"; };
 		7A111DE7285C90A90085BF91 /* SendMLSMessageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMLSMessageActionHandler.swift; sourceTree = "<group>"; };
@@ -1108,8 +1112,10 @@
 			isa = PBXGroup;
 			children = (
 				16DABDA125D69335005F4C3A /* Payload.swift */,
-				169BA1CA25E9507600374343 /* Payload+Decoding.swift */,
+				169BA1CA25E9507600374343 /* Payload+Coding.swift */,
+				63F5AAC6298A96C000712528 /* Payload+CodingTests.swift */,
 				16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */,
+				63F5AAC8298A974F00712528 /* Payload+ConversationTests.swift */,
 				16367F1D26FDB0740028AF8B /* Payload+Connection.swift */,
 				16E70F5E270EE96200718E5D /* Processing */,
 			);
@@ -1820,7 +1826,7 @@
 			files = (
 				F18401C12073BE0800E9F4CC /* ImageV2DownloadRequestStrategy.swift in Sources */,
 				F18401CD2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift in Sources */,
-				169BA1CB25E9507600374343 /* Payload+Decoding.swift in Sources */,
+				169BA1CB25E9507600374343 /* Payload+Coding.swift in Sources */,
 				166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */,
 				06CF5DFA27FC900F00822FAB /* ZMLocalNotification+Calling.swift in Sources */,
 				8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */,
@@ -1981,6 +1987,7 @@
 				16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */,
 				168D7CF626FC6D3400789960 /* RemoveParticipantActionHandlerTests.swift in Sources */,
 				164D007622256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift in Sources */,
+				63F5AAC7298A96C000712528 /* Payload+CodingTests.swift in Sources */,
 				BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */,
 				16189D06268B214E004831BE /* InsertedObjectSyncTests.swift in Sources */,
 				168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */,
@@ -2072,6 +2079,7 @@
 				6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */,
 				06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */,
 				EE90C2AA282E855B00474379 /* RegisterPushTokenActionHandlerTests.swift in Sources */,
+				63F5AAC9298A974F00712528 /* Payload+ConversationTests.swift in Sources */,
 				5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */,
 				63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
@@ -2200,7 +2208,7 @@
 			baseConfigurationReference = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
 				SKIP_INSTALL = YES;
 			};
@@ -2211,6 +2219,7 @@
 			baseConfigurationReference = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
 				SKIP_INSTALL = YES;
 			};

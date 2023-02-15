@@ -19,10 +19,11 @@
 import Foundation
 import WireDataModel
 import WireRequestStrategy
+import CoreCryptoSwift
 
 extension ZMUserSession {
 
-    func setupMLSControllerIfNeeded(coreCryptoSetup: CoreCryptoSetupClosure) {
+    func setupMLSControllerIfNeeded() {
         guard !isMLSControllerInitialized else {
             return
         }
@@ -34,11 +35,14 @@ extension ZMUserSession {
 
         syncContext.performAndWait {
             do {
-                let configuration = try CoreCryptoFactory().configuration(
+                let factory = CoreCryptoFactory()
+                let configuration = try factory.configuration(
                     sharedContainerURL: sharedContainerURL,
                     syncContext: syncContext
                 )
-                let coreCrypto = try coreCryptoSetup(configuration)
+
+                let coreCrypto = try factory.coreCrypto(configuration: configuration)
+
                 initializeMLSController(
                     coreCrypto: coreCrypto,
                     clientID: configuration.clientId,
@@ -61,7 +65,7 @@ extension ZMUserSession {
     }
 
     private func initializeMLSController(
-        coreCrypto: WireDataModel.CoreCryptoProtocol,
+        coreCrypto: CoreCryptoProtocol,
         clientID: String,
         syncStatus: SyncStatusProtocol
     ) {

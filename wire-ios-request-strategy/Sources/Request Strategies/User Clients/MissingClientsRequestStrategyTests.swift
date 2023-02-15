@@ -28,6 +28,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
 
     var validPrekey: String {
+        // TODO: [John] use flag here
         return try! self.selfClient.keysStore.lastPreKey()
     }
 

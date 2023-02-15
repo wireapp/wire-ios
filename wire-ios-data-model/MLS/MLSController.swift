@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import CoreCryptoSwift
 
 public enum MLSDecryptResult: Equatable {
     case message(_ messageData: Data, _ senderClientID: String?)
@@ -66,7 +67,7 @@ public final class MLSController: MLSControllerProtocol {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
-    private let coreCrypto: CoreCryptoProtocol
+    private let coreCrypto: CoreCryptoSwift.CoreCryptoProtocol
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
@@ -153,7 +154,7 @@ public final class MLSController: MLSControllerProtocol {
         self.syncStatus = syncStatus
 
         do {
-            try coreCrypto.wire_setCallbacks(callbacks: CoreCryptoCallbacksImpl())
+            try coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
         } catch {
             logger.error("failed to set callbacks: \(String(describing: error))")
         }
@@ -184,7 +185,7 @@ public final class MLSController: MLSControllerProtocol {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.wire_clientPublicKey()
+                let keyBytes = try coreCrypto.clientPublicKey()
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
             }
@@ -286,10 +287,11 @@ public final class MLSController: MLSControllerProtocol {
         do {
             let config = ConversationConfiguration(
                 ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
-                externalSenders: backendPublicKeys.ed25519Keys
+                externalSenders: backendPublicKeys.ed25519Keys,
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try coreCrypto.wire_createConversation(
+            try coreCrypto.createConversation(
                 conversationId: groupID.bytes,
                 config: config
             )
@@ -416,7 +418,7 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("wiping group (\(groupID))")
 
         do {
-            try coreCrypto.wire_wipeConversation(conversationId: groupID.bytes)
+            try coreCrypto.wipeConversation(conversationId: groupID.bytes)
         } catch {
             logger.warn("failed to wipe group (\(groupID)): \(String(describing: error))")
         }
@@ -478,7 +480,7 @@ public final class MLSController: MLSControllerProtocol {
 
     private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
         do {
-            let estimatedLocalKeyPackageCount = try coreCrypto.wire_clientValidKeypackagesCount()
+            let estimatedLocalKeyPackageCount = try coreCrypto.clientValidKeypackagesCount()
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
             let lastCheckWasMoreThan24Hours = userDefaults.hasMoreThan24HoursPassedSinceLastCheck
 
@@ -521,7 +523,7 @@ public final class MLSController: MLSControllerProtocol {
         var keyPackages = [Bytes]()
 
         do {
-            keyPackages = try coreCrypto.wire_clientKeypackages(amountRequested: amountRequested)
+            keyPackages = try coreCrypto.clientKeypackages(amountRequested: amountRequested)
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -565,7 +567,7 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
-        let result = coreCrypto.wire_conversationExists(conversationId: groupID.bytes)
+        let result = coreCrypto.conversationExists(conversationId: groupID.bytes)
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
@@ -579,7 +581,10 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         do {
-            let groupIDBytes = try coreCrypto.wire_processWelcomeMessage(welcomeMessage: messageBytes)
+            let groupIDBytes = try coreCrypto.processWelcomeMessage(
+                welcomeMessage: messageBytes,
+                customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
+            )
             let groupID = MLSGroupID(groupIDBytes)
             uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
@@ -645,7 +650,7 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("requesting to join group (\(groupID)")
 
         do {
-            let proposal = try coreCrypto.wire_newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch)
+            let proposal = try coreCrypto.newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch)
             try await sendProposal(proposal, groupID: groupID)
             logger.info("success: requested to join group (\(groupID)")
         } catch {
@@ -764,7 +769,7 @@ public final class MLSController: MLSControllerProtocol {
     public func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
         do {
             logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try coreCrypto.wire_encryptMessage(conversationId: groupID.bytes, message: message)
+            return try coreCrypto.encryptMessage(conversationId: groupID.bytes, message: message)
         } catch let error {
             logger.warn("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage
@@ -801,7 +806,7 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         do {
-            let decryptedMessage = try coreCrypto.wire_decryptMessage(
+            let decryptedMessage = try coreCrypto.decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes
             )

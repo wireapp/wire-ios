@@ -38,6 +38,7 @@ extension IntegrationTest {
         var cypherText: Data?
         self.encryptionContext(for: sender).perform { (session) in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
+                // TODO: [John] use flag here
                 guard let lastPrekey = try? selfClient.keysStore.lastPreKey() else {
                     fatalError("Can't get prekey for self user")
                 }
@@ -71,6 +72,7 @@ extension IntegrationTest {
             prekey = try! session.generateLastPrekey()
         }
 
+        // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { (session) in
             try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
         }
