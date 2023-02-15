@@ -23,6 +23,27 @@ import CoreCryptoSwift
 
 extension ZMUserSession {
 
+    func setUpCoreCryptoIfNeeded() {
+        guard !isCoreCryptoInitialized else {
+            return
+        }
+
+        syncContext.performAndWait {
+            do {
+                let factory = CoreCryptoFactory()
+                let configuration = try factory.configuration(
+                    sharedContainerURL: sharedContainerURL,
+                    syncContext: syncContext
+                )
+
+                let coreCrypto = try factory.coreCrypto(configuration: configuration)
+                Logging.coreCrypto.info("success: setup core crypto")
+            } catch {
+                Logging.coreCrypto.error("fail: setup core crypto: \(String(describing: error))")
+            }
+        }
+    }
+
     func setupMLSControllerIfNeeded() {
         guard !isMLSControllerInitialized else {
             return

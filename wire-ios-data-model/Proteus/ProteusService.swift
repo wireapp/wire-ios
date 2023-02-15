@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import CoreCryptoSwift
 
 /// A service that provides support for messaging via the Proteus
 /// end-to-end-encryption protocol.

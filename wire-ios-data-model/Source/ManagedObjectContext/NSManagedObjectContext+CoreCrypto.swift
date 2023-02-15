@@ -17,10 +17,13 @@
 //
 
 import Foundation
+import CoreCryptoSwift
 
 extension NSManagedObjectContext {
 
-    private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
+    public var isCoreCryptoInitialized: Bool {
+        return coreCrypto != nil
+    }
 
     public var coreCrypto: CoreCryptoProtocol? {
         get {
@@ -34,5 +37,7 @@ extension NSManagedObjectContext {
         }
 
     }
+
+    private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
 }
