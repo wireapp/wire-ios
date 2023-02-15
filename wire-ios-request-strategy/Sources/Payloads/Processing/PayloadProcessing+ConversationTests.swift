@@ -250,7 +250,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
                 qualifiedID: qualifiedID,
                 type: .group,
                 access: accessMode.stringValue,
-                accessRoleV2: accessRole.map(\.rawValue)
+                accessRoles: accessRole.map(\.rawValue)
             )
 
             // when
@@ -273,7 +273,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
                 qualifiedID: qualifiedID,
                 type: .group,
                 access: accessMode.stringValue,
-                accessRoleV2: accessRoleV2.map(\.rawValue)
+                accessRoles: accessRoleV2.map(\.rawValue)
             )
 
             // WHEN
@@ -292,10 +292,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let accessMode: ConversationAccessMode = .teamOnly
             let qualifiedID = self.groupConversation.qualifiedID!
 
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
-                                                           type: BackendConversationType.group.rawValue,
-                                                           access: accessMode.stringValue,
-                                                           accessRole: accessRole.rawValue)
+            let conversationPayload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.group.rawValue,
+                access: accessMode.stringValue,
+                legacyAccessRole: accessRole.rawValue
+            )
+
             // WHEN
             conversationPayload.updateOrCreate(in: self.syncMOC)
 
@@ -841,7 +844,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
 
     // MARK: - Helpers
 
-    func updateEvent<T: EventData>(from payload: T) -> ZMUpdateEvent {
+    func updateEvent<T: CodableEventData>(from payload: T) -> ZMUpdateEvent {
         return updateEvent(
             from: payload,
             conversationID: groupConversation.qualifiedID,
@@ -850,7 +853,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         )
     }
 
-    func conversationEvent<T: EventData>(with payload: T) -> Payload.ConversationEvent<T> {
+    func conversationEvent<T: CodableEventData>(with payload: T) -> Payload.ConversationEvent<T> {
         return Payload.ConversationEvent(
             id: groupConversation.remoteIdentifier,
             qualifiedID: groupConversation.qualifiedID,
@@ -873,7 +876,7 @@ extension Payload.Conversation {
         creator: UUID? = nil,
         access: [String]? = nil,
         accessRole: String? = nil,
-        accessRoleV2: [String]? = nil,
+        accessRoles: [String]? = nil,
         name: String? = nil,
         members: Payload.ConversationMembers? = nil,
         lastEvent: String? = nil,
@@ -891,8 +894,8 @@ extension Payload.Conversation {
             type: type?.rawValue,
             creator: creator,
             access: access,
-            accessRole: accessRole,
-            accessRoleV2: accessRoleV2,
+            legacyAccessRole: accessRole,
+            accessRoles: accessRoles,
             name: name,
             members: members,
             lastEvent: lastEvent,
