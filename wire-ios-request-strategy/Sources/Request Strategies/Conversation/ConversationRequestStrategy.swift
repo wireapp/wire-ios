@@ -74,15 +74,15 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         self.syncProgress = syncProgress
         self.conversationIDsSync =
-            PaginatedSync<Payload.PaginatedConversationIDList>(basePath: "/conversations/ids",
-                                                               pageSize: 32,
-                                                               context: managedObjectContext)
+        PaginatedSync<Payload.PaginatedConversationIDList>(basePath: "/conversations/ids",
+                                                           pageSize: 32,
+                                                           context: managedObjectContext)
 
         self.conversationQualifiedIDsSync =
-            PaginatedSync<Payload.PaginatedQualifiedConversationIDList>(basePath: "/conversations/list-ids",
-                                                                        pageSize: 500,
-                                                                        method: .post,
-                                                                        context: managedObjectContext)
+        PaginatedSync<Payload.PaginatedQualifiedConversationIDList>(basePath: "/conversations/list-ids",
+                                                                    pageSize: 500,
+                                                                    method: .post,
+                                                                    context: managedObjectContext)
 
         self.conversationByIDListTranscoder = ConversationByIDListTranscoder(context: managedObjectContext)
         self.conversationByIDListSync = IdentifierObjectSync(managedObjectContext: managedObjectContext,
@@ -349,9 +349,10 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse
     ) {
         guard
+            let apiVersion = APIVersion(rawValue: response.apiVersion),
             let newConversation = managedObject as? ZMConversation,
             let rawData = response.rawData,
-            let payload = Payload.Conversation(rawData, decoder: .defaultDecoder),
+            let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
             let conversationID = payload.id
         else {
             Logging.network.warn("Can't process response, aborting.")
@@ -483,7 +484,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         }
 
         if keys.contains(ZMConversationArchivedChangedTimeStampKey) ||
-           keys.contains(ZMConversationSilencedChangedTimeStampKey) {
+            keys.contains(ZMConversationSilencedChangedTimeStampKey) {
             let payload = Payload.UpdateConversationStatus(conversation)
 
             guard
@@ -536,7 +537,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         let payload = Payload.NewConversation(conversation, selfClientID: selfClientID)
 
         guard
-            let payloadData = payload.payloadData(encoder: .defaultEncoder),
+            let payloadData = payload.payloadData(apiVersion: apiVersion),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil
@@ -592,8 +593,9 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         guard
+            let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
-            let payload = Payload.Conversation(rawData, decoder: decoder)
+            let payload = Payload.Conversation(rawData, apiVersion: apiVersion, decoder: decoder)
         else {
             Logging.network.warn("Can't process response, aborting.")
             return
@@ -688,11 +690,13 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         guard
+            let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
-            let payload = Payload.Conversation(rawData, decoder: decoder)
+            let payload = Payload.Conversation(rawData,
+                                               apiVersion: apiVersion,
+                                               decoder: decoder)
         else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
+            return Logging.network.warn("Can't process response, aborting.")
         }
 
         payload.updateOrCreate(in: context)
@@ -759,10 +763,10 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
-
         guard
+            let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
-            let payload = Payload.ConversationList(rawData, decoder: decoder)
+            let payload = Payload.ConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
         else {
             Logging.network.warn("Can't process response, aborting.")
             return
@@ -812,10 +816,10 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
-
         guard
+            let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
-            let payload = Payload.QualifiedConversationList(rawData, decoder: decoder)
+            let payload = Payload.QualifiedConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
         else {
             Logging.network.warn("Can't process response, aborting.")
             return
