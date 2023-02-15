@@ -97,7 +97,7 @@ public extension ZMTransportRequest {
 }
 
 
-private extension Array<String> {
+private extension Array where Element == String {
     mutating func removeAPIVersionComponent() {
         let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
         if let version = self.first, versions.contains(version) {
