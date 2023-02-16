@@ -7,13 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0602566024893CEC00E060E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
-		066042A1247FE76C00A5F161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 066042A0247FE76C00A5F161 /* Assets.xcassets */; };
 		067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 067ECB3C2487A93D00701956 /* WireNotificationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		067ECB522487AB6000701956 /* WireNotificationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */; };
-		067ECB5D2487ABA100701956 /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		067ECB602487ABF700701956 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
-		06894D85276B27E100DA4E33 /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		069712912497B96E00C32169 /* OperationLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06394AA12497B24600380494 /* OperationLoop.swift */; };
 		069712972497C1BF00C32169 /* NotificationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* NotificationSession.swift */; };
 		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
@@ -22,53 +17,28 @@
 		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
 		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
 		EE668BC62954BA4C00D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
-		EE67F6FC296F09A0001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FB296F09A0001D7C88 /* WireTesting.framework */; };
-		EE67F6FD296F09A0001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FB296F09A0001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
+		EE761672299E6BC5005DB75F /* WireNotificationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE761671299E6BC5005DB75F /* WireNotificationEngineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0605DB94251190B900443219 /* PBXContainerItemProxy */ = {
+		EE76166A299E60C9005DB75F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 067ECB392487A93D00701956;
 			remoteInfo = WireNotificationEngine;
 		};
-		067ECB542487AB6000701956 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 06604293247FE76A00A5F161;
-			remoteInfo = WireNotificationEngineHost;
-		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		EE67F6FE296F09A0001D7C88 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE67F6FD296F09A0001D7C88 /* WireTesting.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
-		06604294247FE76A00A5F161 /* WireNotificationEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireNotificationEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06604297247FE76A00A5F161 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		066042A0247FE76C00A5F161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		066042A5247FE76C00A5F161 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		067ECB3C2487A93D00701956 /* WireNotificationEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireNotificationEngine.h; sourceTree = "<group>"; };
 		067ECB3D2487A93D00701956 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireNotificationEngineTests.swift; sourceTree = "<group>"; };
-		067ECB532487AB6000701956 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		069712952497C1BC00C32169 /* NotificationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSession.swift; sourceTree = "<group>"; };
 		069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatusProvider.swift; sourceTree = "<group>"; };
 		0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationStrategy.swift; sourceTree = "<group>"; };
@@ -88,18 +58,11 @@
 		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
 		EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6FB296F09A0001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE761671299E6BC5005DB75F /* WireNotificationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireNotificationEngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		06604291247FE76A00A5F161 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EE67F6FC296F09A0001D7C88 /* WireTesting.framework in Frameworks */,
-				06894D85276B27E100DA4E33 /* WireNotificationEngine.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		067ECB372487A93D00701956 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -108,11 +71,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		067ECB4C2487AB6000701956 /* Frameworks */ = {
+		EE761662299E60C9005DB75F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				067ECB5D2487ABA100701956 /* WireNotificationEngine.framework in Frameworks */,
+				EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +97,7 @@
 				06BD1D2D2487B01C002F82A6 /* Resources */,
 				06604296247FE76A00A5F161 /* Sources */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
-				067ECB502487AB6000701956 /* WireNotificationEngineTests */,
+				EE761670299E614B005DB75F /* WireNotificationEngineTests */,
 				06604295247FE76A00A5F161 /* Products */,
 				060256312489322000E060E1 /* Frameworks */,
 			);
@@ -145,9 +108,8 @@
 		06604295247FE76A00A5F161 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				06604294247FE76A00A5F161 /* WireNotificationEngine.app */,
 				067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */,
-				067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */,
+				EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,15 +137,6 @@
 				067ECB3D2487A93D00701956 /* Info.plist */,
 			);
 			path = WireNotificationEngine;
-			sourceTree = "<group>";
-		};
-		067ECB502487AB6000701956 /* WireNotificationEngineTests */ = {
-			isa = PBXGroup;
-			children = (
-				067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */,
-				067ECB532487AB6000701956 /* Info.plist */,
-			);
-			path = WireNotificationEngineTests;
 			sourceTree = "<group>";
 		};
 		0697129A2497CA8F00C32169 /* Synchronization */ = {
@@ -237,6 +190,14 @@
 			path = "zmc-config";
 			sourceTree = "<group>";
 		};
+		EE761670299E614B005DB75F /* WireNotificationEngineTests */ = {
+			isa = PBXGroup;
+			children = (
+				EE761671299E6BC5005DB75F /* WireNotificationEngineTests.swift */,
+			);
+			path = WireNotificationEngineTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -251,24 +212,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		06604293247FE76A00A5F161 /* WireNotificationEngineHost */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 066042A8247FE76C00A5F161 /* Build configuration list for PBXNativeTarget "WireNotificationEngineHost" */;
-			buildPhases = (
-				06604290247FE76A00A5F161 /* Sources */,
-				06604291247FE76A00A5F161 /* Frameworks */,
-				06604292247FE76A00A5F161 /* Resources */,
-				EE67F6FE296F09A0001D7C88 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = WireNotificationEngineHost;
-			productName = "wire-ios-notification-engine";
-			productReference = 06604294247FE76A00A5F161 /* WireNotificationEngine.app */;
-			productType = "com.apple.product-type.application";
-		};
 		067ECB392487A93D00701956 /* WireNotificationEngine */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 067ECB432487A93E00701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngine" */;
@@ -287,23 +230,22 @@
 			productReference = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		067ECB4E2487AB6000701956 /* WireNotificationEngineTests */ = {
+		EE761664299E60C9005DB75F /* WireNotificationEngineTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 067ECB562487AB6000701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */;
+			buildConfigurationList = EE76166C299E60C9005DB75F /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */;
 			buildPhases = (
-				067ECB4B2487AB6000701956 /* Sources */,
-				067ECB4C2487AB6000701956 /* Frameworks */,
-				067ECB4D2487AB6000701956 /* Resources */,
+				EE761661299E60C9005DB75F /* Sources */,
+				EE761662299E60C9005DB75F /* Frameworks */,
+				EE761663299E60C9005DB75F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0605DB95251190B900443219 /* PBXTargetDependency */,
-				067ECB552487AB6000701956 /* PBXTargetDependency */,
+				EE76166B299E60C9005DB75F /* PBXTargetDependency */,
 			);
 			name = WireNotificationEngineTests;
 			productName = WireNotificationEngineTests;
-			productReference = 067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */;
+			productReference = EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -312,20 +254,17 @@
 		0660428C247FE76A00A5F161 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1140;
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = Wire;
 				TargetAttributes = {
-					06604293247FE76A00A5F161 = {
-						CreatedOnToolsVersion = 11.4.1;
-					};
 					067ECB392487A93D00701956 = {
 						CreatedOnToolsVersion = 11.4.1;
 						LastSwiftMigration = 1140;
 					};
-					067ECB4E2487AB6000701956 = {
-						CreatedOnToolsVersion = 11.4.1;
-						TestTargetID = 06604293247FE76A00A5F161;
+					EE761664299E60C9005DB75F = {
+						CreatedOnToolsVersion = 13.2.1;
+						LastSwiftMigration = 1320;
 					};
 				};
 			};
@@ -343,21 +282,12 @@
 			projectRoot = "";
 			targets = (
 				067ECB392487A93D00701956 /* WireNotificationEngine */,
-				067ECB4E2487AB6000701956 /* WireNotificationEngineTests */,
-				06604293247FE76A00A5F161 /* WireNotificationEngineHost */,
+				EE761664299E60C9005DB75F /* WireNotificationEngineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		06604292247FE76A00A5F161 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				066042A1247FE76C00A5F161 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		067ECB382487A93D00701956 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -365,7 +295,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		067ECB4D2487AB6000701956 /* Resources */ = {
+		EE761663299E60C9005DB75F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -375,14 +305,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		06604290247FE76A00A5F161 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0602566024893CEC00E060E1 /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		067ECB362487A93D00701956 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -398,26 +320,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		067ECB4B2487AB6000701956 /* Sources */ = {
+		EE761661299E60C9005DB75F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				067ECB522487AB6000701956 /* WireNotificationEngineTests.swift in Sources */,
+				EE761672299E6BC5005DB75F /* WireNotificationEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0605DB95251190B900443219 /* PBXTargetDependency */ = {
+		EE76166B299E60C9005DB75F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
-			targetProxy = 0605DB94251190B900443219 /* PBXContainerItemProxy */;
-		};
-		067ECB552487AB6000701956 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 06604293247FE76A00A5F161 /* WireNotificationEngineHost */;
-			targetProxy = 067ECB542487AB6000701956 /* PBXContainerItemProxy */;
+			targetProxy = EE76166A299E60C9005DB75F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -538,50 +455,6 @@
 			};
 			name = Release;
 		};
-		066042A9247FE76C00A5F161 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 06BD1D332487B01C002F82A6 /* ios-test-host.xcconfig */;
-			buildSettings = {
-				"ARCHS[sdk=iphoneos*]" = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-notification-engine";
-				PRODUCT_NAME = WireNotificationEngine;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		066042AA247FE76C00A5F161 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 06BD1D332487B01C002F82A6 /* ios-test-host.xcconfig */;
-			buildSettings = {
-				"ARCHS[sdk=iphoneos*]" = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-notification-engine";
-				PRODUCT_NAME = WireNotificationEngine;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		067ECB442487A93E00701956 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06BD1D2F2487B01C002F82A6 /* wire-ios-notification-engine.xcconfig */;
@@ -662,57 +535,54 @@
 			};
 			name = Release;
 		};
-		067ECB572487AB6000701956 /* Debug */ = {
+		EE76166D299E60C9005DB75F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"ARCHS[sdk=iphoneos*]" = arm64;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = WireNotificationEngineTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngine.app/WireNotificationEngine";
-				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
-		067ECB582487AB6000701956 /* Release */ = {
+		EE76166E299E60C9005DB75F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"ARCHS[sdk=iphoneos*]" = arm64;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				INFOPLIST_FILE = WireNotificationEngineTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngine.app/WireNotificationEngine";
-				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
@@ -728,15 +598,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		066042A8247FE76C00A5F161 /* Build configuration list for PBXNativeTarget "WireNotificationEngineHost" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				066042A9247FE76C00A5F161 /* Debug */,
-				066042AA247FE76C00A5F161 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		067ECB432487A93E00701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -746,11 +607,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		067ECB562487AB6000701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */ = {
+		EE76166C299E60C9005DB75F /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				067ECB572487AB6000701956 /* Debug */,
-				067ECB582487AB6000701956 /* Release */,
+				EE76166D299E60C9005DB75F /* Debug */,
+				EE76166E299E60C9005DB75F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
