@@ -18,26 +18,41 @@
 
 import Foundation
 import WireDataModel
+import CoreCryptoSwift
+import WireSystem
 
 private let logger = ZMSLog(tag: "mls")
 
 extension SharingSession {
 
-    func setupMLSController(
+    func setUpCoreCryptoStack(
         sharedContainerURL: URL,
         syncContext: NSManagedObjectContext
     ) {
         syncContext.performAndWait {
+            let factory = CoreCryptoFactory()
+
             do {
-                let coreCrypto = try CoreCryptoFactory().coreCrypto(
+                let configuration = try factory.createConfiguration(
                     sharedContainerURL: sharedContainerURL,
-                    syncContext: syncContext
+                    selfUser: .selfUser(in: syncContext)
                 )
-                let mlsController = MLSEncryptionController(coreCrypto: coreCrypto)
-                syncContext.setMLSController(mlsController: mlsController)
+
+                let coreCrypto = try factory.createCoreCrypto(with: configuration)
+                syncContext.coreCrypto = coreCrypto
+
+                if syncContext.proteusService == nil {
+                    syncContext.proteusService = ProteusService(coreCrypto: coreCrypto)
+                }
+
+                if syncContext.mlsController == nil {
+                    syncContext.mlsController = MLSEncryptionController(coreCrypto: coreCrypto)
+                }
             } catch {
-                logger.warn("Failed to setup MLSController for share extension: \(String(describing: error))")
+                WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
+
+            WireLogger.coreCrypto.info("success: setup crypto stack")
         }
     }
 

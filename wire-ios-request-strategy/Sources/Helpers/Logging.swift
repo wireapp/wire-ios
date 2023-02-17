@@ -48,8 +48,4 @@ public enum Logging {
 
     public static let mls = ZMSLog(tag: "mls")
 
-    /// For logs related to any core crypto related flow.
-
-    public static let coreCrypto = WireLogger(tag: "core-crypto")
-
 }

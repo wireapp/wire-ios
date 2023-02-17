@@ -292,10 +292,11 @@ public class SharingSession {
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
 
-        setupMLSController(
+        setUpCoreCryptoStack(
             sharedContainerURL: coreDataStack.applicationContainer,
             syncContext: coreDataStack.syncContext
         )
+
         setupCaches(at: cachesDirectory)
         setupObservers()
     }

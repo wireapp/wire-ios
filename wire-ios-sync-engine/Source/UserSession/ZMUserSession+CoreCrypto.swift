@@ -38,18 +38,18 @@ extension ZMUserSession {
 
                 try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
 
-                try createMLSControllerIfNeede(
+                try createMLSControllerIfNeeded(
                     coreCrypto: coreCrypto,
                     clientID: configuration.clientID
                 )
             } catch let error as MLSControllerSetupFailure {
-                Logging.coreCrypto.error("fail: setup MLSController: \(String(describing: error))")
+                WireLogger.coreCrypto.error("fail: setup MLSController: \(String(describing: error))")
             } catch {
-                Logging.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
+                WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
-        }
 
-        Logging.coreCrypto.info("success: setup crypto stack")
+            WireLogger.coreCrypto.info("success: setup crypto stack")
+        }
     }
 
     // MARK: - Proteus
@@ -61,7 +61,7 @@ extension ZMUserSession {
 
     // MARK: - MLS
 
-    private func createMLSControllerIfNeede(
+    private func createMLSControllerIfNeeded(
         coreCrypto: CoreCryptoProtocol,
         clientID: String
     ) throws {
