@@ -136,6 +136,6 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             accountIdentifier: selfUser.remoteIdentifier,
             applicationContainer: OtrBaseTest.sharedContainerURL
         )
-        return accountDirectory.appendingPathComponent("mls").path
+        return accountDirectory.appendingPathComponent("corecrypto").path
     }
 }
