@@ -82,7 +82,6 @@ final class Analytics: NSObject {
 
         attributes.merge(userInfo, strategy: .preferNew)
         tagEvent("e2ee.failed_message_decryption", attributes: attributes)
-        logger.info("e2ee.failed_message_decryption \(attributes)")
     }
 }
 
