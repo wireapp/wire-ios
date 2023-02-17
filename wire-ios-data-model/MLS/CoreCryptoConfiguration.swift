@@ -35,36 +35,22 @@ public class CoreCryptoFactory {
 
     // MARK: - Properties
 
-    private let sharedContainerURL: URL
-    private let selfUser: ZMUser
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
 
     // MARK: - Life cycle
 
-    public init(
-        sharedContainerURL: URL,
-        selfUser: ZMUser,
-        coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()
-    ) {
-        self.sharedContainerURL = sharedContainerURL
-        self.selfUser = selfUser
+    public init(coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()) {
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
     }
 
-    // MARK: - Types
+    // MARK: - Configuration
 
-    public enum ConfigurationError: Error, Equatable {
-
-        case failedToGetClientId
-        case failedToGetCoreCryptoKey
-
-    }
-
-    // MARK: - Methods
-
-    public func createConfiguration() throws -> CoreCryptoConfiguration {
+    public func createConfiguration(
+        sharedContainerURL: URL,
+        selfUser: ZMUser
+    ) throws -> CoreCryptoConfiguration {
         guard let qualifiedClientId = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
-            throw ConfigurationError.failedToGetClientId
+            throw ConfigurationSetupFailure.failedToGetClientId
         }
 
         let accountDirectory = CoreDataStack.accountDataFolder(
@@ -84,14 +70,20 @@ public class CoreCryptoFactory {
             )
         } catch {
             Logging.mls.warn("Failed to get core crypto key \(String(describing: error))")
-            throw ConfigurationError.failedToGetCoreCryptoKey
+            throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
 
+    public enum ConfigurationSetupFailure: Error, Equatable {
+        case failedToGetClientId
+        case failedToGetCoreCryptoKey
+    }
+
+    // MARK: - Core Crypto
 
     public func createCoreCrypto(with config: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
         guard let clientID = config.clientIDBytes() else {
-            throw ConfigurationError.failedToGetClientId
+            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
 
         return try CoreCrypto(
@@ -100,6 +92,10 @@ public class CoreCryptoFactory {
             clientId: clientID,
             entropySeed: nil
         )
+    }
+
+    public enum CoreCryptoSetupFailure: Error, Equatable {
+        case failedToGetClientIDBytes
     }
 
 }

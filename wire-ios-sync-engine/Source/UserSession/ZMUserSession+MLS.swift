@@ -25,41 +25,68 @@ extension ZMUserSession {
 
     func setupCryptoStack() {
         syncContext.performAndWait {
-            let factory = CoreCryptoFactory(
-                sharedContainerURL: sharedContainerURL,
-                selfUser: .selfUser(in: syncContext)
-            )
+            let factory = CoreCryptoFactory()
 
             do {
-                let configuration = try factory.createConfiguration()
+                let configuration = try factory.createConfiguration(
+                    sharedContainerURL: sharedContainerURL,
+                    selfUser: .selfUser(in: syncContext)
+                )
 
                 let coreCrypto = try factory.createCoreCrypto(with: configuration)
                 syncContext.coreCrypto = coreCrypto
 
-                // Create proteus service.
+                try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
 
-
-                // Create mls controller
-                if syncContext.mlsController == nil {
-                    guard let syncStatus = syncStatus else {
-                        Logging.mls.warn("fail: setup MLSController: no sync status available")
-                        return
-                    }
-
-                    syncContext.mlsController = MLSController(
-                        context: syncContext,
-                        coreCrypto: coreCrypto,
-                        conversationEventProcessor: ConversationEventProcessor(context: syncContext),
-                        userDefaults: UserDefaults(suiteName: "com.wire.mls.\(configuration.clientID)")!,
-                        syncStatus: syncStatus
-                    )
-                }
-
-                Logging.coreCrypto.info("success: setup crypto stack")
+                try createMLSControllerIfNeede(
+                    coreCrypto: coreCrypto,
+                    clientID: configuration.clientID
+                )
+            } catch let error as MLSControllerSetupFailure {
+                Logging.coreCrypto.error("fail: setup MLSController: \(String(describing: error))")
             } catch {
                 Logging.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
         }
+
+        Logging.coreCrypto.info("success: setup crypto stack")
+    }
+
+    // MARK: - Proteus
+
+    private func createProteusServiceIfNeeded(coreCrypto: CoreCryptoProtocol) throws {
+        guard syncContext.proteusService == nil else { return }
+        syncContext.proteusService = ProteusService(coreCrypto: coreCrypto)
+    }
+
+    // MARK: - MLS
+
+    private func createMLSControllerIfNeede(
+        coreCrypto: CoreCryptoProtocol,
+        clientID: String
+    ) throws {
+        guard syncContext.mlsController == nil else { return }
+
+        guard let syncStatus = syncStatus else {
+            throw MLSControllerSetupFailure.missingSyncStatus
+        }
+
+        guard let userDefaults = UserDefaults(suiteName: "com.wire.mls.\(clientID)") else {
+            throw MLSControllerSetupFailure.invalidUserDefaults
+        }
+
+        syncContext.mlsController = MLSController(
+            context: syncContext,
+            coreCrypto: coreCrypto,
+            conversationEventProcessor: ConversationEventProcessor(context: syncContext),
+            userDefaults: userDefaults,
+            syncStatus: syncStatus
+        )
+    }
+
+    private enum MLSControllerSetupFailure: Error {
+        case missingSyncStatus
+        case invalidUserDefaults
     }
 
 }
