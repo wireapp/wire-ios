@@ -54,8 +54,6 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        print("SHARING: Predicates: \(notDelivered), \(notExpired),\(isUploaded), \(isAssetV3),\(fromSelf)")
-
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
     }
 

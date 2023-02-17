@@ -153,7 +153,7 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)objectsDidChange:(NSSet *)objects
 {
-    NSLog(@"SHARING: objects did changed in syncs %@", objects);
+    NSLog(@"SHARING: objects did changed in syncs %@ on transcoder %@", objects, self.transcoder);
     for(ZMManagedObject* obj in objects) {
         BOOL isTrackedObject = ([obj isKindOfClass:[NSManagedObject class]] && obj.entity == self.trackedEntity);
         if (isTrackedObject && [self objectShouldBeSynced:obj]) {
@@ -196,7 +196,7 @@ ZM_EMPTY_ASSERTING_INIT();
             NSLog(@"SHARING: Same dependency as the existing one %@ for object %@", newDependency, mo);
             return NO; // todo: it stays with dependency forever?
         } else {
-            NSLog(@"SHARING: New dependency detected: %@", [newDependency description]);
+            NSLog(@"SHARING: ZMUpstreamModifiedObjectSync checkForUpdatedDependency adding dependency %@ dependent %@ on %@", newDependency, mo, self);
             [self.updatedObjectsWithDependencies addDependentObject:mo dependency:newDependency];
             return YES;
         }
@@ -220,7 +220,7 @@ ZM_EMPTY_ASSERTING_INIT();
         NSLog(@"SHARING: Updated object has dependencies %@", mo);
         id dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (dependency != nil) {
-            NSLog(@"SHARING: Adding updated object with preprocessing dependencies %@", mo);
+            NSLog(@"SHARING: ZMUpstreamModifiedObjectSync addUpdatedObject adding dependency %@ dependent %@ on %@", dependency, mo, self);
             [self.updatedObjectsWithDependencies addDependentObject:mo dependency:dependency];
             return;
         }

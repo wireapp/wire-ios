@@ -80,6 +80,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             switch result {
             case .success:
                 object.markAsSent()
+                print("SHARING: Syncing object after marking sent object: \(object)")
                 self?.deleteMessageIfNecessary(object)
             case .failure(let error):
                 switch error {
