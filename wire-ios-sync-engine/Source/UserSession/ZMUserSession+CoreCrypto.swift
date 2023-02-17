@@ -34,6 +34,7 @@ extension ZMUserSession {
                 )
 
                 let coreCrypto = try syncContext.coreCrypto ?? factory.createCoreCrypto(with: configuration)
+                syncContext.coreCrypto = coreCrypto
 
                 try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
 

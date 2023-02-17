@@ -401,7 +401,7 @@
 		63CD5958296434A700385037 /* ZMUserSession+AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CD59562964346400385037 /* ZMUserSession+AccessToken.swift */; };
 		63CD5959296442D800385037 /* AccessTokenMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */; };
 		63CF4000276B4D110079FF2B /* AVSIdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */; };
-		63D5654D28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift */; };
+		63D5654D28B50CEB00BDFB49 /* ZMUserSessionTests+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+CryptoStack.swift */; };
 		63D5655528B52D0300BDFB49 /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */; };
 		63D5655628B52D0300BDFB49 /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */; };
 		63DA3343286A03B500818C3C /* ZMUserSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA3342286A03B500818C3C /* ZMUserSession+CoreCrypto.swift */; };
@@ -1042,7 +1042,7 @@
 		63CD59562964346400385037 /* ZMUserSession+AccessToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+AccessToken.swift"; sourceTree = "<group>"; };
 		63CF3FFD2768DF8C0079FF2B /* AVSIdentifier+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSIdentifier+Stub.swift"; sourceTree = "<group>"; };
 		63CF3FFF276B4D110079FF2B /* AVSIdentifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSIdentifierTests.swift; sourceTree = "<group>"; };
-		63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTests+MLS.swift"; sourceTree = "<group>"; };
+		63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+CryptoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTests+CryptoStack.swift"; sourceTree = "<group>"; };
 		63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCrypto.swift; sourceTree = "<group>"; };
 		63DA3342286A03B500818C3C /* ZMUserSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+CoreCrypto.swift"; sourceTree = "<group>"; };
 		63E313D527553CA0002EAF1D /* ZMConversation+AVSIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+AVSIdentifier.swift"; sourceTree = "<group>"; };
@@ -1854,7 +1854,7 @@
 				16E0FBB4233119FE000E3235 /* ZMUserSessionTests+Authentication.swift */,
 				1673C35224CB36D800AE2714 /* ZMUserSessionTests+EncryptionAtRest.swift */,
 				707CEBB627B515B200E080A4 /* ZMUserSessionTests+SecurityClassification.swift */,
-				63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift */,
+				63D5654C28B50CEB00BDFB49 /* ZMUserSessionTests+CryptoStack.swift */,
 				636826F72953465F00D904C2 /* ZMUserSessionTests+AccessToken.swift */,
 				0920C4D81B305FF500C55728 /* UserSessionGiphyRequestStateTests.swift */,
 				541228431AEE422C00D9ED1C /* ZMAuthenticationStatusTests.m */,
@@ -3052,7 +3052,7 @@
 				1645ED1B244DE345007A82D6 /* TeamMembersDownloadRequestStrategy.swift in Sources */,
 				549552541D645683004F21F6 /* AddressBookTests.swift in Sources */,
 				161C886623FD248A00CB0B8E /* RecordingMockTransportSession.swift in Sources */,
-				63D5654D28B50CEB00BDFB49 /* ZMUserSessionTests+MLS.swift in Sources */,
+				63D5654D28B50CEB00BDFB49 /* ZMUserSessionTests+CryptoStack.swift in Sources */,
 				F19F4F4D1E646C3C00F4D8FF /* UserProfileImageUpdateStatusTests.swift in Sources */,
 				167BCB902603CAB200E9D7E3 /* AnalyticsTests.swift in Sources */,
 				1679D1CD1EF97387007B0DF5 /* ZMUserSessionTestsBase+Calling.swift in Sources */,
