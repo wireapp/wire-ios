@@ -88,12 +88,12 @@ public class CoreCryptoFactory {
             applicationContainer: sharedContainerURL
         )
         FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let mlsDirectory = accountDirectory.appendingMLSFolder()
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
             let key = try coreCryptoKeyProvider.coreCryptoKey()
             return CoreCryptoConfiguration(
-                path: mlsDirectory.path,
+                path: coreCryptoDirectory.path,
                 key: key.base64EncodedString(),
                 clientId: qualifiedClientId
             )
@@ -108,11 +108,5 @@ public class CoreCryptoFactory {
 public extension CoreCryptoConfiguration {
     func clientIDBytes() -> ClientId? {
         return clientId.data(using: .utf8)?.bytes
-    }
-}
-
-private extension URL {
-    func appendingMLSFolder() -> URL {
-        return appendingPathComponent("mls")
     }
 }
