@@ -28,41 +28,15 @@ extension NSManagedObjectContext {
     }
 
     public var mlsController: MLSControllerProtocol? {
-        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-        return userInfo[Self.mlsControllerUserInfoKey] as? MLSControllerProtocol
-    }
+        get {
+            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
+            return userInfo[Self.mlsControllerUserInfoKey] as? MLSControllerProtocol
+        }
 
-    public func setMLSController(
-        mlsController: MLSControllerProtocol
-    ) {
-        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-
-        userInfo[Self.mlsControllerUserInfoKey] = mlsController
-    }
-
-    public func initializeMLSController(
-        coreCrypto: CoreCryptoProtocol,
-        conversationEventProcessor: ConversationEventProcessorProtocol,
-        userDefaults: UserDefaults,
-        syncStatus: SyncStatusProtocol
-    ) {
-        precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-
-        userInfo[Self.mlsControllerUserInfoKey] = MLSController(
-            context: self,
-            coreCrypto: coreCrypto,
-            conversationEventProcessor: conversationEventProcessor,
-            userDefaults: userDefaults,
-            syncStatus: syncStatus
-        )
-    }
-
-    /// Test helper for setting a mock controller.
-    ///
-    /// Unfortunately this is necessary as we have test logic in other frameworks.
-
-    public func test_setMockMLSController(_ controller: MLSControllerProtocol) {
-        userInfo[Self.mlsControllerUserInfoKey] = controller
+        set {
+            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
+            userInfo[Self.mlsControllerUserInfoKey] = newValue
+        }
     }
 
 }

@@ -19,76 +19,50 @@
 import Foundation
 import CoreCryptoSwift
 
-struct CoreCryptoConfiguration {
+public struct CoreCryptoConfiguration {
 
-    let path: String
-    let key: String
-    let clientId: String
+    public let path: String
+    public let key: String
+    public let clientID: String
 
     func clientIDBytes() -> ClientId? {
-        return clientId.data(using: .utf8)?.bytes
+        return clientID.data(using: .utf8)?.bytes
     }
 
 }
 
-class CoreCryptoFactory {
+public class CoreCryptoFactory {
 
     // MARK: - Properties
 
+    private let sharedContainerURL: URL
+    private let selfUser: ZMUser
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
 
     // MARK: - Life cycle
 
-    convenience init() {
-        self.init(coreCryptoKeyProvider: CoreCryptoKeyProvider())
-    }
-
-    init(coreCryptoKeyProvider: CoreCryptoKeyProvider) {
+    public init(
+        sharedContainerURL: URL,
+        selfUser: ZMUser,
+        coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()
+    ) {
+        self.sharedContainerURL = sharedContainerURL
+        self.selfUser = selfUser
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
     }
 
     // MARK: - Types
 
-    enum ConfigurationError: Error, Equatable {
+    public enum ConfigurationError: Error, Equatable {
+
         case failedToGetClientId
         case failedToGetCoreCryptoKey
+
     }
 
     // MARK: - Methods
 
-    func coreCrypto(
-        sharedContainerURL: URL,
-        syncContext: NSManagedObjectContext
-    ) throws -> CoreCryptoProtocol {
-        let configuration = try configuration(
-            sharedContainerURL: sharedContainerURL,
-            syncContext: syncContext
-        )
-
-        return try coreCrypto(configuration: configuration)
-    }
-
-    func coreCrypto(configuration: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
-        guard let clientId = configuration.clientIDBytes() else {
-            throw ConfigurationError.failedToGetClientId
-        }
-
-        return try CoreCrypto(
-            path: configuration.path,
-            key: configuration.key,
-            clientId: clientId,
-            entropySeed: nil
-        )
-    }
-
-    func configuration(
-        sharedContainerURL: URL,
-        syncContext: NSManagedObjectContext
-    ) throws -> CoreCryptoConfiguration {
-        precondition(syncContext.zm_isSyncContext)
-
-        let selfUser = ZMUser.selfUser(in: syncContext)
-
+    public func createConfiguration() throws -> CoreCryptoConfiguration {
         guard let qualifiedClientId = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
             throw ConfigurationError.failedToGetClientId
         }
@@ -106,12 +80,26 @@ class CoreCryptoFactory {
             return CoreCryptoConfiguration(
                 path: coreCryptoDirectory.path,
                 key: key.base64EncodedString(),
-                clientId: qualifiedClientId
+                clientID: qualifiedClientId
             )
         } catch {
             Logging.mls.warn("Failed to get core crypto key \(String(describing: error))")
             throw ConfigurationError.failedToGetCoreCryptoKey
         }
+    }
+
+
+    public func createCoreCrypto(with config: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
+        guard let clientID = config.clientIDBytes() else {
+            throw ConfigurationError.failedToGetClientId
+        }
+
+        return try CoreCrypto(
+            path: config.path,
+            key: config.key,
+            clientId: clientID,
+            entropySeed: nil
+        )
     }
 
 }

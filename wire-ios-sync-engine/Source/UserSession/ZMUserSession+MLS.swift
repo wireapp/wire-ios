@@ -25,18 +25,16 @@ extension ZMUserSession {
 
     func setupCryptoStack() {
         syncContext.performAndWait {
-            // The factory will create the config, core crypto, proteus service, and mls service.
-            let factory = CoreCryptoFactory()
+            let factory = CoreCryptoFactory(
+                sharedContainerURL: sharedContainerURL,
+                selfUser: .selfUser(in: syncContext)
+            )
 
             do {
-                // Create the config.
-                let configuration = try factory.configuration(
-                    sharedContainerURL: sharedContainerURL,
-                    syncContext: syncContext
-                )
+                let configuration = try factory.createConfiguration()
 
-                // Create core crypto.
-                syncContext.coreCrypto = try factory.coreCrypto(configuration: configuration)
+                let coreCrypto = try factory.createCoreCrypto(with: configuration)
+                syncContext.coreCrypto = coreCrypto
 
                 // Create proteus service.
 
@@ -48,10 +46,11 @@ extension ZMUserSession {
                         return
                     }
 
-                    syncContext.initializeMLSController(
+                    syncContext.mlsController = MLSController(
+                        context: syncContext,
                         coreCrypto: coreCrypto,
                         conversationEventProcessor: ConversationEventProcessor(context: syncContext),
-                        userDefaults: UserDefaults(suiteName: "com.wire.mls.\(clientID)")!,
+                        userDefaults: UserDefaults(suiteName: "com.wire.mls.\(configuration.clientID)")!,
                         syncStatus: syncStatus
                     )
                 }
