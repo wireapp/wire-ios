@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+import CoreCryptoSwift
 
 class MockMLSActionExecutor: MLSActionExecutorProtocol {
 

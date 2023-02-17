@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import CoreCryptoSwift
 
 class MLSEncryptionController: MLSControllerProtocol {
 
@@ -28,7 +29,7 @@ class MLSEncryptionController: MLSControllerProtocol {
     }
 
     func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> WireDataModel.Bytes {
-        return try coreCrypto.wire_encryptMessage(conversationId: groupID.bytes, message: message)
+        return try coreCrypto.encryptMessage(conversationId: groupID.bytes, message: message)
     }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws {

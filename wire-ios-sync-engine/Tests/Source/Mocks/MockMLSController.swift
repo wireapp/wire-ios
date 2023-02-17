@@ -21,8 +21,8 @@ import WireDataModel
 
 // Temporary Mock until we find a way to use a single mocked `MLSControllerProcotol` accross frameworks
 class MockMLSController: MLSControllerProtocol {
+
     func commitPendingProposals(in groupID: WireDataModel.MLSGroupID) async throws {
-        fatalError("not implemented")
     }
 
     func uploadKeyPackagesIfNeeded() {
@@ -66,8 +66,9 @@ class MockMLSController: MLSControllerProtocol {
         didCallPerformPendingJoins = true
     }
 
+    var didCallCommitPendingProposals: Bool = false
     func commitPendingProposals() async throws {
-        fatalError("not implemented")
+        didCallCommitPendingProposals = true
     }
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {

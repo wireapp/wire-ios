@@ -17,6 +17,7 @@
 //
 
 import WireProtos
+import CoreCryptoSwift
 
 extension CommitBundle {
     func protobufData() throws -> Data {
@@ -50,11 +51,11 @@ extension Mls_GroupInfoBundle {
 }
 
 extension Mls_GroupInfoType {
-    init(encryptionType: PublicGroupStateEncryptionType) {
+    init(encryptionType: MlsPublicGroupStateEncryptionType) {
         switch encryptionType {
-        case .Plaintext:
+        case .plaintext:
             self = .publicGroupState
-        case .JweEncrypted:
+        case .jweEncrypted:
             assertionFailure("JweEncrypted is not supported yet")
             self = .publicGroupState
         }
@@ -62,13 +63,13 @@ extension Mls_GroupInfoType {
 }
 
 extension Mls_RatchetTreeType {
-    init(ratchetTreeType: RatchetTreeType) {
+    init(ratchetTreeType: MlsRatchetTreeType) {
         switch ratchetTreeType {
-        case .Full:
+        case .full:
             self = .full
-        case .Delta:
+        case .delta:
             self = .delta
-        case .ByRef:
+        case .byRef:
             self = .reference
         }
     }

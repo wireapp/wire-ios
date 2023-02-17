@@ -10,9 +10,9 @@
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
-		637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */; };
-		63172F96290AB47500DBECC9 /* MLSEncryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */; };
 		63172F792902A42700DBECC9 /* SharingSession+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+MLS.swift */; };
+		63172F96290AB47500DBECC9 /* MLSEncryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */; };
+		637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
 		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
@@ -521,7 +521,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = Resources/Info.plist;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
 				SKIP_INSTALL = YES;
 			};

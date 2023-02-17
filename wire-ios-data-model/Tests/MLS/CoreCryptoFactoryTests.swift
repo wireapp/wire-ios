@@ -88,7 +88,7 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             // we're not creating the self client
 
             // THEN
-            assertItThrows(error: CoreCryptoFactory.ConfigurationError.failedToGetQualifiedClientId) {
+            assertItThrows(error: CoreCryptoFactory.ConfigurationError.failedToGetClientId) {
                 // WHEN
                 _ = try sut.configuration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,

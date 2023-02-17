@@ -143,6 +143,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
     func test_HandleResponse_200_Success() throws {
         // Given
         try syncMOC.performGroupedAndWait { context in
+            BackendInfo.apiVersion = .v2
             let sut = SyncConversationActionHandler(context: context)
             let id = QualifiedID(uuid: .create(), domain: "example.com")
 

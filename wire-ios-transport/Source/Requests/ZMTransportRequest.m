@@ -247,7 +247,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 - (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(NSData *)data type:(NSString *)type contentDisposition:(NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress apiVersion:(int)apiVersion;
 {
-    return [self initWithPath:path method:method binaryData:data type:type acceptHeaderType:ZMTransportAcceptTransportData contentDisposition:contentDisposition shouldCompress:NO apiVersion:apiVersion];
+    return [self initWithPath:path method:method binaryData:data type:type acceptHeaderType:ZMTransportAcceptTransportData contentDisposition:contentDisposition shouldCompress:shouldCompress apiVersion:apiVersion];
 }
 
 - (instancetype)initWithPath:(NSString *)path method:(ZMTransportRequestMethod)method binaryData:(NSData *)data type:(NSString *)type acceptHeaderType:(ZMTransportAccept)acceptHeaderType contentDisposition:(NSDictionary *)contentDisposition shouldCompress:(BOOL)shouldCompress apiVersion:(int)apiVersion;

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2016 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,25 +14,26 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import XCTest
-import WireDataModel
-import WireTesting
-@testable import WireNotificationEngine
 
-class WireNotificationEngineTests: ZMTBaseTest {
-    
-    override func setUp() {
-        super.setUp()
+class WireNotificationEngineTests: XCTestCase {
+
+    override func setUpWithError() throws {
+
     }
-    
-    override func tearDown() {
-        super.tearDown()
+
+    override func tearDownWithError() throws {
+
     }
-    
-    func testExample() {
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(true)
+
+    func testExample() throws {
+
     }
+
+    func testPerformanceExample() throws {
+
+    }
+
 }

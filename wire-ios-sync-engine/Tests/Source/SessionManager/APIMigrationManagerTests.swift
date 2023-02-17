@@ -255,8 +255,7 @@ class APIMigrationManagerTests: MessagingTest {
             application: application,
             appVersion: "999",
             coreDataStack: createCoreDataStack(),
-            configuration: .init(),
-            coreCryptoSetup: MockCoreCryptoSetup.default.setup
+            configuration: .init()
         )
     }
 }

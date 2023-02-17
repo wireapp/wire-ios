@@ -80,9 +80,10 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
                 Logging.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID)): \(String(describing: error))")
             }
 
-            context.perform { [dependencySync] in
+            context.performGroupedBlock { [dependencySync] in
                 dependencySync.synchronize(entity: message, completion: completion)
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+                completion(.success(()), .init())
             }
         }
     }

@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import CoreCryptoSwift
 @testable import WireDataModel
 
 class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
@@ -237,7 +238,9 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
                     message: nil,
                     proposals: [],
                     isActive: false,
-                    commitDelay: nil
+                    commitDelay: nil,
+                    senderClientId: nil,
+                    hasEpochChanged: false
                 )
             }
 
@@ -276,7 +279,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
                     proposals: [],
                     isActive: false,
                     commitDelay: nil,
-                    senderClientId: sender.string.data(using: .utf8)!.bytes
+                    senderClientId: sender.string.data(using: .utf8)!.bytes,
+                    hasEpochChanged: false
                 )
             }
 
@@ -312,7 +316,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             XCTAssertEqual($0, groupID.bytes)
             XCTAssertEqual($1, ConversationConfiguration(
                 ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
-                externalSenders: [removalKey.bytes]
+                externalSenders: [removalKey.bytes],
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             ))
         }
 
@@ -327,13 +332,18 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     func test_CreateGroup_ThrowsError() throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
+        let config = ConversationConfiguration(
+            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            externalSenders: [],
+            custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+        )
 
         var mockCreateConversationCount = 0
         mockCoreCrypto.mockCreateConversation = {
             mockCreateConversationCount += 1
 
             XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, ConversationConfiguration(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519))
+            XCTAssertEqual($1, config)
 
             throw CryptoError.MalformedIdentifier(message: "bad id")
         }
@@ -1228,7 +1238,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let message = Bytes.random().base64EncodedString
 
         // Mock
-        mockCoreCrypto.mockProcessWelcomeMessage = { _ in
+        mockCoreCrypto.mockProcessWelcomeMessage = { _, _ in
             groupID.bytes
         }
 

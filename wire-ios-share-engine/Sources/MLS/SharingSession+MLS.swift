@@ -25,15 +25,13 @@ extension SharingSession {
 
     func setupMLSController(
         sharedContainerURL: URL,
-        syncContext: NSManagedObjectContext,
-        coreCryptoSetup: CoreCryptoSetupClosure
+        syncContext: NSManagedObjectContext
     ) {
         syncContext.performAndWait {
             do {
                 let coreCrypto = try CoreCryptoFactory().coreCrypto(
                     sharedContainerURL: sharedContainerURL,
-                    syncContext: syncContext,
-                    coreCryptoSetup: coreCryptoSetup
+                    syncContext: syncContext
                 )
                 let mlsController = MLSEncryptionController(coreCrypto: coreCrypto)
                 syncContext.setMLSController(mlsController: mlsController)

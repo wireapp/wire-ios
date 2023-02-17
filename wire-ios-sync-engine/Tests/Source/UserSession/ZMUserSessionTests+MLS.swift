@@ -22,19 +22,15 @@ import WireDataModel
 
 class ZMUserSessionTests_MLS: MessagingTest {
 
-    var mockCoreCryptoSetup: MockCoreCryptoSetup!
     var sut: ZMUserSession!
 
     override func setUp() {
         super.setUp()
-
-        mockCoreCryptoSetup = MockCoreCryptoSetup.default
     }
 
     override func tearDown() {
         sut.tearDown()
         sut = nil
-        mockCoreCryptoSetup = nil
         super.tearDown()
     }
 
@@ -90,9 +86,9 @@ class ZMUserSessionTests_MLS: MessagingTest {
 
     func test_ItCommitsPendingProposals_AfterQuickSyncCompletes() {
         // GIVEN
-        let converation = ZMConversation.insertNewObject(in: syncMOC)
-        converation.mlsGroupID = MLSGroupID("123".data(using: .utf8)!)
-        converation.commitPendingProposalDate = Date.distantPast
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.mlsGroupID = MLSGroupID("123".data(using: .utf8)!)
+        conversation.commitPendingProposalDate = Date.distantPast
 
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
@@ -102,16 +98,16 @@ class ZMUserSessionTests_MLS: MessagingTest {
         let client = createSelfClient()
         sut.didRegisterSelfUserClient(client)
 
+        let controller = MockMLSController()
+        sut.syncContext.test_setMockMLSController(controller)
+
         // WHEN
         sut.didFinishQuickSync()
 
         // THEN
-        XCTAssertTrue(wait(withTimeout: 3.0) { [self] in
-            !(mockCoreCryptoSetup.mockCoreCrypto?.calls.wire_commitPendingProposals.isEmpty ?? true)
+        XCTAssertTrue(wait(withTimeout: 3.0) {
+            controller.didCallCommitPendingProposals
         })
-        let wire_commitPendingProposalsCalls = mockCoreCryptoSetup.mockCoreCrypto?.calls.wire_commitPendingProposals
-        XCTAssertEqual(1, wire_commitPendingProposalsCalls?.count)
-        XCTAssertEqual(converation.mlsGroupID?.bytes, wire_commitPendingProposalsCalls?[0])
     }
 
     func createSut(with user: ZMUser) {
@@ -136,8 +132,7 @@ class ZMUserSessionTests_MLS: MessagingTest {
             application: application,
             appVersion: "00000",
             coreDataStack: coreDataStack,
-            configuration: .init(),
-            coreCryptoSetup: mockCoreCryptoSetup.setup
+            configuration: .init()
         )
     }
 }

@@ -95,6 +95,8 @@ final class MessageSyncTests: MessagingTestBase {
                 XCTAssertEqual(request.binaryDataType, "message/mls")
             }
         }
+
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func test_SyncingMessage_Failed_MessageProtocolMissing() {

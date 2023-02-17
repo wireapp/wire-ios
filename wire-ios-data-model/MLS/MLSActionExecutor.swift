@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import CoreCryptoSwift
 
 protocol MLSActionExecutorProtocol {
 
@@ -211,7 +212,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             Logging.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.wire_addClientsToConversation(
+                let memberAddMessages = try coreCrypto.addClientsToConversation(
                     conversationId: groupID.bytes,
                     clients: clients
                 )
@@ -223,16 +224,16 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.wire_removeClientsFromConversation(
+                return try coreCrypto.removeClientsFromConversation(
                     conversationId: groupID.bytes,
                     clients: clients
                 )
 
             case .updateKeyMaterial:
-                return try coreCrypto.wire_updateKeyingMaterial(conversationId: groupID.bytes)
+                return try coreCrypto.updateKeyingMaterial(conversationId: groupID.bytes)
 
             case .proposal:
-                guard let bundle = try coreCrypto.wire_commitPendingProposals(
+                guard let bundle = try coreCrypto.commitPendingProposals(
                     conversationId: groupID.bytes
                 ) else {
                     throw Error.noPendingProposals
@@ -241,7 +242,10 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let publicGroupState):
-                let conversationInitBundle = try coreCrypto.wire_joinByExternalCommit(groupState: publicGroupState.bytes)
+                let conversationInitBundle = try coreCrypto.joinByExternalCommit(
+                    publicGroupState: publicGroupState.bytes,
+                    customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
+                )
 
                 return CommitBundle(
                     welcome: nil,
@@ -309,7 +313,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func mergeCommit(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.wire_commitAccepted(conversationId: groupID.bytes)
+            try coreCrypto.commitAccepted(conversationId: groupID.bytes)
         } catch {
             throw Error.failedToMergeCommit
         }
@@ -317,7 +321,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func discardPendingCommit(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.wire_clearPendingCommit(conversationId: groupID.bytes)
+            try coreCrypto.clearPendingCommit(conversationId: groupID.bytes)
         } catch {
             throw Error.failedToClearCommit
         }
@@ -325,9 +329,8 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func mergePendingGroup(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.wire_mergePendingGroupFromExternalCommit(
-                conversationId: groupID.bytes,
-                config: .init(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+            try coreCrypto.mergePendingGroupFromExternalCommit(
+                conversationId: groupID.bytes
             )
         } catch {
             throw Error.failedToMergePendingGroup
@@ -336,7 +339,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func clearPendingGroup(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.wire_clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
+            try coreCrypto.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
         } catch {
             throw Error.failedToClearPendingGroup
         }
