@@ -99,7 +99,7 @@ class ZMUserSessionTests_MLS: MessagingTest {
         sut.didRegisterSelfUserClient(client)
 
         let controller = MockMLSController()
-        sut.syncContext.test_setMockMLSController(controller)
+        sut.syncContext.mlsController = controller
 
         // WHEN
         sut.didFinishQuickSync()

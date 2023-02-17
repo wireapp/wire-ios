@@ -70,29 +70,32 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             }
 
             // WHEN
-            let configuration = try self.sut.configuration(
+            let configuration = try self.sut.createConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                syncContext: context
+                selfUser: selfUser
             )
 
             // THEN
             XCTAssertEqual(configuration.key, key.base64EncodedString())
             XCTAssertEqual(configuration.path, self.expectedPath(selfUser))
-            XCTAssertEqual(configuration.clientId, self.expectedClientID(selfUser))
+            XCTAssertEqual(configuration.clientID, self.expectedClientID(selfUser))
         }
     }
 
     func test_itThrows_FailedToGetQualifiedClientID() {
         syncMOC.performAndWait {
             // GIVEN
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.domain = "example.domain.com"
+
             // we're not creating the self client
 
             // THEN
-            assertItThrows(error: CoreCryptoFactory.ConfigurationError.failedToGetClientId) {
+            assertItThrows(error: CoreCryptoFactory.ConfigurationSetupFailure.failedToGetClientId) {
                 // WHEN
-                _ = try sut.configuration(
+                _ = try sut.createConfiguration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                    syncContext: syncMOC
+                    selfUser: selfUser
                 )
             }
         }
@@ -112,11 +115,11 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             }
 
             // THEN
-            assertItThrows(error: CoreCryptoFactory.ConfigurationError.failedToGetCoreCryptoKey) {
+            assertItThrows(error: CoreCryptoFactory.ConfigurationSetupFailure.failedToGetCoreCryptoKey) {
                 // WHEN
-                _ = try sut.configuration(
+                _ = try sut.createConfiguration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                    syncContext: syncMOC
+                    selfUser: selfUser
                 )
             }
         }

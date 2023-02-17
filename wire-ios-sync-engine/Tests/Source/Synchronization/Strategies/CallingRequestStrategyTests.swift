@@ -602,7 +602,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let mockMLSController = MockMLSController()
 
         syncMOC.performGroupedBlock {
-            self.syncMOC.test_setMockMLSController(mockMLSController)
+            self.syncMOC.mlsController = mockMLSController
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -668,7 +668,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let mockMLSController = MockMLSController()
 
         syncMOC.performGroupedBlock {
-            self.syncMOC.test_setMockMLSController(mockMLSController)
+            self.syncMOC.mlsController = mockMLSController
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -728,7 +728,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let mockMLSController = MockMLSController()
 
         syncMOC.performGroupedBlock {
-            self.syncMOC.test_setMockMLSController(mockMLSController)
+            self.syncMOC.mlsController = mockMLSController
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
