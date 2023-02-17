@@ -23,80 +23,44 @@ import CoreCryptoSwift
 
 extension ZMUserSession {
 
-    func setUpCoreCryptoIfNeeded() {
-        guard !isCoreCryptoInitialized else {
-            return
-        }
-
+    func setupCryptoStack() {
         syncContext.performAndWait {
+            // The factory will create the config, core crypto, proteus service, and mls service.
+            let factory = CoreCryptoFactory()
+
             do {
-                let factory = CoreCryptoFactory()
+                // Create the config.
                 let configuration = try factory.configuration(
                     sharedContainerURL: sharedContainerURL,
                     syncContext: syncContext
                 )
 
-                let coreCrypto = try factory.coreCrypto(configuration: configuration)
-                Logging.coreCrypto.info("success: setup core crypto")
+                // Create core crypto.
+                syncContext.coreCrypto = try factory.coreCrypto(configuration: configuration)
+
+                // Create proteus service.
+                
+
+                // Create mls controller
+                if syncContext.mlsController == nil {
+                    guard let syncStatus = syncStatus else {
+                        Logging.mls.warn("fail: setup MLSController: no sync status available")
+                        return
+                    }
+
+                    syncContext.initializeMLSController(
+                        coreCrypto: coreCrypto,
+                        conversationEventProcessor: ConversationEventProcessor(context: syncContext),
+                        userDefaults: UserDefaults(suiteName: "com.wire.mls.\(clientID)")!,
+                        syncStatus: syncStatus
+                    )
+                }
+
+                Logging.coreCrypto.info("success: setup crypto stack")
             } catch {
-                Logging.coreCrypto.error("fail: setup core crypto: \(String(describing: error))")
+                Logging.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
         }
     }
 
-    func setupMLSControllerIfNeeded() {
-        guard !isMLSControllerInitialized else {
-            return
-        }
-
-        guard let syncStatus = syncStatus else {
-            Logging.mls.warn("Failed to setup MLSController: no sync status available")
-            return
-        }
-
-        syncContext.performAndWait {
-            do {
-                let factory = CoreCryptoFactory()
-                let configuration = try factory.configuration(
-                    sharedContainerURL: sharedContainerURL,
-                    syncContext: syncContext
-                )
-
-                let coreCrypto = try factory.coreCrypto(configuration: configuration)
-
-                initializeMLSController(
-                    coreCrypto: coreCrypto,
-                    clientID: configuration.clientId,
-                    syncStatus: syncStatus
-                )
-            } catch {
-                Logging.mls.warn("Failed to setup MLSController: \(String(describing: error))")
-            }
-        }
-    }
-
-    private var isMLSControllerInitialized: Bool {
-        var result = false
-
-        syncContext.performAndWait {
-            result = syncContext.isMLSControllerInitialized
-        }
-
-        return result
-    }
-
-    private func initializeMLSController(
-        coreCrypto: CoreCryptoProtocol,
-        clientID: String,
-        syncStatus: SyncStatusProtocol
-    ) {
-        syncContext.performAndWait {
-            syncContext.initializeMLSController(
-                coreCrypto: coreCrypto,
-                conversationEventProcessor: ConversationEventProcessor(context: syncContext),
-                userDefaults: UserDefaults(suiteName: "com.wire.mls.\(clientID)")!,
-                syncStatus: syncStatus
-            )
-        }
-    }
 }
