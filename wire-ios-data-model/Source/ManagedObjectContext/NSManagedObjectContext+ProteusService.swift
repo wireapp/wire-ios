@@ -23,18 +23,16 @@ extension NSManagedObjectContext {
 
     private static let proteusServiceUserInfoKey = "ProteusServiceUserInfoKey"
 
-    public var isProteusServiceInitialized: Bool {
-        return proteusService != nil
-    }
-
     public var proteusService: ProteusServiceInterface? {
-        precondition(zm_isSyncContext, "ProteusService should only be accessed on the sync context")
-        return userInfo[Self.proteusServiceUserInfoKey] as? ProteusServiceInterface
-    }
+        get {
+            precondition(zm_isSyncContext, "ProteusService should only be accessed on the sync context")
+            return userInfo[Self.proteusServiceUserInfoKey] as? ProteusServiceInterface
+        }
 
-    public func initializeProteusService(coreCrypto: CoreCryptoProtocol) {
-        precondition(zm_isSyncContext, "ProteusService should only be accessed on the sync context")
-        userInfo[Self.proteusServiceUserInfoKey] = ProteusService(coreCrypto: coreCrypto)
+        set {
+            precondition(zm_isSyncContext, "ProteusService should only be accessed on the sync context")
+            userInfo[Self.proteusServiceUserInfoKey] = newValue
+        }
     }
 
 }

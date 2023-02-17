@@ -21,9 +21,7 @@ import CoreCryptoSwift
 
 extension NSManagedObjectContext {
 
-    public var isCoreCryptoInitialized: Bool {
-        return coreCrypto != nil
-    }
+    private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
     public var coreCrypto: CoreCryptoProtocol? {
         get {
@@ -37,7 +35,5 @@ extension NSManagedObjectContext {
         }
 
     }
-
-    private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
 }

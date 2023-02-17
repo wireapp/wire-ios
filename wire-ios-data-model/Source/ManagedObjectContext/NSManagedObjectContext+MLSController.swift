@@ -23,10 +23,6 @@ extension NSManagedObjectContext {
 
     private static let mlsControllerUserInfoKey = "MLSControllerUserInfoKey"
 
-    public var isMLSControllerInitialized: Bool {
-        return mlsController != nil
-    }
-
     public var mlsController: MLSControllerProtocol? {
         get {
             precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
