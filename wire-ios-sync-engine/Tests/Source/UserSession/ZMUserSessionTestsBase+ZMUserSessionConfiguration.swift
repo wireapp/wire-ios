@@ -34,8 +34,7 @@ extension ZMUserSessionTestsBase {
             application: application,
             appVersion: "00000",
             coreDataStack: coreDataStack,
-            configuration: .init(),
-            coreCryptoSetup: MockCoreCryptoSetup.default.setup
+            configuration: .init()
         )
     }
 }

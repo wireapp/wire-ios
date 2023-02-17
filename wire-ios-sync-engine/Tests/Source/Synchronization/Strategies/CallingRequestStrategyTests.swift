@@ -238,6 +238,7 @@ class CallingRequestStrategyTests: MessagingTest {
         // A conversation with both users and self.
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = .create()
+        conversation.domain = "foo.com"
         conversation.messageProtocol = .proteus
         conversation.addParticipantsAndUpdateConversationState(
             users: [ZMUser.selfUser(in: syncMOC), user1, user2],
@@ -674,12 +675,17 @@ class CallingRequestStrategyTests: MessagingTest {
 
         var nextRequest: ZMTransportRequest?
 
+        let didEnqueueMessage = expectation(description: "didEnqueueMessage")
+
         // When we schedule the message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: self.callMessage(withType: "CONFKEY"), conversationId: conversation.avsIdentifier!, targets: targets) { _ in }
+            self.sut.send(data: self.callMessage(withType: "CONFKEY"), conversationId: conversation.avsIdentifier!, targets: targets) { _ in
+                didEnqueueMessage.fulfill()
+            }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             nextRequest = self.sut.nextRequest(for: .v2)

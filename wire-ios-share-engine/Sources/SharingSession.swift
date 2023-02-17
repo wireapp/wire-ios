@@ -210,12 +210,13 @@ public class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
 
-    public convenience init(applicationGroupIdentifier: String,
-                            accountIdentifier: UUID,
-                            hostBundleIdentifier: String,
-                            environment: BackendEnvironmentProvider,
-                            appLockConfig: AppLockController.LegacyConfig?,
-                            coreCryptoSetup: @escaping CoreCryptoSetupClosure) throws {
+    public convenience init(
+        applicationGroupIdentifier: String,
+        accountIdentifier: UUID,
+        hostBundleIdentifier: String,
+        environment: BackendEnvironmentProvider,
+        appLockConfig: AppLockController.LegacyConfig?
+    ) throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
@@ -261,23 +262,22 @@ public class SharingSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            appLockConfig: appLockConfig,
-            coreCryptoSetup: coreCryptoSetup
+            appLockConfig: appLockConfig
         )
     }
 
-    internal init(accountIdentifier: UUID,
-                  coreDataStack: CoreDataStack,
-                  transportSession: ZMTransportSession,
-                  cachesDirectory: URL,
-                  saveNotificationPersistence: ContextDidSaveNotificationPersistence,
-                  analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
-                  applicationStatusDirectory: ApplicationStatusDirectory,
-                  operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory,
-                  appLockConfig: AppLockController.LegacyConfig?,
-                  coreCryptoSetup: CoreCryptoSetupClosure
-        ) throws {
+    internal init(
+        accountIdentifier: UUID,
+        coreDataStack: CoreDataStack,
+        transportSession: ZMTransportSession,
+        cachesDirectory: URL,
+        saveNotificationPersistence: ContextDidSaveNotificationPersistence,
+        analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        operationLoop: RequestGeneratingOperationLoop,
+        strategyFactory: StrategyFactory,
+        appLockConfig: AppLockController.LegacyConfig?
+    ) throws {
 
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -294,20 +294,20 @@ public class SharingSession {
 
         setupMLSController(
             sharedContainerURL: coreDataStack.applicationContainer,
-            syncContext: coreDataStack.syncContext,
-            coreCryptoSetup: coreCryptoSetup
+            syncContext: coreDataStack.syncContext
         )
         setupCaches(at: cachesDirectory)
         setupObservers()
     }
 
-    public convenience init(accountIdentifier: UUID,
-                            coreDataStack: CoreDataStack,
-                            transportSession: ZMTransportSession,
-                            cachesDirectory: URL,
-                            accountContainer: URL,
-                            appLockConfig: AppLockController.LegacyConfig?,
-                            coreCryptoSetup: CoreCryptoSetupClosure) throws {
+    public convenience init(
+        accountIdentifier: UUID,
+        coreDataStack: CoreDataStack,
+        transportSession: ZMTransportSession,
+        cachesDirectory: URL,
+        accountContainer: URL,
+        appLockConfig: AppLockController.LegacyConfig?
+    ) throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
         let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
@@ -341,8 +341,7 @@ public class SharingSession {
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
-            appLockConfig: appLockConfig,
-            coreCryptoSetup: coreCryptoSetup
+            appLockConfig: appLockConfig
         )
     }
 

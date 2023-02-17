@@ -59,7 +59,6 @@ public class ZMUserSession: NSObject {
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
-    private let coreCryptoSetup: CoreCryptoSetupClosure
 
     var isNetworkOnline: Bool = true
     var isPerformingSync: Bool = true {
@@ -241,8 +240,7 @@ public class ZMUserSession: NSObject {
                 application: ZMApplication,
                 appVersion: String,
                 coreDataStack: CoreDataStack,
-                configuration: Configuration,
-                coreCryptoSetup: @escaping CoreCryptoSetupClosure) {
+                configuration: Configuration) {
 
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -265,7 +263,6 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
-        self.coreCryptoSetup = coreCryptoSetup
         super.init()
 
         appLockController.delegate = self
@@ -288,7 +285,7 @@ public class ZMUserSession: NSObject {
 
         // This should happen after the request strategies are created b/c
         // it needs to make network requests upon initialization.
-        setupMLSControllerIfNeeded(coreCryptoSetup: coreCryptoSetup)
+        setupMLSControllerIfNeeded()
 
         updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
@@ -648,7 +645,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient!) {
-        setupMLSControllerIfNeeded(coreCryptoSetup: coreCryptoSetup)
+        setupMLSControllerIfNeeded()
 
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration

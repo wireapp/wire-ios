@@ -18,6 +18,7 @@
 
 
 import Foundation
+import CoreCryptoSwift
 
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
@@ -35,7 +36,11 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         return true
     }
 
-    func clientIsExistingGroupUser(clientId: ClientId, existingClients: [ClientId]) -> Bool {
+    func clientIsExistingGroupUser(
+        conversationId: ConversationId,
+        clientId: ClientId,
+        existingClients: [ClientId]
+    ) -> Bool {
         guard let mlsClientID = MLSClientID(data: clientId.data) else {
             return false
         }

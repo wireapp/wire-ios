@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import WireDataModel
+import CoreCryptoSwift
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
@@ -73,8 +74,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockWelcome = Bytes.random()
         let mockUpdateEvent = mockMemberJoinUpdateEvent()
         let mockPublicGroupState = PublicGroupStateBundle(
-            encryptionType: .Plaintext,
-            ratchetTreeType: .Full,
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
             payload: .random()
         )
         let mockMemberAddedMessages = MemberAddedMessages(
@@ -144,8 +145,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockCommit = Bytes.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
         let mockPublicGroupState = PublicGroupStateBundle(
-            encryptionType: .Plaintext,
-            ratchetTreeType: .Full,
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
             payload: .random()
         )
         let mockCommitBundle = CommitBundle(
@@ -202,8 +203,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         let mockCommit = Bytes.random()
         let mockPublicGroupState = PublicGroupStateBundle(
-            encryptionType: .Plaintext,
-            ratchetTreeType: .Full,
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
             payload: .random()
         )
         let mockCommitBundle = CommitBundle(
@@ -261,8 +262,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockWelcome = Bytes.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
         let mockPublicGroupState = PublicGroupStateBundle(
-            encryptionType: .Plaintext,
-            ratchetTreeType: .Full,
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
             payload: .random()
         )
         let mockCommitBundle = CommitBundle(
@@ -322,8 +323,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockCommit = Bytes.random()
         let mockPublicGroupState = Bytes.random().data
         let mockPublicGroupStateBundle = PublicGroupStateBundle(
-            encryptionType: .Plaintext,
-            ratchetTreeType: .Full,
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
             payload: []
         )
         let mockCommitBundle = CommitBundle(
@@ -336,8 +337,9 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [Bytes]()
-        mockCoreCrypto.mockJoinByExternalCommit = {
-            mockJoinByExternalCommitArguments.append($0)
+
+        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _ in
+            mockJoinByExternalCommitArguments.append(groupState)
             return .init(
                 conversationId: groupID.bytes,
                 commit: mockCommit,
@@ -354,7 +356,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock merge pending group
         var mockMergePendingGroupArguments = [Bytes]()
-        mockCoreCrypto.mockMergePendingGroupFromExternalCommit = { conversationId, _ in
+        mockCoreCrypto.mockMergePendingGroupFromExternalCommit = { conversationId in
             mockMergePendingGroupArguments.append(conversationId)
         }
 
@@ -422,15 +424,15 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Given
         let mockCommit = Bytes.random()
         let mockPublicGroupStateBundle = PublicGroupStateBundle(
-            encryptionType: .Plaintext,
-            ratchetTreeType: .Full,
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
             payload: []
         )
 
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [Bytes]()
-        mockCoreCrypto.mockJoinByExternalCommit = {
-            mockJoinByExternalCommitArguments.append($0)
+        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _ in
+            mockJoinByExternalCommitArguments.append(groupState)
             return .init(
                 conversationId: groupID.bytes,
                 commit: mockCommit,
