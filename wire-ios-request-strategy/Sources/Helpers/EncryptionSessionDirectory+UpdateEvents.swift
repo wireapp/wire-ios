@@ -83,7 +83,6 @@ extension EncryptionSessionsDirectory {
 
     /// Appends a system message for a failed decryption
     fileprivate func appendFailedToDecryptMessage(after error: CBoxResult?, for event: ZMUpdateEvent, sender: UserClient, in moc: NSManagedObjectContext) {
-        logger.debug("Event debug: \(event.debugInformation)")
         logger.error("Failed to decrypt message with error: \(error.debugDescription), client id <\(sender.safeRemoteIdentifier))>")
         if error == CBOX_OUTDATED_MESSAGE || error == CBOX_DUPLICATE_MESSAGE {
             return // do not notify the user if the error is just "duplicated"

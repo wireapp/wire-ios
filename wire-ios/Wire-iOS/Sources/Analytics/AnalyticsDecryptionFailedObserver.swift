@@ -17,7 +17,6 @@
 
 import Foundation
 import WireDataModel
-import WireSystem
 
 final class AnalyticsDecryptionFailedObserver: NSObject {
     private let analytics: Analytics

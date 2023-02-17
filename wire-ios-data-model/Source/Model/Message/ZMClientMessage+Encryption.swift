@@ -431,7 +431,7 @@ extension GenericMessage {
         } else if client.failedToEstablishSession {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-            logger.error("Failed to create encryptedMessage payload string: \(data)")
+            logger.error("Failed to create encryptedMessage, session is not established with a client \(data)")
             return Proteus_ClientEntry(withClient: client, data: data)
 
         }
