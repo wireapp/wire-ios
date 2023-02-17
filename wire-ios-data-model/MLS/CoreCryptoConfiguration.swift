@@ -19,23 +19,27 @@
 import Foundation
 import CoreCryptoSwift
 
-public struct CoreCryptoConfiguration {
-    public let path: String
-    public let key: String
-    public let clientId: String
+struct CoreCryptoConfiguration {
 
-    public init(path: String, key: String, clientId: String) {
-        self.path = path
-        self.key = key
-        self.clientId = clientId
+    let path: String
+    let key: String
+    let clientId: String
+
+    func clientIDBytes() -> ClientId? {
+        return clientId.data(using: .utf8)?.bytes
     }
+
 }
 
-public class CoreCryptoFactory {
+class CoreCryptoFactory {
+
+    // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
 
-    public convenience init() {
+    // MARK: - Life cycle
+
+    convenience init() {
         self.init(coreCryptoKeyProvider: CoreCryptoKeyProvider())
     }
 
@@ -43,16 +47,19 @@ public class CoreCryptoFactory {
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
     }
 
-    public enum ConfigurationError: Error, Equatable {
+    // MARK: - Types
+
+    enum ConfigurationError: Error, Equatable {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
 
-    public func coreCrypto(
+    // MARK: - Methods
+
+    func coreCrypto(
         sharedContainerURL: URL,
         syncContext: NSManagedObjectContext
     ) throws -> CoreCryptoProtocol {
-
         let configuration = try configuration(
             sharedContainerURL: sharedContainerURL,
             syncContext: syncContext
@@ -61,7 +68,7 @@ public class CoreCryptoFactory {
         return try coreCrypto(configuration: configuration)
     }
 
-    public func coreCrypto(configuration: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
+    func coreCrypto(configuration: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
         guard let clientId = configuration.clientIDBytes() else {
             throw ConfigurationError.failedToGetClientId
         }
@@ -74,7 +81,10 @@ public class CoreCryptoFactory {
         )
     }
 
-    public func configuration(sharedContainerURL: URL, syncContext: NSManagedObjectContext) throws -> CoreCryptoConfiguration {
+    func configuration(
+        sharedContainerURL: URL,
+        syncContext: NSManagedObjectContext
+    ) throws -> CoreCryptoConfiguration {
         precondition(syncContext.zm_isSyncContext)
 
         let selfUser = ZMUser.selfUser(in: syncContext)
@@ -87,6 +97,7 @@ public class CoreCryptoFactory {
             accountIdentifier: selfUser.remoteIdentifier,
             applicationContainer: sharedContainerURL
         )
+
         FileManager.default.createAndProtectDirectory(at: accountDirectory)
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
@@ -103,10 +114,4 @@ public class CoreCryptoFactory {
         }
     }
 
-}
-
-public extension CoreCryptoConfiguration {
-    func clientIDBytes() -> ClientId? {
-        return clientId.data(using: .utf8)?.bytes
-    }
 }

@@ -39,7 +39,7 @@ extension ZMUserSession {
                 syncContext.coreCrypto = try factory.coreCrypto(configuration: configuration)
 
                 // Create proteus service.
-                
+
 
                 // Create mls controller
                 if syncContext.mlsController == nil {
