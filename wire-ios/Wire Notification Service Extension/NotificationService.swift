@@ -23,7 +23,7 @@ import UserNotifications
 import Datadog
 #endif
 
-public class NotificationService: UNNotificationServiceExtension{
+public class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
