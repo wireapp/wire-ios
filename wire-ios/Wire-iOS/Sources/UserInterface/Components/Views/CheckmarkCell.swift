@@ -74,11 +74,10 @@ final class CheckmarkCell: RightIconDetailsCell {
 
         let color: UIColor
 
-        switch disabled {
-        case false:
-            color = SemanticColors.Icon.foregroundPlainCheckMark
-        case true:
+        if disabled {
             color = SemanticColors.Icon.foregroundPlaceholder
+        } else {
+            color = SemanticColors.Icon.foregroundPlainCheckMark
         }
 
         accessory = StyleKitIcon.checkmark.makeImage(size: .tiny,
