@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,12 @@
 
 import Foundation
 import WireUtilities
+import WireCommonComponents
 
-@available(iOS 14, *)
-final class DeveloperFlagsViewModel: ObservableObject {
+extension DeveloperFlag {
 
-    // MARK: - State
-
-    var flags = DeveloperFlag.allCases.sorted {
-        $0.rawValue < $1.rawValue
+    static var isUpdatedCallingUI: Bool {
+        return !(DeveloperFlag.deprecatedCallingUI.isOn || AutomationHelper.sharedHelper.deprecatedCallingUI)
     }
 
 }
