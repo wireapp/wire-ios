@@ -536,6 +536,7 @@
 		63B9F5B825E7D7190059020D /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B9F5B725E7D7190059020D /* ToastView.swift */; };
 		63CE88A42506A83300E457C7 /* OrientationDeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */; };
 		63D17D6B268E142100B0CC4F /* MockCallGridViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */; };
+		63DFEAD329A3885600FCA830 /* DeveloperFlag+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFEAD229A3885600FCA830 /* DeveloperFlag+Calling.swift */; };
 		63E128B726208BAD009D9AF2 /* CallGridHintNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */; };
 		63E128BB26208DDC009D9AF2 /* CallGridEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */; };
 		63F239352694A151000BFFC6 /* Array+Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D70268F52A300B0CC4F /* Array+Prefix.swift */; };
@@ -1371,7 +1372,6 @@
 		EEE455E828B2E210005ACD74 /* AccessAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */; };
 		EEE455EB28B2E470005ACD74 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
 		EEE455EE28B2E4CE005ACD74 /* NotificationsAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455ED28B2E4CE005ACD74 /* NotificationsAPIClient.swift */; };
-		EEE5D981287E1CDA004E2D2B /* DeveloperFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */; };
 		EEE60E2C2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */; };
 		EEE81E9223E028EA00A1D035 /* TopPeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */; };
 		EEE81E9423E0467F00A1D035 /* TopPeopleLineCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9323E0467F00A1D035 /* TopPeopleLineCollectionViewController.swift */; };
@@ -2423,6 +2423,7 @@
 		63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationDeltaTests.swift; sourceTree = "<group>"; };
 		63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCallGridViewControllerDelegate.swift; sourceTree = "<group>"; };
 		63D17D70268F52A300B0CC4F /* Array+Prefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Prefix.swift"; sourceTree = "<group>"; };
+		63DFEAD229A3885600FCA830 /* DeveloperFlag+Calling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeveloperFlag+Calling.swift"; sourceTree = "<group>"; };
 		63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGridHintNotificationLabel.swift; sourceTree = "<group>"; };
 		63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGridEvent.swift; sourceTree = "<group>"; };
 		63F2398D269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoGridPresentationMode+CallActions.swift"; sourceTree = "<group>"; };
@@ -3337,7 +3338,6 @@
 		EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessAPIClient.swift; sourceTree = "<group>"; };
 		EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPrimitives.swift; sourceTree = "<group>"; };
 		EEE455ED28B2E4CE005ACD74 /* NotificationsAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsAPIClient.swift; sourceTree = "<group>"; };
-		EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlag.swift; sourceTree = "<group>"; };
 		EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsNotificationOptionsCellTests.swift; sourceTree = "<group>"; };
 		EEE81E9123E028EA00A1D035 /* TopPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopPeopleCell.swift; sourceTree = "<group>"; };
 		EEE81E9323E0467F00A1D035 /* TopPeopleLineCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopPeopleLineCollectionViewController.swift; sourceTree = "<group>"; };
@@ -6907,6 +6907,7 @@
 				BFE41870209C8AFD00503C7C /* CallInfoConfiguration+Debug.swift */,
 				635BAFE5262DB34400B986A4 /* Array+CallParticipant.swift */,
 				D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */,
+				63DFEAD229A3885600FCA830 /* DeveloperFlag+Calling.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -7831,7 +7832,6 @@
 				E9EBE0D128194F2D0058C793 /* FontScheme.swift */,
 				E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */,
 				E9EBE0D8281958BE0058C793 /* FontSpec.swift */,
-				EEE5D980287E1CDA004E2D2B /* DeveloperFlag.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
@@ -8748,6 +8748,7 @@
 				EF6777062073C6C20062F122 /* OfflineBar.swift in Sources */,
 				068500C726B9A33000721F80 /* SimpleVideoMessageRestrictionView.swift in Sources */,
 				BFFD439E1DE47FFA00505C8C /* UIView+RightToLeft.swift in Sources */,
+				63DFEAD329A3885600FCA830 /* DeveloperFlag+Calling.swift in Sources */,
 				1661C71F21A71F15003DCE1C /* ConversationAudioMessageCell.swift in Sources */,
 				872B3283209B208D005AC615 /* CallTopOverlayController.swift in Sources */,
 				5EF7BA63221ADF5500815625 /* ProfileDetailsViewController.swift in Sources */,
@@ -9884,7 +9885,6 @@
 				EF3B26DC2370585700245701 /* AppCenter.swift in Sources */,
 				A98370BC2488101500515687 /* URL+FileSize.swift in Sources */,
 				E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */,
-				EEE5D981287E1CDA004E2D2B /* DeveloperFlag.swift in Sources */,
 				5E3E1B732260DA200053AC59 /* StyleKitIcons.generated.swift in Sources */,
 				F15650C621DD0C5500210504 /* CGFloat+Hairline.swift in Sources */,
 				F15650A321DCF63300210504 /* FilePreviewGenerator.swift in Sources */,
