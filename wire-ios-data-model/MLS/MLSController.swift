@@ -107,7 +107,7 @@ public final class MLSController: MLSControllerProtocol {
 
     // MARK: - Life cycle
 
-    convenience init(
+    public convenience init(
         context: NSManagedObjectContext,
         coreCrypto: CoreCryptoProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,

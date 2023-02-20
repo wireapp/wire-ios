@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,10 @@
 //
 
 import Foundation
-import CoreCryptoSwift
 
-extension NSManagedObjectContext {
+/// A type that provides support for messaging via the Proteus
+/// end-to-end-encryption protocol.
 
-    private static let mlsControllerUserInfoKey = "MLSControllerUserInfoKey"
-
-    public var mlsController: MLSControllerProtocol? {
-        get {
-            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-            return userInfo[Self.mlsControllerUserInfoKey] as? MLSControllerProtocol
-        }
-
-        set {
-            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-            userInfo[Self.mlsControllerUserInfoKey] = newValue
-        }
-    }
+public protocol ProteusServiceInterface {
 
 }

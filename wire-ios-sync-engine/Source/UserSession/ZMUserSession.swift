@@ -285,7 +285,7 @@ public class ZMUserSession: NSObject {
 
         // This should happen after the request strategies are created b/c
         // it needs to make network requests upon initialization.
-        setupMLSControllerIfNeeded()
+        setupCryptoStack()
 
         updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
@@ -645,7 +645,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient!) {
-        setupMLSControllerIfNeeded()
+        setupCryptoStack()
 
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration

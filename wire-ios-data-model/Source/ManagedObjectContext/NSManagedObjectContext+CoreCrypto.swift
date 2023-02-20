@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,19 @@ import CoreCryptoSwift
 
 extension NSManagedObjectContext {
 
-    private static let mlsControllerUserInfoKey = "MLSControllerUserInfoKey"
+    private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
-    public var mlsController: MLSControllerProtocol? {
+    public var coreCrypto: CoreCryptoProtocol? {
         get {
-            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-            return userInfo[Self.mlsControllerUserInfoKey] as? MLSControllerProtocol
+            precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
+            return userInfo[Self.coreCryptoUserInfoKey] as? CoreCryptoProtocol
         }
 
         set {
-            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-            userInfo[Self.mlsControllerUserInfoKey] = newValue
+            precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
+            userInfo[Self.coreCryptoUserInfoKey] = newValue
         }
+
     }
 
 }
