@@ -27,12 +27,10 @@ final class Analytics: NSObject {
     private var callingTracker: AnalyticsCallingTracker?
     private var decryptionFailedObserver: AnalyticsDecryptionFailedObserver?
     private var userObserverToken: Any?
-    private let logger = WireLogger(tag: "analytics")
 
     static var shared: Analytics!
 
     required init(optedOut: Bool) {
-        logger.info("Analytics initWithOptedOut: \(optedOut)")
         provider = optedOut ? nil : AnalyticsProviderFactory.shared.analyticsProvider()
 
         super.init()
