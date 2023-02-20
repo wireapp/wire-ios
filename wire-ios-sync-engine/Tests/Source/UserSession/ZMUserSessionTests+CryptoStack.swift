@@ -20,7 +20,7 @@ import XCTest
 @testable import WireSyncEngine
 import WireDataModel
 
-class ZMUserSessionTests_MLS: MessagingTest {
+class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     var sut: ZMUserSession!
 
@@ -34,38 +34,46 @@ class ZMUserSessionTests_MLS: MessagingTest {
         super.tearDown()
     }
 
-    func test_ItSetsUpMLSController_OnInit() {
+    func test_ItSetsUpCryptoStack_OnInit() {
         // GIVEN
         createSelfClient()
 
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.domain = "example.domain.com"
 
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
         XCTAssertNil(syncMOC.mlsController)
 
         // WHEN
         createSut(with: selfUser)
 
         // THEN
+        XCTAssertNotNil(syncMOC.coreCrypto)
+        XCTAssertNotNil(syncMOC.proteusService)
         XCTAssertNotNil(syncMOC.mlsController)
     }
 
-    func test_ItDoesNotSetUpMLSController_WhenThereIsNoSelfClient() {
+    func test_ItDoesNotSetUpCryptoStack_WhenThereIsNoSelfClient() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
         selfUser.domain = "example.domain.com"
 
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
         XCTAssertNil(syncMOC.mlsController)
 
         // WHEN
         createSut(with: selfUser)
 
         // THEN
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
         XCTAssertNil(syncMOC.mlsController)
     }
 
-    func test_ItSetsUpMLSController_AfterRegisteringSelfClient() {
+    func test_ItSetsUpCryptoStack_AfterRegisteringSelfClient() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
@@ -73,6 +81,8 @@ class ZMUserSessionTests_MLS: MessagingTest {
 
         createSut(with: selfUser)
 
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
         XCTAssertNil(syncMOC.mlsController)
 
         let client = createSelfClient()
@@ -81,6 +91,8 @@ class ZMUserSessionTests_MLS: MessagingTest {
         sut.didRegisterSelfUserClient(client)
 
         // THEN
+        XCTAssertNotNil(syncMOC.coreCrypto)
+        XCTAssertNotNil(syncMOC.proteusService)
         XCTAssertNotNil(syncMOC.mlsController)
     }
 
@@ -99,7 +111,7 @@ class ZMUserSessionTests_MLS: MessagingTest {
         sut.didRegisterSelfUserClient(client)
 
         let controller = MockMLSController()
-        sut.syncContext.test_setMockMLSController(controller)
+        sut.syncContext.mlsController = controller
 
         // WHEN
         sut.didFinishQuickSync()

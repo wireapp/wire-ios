@@ -20,99 +20,82 @@ import Foundation
 import CoreCryptoSwift
 
 public struct CoreCryptoConfiguration {
+
     public let path: String
     public let key: String
-    public let clientId: String
+    public let clientID: String
 
-    public init(path: String, key: String, clientId: String) {
-        self.path = path
-        self.key = key
-        self.clientId = clientId
+    func clientIDBytes() -> ClientId? {
+        return clientID.data(using: .utf8)?.bytes
     }
+
 }
 
 public class CoreCryptoFactory {
 
+    // MARK: - Properties
+
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
 
-    public convenience init() {
-        self.init(coreCryptoKeyProvider: CoreCryptoKeyProvider())
-    }
+    // MARK: - Life cycle
 
-    init(coreCryptoKeyProvider: CoreCryptoKeyProvider) {
+    public init(coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()) {
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
     }
 
-    public enum ConfigurationError: Error, Equatable {
-        case failedToGetClientId
-        case failedToGetCoreCryptoKey
-    }
+    // MARK: - Configuration
 
-    public func coreCrypto(
+    public func createConfiguration(
         sharedContainerURL: URL,
-        syncContext: NSManagedObjectContext
-    ) throws -> CoreCryptoProtocol {
-
-        let configuration = try configuration(
-            sharedContainerURL: sharedContainerURL,
-            syncContext: syncContext
-        )
-
-        return try coreCrypto(configuration: configuration)
-    }
-
-    public func coreCrypto(configuration: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
-        guard let clientId = configuration.clientIDBytes() else {
-            throw ConfigurationError.failedToGetClientId
-        }
-
-        return try CoreCrypto(
-            path: configuration.path,
-            key: configuration.key,
-            clientId: clientId,
-            entropySeed: nil
-        )
-    }
-
-    public func configuration(sharedContainerURL: URL, syncContext: NSManagedObjectContext) throws -> CoreCryptoConfiguration {
-        precondition(syncContext.zm_isSyncContext)
-
-        let selfUser = ZMUser.selfUser(in: syncContext)
-
+        selfUser: ZMUser
+    ) throws -> CoreCryptoConfiguration {
         guard let qualifiedClientId = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
-            throw ConfigurationError.failedToGetClientId
+            throw ConfigurationSetupFailure.failedToGetClientId
         }
 
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: selfUser.remoteIdentifier,
             applicationContainer: sharedContainerURL
         )
+
         FileManager.default.createAndProtectDirectory(at: accountDirectory)
-        let mlsDirectory = accountDirectory.appendingMLSFolder()
+        let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
             let key = try coreCryptoKeyProvider.coreCryptoKey()
             return CoreCryptoConfiguration(
-                path: mlsDirectory.path,
+                path: coreCryptoDirectory.path,
                 key: key.base64EncodedString(),
-                clientId: qualifiedClientId
+                clientID: qualifiedClientId
             )
         } catch {
             Logging.mls.warn("Failed to get core crypto key \(String(describing: error))")
-            throw ConfigurationError.failedToGetCoreCryptoKey
+            throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
 
-}
-
-public extension CoreCryptoConfiguration {
-    func clientIDBytes() -> ClientId? {
-        return clientId.data(using: .utf8)?.bytes
+    public enum ConfigurationSetupFailure: Error, Equatable {
+        case failedToGetClientId
+        case failedToGetCoreCryptoKey
     }
-}
 
-private extension URL {
-    func appendingMLSFolder() -> URL {
-        return appendingPathComponent("mls")
+    // MARK: - Core Crypto
+
+    public func createCoreCrypto(with config: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
+        guard let clientID = config.clientIDBytes() else {
+            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
+        }
+
+        return try CoreCrypto(
+            path: config.path,
+            key: config.key,
+            clientId: clientID,
+            entropySeed: nil
+        )
     }
+
+    public enum CoreCryptoSetupFailure: Error, Equatable {
+        case failedToGetClientIDBytes
+    }
+
 }

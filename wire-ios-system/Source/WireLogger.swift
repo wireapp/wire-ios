@@ -137,3 +137,11 @@ public protocol LoggerProtocol {
   func critical(_ message: String, attributes: LogAttributes?)
 
 }
+
+public extension WireLogger {
+
+  /// For logs related to any core crypto related flow.
+  
+  static let coreCrypto = WireLogger(tag: "core-crypto")
+
+}
