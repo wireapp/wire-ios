@@ -20,7 +20,7 @@ import Foundation
 import WireSystem
 import WireCryptobox
 
-private let zmLog = ZMSLog(tag: "proteus")
+private let zmLog = ZMSLog(tag: "cryptobox")
 
 extension EncryptionSessionsDirectory {
 

@@ -19,7 +19,7 @@
 import Foundation
 import WireCryptobox
 
-private var zmLog = ZMSLog(tag: "proteus")
+private var zmLog = ZMSLog(tag: "message encryption")
 
 public let ZMFailedToCreateEncryptedMessagePayloadString = "💣"
 
