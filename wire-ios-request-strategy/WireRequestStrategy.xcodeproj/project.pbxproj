@@ -220,6 +220,7 @@
 		EE402C0528996C6900CA0E40 /* MLSMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE402C0428996C6900CA0E40 /* MLSMessage.swift */; };
 		EE402C0728996F6600CA0E40 /* MessageSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE402C0628996F6600CA0E40 /* MessageSync.swift */; };
 		EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */; };
+		EE47346C29A39E8A00E6C04E /* EventDecoder+Proteus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE47346B29A39E8A00E6C04E /* EventDecoder+Proteus.swift */; };
 		EE4C5FBE27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4C5FBD27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift */; };
 		EE57BD9D28A52DD600C46660 /* MLSMessageSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57BD9C28A52DD600C46660 /* MLSMessageSyncTests.swift */; };
 		EE57BD9F28A52E3100C46660 /* MessageSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57BD9E28A52E3100C46660 /* MessageSyncTests.swift */; };
@@ -636,6 +637,7 @@
 		EE402C0428996C6900CA0E40 /* MLSMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessage.swift; sourceTree = "<group>"; };
 		EE402C0628996F6600CA0E40 /* MessageSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSync.swift; sourceTree = "<group>"; };
 		EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationByQualifiedIDListTranscoderTests.swift; sourceTree = "<group>"; };
+		EE47346B29A39E8A00E6C04E /* EventDecoder+Proteus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventDecoder+Proteus.swift"; sourceTree = "<group>"; };
 		EE4C5FBD27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundledMessageNotificationBuilder.swift; sourceTree = "<group>"; };
 		EE57BD9C28A52DD600C46660 /* MLSMessageSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageSyncTests.swift; sourceTree = "<group>"; };
 		EE57BD9E28A52E3100C46660 /* MessageSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSyncTests.swift; sourceTree = "<group>"; };
@@ -801,6 +803,7 @@
 			isa = PBXGroup;
 			children = (
 				06474D4A24AF6858002C695D /* EventDecoder.swift */,
+				EE47346B29A39E8A00E6C04E /* EventDecoder+Proteus.swift */,
 				06474DA524B4B1EA002C695D /* EventDecoderTest.swift */,
 				06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */,
 				06474DA724B4BB01002C695D /* StoreUpdateEventTests.swift */,
@@ -1885,6 +1888,7 @@
 				1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */,
 				BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */,
 				0693115024F79E2500D14DF5 /* UserNotificationCenterMock.swift in Sources */,
+				EE47346C29A39E8A00E6C04E /* EventDecoder+Proteus.swift in Sources */,
 				06CDDE9F282E9CC200F9360F /* RemovePushTokenAction.swift in Sources */,
 				062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
