@@ -1,1 +1,2 @@
+*.generated.swift linguist-generated=true
 wire-ios/Wire-iOS[[:space:]]Tests/ReferenceImages/**/*.png filter=lfs diff=lfs merge=lfs -text
