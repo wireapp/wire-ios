@@ -28,11 +28,15 @@ class EventDecoderDecryptionTests: MessagingTestBase {
     func testThatItCanDecryptOTRMessageAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
             let generic = GenericMessage(content: Text(content: text))
 
             // WHEN
-            let decryptedEvent = self.decryptedUpdateEventFromOtherClient(message: generic)
+            let decryptedEvent = self.decryptedUpdateEventFromOtherClient(
+                message: generic,
+                eventDecoder: sut
+            )
 
             // THEN
             XCTAssertEqual(decryptedEvent.senderUUID, self.otherUser.remoteIdentifier!)
@@ -49,6 +53,7 @@ class EventDecoderDecryptionTests: MessagingTestBase {
     func testThatItCanDecryptOTRAssetAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let image = self.verySmallJPEGData()
             let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
             let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
@@ -56,7 +61,10 @@ class EventDecoderDecryptionTests: MessagingTestBase {
             let generic = GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium))
 
             // WHEN
-            let decryptedEvent = self.decryptedAssetUpdateEventFromOtherClient(message: generic)
+            let decryptedEvent = self.decryptedAssetUpdateEventFromOtherClient(
+                message: generic,
+                eventDecoder: sut
+            )
 
             // THEN
             guard let decryptedMessage = ZMAssetClientMessage.createOrUpdate(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
