@@ -61,12 +61,17 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
         context: NSManagedObjectContext,
-        userKeysStore: UserClientKeysStore
+        userKeysStore: UserClientKeysStore,
+        useProteusService: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
         self.userKeysStore = userKeysStore
-        self.requestsFactory = UserClientRequestFactory(keysStore: userKeysStore)
+        self.requestsFactory = UserClientRequestFactory(
+            keysStore: userKeysStore,
+            proteusService: useProteusService ? context.proteusService : nil
+        )
+
         super.init(managedObjectContext: context)
 
         let modifiedKeysToSync = [
