@@ -198,7 +198,6 @@ public final class ProteusService: ProteusServiceInterface {
     enum PrekeyError: Error {
         case failedToGeneratePrekey
         case prekeyCountTooLow
-        case prekeyCountTooHigh
         case failedToGetLastPrekey
     }
 
@@ -228,13 +227,9 @@ public final class ProteusService: ProteusServiceInterface {
         return lastPrekeyID ?? UInt16.max
     }
 
-    public func generatePrekeys(count: UInt16 = 0, start: UInt16 = 0) throws -> [IdPrekeyTuple] {
+    public func generatePrekeys(start: UInt16 = 0, count: UInt16 = 0) throws -> [IdPrekeyTuple] {
         guard count > 0 else {
             throw PrekeyError.prekeyCountTooLow
-        }
-
-        guard start + count < lastPrekeyID else {
-            throw PrekeyError.prekeyCountTooHigh
         }
 
         let range = prekeysRange(count, start: start)
@@ -255,7 +250,7 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     private func prekeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
-        if start > lastPrekeyID - count {
+        if start + count > lastPrekeyID {
             return 0 ..< count
         }
         return start ..< (start + count)
