@@ -122,23 +122,15 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         startingAtIndex startIndex: Int64
     ) -> [ZMUpdateEvent] {
-        let account = Account(userName: "", userIdentifier: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
-        let publicKey = try? EncryptionKeys.publicKey(for: account)
         var decryptedEvents: [ZMUpdateEvent] = []
+        let proteusViaCoreCrypto = false
 
-        // TODO: [John] use flag here
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) -> Void in
-            guard let `self` = self else { return }
-
+        if proteusViaCoreCrypto {
+            // TODO: get core crypto lock
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    // Proteus
-                    return decryptProteusEventAndAddClient(
-                        event,
-                        in: self.syncMOC,
-                        sessionsDirectory: sessionsDirectory
-                    )
+                    fatalError("not implemented")
 
                 case .conversationMLSMessageAdd:
                     return self.decryptMlsMessage(from: event, context: self.syncMOC)
@@ -148,19 +140,65 @@ extension EventDecoder {
             }
 
             // This call has to be synchronous to ensure that we close the
-            // encryption context only if we stored all events in the database
+            // encryption context only if we stored all events in the database.
+            storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
 
-            // Insert the decrypted events in the event database using a `storeIndex`
-            // incrementing from the highest index currently stored in the database
-            // The encryptedPayload property is encrypted using the public key
-            for (idx, event) in decryptedEvents.enumerated() {
-                _ = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: Int64(idx) + startIndex + 1, publicKey: publicKey)
+        } else {
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
+                guard let `self` = self else { return }
+
+                decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+                    switch event.type {
+                    case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                        return decryptProteusEventAndAddClient(
+                            event,
+                            in: self.syncMOC,
+                            sessionsDirectory: sessionsDirectory
+                        )
+
+                    case .conversationMLSMessageAdd:
+                        return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    default:
+                        return event
+                    }
+                }
+
+                // This call has to be synchronous to ensure that we close the
+                // encryption context only if we stored all events in the database.
+                storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
             }
-
-            self.eventMOC.saveOrRollback()
         }
 
         return decryptedEvents
+    }
+
+    // Insert the decrypted events in the event database using a `storeIndex`
+    // incrementing from the highest index currently stored in the database.
+    // The encryptedPayload property is encrypted using the public key.
+
+    private func storeUpdateEvents(
+        _ decryptedEvents: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) {
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+
+        let account = Account(
+            userName: "",
+            userIdentifier: selfUser.remoteIdentifier
+        )
+
+        let publicKey = try? EncryptionKeys.publicKey(for: account)
+
+        for (idx, event) in decryptedEvents.enumerated() {
+            _ = StoredUpdateEvent.encryptAndCreate(
+                event,
+                managedObjectContext: eventMOC,
+                index: Int64(idx) + startIndex + 1,
+                publicKey: publicKey
+            )
+        }
+
+        self.eventMOC.saveOrRollback()
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.
