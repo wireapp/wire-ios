@@ -10,7 +10,7 @@
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
-		63172F792902A42700DBECC9 /* SharingSession+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+MLS.swift */; };
+		63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */; };
 		63172F96290AB47500DBECC9 /* MLSEncryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */; };
 		637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
@@ -95,7 +95,7 @@
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5470D42B1D770CEE00FDE440 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		63172F782902A42700DBECC9 /* SharingSession+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+MLS.swift"; sourceTree = "<group>"; };
+		63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+CoreCrypto.swift"; sourceTree = "<group>"; };
 		63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionController.swift; sourceTree = "<group>"; };
 		637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+MLS.swift"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
@@ -162,7 +162,9 @@
 				5470D3E91D76E1B000FDE440 /* Products */,
 				5470D4331D77165E00FDE440 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		5470D3E91D76E1B000FDE440 /* Products */ = {
 			isa = PBXGroup;
@@ -233,13 +235,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		63172F94290AB45100DBECC9 /* MLS */ = {
+		63172F94290AB45100DBECC9 /* CoreCrypto */ = {
 			isa = PBXGroup;
 			children = (
-				63172F782902A42700DBECC9 /* SharingSession+MLS.swift */,
+				63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */,
 				63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */,
 			);
-			path = MLS;
+			path = CoreCrypto;
 			sourceTree = "<group>";
 		};
 		F154EE091F44826400CB8184 /* WireShareEngineTestHost */ = {
@@ -254,7 +256,7 @@
 		F1DABF961E9B8B6100AD2324 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				63172F94290AB45100DBECC9 /* MLS */,
+				63172F94290AB45100DBECC9 /* CoreCrypto */,
 				F1DABF971E9B8B6100AD2324 /* AuthenticationStatusProvider.swift */,
 				F1DABF981E9B8B6100AD2324 /* Conversation.swift */,
 				F1DABF991E9B8B6100AD2324 /* OperationLoop.swift */,
@@ -451,7 +453,7 @@
 				F1DABFAC1E9B8B6100AD2324 /* ZMMessage+Sendable.swift in Sources */,
 				F1DABFA61E9B8B6100AD2324 /* SendableBatchObserver.swift in Sources */,
 				F1DABFA51E9B8B6100AD2324 /* Sendable.swift in Sources */,
-				63172F792902A42700DBECC9 /* SharingSession+MLS.swift in Sources */,
+				63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */,
 				F1DABFA71E9B8B6100AD2324 /* SharingSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

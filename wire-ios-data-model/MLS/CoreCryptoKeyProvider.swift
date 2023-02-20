@@ -19,6 +19,11 @@
 import Foundation
 
 public class CoreCryptoKeyProvider {
+
+    public init() {
+
+    }
+    
     public func coreCryptoKey() throws -> Data  {
         let item = CoreCryptoKeychainItem()
         if let key: Data = try? KeychainManager.fetchItem(item) {

@@ -640,7 +640,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             // GIVEN
             // set mock MLSController
             let mockMLSController = MockMLSController()
-            syncMOC.test_setMockMLSController(mockMLSController)
+            syncMOC.mlsController = mockMLSController
 
             // create conversation
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -699,7 +699,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             // GIVEN
             // set mock MLSController
             let mockMLSController = MockMLSController()
-            syncMOC.test_setMockMLSController(mockMLSController)
+            syncMOC.mlsController = mockMLSController
 
             // mock action handler
             let mockActionHandler = MockActionHandler<RemoveParticipantAction>(
