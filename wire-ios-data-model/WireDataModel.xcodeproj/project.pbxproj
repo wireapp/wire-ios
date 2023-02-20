@@ -290,7 +290,7 @@
 		63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */; };
 		6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */; };
 		6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */; };
-        63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63709F642993E7A600577D4B /* libcore_crypto_ffi.a */; };
+		63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63709F642993E7A600577D4B /* libcore_crypto_ffi.a */; };
 		63709F6B2994108700577D4B /* CoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6A2994108700577D4B /* CoreCrypto */; };
 		63709F6D2994108700577D4B /* LibCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6C2994108700577D4B /* LibCoreCrypto */; };
 		6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */; };
