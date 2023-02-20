@@ -120,7 +120,13 @@ extension EventDecoder {
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return sessionsDirectory.decryptAndAddClient(event, in: self.syncMOC)
+                    // Proteus
+                    return decryptAndAddClient(
+                        event,
+                        in: self.syncMOC,
+                        sessionsDirectory: sessionsDirectory
+                    )
+
                 case .conversationMLSMessageAdd:
                     return self.decryptMlsMessage(from: event, context: self.syncMOC)
                 default:
@@ -143,6 +149,154 @@ extension EventDecoder {
 
         return decryptedEvents
     }
+
+    // MARK: - Decryption
+
+    /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
+    /// decryption was needed) and information about the decryption result.
+
+    func decryptAndAddClient(
+        _ event: ZMUpdateEvent,
+        in moc: NSManagedObjectContext,
+        sessionsDirectory: EncryptionSessionsDirectory
+    ) -> ZMUpdateEvent? {
+        guard !event.wasDecrypted else { return event }
+        guard event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd else {
+            fatal("Can't decrypt event of type \(event.type) as it's not supposed to be encrypted")
+        }
+
+        // is it for the current client?
+        let selfUser = ZMUser.selfUser(in: moc)
+        guard let recipientIdentifier = event.recipientIdentifier, selfUser.selfClient()?.remoteIdentifier == recipientIdentifier else {
+            return nil
+        }
+
+        // client
+        guard let senderClient = createClientIfNeeded(from: event, in: moc) else { return nil }
+
+        // decrypt
+        let createdNewSession: Bool
+        let decryptedEvent: ZMUpdateEvent
+
+        // Proteus
+        func fail(error: CBoxResult? = nil) {
+            if senderClient.isInserted {
+                selfUser.selfClient()?.addNewClientToIgnored(senderClient)
+            }
+            appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: moc)
+        }
+
+        do {
+            guard let result = try decryptedUpdateEvent(
+                for: event,
+                sender: senderClient,
+                sessionsDirectory: sessionsDirectory
+            ) else {
+                fail()
+                return nil
+            }
+            (createdNewSession, decryptedEvent) = result
+        } catch let error as CBoxResult {
+            fail(error: error)
+            return nil
+        } catch {
+            fatalError("Unknown error in decrypting payload, \(error)")
+        }
+
+        // new client discovered?
+        if createdNewSession {
+            let senderClientSet: Set<UserClient> = [senderClient]
+            selfUser.selfClient()?.decrementNumberOfRemainingKeys()
+            selfUser.selfClient()?.addNewClientToIgnored(senderClient)
+            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(senderClientSet)
+        }
+
+        return decryptedEvent
+    }
+
+    /// Create user and client if needed. The client will not be trusted
+    private func createClientIfNeeded(from updateEvent: ZMUpdateEvent, in moc: NSManagedObjectContext) -> UserClient? {
+        guard let senderUUID = updateEvent.senderUUID,
+              let senderClientID = updateEvent.senderClientID else { return nil }
+
+        let domain = updateEvent.senderDomain
+        let user = ZMUser.fetchOrCreate(with: senderUUID, domain: domain, in: moc)
+        let client = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: user, createIfNeeded: true)!
+
+        client.discoveryDate = updateEvent.timestamp
+
+        return client
+    }
+
+    /// Appends a system message for a failed decryption
+    fileprivate func appendFailedToDecryptMessage(after error: CBoxResult?, for event: ZMUpdateEvent, sender: UserClient, in moc: NSManagedObjectContext) {
+        zmLog.safePublic("Failed to decrypt message with error: \(error), client id <\(sender.safeRemoteIdentifier))>")
+        zmLog.error("event debug: \(event.debugInformation)")
+        if error == CBOX_OUTDATED_MESSAGE || error == CBOX_DUPLICATE_MESSAGE {
+            return // do not notify the user if the error is just "duplicated"
+        }
+
+        var conversation: ZMConversation?
+        if let conversationUUID = event.conversationUUID {
+            conversation = ZMConversation.fetch(with: conversationUUID, domain: event.conversationDomain, in: moc)
+            conversation?.appendDecryptionFailedSystemMessage(at: event.timestamp, sender: sender.user!, client: sender, errorCode: Int(error?.rawValue ?? 0))
+        }
+
+        let userInfo: [String: Any] = [
+            "cause": error?.rawValue as Any,
+            "deviceClass": sender.deviceClass ?? ""
+        ]
+
+        NotificationInContext(
+            name: ZMConversation.failedToDecryptMessageNotificationName,
+            context: sender.managedObjectContext!.notificationContext,
+            object: conversation,
+            userInfo: userInfo
+        ).post()
+    }
+
+    /// Returns the decrypted version of an update event. This is generated by decrypting the encrypted version
+    /// and creating a new event with the decrypted data in the expected payload keys
+    private func decryptedUpdateEvent(
+        for event: ZMUpdateEvent,
+        sender: UserClient,
+        sessionsDirectory: EncryptionSessionsDirectory
+    ) throws -> (createdNewSession: Bool, event: ZMUpdateEvent)? {
+        guard
+            let result = try self.decryptedData(
+                event,
+                client: sender,
+                sessionsDirectory: sessionsDirectory
+            ),
+            let decryptedEvent = event.decryptedEvent(decryptedData: result.decryptedData)
+        else {
+            return nil
+        }
+        return (createdNewSession: result.createdNewSession, event: decryptedEvent)
+    }
+
+    /// Decrypted data from event
+    private func decryptedData(
+        _ event: ZMUpdateEvent,
+        client: UserClient,
+        sessionsDirectory: EncryptionSessionsDirectory
+    ) throws -> (createdNewSession: Bool, decryptedData: Data)? {
+        guard
+            let encryptedData = try event.encryptedMessageData(),
+            let sessionID = client.sessionIdentifier
+        else {
+            return nil
+        }
+
+        /// Check if it's the "bomb" message (gave encrypting on the sender)
+        guard encryptedData != ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8) else {
+            zmLog.safePublic("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionID). Current device might have invalid prekeys on the BE.")
+            return nil
+        }
+
+        return try sessionsDirectory.decryptData(encryptedData, for: sessionID)
+    }
+
 
     func decryptMlsMessage(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> ZMUpdateEvent? {
         Logging.mls.info("decrypting mls message")
@@ -318,4 +472,43 @@ extension EventDecoder {
             self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
         }
     }
+}
+
+extension ZMUpdateEvent {
+
+    /// Recipient identifier
+    fileprivate var recipientIdentifier: String? {
+        return self.eventData?["recipient"] as? String
+    }
+
+    /// Event payload
+    private var eventData: [String: Any]? {
+        guard let eventData = (self.payload as? [String: Any])?["data"] as? [String: Any] else {
+            return nil
+        }
+        return eventData
+    }
+
+    fileprivate func encryptedMessageData() throws -> Data? {
+        guard let key = payloadKey else { return nil }
+        guard let string = eventData?[key] as? String, let data = Data(base64Encoded: string) else { return nil }
+
+        // We need to check the size of the encrypted data payload for regular OTR and external messages
+        let maxReceivingSize = Int(12_000 * 1.5)
+        guard string.count <= maxReceivingSize, externalStringCount <= maxReceivingSize else { throw CBOX_DECODE_ERROR }
+        return data
+    }
+
+    fileprivate var payloadKey: String? {
+        switch type {
+        case .conversationOtrMessageAdd: return "text"
+        case .conversationOtrAssetAdd: return "key"
+        default: return nil
+        }
+    }
+
+    fileprivate var externalStringCount: Int {
+        return (eventData?["data"] as? String)?.count ?? 0
+    }
+
 }

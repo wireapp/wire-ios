@@ -21,8 +21,9 @@ import XCTest
 import WireDataModel
 import WireProtos
 import WireCryptobox
+@testable import WireRequestStrategy
 
-class CryptoboxUpdateEventsTests: MessagingTestBase {
+class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItCanDecryptOTRMessageAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
@@ -69,6 +70,8 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItInsertsAUnableToDecryptMessageIfItCanNotEstablishASession() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+
             let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
                                 "sender": self.otherClient.remoteIdentifier!,
                                 "id": UUID.create().transportString(),
@@ -93,7 +96,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                    _ = sut.decryptAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
                 }
             }
 
@@ -108,6 +111,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000() {
         syncMOC.performGroupedBlockAndWait {
             // Given
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
             let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
             XCTAssertGreaterThan(text.count, 18_000)
@@ -136,7 +140,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                    _ = sut.decryptAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
                 }
             }
 
@@ -151,6 +155,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000_External_Message() {
         syncMOC.performGroupedBlockAndWait {
             // Given
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
             let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
             XCTAssertGreaterThan(text.count, 18_000)
@@ -179,7 +184,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                    _ = sut.decryptAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
                 }
             }
 

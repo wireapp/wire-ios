@@ -284,7 +284,7 @@
 		F18401D62073BE0800E9F4CC /* ZMStrategyConfigurationOption.h in Headers */ = {isa = PBXBuildFile; fileRef = F18401962073BE0800E9F4CC /* ZMStrategyConfigurationOption.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F18401D82073BE0800E9F4CC /* ZMConversation+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401982073BE0800E9F4CC /* ZMConversation+Notifications.swift */; };
 		F18401D92073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401992073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift */; };
-		F18401DB2073C25300E9F4CC /* CryptoBoxUpdateEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401952073BE0800E9F4CC /* CryptoBoxUpdateEventsTests.swift */; };
+		F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401952073BE0800E9F4CC /* EventDecoderDecryptionTestsTests.swift */; };
 		F18401DC2073C25300E9F4CC /* MessageExpirationTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401972073BE0800E9F4CC /* MessageExpirationTimerTests.swift */; };
 		F18401E02073C25900E9F4CC /* ClientMessageRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401542073BE0800E9F4CC /* ClientMessageRequestFactoryTests.swift */; };
 		F18401E12073C25900E9F4CC /* OTREntityTests+Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401552073BE0800E9F4CC /* OTREntityTests+Dependency.swift */; };
@@ -713,7 +713,7 @@
 		F18401912073BE0800E9F4CC /* OTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTREntity.swift; sourceTree = "<group>"; };
 		F18401932073BE0800E9F4CC /* ZMMessage+Dependency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Dependency.swift"; sourceTree = "<group>"; };
 		F18401942073BE0800E9F4CC /* MessageExpirationTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageExpirationTimer.swift; sourceTree = "<group>"; };
-		F18401952073BE0800E9F4CC /* CryptoBoxUpdateEventsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxUpdateEventsTests.swift; sourceTree = "<group>"; };
+		F18401952073BE0800E9F4CC /* EventDecoderDecryptionTestsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDecoderDecryptionTestsTests.swift; sourceTree = "<group>"; };
 		F18401962073BE0800E9F4CC /* ZMStrategyConfigurationOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMStrategyConfigurationOption.h; sourceTree = "<group>"; };
 		F18401972073BE0800E9F4CC /* MessageExpirationTimerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageExpirationTimerTests.swift; sourceTree = "<group>"; };
 		F18401982073BE0800E9F4CC /* ZMConversation+Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Notifications.swift"; sourceTree = "<group>"; };
@@ -1576,7 +1576,7 @@
 				0649D14E24F63DCC001DDC78 /* ZMSound.swift */,
 				0649D1A524F673E7001DDC78 /* Logging.swift */,
 				062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */,
-				F18401952073BE0800E9F4CC /* CryptoBoxUpdateEventsTests.swift */,
+				F18401952073BE0800E9F4CC /* EventDecoderDecryptionTestsTests.swift */,
 				F18401982073BE0800E9F4CC /* ZMConversation+Notifications.swift */,
 				BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */,
 				F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */,
@@ -2001,7 +2001,7 @@
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,
 				16E70F6E270EE9F800718E5D /* PayloadProcessing+MessageSendingStatusTests.swift in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
-				F18401DB2073C25300E9F4CC /* CryptoBoxUpdateEventsTests.swift in Sources */,
+				F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTestsTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
 				F18401EC2073C26700E9F4CC /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
