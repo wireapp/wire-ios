@@ -19,6 +19,8 @@
 import Foundation
 import WireCryptobox
 
+private var zmLog = ZMSLog(tag: "proteus")
+
 public let ZMFailedToCreateEncryptedMessagePayloadString = "💣"
 
 // MARK: - Encrypted data for recipients
@@ -491,6 +493,7 @@ extension GenericMessage {
             }
 
             guard let sender = message.sender else {
+                zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
                 WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)", attributes: nil)
                 return Set(arrayLiteral: selfUser)
             }
