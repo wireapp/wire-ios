@@ -1,5 +1,7 @@
 name: Run Tests
-on: [pull_request]
+on:
+  pull_request: 
+    types: [ready_for_review]
 jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
