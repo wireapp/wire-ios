@@ -5,6 +5,8 @@ jobs:
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
     runs-on: ubuntu-latest
+    # Don't test draft PRs
+    if: github.event.pull_request.draft == false
     # Set job outputs to values from filter step
     outputs:
       wire-ios: ${{ steps.filter.outputs.wire-ios }}
