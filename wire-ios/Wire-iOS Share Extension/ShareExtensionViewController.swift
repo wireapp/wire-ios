@@ -268,10 +268,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             switch progress {
             case .preparing:
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .preparing)
-                    )
+                    SharingLog(status: .preparing)
                 )
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
                     guard !postContent.sentAllSendables && nil == self.progressViewController else { return }
@@ -282,10 +279,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .startingSending:
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .started)
-                    )
+                    SharingLog(status: .started)
                 )
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
                     guard postContent.sentAllSendables && nil == self.progressViewController else { return }
@@ -296,20 +290,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .sending(let progress):
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .sending, progress: .progress)
-                    )
+                    SharingLog(status: .sending, progress: .progress)
                 )
                 self.progressViewController?.progress = progress
 
                 print("SHARING: Sending state")
             case .done:
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .done)
-                    )
+                    SharingLog(status: .done)
                 )
                 UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
                     self.view.alpha = 0
@@ -322,10 +310,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .conversationDidDegrade((let users, let strategyChoice)):
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .conversationDegraded)
-                    )
+                    SharingLog(status: .conversationDegraded)
                 )
                 if let conversation = postContent.target {
                     self.conversationDidDegrade(
@@ -334,10 +319,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }
             case .timedOut:
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .timedOut)
-                    )
+                    SharingLog(status: .timedOut)
                 )
                 self.popConfigurationViewController()
 
@@ -354,20 +336,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                         self.popConfigurationViewController()
                     }
                     logger.info(
-                        logger.prepareMessage(
-                            title: "SHARING",
-                            payload: SharingLogPayload(status: .error, errorDescription: errorDescription)
-                        )
+                        SharingLog(status: .error, errorDescription: errorDescription)
                     )
 
                     print("SHARING: error state \(errorDescription)")
                 }
             case .fileSharingRestriction:
                 logger.info(
-                    logger.prepareMessage(
-                        title: "SHARING",
-                        payload: SharingLogPayload(status: .fileSharingRestricted)
-                    )
+                    SharingLog(status: .fileSharingRestricted)
                 )
                 let alert = UIAlertController.alertWithOKButton(title: "feature.flag.file_sharing.alert.title".localized,
                                                                 message: "feature.flag.file_sharing.alert.message" .localized)

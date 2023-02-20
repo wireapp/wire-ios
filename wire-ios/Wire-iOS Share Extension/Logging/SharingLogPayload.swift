@@ -18,7 +18,7 @@
 
 import WireSystem
 
-enum SharingStatus: String, LoggablePayload {
+enum SharingStatus: String, Encodable {
     case preparing
     case started
     case sending
@@ -29,18 +29,34 @@ enum SharingStatus: String, LoggablePayload {
     case fileSharingRestricted
 }
 
-enum SharingProgress: String, LoggablePayload {
+enum SharingProgress: String, Encodable {
     case progress
 }
 
-struct SharingLogPayload: LoggablePayload {
-    let status: SharingStatus
-    let progress: SharingProgress?
-    let errorDescription: String?
-    
+struct SharingLog: LogMessage {
+    private struct Payload: Encodable {
+        let status: SharingStatus
+        let progress: SharingProgress?
+        let errorDescription: String?
+
+        private static let payloadEncoder: JSONEncoder = JSONEncoder()
+
+        var payloadDescription: String {
+            guard let payloadData = try? Self.payloadEncoder.encode(self),
+                  let payloadString = String(data: payloadData, encoding: .utf8) else {
+              return "PAYLOAD ENCODING ERROR"
+            }
+            return "\(payloadString)"
+        }
+    }
+
+    private let payload: Payload
+
     init(status: SharingStatus, progress: SharingProgress? = nil, errorDescription: String? = nil) {
-        self.status = status
-        self.progress = progress
-        self.errorDescription = errorDescription
+        self.payload = Payload(status: status, progress: progress, errorDescription: errorDescription)
+    }
+
+    var logDescription: String {
+        return "SHARING: \(payload.payloadDescription)"
     }
 }

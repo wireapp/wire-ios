@@ -167,14 +167,6 @@ extension RemoteMonitoring.Level {
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
 
-    public func prepareMessage<Payload>(title: String, payload: Payload) -> String where Payload : Encodable {
-        guard let payloadData = try? payloadEncoder.encode(payload),
-              let payloadString = String(data: payloadData, encoding: .utf8) else {
-          return "\(title): PAYLOAD ENCODING ERROR"
-        }
-        return "\(title): \(payloadString)"
-    }
-
     public func debug(_ message: String, attributes: LogAttributes?) {
         log(level: .debug, message: message, attributes: attributes)
     }
