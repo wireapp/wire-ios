@@ -37,7 +37,7 @@ class EventDecoderTest: MessagingTestBase {
         sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.test_setMockMLSController(self.mockMLSController)
+            self.syncMOC.mlsController = self.mockMLSController
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
             let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
