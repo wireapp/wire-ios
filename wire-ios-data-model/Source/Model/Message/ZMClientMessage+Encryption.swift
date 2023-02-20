@@ -19,8 +19,6 @@
 import Foundation
 import WireCryptobox
 
-private let logger = WireLogger(tag: "message-encryption")
-
 public let ZMFailedToCreateEncryptedMessagePayloadString = "💣"
 
 // MARK: - Encrypted data for recipients
@@ -431,7 +429,7 @@ extension GenericMessage {
         } else if client.failedToEstablishSession {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-            logger.error("Failed to create encryptedMessage, session is not established with a client \(data)")
+            WireLogger.proteus.error("Failed to create encryptedMessage, session is not established with a client \(data)", attributes: nil)
             return Proteus_ClientEntry(withClient: client, data: data)
 
         }
@@ -493,7 +491,7 @@ extension GenericMessage {
             }
 
             guard let sender = message.sender else {
-                logger.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
+                WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)", attributes: nil)
                 return Set(arrayLiteral: selfUser)
             }
 

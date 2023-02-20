@@ -20,8 +20,6 @@ import Foundation
 import WireSystem
 import WireCryptobox
 
-private let logger = WireLogger(tag: "cryptobox")
-
 extension EncryptionSessionsDirectory {
 
     /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
@@ -63,7 +61,7 @@ extension EncryptionSessionsDirectory {
             fail(error: error)
             return nil
         } catch {
-            logger.error("Unknown error in decrypting payload, \(error)")
+            WireLogger.proteus.error(("Unknown error in decrypting payload, \(error)"), attributes: nil)
             fatalError("Unknown error in decrypting payload, \(error)")
         }
 
@@ -83,7 +81,7 @@ extension EncryptionSessionsDirectory {
 
     /// Appends a system message for a failed decryption
     fileprivate func appendFailedToDecryptMessage(after error: CBoxResult?, for event: ZMUpdateEvent, sender: UserClient, in moc: NSManagedObjectContext) {
-        logger.error("Failed to decrypt message with error: \(error.debugDescription), client id <\(sender.safeRemoteIdentifier))>")
+        WireLogger.proteus.error("Failed to decrypt message with error: \(error.debugDescription), client id <\(sender.safeRemoteIdentifier))>", attributes: nil)
         if error == CBOX_OUTDATED_MESSAGE || error == CBOX_DUPLICATE_MESSAGE {
             return // do not notify the user if the error is just "duplicated"
         }
@@ -99,7 +97,7 @@ extension EncryptionSessionsDirectory {
             "deviceClass": sender.deviceClass ?? ""
         ]
 
-        logger.info("Notifying decrypt message failure with userInfo: \(userInfo)")
+        WireLogger.proteus.info("Notifying decrypt message failure with userInfo: \(userInfo)", attributes: nil)
         NotificationInContext(name: ZMConversation.failedToDecryptMessageNotificationName,
                               context: sender.managedObjectContext!.notificationContext,
                               object: conversation,
@@ -122,7 +120,7 @@ extension EncryptionSessionsDirectory {
 
         /// Check if it's the "bomb" message (gave encrypting on the sender)
         guard encryptedData != ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8) else {
-            logger.error("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionIdentifier). Current device might have invalid prekeys on the BE.")
+            WireLogger.proteus.error("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionIdentifier). Current device might have invalid prekeys on the BE.", attributes: nil)
             return nil
         }
 
