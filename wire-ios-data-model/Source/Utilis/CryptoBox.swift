@@ -117,7 +117,7 @@ open class UserClientKeysStore: NSObject {
                 } catch let anError as NSError {
                     error = anError
                 }
-                })
+            })
         }
         if let error = error {
             throw error
