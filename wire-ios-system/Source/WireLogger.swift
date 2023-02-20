@@ -144,4 +144,8 @@ public extension WireLogger {
   
   static let coreCrypto = WireLogger(tag: "core-crypto")
 
+  /// For logs related to any proteus related flow.
+
+  static let proteus = WireLogger(tag: "proteus")
+
 }
