@@ -61,6 +61,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 }
 
 // MARK: - Process events
+
 extension EventDecoder {
 
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
@@ -68,7 +69,11 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
-    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], block: ConsumeBlock? = nil) {
+
+    public func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        block: ConsumeBlock? = nil
+    ) {
         var lastIndex: Int64?
         var decryptedEvents: [ZMUpdateEvent] = []
 
@@ -98,6 +103,7 @@ extension EventDecoder {
     /// - Parameters:
     ///   - encryptionKeys: Keys to be used to decrypt events.
     ///   - block: Event consume block which is called once for every stored event.
+
     public func processStoredEvents(with encryptionKeys: EncryptionKeys? = nil, _ block: ConsumeBlock) {
         process(with: encryptionKeys, block, firstCall: true)
     }
@@ -105,10 +111,17 @@ extension EventDecoder {
     /// Decrypts and stores the decrypted events as `StoreUpdateEvent` in the event database.
     /// The encryption context is only closed after the events have been stored, which ensures
     /// they can be decrypted again in case of a crash.
-    /// - parameter events The new events that should be decrypted and stored in the database.
-    /// - parameter startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
-    /// - Returns: Decrypted events
-    fileprivate func decryptAndStoreEvents(_ events: [ZMUpdateEvent], startingAtIndex startIndex: Int64) -> [ZMUpdateEvent] {
+    ///
+    /// - Parameters:
+    ///   - events The new events that should be decrypted and stored in the database.
+    ///   - startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
+    ///
+    /// - Returns: Decrypted events.
+
+    private func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) -> [ZMUpdateEvent] {
         let account = Account(userName: "", userIdentifier: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
         let publicKey = try? EncryptionKeys.publicKey(for: account)
         var decryptedEvents: [ZMUpdateEvent] = []
@@ -121,7 +134,7 @@ extension EventDecoder {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                     // Proteus
-                    return decryptAndAddClient(
+                    return decryptProteusEventAndAddClient(
                         event,
                         in: self.syncMOC,
                         sessionsDirectory: sessionsDirectory
@@ -155,7 +168,7 @@ extension EventDecoder {
     /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
     /// decryption was needed) and information about the decryption result.
 
-    func decryptAndAddClient(
+    func decryptProteusEventAndAddClient(
         _ event: ZMUpdateEvent,
         in moc: NSManagedObjectContext,
         sessionsDirectory: EncryptionSessionsDirectory

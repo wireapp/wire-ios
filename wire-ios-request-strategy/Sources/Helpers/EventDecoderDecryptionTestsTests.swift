@@ -104,7 +104,7 @@ class EventDecoderDecryptionTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = sut.decryptAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
+                    _ = sut.decryptProteusEventAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
                 }
             }
 
@@ -148,7 +148,7 @@ class EventDecoderDecryptionTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = sut.decryptAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
+                    _ = sut.decryptProteusEventAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
                 }
             }
 
@@ -192,7 +192,7 @@ class EventDecoderDecryptionTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = sut.decryptAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
+                    _ = sut.decryptProteusEventAndAddClient(event, in: self.syncMOC, sessionsDirectory: session)
                 }
             }
 
