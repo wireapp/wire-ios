@@ -246,7 +246,8 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let publicGroupState):
-                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(groupState: publicGroupState.bytes) }
+                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(publicGroupState: publicGroupState.bytes,
+                                                                                                  customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)) }
 
                 return CommitBundle(
                     welcome: nil,
@@ -332,8 +333,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         do {
             try coreCrypto.perform {
                 try $0.mergePendingGroupFromExternalCommit(
-                    conversationId: groupID.bytes,
-                    config: .init(ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+                    conversationId: groupID.bytes
                 )
             }
         } catch {

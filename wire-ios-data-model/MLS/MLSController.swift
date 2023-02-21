@@ -585,7 +585,7 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         do {
-            let groupIDBytes = try coreCrypto.perform { try $0.processWelcomeMessage(welcomeMessage: messageBytes) }
+            let groupIDBytes = try coreCrypto.perform { try $0.processWelcomeMessage(welcomeMessage: messageBytes, customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)) }
             let groupID = MLSGroupID(groupIDBytes)
             uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)

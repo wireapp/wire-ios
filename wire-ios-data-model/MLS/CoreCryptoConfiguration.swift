@@ -86,8 +86,7 @@ public class CoreCryptoFactory {
         guard let clientID = config.clientIDBytes() else {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
-
-        let coreCrypto = try CoreCryptoWrapper(
+        let coreCrypto = try CoreCrypto(
             path: config.path,
             key: config.key,
             clientId: clientID,

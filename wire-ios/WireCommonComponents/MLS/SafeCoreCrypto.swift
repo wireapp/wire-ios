@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import CoreCrypto
 import CoreCryptoSwift
 
 // MARK: - Protocols
