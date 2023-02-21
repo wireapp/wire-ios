@@ -87,7 +87,18 @@ extension EventDecoder {
             lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
             guard let index = lastIndex else { return }
-            decryptedEvents = self.decryptAndStoreEvents(filteredEvents, startingAtIndex: index)
+
+            if DeveloperFlag.proteusViaCoreCrypto.isOn {
+                decryptedEvents = self.decryptAndStoreEvents(
+                    filteredEvents,
+                    startingAtIndex: index
+                )
+            } else {
+                decryptedEvents = self.legacyDecryptAndStoreEvents(
+                    filteredEvents,
+                    startingAtIndex: index
+                )
+            }
         }
 
         if !events.isEmpty {
@@ -125,36 +136,68 @@ extension EventDecoder {
     ) -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            // TODO: get core crypto lock
+        // TODO: get core crypto lock
+        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+            switch event.type {
+            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                let proteusService = syncMOC.proteusService!
+
+                return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    if proteusService.sessionExists(id: sessionID) {
+                        let decryptedData = try proteusService.decrypt(
+                            data: encryptedData,
+                            forSession: sessionID
+                        )
+
+                        return (didCreateNewSession: false, decryptedData: decryptedData)
+
+                    } else {
+                        let decryptedData = try proteusService.establishSession(
+                            id: sessionID,
+                            fromMessage: encryptedData
+                        )
+
+                        return (didCreateNewSession: true, decryptedData: decryptedData)
+                    }
+                }
+
+            case .conversationMLSMessageAdd:
+                return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+            default:
+                return event
+            }
+        }
+
+        // This call has to be synchronous to ensure that we close the
+        // encryption context only if we stored all events in the database.
+        storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+
+        return decryptedEvents
+    }
+
+    private func legacyDecryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) -> [ZMUpdateEvent] {
+        var decryptedEvents: [ZMUpdateEvent] = []
+
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
+            guard let `self` = self else { return }
+
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    let proteusService = syncMOC.proteusService!
-
-                    return decryptProteusEventAndAddClient(
-                        event,
-                        in: self.syncMOC
-                    ) { sessionID, encryptedData in
-                        if proteusService.sessionExists(id: sessionID) {
-                            let decryptedData = try proteusService.decrypt(
-                                data: encryptedData,
-                                forSession: sessionID
-                            )
-
-                            return (didCreateNewSession: false, decryptedData: decryptedData)
-                        } else {
-                            let decryptedData = try proteusService.establishSession(
-                                id: sessionID,
-                                fromMessage: encryptedData
-                            )
-
-                            return (didCreateNewSession: true, decryptedData: decryptedData)
-                        }
+                    return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try sessionsDirectory.decryptData(
+                            encryptedData,
+                            for: sessionID.mapToEncryptionSessionID()
+                        )
                     }
 
                 case .conversationMLSMessageAdd:
                     return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
                 default:
                     return event
                 }
@@ -163,35 +206,6 @@ extension EventDecoder {
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
             storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
-
-        } else {
-            syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
-                guard let `self` = self else { return }
-
-                decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-                    switch event.type {
-                    case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                        return decryptProteusEventAndAddClient(
-                            event,
-                            in: self.syncMOC
-                        ) { sessionID, encryptedData in
-                            try sessionsDirectory.decryptData(
-                                encryptedData,
-                                for: sessionID.mapToEncryptionSessionID()
-                            )
-                        }
-
-                    case .conversationMLSMessageAdd:
-                        return self.decryptMlsMessage(from: event, context: self.syncMOC)
-                    default:
-                        return event
-                    }
-                }
-
-                // This call has to be synchronous to ensure that we close the
-                // encryption context only if we stored all events in the database.
-                storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
-            }
         }
 
         return decryptedEvents
