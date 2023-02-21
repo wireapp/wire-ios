@@ -109,7 +109,7 @@ class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
             completion(message)
-            self?.logger.info("SHARING: Text is being send")
+            self.logger.info("SHARING: Text is being send")
             print("SHARING: Text is being send")
         }
     }
@@ -160,9 +160,13 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         //
 
         attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (url, error) in
-            error?.log(message: "Unable to load image from attachment")
-            self!.logger.info("SHARING: Unable to load image from attachment")
+            error?.log(message: "Unable to load image from attachment \(String(describing: error?.localizedDescription))")
+
             print("SHARING: Unable to load image from attachment")
+
+            if error != nil {
+                self!.logger.info("SHARING: Unable to load image from attachment \(String(describing: error?.localizedDescription))")
+            }
 
             // Tries to load the content from local URL...
 
@@ -179,6 +183,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                 }
 
                 print("SHARING: Image scaled")
+                self?.logger.info("SHARING: Image scaled")
                 completion()
 
             } else {
@@ -188,7 +193,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                 self?.attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (image, error) in
 
                     error?.log(message: "Unable to load image from attachment")
-                    self?.logger.info("SHARING: Unable to load image from attachment")
+                    self?.logger.info("SHARING: Unable to load image from attachment, attach it directly")
                     print("SHARING: Unable to load image from attachment")
 
                     if let image = image as? UIImage {

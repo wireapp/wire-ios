@@ -136,7 +136,7 @@ final class SendController {
                 }
                 progress(.startingSending)
                 print("SHARING: prepare before Starting sending")
-                logger.info("SHARING: Prepare before starting sending")
+                self.logger.info("SHARING: Prepare before starting sending")
                 self.append(unsentSendables: self.unsentSendables, completion: completion)
             }
         } else {
