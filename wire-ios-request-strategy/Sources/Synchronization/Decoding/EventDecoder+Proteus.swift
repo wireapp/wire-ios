@@ -21,9 +21,9 @@ import WireCryptobox
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
-extension EventDecoder {
+typealias ProteusDecryptionFunction = (ProteusSessionID, Data) throws -> (didCreateNewSession: Bool, decryptedData: Data)?
 
-    // MARK: - Decryption
+extension EventDecoder {
 
     /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
     /// decryption was needed) and information about the decryption result.
@@ -31,7 +31,7 @@ extension EventDecoder {
     func decryptProteusEventAndAddClient(
         _ event: ZMUpdateEvent,
         in context: NSManagedObjectContext,
-        sessionsDirectory: EncryptionSessionsDirectory
+        using decryptFunction: ProteusDecryptionFunction
     ) -> ZMUpdateEvent? {
         guard !event.wasDecrypted else {
             return event
@@ -74,7 +74,7 @@ extension EventDecoder {
             guard let result = try decryptedUpdateEvent(
                 for: event,
                 sender: senderClient,
-                sessionsDirectory: sessionsDirectory
+                using: decryptFunction
             ) else {
                 fail()
                 return nil
@@ -182,29 +182,29 @@ extension EventDecoder {
     private func decryptedUpdateEvent(
         for event: ZMUpdateEvent,
         sender: UserClient,
-        sessionsDirectory: EncryptionSessionsDirectory
-    ) throws -> (createdNewSession: Bool, event: ZMUpdateEvent)? {
+        using decryptFunction: ProteusDecryptionFunction
+    ) throws -> (didCreateNewSession: Bool, event: ZMUpdateEvent)? {
         guard
             let result = try self.decryptedData(
                 event,
                 client: sender,
-                sessionsDirectory: sessionsDirectory
+                using: decryptFunction
             ),
             let decryptedEvent = event.decryptedEvent(decryptedData: result.decryptedData)
         else {
             return nil
         }
-        return (createdNewSession: result.createdNewSession, event: decryptedEvent)
+        return (result.didCreateNewSession, event: decryptedEvent)
     }
 
     private func decryptedData(
         _ event: ZMUpdateEvent,
         client: UserClient,
-        sessionsDirectory: EncryptionSessionsDirectory
-    ) throws -> (createdNewSession: Bool, decryptedData: Data)? {
+        using decryptFunction: ProteusDecryptionFunction
+    ) throws -> (didCreateNewSession: Bool, decryptedData: Data)? {
         guard
             let encryptedData = try event.encryptedMessageData(),
-            let sessionID = client.sessionIdentifier
+            let sessionID = client.proteusSessionID
         else {
             return nil
         }
@@ -215,7 +215,7 @@ extension EventDecoder {
             return nil
         }
 
-        return try sessionsDirectory.decryptData(encryptedData, for: sessionID)
+        return try decryptFunction(sessionID, encryptedData)
     }
 
 }

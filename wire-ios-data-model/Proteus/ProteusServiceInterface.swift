@@ -24,7 +24,7 @@ import Foundation
 public protocol ProteusServiceInterface {
 
     func establishSession(id: String, fromPrekey: String) throws
-    func establishSession(id: String, fromMessage message: String) throws -> Data
+    func establishSession(id: String, fromMessage message: Data) throws -> Data
     func deleteSession(id: String) throws
     func sessionExists(id: String) -> Bool
     func encrypt(data: Data, forSession id: String) throws -> Data

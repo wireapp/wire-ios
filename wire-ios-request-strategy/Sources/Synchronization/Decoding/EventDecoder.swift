@@ -130,7 +130,28 @@ extension EventDecoder {
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    fatalError("not implemented")
+                    let proteusService = syncMOC.proteusService!
+
+                    return decryptProteusEventAndAddClient(
+                        event,
+                        in: self.syncMOC
+                    ) { sessionID, encryptedData in
+                        if proteusService.sessionExists(id: sessionID.rawValue) {
+                            let decryptedData = try proteusService.decrypt(
+                                data: encryptedData,
+                                forSession: sessionID.rawValue
+                            )
+
+                            return (didCreateNewSession: false, decryptedData: decryptedData)
+                        } else {
+                            let decryptedData = try proteusService.establishSession(
+                                id: sessionID.rawValue,
+                                fromMessage: encryptedData
+                            )
+
+                            return (didCreateNewSession: true, decryptedData: decryptedData)
+                        }
+                    }
 
                 case .conversationMLSMessageAdd:
                     return self.decryptMlsMessage(from: event, context: self.syncMOC)
@@ -152,9 +173,13 @@ extension EventDecoder {
                     case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                         return decryptProteusEventAndAddClient(
                             event,
-                            in: self.syncMOC,
-                            sessionsDirectory: sessionsDirectory
-                        )
+                            in: self.syncMOC
+                        ) { sessionID, encryptedData in
+                            try sessionsDirectory.decryptData(
+                                encryptedData,
+                                for: sessionID.mapToEncryptionSessionID()
+                            )
+                        }
 
                     case .conversationMLSMessageAdd:
                         return self.decryptMlsMessage(from: event, context: self.syncMOC)

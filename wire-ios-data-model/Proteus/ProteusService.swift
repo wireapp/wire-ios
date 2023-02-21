@@ -42,7 +42,6 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToEstablishSession
         case prekeyNotBase64Encoded
         case failedToEstablishSessionFromMessage
-        case messageNotBase64Encoded
     }
 
 
@@ -66,17 +65,13 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusSessionFromMessage
 
-    public func establishSession(id: String, fromMessage message: String) throws -> Data {
+    public func establishSession(id: String, fromMessage message: Data) throws -> Data {
         logger.info("establishing session from message")
-
-        guard let messageBytes = message.base64EncodedBytes else {
-            throw ProteusSessionError.messageNotBase64Encoded
-        }
 
         do {
             let decryptedBytes = try coreCrypto.proteusSessionFromMessage(
                 sessionId: id,
-                envelope: messageBytes
+                envelope: message.bytes
             )
             return decryptedBytes.data
         } catch {
