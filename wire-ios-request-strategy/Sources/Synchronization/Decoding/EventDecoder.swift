@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
@@ -123,9 +124,8 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64
     ) -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
-        let proteusViaCoreCrypto = false
 
-        if proteusViaCoreCrypto {
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
             // TODO: get core crypto lock
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
