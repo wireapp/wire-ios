@@ -1076,3 +1076,19 @@ extension UserClientTests {
     }
 
 }
+
+// MARK: - Proteus
+
+extension UserClientTests {
+
+    func test_GivenDeveloperFlagproteusViaCoreCryptoEnabled_itUsesCoreKrypto() {
+        let sut = UserClient.insertNewObject(in: self.syncMOC)
+        let clientB = UserClient.insertNewObject(in: self.syncMOC)
+
+        // WHEN
+        le tsut.establishSessionWithClient(clientB, usingPreKey: "prekey")
+
+        // THEN
+
+    }
+}
