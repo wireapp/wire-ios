@@ -29,6 +29,18 @@ public protocol ProteusServiceInterface {
     func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
     func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data]
 
+    /// Decrypt a proteus message for a given session.
+    ///
+    /// If a session currently doesn't exist for the session id, a new one
+    /// will be established from the encrypted messag.
+    ///
+    /// - Parameters:
+    ///   - data: The encrypted message.
+    ///   - id: The id of the session associated with the message.
+    ///
+    /// - Throws: `ProteusService.DecryptionError`
+    /// - Returns: The decrypted data and indicates whether a new session was established.
+
     func decrypt(
         data: Data,
         forSession id: ProteusSessionID
