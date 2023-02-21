@@ -20,7 +20,11 @@ import Foundation
 import WireDataModel
 import CoreCryptoSwift
 
-class MockCoreCrypto: CoreCryptoProtocol {
+class MockCoreCrypto: SafeCoreCryptoProtocol, CoreCryptoProtocol {
+
+    func perform<T>(_ block: (WireDataModel.CoreCryptoProtocol) throws -> T) rethrows -> T {
+        try block(self)
+    }
 
     // MARK: - mlsInit
 
