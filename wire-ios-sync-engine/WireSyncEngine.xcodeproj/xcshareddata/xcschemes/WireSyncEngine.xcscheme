@@ -59,6 +59,9 @@
          <TestPlanReference
             reference = "container:TestsPlans/IntegrationTests.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsPlans/SecurityTests.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
