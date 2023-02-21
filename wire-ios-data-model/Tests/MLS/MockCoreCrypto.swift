@@ -20,9 +20,9 @@ import Foundation
 import WireDataModel
 import CoreCryptoSwift
 
-class MockCoreCrypto: SafeCoreCryptoProtocol, CoreCryptoProtocol {
+class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
 
-    func perform<T>(_ block: (WireDataModel.CoreCryptoProtocol) throws -> T) rethrows -> T {
+    func perform<T>(_ block: (CoreCryptoInterface) throws -> T) rethrows -> T {
         try block(self)
     }
 
