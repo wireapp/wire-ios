@@ -258,7 +258,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     @objc
     private func appendPostTapped() {
         let logger = WireLogger(tag: "share extension")
-        guard let sharingSession = sharingSession else { return }
+        logger.info("SHARING: Append Post Tapped")
+        guard let sharingSession = sharingSession else {
+            return
+            logger.info("SHARING: Sharing session aborted")
+        }
 
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 

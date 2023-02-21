@@ -56,6 +56,8 @@ final class SendController {
 
     public var sentAllSendables = false
 
+    let logger = WireLogger(tag: "share extension")
+
     init(text: String, attachments: [NSItemProvider], conversation: WireShareEngine.Conversation, sharingSession: SharingSession) {
 
         var linkAttachment: NSItemProvider?
@@ -107,6 +109,7 @@ final class SendController {
                 weakSelf.observer = SendableBatchObserver(sendables: sendables)
                 weakSelf.observer?.progressHandler = { [weak self] in
                     progress(.sending($0))
+                    self?.logger.info("SHARING: Trying timeout while sending")
                     print("SHARING: Trying timeout while sending")
                     self?.tryToTimeout()
                 }
@@ -114,12 +117,13 @@ final class SendController {
                 weakSelf.observer?.sentHandler = { [weak self] in
                     self?.cancelTimeout()
                     self?.sentAllSendables = true
-                    print("SHARING: Cancel Timeout and progress to done")
+                    self?.logger.info("SHARING: Cancel Timeout and progress to done")
                     progress(.done)
                 }
             case .failure(let error):
                 progress(.error(error))
                 print("SHARING: We hit an error")
+                self?.logger.error("SHARING: We hit an error \(error)")
             }
         }
 
@@ -132,12 +136,13 @@ final class SendController {
                 }
                 progress(.startingSending)
                 print("SHARING: prepare before Starting sending")
+                logger.info("SHARING: Prepare before starting sending")
                 self.append(unsentSendables: self.unsentSendables, completion: completion)
             }
         } else {
             progress(.startingSending)
             append(unsentSendables: unsentSendables, completion: completion)
-            print("SHARING: Starting sending")
+            logger.info("SHARING: Starting sending")
         }
     }
 
@@ -209,6 +214,7 @@ final class SendController {
             defer { sendingGroup.leave() }
             guard let sendable = sendable else { return }
             messages.append(sendable)
+            self.logger.info("SHARING: Append sendables to messages")
             print("SHARING: Append sendables to messages")
         }
 
@@ -217,6 +223,7 @@ final class SendController {
         }.forEach {
             sendingGroup.enter()
             $0.send(completion: appendToMessages)
+            self.logger.info("SHARING: Sending sendables")
             print("SHARING: Sending sendables")
         }
 
@@ -226,6 +233,7 @@ final class SendController {
             if let error = error {
                 completion(.failure(error))
                 print("SHARING: \(error.localizedDescription)")
+                self.logger.error("SHARING: \(error.localizedDescription)")
             } else {
                 completion(.success(messages))
                 print("SHARING: \(messages)")

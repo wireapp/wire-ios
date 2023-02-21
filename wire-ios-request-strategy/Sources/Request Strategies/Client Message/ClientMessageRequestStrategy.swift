@@ -25,6 +25,7 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
     let messageExpirationTimer: MessageExpirationTimer
     let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
     let localNotificationDispatcher: PushMessageHandler
+    let logger = WireLogger(tag: "share extension")
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
@@ -81,6 +82,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             case .success:
                 object.markAsSent()
                 print("SHARING: Syncing object after marking sent object: \(object)")
+                self?.logger.info("SHARING: Syncing object after marking sent object: \(object)")
+
                 self?.deleteMessageIfNecessary(object)
             case .failure(let error):
                 switch error {

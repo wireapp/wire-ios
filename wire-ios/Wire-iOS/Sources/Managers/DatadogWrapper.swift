@@ -115,7 +115,7 @@ public class DatadogWrapper {
     ) {
         logger?.log(
             level: level,
-            message: message,
+            message: message.logDescription,
             error: error,
             attributes: attributes
         )

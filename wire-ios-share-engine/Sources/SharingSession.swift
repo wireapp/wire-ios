@@ -167,6 +167,8 @@ public class SharingSession {
 
     private var contextSaveObserverToken: NSObjectProtocol?
 
+    let logger = WireLogger(tag: "share extension")
+
     let transportSession: ZMTransportSession
 
     let coreDataStack: CoreDataStack
@@ -370,6 +372,7 @@ public class SharingSession {
 
     public func enqueue(changes: @escaping () -> Void) {
         print("SHARING: Session enqueue sendable")
+        logger.info("SHARING: Session enqueue sendable")
         enqueue(changes: changes, completionHandler: nil)
     }
 
