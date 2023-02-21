@@ -83,6 +83,7 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
         didSet {
             if safeReachability == nil && enabled {
                 safeReachability = reachabilityClosure()
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil)
             } else if !enabled {
                 safeReachability?.tearDown()
                 safeReachability = nil
