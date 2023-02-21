@@ -109,7 +109,7 @@ class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
             completion(message)
-            self?.logger.info("SHARING: Text is being send")
+            self.logger.info("SHARING: Text is being send")
             print("SHARING: Text is being send")
         }
     }
