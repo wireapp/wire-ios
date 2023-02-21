@@ -31,7 +31,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - Life cycle
 
-    init(coreCrypto: CoreCryptoProtocol) throws {
+    public init(coreCrypto: CoreCryptoProtocol) throws {
         self.coreCrypto = coreCrypto
         try coreCrypto.proteusInit()
     }
@@ -313,6 +313,5 @@ public final class ProteusService: ProteusServiceInterface {
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
-
 
 }
