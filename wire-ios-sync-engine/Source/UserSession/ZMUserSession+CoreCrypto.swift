@@ -56,7 +56,7 @@ extension ZMUserSession {
 
     private func createProteusServiceIfNeeded(coreCrypto: CoreCryptoProtocol) throws {
         guard syncContext.proteusService == nil else { return }
-        syncContext.proteusService = ProteusService(coreCrypto: coreCrypto)
+        syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
     }
 
     // MARK: - MLS

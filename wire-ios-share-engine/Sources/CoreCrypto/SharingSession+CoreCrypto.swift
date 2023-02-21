@@ -42,7 +42,7 @@ extension SharingSession {
                 syncContext.coreCrypto = coreCrypto
 
                 if syncContext.proteusService == nil {
-                    syncContext.proteusService = ProteusService(coreCrypto: coreCrypto)
+                    syncContext.proteusService = try? ProteusService(coreCrypto: coreCrypto)
                 }
 
                 if syncContext.mlsController == nil {
