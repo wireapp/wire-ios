@@ -89,7 +89,7 @@ final class SendController {
     @objc
     private func networkStatusDidChange(_ notification: Notification) {
         if let status = notification.object as? NetworkStatus, status.reachability == .ok {
-            print("SHARING: Network")
+            self.logger.info("SHARING: Network Status Did Change")
             self.tryToTimeout()
         }
     }

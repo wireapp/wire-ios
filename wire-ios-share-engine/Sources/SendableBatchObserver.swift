@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 public final class SendableBatchObserver {
 
@@ -25,6 +26,7 @@ public final class SendableBatchObserver {
     public var sentHandler: (() -> Void)?
     public var progressHandler: ((Float) -> Void)?
     private var observerToken: Any?
+    let logger = WireLogger(tag: "share extension")
 
     public init(sendables: [Sendable]) {
         self.sendables = sendables
@@ -72,6 +74,7 @@ public final class SendableBatchObserver {
             }
         }
         print("SHARING: Progress calculated \(totalProgress)")
+
         DispatchQueue.main.async { [weak self] in
             self?.progressHandler?(totalProgress)
         }

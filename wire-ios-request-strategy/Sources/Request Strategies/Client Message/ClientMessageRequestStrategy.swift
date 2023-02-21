@@ -77,12 +77,14 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+        logger.info("SHARING: ClientMessageRequestStrategy - inseting object to sync")
+
         messageSync.sync(object) { [weak self] (result, response) in
             switch result {
             case .success:
                 object.markAsSent()
                 print("SHARING: Syncing object after marking sent object: \(object)")
-                self?.logger.info("SHARING: Syncing object after marking sent object: \(object)")
+                self?.logger.info("SHARING: ClientMessageRequestStrategy - Syncing object after marking sent object")
 
                 self?.deleteMessageIfNecessary(object)
             case .failure(let error):
@@ -98,6 +100,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                             NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
                         }
                     }
+
+                    self?.logger.info("SHARING: ClientMessageRequestStrategy - Syncing object expired")
                 }
             }
         }

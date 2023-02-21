@@ -161,10 +161,8 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
         attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (url, error) in
             error?.log(message: "Unable to load image from attachment \(String(describing: error?.localizedDescription))")
-
-            print("SHARING: Unable to load image from attachment")
-
             if error != nil {
+                print("SHARING: Unable to load image from attachment")
                 self!.logger.info("SHARING: Unable to load image from attachment \(String(describing: error?.localizedDescription))")
             }
 

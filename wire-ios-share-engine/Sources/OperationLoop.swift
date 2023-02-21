@@ -134,6 +134,7 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     private unowned let userContext: NSManagedObjectContext
     private let callBackQueue: OperationQueue
     private var tokens: [NSObjectProtocol] = []
+    let logger = WireLogger(tag: "share extension")
 
     public var changeClosure: ChangeClosure?
     public var requestAvailableClosure: RequestAvailableClosure?
@@ -148,6 +149,7 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
         RequestAvailableNotification.addObserver(self)
 
         print("SHARING: OperationLoop syncContext object: \(syncContext) and userContext object: \(userContext)")
+        logger.info("SHARING: OperationLoop - setting-up observers")
         tokens.append(setupObserver(for: userContext) { [weak self] (note, inserted, updated) in
             print("SHARING: tokens user context observer")
             self?.userInterfaceContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
@@ -165,7 +167,8 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
 
     func setupObserver(for context: NSManagedObjectContext, onSave: @escaping SaveClosure) -> NSObjectProtocol {
         print("SHARING: settingup observer for context \(context)")
-        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: context, queue: callBackQueue) { note in
+        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: context, queue: callBackQueue) { [weak self] note in
+            self?.logger.info("SHARING: OperationLoop - .NSManagedObjectContextDidSave")
             print("SHARING: Operation loop context updated \(context)")
             print("SHARING: Operation note user info: \(String(describing: note.userInfo))")
 
@@ -189,6 +192,7 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     }
 
     func syncContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
+        logger.info("SHARING: OperationLoop - syncContextDidSave")
         print("SHARING: syncContextDidSave with inserted objects \(insertedObjects) and updated objects \(updatedObjects)")
         merge(changes: notification, intoContext: userContext)
 
@@ -199,6 +203,7 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     }
 
     func userInterfaceContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
+        logger.info("SHARING: OperationLoop - userInterfaceContextDidSave")
         print("SHARING: userInterfaceContextDidSave with inserted objects \(insertedObjects) and updated objects \(updatedObjects)")
         merge(changes: notification, intoContext: syncContext)
 

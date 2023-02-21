@@ -379,6 +379,7 @@ public class SharingSession {
     public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
         userInterfaceContext.performGroupedBlock { [weak self] in
             print("SHARING: Enqueing changes")
+            self?.logger.info("SHARING: Enqeuing changes")
             changes()
             self?.userInterfaceContext.saveOrRollback()
             completionHandler?()
