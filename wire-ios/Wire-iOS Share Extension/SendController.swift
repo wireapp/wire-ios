@@ -89,7 +89,6 @@ final class SendController {
     @objc
     private func networkStatusDidChange(_ notification: Notification) {
         if let status = notification.object as? NetworkStatus, status.reachability == .ok {
-            logger.info("SHARING: Network status did change")
             print("SHARING: Network")
             self.tryToTimeout()
         }
@@ -137,7 +136,7 @@ final class SendController {
                 }
                 progress(.startingSending)
                 print("SHARING: prepare before Starting sending")
-                self.logger.info("SHARING: Prepare before starting sending")
+                logger.info("SHARING: Prepare before starting sending")
                 self.append(unsentSendables: self.unsentSendables, completion: completion)
             }
         } else {
