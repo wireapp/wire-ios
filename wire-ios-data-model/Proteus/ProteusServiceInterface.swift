@@ -24,12 +24,16 @@ import Foundation
 public protocol ProteusServiceInterface {
 
     func establishSession(id: ProteusSessionID, fromPrekey: String) throws
-    func establishSession(id: ProteusSessionID, fromMessage message: Data) throws -> Data
     func deleteSession(id: ProteusSessionID) throws
     func sessionExists(id: ProteusSessionID) -> Bool
     func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
     func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data]
-    func decrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
+
+    func decrypt(
+        data: Data,
+        forSession id: ProteusSessionID
+    ) throws -> (didCreateSession: Bool, decryptedData: Data)
+
     func generatePrekey(id: UInt16) throws -> String
     func lastPrekey() throws -> String
     var lastPrekeyID: UInt16 { get }

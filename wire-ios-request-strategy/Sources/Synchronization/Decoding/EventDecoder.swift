@@ -143,22 +143,10 @@ extension EventDecoder {
                 let proteusService = syncMOC.proteusService!
 
                 return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    if proteusService.sessionExists(id: sessionID) {
-                        let decryptedData = try proteusService.decrypt(
-                            data: encryptedData,
-                            forSession: sessionID
-                        )
-
-                        return (didCreateNewSession: false, decryptedData: decryptedData)
-
-                    } else {
-                        let decryptedData = try proteusService.establishSession(
-                            id: sessionID,
-                            fromMessage: encryptedData
-                        )
-
-                        return (didCreateNewSession: true, decryptedData: decryptedData)
-                    }
+                    try proteusService.decrypt(
+                        data: encryptedData,
+                        forSession: sessionID
+                    )
                 }
 
             case .conversationMLSMessageAdd:
