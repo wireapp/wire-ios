@@ -21,6 +21,8 @@ import CoreCryptoSwift
 
 // MARK: - Protocols
 
+public typealias CoreCryptoInterface = CoreCryptoProtocol
+
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoInterface) throws -> T) rethrows -> T
 }
