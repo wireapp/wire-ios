@@ -22,7 +22,7 @@ import CoreCryptoSwift
 
 class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
 
-    func perform<T>(_ block: (CoreCryptoInterface) throws -> T) rethrows -> T {
+    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
         try block(self)
     }
 

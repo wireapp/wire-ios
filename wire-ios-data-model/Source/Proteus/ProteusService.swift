@@ -33,7 +33,8 @@ public final class ProteusService: ProteusServiceInterface {
 
     public init(coreCrypto: SafeCoreCryptoProtocol) throws {
         self.coreCrypto = coreCrypto
-        try coreCrypto.perform { try $0.proteusInit() }
+        // this is fine not to lock for initialization
+        try coreCrypto.unsafePerform { try $0.proteusInit() }
     }
 
     // MARK: - proteusSessionFromPrekey
@@ -44,7 +45,6 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToEstablishSessionFromMessage
         case messageNotBase64Encoded
     }
-
 
     public func establishSession(id: String, fromPrekey prekey: String) throws {
         logger.info("establishing session from prekey")
