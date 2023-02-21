@@ -21,16 +21,19 @@ import XCTest
 import CoreCryptoSwift
 @testable import WireDataModel
 
-class ProteusServiceTests: XCTest {
+class ProteusServiceTests: XCTestCase {
+
+    struct MockError: Error {}
 
     var mockCoreCrypto: MockCoreCrypto!
     var sut: ProteusService!
 
     // MARK: - Set up
 
-    override func setupWithError() throws {
-        try super.setupWithError()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
         mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto.mockProteusInit = {}
         sut = try ProteusService(coreCrypto: mockCoreCrypto)
     }
 
@@ -43,11 +46,139 @@ class ProteusServiceTests: XCTest {
     // MARK: - Decrypting messages
 
     func test_DecryptDataForSession_SessionExists() throws {
-        XCTFail()
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCrypto.mockProteusSessionExists = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return true
+        }
+
+        mockCoreCrypto.mockProteusDecrypt = { id, ciphertext in
+            XCTAssertEqual(id, sessionID.rawValue)
+            XCTAssertEqual(ciphertext, encryptedData.bytes)
+            return Bytes(arrayLiteral: 0, 1, 2, 3, 4, 5)
+        }
+
+        // When
+        let (didCreateSession, decryptedData) = try sut.decrypt(
+            data: encryptedData,
+            forSession: sessionID
+        )
+
+        // Then
+        XCTAssertFalse(didCreateSession)
+        XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
+    }
+
+    func test_DecryptDataForSession_SessionExists_Failure() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCrypto.mockProteusSessionExists = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return true
+        }
+
+        mockCoreCrypto.mockProteusDecrypt = { _, _ in
+            throw MockError()
+        }
+
+        // Then
+        assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData) {
+            // When
+            _ = try sut.decrypt(
+                data: encryptedData,
+                forSession: sessionID
+            )
+        }
     }
 
     func test_DecryptDataForSession_SessionDoesNotExist() throws {
-        XCTFail()
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCrypto.mockProteusSessionExists = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return false
+        }
+
+        mockCoreCrypto.mockProteusSessionFromMessage = { id, ciphertext in
+            XCTAssertEqual(id, sessionID.rawValue)
+            XCTAssertEqual(ciphertext, encryptedData.bytes)
+            return Bytes(arrayLiteral: 0, 1, 2, 3, 4, 5)
+        }
+
+        // When
+        let (didCreateSession, decryptedData) = try sut.decrypt(
+            data: encryptedData,
+            forSession: sessionID
+        )
+
+        // Then
+        XCTAssertTrue(didCreateSession)
+        XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
+    }
+
+    func test_DecryptDataForSession_SessionDoesNotExist_Failure() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCrypto.mockProteusSessionExists = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return false
+        }
+
+        mockCoreCrypto.mockProteusSessionFromMessage = { _, _ in
+            throw MockError()
+        }
+
+        // Then
+        assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage) {
+            // When
+            _ = try sut.decrypt(
+                data: encryptedData,
+                forSession: sessionID
+            )
+        }
+    }
+
+}
+
+// MARK: - Helpers
+
+extension ProteusSessionID {
+
+    static func random() -> Self {
+        ProteusSessionID(
+            domain: .randomDomain(),
+            userID: UUID.create().uuidString,
+            clientID: .random(length: 6)
+        )
+    }
+
+}
+
+extension String {
+
+    static func randomDomain() -> Self {
+        return "\(Self.random(length: 6))@\(random(length: 6)).com"
+    }
+
+    static func random(length: UInt = 8) -> Self {
+        let aToZ = "abcdefghijklmnopqrstuvwxyz"
+
+        return (0..<length)
+            .map { _ in String(aToZ.randomElement()!) }
+            .joined()
     }
 
 }
