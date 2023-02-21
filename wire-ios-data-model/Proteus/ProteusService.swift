@@ -45,7 +45,10 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
 
-    public func establishSession(id: String, fromPrekey prekey: String) throws {
+    public func establishSession(
+        id: ProteusSessionID,
+        fromPrekey prekey: String
+    ) throws {
         logger.info("establishing session from prekey")
 
         guard let prekeyBytes = prekey.base64EncodedBytes else {
@@ -54,7 +57,7 @@ public final class ProteusService: ProteusServiceInterface {
 
         do {
             try coreCrypto.proteusSessionFromPrekey(
-                sessionId: id,
+                sessionId: id.rawValue,
                 prekey: prekeyBytes
             )
         } catch {
@@ -65,12 +68,15 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusSessionFromMessage
 
-    public func establishSession(id: String, fromMessage message: Data) throws -> Data {
+    public func establishSession(
+        id: ProteusSessionID,
+        fromMessage message: Data
+    ) throws -> Data {
         logger.info("establishing session from message")
 
         do {
             let decryptedBytes = try coreCrypto.proteusSessionFromMessage(
-                sessionId: id,
+                sessionId: id.rawValue,
                 envelope: message.bytes
             )
             return decryptedBytes.data
@@ -86,11 +92,11 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToDeleteSession
     }
 
-    public func deleteSession(id: String) throws {
+    public func deleteSession(id: ProteusSessionID) throws {
         logger.info("deleting session")
 
         do {
-            try coreCrypto.proteusSessionDelete(sessionId: id)
+            try coreCrypto.proteusSessionDelete(sessionId: id.rawValue)
         } catch {
             logger.error("failed to delete session: \(String(describing: error))")
             throw DeleteSessionError.failedToDeleteSession
@@ -106,9 +112,9 @@ public final class ProteusService: ProteusServiceInterface {
     // saving the session is managed internally by CC.
     // so there wouldn't be a need for this to be called.
 
-    func saveSession(id: String) throws {
+    func saveSession(id: ProteusSessionID) throws {
         do {
-            try coreCrypto.proteusSessionSave(sessionId: id)
+            try coreCrypto.proteusSessionSave(sessionId: id.rawValue)
         } catch {
             // TODO: Log error
             throw SaveSessionError.failedToSaveSession
@@ -117,11 +123,11 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusSessionExists
 
-    public func sessionExists(id: String) -> Bool {
+    public func sessionExists(id: ProteusSessionID) -> Bool {
         logger.info("checking if session exists")
 
         do {
-            return try coreCrypto.proteusSessionExists(sessionId: id)
+            return try coreCrypto.proteusSessionExists(sessionId: id.rawValue)
         } catch {
             logger.error("failed to check if session exists \(String(describing: error))")
             return false
@@ -135,12 +141,15 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToEncryptDataBatch
     }
 
-    public func encrypt(data: Data, forSession id: String) throws -> Data {
+    public func encrypt(
+        data: Data,
+        forSession id: ProteusSessionID
+    ) throws -> Data {
         logger.info("encrypting data")
 
         do {
             let encryptedBytes = try coreCrypto.proteusEncrypt(
-                sessionId: id,
+                sessionId: id.rawValue,
                 plaintext: data.bytes
             )
             return encryptedBytes.data
@@ -152,12 +161,15 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusEncryptBatched
 
-    public func encryptBatched(data: Data, forSessions sessions: [String]) throws -> [String: Data] {
+    public func encryptBatched(
+        data: Data,
+        forSessions sessions: [ProteusSessionID]
+    ) throws -> [String: Data] {
         logger.info("encrypting data batch")
 
         do {
             let encryptedBatch = try coreCrypto.proteusEncryptBatched(
-                sessionId: sessions,
+                sessionId: sessions.map(\.rawValue),
                 plaintext: data.bytes
             )
             return encryptedBatch.mapValues(\Bytes.data)
@@ -173,12 +185,15 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToDecryptData
     }
 
-    public func decrypt(data: Data, forSession id: String) throws -> Data {
+    public func decrypt(
+        data: Data,
+        forSession id: ProteusSessionID
+    ) throws -> Data {
         logger.info("decrypting data")
 
         do {
             let decryptedBytes = try coreCrypto.proteusDecrypt(
-                sessionId: id,
+                sessionId: id.rawValue,
                 ciphertext: data.bytes
             )
             return decryptedBytes.data
@@ -272,22 +287,22 @@ public final class ProteusService: ProteusServiceInterface {
         }
     }
 
-    public func localFingerprint(forSession id: String) throws -> String {
+    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
         logger.info("fetching local fingerprint")
 
         do {
-            return try coreCrypto.proteusFingerprintLocal(sessionId: id)
+            return try coreCrypto.proteusFingerprintLocal(sessionId: id.rawValue)
         } catch {
             logger.error("failed to fetch local fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetLocalFingerprint
         }
     }
 
-    public func remoteFingerprint(forSession id: String) throws -> String {
+    public func remoteFingerprint(forSession id: ProteusSessionID) throws -> String {
         logger.info("fetching remote fingerprint")
 
         do {
-            return try coreCrypto.proteusFingerprintRemote(sessionId: id)
+            return try coreCrypto.proteusFingerprintRemote(sessionId: id.rawValue)
         } catch {
             logger.error("failed to fetch remote fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetRemoteFingerprint

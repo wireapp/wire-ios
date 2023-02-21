@@ -136,16 +136,16 @@ extension EventDecoder {
                         event,
                         in: self.syncMOC
                     ) { sessionID, encryptedData in
-                        if proteusService.sessionExists(id: sessionID.rawValue) {
+                        if proteusService.sessionExists(id: sessionID) {
                             let decryptedData = try proteusService.decrypt(
                                 data: encryptedData,
-                                forSession: sessionID.rawValue
+                                forSession: sessionID
                             )
 
                             return (didCreateNewSession: false, decryptedData: decryptedData)
                         } else {
                             let decryptedData = try proteusService.establishSession(
-                                id: sessionID.rawValue,
+                                id: sessionID,
                                 fromMessage: encryptedData
                             )
 
