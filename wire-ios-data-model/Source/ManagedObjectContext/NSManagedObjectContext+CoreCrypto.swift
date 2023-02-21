@@ -17,16 +17,15 @@
 //
 
 import Foundation
-import CoreCryptoSwift
 
 extension NSManagedObjectContext {
 
     private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
-    public var coreCrypto: CoreCryptoProtocol? {
+    public var coreCrypto: SafeCoreCryptoProtocol? {
         get {
             precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
-            return userInfo[Self.coreCryptoUserInfoKey] as? CoreCryptoProtocol
+            return userInfo[Self.coreCryptoUserInfoKey] as? SafeCoreCryptoProtocol
         }
 
         set {

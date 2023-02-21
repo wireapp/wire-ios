@@ -23,28 +23,22 @@ import CoreCryptoSwift
 // MARK: - Protocols
 
 public protocol SafeCoreCryptoProtocol {
-    func perform<T>(_ block: (CoreCryptoSwift.CoreCryptoProtocol) throws -> T) rethrows -> T
+    func perform<T>(_ block: (CoreCryptoInterface) throws -> T) rethrows -> T
 }
 
 
 public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
 
-    private let coreCrypto: CoreCryptoWrapper!
+    private let coreCrypto: CoreCryptoInterface
     private let safeContext: SafeFileContext
 
-    public static func create(coreCryptoConfiguration: CoreCryptoConfiguration) throws -> SafeCoreCryptoProtocol {
-        let coreCrypto = try CoreCryptoWrapper.setup(with: coreCryptoConfiguration)
-
-        return SafeCoreCrypto(coreCryptoWrapper: coreCrypto, coreCryptoConfiguration: coreCryptoConfiguration)
-    }
-
-    init(coreCryptoWrapper: CoreCryptoWrapper, coreCryptoConfiguration: CoreCryptoConfiguration) {
-        self.coreCrypto = coreCryptoWrapper
+    init(coreCrypto: CoreCryptoInterface, coreCryptoConfiguration: CoreCryptoConfiguration) {
+        self.coreCrypto = coreCrypto
         let pathUrl = URL(fileURLWithPath: coreCryptoConfiguration.path)
         self.safeContext = SafeFileContext(fileURL: pathUrl)
     }
 
-    public func perform<T>(_ block: (CoreCryptoSwift.CoreCryptoProtocol) throws -> T) rethrows -> T {
+    public func perform<T>(_ block: (CoreCryptoInterface) throws -> T) rethrows -> T {
         var result: T
         safeContext.acquireDirectoryLock()
         //TODO: call `restoreFromDisk`

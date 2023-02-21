@@ -18,6 +18,7 @@
 
 import Foundation
 import CoreCryptoSwift
+import CoreCrypto
 
 public struct CoreCryptoConfiguration {
 
@@ -81,17 +82,19 @@ public class CoreCryptoFactory {
 
     // MARK: - Core Crypto
 
-    public func createCoreCrypto(with config: CoreCryptoConfiguration) throws -> CoreCryptoProtocol {
+    public func createCoreCrypto(with config: CoreCryptoConfiguration) throws -> SafeCoreCryptoProtocol {
         guard let clientID = config.clientIDBytes() else {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
 
-        return try CoreCrypto(
+        let coreCrypto = try CoreCryptoWrapper(
             path: config.path,
             key: config.key,
             clientId: clientID,
             entropySeed: nil
         )
+
+        return SafeCoreCrypto(coreCrypto: coreCrypto, coreCryptoConfiguration: config)
     }
 
     public enum CoreCryptoSetupFailure: Error, Equatable {

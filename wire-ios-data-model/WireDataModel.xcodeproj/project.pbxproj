@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		01B16BF429A4B6E8004A7234 /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B16BF329A4B6E8004A7234 /* SafeCoreCrypto.swift */; };
 		01B16BF629A4B71B004A7234 /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B16BF529A4B71B004A7234 /* SafeFileContext.swift */; };
+		01B16BF829A4C972004A7234 /* CoreCryptoInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B16BF729A4C972004A7234 /* CoreCryptoInterface.swift */; };
 		06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */; };
 		0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */; };
 		0604F8002651CAFE0016A71E /* store2-91-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0604F7FF2651CAFD0016A71E /* store2-91-0.wiredatabase */; };
@@ -804,6 +805,7 @@
 /* Begin PBXFileReference section */
 		01B16BF329A4B6E8004A7234 /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SafeCoreCrypto.swift; path = "../../wire-ios/WireCommonComponents/MLS/SafeCoreCrypto.swift"; sourceTree = "<group>"; };
 		01B16BF529A4B71B004A7234 /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
+		01B16BF729A4C972004A7234 /* CoreCryptoInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoInterface.swift; sourceTree = "<group>"; };
 		06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.FileSharing.swift; sourceTree = "<group>"; };
 		0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSystemMessage+ParticipantsRemovedReason.swift"; sourceTree = "<group>"; };
 		0604F7FC2651C9220016A71E /* zmessaging2.91.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.91.0.xcdatamodel; sourceTree = "<group>"; };
@@ -2062,6 +2064,7 @@
 			children = (
 				7AFC6A272876E935000FF1A1 /* Actions */,
 				EE404EA1287317CB00B3653F /* MLSController.swift */,
+				01B16BF729A4C972004A7234 /* CoreCryptoInterface.swift */,
 				6397F6E328F481A700298DB1 /* MLSActionsProvider.swift */,
 				EEDE7DB428EAFE45007DC6A3 /* MLSActionExecutor.swift */,
 				EE04084B28CA8283009E4B8D /* StaleMLSKeyMaterialDetector.swift */,
@@ -3668,6 +3671,7 @@
 				5451DE351F5FFF8B00C82E75 /* NotificationInContext.swift in Sources */,
 				F179B5DA2062B77300C13DFD /* CoreDataStack+Backup.swift in Sources */,
 				F9A706A41CAEE01D00C2F5FE /* ConversationChangeInfo.swift in Sources */,
+				01B16BF829A4C972004A7234 /* CoreCryptoInterface.swift in Sources */,
 				7AA8560E28FDAD6F00088D41 /* FetchPublicGroupStateAction.swift in Sources */,
 				A943BBE825B5A59D003D66BA /* ConversationLike.swift in Sources */,
 				062FD8852756053800B9DE39 /* Feature.ConversationGuestLinks.swift in Sources */,

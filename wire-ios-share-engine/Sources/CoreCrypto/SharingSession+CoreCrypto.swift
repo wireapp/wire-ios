@@ -39,6 +39,7 @@ extension SharingSession {
                 )
 
                 let coreCrypto = try factory.createCoreCrypto(with: configuration)
+                SafeCoreCrypto
                 syncContext.coreCrypto = coreCrypto
 
                 if syncContext.proteusService == nil {
