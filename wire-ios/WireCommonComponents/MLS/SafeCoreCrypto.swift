@@ -18,7 +18,14 @@
 
 import Foundation
 import CoreCrypto
-import WireDataModel
+import CoreCryptoSwift
+
+// MARK: - Protocols
+
+public protocol SafeCoreCryptoProtocol {
+    func perform<T>(_ block: (CoreCryptoSwift.CoreCryptoProtocol) throws -> T) rethrows -> T
+}
+
 
 public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
 
@@ -37,7 +44,7 @@ public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
         self.safeContext = SafeFileContext(fileURL: pathUrl)
     }
 
-    public func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+    public func perform<T>(_ block: (CoreCryptoSwift.CoreCryptoProtocol) throws -> T) rethrows -> T {
         var result: T
         safeContext.acquireDirectoryLock()
         //TODO: call `restoreFromDisk`
