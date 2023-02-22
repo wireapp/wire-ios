@@ -36,11 +36,15 @@ public final class UserClientRequestFactory {
 
     unowned var keyStore: UserClientKeysStore
     public let keyCount: UInt16
+    private let proteusService: ProteusServiceInterface?
 
     public init(keysCount: UInt16 = 100,
-                keysStore: UserClientKeysStore) {
+                keysStore: UserClientKeysStore,
+                proteusService: ProteusServiceInterface?
+    ) {
         self.keyCount = (UserClientRequestFactory._test_overrideNumberOfKeys ?? keysCount)
         self.keyStore = keysStore
+        self.proteusService = proteusService
     }
 
     public func registerClientRequest(_ client: UserClient, credentials: ZMEmailCredentials?, cookieLabel: String, apiVersion: APIVersion) throws -> ZMUpstreamRequest {
@@ -111,13 +115,22 @@ public final class UserClientRequestFactory {
     internal func payloadForPreKeys(_ client: UserClient, startIndex: UInt16 = 0) throws -> (payload: [[String: Any]], maxRange: UInt16) {
         // we don't want to generate new prekeys if we already have them
         do {
-            let preKeys = try keyStore.generateMoreKeys(keyCount, start: startIndex)
+            var preKeys: [IdPrekeyTuple]
+
+            if let proteusService = proteusService {
+                preKeys = try proteusService.generatePrekeys(start: startIndex, count: keyCount)
+            } else {
+                preKeys = try keyStore.generateMoreKeys(keyCount, start: startIndex)
+            }
+
             guard preKeys.count > 0 else {
                 throw UserClientRequestError.noPreKeys
             }
+
             let preKeysPayloadData: [[String: Any]] = preKeys.map {
                 ["key": $0.prekey, "id": NSNumber(value: $0.id)]
             }
+
             return (preKeysPayloadData, preKeys.last!.id)
         } catch {
             throw UserClientRequestError.noPreKeys
@@ -126,11 +139,20 @@ public final class UserClientRequestFactory {
 
     internal func payloadForLastPreKey(_ client: UserClient) throws -> [String: Any] {
         do {
-            let lastKey = try keyStore.lastPreKey()
-            let lastPreKeyString = lastKey
+            var lastKey: String
+            var lastKeyId: UInt16
+
+            if let proteusService = proteusService {
+                lastKey = try proteusService.lastPrekey()
+                lastKeyId = proteusService.lastPrekeyID
+            } else {
+                lastKey = try keyStore.lastPreKey()
+                lastKeyId = CBOX_LAST_PREKEY_ID
+            }
+
             let lastPreKeyPayloadData: [String: Any] = [
-                "key": lastPreKeyString,
-                "id": NSNumber(value: CBOX_LAST_PREKEY_ID)
+                "key": lastKey,
+                "id": NSNumber(value: lastKeyId)
             ]
             return lastPreKeyPayloadData
         } catch {
