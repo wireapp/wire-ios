@@ -22,6 +22,7 @@ import WireTesting
 import WireCryptobox
 import WireMockTransport
 import WireDataModel
+import Foundation
 
 class UserClientRequestFactoryTests: MessagingTest {
 
@@ -30,15 +31,23 @@ class UserClientRequestFactoryTests: MessagingTest {
     var spyKeyStore: SpyUserClientKeyStore!
     var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
     var userInfoParser: MockUserInfoParser!
+    var proteusService: MockProteusServiceInterface!
 
     override func setUp() {
         super.setUp()
         spyKeyStore = SpyUserClientKeyStore(accountDirectory: accountDirectory, applicationContainer: sharedContainerURL)
         userInfoParser = MockUserInfoParser()
         mockAuthenticationStatusDelegate = MockAuthenticationStatusDelegate()
-        authenticationStatus = MockAuthenticationStatus(delegate: mockAuthenticationStatusDelegate,
-                                                             userInfoParser: self.userInfoParser)
-        sut = UserClientRequestFactory(keysStore: self.spyKeyStore)
+        authenticationStatus = MockAuthenticationStatus(
+            delegate: mockAuthenticationStatusDelegate,
+            userInfoParser: self.userInfoParser
+        )
+        proteusService = mockProteusService()
+
+        sut = UserClientRequestFactory(
+            keysStore: self.spyKeyStore,
+            proteusService: nil
+        )
     }
 
     override func tearDown() {
@@ -48,213 +57,232 @@ class UserClientRequestFactoryTests: MessagingTest {
         sut = nil
         spyKeyStore = nil
         userInfoParser = nil
+        proteusService = nil
         super.tearDown()
     }
 
-    func expectedKeyPayloadForClientPreKeys(_ client: UserClient) -> [[String: Any]] {
-        let generatedKeys = self.spyKeyStore.lastGeneratedKeys
-        let expectedPrekeys: [[String: Any]] = generatedKeys.map { (key: (id: UInt16, prekey: String)) in
-            return ["key": key.prekey, "id": NSNumber(value: key.id)]
-        }
-        return expectedPrekeys
+    private func mockProteusService() -> MockProteusServiceInterface {
+        let proteusService = MockProteusServiceInterface()
+
+        proteusService.generatePrekeysStartCount_MockValue = [(1, "prekey")]
+        proteusService.lastPrekey_MockValue = "prekey"
+        proteusService.underlyingLastPrekeyID = UInt16.max
+
+        return proteusService
     }
 
-    func testThatItCreatesRegistrationRequestWithEmailCorrectly() {
-        // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+    // MARK: - Registration request creation 
+
+    func testThatItCreatesRegistrationRequestWithEmailCorrectly() throws {
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
 
-        // when
-        guard let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie", apiVersion: .v0) else {
-            XCTFail()
-            return
-        }
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: false
+        )
 
-        // then
-        guard let transportRequest = request.transportRequest else { return XCTFail("Should return non nil request") }
-        guard let payload = transportRequest.payload?.asDictionary() as? [String: NSObject] else { return XCTFail("Request should contain payload") }
-
-        guard let type = payload["type"] as? String, type == DeviceType.permanent.rawValue else { return XCTFail("Client type should be 'permanent'") }
-        guard let password = payload["password"] as? String, password == credentials.password else { return XCTFail("Payload should contain password") }
-
-        guard let lastPreKey = self.spyKeyStore.lastGeneratedLastPrekey else {
-            XCTFail()
-            return
-        }
-
-        guard let lastKeyPayload = payload["lastkey"] as? [String: Any] else { return XCTFail() }
-        XCTAssertEqual(lastKeyPayload["key"] as? String, lastPreKey)
-        XCTAssertEqual(lastKeyPayload["id"] as? NSNumber, NSNumber(value: CBOX_LAST_PREKEY_ID))
-
-        guard let preKeysPayloadData = payload["prekeys"] as? [[String: Any]] else { return XCTFail("Payload should contain prekeys") }
-        zip(preKeysPayloadData, expectedKeyPayloadForClientPreKeys(client)).forEach { (lhs, rhs) in
-            XCTAssertEqual(lhs["key"] as? String, rhs["key"] as? String)
-            XCTAssertEqual(lhs["id"] as? UInt16, rhs["id"] as? UInt16)
-        }
-
-        guard let apnsKeysPayload = payload["sigkeys"] as? [String: NSObject] else {return XCTFail("Payload should contain apns keys")}
-        XCTAssertNotNil(apnsKeysPayload["enckey"], "Payload should contain apns enc key")
-        XCTAssertNotNil(apnsKeysPayload["mackey"], "Payload should contain apns mac key")
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: true
+        )
     }
 
     func testThatItCreatesRegistrationRequestWithEmailVerificationCodeCorrectly() throws {
+        let credentials = ZMEmailCredentials(
+            email: "some@example.com",
+            password: "123",
+            emailVerificationCode: "123456"
+        )
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: false
+        )
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: true
+        )
+    }
+
+    func testThatItCreatesRegistrationRequestWithPhoneCredentialsCorrectly() throws {
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: nil,
+            usingProteusService: false
+        )
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: nil,
+            usingProteusService: true
+        )
+    }
+
+    private func testThatItCreatesRegistrationRequestCorrectly(
+        credentials: ZMEmailCredentials?,
+        usingProteusService: Bool
+    ) throws {
         // given
-        let credentials = ZMEmailCredentials(email: "some@example.com",
-                                             password: "gfsgdfgdfgdfgdfg",
-                                             emailVerificationCode: "123456")
+        let sut = UserClientRequestFactory(
+            keysStore: self.spyKeyStore,
+            proteusService: usingProteusService ? proteusService : nil
+        )
 
         let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = "\(client.objectID)"
 
         // when
-        guard let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie", apiVersion: .v0) else {
-            XCTFail()
-            return
-        }
+        let request = try sut.registerClientRequest(
+            client,
+            credentials: credentials,
+            cookieLabel: "mycookie",
+            apiVersion: .v0
+        )
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
-        let payload = try XCTUnwrap(transportRequest.payload?.asDictionary() as? [String: NSObject])
+        assertRequest(transportRequest, path: "/clients", method: .methodPOST)
 
-        XCTAssertEqual(transportRequest.path, "/clients")
-        let password = try XCTUnwrap(payload["password"] as? String)
-        XCTAssertEqual(password, credentials.password)
-        let verificationCode = try XCTUnwrap(payload["verification_code"] as? String)
-        XCTAssertEqual(verificationCode, credentials.emailVerificationCode)
-        XCTAssertEqual(transportRequest.method, ZMTransportRequestMethod.methodPOST)
+        let payload = try XCTUnwrap(payload(from: transportRequest))
+        try assertLastPrekey(payload, usingProteusService: usingProteusService)
+        try assertPrekeys(payload, client: client, usingProteusService: usingProteusService)
+        try assertSigkeys(payload)
+
+        XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
+
+        if let credentials = credentials {
+            XCTAssertEqual(payload.password, credentials.password)
+        }
+
+        if let emailVerificationCode = credentials?.emailVerificationCode {
+            XCTAssertEqual(payload.verificationCode, emailVerificationCode)
+        }
     }
 
-    func testThatItCreatesRegistrationRequestWithPhoneCredentialsCorrectly() {
+    func testThatItReturnsNilForRegisterClientRequest_PrekeyError() {
+        // Failing to generate prekeys
+
+        testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
+            .failedToGeneratePrekeys,
+            usingProteusService: false
+        )
+        testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
+            .failedToGeneratePrekeys,
+            usingProteusService: true
+        )
+
+        // Failing to generate last prekey
+
+        testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
+            .failedToGenerateLastPrekey,
+            usingProteusService: false
+        )
+        testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
+            .failedToGenerateLastPrekey,
+            usingProteusService: true
+        )
+    }
+
+    private func testThatItReturnsNilForRegisterClientRequestIfPreKeyError(
+        _ error: PrekeyError,
+        usingProteusService: Bool
+    ) {
         // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+        let sut = UserClientRequestFactory(
+            keysStore: spyKeyStore,
+            proteusService: usingProteusService ? proteusService : nil
+        )
+
+        switch error {
+        case .failedToGeneratePrekeys:
+            proteusService.generatePrekeysStartCount_MockError = error
+            spyKeyStore.failToGeneratePreKeys = true
+        case .failedToGenerateLastPrekey:
+            proteusService.lastPrekey_MockError = error
+            spyKeyStore.failToGenerateLastPreKey = true
+        }
+
+        let client = UserClient.insertNewObject(in: syncMOC)
+        let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
 
         // when
-        let upstreamRequest: ZMUpstreamRequest
-        do {
-            upstreamRequest = try sut.registerClientRequest(client, credentials: nil, cookieLabel: "mycookie", apiVersion: .v0)
-        } catch {
-            return XCTFail("error should be nil \(error)")
-
-        }
+        let request = try? sut.registerClientRequest(
+            client,
+            credentials: credentials,
+            cookieLabel: "mycookie",
+            apiVersion: .v0
+        )
 
         // then
-        guard let request = upstreamRequest.transportRequest else { return XCTFail("Request should not be nil") }
-        XCTAssertEqual(request.path, "/clients", "Should create request with correct path")
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST, "Should create POST request")
-        guard let payload = request.payload?.asDictionary() as? [String: NSObject] else { return XCTFail("Request should contain payload") }
-        XCTAssertEqual(payload["type"] as? String, DeviceType.permanent.rawValue, "Client type should be 'permanent'")
-        XCTAssertNil(payload["password"])
-
-        let lastPreKey = try! self.spyKeyStore.lastPreKey()
-
-        guard let lastKeyPayload = payload["lastkey"] as? [String: Any] else { return XCTFail("Payload should contain last prekey") }
-        XCTAssertEqual(lastKeyPayload["key"] as? String, lastPreKey)
-        XCTAssertEqual(lastKeyPayload["id"] as? NSNumber, NSNumber(value: CBOX_LAST_PREKEY_ID))
-
-        guard let preKeysPayloadData = payload["prekeys"] as? [[String: Any]] else { return XCTFail("Payload should contain prekeys") }
-
-        zip(preKeysPayloadData, expectedKeyPayloadForClientPreKeys(client)).forEach { (lhs, rhs) in
-            XCTAssertEqual(lhs["key"] as? String, rhs["key"] as? String)
-            XCTAssertEqual(lhs["id"] as? UInt16, rhs["id"] as? UInt16)
-        }
-
-        guard let signalingKeys = payload["sigkeys"] as? [String: NSObject] else { return XCTFail("Payload should contain apns keys") }
-        XCTAssertNotNil(signalingKeys["enckey"], "Payload should contain apns enc key")
-        XCTAssertNotNil(signalingKeys["mackey"], "Payload should contain apns mac key")
+        XCTAssertNil(request)
     }
 
-    func testThatItReturnsNilForRegisterClientRequestIfCanNotGeneratePreKyes() {
-        // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        self.spyKeyStore.failToGeneratePreKeys = true
-
-        let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
-
-        // when
-        let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie", apiVersion: .v0)
-
-        XCTAssertNil(request, "Should not return request if client fails to generate prekeys")
+    private enum PrekeyError: Error {
+        case failedToGeneratePrekeys
+        case failedToGenerateLastPrekey
     }
 
-    func testThatItReturnsNilForRegisterClientRequestIfCanNotGenerateLastPreKey() {
-        // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        self.spyKeyStore.failToGenerateLastPreKey = true
+    // MARK: - Updating client request creation
 
-        let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
-
-        // when
-        let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie", apiVersion: .v0)
-
-        XCTAssertNil(request, "Should not return request if client fails to generate last prekey")
+    func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey0() throws {
+        try testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(0, usingProteusService: false)
+        try testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(0, usingProteusService: true)
     }
 
-    func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey0() {
+    func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey400() throws {
+        try testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(400, usingProteusService: false)
+        try testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(400, usingProteusService: true)
+    }
 
+    private func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey(
+        _ prekeyRangeMax: Int64,
+        usingProteusService: Bool
+    ) throws {
         // given
+        let sut = UserClientRequestFactory(
+            keysStore: self.spyKeyStore,
+            proteusService: usingProteusService ? proteusService : nil
+        )
+
         let client = UserClient.insertNewObject(in: self.syncMOC)
         client.remoteIdentifier = UUID.create().transportString()
+        client.preKeysRangeMax = prekeyRangeMax
 
         // when
-        let request = try! sut.updateClientPreKeysRequest(client, apiVersion: .v0)
+        let request = try sut.updateClientPreKeysRequest(client, apiVersion: .v0)
 
-        AssertOptionalNotNil(request.transportRequest, "Should return non nil request") { request in
+        // then
+        let transportRequest = try XCTUnwrap(request.transportRequest)
+        assertRequest(
+            transportRequest,
+            path: "/clients/\(client.remoteIdentifier!)",
+            method: .methodPUT
+        )
 
-            XCTAssertEqual(request.path, "/clients/\(client.remoteIdentifier!)", "Should create request with correct path")
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPUT, "Should create POST request")
-
-            AssertOptionalNotNil(request.payload?.asDictionary() as? [String: NSObject], "Request should contain payload") { payload in
-
-                let preKeysPayloadData = payload["prekeys"] as? [[NSString: Any]]
-                AssertOptionalNotNil(preKeysPayloadData, "Payload should contain prekeys") { data in
-                    zip(data, expectedKeyPayloadForClientPreKeys(client)).forEach { (lhs, rhs) in
-                        XCTAssertEqual(lhs["key"] as? String, rhs["key"] as? String)
-                        XCTAssertEqual(lhs["id"] as? UInt16, rhs["id"] as? UInt16)
-                    }
-                }
-            }
-        }
-    }
-
-    func testThatItCreatesUpdateClientRequestCorrectlyWhenStartingFromPrekey400() {
-
-        // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        client.remoteIdentifier = UUID.create().transportString()
-        client.preKeysRangeMax = 400
-
-        // when
-        let request = try! sut.updateClientPreKeysRequest(client, apiVersion: .v0)
-
-        AssertOptionalNotNil(request.transportRequest, "Should return non nil request") { request in
-
-            XCTAssertEqual(request.path, "/clients/\(client.remoteIdentifier!)", "Should create request with correct path")
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPUT, "Should create POST request")
-
-            AssertOptionalNotNil(request.payload?.asDictionary() as? [String: NSObject], "Request should contain payload") { payload in
-
-                let preKeysPayloadData = payload["prekeys"] as? [[NSString: Any]]
-                AssertOptionalNotNil(preKeysPayloadData, "Payload should contain prekeys") { data in
-                    zip(data, expectedKeyPayloadForClientPreKeys(client)).forEach { (lhs, rhs) in
-                        XCTAssertEqual(lhs["key"] as? String, rhs["key"] as? String)
-                        XCTAssertEqual(lhs["id"] as? UInt16, rhs["id"] as? UInt16)
-                    }
-                }
-            }
-        }
+        let payload = try XCTUnwrap(payload(from: transportRequest))
+        try assertPrekeys(payload, client: client, usingProteusService: usingProteusService)
     }
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys() {
+        testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys(usingProteusService: false)
+        testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys(usingProteusService: true)
+    }
 
+    func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys(usingProteusService: Bool) {
         // given
-        let client = UserClient.insertNewObject(in: self.syncMOC)
-        self.spyKeyStore.failToGeneratePreKeys = true
+        let sut = UserClientRequestFactory(
+            keysStore: spyKeyStore,
+            proteusService: usingProteusService ? proteusService : nil
+        )
 
+        spyKeyStore.failToGeneratePreKeys = true
+        proteusService.generatePrekeysStartCount_MockError = PrekeyError.failedToGeneratePrekeys
+
+        let client = UserClient.insertNewObject(in: self.syncMOC)
         client.remoteIdentifier = UUID.create().transportString()
 
         // when
         let request = try? sut.updateClientPreKeysRequest(client, apiVersion: .v0)
 
+        // then
         XCTAssertNil(request, "Should not return request if client fails to generate prekeys")
     }
 
@@ -271,8 +299,9 @@ class UserClientRequestFactoryTests: MessagingTest {
 
     }
 
-    func testThatItCreatesARequestToDeleteAClient() {
+    // MARK: - Deleting client
 
+    func testThatItCreatesARequestToDeleteAClient() throws {
         // given
         let email = "foo@example.com"
         let password = "gfsgdfgdfgdfgdfg"
@@ -285,14 +314,16 @@ class UserClientRequestFactoryTests: MessagingTest {
         let nextRequest = sut.deleteClientRequest(client, credentials: credentials, apiVersion: .v0)
 
         // then
-        AssertOptionalNotNil(nextRequest) {
-            XCTAssertEqual($0.transportRequest.path, "/clients/\(client.remoteIdentifier!)")
-            XCTAssertEqual($0.transportRequest.payload as! [String: String], [
-                "email": email,
-                "password": password
-                ])
-            XCTAssertEqual($0.transportRequest.method, ZMTransportRequestMethod.methodDELETE)
-        }
+        let transportRequest = try XCTUnwrap(nextRequest.transportRequest)
+        assertRequest(
+            transportRequest,
+            path: "/clients/\(client.remoteIdentifier!)",
+            method: .methodDELETE
+        )
+
+        let payload = try XCTUnwrap(payload(from: transportRequest))
+        XCTAssertEqual(payload.password, password)
+        XCTAssertEqual(payload.email, email)
     }
 
     // MARK: - MLS public keys
@@ -311,13 +342,149 @@ class UserClientRequestFactoryTests: MessagingTest {
         XCTAssertEqual(request.keys, Set([UserClient.needsToUploadMLSPublicKeysKey]))
 
         let transportRequest = try XCTUnwrap(request.transportRequest)
-        XCTAssertEqual(transportRequest.path, "/v1/clients/\(client.remoteIdentifier!)")
-        XCTAssertEqual(transportRequest.method, .methodPUT)
+        assertRequest(
+            transportRequest,
+            path: "/v1/clients/\(client.remoteIdentifier!)",
+            method: .methodPUT
+        )
 
-        let payload = try XCTUnwrap(transportRequest.payload)
-        let payloadDict = try XCTUnwrap(payload.asDictionary())
-        let keys = try XCTUnwrap(payloadDict["mls_public_keys"] as? [String: String])
-        XCTAssertEqual(keys["ed25519"], "foo")
+        let payload = try XCTUnwrap(payload(from: transportRequest))
+        XCTAssertEqual(payload.mlsPublicKeys?.ed25519, "foo")
     }
 
+    // MARK: - Helpers
+
+    private func payload(from request: ZMTransportRequest) -> [String: Any]? {
+        return request.payload?.asDictionary() as? [String: Any]
+    }
+
+    private func assertRequest(_ request: ZMTransportRequest, path: String, method: ZMTransportRequestMethod) {
+        XCTAssertEqual(request.path, path)
+        XCTAssertEqual(request.method, method)
+    }
+
+    private func assertLastPrekey(_ payload: [String: Any], usingProteusService: Bool) throws {
+        let expectedLastPrekey = try expectedLastPrekey(usingProteusService: usingProteusService)
+        let lastPrekey = try XCTUnwrap(payload.lastKey)
+
+        XCTAssertEqual(lastPrekey.key, expectedLastPrekey.key)
+        XCTAssertEqual(lastPrekey.id, expectedLastPrekey.id)
+    }
+
+    private func assertPrekeys(_ payload: [String: Any], client: UserClient, usingProteusService: Bool) throws {
+        let expectedPrekeys = try expectedKeyPayloadForClientPreKeys(
+            client,
+            usingProteusService: usingProteusService
+        )
+        let prekeys = try XCTUnwrap(payload.prekeys)
+
+        zip(prekeys, expectedPrekeys).forEach { (lhs, rhs) in
+            XCTAssertEqual(lhs.key, rhs.key)
+            XCTAssertEqual(lhs.id, rhs.id)
+        }
+    }
+
+    private func assertSigkeys(_ payload: [String: Any]) throws {
+        let sigkeys = try XCTUnwrap(payload.sigkeys)
+        XCTAssertNotNil(sigkeys.enckey)
+        XCTAssertNotNil(sigkeys.mackey)
+    }
+
+    private func expectedLastPrekey(usingProteusService: Bool) throws -> (key: String, id: NSNumber) {
+        let expectedLastPrekey = usingProteusService
+        ? try proteusService.lastPrekey()
+        : try XCTUnwrap(spyKeyStore.lastGeneratedLastPrekey)
+
+        let expectedLastPrekeyID = usingProteusService
+        ? NSNumber(value: proteusService.lastPrekeyID)
+        : NSNumber(value: CBOX_LAST_PREKEY_ID)
+
+        return (expectedLastPrekey, expectedLastPrekeyID)
+    }
+
+    private func expectedKeyPayloadForClientPreKeys(_ client: UserClient, usingProteusService: Bool) throws -> [[String: Any]] {
+        let generatedKeys = usingProteusService
+        ? try proteusService.generatePrekeys(start: 0, count: 100)
+        : self.spyKeyStore.lastGeneratedKeys
+
+        let expectedPrekeys: [[String: Any]] = generatedKeys.map { (key: (id: UInt16, prekey: String)) in
+            return ["key": key.prekey, "id": NSNumber(value: key.id)]
+        }
+        return expectedPrekeys
+    }
+
+}
+
+private extension Dictionary where Key == String, Value == Any {
+    enum PayloadKey: String {
+        case type
+        case email
+        case password
+        case verificationCode = "verification_code"
+        case lastkey
+        case key
+        case id
+        case prekeys
+        case sigkeys
+        case enckey
+        case mackey
+        case mlsPublicKeys = "mls_public_keys"
+        case ed25519
+    }
+
+    var type: String? {
+        value(forKey: .type)
+    }
+
+    var password: String? {
+        value(forKey: .password)
+    }
+
+    var email: String? {
+        value(forKey: .email)
+    }
+
+    var verificationCode: String? {
+        value(forKey: .verificationCode)
+    }
+
+    var lastKey: [String: Any]? {
+        value(forKey: .lastkey)
+    }
+
+    var key: String? {
+        value(forKey: .key)
+    }
+
+    var id: NSNumber? {
+        value(forKey: .id)
+    }
+
+    var prekeys: [[String: Any]]? {
+        value(forKey: .prekeys)
+    }
+
+    var sigkeys: [String: Any]? {
+        value(forKey: .sigkeys)
+    }
+
+    var enckey: String? {
+        value(forKey: .enckey)
+    }
+
+    var mackey: String? {
+        value(forKey: .mackey)
+    }
+
+    var mlsPublicKeys: [String: Any]? {
+        value(forKey: .mlsPublicKeys)
+    }
+
+    var ed25519: String? {
+        value(forKey: .ed25519)
+    }
+
+    func value<T>(forKey key: PayloadKey) -> T? {
+        return self[key.rawValue] as? T
+    }
 }

@@ -70,7 +70,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
                                                                            cookieStorage: self.cookieStorage,
                                                                            registrationStatusDelegate: self.mockClientRegistrationStatusDelegate)
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
-            self.sut = UserClientRequestStrategy(clientRegistrationStatus: self.clientRegistrationStatus, clientUpdateStatus: self.clientUpdateStatus, context: self.syncMOC, userKeysStore: self.spyKeyStore)
+            self.sut = UserClientRequestStrategy(clientRegistrationStatus: self.clientRegistrationStatus, clientUpdateStatus: self.clientUpdateStatus, context: self.syncMOC, userKeysStore: self.spyKeyStore, useProteusService: false)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
             self.syncMOC.saveOrRollback()
