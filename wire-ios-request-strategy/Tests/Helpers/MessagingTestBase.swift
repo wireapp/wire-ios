@@ -185,7 +185,9 @@ extension MessagingTestBase {
         var decryptedEvent: ZMUpdateEvent?
         // TODO: [John] use flag here
         selfClient.keysStore.encryptionContext.perform { session in
-            decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(event, in: syncMOC, sessionsDirectory: session)
+            decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+            }
         }
         return decryptedEvent!
     }
