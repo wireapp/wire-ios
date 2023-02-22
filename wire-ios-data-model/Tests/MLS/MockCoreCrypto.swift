@@ -26,6 +26,10 @@ class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
         try block(self)
     }
 
+    func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+        try block(self)
+    }
+
     // MARK: - mlsInit
 
     var mockMlsInit: ((ClientId) throws -> Void)?
