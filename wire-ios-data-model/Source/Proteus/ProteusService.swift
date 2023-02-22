@@ -34,7 +34,7 @@ public final class ProteusService: ProteusServiceInterface {
     public init(coreCrypto: SafeCoreCryptoProtocol) throws {
         self.coreCrypto = coreCrypto
         // this is fine not to lock for initialization
-        try coreCrypto.unsafePerform { try $0.proteusInit() }
+        try coreCrypto.perform { try $0.proteusInit() }
     }
 
     // MARK: - proteusSessionFromPrekey

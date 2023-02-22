@@ -86,7 +86,6 @@ public final class MLSController: MLSControllerProtocol {
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
 
-
     // The number of days to wait until refreshing the key material for a group.
 
     private static var keyMaterialRefreshIntervalInDays: UInt {
@@ -152,13 +151,12 @@ public final class MLSController: MLSControllerProtocol {
         self.userDefaults = userDefaults
         self.delegate = delegate
         self.syncStatus = syncStatus
-        
+
         do {
             try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
         } catch {
             logger.error("failed to set callbacks: \(String(describing: error))")
         }
-
 
         generateClientPublicKeysIfNeeded()
         uploadKeyPackagesIfNeeded()

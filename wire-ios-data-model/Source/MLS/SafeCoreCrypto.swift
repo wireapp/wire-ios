@@ -33,8 +33,8 @@ public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     init(coreCrypto: CoreCryptoProtocol, coreCryptoConfiguration: CoreCryptoConfiguration) {
         self.coreCrypto = coreCrypto
-        let pathUrl = URL(fileURLWithPath: coreCryptoConfiguration.path)
-        self.safeContext = SafeFileContext(fileURL: pathUrl)
+        let directoryPathUrl = URL(fileURLWithPath: coreCryptoConfiguration.path).deletingLastPathComponent()
+        self.safeContext = SafeFileContext(fileURL: directoryPathUrl)
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
