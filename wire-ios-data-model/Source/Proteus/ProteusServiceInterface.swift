@@ -21,6 +21,7 @@ import Foundation
 /// A type that provides support for messaging via the Proteus
 /// end-to-end-encryption protocol.
 
+// sourcery: AutoMockable
 public protocol ProteusServiceInterface {
 
     func establishSession(id: ProteusSessionID, fromPrekey: String) throws
