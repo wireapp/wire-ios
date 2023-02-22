@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,13 @@
 //
 
 import Foundation
+import WireUtilities
+import WireCommonComponents
 
-@objc
-class MockURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender {
+extension DeveloperFlag {
 
-    func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {
-
-    }
-
-    func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {
-
-    }
-
-    func cancel(_ challenge: URLAuthenticationChallenge) {
-
+    static var isUpdatedCallingUI: Bool {
+        return !(DeveloperFlag.deprecatedCallingUI.isOn || AutomationHelper.sharedHelper.deprecatedCallingUI)
     }
 
 }
