@@ -215,45 +215,81 @@ extension GenericMessage {
 
     /// Attempts to generate an encrypted payload for recipients in the given conversation.
 
-    public func encryptForTransport(for conversation: ZMConversation,
-                                    useQualifiedIdentifiers: Bool = false,
-                                    externalData: Data? = nil) -> EncryptedPayloadGenerator.Payload? {
-
-        guard let context = conversation.managedObjectContext else { return nil }
+    public func encryptForTransport(
+        for conversation: ZMConversation,
+        useQualifiedIdentifiers: Bool = false,
+        externalData: Data? = nil
+    ) -> EncryptedPayloadGenerator.Payload? {
+        guard let context = conversation.managedObjectContext else {
+            return nil
+        }
 
         let selfUser = ZMUser.selfUser(in: context)
         let (users, missingClientsStrategy) = recipientUsersForMessage(in: conversation, selfUser: selfUser)
         let recipients = users.mapToDictionary { $0.clients }
 
-        guard let data = encrypt(for: recipients,
-                                 with: missingClientsStrategy,
-                                 externalData: externalData,
-                                 useQualifiedIdentifiers: useQualifiedIdentifiers,
-                                 in: context) else {
+        let encryptedData: Data?
+
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
+            encryptedData = encrypt(
+                for: recipients,
+                with: missingClientsStrategy,
+                externalData: externalData,
+                useQualifiedIdentifiers: useQualifiedIdentifiers,
+                in: context
+            )
+        } else {
+            encryptedData = legacyEncrypt(
+                for: recipients,
+                with: missingClientsStrategy,
+                externalData: externalData,
+                useQualifiedIdentifiers: useQualifiedIdentifiers,
+                in: context
+            )
+        }
+
+        guard let encryptedData = encryptedData else {
             return nil
         }
 
-        return (data, missingClientsStrategy)
+        return (encryptedData, missingClientsStrategy)
     }
 
     /// Attempts to generate an encrypted payload for the given set of users.
 
-    public func encryptForTransport(forBroadcastRecipients recipients: Set<ZMUser>,
-                                    useQualifiedIdentifiers: Bool = false,
-                                    in context: NSManagedObjectContext) -> EncryptedPayloadGenerator.Payload? {
-
+    public func encryptForTransport(
+        forBroadcastRecipients recipients: Set<ZMUser>,
+        useQualifiedIdentifiers: Bool = false,
+        in context: NSManagedObjectContext
+    ) -> EncryptedPayloadGenerator.Payload? {
         // It's important to ignore all irrelevant missing clients, because otherwise the backend will enforce that
         // the message is sent to all team members and contacts.
         let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: recipients)
 
         let messageRecipients = recipients.mapToDictionary { $0.clients }
+        let encryptedData: Data?
 
-        guard let data = encrypt(for: messageRecipients,
-                                 with: missingClientsStrategy,
-                                 useQualifiedIdentifiers: useQualifiedIdentifiers,
-                                 in: context) else { return nil }
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
+            encryptedData = encrypt(
+                for: messageRecipients,
+                with: missingClientsStrategy,
+                useQualifiedIdentifiers: useQualifiedIdentifiers,
+                in: context
+            )
+        } else {
+            encryptedData = legacyEncrypt(
+                for: messageRecipients,
+                with: missingClientsStrategy,
+                useQualifiedIdentifiers: useQualifiedIdentifiers,
+                in: context
+            )
+        }
 
-        return (data, missingClientsStrategy)
+        guard let encryptedData = encryptedData else {
+            return nil
+        }
+
+        return (encryptedData, missingClientsStrategy)
     }
 
     /// Attempts to generate an encrypted payload for the given collection of user clients.
