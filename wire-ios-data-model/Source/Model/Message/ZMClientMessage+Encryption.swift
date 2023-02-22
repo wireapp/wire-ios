@@ -211,7 +211,7 @@ extension GenericMessage {
 
 extension GenericMessage {
 
-    typealias EncryptionFunction = (ProteusSessionID, Data) throws -> Data?
+    private typealias EncryptionFunction = (ProteusSessionID, Data) throws -> Data?
 
     /// Attempts to generate an encrypted payload for recipients in the given conversation.
 
@@ -789,7 +789,7 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
 
-    public func encryptForTransport(using encrypt: EncryptionFunction) throws -> Data {
+    public func encryptForTransport(using encrypt: MLSEncryptedPayloadGenerator.EncryptionFunction) throws -> Data {
         let unencryptedData = try unencryptedData()
         return try encrypt(unencryptedData)
     }
