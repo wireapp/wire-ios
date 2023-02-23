@@ -811,9 +811,41 @@ public final class SessionManager: NSObject, SessionManagerType {
                     if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
-                        let userSession = self.startBackgroundSession(for: account,
-                                                                         with: coreDataStack)
-                        completion(userSession)
+                        let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
+
+                        /// If `proteusViaCoreCrypto` developer flag isOn and cryptobox directory exists,
+                        /// we need to migrate the existing proteus sessions, prekeys, and identity key stored in the cryptobox directory to Core Crypto.
+                        let cryptoboxNeedsMigration = DeveloperFlag.proteusViaCoreCrypto.isOn && coreDataStack.cryptoboxDirectoryExists
+
+                        if cryptoboxNeedsMigration {
+                            self.delegate?.sessionManagerWillMigrateAccount {
+                                coreDataStack.syncContext.performGroupedBlock {
+                                    guard let proteusService = userSession.syncContext.proteusService else {
+                                        log.error("'proteusViaCoreCrypto' developer flag enabled, but proteusService is nil: \(String(describing: error))")
+                                        fatal("proteusService is nil")
+                                    }
+
+                                    do {
+                                        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: coreDataStack.accountContainer, createParentIfNeeded: false)
+                                        try proteusService.proteusCryptoboxMigrate(path: cryptoboxDirectory.path)
+                                    } catch {
+                                        log.error("failed to migrate data from Cryptobox to CoreCrypto: \(String(describing: error))")
+                                        //completion(userSession)
+                                    }
+                                }
+                                do {
+                                    try coreDataStack.clearSessionStore(in: coreDataStack.accountContainer)
+                                } catch {
+                                    log.error("failed to remove Cryptobox directory: \(String(describing: error))")
+                                    //completion(userSession)
+                                }
+
+                                completion(userSession)
+
+                            }
+                        } else {
+                            completion(userSession)
+                        }
                     }
                     onWorkDone()
                     group?.leave()

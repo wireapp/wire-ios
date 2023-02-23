@@ -39,6 +39,7 @@ public protocol ProteusServiceInterface {
     func localFingerprint(forSession id: String) throws -> String
     func remoteFingerprint(forSession id: String) throws -> String
     func fingerprint(fromPrekey prekey: String) throws -> String
+    func proteusCryptoboxMigrate(path: String) throws
 
 }
 

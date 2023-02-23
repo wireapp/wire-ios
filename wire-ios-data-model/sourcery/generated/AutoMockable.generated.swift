@@ -360,4 +360,24 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
+    // MARK: - proteusCryptoboxMigrate
+
+    public var proteusCryptoboxMigrate_Invocations: [String] = []
+    public var proteusCryptoboxMigrate_MockError: Error?
+    public var proteusCryptoboxMigrate_MockMethod: ((String) throws -> Void)?
+
+    public func proteusCryptoboxMigrate(path: String) throws {
+        proteusCryptoboxMigrate_Invocations.append(path)
+
+        if let error = proteusCryptoboxMigrate_MockError {
+            throw error
+        }
+
+        guard let mock = proteusCryptoboxMigrate_MockMethod else {
+            fatalError("no mock for `proteusCryptoboxMigrate`")
+        }
+
+        try mock(path)
+    }
+
 }

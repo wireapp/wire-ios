@@ -57,9 +57,10 @@ extension CoreDataStack {
         }
     }
 
-    private func clearSessionStore(in directory: URL) throws {
+    public func clearSessionStore(in directory: URL) throws {
         let fileManager = FileManager.default
 
+        /// append 'otr'
         let sessionDirectory = directory.appendingSessionStoreFolder()
 
         if fileManager.fileExists(atPath: sessionDirectory.path) {

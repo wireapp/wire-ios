@@ -314,4 +314,21 @@ public final class ProteusService: ProteusServiceInterface {
         }
     }
 
+    // MARK: - cryptoboxMigration
+
+        enum MigrationError: Error {
+            case failedToMigrateData
+        }
+
+        public func proteusCryptoboxMigrate(path: String) throws {
+            logger.info("migrating data from Cryptobox into the CoreCrypto keystore")
+
+            do {
+                return try coreCrypto.proteusCryptoboxMigrate(path: path)
+            } catch {
+                logger.error("failed to migrate data from Cryptobox: \(String(describing: error))")
+                throw MigrationError.failedToMigrateData
+            }
+        }
+
 }

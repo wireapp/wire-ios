@@ -149,4 +149,13 @@ extension CoreDataStack {
         }
     }
 
+    public var cryptoboxDirectoryExists: Bool {
+            let accountsFolder = Self.accountDataFolder(
+                accountIdentifier: account.userIdentifier,
+                applicationContainer: applicationContainer)
+
+            let cryptoboxFolder = FileManager.keyStoreURL(accountDirectory: accountsFolder, createParentIfNeeded: false)
+            return FileManager.default.fileExists(atPath: cryptoboxFolder.path)
+        }
+
 }
