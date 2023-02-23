@@ -290,7 +290,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         }];
 
         self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(renewReachabilityObserverToken) name:ZMTransportSessionReachabilityIsEnabled object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(renewReachabilityObserverToken) name:ZMTransportSessionReachabilityIsEnabled object:self.reachability];
     }
     return self;
 }
