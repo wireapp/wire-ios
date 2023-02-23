@@ -27,9 +27,26 @@ public protocol SafeCoreCryptoProtocol {
 }
 
 public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
+    public enum CoreCryptoSetupFailure: Error, Equatable {
+        case failedToGetClientIDBytes
+    }
 
     private let coreCrypto: CoreCryptoProtocol
     private let safeContext: SafeFileContext
+
+    public init(coreCryptoConfiguration config: CoreCryptoConfiguration) throws {
+        guard let clientID = config.clientIDBytes() else {
+            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
+        }
+        let coreCrypto = try CoreCrypto(
+            path: config.path,
+            key: config.key,
+            clientId: clientID,
+            entropySeed: nil
+        )
+
+        self.init(coreCrypto: coreCrypto, coreCryptoConfiguration: config)
+    }
 
     init(coreCrypto: CoreCryptoProtocol, coreCryptoConfiguration: CoreCryptoConfiguration) {
         self.coreCrypto = coreCrypto

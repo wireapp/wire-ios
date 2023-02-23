@@ -79,25 +79,4 @@ public class CoreCryptoFactory {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
-
-    // MARK: - Core Crypto
-
-    public func createCoreCrypto(with config: CoreCryptoConfiguration) throws -> SafeCoreCryptoProtocol {
-        guard let clientID = config.clientIDBytes() else {
-            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
-        }
-        let coreCrypto = try CoreCrypto(
-            path: config.path,
-            key: config.key,
-            clientId: clientID,
-            entropySeed: nil
-        )
-
-        return SafeCoreCrypto(coreCrypto: coreCrypto, coreCryptoConfiguration: config)
-    }
-
-    public enum CoreCryptoSetupFailure: Error, Equatable {
-        case failedToGetClientIDBytes
-    }
-
 }

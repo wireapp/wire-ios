@@ -33,7 +33,7 @@ extension ZMUserSession {
                     selfUser: .selfUser(in: syncContext)
                 )
 
-                let coreCrypto = try syncContext.coreCrypto ?? factory.createCoreCrypto(with: configuration)
+                let coreCrypto = try syncContext.coreCrypto ?? SafeCoreCrypto(coreCryptoConfiguration: configuration)
                 syncContext.coreCrypto = coreCrypto
 
                 try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
