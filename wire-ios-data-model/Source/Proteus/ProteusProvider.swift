@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 public typealias KeyStorePerformBlock<T> = ((UserClientKeysStore) throws -> T)
 public typealias ProteusServicePerformBlock<T> = ((ProteusServiceInterface) throws -> T)
@@ -33,9 +34,14 @@ public protocol ProteusProviding {
 public class ProteusProvider: ProteusProviding {
 
     private let context: NSManagedObjectContext
+    private let proteusViaCoreCrypto: Bool
 
-    public init(context: NSManagedObjectContext) {
+    public init(
+        context: NSManagedObjectContext,
+        proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
+    ) {
         self.context = context
+        self.proteusViaCoreCrypto = proteusViaCoreCrypto
     }
 
     public func perform<T>(
@@ -46,9 +52,16 @@ public class ProteusProvider: ProteusProviding {
         precondition(context.zm_isSyncContext, "ProteusProvider should only be used on the sync context")
 
         if let proteusService = context.proteusService {
+
+            precondition(proteusViaCoreCrypto, "core crypto should only be used when the flag is on")
             return try proteusServiceBlock(proteusService)
+
         } else if let keyStore = context.zm_cryptKeyStore {
+
+            // remove comment once implementation of proteus via core crypto is done
+            // precondition(!proteusViaCoreCrypto, "cryptobox should only be used when the flag is off")
             return try keyStoreBlock(keyStore)
+
         } else {
             fatal("can't access any proteus cryptography service")
         }
