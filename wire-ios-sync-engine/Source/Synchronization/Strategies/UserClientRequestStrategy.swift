@@ -59,11 +59,12 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     public init(
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        proteusProvider: ProteusProviding
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-        self.requestsFactory = UserClientRequestFactory(proteusProvider: ProteusProvider(context: context))
+        self.requestsFactory = UserClientRequestFactory(proteusProvider: proteusProvider)
 
         super.init(managedObjectContext: context)
 

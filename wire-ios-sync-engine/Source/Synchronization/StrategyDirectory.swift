@@ -91,7 +91,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
-                context: syncMOC),
+                context: syncMOC,
+                proteusProvider: ProteusProvider(context: syncMOC)
+            ),
             MissingClientsRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
