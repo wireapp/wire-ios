@@ -46,6 +46,8 @@ public class DatadogWrapper {
 
     public var datadogUserId: String
 
+    private let bundleVersion: String?
+
     var logger: Logger?
     var defaultLevel: LogLevel
 
@@ -74,6 +76,8 @@ public class DatadogWrapper {
                 .enableCrashReporting(using: DDCrashReportingPlugin())
                 .build()
         )
+
+        bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
         defaultLevel = level
         logger = Logger.builder
@@ -110,6 +114,9 @@ public class DatadogWrapper {
         error: Error? = nil,
         attributes: [String: Encodable]? = nil
     ) {
+        var attributes = attributes ?? .init()
+        attributes["build_number"] = bundleVersion
+
         logger?.log(
             level: level,
             message: message,
