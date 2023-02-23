@@ -814,7 +814,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                         let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
 
                         /// If `proteusViaCoreCrypto` developer flag isOn and cryptobox directory exists,
-                        /// we need to migrate the existing proteus sessions, prekeys, and identity key stored in the cryptobox directory to Core Crypto.
+                        /// we need to migrate the existing proteus sessions, prekeys, and identity key to Core Crypto.
                         let cryptoboxNeedsMigration = DeveloperFlag.proteusViaCoreCrypto.isOn && coreDataStack.cryptoboxDirectoryExists
 
                         if cryptoboxNeedsMigration {
@@ -826,7 +826,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                                     }
 
                                     do {
-                                        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: coreDataStack.accountContainer, createParentIfNeeded: false)
+                                        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: coreDataStack.accountContainer,
+                                                                                         createParentIfNeeded: false)
                                         try proteusService.proteusCryptoboxMigrate(path: cryptoboxDirectory.path)
                                     } catch {
                                         log.error("failed to migrate data from Cryptobox to CoreCrypto: \(String(describing: error))")
