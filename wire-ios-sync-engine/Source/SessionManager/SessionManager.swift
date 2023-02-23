@@ -819,7 +819,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
                         if cryptoboxNeedsMigration {
                             self.delegate?.sessionManagerWillMigrateAccount {
-                                coreDataStack.syncContext.performGroupedBlock {
+                                coreDataStack.syncContext.performAndWait {
                                     guard let proteusService = userSession.syncContext.proteusService else {
                                         log.error("'proteusViaCoreCrypto' developer flag enabled, but proteusService is nil: \(String(describing: error))")
                                         fatal("proteusService is nil")
@@ -832,12 +832,12 @@ public final class SessionManager: NSObject, SessionManagerType {
                                         log.error("failed to migrate data from Cryptobox to CoreCrypto: \(String(describing: error))")
                                         //completion(userSession)
                                     }
-                                }
-                                do {
-                                    try coreDataStack.clearSessionStore(in: coreDataStack.accountContainer)
-                                } catch {
-                                    log.error("failed to remove Cryptobox directory: \(String(describing: error))")
-                                    //completion(userSession)
+                                    do {
+                                        try coreDataStack.clearSessionStore(in: coreDataStack.accountContainer)
+                                    } catch {
+                                        log.error("failed to remove Cryptobox directory: \(String(describing: error))")
+                                        //completion(userSession)
+                                    }
                                 }
 
                                 completion(userSession)
