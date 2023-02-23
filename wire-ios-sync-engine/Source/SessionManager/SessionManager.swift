@@ -845,7 +845,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             do {
                 let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: coreDataStack.accountContainer,
                                                                  createParentIfNeeded: false)
-                try proteusService.proteusCryptoboxMigrate(path: cryptoboxDirectory.path)
+                try proteusService.migrateCryptoboxSessions(at: cryptoboxDirectory)
             } catch {
                 log.error("Failed to migrate data from Cryptobox to CoreCrypto, error: \(error)")
                 return

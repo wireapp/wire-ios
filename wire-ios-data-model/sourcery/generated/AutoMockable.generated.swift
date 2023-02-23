@@ -360,24 +360,24 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
-    // MARK: - proteusCryptoboxMigrate
+    // MARK: - migrateCryptoboxSessions
 
-    public var proteusCryptoboxMigrate_Invocations: [String] = []
-    public var proteusCryptoboxMigrate_MockError: Error?
-    public var proteusCryptoboxMigrate_MockMethod: ((String) throws -> Void)?
+    public var migrateCryptoboxSessions_Invocations: [URL] = []
+    public var migrateCryptoboxSessions_MockError: Error?
+    public var migrateCryptoboxSessions_MockMethod: ((URL) throws -> Void)?
 
-    public func proteusCryptoboxMigrate(path: String) throws {
-        proteusCryptoboxMigrate_Invocations.append(path)
+    public func migrateCryptoboxSessions(at url: URL) throws {
+        migrateCryptoboxSessions_Invocations.append(url)
 
-        if let error = proteusCryptoboxMigrate_MockError {
+        if let error = migrateCryptoboxSessions_MockError {
             throw error
         }
 
-        guard let mock = proteusCryptoboxMigrate_MockMethod else {
-            fatalError("no mock for `proteusCryptoboxMigrate`")
+        guard let mock = migrateCryptoboxSessions_MockMethod else {
+            fatalError("no mock for `migrateCryptoboxSessions`")
         }
 
-        try mock(path)
+        try mock(url)
     }
 
 }

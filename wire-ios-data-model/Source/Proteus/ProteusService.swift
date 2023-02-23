@@ -320,11 +320,11 @@ public final class ProteusService: ProteusServiceInterface {
             case failedToMigrateData
         }
 
-        public func proteusCryptoboxMigrate(path: String) throws {
+        public func migrateCryptoboxSessions(at url: URL) throws {
             logger.info("migrating data from Cryptobox into the CoreCrypto keystore")
 
             do {
-                return try coreCrypto.proteusCryptoboxMigrate(path: path)
+                return try coreCrypto.proteusCryptoboxMigrate(path: url.path)
             } catch {
                 logger.error("failed to migrate data from Cryptobox: \(String(describing: error))")
                 throw MigrationError.failedToMigrateData
