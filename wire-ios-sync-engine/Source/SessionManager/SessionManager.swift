@@ -814,7 +814,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                         let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
 
                         /// If `proteusViaCoreCrypto` developer flag isOn and cryptobox directory exists,
-                        /// we need to migrate the existing proteus sessions, prekeys, and identity key to Core Crypto.
+                        /// we need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
                         let cryptoboxNeedsMigration = DeveloperFlag.proteusViaCoreCrypto.isOn && coreDataStack.cryptoboxDirectoryExists
 
                         if cryptoboxNeedsMigration {
@@ -834,7 +834,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func cryptoboxMigration(for userSession: ZMUserSession, coreDataStack: CoreDataStack) {
-        log.debug("Data migration from Cryptobox to CoreCrypto")
+        log.debug("Migrating data from Cryptobox into the CoreCrypto keystore")
 
         coreDataStack.syncContext.performAndWait {
             guard let proteusService = userSession.syncContext.proteusService else {
