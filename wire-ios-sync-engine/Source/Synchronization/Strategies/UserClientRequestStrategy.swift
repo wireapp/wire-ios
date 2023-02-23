@@ -45,7 +45,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
     fileprivate var didRetryRegisteringSignalingKeys: Bool = false
     fileprivate var didRetryUpdatingCapabilities: Bool = false
-    fileprivate let userKeysStore: UserClientKeysStore
 
     public var requestsFactory: UserClientRequestFactory
     public var minNumberOfRemainingKeys: UInt = 20
@@ -60,17 +59,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     public init(
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
-        context: NSManagedObjectContext,
-        userKeysStore: UserClientKeysStore,
-        useProteusService: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
+        context: NSManagedObjectContext
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-        self.userKeysStore = userKeysStore
-        self.requestsFactory = UserClientRequestFactory(
-            keysStore: userKeysStore,
-            proteusService: useProteusService ? context.proteusService : nil
-        )
+        self.requestsFactory = UserClientRequestFactory(proteusProvider: ProteusProvider(context: context))
 
         super.init(managedObjectContext: context)
 

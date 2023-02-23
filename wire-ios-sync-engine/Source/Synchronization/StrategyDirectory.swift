@@ -91,8 +91,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
-                context: syncMOC,
-                userKeysStore: syncMOC.zm_cryptKeyStore),
+                context: syncMOC),
             MissingClientsRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
