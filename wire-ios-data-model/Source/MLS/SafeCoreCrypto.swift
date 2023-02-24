@@ -57,7 +57,7 @@ public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
     public func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
         var result: T
         safeContext.acquireDirectoryLock()
-        // TODO: call `restoreFromDisk`
+        restoreFromDisk()
         result = try block(coreCrypto)
         safeContext.releaseDirectoryLock()
         return result
@@ -67,4 +67,11 @@ public struct SafeCoreCrypto: SafeCoreCryptoProtocol {
         return try block(coreCrypto)
     }
 
+    private func restoreFromDisk() {
+        do {
+            try coreCrypto.restoreFromDisk()
+        } catch {
+            WireLogger.coreCrypto.error(error.localizedDescription)
+        }
+    }
 }
