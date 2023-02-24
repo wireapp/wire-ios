@@ -16,22 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 @testable import WireDataModel
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
 
     func test_performDoesNotBlockWithMock() throws {
-
+        // GIVEN
         let tempURL = createTempFolder()
+        let mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto.mockRestoreFromDisk = {}
+        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, coreCryptoConfiguration: .init(path: tempURL.path, key: "key", clientID: "id"))
 
-        let sut = SafeCoreCrypto(coreCrypto: MockCoreCrypto(), coreCryptoConfiguration: .init(path: tempURL.path, key: "key", clientID: "id"))
-
+        // WHEN / THEN
         XCTAssertNoThrow(try sut.perform { mock in
             try mock.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
         })
 
+    }
+
+    func test_performDoesCallRestoreFromDisk() throws {
+        let tempURL = createTempFolder()
+        let mockCoreCrypto = MockCoreCrypto()
+        var called = false
+        mockCoreCrypto.mockRestoreFromDisk = {
+            called = true
+        }
+
+        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, coreCryptoConfiguration: .init(path: tempURL.path, key: "key", clientID: "id"))
+        // WHEN
+        try sut.perform { mock in
+            try mock.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
+        }
+
+        // THEN
+        XCTAssertTrue(called)
     }
 
     // MARK: - Helper
