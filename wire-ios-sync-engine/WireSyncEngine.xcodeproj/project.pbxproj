@@ -14,9 +14,12 @@
 		063AF985264B2DF800DCBCED /* CallClosedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625690E264AE6560041C17B /* CallClosedReason.swift */; };
 		0640C26D26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0640C26C26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift */; };
 		0648FC1427864783006519D1 /* Conversation+Join.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0648FC1327864783006519D1 /* Conversation+Join.swift */; };
+		067175D429A8EB5900B32E08 /* CryptoboxMigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067175D329A8EB5900B32E08 /* CryptoboxMigrationManager.swift */; };
+		067175D629A8F12500B32E08 /* CryptoboxMigrationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067175D529A8F12500B32E08 /* CryptoboxMigrationManagerTests.swift */; };
 		067BB08125074EA200946EC8 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		067BB08F250789D500946EC8 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		06894D92276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */; };
+		06B17DC929A91A2000EE6975 /* SessionManagerTests_CryptoboxMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B17DC729A919D700EE6975 /* SessionManagerTests_CryptoboxMigration.swift */; };
 		06B99C7B242B51A300FEAFDE /* SignatureRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B99C7A242B51A300FEAFDE /* SignatureRequestStrategy.swift */; };
 		06BBF7012473D51D00A26626 /* MessagingTest+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BBF7002473D51D00A26626 /* MessagingTest+Swift.swift */; };
 		06DE14CF24B85CA0006CB6B3 /* ZMSyncStateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 06DE14CE24B85BD0006CB6B3 /* ZMSyncStateDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -691,7 +694,10 @@
 		063AFA3E264B30C400DCBCED /* BuildType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildType.swift; sourceTree = "<group>"; };
 		0640C26C26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Packaging.swift"; sourceTree = "<group>"; };
 		0648FC1327864783006519D1 /* Conversation+Join.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Conversation+Join.swift"; sourceTree = "<group>"; };
+		067175D329A8EB5900B32E08 /* CryptoboxMigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoboxMigrationManager.swift; sourceTree = "<group>"; };
+		067175D529A8F12500B32E08 /* CryptoboxMigrationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoboxMigrationManagerTests.swift; sourceTree = "<group>"; };
 		06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessorTests.swift; sourceTree = "<group>"; };
+		06B17DC729A919D700EE6975 /* SessionManagerTests_CryptoboxMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerTests_CryptoboxMigration.swift; sourceTree = "<group>"; };
 		06B99C7A242B51A300FEAFDE /* SignatureRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureRequestStrategy.swift; sourceTree = "<group>"; };
 		06BBF6EC246EB56B00A26626 /* ConversationTests+List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationTests+List.swift"; sourceTree = "<group>"; };
 		06BBF6EF246ECB2400A26626 /* ConversationTests+Archiving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationTests+Archiving.swift"; sourceTree = "<group>"; };
@@ -1422,6 +1428,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		067175D229A8EB3C00B32E08 /* CryptoboxMigration */ = {
+			isa = PBXGroup;
+			children = (
+				067175D329A8EB5900B32E08 /* CryptoboxMigrationManager.swift */,
+			);
+			path = CryptoboxMigration;
+			sourceTree = "<group>";
+		};
 		0928E38F1BA2CFF60057232E /* E2EE */ = {
 			isa = PBXGroup;
 			children = (
@@ -2494,12 +2508,14 @@
 				63F376DF283519CC00FE1F05 /* SessionManagerTests+APIVersionResolver.swift */,
 				162A81D5202B5BC600F6200C /* SessionManagerAVSTests.swift */,
 				EE95DECC247C0049001EA010 /* SessionManagerConfigurationTests.swift */,
+				06B17DC729A919D700EE6975 /* SessionManagerTests_CryptoboxMigration.swift */,
 				87DF28C61F680495007E1702 /* PushDispatcherTests.swift */,
 				161ACB3923F6BAFE00ABFF33 /* URLActionTests.swift */,
 				EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */,
 				636826FB2954550900D904C2 /* APIMigrationManagerTests.swift */,
 				63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */,
 				01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */,
+				067175D529A8F12500B32E08 /* CryptoboxMigrationManagerTests.swift */,
 			);
 			path = SessionManager;
 			sourceTree = "<group>";
@@ -2526,6 +2542,7 @@
 		F19F1D361EFBF60A00275E27 /* SessionManager */ = {
 			isa = PBXGroup;
 			children = (
+				067175D229A8EB3C00B32E08 /* CryptoboxMigration */,
 				63F1DF22294B69E10061565E /* APIMigration */,
 				EE9CDE8D27D9FF5900C4DAC8 /* APIVersionResolver.swift */,
 				A95D0B1123F6B75A0057014F /* AVSLogObserver.swift */,
@@ -2949,6 +2966,7 @@
 				169BA21625ED0F8900374343 /* UserProfileTests.m in Sources */,
 				169BA20D25ED0F5E00374343 /* APNSTests+Swift.swift in Sources */,
 				169BA24925EF743F00374343 /* SessionManagerTests+Backup.swift in Sources */,
+				06B17DC929A91A2000EE6975 /* SessionManagerTests_CryptoboxMigration.swift in Sources */,
 				169BA26225EFA32000374343 /* ZMUser+Testing.m in Sources */,
 				169BA22D25ED0FEF00374343 /* AvailabilityTests.swift in Sources */,
 				169BA1F025ECEB0E00374343 /* SessionManagerTests.swift in Sources */,
@@ -3180,6 +3198,7 @@
 				EE1DEBB923D5B9BC0087EE1F /* ZMConversation+TypingUsersTests.swift in Sources */,
 				164B8C211E254AD00060AB26 /* WireCallCenterV3Mock.swift in Sources */,
 				F170AF211E78013A0033DC33 /* UserImageAssetUpdateStrategyTests.swift in Sources */,
+				067175D629A8F12500B32E08 /* CryptoboxMigrationManagerTests.swift in Sources */,
 				F95ECF511B94BD05009F91BA /* ZMHotFixTests.m in Sources */,
 				63FCE54628C7554200126D9D /* MockMLSController.swift in Sources */,
 				F9ABE8571EFD56BF00D83214 /* TeamDownloadRequestStrategy+EventsTests.swift in Sources */,
@@ -3320,6 +3339,7 @@
 				F90EC5A31E7BF1AC00A6779E /* AVSWrapper.swift in Sources */,
 				5E8BB8992147CD3F00EEA64B /* AVSBridging.swift in Sources */,
 				16F5F16C1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift in Sources */,
+				067175D429A8EB5900B32E08 /* CryptoboxMigrationManager.swift in Sources */,
 				09531F181AE960E300B8556A /* ZMLoginCodeRequestTranscoder.m in Sources */,
 				F148F6671FB9AA7600BD6909 /* UnregisteredTeam.swift in Sources */,
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,

@@ -243,6 +243,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
+    var cryptoboxMigrationManager: CryptoboxMigration = CryptoboxMigrationManager()
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
@@ -813,13 +814,13 @@ public final class SessionManager: NSObject, SessionManagerType {
                     } else {
                         let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
 
-                        /// If `proteusViaCoreCrypto` developer flag isOn and cryptobox directory exists,
-                        /// we need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
-                        let cryptoboxNeedsMigration = DeveloperFlag.proteusViaCoreCrypto.isOn && coreDataStack.cryptoboxDirectoryExists
-
-                        if cryptoboxNeedsMigration {
+                        if self.cryptoboxMigrationManager.isNeeded(in: coreDataStack.accountContainer) {
+                            /// We need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
                             self.delegate?.sessionManagerWillMigrateAccount {
-                                self.cryptoboxMigration(for: userSession, coreDataStack: coreDataStack)
+                                userSession.syncContext.performAndWait {
+                                    try? self.cryptoboxMigrationManager.perform(in: coreDataStack.accountContainer,
+                                                                                syncContext: userSession.syncContext)
+                                }
                                 completion(userSession)
                             }
                         } else {
@@ -831,32 +832,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         })
-    }
-
-    fileprivate func cryptoboxMigration(for userSession: ZMUserSession, coreDataStack: CoreDataStack) {
-        log.debug("Migrating data from Cryptobox into the CoreCrypto keystore")
-
-        coreDataStack.syncContext.performAndWait {
-            guard let proteusService = userSession.syncContext.proteusService else {
-                log.error("'proteusViaCoreCrypto' developer flag enabled, but proteusService is nil")
-                fatal("proteusService is nil")
-            }
-
-            do {
-                let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: coreDataStack.accountContainer,
-                                                                 createParentIfNeeded: false)
-                try proteusService.migrateCryptoboxSessions(at: cryptoboxDirectory)
-            } catch {
-                log.error("Failed to migrate data from Cryptobox to CoreCrypto, error: \(error)")
-                return
-            }
-
-            do {
-                try coreDataStack.clearSessionStore(in: coreDataStack.accountContainer)
-            } catch {
-                log.error("Cannot delete Cryptobox directory, error: \(error)")
-            }
-        }
     }
 
     fileprivate func deleteAccountData(for account: Account) {
