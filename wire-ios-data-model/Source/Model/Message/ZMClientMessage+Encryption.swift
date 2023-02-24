@@ -735,11 +735,12 @@ extension GenericMessage {
         return externalGenericMessage.encryptForTransport(for: conversation, externalData: encryptedDataWithKeys.data)
     }
 
-    private func encryptForTransportWithExternalDataBlob(for recipients: [ZMUser: Set<UserClient>],
-                                                         with missingClientsStrategy: MissingClientsStrategy,
-                                                         useQualifiedIdentifiers: Bool = false,
-                                                         in context: NSManagedObjectContext) -> Data? {
-
+    private func encryptForTransportWithExternalDataBlob(
+        for recipients: [ZMUser: Set<UserClient>],
+        with missingClientsStrategy: MissingClientsStrategy,
+        useQualifiedIdentifiers: Bool = false,
+        in context: NSManagedObjectContext
+    ) -> Data? {
         guard
             let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: self),
             let data = encryptedDataWithKeys.data,
@@ -749,11 +750,26 @@ extension GenericMessage {
         }
 
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: keys))
-        return externalGenericMessage.encrypt(for: recipients,
-                                              with: missingClientsStrategy,
-                                              externalData: data,
-                                              useQualifiedIdentifiers: useQualifiedIdentifiers,
-                                              in: context)
+
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
+            return externalGenericMessage.encrypt(
+                for: recipients,
+                with: missingClientsStrategy,
+                externalData: data,
+                useQualifiedIdentifiers: useQualifiedIdentifiers,
+                in: context
+            )
+        } else {
+            return externalGenericMessage.legacyEncrypt(
+                for: recipients,
+                with: missingClientsStrategy,
+                externalData: data,
+                useQualifiedIdentifiers: useQualifiedIdentifiers,
+                in: context
+            )
+        }
+
+
     }
 }
 
