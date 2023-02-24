@@ -607,7 +607,7 @@ extension GenericMessage {
             guard let data = encryptedData else { return nil }
             return Proteus_ClientEntry(withClient: client, data: data)
         } catch {
-            // TODO: log
+            print("error: \(String(describing: error))")
             return nil
         }
     }
