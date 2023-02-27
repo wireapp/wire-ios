@@ -200,12 +200,25 @@ extension MessagingTestBase {
         )
 
         var decryptedEvent: ZMUpdateEvent?
-        // TODO: [John] use flag here
-        selfClient.keysStore.encryptionContext.perform { session in
-            decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
+            eventDecoder.decryptProteusEventAndAddClient(
+                event,
+                in: self.syncMOC
+            ) { sessionID, encryptedData in
+                try self.syncMOC.proteusService?.decrypt(data: encryptedData, forSession: sessionID)
+            }
+        } else {
+            selfClient.keysStore.encryptionContext.perform { session in
+                decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(
+                    event,
+                    in: self.syncMOC
+                ) { sessionID, encryptedData in
+                    try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+                }
             }
         }
+
         return decryptedEvent!
     }
 
