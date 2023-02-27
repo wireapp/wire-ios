@@ -202,7 +202,7 @@ extension MessagingTestBase {
         var decryptedEvent: ZMUpdateEvent?
 
         if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            eventDecoder.decryptProteusEventAndAddClient(
+            decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(
                 event,
                 in: self.syncMOC
             ) { sessionID, encryptedData in
