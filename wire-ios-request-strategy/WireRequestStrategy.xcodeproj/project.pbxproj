@@ -213,6 +213,7 @@
 		EE04084A28C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084928C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift */; };
 		EE0CEB462893E9390055ECE5 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */; };
 		EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */; };
+		EE30CAB029ACAE1600A332B1 /* MockProteusServiceinterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE30CAAF29ACAE1600A332B1 /* MockProteusServiceinterface.swift */; };
 		EE3245FC2821D41000F2A84A /* VoIPPushHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */; };
 		EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */; };
 		EE402C0128996AA300CA0E40 /* MLSMessageSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE402C0028996AA300CA0E40 /* MLSMessageSync.swift */; };
@@ -631,6 +632,7 @@
 		EE04084928C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE202DAA27F1F4CC00083AB3 /* VoIPPushPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushPayload.swift; sourceTree = "<group>"; };
+		EE30CAAF29ACAE1600A332B1 /* MockProteusServiceinterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusServiceinterface.swift; sourceTree = "<group>"; };
 		EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelper.swift; sourceTree = "<group>"; };
 		EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelperTests.swift; sourceTree = "<group>"; };
 		EE402C0028996AA300CA0E40 /* MLSMessageSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageSync.swift; sourceTree = "<group>"; };
@@ -918,6 +920,7 @@
 				06ADF693264B467E002E0C7A /* MockAnalytics.swift */,
 				63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */,
 				633B396B2892D53300208124 /* MockMLSController.swift */,
+				EE30CAAF29ACAE1600A332B1 /* MockProteusServiceinterface.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -2093,6 +2096,7 @@
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
 				7AA8561028FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
+				EE30CAB029ACAE1600A332B1 /* MockProteusServiceinterface.swift in Sources */,
 				EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */,
 				06474D6024B310B6002C695D /* NotificationsTrackerTests.swift in Sources */,
 				0693114A24F799F400D14DF5 /* ZMLocalNotificationTests.swift in Sources */,
