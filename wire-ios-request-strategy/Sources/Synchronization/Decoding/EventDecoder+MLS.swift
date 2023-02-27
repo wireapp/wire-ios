@@ -28,7 +28,7 @@ extension EventDecoder {
 
         guard let mlsController = context.mlsController else {
             Logging.mls.warn("failed to decrypt mls message: MLSController is missing")
-            return nil
+            fatalError("failed to decrypt mls message: MLSController is missing")
         }
 
         guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
