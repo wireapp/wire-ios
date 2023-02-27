@@ -20,7 +20,7 @@ import Foundation
 
 enum CryptoboxMigrationError: Error {
     case failedToMigrateData
-    case failedToRemoveDirectory
+    case failedToDeleteLegacyData
 }
 
 protocol CryptoboxMigration {
@@ -33,10 +33,11 @@ class CryptoboxMigrationManager: CryptoboxMigration {
     private let logger = Logging.cryptoboxMigration
 
     func isNeeded(in accountDirectory: URL) -> Bool {
+        guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
+
         let cryptoboxDirectory = getDirectory(in: accountDirectory)
         let cryptoboxDirectoryExists = FileManager.default.fileExists(atPath: cryptoboxDirectory.path)
-
-        return DeveloperFlag.proteusViaCoreCrypto.isOn && cryptoboxDirectoryExists
+        return cryptoboxDirectoryExists
     }
 
     func perform(in accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
@@ -60,7 +61,7 @@ class CryptoboxMigrationManager: CryptoboxMigration {
                 logger.info("Removing Cryptobox directory")
                 try removeDirectory(in: accountDirectory)
             } catch {
-                throw CryptoboxMigrationError.failedToRemoveDirectory
+                throw CryptoboxMigrationError.failedToDeleteLegacyData
             }
     }
 

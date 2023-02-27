@@ -63,31 +63,39 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         XCTAssertFalse(sut!.isNeeded(in: accountDirectory))
     }
 
-    func test_itReturnsFalse_WhenMigrationIsNotNeeded_AccountDirectoryDoesNotExist() {
+    func test_itReturnsFalse_WhenMigrationIsNotNeeded_AccountDirectoryDoesNotExist() throws {
         // Given
-        let fakeAccountDirectory: URL = URL(fileURLWithPath: "something")
+        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: cryptoboxDirectory.path) {
+            try fileManager.removeItem(at: cryptoboxDirectory)
+        }
+        XCTAssertFalse(fileManager.fileExists(atPath: cryptoboxDirectory.path))
 
         // When
         proteusViaCoreCryptoFlag.isOn = true
 
         // Then
-        XCTAssertFalse(sut!.isNeeded(in: fakeAccountDirectory))
+        XCTAssertFalse(sut!.isNeeded(in: cryptoboxDirectory))
     }
 
     // MARK: - Perform migration
 
-    func test_itPerformsMigrations() {
+    func test_itPerformsMigrations() throws {
         // Given
         let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
+        let mockProteusService = mockProteusService(with: nil)
 
         // When
         proteusViaCoreCryptoFlag.isOn = true
-        syncMOC.proteusService = mockProteusService(with: nil)
-        try? sut?.perform(in: accountDirectory, syncContext: syncMOC)
+        syncMOC.proteusService = mockProteusService
+        XCTAssertEqual(mockProteusService.migrateCryptoboxSessions_CallCount, 0)
+        try sut?.perform(in: accountDirectory, syncContext: syncMOC)
 
         // Then
         XCTAssertFalse(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
+        XCTAssertEqual(mockProteusService.migrateCryptoboxSessions_CallCount, 1)
     }
 
     func test_itDoesNotPerformMigration_CoreCryptoError() {
@@ -115,7 +123,9 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         if let migrationError = error {
             proteusService.migrateCryptoboxSessions_MockError = migrationError
         }
-        proteusService.migrateCryptoboxSessions_MockMethod = { _ in }
+        proteusService.migrateCryptoboxSessions_MockMethod = { _ in
+            proteusService.migrateCryptoboxSessions_CallCount += 1
+        }
 
         return proteusService
     }

@@ -351,6 +351,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var migrateCryptoboxSessions_Invocations: [URL] = []
     public var migrateCryptoboxSessions_MockError: Error?
     public var migrateCryptoboxSessions_MockMethod: ((URL) throws -> Void)?
+    public var migrateCryptoboxSessions_CallCount = 0
 
     public func migrateCryptoboxSessions(at url: URL) throws {
         migrateCryptoboxSessions_Invocations.append(url)
