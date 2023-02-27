@@ -155,7 +155,7 @@ class ProteusServiceTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension ProteusSessionID {
+private extension ProteusSessionID {
 
     static func random() -> Self {
         ProteusSessionID(
@@ -167,7 +167,7 @@ extension ProteusSessionID {
 
 }
 
-extension String {
+private extension String {
 
     static func randomDomain() -> Self {
         return "\(Self.random(length: 6))@\(random(length: 6)).com"
