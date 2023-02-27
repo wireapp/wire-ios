@@ -32,6 +32,7 @@ class UserClientRequestFactoryTests: MessagingTest {
     var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
     var userInfoParser: MockUserInfoParser!
     var proteusService: MockProteusServiceInterface!
+    var proteusProvider: MockProteusProvider!
 
     override func setUp() {
         super.setUp()
@@ -43,11 +44,12 @@ class UserClientRequestFactoryTests: MessagingTest {
             userInfoParser: self.userInfoParser
         )
         proteusService = mockProteusService()
-
-        sut = UserClientRequestFactory(
-            keysStore: self.spyKeyStore,
-            proteusService: nil
+        proteusProvider = MockProteusProvider(
+            mockProteusService: proteusService,
+            mockKeyStore: spyKeyStore
         )
+
+        sut = UserClientRequestFactory(proteusProvider: proteusProvider)
     }
 
     override func tearDown() {
@@ -122,11 +124,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         usingProteusService: Bool
     ) throws {
         // given
-        let sut = UserClientRequestFactory(
-            keysStore: self.spyKeyStore,
-            proteusService: usingProteusService ? proteusService : nil
-        )
-
+        proteusProvider.useProteusService = usingProteusService
         let client = UserClient.insertNewObject(in: self.syncMOC)
 
         // when
@@ -186,10 +184,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         usingProteusService: Bool
     ) {
         // given
-        let sut = UserClientRequestFactory(
-            keysStore: spyKeyStore,
-            proteusService: usingProteusService ? proteusService : nil
-        )
+        proteusProvider.useProteusService = usingProteusService
 
         switch error {
         case .failedToGeneratePrekeys:
@@ -237,10 +232,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         usingProteusService: Bool
     ) throws {
         // given
-        let sut = UserClientRequestFactory(
-            keysStore: self.spyKeyStore,
-            proteusService: usingProteusService ? proteusService : nil
-        )
+        proteusProvider.useProteusService = usingProteusService
 
         let client = UserClient.insertNewObject(in: self.syncMOC)
         client.remoteIdentifier = UUID.create().transportString()
@@ -268,11 +260,7 @@ class UserClientRequestFactoryTests: MessagingTest {
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys(usingProteusService: Bool) {
         // given
-        let sut = UserClientRequestFactory(
-            keysStore: spyKeyStore,
-            proteusService: usingProteusService ? proteusService : nil
-        )
-
+        proteusProvider.useProteusService = usingProteusService
         spyKeyStore.failToGeneratePreKeys = true
         proteusService.generatePrekeysStartCount_MockError = PrekeyError.failedToGeneratePrekeys
 

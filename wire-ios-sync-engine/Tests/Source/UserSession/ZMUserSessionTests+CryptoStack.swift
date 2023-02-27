@@ -17,20 +17,24 @@
 //
 
 import XCTest
-@testable import WireSyncEngine
 import WireDataModel
+import WireUtilities
+@testable import WireSyncEngine
 
 class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     var sut: ZMUserSession!
+    var flag = DeveloperFlag.proteusViaCoreCrypto
 
     override func setUp() {
         super.setUp()
+        flag.isOn = true
     }
 
     override func tearDown() {
         sut.tearDown()
         sut = nil
+        flag.isOn = false
         super.tearDown()
     }
 

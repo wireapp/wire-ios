@@ -33,18 +33,15 @@ public final class UserClientRequestFactory {
     // This is needed to save ~3 seconds for every unit test run
     // as generating 100 keys is an expensive operation
     static var _test_overrideNumberOfKeys: UInt16?
-
-    unowned var keyStore: UserClientKeysStore
     public let keyCount: UInt16
-    private let proteusService: ProteusServiceInterface?
+    private let proteusProvider: ProteusProviding
 
-    public init(keysCount: UInt16 = 100,
-                keysStore: UserClientKeysStore,
-                proteusService: ProteusServiceInterface?
+    public init(
+        keysCount: UInt16 = 100,
+        proteusProvider: ProteusProviding
     ) {
         self.keyCount = (UserClientRequestFactory._test_overrideNumberOfKeys ?? keysCount)
-        self.keyStore = keysStore
-        self.proteusService = proteusService
+        self.proteusProvider = proteusProvider
     }
 
     public func registerClientRequest(_ client: UserClient, credentials: ZMEmailCredentials?, cookieLabel: String, apiVersion: APIVersion) throws -> ZMUpstreamRequest {
@@ -115,13 +112,14 @@ public final class UserClientRequestFactory {
     internal func payloadForPreKeys(_ client: UserClient, startIndex: UInt16 = 0) throws -> (payload: [[String: Any]], maxRange: UInt16) {
         // we don't want to generate new prekeys if we already have them
         do {
-            var preKeys: [IdPrekeyTuple]
-
-            if let proteusService = proteusService {
-                preKeys = try proteusService.generatePrekeys(start: startIndex, count: keyCount)
-            } else {
-                preKeys = try keyStore.generateMoreKeys(keyCount, start: startIndex)
-            }
+            let preKeys = try proteusProvider.perform(
+                withProteusService: { proteusService in
+                    return try proteusService.generatePrekeys(start: startIndex, count: keyCount)
+                },
+                withKeyStore: { keyStore in
+                    return try keyStore.generateMoreKeys(keyCount, start: startIndex)
+                }
+            )
 
             guard preKeys.count > 0 else {
                 throw UserClientRequestError.noPreKeys
@@ -139,20 +137,25 @@ public final class UserClientRequestFactory {
 
     internal func payloadForLastPreKey(_ client: UserClient) throws -> [String: Any] {
         do {
-            var lastKey: String
-            var lastKeyId: UInt16
 
-            if let proteusService = proteusService {
-                lastKey = try proteusService.lastPrekey()
-                lastKeyId = proteusService.lastPrekeyID
-            } else {
-                lastKey = try keyStore.lastPreKey()
-                lastKeyId = CBOX_LAST_PREKEY_ID
-            }
+            let lastKey = try proteusProvider.perform(
+                withProteusService: { proteusService in
+                    return (
+                        key: try proteusService.lastPrekey(),
+                        id: proteusService.lastPrekeyID
+                    )
+                },
+                withKeyStore: { keyStore in
+                    return (
+                        key: try keyStore.lastPreKey(),
+                        id: CBOX_LAST_PREKEY_ID
+                    )
+                }
+            )
 
             let lastPreKeyPayloadData: [String: Any] = [
-                "key": lastKey,
-                "id": NSNumber(value: lastKeyId)
+                "key": lastKey.key,
+                "id": NSNumber(value: lastKey.id)
             ]
             return lastPreKeyPayloadData
         } catch {

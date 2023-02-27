@@ -396,6 +396,7 @@
 		63A8F576276B7B3100513750 /* AVSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8F575276B7B3100513750 /* AVSClientTests.swift */; };
 		63B1337029A50E4A00009D84 /* MockProteusServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1336F29A50E4A00009D84 /* MockProteusServiceInterface.swift */; };
 		63B1337129A50E4A00009D84 /* MockProteusServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1336F29A50E4A00009D84 /* MockProteusServiceInterface.swift */; };
+		63B1337529A7DFBF00009D84 /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1337429A7DFBF00009D84 /* MockProteusProvider.swift */; };
 		63B1FAD92763A510000766F8 /* AVSIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1FAD82763A510000766F8 /* AVSIdentifier.swift */; };
 		63B1FADB2763A636000766F8 /* ZMUser+AVSIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1FADA2763A636000766F8 /* ZMUser+AVSIdentifier.swift */; };
 		63C5321F27FDB283009DFFF4 /* SyncStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C5321E27FDB283009DFFF4 /* SyncStatus.swift */; };
@@ -1038,6 +1039,7 @@
 		639290A6252DEDB400046171 /* WireCallCenterV3+Degradation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireCallCenterV3+Degradation.swift"; sourceTree = "<group>"; };
 		63A8F575276B7B3100513750 /* AVSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSClientTests.swift; sourceTree = "<group>"; };
 		63B1336F29A50E4A00009D84 /* MockProteusServiceInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusServiceInterface.swift; sourceTree = "<group>"; };
+		63B1337429A7DFBF00009D84 /* MockProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
 		63B1FAD82763A510000766F8 /* AVSIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSIdentifier.swift; sourceTree = "<group>"; };
 		63B1FADA2763A636000766F8 /* ZMUser+AVSIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+AVSIdentifier.swift"; sourceTree = "<group>"; };
 		63C5321E27FDB283009DFFF4 /* SyncStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatus.swift; sourceTree = "<group>"; };
@@ -2245,6 +2247,7 @@
 			children = (
 				63D5655428B52D0300BDFB49 /* MockCoreCrypto.swift */,
 				63B1336F29A50E4A00009D84 /* MockProteusServiceInterface.swift */,
+				63B1337429A7DFBF00009D84 /* MockProteusProvider.swift */,
 			);
 			path = "Core Crypto";
 			sourceTree = "<group>";
@@ -3190,6 +3193,7 @@
 				636826FC2954550900D904C2 /* APIMigrationManagerTests.swift in Sources */,
 				F9F9F5621D75D62100AE6499 /* RequestStrategyTestBase.swift in Sources */,
 				7C419ED821F8D81D00B95770 /* EventProcessingTrackerTests.swift in Sources */,
+				63B1337529A7DFBF00009D84 /* MockProteusProvider.swift in Sources */,
 				707CEBB727B515B200E080A4 /* ZMUserSessionTests+SecurityClassification.swift in Sources */,
 				85D8522CF8DE246DDD5BD12C /* MockEntity.m in Sources */,
 				EF2CB12A22D5E5BF00350B0A /* TeamImageAssetUpdateStrategyTests.swift in Sources */,
