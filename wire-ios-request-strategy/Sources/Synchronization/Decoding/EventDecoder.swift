@@ -70,6 +70,7 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
+    ///   - block: A block that receives the decrypted events for processing.
 
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
