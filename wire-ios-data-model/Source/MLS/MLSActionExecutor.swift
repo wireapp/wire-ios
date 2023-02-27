@@ -122,14 +122,14 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Properties
 
-    private let coreCrypto: CoreCryptoProtocol
+    private let coreCrypto: SafeCoreCryptoProtocol
     private let context: NSManagedObjectContext
     private let actionsProvider: MLSActionsProviderProtocol
 
     // MARK: - Life cycle
 
     init(
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: SafeCoreCryptoProtocol,
         context: NSManagedObjectContext,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider()
     ) {
@@ -212,10 +212,10 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             Logging.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.addClientsToConversation(
+                let memberAddMessages = try coreCrypto.perform { try $0.addClientsToConversation(
                     conversationId: groupID.bytes,
                     clients: clients
-                )
+                ) }
 
                 return CommitBundle(
                     welcome: memberAddMessages.welcome,
@@ -224,28 +224,30 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.removeClientsFromConversation(
-                    conversationId: groupID.bytes,
-                    clients: clients
-                )
+                return try coreCrypto.perform {
+                    try $0.removeClientsFromConversation(
+                        conversationId: groupID.bytes,
+                        clients: clients
+                    )
+                }
 
             case .updateKeyMaterial:
-                return try coreCrypto.updateKeyingMaterial(conversationId: groupID.bytes)
+                return try coreCrypto.perform {
+                    try $0.updateKeyingMaterial(conversationId: groupID.bytes)
+                }
 
             case .proposal:
-                guard let bundle = try coreCrypto.commitPendingProposals(
+                guard let bundle = try coreCrypto.perform({ try $0.commitPendingProposals(
                     conversationId: groupID.bytes
-                ) else {
+                ) }) else {
                     throw Error.noPendingProposals
                 }
 
                 return bundle
 
             case .joinGroup(let publicGroupState):
-                let conversationInitBundle = try coreCrypto.joinByExternalCommit(
-                    publicGroupState: publicGroupState.bytes,
-                    customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
-                )
+                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(publicGroupState: publicGroupState.bytes,
+                                                                                                  customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)) }
 
                 return CommitBundle(
                     welcome: nil,
@@ -313,7 +315,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func mergeCommit(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.commitAccepted(conversationId: groupID.bytes)
+            try coreCrypto.perform { try $0.commitAccepted(conversationId: groupID.bytes) }
         } catch {
             throw Error.failedToMergeCommit
         }
@@ -321,7 +323,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func discardPendingCommit(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.clearPendingCommit(conversationId: groupID.bytes)
+            try coreCrypto.perform { try $0.clearPendingCommit(conversationId: groupID.bytes) }
         } catch {
             throw Error.failedToClearCommit
         }
@@ -329,9 +331,11 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func mergePendingGroup(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.mergePendingGroupFromExternalCommit(
-                conversationId: groupID.bytes
-            )
+            try coreCrypto.perform {
+                try $0.mergePendingGroupFromExternalCommit(
+                    conversationId: groupID.bytes
+                )
+            }
         } catch {
             throw Error.failedToMergePendingGroup
         }
@@ -339,7 +343,9 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func clearPendingGroup(in groupID: MLSGroupID) throws {
         do {
-            try coreCrypto.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
+            try coreCrypto.perform {
+                try $0.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
+            }
         } catch {
             throw Error.failedToClearPendingGroup
         }
