@@ -349,7 +349,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let mlsController = MockMLSController()
-            self.syncMOC.test_setMockMLSController(mlsController)
+            self.syncMOC.mlsController = mlsController
 
             let id = UUID.create()
             let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)

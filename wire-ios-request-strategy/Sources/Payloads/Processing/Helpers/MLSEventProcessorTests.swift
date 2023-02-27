@@ -30,7 +30,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         super.setUp()
         syncMOC.performGroupedBlockAndWait {
             self.mlsControllerMock = MockMLSController()
-            self.syncMOC.test_setMockMLSController(self.mlsControllerMock)
+            self.syncMOC.mlsController = self.mlsControllerMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64EncodedBytes!)
             self.conversation.domain = self.domain

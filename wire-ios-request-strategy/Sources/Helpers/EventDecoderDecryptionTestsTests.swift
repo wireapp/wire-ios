@@ -21,17 +21,22 @@ import XCTest
 import WireDataModel
 import WireProtos
 import WireCryptobox
+@testable import WireRequestStrategy
 
-class CryptoboxUpdateEventsTests: MessagingTestBase {
+class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItCanDecryptOTRMessageAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
             let generic = GenericMessage(content: Text(content: text))
 
             // WHEN
-            let decryptedEvent = self.decryptedUpdateEventFromOtherClient(message: generic)
+            let decryptedEvent = self.decryptedUpdateEventFromOtherClient(
+                message: generic,
+                eventDecoder: sut
+            )
 
             // THEN
             XCTAssertEqual(decryptedEvent.senderUUID, self.otherUser.remoteIdentifier!)
@@ -48,6 +53,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItCanDecryptOTRAssetAddEvent() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let image = self.verySmallJPEGData()
             let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
             let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
@@ -55,7 +61,10 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let generic = GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium))
 
             // WHEN
-            let decryptedEvent = self.decryptedAssetUpdateEventFromOtherClient(message: generic)
+            let decryptedEvent = self.decryptedAssetUpdateEventFromOtherClient(
+                message: generic,
+                eventDecoder: sut
+            )
 
             // THEN
             guard let decryptedMessage = ZMAssetClientMessage.createOrUpdate(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
@@ -69,6 +78,8 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItInsertsAUnableToDecryptMessageIfItCanNotEstablishASession() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+
             let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
                                 "sender": self.otherClient.remoteIdentifier!,
                                 "id": UUID.create().transportString(),
@@ -93,7 +104,9 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                    _ = sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+                    }
                 }
             }
 
@@ -108,6 +121,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000() {
         syncMOC.performGroupedBlockAndWait {
             // Given
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
             let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
             XCTAssertGreaterThan(text.count, 18_000)
@@ -136,7 +150,9 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                    _ = sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+                    }
                 }
             }
 
@@ -151,6 +167,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
     func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000_External_Message() {
         syncMOC.performGroupedBlockAndWait {
             // Given
+            let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
             let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
             XCTAssertGreaterThan(text.count, 18_000)
@@ -179,7 +196,9 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             // TODO: [John] use flag here
             self.performIgnoringZMLogError {
                 self.selfClient.keysStore.encryptionContext.perform { session in
-                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                    _ = sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+                    }
                 }
             }
 
