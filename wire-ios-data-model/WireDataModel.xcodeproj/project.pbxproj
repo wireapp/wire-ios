@@ -942,6 +942,7 @@
 		16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+EncryptionKeys.swift"; sourceTree = "<group>"; };
 		16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-85-0.wiredatabase"; sourceTree = "<group>"; };
 		16F9010226C50967002794B5 /* zmessaging2.94.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.94.0.xcdatamodel; sourceTree = "<group>"; };
+		2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchApplicatorTests.swift; sourceTree = "<group>"; };
 		2BB2076F292B787000FB6468 /* PatchApplicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchApplicator.swift; sourceTree = "<group>"; };
@@ -1707,6 +1708,7 @@
 			isa = PBXGroup;
 			children = (
 				2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */,
+				2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */,
 			);
 			path = TestPlans;
 			sourceTree = "<group>";

@@ -32,7 +32,6 @@
   },
   "testTargets" : [
     {
-      "parallelizable" : true,
       "skippedTests" : [
         "AccessRoleMappingTests",
         "AccessRoleMigrationTests",

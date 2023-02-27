@@ -40,8 +40,11 @@
       </MacroExpansion>
       <TestPlans>
          <TestPlanReference
-            reference = "container:TestPlans/SecurityTests.xctestplan"
+            reference = "container:Wire-iOS Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Wire-iOS Tests/TestPlans/SecurityTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
