@@ -134,7 +134,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -167,7 +167,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -290,7 +290,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         self.syncMOC.performGroupedBlockAndWait {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -673,7 +673,7 @@ extension UserClientTests {
             // GIVEN
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
 
             // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
@@ -1008,7 +1008,7 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -1085,10 +1085,10 @@ extension UserClientTests {
         // GIVEN
         let context = self.syncMOC
         var called = false
+        let prekey = "test".utf8Data!.base64String()
         var resultOfMethod = false
 
         let mockProteusService = MockProteusServiceInterface()
-
         mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in
             called = true
         }
@@ -1106,15 +1106,11 @@ extension UserClientTests {
             sut = self.createSelfClient(onMOC: context)
             let userB = self.createUser(in: context)
             clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // WHEN
-        self.syncMOC.performGroupedBlockAndWait {
-            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: "prekey", proteusProviding: mock)
-        }
-        // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+            // WHEN
+           resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
+
+            // THEN
             XCTAssertTrue(called)
             XCTAssertTrue(resultOfMethod)
         }
@@ -1122,21 +1118,34 @@ extension UserClientTests {
 
     func test_GivenDeveloperFlagproteusViaCoreCryptoDisabled_itUsesCryptoBox() {
         // GIVEN
-        let sut = UserClient.insertNewObject(in: self.syncMOC)
-        let clientB = UserClient.insertNewObject(in: self.syncMOC)
-
+        let context = self.syncMOC
+        var resultOfMethod = false
+        let prekey = "test".utf8Data!.base64String()
         let spy = self.spyForTests()
         let mock = MockProteusProvider(mockProteusService: MockProteusServiceInterface(), mockKeyStore: spy)
         mock.useProteusService = false
 
-        // WHEN
-        let result = sut.establishSessionWithClient(clientB, usingPreKey: "prekey", proteusProviding: mock)
+        var sut: UserClient!
+        var clientB: UserClient!
 
-        // THEN
-        XCTAssertEqual(spy.accessEncryptionContextCount, 2)
-        XCTAssertTrue(result)
+        context.performGroupedBlock {
+            sut = self.createSelfClient(onMOC: context)
+            let userB = self.createUser(in: context)
+            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
+            // we need real prekeys here
+            var preKeys: [(id: UInt16, prekey: String)] = []
+            sut.keysStore.encryptionContext.perform { sessionsDirectory in
+                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
+            }
+
+            // WHEN
+            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: preKeys.first!.prekey, proteusProviding: mock)
+
+            // THEN
+            XCTAssertEqual(spy.accessEncryptionContextCount, 2)
+            XCTAssertTrue(resultOfMethod)
+        }
     }
-
 
     private func spyForTests() -> SpyUserClientKeyStore {
         let url = self.createTempFolder()
