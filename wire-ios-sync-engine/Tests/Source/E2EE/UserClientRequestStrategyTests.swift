@@ -57,20 +57,37 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     var cookieStorage: ZMPersistentCookieStorage!
 
     var spyKeyStore: SpyUserClientKeyStore!
+    var proteusService: MockProteusServiceInterface!
+    var proteusProvider: MockProteusProvider!
 
     var postLoginAuthenticationObserverToken: Any?
 
     override func setUp() {
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
-            self.spyKeyStore = SpyUserClientKeyStore(accountDirectory: self.accountDirectory, applicationContainer: self.sharedContainerURL)
+            self.spyKeyStore = SpyUserClientKeyStore(
+                accountDirectory: self.accountDirectory,
+                applicationContainer: self.sharedContainerURL
+            )
+            self.proteusService = MockProteusServiceInterface()
+            self.proteusProvider = MockProteusProvider(
+                mockProteusService: self.proteusService,
+                mockKeyStore: self.spyKeyStore
+            )
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier)
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
-            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(managedObjectContext: self.syncMOC,
-                                                                           cookieStorage: self.cookieStorage,
-                                                                           registrationStatusDelegate: self.mockClientRegistrationStatusDelegate)
+            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
+                managedObjectContext: self.syncMOC,
+                cookieStorage: self.cookieStorage,
+                registrationStatusDelegate: self.mockClientRegistrationStatusDelegate
+            )
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
-            self.sut = UserClientRequestStrategy(clientRegistrationStatus: self.clientRegistrationStatus, clientUpdateStatus: self.clientUpdateStatus, context: self.syncMOC, userKeysStore: self.spyKeyStore, useProteusService: false)
+            self.sut = UserClientRequestStrategy(
+                clientRegistrationStatus: self.clientRegistrationStatus,
+                clientUpdateStatus: self.clientUpdateStatus,
+                context: self.syncMOC,
+                proteusProvider: self.proteusProvider
+            )
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
             self.syncMOC.saveOrRollback()
