@@ -38,7 +38,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             self.groupConversation.mlsGroupID = MLSGroupID([1, 2, 3])
             self.groupConversation.messageProtocol = .mls
-            self.syncMOC.test_setMockMLSController(self.mockMLSController)
+            self.syncMOC.mlsController = self.mockMLSController
         }
     }
 

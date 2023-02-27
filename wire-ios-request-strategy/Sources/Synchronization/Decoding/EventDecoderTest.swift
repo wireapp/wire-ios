@@ -37,7 +37,7 @@ class EventDecoderTest: MessagingTestBase {
         sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.test_setMockMLSController(self.mockMLSController)
+            self.syncMOC.mlsController = self.mockMLSController
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
             let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -382,7 +382,71 @@ extension EventDecoderTest {
 
 }
 
+// MARK: - Proteus via Core Crypto Event Decryption
+
+extension EventDecoderTest {
+
+    func test_ProteusEventDecryption() throws {
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        let mockProteusService = MockProteusServiceInterface()
+
+        syncMOC.performGroupedBlock {
+            // Given
+            let message = GenericMessage(content: Text(content: "foo"))
+            let event = self.encryptedUpdateEventToSelfFromOtherClient(message: message)
+
+            proteusViaCoreCrypto.isOn = true
+
+            // Mock
+            self.syncMOC.proteusService = mockProteusService
+            mockProteusService.decryptDataForSession_MockMethod = { data, _ in
+                return (didCreateSession: false, decryptedData: data)
+            }
+
+            // When
+            self.sut.decryptAndStoreEvents([event])
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
+
+        // Cleanup
+        proteusViaCoreCrypto.isOn = false
+    }
+
+    func test_ProteusEventDecryption_Legacy() throws {
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        let mockProteusService = MockProteusServiceInterface()
+
+        syncMOC.performGroupedBlock {
+            // Given
+            let message = GenericMessage(content: Text(content: "foo"))
+            let event = self.encryptedUpdateEventToSelfFromOtherClient(message: message)
+
+            proteusViaCoreCrypto.isOn = false
+
+            // Mock
+            self.syncMOC.proteusService = mockProteusService
+            mockProteusService.decryptDataForSession_MockMethod = { data, _ in
+                return (didCreateSession: false, decryptedData: data)
+            }
+
+            // When
+            self.sut.decryptAndStoreEvents([event])
+        }
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 0)
+    }
+
+}
+
 // MARK: - MLS Event Decryption
+
 extension EventDecoderTest {
     func test_DecryptMLSMessage_ReturnsDecryptedEvent() {
         syncMOC.performAndWait {

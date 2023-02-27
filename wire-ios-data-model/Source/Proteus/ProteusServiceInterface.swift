@@ -24,20 +24,36 @@ import Foundation
 // sourcery: AutoMockable
 public protocol ProteusServiceInterface {
 
-    func establishSession(id: String, fromPrekey: String) throws
-    func establishSession(id: String, fromMessage message: String) throws -> Data
-    func deleteSession(id: String) throws
-    func sessionExists(id: String) -> Bool
-    func encrypt(data: Data, forSession id: String) throws -> Data
-    func encryptBatched(data: Data, forSessions sessions: [String]) throws -> [String: Data]
-    func decrypt(data: Data, forSession id: String) throws -> Data
+    func establishSession(id: ProteusSessionID, fromPrekey: String) throws
+    func deleteSession(id: ProteusSessionID) throws
+    func sessionExists(id: ProteusSessionID) -> Bool
+    func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
+    func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data]
+
+    /// Decrypt a proteus message for a given session.
+    ///
+    /// If a session currently doesn't exist for the session id, a new one
+    /// will be established from the encrypted messag.
+    ///
+    /// - Parameters:
+    ///   - data: The encrypted message.
+    ///   - id: The id of the session associated with the message.
+    ///
+    /// - Throws: `ProteusService.DecryptionError`
+    /// - Returns: The decrypted data and indicates whether a new session was established.
+
+    func decrypt(
+        data: Data,
+        forSession id: ProteusSessionID
+    ) throws -> (didCreateSession: Bool, decryptedData: Data)
+
     func generatePrekey(id: UInt16) throws -> String
     func lastPrekey() throws -> String
     var lastPrekeyID: UInt16 { get }
     func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple]
     func fingerprint() throws -> String
-    func localFingerprint(forSession id: String) throws -> String
-    func remoteFingerprint(forSession id: String) throws -> String
+    func localFingerprint(forSession id: ProteusSessionID) throws -> String
+    func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
     func fingerprint(fromPrekey prekey: String) throws -> String
     func migrateCryptoboxSessions(at url: URL) throws
 

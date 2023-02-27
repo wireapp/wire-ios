@@ -17,22 +17,16 @@
 //
 
 import Foundation
+import WireCryptobox
 
-extension NSManagedObjectContext {
+public extension ProteusSessionID {
 
-    private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
-
-    public var coreCrypto: SafeCoreCryptoProtocol? {
-        get {
-            precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
-            return userInfo[Self.coreCryptoUserInfoKey] as? SafeCoreCryptoProtocol
-        }
-
-        set {
-            precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
-            userInfo[Self.coreCryptoUserInfoKey] = newValue
-        }
-
+    func mapToEncryptionSessionID() -> EncryptionSessionIdentifier {
+        return EncryptionSessionIdentifier(
+            domain: domain,
+            userId: userID,
+            clientId: clientID
+        )
     }
 
 }

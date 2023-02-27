@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+//
 
 import Foundation
-import WireDataModel
 
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
@@ -321,27 +321,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
-    }
-
-    // MARK: - migrateCryptoboxSessions
-
-    public var migrateCryptoboxSessions_Invocations: [URL] = []
-    public var migrateCryptoboxSessions_MockError: Error?
-    public var migrateCryptoboxSessions_MockMethod: ((URL) throws -> Void)?
-    public var migrateCryptoboxSessions_CallCount = 0
-
-    public func migrateCryptoboxSessions(at url: URL) throws {
-        migrateCryptoboxSessions_Invocations.append(url)
-
-        if let error = migrateCryptoboxSessions_MockError {
-            throw error
-        }
-
-        guard let mock = migrateCryptoboxSessions_MockMethod else {
-            fatalError("no mock for `migrateCryptoboxSessions`")
-        }
-
-        try mock(url)
     }
 
 }
