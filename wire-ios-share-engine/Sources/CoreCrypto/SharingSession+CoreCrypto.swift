@@ -38,15 +38,16 @@ extension SharingSession {
                     selfUser: .selfUser(in: syncContext)
                 )
 
-                let coreCrypto = try factory.createCoreCrypto(with: configuration)
-                syncContext.coreCrypto = coreCrypto
+                let safeCoreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: configuration)
+
+                syncContext.coreCrypto = safeCoreCrypto
 
                 if syncContext.proteusService == nil {
-                    syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
+                    syncContext.proteusService = try ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
                 if syncContext.mlsController == nil {
-                    syncContext.mlsController = MLSEncryptionController(coreCrypto: coreCrypto)
+                    syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
                 }
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
