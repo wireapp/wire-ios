@@ -33,7 +33,7 @@ extension ZMUserSession {
                     selfUser: .selfUser(in: syncContext)
                 )
 
-                let coreCrypto = try syncContext.coreCrypto ?? factory.createCoreCrypto(with: configuration)
+                let coreCrypto = try syncContext.coreCrypto ?? SafeCoreCrypto(coreCryptoConfiguration: configuration)
                 syncContext.coreCrypto = coreCrypto
 
                 try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
@@ -54,7 +54,7 @@ extension ZMUserSession {
 
     // MARK: - Proteus
 
-    private func createProteusServiceIfNeeded(coreCrypto: CoreCryptoProtocol) throws {
+    private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) throws {
         guard syncContext.proteusService == nil else { return }
         syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
     }
@@ -62,7 +62,7 @@ extension ZMUserSession {
     // MARK: - MLS
 
     private func createMLSControllerIfNeeded(
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: SafeCoreCryptoProtocol,
         clientID: String
     ) throws {
         guard syncContext.mlsController == nil else { return }

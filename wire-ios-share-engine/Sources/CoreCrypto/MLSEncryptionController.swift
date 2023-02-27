@@ -22,14 +22,14 @@ import CoreCryptoSwift
 
 class MLSEncryptionController: MLSControllerProtocol {
 
-    private let coreCrypto: CoreCryptoProtocol
+    private let coreCrypto: SafeCoreCryptoProtocol
 
-    init(coreCrypto: CoreCryptoProtocol) {
+    init(coreCrypto: SafeCoreCryptoProtocol) {
         self.coreCrypto = coreCrypto
     }
 
     func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> WireDataModel.Bytes {
-        return try coreCrypto.encryptMessage(conversationId: groupID.bytes, message: message)
+        return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
     }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws {
