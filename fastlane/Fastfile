@@ -185,7 +185,7 @@ platform :ios do
         sh "cp ../wire-ios/Configuration/Appfile ."
 
         deliver(
-            api_key_path: ENV['APPSTORE_CONNECT_KEY'],
+            api_key: ENV['APPSTORE_CONNECT_KEY'],
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             submit_for_review: false,
             automatic_release: false,
@@ -206,7 +206,7 @@ platform :ios do
 
 
         upload_to_testflight(
-            api_key_path: ENV['APPSTORE_CONNECT_KEY'],
+            api_key: ENV['APPSTORE_CONNECT_KEY'],
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             skip_waiting_for_build_processing: true
         )
@@ -215,7 +215,7 @@ platform :ios do
     desc "Create a new version but not submit for review. Usage: Create release_note.txt in fastlane/metadata/en-US & de-DE folders. Then call $fastlane create_version app_version:X.XX"
     lane :create_version do |options|
         deliver(
-            api_key_path: ENV['APPSTORE_CONNECT_KEY'],    
+            api_key: ENV['APPSTORE_CONNECT_KEY'],    
             app_version: options[:app_version],
             submit_for_review: false,
             automatic_release: false,
@@ -230,7 +230,7 @@ platform :ios do
     desc "Submit for review with release note. Usage: Create release_note.txt in fastlane/metadata/en-US & de-DE folders. Then call $fastlane submit_review app_version:X.XX"
     lane :submit_review do |options|
         deliver(
-            api_key_path: ENV['APPSTORE_CONNECT_KEY'],
+            api_key: ENV['APPSTORE_CONNECT_KEY'],
             app_version: options[:app_version],
             submit_for_review: true,
             automatic_release: false,
