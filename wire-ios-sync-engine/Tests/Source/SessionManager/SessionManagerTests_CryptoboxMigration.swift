@@ -70,6 +70,7 @@ class SessionManagerTests_CryptoboxMigration: IntegrationTest {
         cryptoboxMigrationMock?.needsMigration = false
 
         // When
+        XCTAssert(login())
 
         // Then
         XCTAssertEqual(cryptoboxMigrationMock?.performCallCount, 0)
