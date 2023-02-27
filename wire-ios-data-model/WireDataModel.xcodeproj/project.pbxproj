@@ -475,6 +475,9 @@
 		E97A542827B122D80009DCCF /* AccessRoleMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */; };
 		E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */; };
 		EE002F222878345C0027D63A /* store2-104-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE002F212878345C0027D63A /* store2-104-0.wiredatabase */; };
+		EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */; };
+		EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */; };
+		EE032B3629A62CD600E1DDF3 /* ProteusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */; };
 		EE04084E28CA85B2009E4B8D /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */; };
 		EE09EEB1255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */; };
 		EE128A66286DE31200558550 /* UserClient+MLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */; };
@@ -1327,6 +1330,9 @@
 		E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMappingTests.swift; sourceTree = "<group>"; };
 		EE002F1C28772DFA0027D63A /* zmessaging2.104.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.104.0.xcdatamodel; sourceTree = "<group>"; };
 		EE002F212878345C0027D63A /* store2-104-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-104-0.wiredatabase"; sourceTree = "<group>"; };
+		EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusSessionID.swift; sourceTree = "<group>"; };
+		EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ProteusSessionID+Mapping.swift"; sourceTree = "<group>"; };
+		EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusServiceTests.swift; sourceTree = "<group>"; };
 		EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserTests+AnalyticsIdentifier.swift"; sourceTree = "<group>"; };
 		EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+MLSPublicKeys.swift"; sourceTree = "<group>"; };
@@ -1954,6 +1960,8 @@
 			children = (
 				63B1333729A503D000009D84 /* ProteusServiceInterface.swift */,
 				63B1333829A503D000009D84 /* ProteusService.swift */,
+				EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */,
+				EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */,
 			);
 			name = Proteus;
 			path = Source/Proteus;
@@ -2095,6 +2103,14 @@
 				CE4EDC081D6D9A3D002A20AA /* Reaction.swift */,
 			);
 			name = Reaction;
+			sourceTree = "<group>";
+		};
+		EE032B3429A62CD600E1DDF3 /* Proteus */ = {
+			isa = PBXGroup;
+			children = (
+				EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */,
+			);
+			path = Proteus;
 			sourceTree = "<group>";
 		};
 		EE28991C26B4420A00E7BAF0 /* ConferenceCalling */ = {
@@ -3063,6 +3079,7 @@
 				F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */,
 				F9A7080A1CAEEB7400C2F5FE /* Model */,
 				EE98879028882C6D002340D2 /* MLS */,
+				EE032B3429A62CD600E1DDF3 /* Proteus */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -3708,6 +3725,7 @@
 				63298D9A2434D04D006B6018 /* GenericMessage+External.swift in Sources */,
 				A90676EA238EB05F006417AC /* Action.swift in Sources */,
 				EE6A57E025BB1C6800F848DD /* AppLockController.State.swift in Sources */,
+				EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */,
 				63B1336E29A503D100009D84 /* StaleMLSKeyMaterialDetector.swift in Sources */,
 				63B1336229A503D100009D84 /* CoreCryptoKeyProvider.swift in Sources */,
 				16D68E971CEF2EC4003AB9E0 /* ZMFileMetadata.swift in Sources */,
@@ -3821,6 +3839,7 @@
 				F9A706B71CAEE01D00C2F5FE /* UserChangeInfo.swift in Sources */,
 				EE68EEC9252DC4450013B242 /* ChangeDetector.swift in Sources */,
 				63B1335629A503D100009D84 /* MLSGroup.swift in Sources */,
+				EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */,
 				F9AB00271F0CE5520037B437 /* FileManager+FileLocations.swift in Sources */,
 				F9A7067F1CAEE01D00C2F5FE /* ZMImageMessage.m in Sources */,
 				63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */,
@@ -3976,6 +3995,7 @@
 				EEE83B4A1FBB496B00FC0296 /* ZMMessageTimerTests.swift in Sources */,
 				F9B71F931CB2BF00001DB03F /* ZMMessageTests.m in Sources */,
 				16030DBE21AE8FAB00F8032E /* ZMConversationTests+Confirmations.swift in Sources */,
+				EE032B3629A62CD600E1DDF3 /* ProteusServiceTests.swift in Sources */,
 				54FB03AD1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift in Sources */,
 				F9B71F9F1CB2BF2B001DB03F /* ZMConversationListDirectoryTests.m in Sources */,
 				F94A208F1CB51AF50059632A /* ManagedObjectValidationTests.m in Sources */,
