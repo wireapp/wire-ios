@@ -952,7 +952,7 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
             selfClient.keysStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -1082,13 +1082,64 @@ extension UserClientTests {
 extension UserClientTests {
 
     func test_GivenDeveloperFlagproteusViaCoreCryptoEnabled_itUsesCoreKrypto() {
+        // GIVEN
+        let context = self.syncMOC
+        var called = false
+        var resultOfMethod = false
+
+        let mockProteusService = MockProteusServiceInterface()
+
+        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in
+            called = true
+        }
+        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
+            return "test"
+        }
+
+        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
+        mock.useProteusService = true
+
+        var sut: UserClient!
+        var clientB: UserClient!
+
+        context.performGroupedBlock {
+            sut = self.createSelfClient(onMOC: context)
+            let userB = self.createUser(in: context)
+            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: "prekey", proteusProviding: mock)
+        }
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(called)
+            XCTAssertTrue(resultOfMethod)
+        }
+    }
+
+    func test_GivenDeveloperFlagproteusViaCoreCryptoDisabled_itUsesCryptoBox() {
+        // GIVEN
         let sut = UserClient.insertNewObject(in: self.syncMOC)
         let clientB = UserClient.insertNewObject(in: self.syncMOC)
 
+        let spy = self.spyForTests()
+        let mock = MockProteusProvider(mockProteusService: MockProteusServiceInterface(), mockKeyStore: spy)
+        mock.useProteusService = false
+
         // WHEN
-        le tsut.establishSessionWithClient(clientB, usingPreKey: "prekey")
+        let result = sut.establishSessionWithClient(clientB, usingPreKey: "prekey", proteusProviding: mock)
 
         // THEN
+        XCTAssertEqual(spy.accessEncryptionContextCount, 2)
+        XCTAssertTrue(result)
+    }
 
+
+    private func spyForTests() -> SpyUserClientKeyStore {
+        let url = self.createTempFolder()
+        return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
     }
 }

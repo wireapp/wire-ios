@@ -597,35 +597,47 @@ public extension UserClient {
         }
     }
 
+
+    var proteusProvider: ProteusProviding? {
+        if let context = self.managedObjectContext?.zm_sync {
+            return ProteusProvider(context: context)
+        }
+        return nil
+    }
+
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
-    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
+    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String, proteusProviding: ProteusProviding) -> Bool {
         guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
 
-        if true { // TODO: Use flag
-            return establishSessionThroughProteusService(
-                client: client,
-                sessionId: sessionIdentifier,
-                preKey: preKey
+        return proteusProviding.perform { proteusService in
+            establishSession(through: proteusService,
+                             client: client,
+                             sessionId: sessionIdentifier,
+                             preKey: preKey
             )
-        } else {
-            return establishSessionThroughKeystore(
-                client: client,
-                sessionId: sessionIdentifier,
-                preKey: preKey
+        } withKeyStore: { keystore in
+            establishSession(through: keystore,
+                             client: client,
+                             sessionId: sessionIdentifier,
+                             preKey: preKey
             )
         }
     }
 
-    private func establishSessionThroughProteusService(
-        client: UserClient,
-        sessionId: EncryptionSessionIdentifier,
-        preKey: String
-    ) -> Bool {
-        guard let proteusService = self.managedObjectContext?.proteusService else {
+    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
+        guard let proteusProvider = proteusProvider else {
             return false
         }
+        return  establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
+    }
+
+    private func establishSession(through proteusService: ProteusServiceInterface,
+                                  client: UserClient,
+                                  sessionId: EncryptionSessionIdentifier,
+                                  preKey: String
+    ) -> Bool {
         do {
             // TODO: check if we should delete session if it exists before creating new one
             try proteusService.establishSession(id: sessionId.rawValue, fromPrekey: preKey)
@@ -638,10 +650,10 @@ public extension UserClient {
         }
     }
 
-    private func establishSessionThroughKeystore(
-        client: UserClient,
-        sessionId: EncryptionSessionIdentifier,
-        preKey: String
+    private func establishSession(through keystore: UserClientKeysStore,
+                                  client: UserClient,
+                                  sessionId: EncryptionSessionIdentifier,
+                                  preKey: String
     ) -> Bool {
 
         var didEstablishSession = false
