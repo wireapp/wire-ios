@@ -1707,8 +1707,8 @@
 		2B7AB1B529A4E5C500D9A63A /* TestPlans */ = {
 			isa = PBXGroup;
 			children = (
-				2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */,
 				2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */,
+				2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */,
 			);
 			path = TestPlans;
 			sourceTree = "<group>";

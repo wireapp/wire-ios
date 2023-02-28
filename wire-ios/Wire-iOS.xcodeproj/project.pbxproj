@@ -4211,8 +4211,8 @@
 		2B56189C29A508E900D8CCCA /* TestPlans */ = {
 			isa = PBXGroup;
 			children = (
-				2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */,
 				2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */,
+				2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */,
 			);
 			path = TestPlans;
 			sourceTree = "<group>";
