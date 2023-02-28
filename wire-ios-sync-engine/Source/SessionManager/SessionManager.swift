@@ -814,28 +814,37 @@ public final class SessionManager: NSObject, SessionManagerType {
                     } else {
                         let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
 
-                        if self.cryptoboxMigrationManager.isNeeded(in: coreDataStack.accountContainer) {
-                            /// We need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
-                            self.delegate?.sessionManagerWillMigrateAccount {
-                                userSession.syncContext.performAndWait {
-                                    do {
-                                    try self.cryptoboxMigrationManager.perform(in: coreDataStack.accountContainer,
-                                                                                syncContext: userSession.syncContext)
-                                    } catch {
-                                        fatalError("Failed to migrate data from CryptoBox CoreCrypto keystore, error : \(error.localizedDescription)")
-                                    }
-                                }
-                                completion(userSession)
-                            }
-                        } else {
+                        self.migrateCryptoboxIfNeeded(in: coreDataStack.accountContainer, syncContext: userSession.syncContext) {
                             completion(userSession)
                         }
+
                     }
                     onWorkDone()
                     group?.leave()
                 }
             }
         })
+    }
+
+    fileprivate func migrateCryptoboxIfNeeded(in accountDirectory: URL,
+                                              syncContext: NSManagedObjectContext,
+                                              completion: @escaping () -> Void) {
+        guard self.cryptoboxMigrationManager.isNeeded(in: accountDirectory) else {
+            completion()
+            return
+        }
+
+        /// We need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
+        self.delegate?.sessionManagerWillMigrateAccount {
+            syncContext.performAndWait {
+                do {
+                    try self.cryptoboxMigrationManager.perform(in: accountDirectory, syncContext: syncContext)
+                } catch {
+                    fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
+                }
+                completion()
+            }
+        }
     }
 
     fileprivate func deleteAccountData(for account: Account) {
