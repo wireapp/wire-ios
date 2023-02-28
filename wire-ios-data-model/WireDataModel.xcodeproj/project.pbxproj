@@ -323,6 +323,7 @@
 		63B1336C29A503D100009D84 /* CoreCryptoCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */; };
 		63B1336D29A503D100009D84 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1335229A503D000009D84 /* Bytes.swift */; };
 		63B1336E29A503D100009D84 /* StaleMLSKeyMaterialDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1335329A503D000009D84 /* StaleMLSKeyMaterialDetector.swift */; };
+		63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1337229A798C800009D84 /* ProteusProvider.swift */; };
 		63B658DE243754E100EF463F /* GenericMessage+UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */; };
 		63B658E0243789DE00EF463F /* GenericMessage+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */; };
 		63C07015291144F70075D598 /* CoreCryptoFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C07014291144F70075D598 /* CoreCryptoFactoryTests.swift */; };
@@ -1157,6 +1158,7 @@
 		63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreCryptoCallbacks.swift; sourceTree = "<group>"; };
 		63B1335229A503D000009D84 /* Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bytes.swift; sourceTree = "<group>"; };
 		63B1335329A503D000009D84 /* StaleMLSKeyMaterialDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaleMLSKeyMaterialDetector.swift; sourceTree = "<group>"; };
+		63B1337229A798C800009D84 /* ProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusProvider.swift; sourceTree = "<group>"; };
 		63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GenericMessage+UpdateEvent.swift"; sourceTree = "<group>"; };
 		63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Assets.swift"; sourceTree = "<group>"; };
 		63C07014291144F70075D598 /* CoreCryptoFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoFactoryTests.swift; sourceTree = "<group>"; };
@@ -1960,6 +1962,7 @@
 			children = (
 				63B1333729A503D000009D84 /* ProteusServiceInterface.swift */,
 				63B1333829A503D000009D84 /* ProteusService.swift */,
+				63B1337229A798C800009D84 /* ProteusProvider.swift */,
 				EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */,
 				EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */,
 			);
@@ -3807,6 +3810,7 @@
 				873B88FC204044AC00FBE254 /* ConversationCreationOptions.swift in Sources */,
 				87E9508B2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift in Sources */,
 				EE9AD9162696F01700DD5F51 /* FeatureService.swift in Sources */,
+				63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */,
 				0630E4B6257F888600C75BFB /* NSManagedObjectContext+AppLock.swift in Sources */,
 				63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */,
 				EEF4010723A9213B007B1A97 /* UserType+Team.swift in Sources */,
