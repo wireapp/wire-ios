@@ -40,12 +40,12 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 class CoreCryptoFactoryTests: ZMConversationTestsBase {
 
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
-    private var sut: CoreCryptoFactory!
+    private var sut: CoreCryptoConfigProvider!
 
     override func setUp() {
         super.setUp()
         mockCoreCryptoKeyProvider = MockCoreCryptoKeyProvider()
-        sut = CoreCryptoFactory(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
+        sut = CoreCryptoConfigProvider(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
     }
 
     override func tearDown() {
@@ -70,7 +70,7 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             }
 
             // WHEN
-            let configuration = try self.sut.createConfiguration(
+            let configuration = try self.sut.createFullConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
                 selfUser: selfUser
             )
@@ -91,9 +91,9 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             // we're not creating the self client
 
             // THEN
-            assertItThrows(error: CoreCryptoFactory.ConfigurationSetupFailure.failedToGetClientId) {
+            assertItThrows(error: CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetClientId) {
                 // WHEN
-                _ = try sut.createConfiguration(
+                _ = try sut.createFullConfiguration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
                     selfUser: selfUser
                 )
@@ -115,9 +115,9 @@ class CoreCryptoFactoryTests: ZMConversationTestsBase {
             }
 
             // THEN
-            assertItThrows(error: CoreCryptoFactory.ConfigurationSetupFailure.failedToGetCoreCryptoKey) {
+            assertItThrows(error: CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetCoreCryptoKey) {
                 // WHEN
-                _ = try sut.createConfiguration(
+                _ = try sut.createFullConfiguration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
                     selfUser: selfUser
                 )

@@ -13,6 +13,8 @@
 		069712972497C1BF00C32169 /* NotificationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* NotificationSession.swift */; };
 		069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712982497C2B900C32169 /* AuthenticationStatusProvider.swift */; };
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
+		630A582729AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582629AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift */; };
+		630A582929AE5FC500E26C4D /* MLSDecryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582829AE5FC500E26C4D /* MLSDecryptionController.swift */; };
 		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
 		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
 		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
@@ -53,6 +55,8 @@
 		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		630A582629AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationSession+CoreCrypto.swift"; sourceTree = "<group>"; };
+		630A582829AE5FC500E26C4D /* MLSDecryptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionController.swift; sourceTree = "<group>"; };
 		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
 		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
 		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
@@ -117,6 +121,7 @@
 		06604296247FE76A00A5F161 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				630A582529AE5A6300E26C4D /* CoreCrypto */,
 				0697129A2497CA8F00C32169 /* Synchronization */,
 				06604297247FE76A00A5F161 /* AppDelegate.swift */,
 				EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */,
@@ -188,6 +193,15 @@
 				06BD1D352487B01C002F82A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+		630A582529AE5A6300E26C4D /* CoreCrypto */ = {
+			isa = PBXGroup;
+			children = (
+				630A582629AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift */,
+				630A582829AE5FC500E26C4D /* MLSDecryptionController.swift */,
+			);
+			path = CoreCrypto;
 			sourceTree = "<group>";
 		};
 		EE761670299E614B005DB75F /* WireNotificationEngineTests */ = {
@@ -312,6 +326,8 @@
 				067ECB602487ABF700701956 /* AppDelegate.swift in Sources */,
 				EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */,
 				EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */,
+				630A582929AE5FC500E26C4D /* MLSDecryptionController.swift in Sources */,
+				630A582729AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift in Sources */,
 				069712912497B96E00C32169 /* OperationLoop.swift in Sources */,
 				0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */,
 				069712992497C2B900C32169 /* AuthenticationStatusProvider.swift in Sources */,

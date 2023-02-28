@@ -210,6 +210,11 @@ public class NotificationSession {
         self.operationLoop = operationLoop
         self.accountIdentifier = accountIdentifier
         pushNotificationStrategy.delegate = self
+
+        setUpCoreCryptoStack(
+            sharedContainerURL: coreDataStack.applicationContainer,
+            syncContext: coreDataStack.syncContext
+        )
     }
 
     deinit {

@@ -38,7 +38,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         super.tearDown()
     }
 
-    func test_ItSetsUpCryptoStack_OnInit() {
+    func test_CryptoStackSetup_OnInit() {
         // GIVEN
         createSelfClient()
 
@@ -58,7 +58,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertNotNil(syncMOC.mlsController)
     }
 
-    func test_ItDoesNotSetUpCryptoStack_WhenThereIsNoSelfClient() {
+    func test_CryptoStackSetup_WhenThereIsNoSelfClient() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
@@ -72,12 +72,12 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         createSut(with: selfUser)
 
         // THEN
-        XCTAssertNil(syncMOC.coreCrypto)
-        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNotNil(syncMOC.coreCrypto)
+        XCTAssertNotNil(syncMOC.proteusService)
         XCTAssertNil(syncMOC.mlsController)
     }
 
-    func test_ItSetsUpCryptoStack_AfterRegisteringSelfClient() {
+    func test_CryptoStackSetup_AfterRegisteringSelfClient() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
@@ -85,8 +85,8 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
         createSut(with: selfUser)
 
-        XCTAssertNil(syncMOC.coreCrypto)
-        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNotNil(syncMOC.coreCrypto)
+        XCTAssertNotNil(syncMOC.proteusService)
         XCTAssertNil(syncMOC.mlsController)
 
         let client = createSelfClient()

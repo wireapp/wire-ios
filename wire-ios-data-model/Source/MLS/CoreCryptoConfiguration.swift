@@ -26,13 +26,13 @@ public struct CoreCryptoConfiguration {
     public let key: String
     public let clientID: String
 
-    func clientIDBytes() -> ClientId? {
-        return clientID.data(using: .utf8)?.bytes
+    public var clientIDBytes: ClientId? {
+        .init(from: clientID)
     }
 
 }
 
-public class CoreCryptoFactory {
+public class CoreCryptoConfigProvider {
 
     // MARK: - Properties
 
@@ -46,13 +46,29 @@ public class CoreCryptoFactory {
 
     // MARK: - Configuration
 
-    public func createConfiguration(
+    public func createFullConfiguration(
         sharedContainerURL: URL,
         selfUser: ZMUser
     ) throws -> CoreCryptoConfiguration {
-        guard let qualifiedClientId = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
-            throw ConfigurationSetupFailure.failedToGetClientId
-        }
+
+        let qualifiedClientID = try clientID(of: selfUser)
+
+        let initialConfig = try createInitialConfiguration(
+            sharedContainerURL: sharedContainerURL,
+            selfUser: selfUser
+        )
+
+        return CoreCryptoConfiguration(
+            path: initialConfig.path,
+            key: initialConfig.key,
+            clientID: qualifiedClientID
+        )
+    }
+
+    public func createInitialConfiguration(
+        sharedContainerURL: URL,
+        selfUser: ZMUser
+    ) throws -> (path: String, key: String) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: selfUser.remoteIdentifier,
@@ -64,10 +80,9 @@ public class CoreCryptoFactory {
 
         do {
             let key = try coreCryptoKeyProvider.coreCryptoKey()
-            return CoreCryptoConfiguration(
+            return (
                 path: coreCryptoDirectory.path,
-                key: key.base64EncodedString(),
-                clientID: qualifiedClientId
+                key: key.base64EncodedString()
             )
         } catch {
             Logging.mls.warn("Failed to get core crypto key \(String(describing: error))")
@@ -75,8 +90,28 @@ public class CoreCryptoFactory {
         }
     }
 
+    public func clientID(of selfUser: ZMUser) throws -> String {
+        guard let clientID = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
+            throw ConfigurationSetupFailure.failedToGetClientId
+        }
+
+        return clientID
+    }
+
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
     }
+}
+
+public extension ClientId {
+
+    init?(from string: String) {
+        guard let bytes = string.data(using: .utf8)?.bytes else {
+            return nil
+        }
+
+        self = bytes
+    }
+
 }
