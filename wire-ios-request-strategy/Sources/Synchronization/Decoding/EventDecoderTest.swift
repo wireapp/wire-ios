@@ -399,6 +399,15 @@ extension EventDecoderTest {
 
             // Mock
             self.syncMOC.proteusService = mockProteusService
+
+            mockProteusService.performBatchedOperations_MockMethod = { block in
+                do {
+                    try block()
+                } catch {
+                    XCTFail("an error was thrown: \(error)")
+                }
+            }
+
             mockProteusService.decryptDataForSession_MockMethod = { data, _ in
                 return (didCreateSession: false, decryptedData: data)
             }
@@ -410,6 +419,7 @@ extension EventDecoderTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
+        XCTAssertEqual(mockProteusService.performBatchedOperations_Invocations.count, 1)
         XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
 
         // Cleanup
