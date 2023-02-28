@@ -52,11 +52,11 @@
       </EnvironmentVariables>
       <TestPlans>
          <TestPlanReference
-            reference = "container:TestPlans/SecurityTests.xctestplan">
+            reference = "container:Tests/TestPlans/AllTests.xctestplan"
+            default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:TestPlans/AllTests.xctestplan"
-            default = "YES">
+            reference = "container:Tests/TestPlans/SecurityTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
