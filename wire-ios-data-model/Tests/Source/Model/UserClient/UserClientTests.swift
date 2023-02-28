@@ -1084,13 +1084,13 @@ extension UserClientTests {
     func test_GivenDeveloperFlagproteusViaCoreCryptoEnabled_itUsesCoreKrypto() {
         // GIVEN
         let context = self.syncMOC
-        var called = false
+        var mockMethodCalled = false
         let prekey = "test".utf8Data!.base64String()
         var resultOfMethod = false
 
         let mockProteusService = MockProteusServiceInterface()
         mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in
-            called = true
+            mockMethodCalled = true
         }
         mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
             return "test"
@@ -1111,7 +1111,7 @@ extension UserClientTests {
            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
 
             // THEN
-            XCTAssertTrue(called)
+            XCTAssertTrue(mockMethodCalled)
             XCTAssertTrue(resultOfMethod)
         }
     }
@@ -1122,6 +1122,16 @@ extension UserClientTests {
         var resultOfMethod = false
         let prekey = "test".utf8Data!.base64String()
         let spy = self.spyForTests()
+        var mockProteusServiceCalled = false
+
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in
+            mockProteusServiceCalled = true
+        }
+        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
+            return "test"
+        }
+
         let mock = MockProteusProvider(mockProteusService: MockProteusServiceInterface(), mockKeyStore: spy)
         mock.useProteusService = false
 
@@ -1144,6 +1154,7 @@ extension UserClientTests {
             // THEN
             XCTAssertEqual(spy.accessEncryptionContextCount, 2)
             XCTAssertTrue(resultOfMethod)
+            XCTAssertFalse(mockProteusServiceCalled)
         }
     }
 
