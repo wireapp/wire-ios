@@ -822,7 +822,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                                     try self.cryptoboxMigrationManager.perform(in: coreDataStack.accountContainer,
                                                                                 syncContext: userSession.syncContext)
                                     } catch {
-                                        log.error("Failed to migrate data from CryptoBox CoreCrypto keystore, error : \(error.localizedDescription)")
+                                        fatalError("Failed to migrate data from CryptoBox CoreCrypto keystore, error : \(error.localizedDescription)")
                                     }
                                 }
                                 completion(userSession)
