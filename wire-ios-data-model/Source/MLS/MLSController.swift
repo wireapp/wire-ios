@@ -67,7 +67,7 @@ public final class MLSController: MLSControllerProtocol {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
-    private let coreCrypto: CoreCryptoSwift.CoreCryptoProtocol
+    private let coreCrypto: SafeCoreCryptoProtocol
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
@@ -85,7 +85,6 @@ public final class MLSController: MLSControllerProtocol {
 
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
-
 
     // The number of days to wait until refreshing the key material for a group.
 
@@ -109,7 +108,7 @@ public final class MLSController: MLSControllerProtocol {
 
     public convenience init(
         context: NSManagedObjectContext,
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: SafeCoreCryptoProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol
@@ -130,7 +129,7 @@ public final class MLSController: MLSControllerProtocol {
 
     init(
         context: NSManagedObjectContext,
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: SafeCoreCryptoProtocol,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
@@ -154,7 +153,7 @@ public final class MLSController: MLSControllerProtocol {
         self.syncStatus = syncStatus
 
         do {
-            try coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
+            try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
         } catch {
             logger.error("failed to set callbacks: \(String(describing: error))")
         }
@@ -185,7 +184,7 @@ public final class MLSController: MLSControllerProtocol {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.clientPublicKey()
+                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey() }
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
             }
@@ -291,10 +290,12 @@ public final class MLSController: MLSControllerProtocol {
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try coreCrypto.createConversation(
-                conversationId: groupID.bytes,
-                config: config
-            )
+            try coreCrypto.perform {
+                try $0.createConversation(
+                    conversationId: groupID.bytes,
+                    config: config
+                )
+            }
         } catch let error {
             logger.warn("failed to create group (\(groupID)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToCreateGroup
@@ -416,9 +417,8 @@ public final class MLSController: MLSControllerProtocol {
 
     public func wipeGroup(_ groupID: MLSGroupID) {
         logger.info("wiping group (\(groupID))")
-
         do {
-            try coreCrypto.wipeConversation(conversationId: groupID.bytes)
+            try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
             logger.warn("failed to wipe group (\(groupID)): \(String(describing: error))")
         }
@@ -480,7 +480,9 @@ public final class MLSController: MLSControllerProtocol {
 
     private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
         do {
-            let estimatedLocalKeyPackageCount = try coreCrypto.clientValidKeypackagesCount()
+            let estimatedLocalKeyPackageCount = try coreCrypto.perform {
+                try $0.clientValidKeypackagesCount()
+            }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
             let lastCheckWasMoreThan24Hours = userDefaults.hasMoreThan24HoursPassedSinceLastCheck
 
@@ -523,7 +525,7 @@ public final class MLSController: MLSControllerProtocol {
         var keyPackages = [Bytes]()
 
         do {
-            keyPackages = try coreCrypto.clientKeypackages(amountRequested: amountRequested)
+            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(amountRequested: amountRequested) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -567,7 +569,7 @@ public final class MLSController: MLSControllerProtocol {
     }
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
-        let result = coreCrypto.conversationExists(conversationId: groupID.bytes)
+        let result = coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
@@ -581,10 +583,12 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         do {
-            let groupIDBytes = try coreCrypto.processWelcomeMessage(
-                welcomeMessage: messageBytes,
-                customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
-            )
+            let groupIDBytes = try coreCrypto.perform { 
+                try $0.processWelcomeMessage(
+                    welcomeMessage: messageBytes, 
+                    customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
+                )
+             }
             let groupID = MLSGroupID(groupIDBytes)
             uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
@@ -650,7 +654,7 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("requesting to join group (\(groupID)")
 
         do {
-            let proposal = try coreCrypto.newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch)
+            let proposal = try coreCrypto.perform { try $0.newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch) }
             try await sendProposal(proposal, groupID: groupID)
             logger.info("success: requested to join group (\(groupID)")
         } catch {
@@ -769,7 +773,7 @@ public final class MLSController: MLSControllerProtocol {
     public func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
         do {
             logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try coreCrypto.encryptMessage(conversationId: groupID.bytes, message: message)
+            return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
         } catch let error {
             logger.warn("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage
@@ -806,10 +810,10 @@ public final class MLSController: MLSControllerProtocol {
         }
 
         do {
-            let decryptedMessage = try coreCrypto.decryptMessage(
+            let decryptedMessage = try coreCrypto.perform { try $0.decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes
-            )
+            ) }
 
             if let commitDelay = decryptedMessage.commitDelay {
                 return MLSDecryptResult.proposal(commitDelay)

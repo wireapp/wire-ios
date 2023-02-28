@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
@@ -61,6 +62,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 }
 
 // MARK: - Process events
+
 extension EventDecoder {
 
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
@@ -68,7 +70,12 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
-    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], block: ConsumeBlock? = nil) {
+    ///   - block: A block that receives the decrypted events for processing.
+
+    public func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        block: ConsumeBlock? = nil
+    ) {
         var lastIndex: Int64?
         var decryptedEvents: [ZMUpdateEvent] = []
 
@@ -81,7 +88,18 @@ extension EventDecoder {
             lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
             guard let index = lastIndex else { return }
-            decryptedEvents = self.decryptAndStoreEvents(filteredEvents, startingAtIndex: index)
+
+            if DeveloperFlag.proteusViaCoreCrypto.isOn {
+                decryptedEvents = self.decryptAndStoreEvents(
+                    filteredEvents,
+                    startingAtIndex: index
+                )
+            } else {
+                decryptedEvents = self.legacyDecryptAndStoreEvents(
+                    filteredEvents,
+                    startingAtIndex: index
+                )
+            }
         }
 
         if !events.isEmpty {
@@ -98,6 +116,7 @@ extension EventDecoder {
     /// - Parameters:
     ///   - encryptionKeys: Keys to be used to decrypt events.
     ///   - block: Event consume block which is called once for every stored event.
+
     public func processStoredEvents(with encryptionKeys: EncryptionKeys? = nil, _ block: ConsumeBlock) {
         process(with: encryptionKeys, block, firstCall: true)
     }
@@ -105,105 +124,109 @@ extension EventDecoder {
     /// Decrypts and stores the decrypted events as `StoreUpdateEvent` in the event database.
     /// The encryption context is only closed after the events have been stored, which ensures
     /// they can be decrypted again in case of a crash.
-    /// - parameter events The new events that should be decrypted and stored in the database.
-    /// - parameter startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
-    /// - Returns: Decrypted events
-    fileprivate func decryptAndStoreEvents(_ events: [ZMUpdateEvent], startingAtIndex startIndex: Int64) -> [ZMUpdateEvent] {
-        let account = Account(userName: "", userIdentifier: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
-        let publicKey = try? EncryptionKeys.publicKey(for: account)
+    ///
+    /// - Parameters:
+    ///   - events The new events that should be decrypted and stored in the database.
+    ///   - startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
+    ///
+    /// - Returns: Decrypted events.
+
+    private func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        // TODO: [John] use flag here
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) -> Void in
+        // TODO: get core crypto lock
+        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+            switch event.type {
+            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                let proteusService = syncMOC.proteusService!
+
+                return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    try proteusService.decrypt(
+                        data: encryptedData,
+                        forSession: sessionID
+                    )
+                }
+
+            case .conversationMLSMessageAdd:
+                return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+            default:
+                return event
+            }
+        }
+
+        // This call has to be synchronous to ensure that we close the
+        // encryption context only if we stored all events in the database.
+        storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+
+        return decryptedEvents
+    }
+
+    private func legacyDecryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) -> [ZMUpdateEvent] {
+        var decryptedEvents: [ZMUpdateEvent] = []
+
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
             guard let `self` = self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return sessionsDirectory.decryptAndAddClient(event, in: self.syncMOC)
+                    return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try sessionsDirectory.decryptData(
+                            encryptedData,
+                            for: sessionID.mapToEncryptionSessionID()
+                        )
+                    }
+
                 case .conversationMLSMessageAdd:
                     return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
                 default:
                     return event
                 }
             }
 
             // This call has to be synchronous to ensure that we close the
-            // encryption context only if we stored all events in the database
-
-            // Insert the decrypted events in the event database using a `storeIndex`
-            // incrementing from the highest index currently stored in the database
-            // The encryptedPayload property is encrypted using the public key
-            for (idx, event) in decryptedEvents.enumerated() {
-                _ = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: Int64(idx) + startIndex + 1, publicKey: publicKey)
-            }
-
-            self.eventMOC.saveOrRollback()
+            // encryption context only if we stored all events in the database.
+            storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
         }
 
         return decryptedEvents
     }
 
-    func decryptMlsMessage(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> ZMUpdateEvent? {
-        Logging.mls.info("decrypting mls message")
+    // Insert the decrypted events in the event database using a `storeIndex`
+    // incrementing from the highest index currently stored in the database.
+    // The encryptedPayload property is encrypted using the public key.
 
-        guard let mlsController = context.mlsController else {
-            Logging.mls.warn("failed to decrypt mls message: MLSController is missing")
-            return nil
+    private func storeUpdateEvents(
+        _ decryptedEvents: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) {
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+
+        let account = Account(
+            userName: "",
+            userIdentifier: selfUser.remoteIdentifier
+        )
+
+        let publicKey = try? EncryptionKeys.publicKey(for: account)
+
+        for (idx, event) in decryptedEvents.enumerated() {
+            _ = StoredUpdateEvent.encryptAndCreate(
+                event,
+                managedObjectContext: eventMOC,
+                index: Int64(idx) + startIndex + 1,
+                publicKey: publicKey
+            )
         }
 
-        guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
-            Logging.mls.warn("failed to decrypt mls message: invalid update event payload")
-            return nil
-        }
-
-        guard let conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context) else {
-            Logging.mls.warn("failed to decrypt mls message: conversation not found in db")
-            return nil
-        }
-
-        guard conversation.mlsStatus == .ready else {
-            Logging.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))")
-            return nil
-        }
-
-        guard let groupID = conversation.mlsGroupID else {
-            Logging.mls.warn("failed to decrypt mls message: missing MLS group ID")
-            return nil
-        }
-
-        do {
-            guard
-                let result = try mlsController.decrypt(message: payload.data,
-                                                       for: groupID)
-            else {
-                Logging.mls.info("successfully decrypted mls message but no result was returned")
-                return nil
-            }
-
-            switch result {
-            case .message(let decryptedData, let senderClientID):
-                return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
-            case .proposal(let commitDelay):
-                let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
-                mlsController.scheduleCommitPendingProposals(groupID: groupID, at: scheduledDate)
-
-                if updateEvent.source == .webSocket {
-                    Task {
-                        do {
-                            try await mlsController.commitPendingProposals()
-                        } catch {
-                            Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
-                        }
-                    }
-                }
-                return nil
-            }
-
-        } catch {
-            Logging.mls.warn("failed to decrypt mls message: \(String(describing: error))")
-            return nil
-        }
+        self.eventMOC.saveOrRollback()
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.

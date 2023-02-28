@@ -51,11 +51,11 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - establishSession
 
-    public var establishSessionIdFromPrekey_Invocations: [(id: String, fromPrekey: String)] = []
+    public var establishSessionIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []
     public var establishSessionIdFromPrekey_MockError: Error?
-    public var establishSessionIdFromPrekey_MockMethod: ((String, String) throws -> Void)?
+    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) throws -> Void)?
 
-    public func establishSession(id: String, fromPrekey: String) throws {
+    public func establishSession(id: ProteusSessionID, fromPrekey: String) throws {
         establishSessionIdFromPrekey_Invocations.append((id: id, fromPrekey: fromPrekey))
 
         if let error = establishSessionIdFromPrekey_MockError {
@@ -69,36 +69,13 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         try mock(id, fromPrekey)            
     }
 
-    // MARK: - establishSession
-
-    public var establishSessionIdFromMessage_Invocations: [(id: String, message: String)] = []
-    public var establishSessionIdFromMessage_MockError: Error?
-    public var establishSessionIdFromMessage_MockMethod: ((String, String) throws -> Data)?
-    public var establishSessionIdFromMessage_MockValue: Data?
-
-    public func establishSession(id: String, fromMessage message: String) throws -> Data {
-        establishSessionIdFromMessage_Invocations.append((id: id, message: message))
-
-        if let error = establishSessionIdFromMessage_MockError {
-            throw error
-        }
-
-        if let mock = establishSessionIdFromMessage_MockMethod {
-            return try mock(id, message)
-        } else if let mock = establishSessionIdFromMessage_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `establishSessionIdFromMessage`")
-        }
-    }
-
     // MARK: - deleteSession
 
-    public var deleteSessionId_Invocations: [String] = []
+    public var deleteSessionId_Invocations: [ProteusSessionID] = []
     public var deleteSessionId_MockError: Error?
-    public var deleteSessionId_MockMethod: ((String) throws -> Void)?
+    public var deleteSessionId_MockMethod: ((ProteusSessionID) throws -> Void)?
 
-    public func deleteSession(id: String) throws {
+    public func deleteSession(id: ProteusSessionID) throws {
         deleteSessionId_Invocations.append(id)
 
         if let error = deleteSessionId_MockError {
@@ -114,11 +91,11 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - sessionExists
 
-    public var sessionExistsId_Invocations: [String] = []
-    public var sessionExistsId_MockMethod: ((String) -> Bool)?
+    public var sessionExistsId_Invocations: [ProteusSessionID] = []
+    public var sessionExistsId_MockMethod: ((ProteusSessionID) -> Bool)?
     public var sessionExistsId_MockValue: Bool?
 
-    public func sessionExists(id: String) -> Bool {
+    public func sessionExists(id: ProteusSessionID) -> Bool {
         sessionExistsId_Invocations.append(id)
 
         if let mock = sessionExistsId_MockMethod {
@@ -132,12 +109,12 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - encrypt
 
-    public var encryptDataForSession_Invocations: [(data: Data, id: String)] = []
+    public var encryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var encryptDataForSession_MockError: Error?
-    public var encryptDataForSession_MockMethod: ((Data, String) throws -> Data)?
+    public var encryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> Data)?
     public var encryptDataForSession_MockValue: Data?
 
-    public func encrypt(data: Data, forSession id: String) throws -> Data {
+    public func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data {
         encryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = encryptDataForSession_MockError {
@@ -155,12 +132,12 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - encryptBatched
 
-    public var encryptBatchedDataForSessions_Invocations: [(data: Data, sessions: [String])] = []
+    public var encryptBatchedDataForSessions_Invocations: [(data: Data, sessions: [ProteusSessionID])] = []
     public var encryptBatchedDataForSessions_MockError: Error?
-    public var encryptBatchedDataForSessions_MockMethod: ((Data, [String]) throws -> [String: Data])?
+    public var encryptBatchedDataForSessions_MockMethod: ((Data, [ProteusSessionID]) throws -> [String: Data])?
     public var encryptBatchedDataForSessions_MockValue: [String: Data]?
 
-    public func encryptBatched(data: Data, forSessions sessions: [String]) throws -> [String: Data] {
+    public func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data] {
         encryptBatchedDataForSessions_Invocations.append((data: data, sessions: sessions))
 
         if let error = encryptBatchedDataForSessions_MockError {
@@ -178,12 +155,12 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptDataForSession_Invocations: [(data: Data, id: String)] = []
+    public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var decryptDataForSession_MockError: Error?
-    public var decryptDataForSession_MockMethod: ((Data, String) throws -> Data)?
-    public var decryptDataForSession_MockValue: Data?
+    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> (didCreateSession: Bool, decryptedData: Data))?
+    public var decryptDataForSession_MockValue: (didCreateSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: String) throws -> Data {
+    public func decrypt(data: Data, forSession id: ProteusSessionID) throws -> (didCreateSession: Bool, decryptedData: Data) {
         decryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = decryptDataForSession_MockError {
@@ -293,12 +270,12 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - localFingerprint
 
-    public var localFingerprintForSession_Invocations: [String] = []
+    public var localFingerprintForSession_Invocations: [ProteusSessionID] = []
     public var localFingerprintForSession_MockError: Error?
-    public var localFingerprintForSession_MockMethod: ((String) throws -> String)?
+    public var localFingerprintForSession_MockMethod: ((ProteusSessionID) throws -> String)?
     public var localFingerprintForSession_MockValue: String?
 
-    public func localFingerprint(forSession id: String) throws -> String {
+    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
         localFingerprintForSession_Invocations.append(id)
 
         if let error = localFingerprintForSession_MockError {
@@ -316,12 +293,12 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - remoteFingerprint
 
-    public var remoteFingerprintForSession_Invocations: [String] = []
+    public var remoteFingerprintForSession_Invocations: [ProteusSessionID] = []
     public var remoteFingerprintForSession_MockError: Error?
-    public var remoteFingerprintForSession_MockMethod: ((String) throws -> String)?
+    public var remoteFingerprintForSession_MockMethod: ((ProteusSessionID) throws -> String)?
     public var remoteFingerprintForSession_MockValue: String?
 
-    public func remoteFingerprint(forSession id: String) throws -> String {
+    public func remoteFingerprint(forSession id: ProteusSessionID) throws -> String {
         remoteFingerprintForSession_Invocations.append(id)
 
         if let error = remoteFingerprintForSession_MockError {

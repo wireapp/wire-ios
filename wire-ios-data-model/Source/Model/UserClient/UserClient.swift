@@ -923,3 +923,52 @@ extension UserClient {
                                         to: sessionIdentifier)
     }
 }
+
+// MARK: - Proteus Session ID
+
+extension UserClient {
+
+    public var proteusSessionID: ProteusSessionID? {
+        if needsSessionMigration {
+            return proteusSessionID_V2
+        } else {
+            return proteusSessionID_V3
+        }
+    }
+
+    private var proteusSessionID_V1: ProteusSessionID? {
+        guard let clientID = remoteIdentifier else { return nil }
+        return ProteusSessionID(fromLegacyV1Identifier: clientID)
+    }
+
+    private var proteusSessionID_V2: ProteusSessionID? {
+        guard
+            let userID = user?.remoteIdentifier,
+            let clientID = remoteIdentifier
+        else {
+            return nil
+        }
+
+        return ProteusSessionID(
+            userID: userID.uuidString,
+            clientID: clientID
+        )
+    }
+
+    private var proteusSessionID_V3: ProteusSessionID? {
+        guard
+            let domain = user?.domain,
+            let userID = user?.remoteIdentifier,
+            let clientID = remoteIdentifier
+        else {
+            return nil
+        }
+
+        return ProteusSessionID(
+            domain: domain,
+            userID: userID.uuidString,
+            clientID: clientID
+        )
+    }
+
+}
