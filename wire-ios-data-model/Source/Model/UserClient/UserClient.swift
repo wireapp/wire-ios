@@ -598,7 +598,6 @@ public extension UserClient {
         }
     }
 
-
     var proteusProvider: ProteusProviding? {
         if let context = self.managedObjectContext?.zm_sync {
             return ProteusProvider(context: context)
@@ -609,7 +608,9 @@ public extension UserClient {
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
-    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String, proteusProviding: ProteusProviding) -> Bool {
+    func establishSessionWithClient(_ client: UserClient,
+                                    usingPreKey preKey: String,
+                                    proteusProviding: ProteusProviding) -> Bool {
         guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
 
         return proteusProviding.perform { proteusService in
@@ -631,7 +632,7 @@ public extension UserClient {
         guard let proteusProvider = proteusProvider else {
             return false
         }
-        return  establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
+        return establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
     }
 
     private func establishSession(through proteusService: ProteusServiceInterface,
@@ -641,8 +642,10 @@ public extension UserClient {
     ) -> Bool {
         do {
             // TODO: check if we should delete session if it exists before creating new one
-            try proteusService.establishSession(id: sessionId.rawValue, fromPrekey: preKey)
-            let fingerprint = try proteusService.remoteFingerprint(forSession: sessionId.rawValue)
+            let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
+
+            try proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
+            let fingerprint = try proteusService.remoteFingerprint(forSession: proteusSessionId)
             client.fingerprint = fingerprint.utf8Data
             return true
         } catch {
