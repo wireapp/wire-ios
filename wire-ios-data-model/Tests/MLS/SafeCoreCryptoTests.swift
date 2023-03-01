@@ -102,4 +102,5 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         return url
     }
+
 }
