@@ -79,7 +79,7 @@ open class UserClientKeysStore: NSObject {
     /// Maximum possible ID for prekey
     public static let MaxPreKeyID: UInt16 = UInt16.max-1
 
-    public var encryptionContext: EncryptionContext
+    open var encryptionContext: EncryptionContext
 
     /// Fallback prekeys (when no other prekey is available, this will always work)
     fileprivate var internalLastPreKey: String?
