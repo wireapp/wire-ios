@@ -23,8 +23,8 @@ public class CoreCryptoKeyProvider {
     public init() {
 
     }
-    
-    public func coreCryptoKey() throws -> Data  {
+
+    public func coreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
         if let key: Data = try? KeychainManager.fetchItem(item) {
             return key
@@ -40,7 +40,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
     static let tag = "com.wire.mls.key".data(using: .utf8)!
 
-    var getQuery: [CFString : Any] {
+    var getQuery: [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: Self.tag,
@@ -48,7 +48,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
         ]
     }
 
-    func setQuery<T>(value: T) -> [CFString : Any] {
+    func setQuery<T>(value: T) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: Self.tag,
