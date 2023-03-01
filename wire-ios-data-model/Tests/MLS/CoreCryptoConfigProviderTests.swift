@@ -37,7 +37,7 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
     }
 }
 
-class CoreCryptoFactoryTests: ZMConversationTestsBase {
+class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
     private var sut: CoreCryptoConfigProvider!

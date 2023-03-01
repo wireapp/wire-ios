@@ -326,7 +326,7 @@
 		63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1337229A798C800009D84 /* ProteusProvider.swift */; };
 		63B658DE243754E100EF463F /* GenericMessage+UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */; };
 		63B658E0243789DE00EF463F /* GenericMessage+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */; };
-		63C07015291144F70075D598 /* CoreCryptoFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C07014291144F70075D598 /* CoreCryptoFactoryTests.swift */; };
+		63C07015291144F70075D598 /* CoreCryptoConfigProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */; };
 		63CA8215240812620073426A /* ZMClientMessage+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CA8214240812620073426A /* ZMClientMessage+Composite.swift */; };
 		63D41E4F2452EA080076826F /* ZMConversation+SelfConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E4E2452EA080076826F /* ZMConversation+SelfConversation.swift */; };
 		63D41E512452F0A60076826F /* ZMMessage+Removal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E502452F0A60076826F /* ZMMessage+Removal.swift */; };
@@ -1161,7 +1161,7 @@
 		63B1337229A798C800009D84 /* ProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusProvider.swift; sourceTree = "<group>"; };
 		63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GenericMessage+UpdateEvent.swift"; sourceTree = "<group>"; };
 		63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Assets.swift"; sourceTree = "<group>"; };
-		63C07014291144F70075D598 /* CoreCryptoFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoFactoryTests.swift; sourceTree = "<group>"; };
+		63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoConfigProviderTests.swift; sourceTree = "<group>"; };
 		63CA8214240812620073426A /* ZMClientMessage+Composite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+Composite.swift"; sourceTree = "<group>"; };
 		63D41E4E2452EA080076826F /* ZMConversation+SelfConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+SelfConversation.swift"; sourceTree = "<group>"; };
 		63D41E502452F0A60076826F /* ZMMessage+Removal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Removal.swift"; sourceTree = "<group>"; };
@@ -2153,7 +2153,7 @@
 				EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */,
 				EEC3BC75288855C000BFDC35 /* MockMLSActionsProvider.swift */,
 				EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */,
-				63C07014291144F70075D598 /* CoreCryptoFactoryTests.swift */,
+				63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */,
 				63FACD55291BC598003AB25D /* MLSClientIdTests.swift */,
 			);
 			path = MLS;
@@ -3990,7 +3990,7 @@
 				A923D77E239DB87700F47B85 /* ZMConversationTests+SecurityLevel.swift in Sources */,
 				F93C4C7F1E24F832007E9CEE /* NotificationDispatcherTests.swift in Sources */,
 				EEDE7DB728EC1618007DC6A3 /* MockMLSActionExecutor.swift in Sources */,
-				63C07015291144F70075D598 /* CoreCryptoFactoryTests.swift in Sources */,
+				63C07015291144F70075D598 /* CoreCryptoConfigProviderTests.swift in Sources */,
 				1645ECC2243B643B007A82D6 /* ZMSearchUserTests+TeamUser.swift in Sources */,
 				F9331C521CB3BC6800139ECC /* CryptoBoxTests.swift in Sources */,
 				1693155325A30D4E00709F15 /* UserClientTests+ResetSession.swift in Sources */,
