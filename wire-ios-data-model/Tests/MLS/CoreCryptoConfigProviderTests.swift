@@ -55,7 +55,31 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     // MARK: - Core crypto configuration
 
-    func test_itReturnsCoreCryptoConfiguration() throws {
+    func test_itReturnsInitialCoreCryptoConfiguratio() throws {
+        try syncMOC.performGroupedAndWait { context in
+            // GIVEN
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.remoteIdentifier = UUID.create()
+
+            // mock core crypto key
+            let key = Data([1, 2, 3])
+            self.mockCoreCryptoKeyProvider.coreCryptoKeyMock = {
+                return key
+            }
+
+            // WHEN
+            let configuration = try self.sut.createInitialConfiguration(
+                sharedContainerURL: OtrBaseTest.sharedContainerURL,
+                selfUser: selfUser
+            )
+
+            // THEN
+            XCTAssertEqual(configuration.key, key.base64EncodedString())
+            XCTAssertEqual(configuration.path, self.expectedPath(selfUser))
+        }
+    }
+
+    func test_itReturnsFullCoreCryptoConfiguration() throws {
         try syncMOC.performGroupedAndWait { context in
             // GIVEN
             // create self client and self user
@@ -121,6 +145,39 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
                     selfUser: selfUser
                 )
+            }
+        }
+    }
+
+    // MARK: - Client ID
+
+    func test_itReturnsClientIDForSelfUser() throws {
+        try syncMOC.performGroupedAndWait { context in
+            // GIVEN
+            self.createSelfClient()
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.domain = "example.domain.com"
+
+            // WHEN
+            let id = try self.sut.clientID(of: selfUser)
+
+            // THEN
+            XCTAssertEqual(id, MLSQualifiedClientID(user: selfUser).qualifiedClientId)
+        }
+    }
+
+    func test_itThrows_WhenFailedToGetClientID() {
+        syncMOC.performAndWait {
+            // GIVEN
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.domain = "example.domain.com"
+
+            let expectedError = CoreCryptoConfigProvider.ConfigurationSetupFailure.failedToGetClientId
+
+            // THEN
+            assertItThrows(error: expectedError) {
+                // WHEN
+                _ = try sut.clientID(of: selfUser)
             }
         }
     }
