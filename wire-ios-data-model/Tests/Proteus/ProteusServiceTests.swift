@@ -34,7 +34,8 @@ class ProteusServiceTests: XCTestCase {
         try super.setUpWithError()
         mockCoreCrypto = MockCoreCrypto()
         mockCoreCrypto.mockProteusInit = {}
-        sut = try ProteusService(coreCrypto: mockCoreCrypto)
+
+        sut = try ProteusService(coreCrypto: MockSafeCoreCrypto(coreCrypto: mockCoreCrypto))
     }
 
     override func tearDown() {

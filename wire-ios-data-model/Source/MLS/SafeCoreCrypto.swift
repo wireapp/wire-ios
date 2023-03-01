@@ -49,6 +49,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         )
 
         self.init(coreCrypto: coreCrypto, path: config.path)
+        isReadyForMLS = true
     }
 
     public convenience init(path: String, key: String) throws {
