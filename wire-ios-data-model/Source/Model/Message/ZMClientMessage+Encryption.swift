@@ -607,7 +607,7 @@ extension GenericMessage {
             guard let data = encryptedData else { return nil }
             return Proteus_ClientEntry(withClient: client, data: data)
         } catch {
-            print("error: \(String(describing: error))")
+            WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
             return nil
         }
     }
