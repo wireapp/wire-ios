@@ -57,7 +57,7 @@ public final class ProteusService: ProteusServiceInterface {
             try coreCrypto.perform { try $0.proteusSessionFromPrekey(
                 sessionId: id.rawValue,
                 prekey: prekeyBytes
-            ) }
+            )}
         } catch {
             logger.error("failed to establish session from prekey: \(String(describing: error))")
             throw ProteusSessionError.failedToEstablishSession
@@ -129,7 +129,7 @@ public final class ProteusService: ProteusServiceInterface {
             let encryptedBytes = try coreCrypto.perform { try $0.proteusEncrypt(
                 sessionId: id.rawValue,
                 plaintext: data.bytes
-            ) }
+            )}
             return encryptedBytes.data
         } catch {
             logger.error("failed to encrypt data: \(String(describing: error))")
@@ -149,7 +149,7 @@ public final class ProteusService: ProteusServiceInterface {
             let encryptedBatch = try coreCrypto.perform { try $0.proteusEncryptBatched(
                 sessionId: sessions.map(\.rawValue),
                 plaintext: data.bytes
-            ) }
+            )}
             return encryptedBatch.mapValues(\Bytes.data)
         } catch {
             logger.error("failed to encrypt data batch: \(String(describing: error))")
