@@ -146,11 +146,6 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
-    private var proteusProvider: ProteusProvider? {
-        guard let context = managedObjectContext else { return nil }
-        return ProteusProvider(context: context)
-    }
-
     public var activationLocation: CLLocation {
         return CLLocation(latitude: self.activationLocationLatitude as! CLLocationDegrees, longitude: self.activationLocationLongitude as! CLLocationDegrees)
     }
@@ -319,7 +314,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     public var hasSessionWithSelfClient: Bool {
         guard
             let sessionID = proteusSessionID,
-            let proteusProvider = proteusProvider
+            let proteusProvider = managedObjectContext?.proteusProvider
         else {
             return false
         }
