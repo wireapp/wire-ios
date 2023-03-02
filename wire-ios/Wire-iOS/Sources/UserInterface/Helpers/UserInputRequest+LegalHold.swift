@@ -30,7 +30,7 @@ extension UserType where Self: SelfLegalHoldSubject {
      */
 
     func makeLegalHoldInputRequest(for request: LegalHoldRequest, cancellationHandler: @escaping () -> Void, inputHandler: @escaping (String?) -> Void) -> UserInputRequest {
-        let fingerprintString = self.fingerprint ?? "<fingerprint unavailable>"
+        let fingerprintString = self.fingerprint?.fingerprintStringWithSpaces ?? "<fingerprint unavailable>"
         var legalHoldMessage = "legalhold_request.alert.detail".localized(args: fingerprintString)
 
         var inputConfiguration: UserInputRequest.InputConfiguration?
