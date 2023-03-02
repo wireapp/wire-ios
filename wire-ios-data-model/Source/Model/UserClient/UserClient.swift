@@ -680,10 +680,7 @@ public extension UserClient {
     }
 
     func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard let managedObjectContext = self.managedObjectContext,
-              managedObjectContext.zm_isSyncContext,
-              let proteusProvider = managedObjectContext.zm_sync.proteusProvider
-        else {
+        guard let proteusProvider = managedObjectContext?.zm_sync.proteusProvider else {
             return false
         }
         return establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
