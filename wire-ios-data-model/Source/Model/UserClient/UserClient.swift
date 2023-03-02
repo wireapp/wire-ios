@@ -165,7 +165,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         // Fetch fingerprint if not there yet (could remain nil after fetch)
         if let managedObjectContext = self.managedObjectContext,
            self.remoteIdentifier != nil, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
-            self.fingerprint = self.remoteFingerprint
+            self.fingerprint = self.remoteFingerprint()
         }
     }
 
@@ -449,7 +449,7 @@ public extension UserClient {
 
             // We could already set local fingerprint if user is self
             if client.remoteIdentifier == selfClient.remoteIdentifier {
-                client.fingerprint = client.localFingerprint
+                client.fingerprint = client.localFingerprint()
                 if client.fingerprint == nil {
                     zmLog.error("Cannot fetch local fingerprint for \(client)")
                 }
@@ -504,7 +504,7 @@ public extension UserClient {
             else { return }
 
             if syncSelfClient == syncClient {
-                syncClient.fingerprint = syncClient.localFingerprint
+                syncClient.fingerprint = syncClient.localFingerprint()
                 syncMOC.saveOrRollback()
             } else {
                 if !syncClient.hasSessionWithSelfClient {
@@ -513,7 +513,7 @@ public extension UserClient {
                     syncMOC.saveOrRollback()
                 }
                 else {
-                    syncClient.fingerprint = syncClient.remoteFingerprint
+                    syncClient.fingerprint = syncClient.remoteFingerprint()
                     guard syncClient.fingerprint != nil else {
                         zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")
                         return
@@ -530,7 +530,7 @@ public extension UserClient {
 
 extension UserClient {
 
-    private var remoteFingerprint: Data? {
+    private func remoteFingerprint() -> Data? {
         guard let proteusProvider = self.proteusProvider,
               let sessionIdentifier = self.sessionIdentifier else {
                   return nil
@@ -555,7 +555,6 @@ extension UserClient {
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform({ (sessionsDirectory) in
                     fingerprintData = sessionsDirectory.fingerprint(for: sessionIdentifier)
-                    print(fingerprintData)
                 })
             }
         )
@@ -563,7 +562,7 @@ extension UserClient {
         return fingerprintData
     }
 
-    private var localFingerprint: Data? {
+    private func localFingerprint() -> Data? {
         guard let proteusProvider = self.proteusProvider else {
             return nil
         }

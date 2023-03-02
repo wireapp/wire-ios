@@ -33,7 +33,7 @@ public protocol SelfLegalHoldSubject {
     /// Whether the user needs to acknowledge the current legal hold status.
     var needsToAcknowledgeLegalHoldStatus: Bool { get }
 
-    /// The user's fingerprint.
+    /// The legal hold client's fingerprint.
     var fingerprint: String? { get }
 
     /// Call this method a pending legal hold request was cancelled

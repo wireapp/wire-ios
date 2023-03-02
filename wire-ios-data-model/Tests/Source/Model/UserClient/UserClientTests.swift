@@ -1113,7 +1113,6 @@ extension UserClientTests {
             // THEN
             XCTAssertTrue(mockMethodCalled)
             XCTAssertTrue(resultOfMethod)
-            XCTAssertEqual(clientB.fingerprint!, "test".utf8Data)
         }
     }
 
@@ -1189,6 +1188,44 @@ extension UserClientTests {
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertEqual(selfClient.fingerprint!, localFingerprint.utf8Data)
+        }
+
+        // Cleanup
+        proteusViaCoreCrypto.isOn = false
+    }
+
+    func test_itLoadsRemoteFingerprintForOtherClient_proteusViaCoreCryptoFlagEnabled() {
+        // GIVEN
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        proteusViaCoreCrypto.isOn = true
+        let context = self.syncMOC
+        let prekey = "test".utf8Data!.base64String()
+        let remoteFingerprint: String = "fingerprint"
+
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in }
+
+        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
+            return remoteFingerprint
+        }
+
+        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
+        mock.useProteusService = true
+
+        var sut: UserClient!
+        var clientB: UserClient!
+
+        context.performGroupedBlock {
+            sut = self.createSelfClient(onMOC: context)
+            let userB = self.createUser(in: context)
+            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
+            clientB.fingerprint = .none
+
+            // WHEN
+            let _ = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
+
+            // THEN
+            XCTAssertEqual(clientB.fingerprint!, remoteFingerprint.utf8Data)
         }
 
         // Cleanup
