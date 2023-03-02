@@ -321,4 +321,13 @@ public final class ProteusService: ProteusServiceInterface {
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
+
+    // MARK: - Batched operations
+
+    public func performBatchedOperations(_ block: () throws -> Void) rethrows {
+        try coreCrypto.perform { _ in
+            try block()
+        }
+    }
+
 }
