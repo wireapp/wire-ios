@@ -22,12 +22,16 @@ import CoreCryptoSwift
 
 class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
 
+    var performCount = 0
     func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(self)
+        performCount += 1
+        return try block(self)
     }
 
+    var unsafePerformCount = 0
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(self)
+        unsafePerformCount += 1
+        return try block(self)
     }
 
     // MARK: - mlsInit
