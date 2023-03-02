@@ -57,20 +57,19 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
     }
 
     // MARK: - Overrides
-    // MARK: - Override setUp
     override func setUp() {
         super.setUp()
         title = L10n.Localizable.Conversation.Create.Options.title
         icon = nil
         showSeparator = false
         contentLeadingOffset = 16
-        setupIconForCell()
+        setupIcon()
         setupAccessibility()
     }
 
     // MARK: Methods
-    /// Set up the Icon its color for the cell
-    private func setupIconForCell() {
+    /// Sets up the icon and its color.
+    private func setupIcon() {
         let color = SemanticColors.Icon.foregroundPlainDownArrow
         let image = StyleKitIcon.downArrow.makeImage(
             size: .tiny,
