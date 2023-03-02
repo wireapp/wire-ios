@@ -150,6 +150,6 @@ public extension WireLogger {
 
   /// For logs related to any mls related flow.
 
-  static let proteus = WireLogger(tag: "mls")
+  static let mls = WireLogger(tag: "mls")
 
 }

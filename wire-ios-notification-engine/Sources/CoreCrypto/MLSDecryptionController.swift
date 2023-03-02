@@ -18,22 +18,33 @@
 
 import Foundation
 import WireDataModel
+import CoreData
+import CoreCryptoSwift
 
 class MLSDecryptionController: MLSControllerProtocol {
 
     // MARK: - Properties
 
     private let coreCrypto: SafeCoreCryptoProtocol
+    private weak var context: NSManagedObjectContext?
 
     // MARK: - Life cycle
 
-    init(coreCrypto: SafeCoreCryptoProtocol) {
+    init(context: NSManagedObjectContext, coreCrypto: SafeCoreCryptoProtocol) {
         self.coreCrypto = coreCrypto
+        self.context = context
     }
 
     // MARK: - Methods
 
     // TODO: Avoid this code duplication from `MLSController`
+
+    public enum MLSMessageDecryptionError: Error {
+
+        case failedToConvertMessageToBytes
+        case failedToDecryptMessage
+
+    }
 
     func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
         WireLogger.mls.info("decrypting message for group (\(groupID))")
@@ -65,6 +76,14 @@ class MLSDecryptionController: MLSControllerProtocol {
             WireLogger.mls.warn("failed to decrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageDecryptionError.failedToDecryptMessage
         }
+    }
+
+    private func senderClientId(from message: DecryptedMessage) -> String? {
+        guard let senderClientID = message.senderClientId else {
+            return nil
+        }
+
+        return MLSClientID(data: senderClientID.data)?.clientID
     }
 
     // TODO: Avoid this code duplication from `MLSController`

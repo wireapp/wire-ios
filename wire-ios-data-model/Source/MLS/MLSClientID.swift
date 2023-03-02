@@ -25,17 +25,17 @@ public struct MLSClientID: Equatable {
 
     // MARK: - Properties
 
-    let userID: String
-    let clientID: String
-    let domain: String
+    public let userID: String
+    public let clientID: String
+    public let domain: String
 
     // The string representation of the id.
 
-    let string: String
+    public let string: String
 
     // MARK: - Life cycle
 
-    init?(userClient: UserClient) {
+    public init?(userClient: UserClient) {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
@@ -51,7 +51,7 @@ public struct MLSClientID: Equatable {
         )
     }
 
-    init(qualifiedClientID: QualifiedClientID) {
+    public init(qualifiedClientID: QualifiedClientID) {
         self.init(
             userID: qualifiedClientID.userID.transportString(),
             clientID: qualifiedClientID.clientID,
@@ -59,12 +59,12 @@ public struct MLSClientID: Equatable {
         )
     }
 
-    init?(data: Data) {
+    public init?(data: Data) {
         guard let string = String(data: data, encoding: .utf8) else { return nil }
         self.init(string: string)
     }
 
-    init?(string: String) {
+    public init?(string: String) {
         guard
             let regex = try? NSRegularExpression(pattern: "(.+):(.+)@(.+)", options: []),
             let result = regex.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)),
@@ -82,7 +82,7 @@ public struct MLSClientID: Equatable {
         )
     }
 
-    init(
+    public init(
         userID: String,
         clientID: String,
         domain: String
