@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.8.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
@@ -335,6 +335,21 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
+    }
+
+    // MARK: - performBatchedOperations
+
+    public var performBatchedOperations_Invocations: [() throws -> Void] = []
+    public var performBatchedOperations_MockMethod: ((@escaping () throws -> Void) -> Void)?
+
+    public func performBatchedOperations(_ block: @escaping () throws -> Void) {
+        performBatchedOperations_Invocations.append(block)
+
+        guard let mock = performBatchedOperations_MockMethod else {
+            fatalError("no mock for `performBatchedOperations`")
+        }
+
+        mock(block)            
     }
 
 }
