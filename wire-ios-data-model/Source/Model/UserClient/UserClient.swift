@@ -312,20 +312,31 @@ public class UserClient: ZMManagedObject, UserClientType {
         managedObjectContext?.delete(self)
     }
 
-    /// Checks if there is an existing session with the selfClient
-    /// Access this property only from the syncContext
+    /// Checks if there is an existing session with the self client.
+    ///
+    /// Note: only access this property only from the sync context.
+
     public var hasSessionWithSelfClient: Bool {
-        guard let selfClient = ZMUser.selfUser(in: managedObjectContext!).selfClient()
+        guard
+            let sessionID = proteusSessionID,
+            let proteusProvider = proteusProvider
         else {
-            zmLog.error("SelfUser has no selfClient")
             return false
         }
+
         var hasSession = false
-        // TODO: [John] use flag here
-        selfClient.keysStore.encryptionContext.perform { [weak self](sessionsDirectory) in
-            guard let strongSelf = self, let sessionIdentifier = strongSelf.sessionIdentifier else {return}
-            hasSession = sessionsDirectory.hasSession(for: sessionIdentifier)
-        }
+
+        proteusProvider.perform(
+            withProteusService: { proteusService in
+                hasSession = proteusService.sessionExists(id: sessionID)
+            },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform { sessionsDirectory in
+                    hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                }
+            }
+        )
+
         return hasSession
     }
 
