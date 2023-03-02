@@ -146,9 +146,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
-    // TODO: to be removed once we use ProteusProvider everywhere
-    public var keysStore: UserClientKeysStore {
-        return managedObjectContext!.zm_cryptKeyStore
+    private var proteusProvider: ProteusProvider? {
+        guard let context = managedObjectContext else { return nil }
+        return ProteusProvider(context: context)
     }
 
     public var activationLocation: CLLocation {
