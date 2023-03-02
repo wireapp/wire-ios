@@ -47,6 +47,16 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             // Given
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
+
+            // Mock
+            self.mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
+                // No op
+            }
+
+            self.mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
+                return sessionID.rawValue + "remote_fingerprint"
+            }
+
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
