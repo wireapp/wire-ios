@@ -34,6 +34,10 @@ extension MockUserType: SelfLegalHoldSubject {
         return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
+    public var fingerprint: String? {
+        return "test"
+    }
+
     func legalHoldRequestWasCancelled() {
         legalHoldDataSource.legalHoldRequest = nil
     }
