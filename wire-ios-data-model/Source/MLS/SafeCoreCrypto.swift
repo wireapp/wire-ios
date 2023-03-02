@@ -48,7 +48,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             entropySeed: nil
         )
 
-        self.init(coreCrypto: coreCrypto, path: config.path)
+        self.init(coreCrypto: coreCrypto, databasePath: config.path)
         didInitializeMLS = true
     }
 
@@ -59,7 +59,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             entropySeed: nil
         )
 
-        self.init(coreCrypto: coreCrypto, path: path)
+        self.init(coreCrypto: coreCrypto, databasePath: path)
     }
 
     public func mlsInit(clientID: String) throws {
@@ -73,9 +73,9 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         didInitializeMLS = true
     }
 
-    init(coreCrypto: CoreCryptoProtocol, path: String) {
+    init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
         self.coreCrypto = coreCrypto
-        let directoryPathUrl = URL(fileURLWithPath: path).deletingLastPathComponent()
+        let directoryPathUrl = URL(fileURLWithPath: databasePath).deletingLastPathComponent()
         self.safeContext = SafeFileContext(fileURL: directoryPathUrl)
     }
 

@@ -27,7 +27,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         let tempURL = createTempFolder()
         let mockCoreCrypto = MockCoreCrypto()
         mockCoreCrypto.mockRestoreFromDisk = {}
-        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, path: tempURL.path)
+        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN / THEN
         XCTAssertNoThrow(try sut.perform { mock in
@@ -44,7 +44,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
             called = true
         }
 
-        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, path: tempURL.path)
+        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN
         try sut.perform { mock in
@@ -65,7 +65,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
             mlsInitCalled = true
         }
 
-        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, path: tempURL.path)
+        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN
         try sut.mlsInit(clientID: "id")
@@ -84,7 +84,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
             mlsInitCalls += 1
         }
 
-        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, path: tempURL.path)
+        let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
         try sut.mlsInit(clientID: "id")
 
         XCTAssertEqual(mlsInitCalls, 1)
@@ -94,6 +94,5 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
 
         XCTAssertEqual(mlsInitCalls, 1)
     }
-
 
 }
