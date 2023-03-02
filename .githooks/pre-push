@@ -36,7 +36,7 @@ if [[ -e "${SWIFT_LINT}" ]]; then
     fi
 
     echo "Found $count lintable files! Linting now.."
-    $SWIFT_LINT --fix
+    $SWIFT_LINT fix --use-script-input-files
     RESULT=$? # swiftline exit value is number of errors
 
     if [ $RESULT -eq 0 ]; then
@@ -48,3 +48,4 @@ else
     echo "⚠️  You might want to edit .git/hooks/pre-commit to locate your swiftlint"
     exit 0
 fi
+
