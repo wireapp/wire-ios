@@ -280,10 +280,10 @@ public class UserClient: ZMManagedObject, UserClientType {
         let user = self.user
 
         self.failedToEstablishSession = false
+
         // reset the session
-        if let sessionIdentifier = self.sessionIdentifier {
-            UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: managedObjectContext!)
-        }
+        try? deleteSession()
+
         // reset the relationship
         self.user = nil
 
@@ -338,19 +338,24 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
     public func resetSession() {
-        guard let sessionIdentifier = self.sessionIdentifier,
-              let uiMOC = self.managedObjectContext?.zm_userInterface,
-              let syncMOC = uiMOC.zm_sync
-        else { return }
+        guard
+            let uiMOC = self.managedObjectContext?.zm_userInterface,
+            let syncMOC = uiMOC.zm_sync
+        else {
+            return
+        }
 
         // Delete should happen on sync context since the cryptobox could be accessed only from there
         syncMOC.performGroupedBlock {
-            guard let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
-                  let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
-            else { return }
+            guard
+                let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
+                let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
+            else {
+                return
+            }
 
             // Delete session and fingerprint
-            UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: syncMOC)
+            try? self.deleteSession(context: syncMOC)
             syncClient.fingerprint = .none
 
             // Mark clients as needing to be refetched
@@ -649,14 +654,25 @@ public extension UserClient {
 
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    static func deleteSession(for clientID: EncryptionSessionIdentifier, managedObjectContext: NSManagedObjectContext) {
-        guard let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(), selfClient.sessionIdentifier != clientID
-        else { return }
-
-        // TODO: [John] use flag here
-        selfClient.keysStore.encryptionContext.perform { (sessionsDirectory) in
-            sessionsDirectory.delete(clientID)
+    func deleteSession(context: NSManagedObjectContext? = nil) throws {
+        guard
+            !isSelfClient(),
+            let context = context ?? managedObjectContext,
+            let sessionID = proteusSessionID
+        else {
+            return
         }
+
+        try ProteusProvider(context: context).perform(
+            withProteusService: { proteusService in
+                try proteusService.deleteSession(id: sessionID)
+            },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform { sessionsDirectory in
+                    sessionsDirectory.delete(sessionID.mapToEncryptionSessionID())
+                }
+            }
+        )
     }
 
     /// Creates a session between the selfClient and the given userClient
