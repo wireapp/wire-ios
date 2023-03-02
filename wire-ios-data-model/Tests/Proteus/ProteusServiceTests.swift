@@ -151,6 +151,59 @@ class ProteusServiceTests: XCTestCase {
         }
     }
 
+    // MARK: - Encrypting messages
+
+    func test_EncryptDataForSession_Success() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let plaintext = Data.secureRandomData(length: 8)
+
+        // Mock
+        var encryptCalls = 0
+        mockCoreCrypto.mockProteusEncrypt = { sessionIDString, plaintextBytes in
+            encryptCalls += 1
+            XCTAssertEqual(sessionIDString, sessionID.rawValue)
+            XCTAssertEqual(plaintextBytes, plaintext.bytes)
+            return Bytes([1, 2, 3, 4, 5])
+        }
+
+        // When
+        let encryptedData = try sut.encrypt(
+            data: plaintext,
+            forSession: sessionID
+        )
+
+        // Then
+        XCTAssertEqual(encryptCalls, 1)
+        XCTAssertEqual(encryptedData, Data([1, 2, 3, 4, 5]))
+    }
+
+    func test_EncryptDataForSession_Fail() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let plaintext = Data.secureRandomData(length: 8)
+
+        // Mock
+        var encryptCalls = 0
+        mockCoreCrypto.mockProteusEncrypt = { sessionIDString, plaintextBytes in
+            encryptCalls += 1
+            XCTAssertEqual(sessionIDString, sessionID.rawValue)
+            XCTAssertEqual(plaintextBytes, plaintext.bytes)
+            throw MockError()
+        }
+
+        // Then
+        assertItThrows(error: ProteusService.EncryptionError.failedToEncryptData) {
+            // When
+            _ = try sut.encrypt(
+                data: plaintext,
+                forSession: sessionID
+            )
+        }
+
+        XCTAssertEqual(encryptCalls, 1)
+    }
+
 }
 
 // MARK: - Helpers
