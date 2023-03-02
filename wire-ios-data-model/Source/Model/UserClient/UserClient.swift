@@ -698,17 +698,26 @@ public extension UserClient {
         }
     }
 
-    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard let proteusProvider = proteusProvider else {
+    func establishSessionWithClient(
+        _ client: UserClient,
+        usingPreKey preKey: String
+    ) -> Bool {
+        guard let proteusProvider = managedObjectContext?.proteusProvider else {
             return false
         }
-        return establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
+
+        return establishSessionWithClient(
+            client,
+            usingPreKey: preKey,
+            proteusProviding: proteusProvider
+        )
     }
 
-    private func establishSession(through proteusService: ProteusServiceInterface,
-                                  client: UserClient,
-                                  sessionId: EncryptionSessionIdentifier,
-                                  preKey: String
+    private func establishSession(
+        through proteusService: ProteusServiceInterface,
+        client: UserClient,
+        sessionId: EncryptionSessionIdentifier,
+        preKey: String
     ) -> Bool {
         do {
             // TODO: check if we should delete session if it exists before creating new one
@@ -724,12 +733,12 @@ public extension UserClient {
         }
     }
 
-    private func establishSession(through keystore: UserClientKeysStore,
-                                  client: UserClient,
-                                  sessionId: EncryptionSessionIdentifier,
-                                  preKey: String
+    private func establishSession(
+        through keystore: UserClientKeysStore,
+        client: UserClient,
+        sessionId: EncryptionSessionIdentifier,
+        preKey: String
     ) -> Bool {
-
         var didEstablishSession = false
 
         keystore.encryptionContext.perform { (sessionsDirectory) in
