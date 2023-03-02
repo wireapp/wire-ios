@@ -21,6 +21,8 @@
 		630A583729B0B71800E26C4D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A583629B0B71800E26C4D /* ContentView.swift */; };
 		630A583929B0B71A00E26C4D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 630A583829B0B71A00E26C4D /* Assets.xcassets */; };
 		630A583C29B0B71A00E26C4D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 630A583B29B0B71A00E26C4D /* Preview Assets.xcassets */; };
+		630A584429B0DF0600E26C4D /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630A584329B0DF0600E26C4D /* WireMockTransport.framework */; };
+		630A584529B0DF0600E26C4D /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 630A584329B0DF0600E26C4D /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
 		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
 		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
@@ -44,6 +46,20 @@
 			remoteInfo = WireNotificationEngine;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		630A584629B0DF0700E26C4D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				630A584529B0DF0600E26C4D /* WireMockTransport.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
@@ -76,6 +92,7 @@
 		630A583629B0B71800E26C4D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		630A583829B0B71A00E26C4D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		630A583B29B0B71A00E26C4D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		630A584329B0DF0600E26C4D /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
 		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
 		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
@@ -97,6 +114,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				630A584429B0DF0600E26C4D /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +132,7 @@
 		060256312489322000E060E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				630A584329B0DF0600E26C4D /* WireMockTransport.framework */,
 				EE67F6FB296F09A0001D7C88 /* WireTesting.framework */,
 				EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */,
 			);
@@ -298,6 +317,7 @@
 				630A582E29B0B71800E26C4D /* Sources */,
 				630A582F29B0B71800E26C4D /* Frameworks */,
 				630A583029B0B71800E26C4D /* Resources */,
+				630A584629B0DF0700E26C4D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
