@@ -355,6 +355,42 @@ platform :ios do
             site: "datadoghq.eu")
     end
 
+    desc "Run security plans"
+    lane :security_plans do |options|
+        xcode_version = options[:xcode_version]
+
+        ios_version = "15.2"
+        if !xcode_version.nil? 
+            xcversion(version: xcode_version)
+
+            if xcode_version == "13.2.1"
+                ios_version = "15.2"
+            elsif xcode_version == "13.1"
+                 ios_version = "15.0"
+            elsif xcode_version == "12.4"
+                ios_version = "14.4"
+            end
+        end
+
+        for scheme in ["Wire-iOS", "WireDataModel", "WireSyncEngine"] do
+            run_tests(
+                testplan: "SecurityTests",
+                scheme: scheme,
+                skip_detect_devices: true,
+                configuration: "Debug",
+                # test_without_building: true,
+                sdk:"iphonesimulator",
+                destination: "platform=iOS Simulator,name=iPhone 8,OS=#{ios_version}",
+                # code_coverage: true,
+                derived_data_path: "DerivedData",
+                buildlog_path: options[:destination],
+                output_directory: "options[:destination]/#{scheme}",
+                output_types: "junit"
+            )    
+        end
+    end
+
+
     desc "Run post-test tasks"
     lane :post_test do
         sh "curl -s https://codecov.io/bash > codecov"
