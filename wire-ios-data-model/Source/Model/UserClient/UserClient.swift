@@ -537,39 +537,10 @@ public extension UserClient {
 extension UserClient {
 
     private func remoteFingerprint() -> Data? {
-        guard let proteusProvider = self.proteusProvider,
-              let sessionIdentifier = self.sessionIdentifier else {
-                  return nil
-              }
-
-        var fingerprintData: Data? = nil
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                guard let proteusSessionID = self.proteusSessionID else {
-                    return
-                }
-
-                do {
-                    let fingerprint = try proteusService.remoteFingerprint(forSession: proteusSessionID)
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    zmLog.error("Cannot fetch remote fingerprint for \(self)")
-                }
-            },
-
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform({ (sessionsDirectory) in
-                    fingerprintData = sessionsDirectory.fingerprint(for: sessionIdentifier)
-                })
-            }
-        )
-
-        return fingerprintData
-    }
-
-    private func localFingerprint() -> Data? {
-        guard let proteusProvider = self.proteusProvider else {
+        guard
+            let proteusProvider = managedObjectContext?.proteusProvider,
+            let sessionID = proteusSessionID
+        else {
             return nil
         }
 
@@ -577,20 +548,47 @@ extension UserClient {
 
         proteusProvider.perform(
             withProteusService: { proteusService in
-                guard let proteusSessionID = self.proteusSessionID else {
+                do {
+                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionID)
+                    fingerprintData = fingerprint.utf8Data
+                } catch {
+                    zmLog.error("Cannot fetch remote fingerprint for \(self)")
+                }
+            },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform { sessionsDirectory in
+                    fingerprintData = sessionsDirectory.fingerprint(for: sessionID.mapToEncryptionSessionID())
+                }
+            }
+        )
+
+        return fingerprintData
+    }
+
+    private func localFingerprint() -> Data? {
+        guard let proteusProvider = managedObjectContext?.proteusProvider else {
+            return nil
+        }
+
+        var fingerprintData: Data? = nil
+
+        proteusProvider.perform(
+            withProteusService: { proteusService in
+                guard let sessionID = self.proteusSessionID else {
                     return
                 }
+
                 do {
-                    let fingerprint = try proteusService.localFingerprint(forSession: proteusSessionID)
+                    let fingerprint = try proteusService.localFingerprint(forSession: sessionID)
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     zmLog.error("Cannot fetch local fingerprint for \(self)")
                 }
             },
             withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform({ (sessionsDirectory) in
+                keyStore.encryptionContext.perform { sessionsDirectory in
                     fingerprintData = sessionsDirectory.localFingerprint
-                })
+                }
             }
         )
 
