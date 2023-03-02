@@ -531,9 +531,11 @@ public extension UserClient {
 extension UserClient {
 
     private func remoteFingerprint() -> Data? {
-        guard let proteusProvider = self.proteusProvider,
-              let sessionIdentifier = self.sessionIdentifier 
-        else { return nil }
+        guard let proteusProvider = managedObjectContext?.zm_sync.proteusProvider,
+              let sessionIdentifier = self.sessionIdentifier
+        else {
+            return nil
+        }
 
         var fingerprintData: Data? = nil
 
@@ -562,7 +564,7 @@ extension UserClient {
     }
 
     private func localFingerprint() -> Data? {
-        guard let proteusProvider = self.proteusProvider else {
+        guard let proteusProvider = managedObjectContext?.zm_sync.proteusProvider else {
             return nil
         }
 
@@ -654,14 +656,6 @@ public extension UserClient {
         }
     }
 
-    var proteusProvider: ProteusProviding? {
-        guard let context = self.managedObjectContext?.zm_sync else {
-            return nil
-        }
-
-        return context.proteusProvider
-    }
-
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
@@ -686,7 +680,10 @@ public extension UserClient {
     }
 
     func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard let proteusProvider = proteusProvider else {
+        guard let managedObjectContext = self.managedObjectContext,
+              managedObjectContext.zm_isSyncContext,
+              let proteusProvider = managedObjectContext.zm_sync.proteusProvider
+        else {
             return false
         }
         return establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
