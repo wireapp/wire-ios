@@ -1113,6 +1113,7 @@ extension UserClientTests {
             // THEN
             XCTAssertTrue(mockMethodCalled)
             XCTAssertTrue(resultOfMethod)
+            XCTAssertEqual(clientB.fingerprint!, "test".utf8Data)
         }
     }
 
@@ -1156,6 +1157,42 @@ extension UserClientTests {
             XCTAssertTrue(resultOfMethod)
             XCTAssertFalse(mockProteusServiceCalled)
         }
+    }
+
+    func test_itLoadsLocalFingerprintForSelfClient_proteusViaCoreCryptoFlagEnabled() {
+
+        // GIVEN
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        proteusViaCoreCrypto.isOn = true
+        var selfClient: UserClient!
+        let localFingerprint: String = "test"
+
+        self.syncMOC.performGroupedBlockAndWait {
+            let mockProteusService = MockProteusServiceInterface()
+            mockProteusService.localFingerprintForSession_MockMethod = {_ in
+                return localFingerprint
+            }
+            self.syncMOC.proteusService = mockProteusService
+
+            selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            selfClient.fingerprint = .none
+
+            self.syncMOC.saveOrRollback()
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            selfClient.fetchFingerprintOrPrekeys()
+        }
+
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(selfClient.fingerprint!, localFingerprint.utf8Data)
+        }
+
+        // Cleanup
+        proteusViaCoreCrypto.isOn = false
     }
 
     private func spyForTests() -> SpyUserClientKeyStore {

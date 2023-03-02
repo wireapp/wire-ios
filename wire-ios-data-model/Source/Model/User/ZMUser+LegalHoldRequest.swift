@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCryptobox
 
 private let log = ZMSLog(tag: "UserClient")
 
@@ -31,6 +32,9 @@ public protocol SelfLegalHoldSubject {
 
     /// Whether the user needs to acknowledge the current legal hold status.
     var needsToAcknowledgeLegalHoldStatus: Bool { get }
+
+    /// The user's fingerprint.
+    var fingerprint: String? { get }
 
     /// Call this method a pending legal hold request was cancelled
     func legalHoldRequestWasCancelled()
@@ -270,6 +274,44 @@ extension ZMUser: SelfLegalHoldSubject {
 
     public func acknowledgeLegalHoldStatus() {
         needsToAcknowledgeLegalHoldStatus = false
+    }
+
+    // MARK: - Fingerprint
+
+    var proteusProvider: ProteusProviding? {
+        if let context = self.managedObjectContext?.zm_sync {
+            return ProteusProvider(context: context)
+        }
+        return nil
+    }
+
+    public var fingerprint: String? {
+        proteusProvider?.perform(withProteusService: { proteusService in
+            return fetchFingerprint(through: proteusService)
+        }, withKeyStore: { keyStore in
+            return fetchFingerprint(through: keyStore)
+        })
+    }
+
+    private func fetchFingerprint(through proteusService: ProteusServiceInterface) -> String? {
+        guard let preKey = legalHoldRequest?.lastPrekey else {
+            return nil
+        }
+
+        do {
+            return try proteusService.fingerprint(fromPrekey: preKey.key.base64EncodedString())
+        } catch {
+            log.error("Could not fetch fingerprint for \(self)")
+            return nil
+        }
+    }
+
+    private func fetchFingerprint(through keystore: UserClientKeysStore) -> String? {
+        guard let preKey = legalHoldRequest?.lastPrekey,
+              let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) else {
+                  return nil
+              }
+        return String(data: fingerprintData, encoding: .utf8)
     }
 
 }
