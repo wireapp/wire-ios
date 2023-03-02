@@ -357,6 +357,8 @@ platform :ios do
 
     desc "Run security plans"
     lane :security_plans do |options|
+        build = Build.new(options: options)
+
         xcode_version = options[:xcode_version]
 
         ios_version = "15.2"
@@ -383,8 +385,8 @@ platform :ios do
                 destination: "platform=iOS Simulator,name=iPhone 8,OS=#{ios_version}",
                 # code_coverage: true,
                 derived_data_path: "DerivedData",
-                buildlog_path: options[:destination],
-                output_directory: "options[:destination]/#{scheme}",
+                buildlog_path: build.build_path,
+                output_directory: "#{build.archive_path(with_filename: false)}/tests/#{scheme}",
                 output_types: "junit"
             )    
         end
