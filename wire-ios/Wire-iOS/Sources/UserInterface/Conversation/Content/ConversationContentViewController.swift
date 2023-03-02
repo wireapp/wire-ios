@@ -170,7 +170,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
                                                  message: MessageSendError.missingLegalholdConsent)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool){
         super.viewDidAppear(animated)
         updateVisibleMessagesWindow()
 
