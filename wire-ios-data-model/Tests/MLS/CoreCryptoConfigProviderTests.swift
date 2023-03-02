@@ -55,7 +55,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     // MARK: - Core crypto configuration
 
-    func test_itReturnsInitialCoreCryptoConfiguratio() throws {
+    func test_itReturnsInitialCoreCryptoConfiguration() throws {
         try syncMOC.performGroupedAndWait { context in
             // GIVEN
             let selfUser = ZMUser.selfUser(in: context)
