@@ -532,9 +532,8 @@ extension UserClient {
 
     private func remoteFingerprint() -> Data? {
         guard let proteusProvider = self.proteusProvider,
-              let sessionIdentifier = self.sessionIdentifier else {
-                  return nil
-              }
+              let sessionIdentifier = self.sessionIdentifier 
+        else { return nil }
 
         var fingerprintData: Data? = nil
 
