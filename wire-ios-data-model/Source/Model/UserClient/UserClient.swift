@@ -494,9 +494,12 @@ public extension UserClient {
     }
 
     @objc func fetchFingerprintOrPrekeys() {
-        guard self.fingerprint == .none,
-              let syncMOC = self.managedObjectContext?.zm_sync
-        else { return }
+        guard
+            self.fingerprint == .none,
+            let syncMOC = self.managedObjectContext?.zm_sync
+        else {
+            return
+        }
 
         if self.objectID.isTemporaryID {
             do {
@@ -509,10 +512,13 @@ public extension UserClient {
         let selfObjectID = self.objectID
 
         syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
-            guard let obj = try? syncMOC.existingObject(with: selfObjectID),
-                  let syncClient = obj as? UserClient,
-                  let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
-            else { return }
+            guard
+                let obj = try? syncMOC.existingObject(with: selfObjectID),
+                let syncClient = obj as? UserClient,
+                let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
+            else {
+                return
+            }
 
             if syncSelfClient == syncClient {
                 syncClient.fingerprint = syncClient.localFingerprint()
