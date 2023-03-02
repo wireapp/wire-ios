@@ -681,13 +681,35 @@ public extension UserClient {
         )
     }
 
+    func establishSessionWithClient(
+        _ client: UserClient,
+        usingPreKey preKey: String
+    ) -> Bool {
+        guard let proteusProvider = managedObjectContext?.proteusProvider else {
+            return false
+        }
+
+        return establishSessionWithClient(
+            client,
+            usingPreKey: preKey,
+            proteusProviding: proteusProvider
+        )
+    }
+
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
-    func establishSessionWithClient(_ client: UserClient,
-                                    usingPreKey preKey: String,
-                                    proteusProviding: ProteusProviding) -> Bool {
-        guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
+    func establishSessionWithClient(
+        _ client: UserClient,
+        usingPreKey preKey: String,
+        proteusProviding: ProteusProviding
+    ) -> Bool {
+        guard
+            isSelfClient(),
+            let sessionIdentifier = client.sessionIdentifier
+        else {
+            return false
+        }
 
         return proteusProviding.perform { proteusService in
             establishSession(through: proteusService,
@@ -702,21 +724,6 @@ public extension UserClient {
                              preKey: preKey
             )
         }
-    }
-
-    func establishSessionWithClient(
-        _ client: UserClient,
-        usingPreKey preKey: String
-    ) -> Bool {
-        guard let proteusProvider = managedObjectContext?.proteusProvider else {
-            return false
-        }
-
-        return establishSessionWithClient(
-            client,
-            usingPreKey: preKey,
-            proteusProviding: proteusProvider
-        )
     }
 
     private func establishSession(
