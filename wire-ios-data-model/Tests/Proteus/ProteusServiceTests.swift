@@ -26,6 +26,7 @@ class ProteusServiceTests: XCTestCase {
     struct MockError: Error {}
 
     var mockCoreCrypto: MockCoreCrypto!
+    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var sut: ProteusService!
 
     // MARK: - Set up
@@ -34,7 +35,8 @@ class ProteusServiceTests: XCTestCase {
         try super.setUpWithError()
         mockCoreCrypto = MockCoreCrypto()
         mockCoreCrypto.mockProteusInit = {}
-        sut = try ProteusService(coreCrypto: mockCoreCrypto)
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        sut = try ProteusService(coreCrypto: mockSafeCoreCrypto)
     }
 
     override func tearDown() {
@@ -149,6 +151,73 @@ class ProteusServiceTests: XCTestCase {
                 forSession: sessionID
             )
         }
+    }
+
+    // MARK: - Encrypting messages
+
+    func test_EncryptDataForSession_Success() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let plaintext = Data.secureRandomData(length: 8)
+
+        // Mock
+        var encryptCalls = 0
+        mockCoreCrypto.mockProteusEncrypt = { sessionIDString, plaintextBytes in
+            encryptCalls += 1
+            XCTAssertEqual(sessionIDString, sessionID.rawValue)
+            XCTAssertEqual(plaintextBytes, plaintext.bytes)
+            return Bytes([1, 2, 3, 4, 5])
+        }
+
+        // When
+        let encryptedData = try sut.encrypt(
+            data: plaintext,
+            forSession: sessionID
+        )
+
+        // Then
+        XCTAssertEqual(encryptCalls, 1)
+        XCTAssertEqual(encryptedData, Data([1, 2, 3, 4, 5]))
+    }
+
+    func test_EncryptDataForSession_Fail() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let plaintext = Data.secureRandomData(length: 8)
+
+        // Mock
+        var encryptCalls = 0
+        mockCoreCrypto.mockProteusEncrypt = { sessionIDString, plaintextBytes in
+            encryptCalls += 1
+            XCTAssertEqual(sessionIDString, sessionID.rawValue)
+            XCTAssertEqual(plaintextBytes, plaintext.bytes)
+            throw MockError()
+        }
+
+        // Then
+        assertItThrows(error: ProteusService.EncryptionError.failedToEncryptData) {
+            // When
+            _ = try sut.encrypt(
+                data: plaintext,
+                forSession: sessionID
+            )
+        }
+
+        XCTAssertEqual(encryptCalls, 1)
+    }
+    
+    // MARK: - Batched operations
+
+    func test_PerformBachedOperations() throws {
+        // Given
+        mockSafeCoreCrypto.performCount = 0
+
+        // When
+        sut.performBatchedOperations {}
+
+        // Then
+        XCTAssertEqual(mockSafeCoreCrypto.performCount, 1)
+        XCTAssertEqual(mockSafeCoreCrypto.unsafePerformCount, 0)
     }
 
 }

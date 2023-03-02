@@ -34,7 +34,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     private let coreCrypto: CoreCryptoProtocol
     private let safeContext: SafeFileContext
-    private var isReadyForMLS: Bool = false
+    private var didInitializeMLS = false
 
     public convenience init(coreCryptoConfiguration config: CoreCryptoConfiguration) throws {
         guard let clientID = config.clientIDBytes else {
@@ -48,7 +48,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             entropySeed: nil
         )
 
-        self.init(coreCrypto: coreCrypto, path: config.path)
+        self.init(coreCrypto: coreCrypto, databasePath: config.path)
+        didInitializeMLS = true
     }
 
     public convenience init(path: String, key: String) throws {
@@ -58,23 +59,23 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             entropySeed: nil
         )
 
-        self.init(coreCrypto: coreCrypto, path: path)
+        self.init(coreCrypto: coreCrypto, databasePath: path)
     }
 
     public func mlsInit(clientID: String) throws {
-        guard !isReadyForMLS else { return }
+        guard !didInitializeMLS else { return }
 
         guard let clientIdBytes = ClientId(from: clientID) else {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
 
         try coreCrypto.mlsInit(clientId: clientIdBytes)
-        isReadyForMLS = true
+        didInitializeMLS = true
     }
 
-    init(coreCrypto: CoreCryptoProtocol, path: String) {
+    init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
         self.coreCrypto = coreCrypto
-        let directoryPathUrl = URL(fileURLWithPath: path).deletingLastPathComponent()
+        let directoryPathUrl = URL(fileURLWithPath: databasePath).deletingLastPathComponent()
         self.safeContext = SafeFileContext(fileURL: directoryPathUrl)
     }
 

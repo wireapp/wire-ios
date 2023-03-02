@@ -15,15 +15,29 @@
 		0697129D2497CAC200C32169 /* PushNotificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0697129C2497CAC200C32169 /* PushNotificationStrategy.swift */; };
 		630A582729AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582629AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift */; };
 		630A582929AE5FC500E26C4D /* MLSDecryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582829AE5FC500E26C4D /* MLSDecryptionController.swift */; };
+		630A582B29AF9CB800E26C4D /* NotificationSessionTests+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582A29AF9CB800E26C4D /* NotificationSessionTests+CryptoStack.swift */; };
+		630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */; };
+		630A583529B0B71800E26C4D /* WireNotificationEngineTestHostApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A583429B0B71800E26C4D /* WireNotificationEngineTestHostApp.swift */; };
+		630A583729B0B71800E26C4D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A583629B0B71800E26C4D /* ContentView.swift */; };
+		630A583929B0B71A00E26C4D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 630A583829B0B71A00E26C4D /* Assets.xcassets */; };
+		630A583C29B0B71A00E26C4D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 630A583B29B0B71A00E26C4D /* Preview Assets.xcassets */; };
+		630A584429B0DF0600E26C4D /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630A584329B0DF0600E26C4D /* WireMockTransport.framework */; };
+		630A584529B0DF0600E26C4D /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 630A584329B0DF0600E26C4D /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
 		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
 		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
 		EE668BC62954BA4C00D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */; };
 		EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
-		EE761672299E6BC5005DB75F /* WireNotificationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE761671299E6BC5005DB75F /* WireNotificationEngineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		630A584029B0B72300E26C4D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 630A583129B0B71800E26C4D;
+			remoteInfo = WireNotificationEngineTestHost;
+		};
 		EE76166A299E60C9005DB75F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
@@ -32,6 +46,20 @@
 			remoteInfo = WireNotificationEngine;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		630A584629B0DF0700E26C4D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				630A584529B0DF0600E26C4D /* WireMockTransport.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
@@ -57,13 +85,20 @@
 		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		630A582629AE5AE900E26C4D /* NotificationSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationSession+CoreCrypto.swift"; sourceTree = "<group>"; };
 		630A582829AE5FC500E26C4D /* MLSDecryptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionController.swift; sourceTree = "<group>"; };
+		630A582A29AF9CB800E26C4D /* NotificationSessionTests+CryptoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationSessionTests+CryptoStack.swift"; sourceTree = "<group>"; };
+		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
+		630A583229B0B71800E26C4D /* WireNotificationEngineTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireNotificationEngineTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		630A583429B0B71800E26C4D /* WireNotificationEngineTestHostApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireNotificationEngineTestHostApp.swift; sourceTree = "<group>"; };
+		630A583629B0B71800E26C4D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		630A583829B0B71A00E26C4D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		630A583B29B0B71A00E26C4D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		630A584329B0DF0600E26C4D /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
 		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
 		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
 		EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6FB296F09A0001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE761671299E6BC5005DB75F /* WireNotificationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireNotificationEngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +107,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE668BC62954BA4C00D939E7 /* WireRequestStrategy.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		630A582F29B0B71800E26C4D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				630A584429B0DF0600E26C4D /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +132,7 @@
 		060256312489322000E060E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				630A584329B0DF0600E26C4D /* WireMockTransport.framework */,
 				EE67F6FB296F09A0001D7C88 /* WireTesting.framework */,
 				EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */,
 			);
@@ -102,6 +146,7 @@
 				06604296247FE76A00A5F161 /* Sources */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
 				EE761670299E614B005DB75F /* WireNotificationEngineTests */,
+				630A583329B0B71800E26C4D /* WireNotificationEngineTestHost */,
 				06604295247FE76A00A5F161 /* Products */,
 				060256312489322000E060E1 /* Frameworks */,
 			);
@@ -114,6 +159,7 @@
 			children = (
 				067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */,
 				EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */,
+				630A583229B0B71800E26C4D /* WireNotificationEngineTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,10 +250,30 @@
 			path = CoreCrypto;
 			sourceTree = "<group>";
 		};
+		630A583329B0B71800E26C4D /* WireNotificationEngineTestHost */ = {
+			isa = PBXGroup;
+			children = (
+				630A583429B0B71800E26C4D /* WireNotificationEngineTestHostApp.swift */,
+				630A583629B0B71800E26C4D /* ContentView.swift */,
+				630A583829B0B71A00E26C4D /* Assets.xcassets */,
+				630A583A29B0B71A00E26C4D /* Preview Content */,
+			);
+			path = WireNotificationEngineTestHost;
+			sourceTree = "<group>";
+		};
+		630A583A29B0B71A00E26C4D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				630A583B29B0B71A00E26C4D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		EE761670299E614B005DB75F /* WireNotificationEngineTests */ = {
 			isa = PBXGroup;
 			children = (
-				EE761671299E6BC5005DB75F /* WireNotificationEngineTests.swift */,
+				630A582A29AF9CB800E26C4D /* NotificationSessionTests+CryptoStack.swift */,
+				630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */,
 			);
 			path = WireNotificationEngineTests;
 			sourceTree = "<group>";
@@ -244,6 +310,24 @@
 			productReference = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		630A583129B0B71800E26C4D /* WireNotificationEngineTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 630A583D29B0B71A00E26C4D /* Build configuration list for PBXNativeTarget "WireNotificationEngineTestHost" */;
+			buildPhases = (
+				630A582E29B0B71800E26C4D /* Sources */,
+				630A582F29B0B71800E26C4D /* Frameworks */,
+				630A583029B0B71800E26C4D /* Resources */,
+				630A584629B0DF0700E26C4D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WireNotificationEngineTestHost;
+			productName = WireNotificationEngineTestHost;
+			productReference = 630A583229B0B71800E26C4D /* WireNotificationEngineTestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
 		EE761664299E60C9005DB75F /* WireNotificationEngineTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE76166C299E60C9005DB75F /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */;
@@ -256,6 +340,7 @@
 			);
 			dependencies = (
 				EE76166B299E60C9005DB75F /* PBXTargetDependency */,
+				630A584129B0B72300E26C4D /* PBXTargetDependency */,
 			);
 			name = WireNotificationEngineTests;
 			productName = WireNotificationEngineTests;
@@ -276,9 +361,13 @@
 						CreatedOnToolsVersion = 11.4.1;
 						LastSwiftMigration = 1140;
 					};
+					630A583129B0B71800E26C4D = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
 					EE761664299E60C9005DB75F = {
 						CreatedOnToolsVersion = 13.2.1;
 						LastSwiftMigration = 1320;
+						TestTargetID = 630A583129B0B71800E26C4D;
 					};
 				};
 			};
@@ -297,6 +386,7 @@
 			targets = (
 				067ECB392487A93D00701956 /* WireNotificationEngine */,
 				EE761664299E60C9005DB75F /* WireNotificationEngineTests */,
+				630A583129B0B71800E26C4D /* WireNotificationEngineTestHost */,
 			);
 		};
 /* End PBXProject section */
@@ -306,6 +396,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		630A583029B0B71800E26C4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				630A583C29B0B71A00E26C4D /* Preview Assets.xcassets in Resources */,
+				630A583929B0B71A00E26C4D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,17 +435,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		630A582E29B0B71800E26C4D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				630A583729B0B71800E26C4D /* ContentView.swift in Sources */,
+				630A583529B0B71800E26C4D /* WireNotificationEngineTestHostApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EE761661299E60C9005DB75F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE761672299E6BC5005DB75F /* WireNotificationEngineTests.swift in Sources */,
+				630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */,
+				630A582B29AF9CB800E26C4D /* NotificationSessionTests+CryptoStack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		630A584129B0B72300E26C4D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 630A583129B0B71800E26C4D /* WireNotificationEngineTestHost */;
+			targetProxy = 630A584029B0B72300E26C4D /* PBXContainerItemProxy */;
+		};
 		EE76166B299E60C9005DB75F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
@@ -551,6 +665,70 @@
 			};
 			name = Release;
 		};
+		630A583E29B0B71A00E26C4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"WireNotificationEngineTestHost/Preview Content\"";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "David-Henner.WireNotificationEngineTestHost";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		630A583F29B0B71A00E26C4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"WireNotificationEngineTestHost/Preview Content\"";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "David-Henner.WireNotificationEngineTestHost";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		EE76166D299E60C9005DB75F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -574,6 +752,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngineTestHost.app/WireNotificationEngineTestHost";
 			};
 			name = Debug;
 		};
@@ -599,6 +778,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngineTestHost.app/WireNotificationEngineTestHost";
 			};
 			name = Release;
 		};
@@ -619,6 +799,15 @@
 			buildConfigurations = (
 				067ECB442487A93E00701956 /* Debug */,
 				067ECB452487A93E00701956 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		630A583D29B0B71A00E26C4D /* Build configuration list for PBXNativeTarget "WireNotificationEngineTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				630A583E29B0B71A00E26C4D /* Debug */,
+				630A583F29B0B71A00E26C4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
