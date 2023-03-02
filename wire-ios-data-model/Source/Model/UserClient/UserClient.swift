@@ -146,6 +146,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
+    // TODO: to be removed once we use ProteusProvider everywhere
     public var keysStore: UserClientKeysStore {
         return managedObjectContext!.zm_cryptKeyStore
     }
@@ -597,21 +598,76 @@ public extension UserClient {
         }
     }
 
+    var proteusProvider: ProteusProviding? {
+        if let context = self.managedObjectContext?.zm_sync {
+            return ProteusProvider(context: context)
+        }
+        return nil
+    }
+
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
-    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
+    func establishSessionWithClient(_ client: UserClient,
+                                    usingPreKey preKey: String,
+                                    proteusProviding: ProteusProviding) -> Bool {
         guard isSelfClient(), let sessionIdentifier = client.sessionIdentifier else { return false }
+
+        return proteusProviding.perform { proteusService in
+            establishSession(through: proteusService,
+                             client: client,
+                             sessionId: sessionIdentifier,
+                             preKey: preKey
+            )
+        } withKeyStore: { keystore in
+            establishSession(through: keystore,
+                             client: client,
+                             sessionId: sessionIdentifier,
+                             preKey: preKey
+            )
+        }
+    }
+
+    func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
+        guard let proteusProvider = proteusProvider else {
+            return false
+        }
+        return establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
+    }
+
+    private func establishSession(through proteusService: ProteusServiceInterface,
+                                  client: UserClient,
+                                  sessionId: EncryptionSessionIdentifier,
+                                  preKey: String
+    ) -> Bool {
+        do {
+            // TODO: check if we should delete session if it exists before creating new one
+            let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
+
+            try proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
+            let fingerprint = try proteusService.remoteFingerprint(forSession: proteusSessionId)
+            client.fingerprint = fingerprint.utf8Data
+            return true
+        } catch {
+            zmLog.error("Cannot create session for prekey \(preKey): \(String(describing: error))")
+            return false
+        }
+    }
+
+    private func establishSession(through keystore: UserClientKeysStore,
+                                  client: UserClient,
+                                  sessionId: EncryptionSessionIdentifier,
+                                  preKey: String
+    ) -> Bool {
 
         var didEstablishSession = false
 
-        // TODO: [John] use flag here
-        keysStore.encryptionContext.perform { (sessionsDirectory) in
+        keystore.encryptionContext.perform { (sessionsDirectory) in
 
             // Session is already established?
-            if sessionsDirectory.hasSession(for: sessionIdentifier) {
-                zmLog.debug("Session with \(sessionIdentifier) was already established, re-creating")
-                sessionsDirectory.delete(sessionIdentifier)
+            if sessionsDirectory.hasSession(for: sessionId) {
+                zmLog.debug("Session with \(sessionId) was already established, re-creating")
+                sessionsDirectory.delete(sessionId)
             }
         }
 
@@ -620,11 +676,10 @@ public extension UserClient {
         // if at the end of the block the session is still there. Just to be safe, I split the operations
         // in two separate `perform` blocks.
 
-        // TODO: [John] use flag here
-        keysStore.encryptionContext.perform { (sessionsDirectory) in
+        keystore.encryptionContext.perform { (sessionsDirectory) in
             do {
-                try sessionsDirectory.createClientSession(sessionIdentifier, base64PreKeyString: preKey)
-                client.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
+                try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
+                client.fingerprint = sessionsDirectory.fingerprint(for: sessionId)
                 didEstablishSession = true
             } catch {
                 zmLog.error("Cannot create session for prekey \(preKey)")

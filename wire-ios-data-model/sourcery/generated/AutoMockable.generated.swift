@@ -357,4 +357,19 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         try mock(url)
     }
 
+    // MARK: - performBatchedOperations
+
+    public var performBatchedOperations_Invocations: [() throws -> Void] = []
+    public var performBatchedOperations_MockMethod: ((@escaping () throws -> Void) -> Void)?
+
+    public func performBatchedOperations(_ block: @escaping () throws -> Void) {
+        performBatchedOperations_Invocations.append(block)
+
+        guard let mock = performBatchedOperations_MockMethod else {
+            fatalError("no mock for `performBatchedOperations`")
+        }
+
+        mock(block)
+    }
+
 }

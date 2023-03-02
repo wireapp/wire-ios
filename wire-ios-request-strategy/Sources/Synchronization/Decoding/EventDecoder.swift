@@ -135,32 +135,32 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         startingAtIndex startIndex: Int64
     ) -> [ZMUpdateEvent] {
-        var decryptedEvents: [ZMUpdateEvent] = []
+        var decryptedEvents = [ZMUpdateEvent]()
+        let proteusService = syncMOC.proteusService!
 
-        // TODO: get core crypto lock
-        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-            switch event.type {
-            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                let proteusService = syncMOC.proteusService!
+        proteusService.performBatchedOperations {
+            decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+                switch event.type {
+                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try proteusService.decrypt(
+                            data: encryptedData,
+                            forSession: sessionID
+                        )
+                    }
 
-                return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    try proteusService.decrypt(
-                        data: encryptedData,
-                        forSession: sessionID
-                    )
+                case .conversationMLSMessageAdd:
+                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+                default:
+                    return event
                 }
-
-            case .conversationMLSMessageAdd:
-                return self.decryptMlsMessage(from: event, context: self.syncMOC)
-
-            default:
-                return event
             }
-        }
 
-        // This call has to be synchronous to ensure that we close the
-        // encryption context only if we stored all events in the database.
-        storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+            // This call has to be synchronous to ensure that we close the
+            // encryption context only if we stored all events in the database.
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+        }
 
         return decryptedEvents
     }

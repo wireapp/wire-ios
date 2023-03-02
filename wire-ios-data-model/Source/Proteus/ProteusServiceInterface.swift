@@ -59,6 +59,13 @@ public protocol ProteusServiceInterface {
     func fingerprint(fromPrekey prekey: String) throws -> String
     func migrateCryptoboxSessions(at url: URL) throws
 
+    /// Acquire safe Core Crypto access during across the lifetime of the given block.
+    ///
+    /// - Parameters:
+    ///   - block: A closure to perform some work needing safe Core Crypto access.
+
+    func performBatchedOperations(_ block: @escaping () throws -> Void) rethrows
+
 }
 
 public typealias IdPrekeyTuple = (id: UInt16, prekey: String)
