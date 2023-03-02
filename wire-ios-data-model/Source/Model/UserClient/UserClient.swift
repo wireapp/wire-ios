@@ -667,13 +667,6 @@ public extension UserClient {
         }
     }
 
-    var proteusProvider: ProteusProviding? {
-        if let context = self.managedObjectContext?.zm_sync {
-            return ProteusProvider(context: context)
-        }
-        return nil
-    }
-
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
