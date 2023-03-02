@@ -28,12 +28,16 @@ class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
         self.coreCrypto = coreCrypto
     }
 
+    var performCount = 0
     func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(coreCrypto)
+        performCount += 1
+        return try block(coreCrypto)
     }
 
+    var unsafePerformCount = 0
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(coreCrypto)
+        unsafePerformCount += 1
+        return try block(coreCrypto)
     }
 
     var mockMlsInit: ((String) throws -> Void)?
