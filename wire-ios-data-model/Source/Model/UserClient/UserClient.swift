@@ -669,7 +669,7 @@ public extension UserClient {
             return
         }
 
-        try ProteusProvider(context: context).perform(
+        try context.proteusProvider.perform(
             withProteusService: { proteusService in
                 try proteusService.deleteSession(id: sessionID)
             },

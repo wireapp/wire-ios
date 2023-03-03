@@ -230,7 +230,7 @@ extension GenericMessage {
 
         var encryptedData: Data?
 
-        ProteusProvider(context: context).perform(
+        context.proteusProvider.perform(
             withProteusService: { proteusService in
                 encryptedData = encrypt(
                     using: proteusService,
@@ -274,7 +274,7 @@ extension GenericMessage {
         let messageRecipients = recipients.mapToDictionary { $0.clients }
         var encryptedData: Data?
 
-        ProteusProvider(context: context).perform(
+        context.proteusProvider.perform(
             withProteusService: { proteusService in
                 encryptedData = encrypt(
                     using: proteusService,
@@ -313,7 +313,7 @@ extension GenericMessage {
         let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClients
         var encryptedData: Data?
 
-        ProteusProvider(context: context).perform(
+        context.proteusProvider.perform(
             withProteusService: { proteusService in
                 encryptedData = encrypt(
                     using: proteusService,
@@ -768,7 +768,7 @@ extension GenericMessage {
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: keys))
         var encryptedData: Data?
 
-        ProteusProvider(context: context).perform(
+        context.proteusProvider.perform(
             withProteusService: { proteusService in
                 encryptedData = externalGenericMessage.encrypt(
                     using: proteusService,
