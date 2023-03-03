@@ -970,9 +970,10 @@ extension UserClient {
 
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
         guard
-            let domain = self.user?.domain,
-            let userIdentifier = self.user?.remoteIdentifier,
-            let clientIdentifier = self.remoteIdentifier
+            let user = user,
+            let domain = user.domain ?? BackendInfo.domain,
+            let userIdentifier = user.remoteIdentifier,
+            let clientIdentifier = remoteIdentifier
         else {
             return nil
         }
