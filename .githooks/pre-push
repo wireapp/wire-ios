@@ -38,7 +38,7 @@ else
 	exit 1
 fi
 
-RESULT=$($LINT lint --quiet --config .swiftlint.yml)
+RESULT=$($LINT lint --config .swiftlint.yml)
 
 if [ -z "$RESULT" ]; then
 	printf "SwiftLint Finished.\n"
