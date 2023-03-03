@@ -984,7 +984,7 @@ extension UserClient {
 
     /// Migrates from old session identifier to new session identifier if needed.
 
-    public func migrateSessionIdentifierFromV1IfNeeded_Legacy(sessionDirectory: EncryptionSessionsDirectory) {
+    public func migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
             let sessionIdentifier_V1 = sessionIdentifier_V1,
             let sessionIdentifier = sessionIdentifier_V2
@@ -992,13 +992,11 @@ extension UserClient {
             return
         }
 
-        sessionDirectory.migrateSession(
-            from: sessionIdentifier_V1,
-            to: sessionIdentifier
-        )
+        sessionDirectory.migrateSession(from: sessionIdentifier_V1,
+                                        to: sessionIdentifier)
     }
 
-    public func migrateSessionIdentifierFromV2IfNeeded_Legacy(sessionDirectory: EncryptionSessionsDirectory) {
+    public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
             let sessionIdentifier_V2 = sessionIdentifier_V2,
             let sessionIdentifier = sessionIdentifier_V3
@@ -1006,10 +1004,8 @@ extension UserClient {
             return
         }
 
-        sessionDirectory.migrateSession(
-            from: sessionIdentifier_V2.rawValue,
-            to: sessionIdentifier
-        )
+        sessionDirectory.migrateSession(from: sessionIdentifier_V2.rawValue,
+                                        to: sessionIdentifier)
     }
 }
 
