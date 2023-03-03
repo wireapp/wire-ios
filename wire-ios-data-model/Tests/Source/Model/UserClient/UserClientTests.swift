@@ -1138,7 +1138,7 @@ extension UserClientTests {
 
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 // when
-                otherClient.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: sessionsDirectory)
+                otherClient.migrateSessionIdentifierFromV2IfNeeded_Legacy(sessionDirectory: sessionsDirectory)
 
                 // then
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v2SessionIdentifier))
@@ -1185,7 +1185,7 @@ extension UserClientTests {
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
 
                 // when
-                otherClient.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: sessionsDirectory)
+                otherClient.migrateSessionIdentifierFromV2IfNeeded_Legacy(sessionDirectory: sessionsDirectory)
 
                 // then
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))

@@ -39,7 +39,7 @@ extension UserClient {
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { session in
                     for client in allClients {
-                        client.migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: session)
+                        client.migrateSessionIdentifierFromV1IfNeeded_Legacy(sessionDirectory: session)
                         client.needsSessionMigration = false
                     }
                 }
@@ -62,7 +62,7 @@ extension UserClient {
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { session in
                     for client in allClients {
-                        client.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: session)
+                        client.migrateSessionIdentifierFromV2IfNeeded_Legacy(sessionDirectory: session)
                         client.needsSessionMigration = false
                     }
                 }
