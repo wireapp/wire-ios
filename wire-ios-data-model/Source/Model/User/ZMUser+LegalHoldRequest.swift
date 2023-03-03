@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCryptobox
 
 private let log = ZMSLog(tag: "UserClient")
 
@@ -31,6 +32,9 @@ public protocol SelfLegalHoldSubject {
 
     /// Whether the user needs to acknowledge the current legal hold status.
     var needsToAcknowledgeLegalHoldStatus: Bool { get }
+
+    /// The legal hold client's fingerprint.
+    var fingerprint: String? { get }
 
     /// Call this method a pending legal hold request was cancelled
     func legalHoldRequestWasCancelled()
@@ -270,6 +274,48 @@ extension ZMUser: SelfLegalHoldSubject {
 
     public func acknowledgeLegalHoldStatus() {
         needsToAcknowledgeLegalHoldStatus = false
+    }
+
+    // MARK: - Fingerprint
+
+    public var fingerprint: String? {
+        guard let syncContext = managedObjectContext?.zm_sync else { return nil }
+
+        var fingerprint: String?
+        syncContext.performAndWait {
+            guard let proteusProvider = syncContext.proteusProvider else {
+                log.error("Could not access proteusProvider")
+                return
+            }
+
+            fingerprint = proteusProvider.perform(withProteusService: { proteusService in
+                return fetchFingerprint(through: proteusService)
+            }, withKeyStore: { keyStore in
+                return fetchFingerprint(through: keyStore)
+            })
+        }
+        return fingerprint
+    }
+
+    private func fetchFingerprint(through proteusService: ProteusServiceInterface) -> String? {
+        guard let preKey = legalHoldRequest?.lastPrekey else {
+            return nil
+        }
+
+        do {
+            return try proteusService.fingerprint(fromPrekey: preKey.key.base64EncodedString())
+        } catch {
+            log.error("Could not fetch fingerprint for \(self)")
+            return nil
+        }
+    }
+
+    private func fetchFingerprint(through keystore: UserClientKeysStore) -> String? {
+        guard 
+            let preKey = legalHoldRequest?.lastPrekey,
+            let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) 
+        else { return nil }
+        return String(data: fingerprintData, encoding: .utf8)
     }
 
 }

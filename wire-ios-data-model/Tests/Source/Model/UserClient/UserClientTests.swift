@@ -1158,6 +1158,80 @@ extension UserClientTests {
         }
     }
 
+    func test_itLoadsLocalFingerprintForSelfClient_proteusViaCoreCryptoFlagEnabled() {
+
+        // GIVEN
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        proteusViaCoreCrypto.isOn = true
+        var selfClient: UserClient!
+        let localFingerprint: String = "test"
+
+        self.syncMOC.performGroupedBlockAndWait {
+            let mockProteusService = MockProteusServiceInterface()
+            mockProteusService.localFingerprintForSession_MockMethod = {_ in
+                return localFingerprint
+            }
+            self.syncMOC.proteusService = mockProteusService
+
+            selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            selfClient.fingerprint = .none
+
+            self.syncMOC.saveOrRollback()
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.05))
+
+        // WHEN
+        self.syncMOC.performGroupedBlockAndWait {
+            selfClient.fetchFingerprintOrPrekeys()
+        }
+
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(selfClient.fingerprint!, localFingerprint.utf8Data)
+        }
+
+        // Cleanup
+        proteusViaCoreCrypto.isOn = false
+    }
+
+    func test_itLoadsRemoteFingerprintForOtherClient_proteusViaCoreCryptoFlagEnabled() {
+        // GIVEN
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        proteusViaCoreCrypto.isOn = true
+        let context = self.syncMOC
+        let prekey = "test".utf8Data!.base64String()
+        let remoteFingerprint: String = "fingerprint"
+
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in }
+
+        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
+            return remoteFingerprint
+        }
+
+        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
+        mock.useProteusService = true
+
+        var sut: UserClient!
+        var clientB: UserClient!
+
+        context.performGroupedBlock {
+            sut = self.createSelfClient(onMOC: context)
+            let userB = self.createUser(in: context)
+            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
+            clientB.fingerprint = .none
+
+            // WHEN
+            let _ = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
+
+            // THEN
+            XCTAssertEqual(clientB.fingerprint!, remoteFingerprint.utf8Data)
+        }
+
+        // Cleanup
+        proteusViaCoreCrypto.isOn = false
+    }
+
     private func spyForTests() -> SpyUserClientKeyStore {
         let url = self.createTempFolder()
         return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
