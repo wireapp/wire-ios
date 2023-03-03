@@ -20,7 +20,6 @@ import Foundation
 import UIKit
 
 extension ColorScheme {
-
     func isCurrentAccentColor(_ accentColor: UIColor) -> Bool {
         return self.accentColor == accentColor
     }
