@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 
 extension MockUserType: SelfLegalHoldSubject {
 
@@ -33,14 +32,6 @@ extension MockUserType: SelfLegalHoldSubject {
 
     var needsToAcknowledgeLegalHoldStatus: Bool {
         return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
-    }
-
-    public var fingerprint: String? {
-        guard let preKey = legalHoldDataSource.legalHoldRequest?.lastPrekey,
-              let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) else {
-                  return nil
-              }
-        return String(data: fingerprintData, encoding: .utf8)
     }
 
     func legalHoldRequestWasCancelled() {
