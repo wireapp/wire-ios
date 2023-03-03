@@ -39,7 +39,7 @@ extension IntegrationTest {
         self.encryptionContext(for: sender).perform { (session) in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
                 // TODO: [John] use flag here
-                guard let lastPrekey = try? selfClient.keysStore.lastPreKey() else {
+                guard let lastPrekey = try? userSession!.syncContext.zm_cryptKeyStore.lastPreKey() else {
                     fatalError("Can't get prekey for self user")
                 }
                 try! session.createClientSession(selfClient.sessionIdentifier!, base64PreKeyString: lastPrekey)
@@ -73,7 +73,7 @@ extension IntegrationTest {
         }
 
         // TODO: [John] use flag here
-        selfClient.keysStore.encryptionContext.perform { (session) in
+        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
             try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
         }
     }
