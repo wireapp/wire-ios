@@ -21,7 +21,35 @@ import WireCryptobox
 
 extension NSManagedObjectContext {
 
-    fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
+    private static let AccountDirectoryURLKey = "AccountDirectoryURLKey"
+
+    public var accountDirectoryURL: URL? {
+        get {
+            precondition(zm_isSyncContext, "accountDirectoryURL should only be accessed on the sync context")
+            return userInfo[Self.AccountDirectoryURLKey] as? URL
+        }
+
+        set {
+            precondition(zm_isSyncContext, "accountDirectoryURL should only be accessed on the sync context")
+            userInfo[Self.AccountDirectoryURLKey] = newValue
+        }
+    }
+
+    private static let ApplicationContainerURLKey = "ApplicationContainerURLKey"
+
+    public var applicationContainerURL: URL? {
+        get {
+            precondition(zm_isSyncContext, "applicationContainerURL should only be accessed on the sync context")
+            return userInfo[Self.ApplicationContainerURLKey] as? URL
+        }
+
+        set {
+            precondition(zm_isSyncContext, "applicationContainerURL should only be accessed on the sync context")
+            userInfo[Self.ApplicationContainerURLKey] = newValue
+        }
+    }
+
+    private static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
 
     @objc(setupUserKeyStoreInAccountDirectory:applicationContainer:)
     public func setupUserKeyStore(accountDirectory: URL, applicationContainer: URL) {
