@@ -33,8 +33,11 @@ extension UserClient {
         }
 
         moc.proteusProvider.perform(
-            withProteusService: { proteusService in
-                // TODO: migrate v1 to v2
+            withProteusService: { _ in
+                for client in allClients {
+                    client.migrateProteusSessionIDFromV1IfNeeded()
+                    client.needsSessionMigration = false
+                }
             },
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { session in
@@ -56,8 +59,11 @@ extension UserClient {
         }
 
         moc.proteusProvider.perform(
-            withProteusService: { proteusService in
-                // TODO: migrate v2 to v3
+            withProteusService: { _ in
+                for client in allClients {
+                    client.migrateProteusSessionIDFromV2IfNeeded()
+                    client.needsSessionMigration = false
+                }
             },
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { session in
