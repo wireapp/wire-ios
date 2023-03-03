@@ -165,7 +165,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         // Fetch fingerprint if not there yet (could remain nil after fetch)
         if let managedObjectContext = self.managedObjectContext,
            self.remoteIdentifier != nil, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
-            self.fingerprint = self.fetchFingerprint()
+            self.fingerprint = self.remoteFingerprint()
         }
     }
 
@@ -449,13 +449,10 @@ public extension UserClient {
 
             // We could already set local fingerprint if user is self
             if client.remoteIdentifier == selfClient.remoteIdentifier {
-                // TODO: [John] use flag here
-                client.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                    client.fingerprint = sessionsDirectory.localFingerprint
-                    if client.fingerprint == nil {
-                        zmLog.error("Cannot fetch local fingerprint for \(client)")
-                    }
-                })
+                client.fingerprint = client.localFingerprint()
+                if client.fingerprint == nil {
+                    zmLog.error("Cannot fetch local fingerprint for \(client)")
+                }
             }
         }
 
@@ -503,37 +500,101 @@ public extension UserClient {
         syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
             guard let obj = try? syncMOC.existingObject(with: selfObjectID),
                   let syncClient = obj as? UserClient,
-                  let sessionIdentifier = syncClient.sessionIdentifier,
                   let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
             else { return }
 
             if syncSelfClient == syncClient {
-                // TODO: [John] use flag here
-                syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                    syncClient.fingerprint = sessionsDirectory.localFingerprint
-                    syncMOC.saveOrRollback()
-                })
-            }
-            else {
+                syncClient.fingerprint = syncClient.localFingerprint()
+                syncMOC.saveOrRollback()
+            } else {
                 if !syncClient.hasSessionWithSelfClient {
                     syncSelfClient.missesClient(syncClient)
                     syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
                     syncMOC.saveOrRollback()
                 }
                 else {
-                    // TODO: [John] use flag here
-                    syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                        syncClient.fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
-                        if syncClient.fingerprint == nil {
-                            zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")
-                        } else {
-                            syncMOC.saveOrRollback()
-                        }
-                    })
+                    syncClient.fingerprint = syncClient.remoteFingerprint()
+                    guard syncClient.fingerprint != nil else {
+                        zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")
+                        return
+                    }
+                    syncMOC.saveOrRollback()
                 }
             }
         })
     }
+
+}
+
+// MARK: - Fetch fingerprint
+
+extension UserClient {
+
+    private func remoteFingerprint() -> Data? {
+        guard let syncContext = managedObjectContext?.zm_sync,
+              let proteusProvider = syncContext.proteusProvider,
+              let sessionIdentifier = self.sessionIdentifier
+        else {
+            return nil
+        }
+
+        var fingerprintData: Data? = nil
+
+        proteusProvider.perform(
+            withProteusService: { proteusService in
+                guard let proteusSessionID = self.proteusSessionID else {
+                    return
+                }
+
+                do {
+                    let fingerprint = try proteusService.remoteFingerprint(forSession: proteusSessionID)
+                    fingerprintData = fingerprint.utf8Data
+                } catch {
+                    zmLog.error("Cannot fetch remote fingerprint for \(self)")
+                }
+            },
+
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform({ (sessionsDirectory) in
+                    fingerprintData = sessionsDirectory.fingerprint(for: sessionIdentifier)
+                })
+            }
+        )
+
+        return fingerprintData
+    }
+
+    private func localFingerprint() -> Data? {
+        guard let syncContext = managedObjectContext?.zm_sync,
+              let proteusProvider = syncContext.proteusProvider
+        else {
+            return nil
+        }
+
+        var fingerprintData: Data? = nil
+
+        proteusProvider.perform(
+            withProteusService: { proteusService in
+                guard let proteusSessionID = self.proteusSessionID else {
+                    return
+                }
+                do {
+                    let fingerprint = try proteusService.localFingerprint(forSession: proteusSessionID)
+                    fingerprintData = fingerprint.utf8Data
+                } catch {
+                    zmLog.error("Cannot fetch local fingerprint for \(self)")
+                }
+            },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform({ (sessionsDirectory) in
+                    fingerprintData = sessionsDirectory.localFingerprint
+                })
+            }
+        )
+
+        return fingerprintData
+    }
+
 }
 
 // MARK: - Corrupted Session
@@ -598,13 +659,6 @@ public extension UserClient {
         }
     }
 
-    var proteusProvider: ProteusProviding? {
-        if let context = self.managedObjectContext?.zm_sync {
-            return ProteusProvider(context: context)
-        }
-        return nil
-    }
-
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
@@ -629,7 +683,9 @@ public extension UserClient {
     }
 
     func establishSessionWithClient(_ client: UserClient, usingPreKey preKey: String) -> Bool {
-        guard let proteusProvider = proteusProvider else {
+        guard let syncContext = managedObjectContext?.zm_sync,
+              let proteusProvider = syncContext.proteusProvider
+        else {
             return false
         }
         return establishSessionWithClient(client, usingPreKey: preKey, proteusProviding: proteusProvider)
@@ -687,16 +743,6 @@ public extension UserClient {
         }
 
         return didEstablishSession
-    }
-
-    fileprivate func fetchFingerprint() -> Data? {
-        var fingerprint: Data?
-        // TODO: [John] use flag here
-        keysStore.encryptionContext.perform { [weak self] (sessionsDirectory) in
-            guard let strongSelf = self, let sessionIdentifier = strongSelf.sessionIdentifier else { return }
-            fingerprint = sessionsDirectory.fingerprint(for: sessionIdentifier)
-        }
-        return fingerprint
     }
 
     /// Use this method only for the selfClient
