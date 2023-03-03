@@ -252,7 +252,7 @@
         [self performPretendingUiMocIsSyncMoc:^{
             NSError *error;
             // TODO: [John] use flag here
-            NSString *key = [selfClient.keysStore lastPreKeyAndReturnError:&error];
+            NSString *key = [moc.zm_cryptKeyStore lastPreKeyAndReturnError:&error];
             NOT_USED([selfClient establishSessionWithClient:userClient usingPreKey:key]);
         }];
     }

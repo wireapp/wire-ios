@@ -283,16 +283,14 @@ extension ZMUser: SelfLegalHoldSubject {
 
         var fingerprint: String?
         syncContext.performAndWait {
-            guard let proteusProvider = syncContext.proteusProvider else {
-                log.error("Could not access proteusProvider")
-                return
-            }
-
-            fingerprint = proteusProvider.perform(withProteusService: { proteusService in
-                return fetchFingerprint(through: proteusService)
-            }, withKeyStore: { keyStore in
-                return fetchFingerprint(through: keyStore)
-            })
+            fingerprint = syncContext.proteusProvider.perform(
+                withProteusService: { proteusService in
+                    fetchFingerprint(through: proteusService)
+                },
+                withKeyStore: { keyStore in
+                    fetchFingerprint(through: keyStore)
+                }
+            )
         }
         return fingerprint
     }

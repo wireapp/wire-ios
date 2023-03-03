@@ -17,11 +17,10 @@
 //
 
 import Foundation
-import CoreCryptoSwift
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
-    public var proteusProvider: ProteusProviding? {
+    var proteusProvider: ProteusProviding {
         precondition(zm_isSyncContext, "ProteusProvider should only be accessed on the sync context")
         return ProteusProvider(context: self)
     }
