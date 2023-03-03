@@ -1061,43 +1061,4 @@ extension UserClient {
         )
     }
 
-    /// Migrates from old session identifier to new session identifier if needed.
-
-    public func migrateProteusSessionIDFromV1IfNeeded() {
-        guard
-            let proteusSessionID_V1 = proteusSessionID_V1,
-            let proteusSessionID_V2 = proteusSessionID_V2
-        else {
-            return
-        }
-
-        migrateSession(
-            from: proteusSessionID_V1,
-            to: proteusSessionID_V2
-        )
-    }
-
-    /// Migrates from old session identifier to new session identifier if needed.
-
-    public func migrateProteusSessionIDFromV2IfNeeded() {
-        guard
-            let proteusSessionID_V2 = proteusSessionID_V2,
-            let proteusSessionID_V3 = proteusSessionID_V3
-        else {
-            return
-        }
-
-        migrateSession(
-            from: proteusSessionID_V2,
-            to: proteusSessionID_V3
-        )
-    }
-
-    private func migrateSession(
-        from oldID: ProteusSessionID,
-        to newID: ProteusSessionID
-    ) {
-        // TODO: implement
-    }
-
 }
