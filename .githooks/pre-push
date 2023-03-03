@@ -31,34 +31,34 @@ export PATH=/usr/local/bin:$PATH
 LINT=$(command -v swiftlint)
 
 if [[ -e "${LINT}" ]]; then
-	echo "SwiftLint Start..."
-	echo "$PWD"
+    echo "SwiftLint Start..."
+    echo "$PWD"
 else
-	echo "SwiftLint does not exist, download from https://github.com/realm/SwiftLint"
-	exit 1
+    echo "SwiftLint does not exist, download from https://github.com/realm/SwiftLint"
+    exit 1
 fi
 
-RESULT=$($LINT lint --config .swiftlint.yml)
+RESULT=$($LINT --fix)
 
 if [ -z "$RESULT" ]; then
-	printf "SwiftLint Finished.\n"
+    printf "SwiftLint Finished.\n"
 else
-	echo ""
-	printf "SwiftLint Failed. Please check below:\n"
+    echo ""
+    printf "SwiftLint Failed. Please check below:\n"
 
-	while read -r line; do
-		FILEPATH=$(echo "$line" | cut -d : -f 1)
-		L=$(echo "$line" | cut -d : -f 2)
-		C=$(echo "$line" | cut -d : -f 3)
-		TYPE=$(echo "$line" | cut -d : -f 4 | cut -c 2-)
-		MESSAGE=$(echo "$line" | cut -d : -f 5 | cut -c 2-)
-		DESCRIPTION=$(echo "$line" | cut -d : -f 6 | cut -c 2-)
-		printf '\n %s\n' "$TYPE"
-		echo "    $FILEPATH:$L:$C"
-		echo "    $MESSAGE - $DESCRIPTION"
-	done <<< "$RESULT"
+    while read -r line; do
+        FILEPATH=$(echo "$line" | cut -d : -f 1)
+        L=$(echo "$line" | cut -d : -f 2)
+        C=$(echo "$line" | cut -d : -f 3)
+        TYPE=$(echo "$line" | cut -d : -f 4 | cut -c 2-)
+        MESSAGE=$(echo "$line" | cut -d : -f 5 | cut -c 2-)
+        DESCRIPTION=$(echo "$line" | cut -d : -f 6 | cut -c 2-)
+        printf '\n %s\n' "$TYPE"
+        echo "    $FILEPATH:$L:$C"
+        echo "    $MESSAGE - $DESCRIPTION"
+    done <<< "$RESULT"
 
-	printf "\nCOMMIT ABORTED. Please fix them before commiting.\n"
+    printf "\nCOMMIT ABORTED. Please fix them before commiting.\n"
 
-	exit 1
+    exit 1
 fi
