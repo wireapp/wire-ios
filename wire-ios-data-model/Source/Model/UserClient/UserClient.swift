@@ -1046,8 +1046,9 @@ extension UserClient {
 
     private var proteusSessionID_V3: ProteusSessionID? {
         guard
-            let domain = user?.domain,
-            let userID = user?.remoteIdentifier,
+            let user = user,
+            let domain = user.domain ?? BackendInfo.domain,
+            let userID = user.remoteIdentifier,
             let clientID = remoteIdentifier
         else {
             return nil
