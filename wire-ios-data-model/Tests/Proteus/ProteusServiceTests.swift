@@ -203,6 +203,41 @@ class ProteusServiceTests: XCTestCase {
 
         XCTAssertEqual(encryptCalls, 1)
     }
+
+    // MARK: - Session deletion
+
+    func test_DeleteSession_Success() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+
+        // Mock
+        var sessionDeleteCalls = [String]()
+        mockCoreCrypto.mockProteusSessionDelete = {
+            sessionDeleteCalls.append($0)
+        }
+
+        // When
+        try sut.deleteSession(id: sessionID)
+
+        // Then
+        XCTAssertEqual(sessionDeleteCalls, [sessionID.rawValue])
+    }
+
+    func test_DeleteSession_Failure() throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+
+        // Mock
+        mockCoreCrypto.mockProteusSessionDelete = { _ in
+            throw MockError()
+        }
+
+        // Then
+        assertItThrows(error: ProteusService.DeleteSessionError.failedToDeleteSession) {
+            // When
+            try sut.deleteSession(id: sessionID)
+        }
+    }
     
     // MARK: - Batched operations
 
