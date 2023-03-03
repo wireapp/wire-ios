@@ -66,7 +66,7 @@ final class FolderPickerViewController: UIViewController {
     }
 
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        return overrideUserInterfaceStyle == .light ? .compatibleDarkContent : .lightContent
+        return overrideUserInterfaceStyle == .light ? .darkContent : .lightContent
     }
 
     private func configureNavbar() {
