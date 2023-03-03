@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,9 @@
 
 import Foundation
 import WireDataModel
-import CoreCryptoSwift
-import WireSystem
+import WireUtilities
 
-private let logger = ZMSLog(tag: "mls")
-
-extension SharingSession {
+extension NotificationSession {
 
     func setUpCoreCryptoStack(
         sharedContainerURL: URL,
@@ -48,7 +45,7 @@ extension SharingSession {
 
                 // TODO: Check flag
                 if syncContext.mlsController == nil {
-                    syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
+                    syncContext.mlsController = MLSDecryptionController(coreCrypto: safeCoreCrypto)
                 }
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
