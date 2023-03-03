@@ -55,7 +55,7 @@ public class CoreCryptoConfigProvider {
 
         let initialConfig = try createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
-            selfUser: selfUser
+            userID: selfUser.remoteIdentifier
         )
 
         return CoreCryptoConfiguration(
@@ -67,11 +67,11 @@ public class CoreCryptoConfigProvider {
 
     public func createInitialConfiguration(
         sharedContainerURL: URL,
-        selfUser: ZMUser
+        userID: UUID
     ) throws -> (path: String, key: String) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
-            accountIdentifier: selfUser.remoteIdentifier,
+            accountIdentifier: userID,
             applicationContainer: sharedContainerURL
         )
 
