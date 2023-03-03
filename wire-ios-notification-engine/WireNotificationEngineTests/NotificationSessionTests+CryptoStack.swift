@@ -16,13 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import WireNotificationEngine
+import XCTest
 import Foundation
+import WireUtilities
 
-public extension NSManagedObjectContext {
+class NotificationSessionTests_CryptoStack: BaseTest {
 
-    var proteusProvider: ProteusProviding {
-        precondition(zm_isSyncContext, "ProteusProvider should only be accessed on the sync context")
-        return ProteusProvider(context: self)
+    func test_CryptoStackSetup_OnInit() throws {
+        // GIVEN
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = true
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createNotificationSession()
+
+        // THEN
+        XCTAssertNotNil(context.mlsController)
+        XCTAssertNotNil(context.proteusService)
+        XCTAssertNotNil(context.coreCrypto)
+
+        flag.isOn = false
     }
 
 }

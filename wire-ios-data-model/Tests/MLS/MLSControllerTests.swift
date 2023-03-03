@@ -25,6 +25,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
     var sut: MLSController!
     var mockCoreCrypto: MockCoreCrypto!
+    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSyncStatus: MockSyncStatus!
     var mockActionsProvider: MockMLSActionsProvider!
@@ -37,6 +38,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockMLSActionExecutor = MockMLSActionExecutor()
         mockSyncStatus = MockSyncStatus()
         mockActionsProvider = MockMLSActionsProvider()
@@ -50,7 +52,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         sut = MLSController(
             context: uiMOC,
-            coreCrypto: mockCoreCrypto,
+            coreCrypto: mockSafeCoreCrypto,
             mlsActionExecutor: mockMLSActionExecutor,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
@@ -137,7 +139,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // When
         let sut = MLSController(
             context: uiMOC,
-            coreCrypto: mockCoreCrypto,
+            coreCrypto: mockSafeCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
@@ -1285,7 +1287,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // When
         let sut = MLSController(
             context: uiMOC,
-            coreCrypto: mockCoreCrypto,
+            coreCrypto: mockSafeCoreCrypto,
             mlsActionExecutor: mockMLSActionExecutor,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
@@ -1373,7 +1375,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // When
         let sut = MLSController(
             context: uiMOC,
-            coreCrypto: mockCoreCrypto,
+            coreCrypto: mockSafeCoreCrypto,
             mlsActionExecutor: mockMLSActionExecutor,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,

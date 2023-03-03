@@ -24,18 +24,30 @@ import WireMockTransport
 import CoreCryptoSwift
 @testable import WireShareEngine
 
-class SharingSessionTestsMLS: BaseTest {
+class SharingSessionTestsCryptoStack: BaseTest {
 
-    func test_ItSetsUpMLSController_OnInit() throws {
+    func test_CryptoStackSetup_OnInit() throws {
         // GIVEN
-        XCTAssertNil(coreDataStack.syncContext.mlsController)
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = true
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
 
         // WHEN
         _ = try createSharingSession()
 
         // THEN
-        XCTAssertNotNil(coreDataStack.syncContext.mlsController)
+        XCTAssertNotNil(context.mlsController)
+        XCTAssertNotNil(context.proteusService)
+        XCTAssertNotNil(context.coreCrypto)
+
+        flag.isOn = false
     }
+
 }
 
 class MockCoreCrypto: CoreCryptoProtocol {

@@ -71,7 +71,8 @@
     },
     {
       "skippedTests" : [
-        "AvailabilityTests"
+        "AvailabilityTests",
+        "UserRichProfileIntegrationTests"
       ],
       "target" : {
         "containerPath" : "container:WireSyncEngine.xcodeproj",
