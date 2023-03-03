@@ -145,7 +145,7 @@ extension MockUser {
     }
     
     // Nil if user is not part of a team
-    public var currentTeamMembers : [MockUser]? {
+    public var currentTeamMembers: [MockUser]? {
         return self.memberships?.first?.team.members.compactMap({ $0.user })
     }
     
