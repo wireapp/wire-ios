@@ -26,14 +26,16 @@ extension UserClient {
     static func migrateAllSessionsClientIdentifiersV2(in moc: NSManagedObjectContext) {
         let request = UserClient.sortedFetchRequest()
 
-        guard let selfClient = ZMUser.selfUser(in: moc).selfClient(),
-            let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-                // no client? no migration needed
-                return
+        guard
+            let allClients = moc.fetchOrAssert(request: request) as? [UserClient],
+            let keyStore = moc.zm_cryptKeyStore
+        else {
+            // no client? no migration needed
+            return
         }
 
         // TODO: [John] use flag here
-        selfClient.keysStore.encryptionContext.perform { (session) in
+        keyStore.encryptionContext.perform { session in
             for client in allClients {
                 client.migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: session)
                 client.needsSessionMigration = false
@@ -44,14 +46,16 @@ extension UserClient {
     static func migrateAllSessionsClientIdentifiersV3(in moc: NSManagedObjectContext) {
         let request = UserClient.sortedFetchRequest()
 
-        guard let selfClient = ZMUser.selfUser(in: moc).selfClient(),
-            let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-                // no client? no migration needed
-                return
+        guard
+            let allClients = moc.fetchOrAssert(request: request) as? [UserClient],
+            let keyStore = moc.zm_cryptKeyStore
+        else {
+            // no client? no migration needed
+            return
         }
 
         // TODO: [John] use flag here
-        selfClient.keysStore.encryptionContext.perform { (session) in
+        keyStore.encryptionContext.perform { session in
             for client in allClients {
                 client.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: session)
                 client.needsSessionMigration = false
