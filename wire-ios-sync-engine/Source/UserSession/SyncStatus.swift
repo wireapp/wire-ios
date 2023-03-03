@@ -32,6 +32,7 @@ extension Notification.Name {
     public internal (set) var currentSyncPhase: SyncPhase = .done {
         didSet {
             if currentSyncPhase != oldValue {
+                self.log()
                 zmLog.debug("did change sync phase: \(currentSyncPhase)")
                 notifySyncPhaseDidStart()
             }
@@ -110,13 +111,16 @@ extension Notification.Name {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Set the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        self.log("slow sync")
         syncStateDelegate.didStartSlowSync()
     }
 
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
+        self.log("quick sync")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
+
     }
 
 }
@@ -243,4 +247,26 @@ extension SyncStatus {
         }
     }
 
+    private func log(_ message: String? = nil) {
+        let info = SyncStatusLog(phase: currentSyncPhase.description,
+                                 isSyncing: isSyncing,
+                                 pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
+                                 message: message)
+        do {
+            let data = try JSONEncoder().encode(info)
+            let jsonString = String(data: data, encoding: .utf8)
+            let message = "SYNC_STATUS: \(jsonString ?? self.description)"
+            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .info)
+        } catch {
+            let message = "SYNC_STATUS: \(self.description)"
+            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .info)
+        }
+    }
+}
+
+struct SyncStatusLog: Codable {
+    var phase: String
+    var isSyncing: Bool
+    var pushChannelEstablishedDate: String?
+    var message: String?
 }
