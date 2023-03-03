@@ -20,6 +20,12 @@
 
 
 
+#!/bin/bash
+
+# Git Hook for SwiftLint
+# Runs at every commit and checks for an error.
+# For the test, you can run `git commit` with an empty` commit message`
+
 export PATH=/usr/local/bin:$PATH
 
 LINT=$(command -v swiftlint)
@@ -32,7 +38,7 @@ else
 	exit 1
 fi
 
-RESULT=$($LINT --fix .swiftlint.yml)
+RESULT=$($LINT lint --quiet --config .swiftlint.yml)
 
 if [ -z "$RESULT" ]; then
 	printf "SwiftLint Finished.\n"
