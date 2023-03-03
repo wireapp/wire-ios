@@ -3993,13 +3993,13 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "profile.block_dialog.title", fallback: "Block?")
       }
       internal enum CancelConnectionRequestDialog {
-        /// No
-        internal static let buttonNo = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.button_no", fallback: "No")
+        /// Cancel
+        internal static let buttonCancel = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.button_cancel", fallback: "Cancel")
         /// Yes
         internal static let buttonYes = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.button_yes", fallback: "Yes")
-        /// Cancel your connection request to %@?
+        /// Remove connection request to %@.
         internal static func message(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "profile.cancel_connection_request_dialog.message", String(describing: p1), fallback: "Cancel your connection request to %@?")
+          return L10n.tr("Localizable", "profile.cancel_connection_request_dialog.message", String(describing: p1), fallback: "Remove connection request to %@.")
         }
         /// Cancel Request?
         internal static let title = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.title", fallback: "Cancel Request?")
@@ -4031,8 +4031,14 @@ internal enum L10n {
         internal static let groupAdmin = L10n.tr("Localizable", "profile.details.group_admin", fallback: "Group admin")
         /// Guest
         internal static let guest = L10n.tr("Localizable", "profile.details.guest", fallback: "Guest")
+        /// Get certainty about %@’s identity before connecting.
+        internal static func identityWarning(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.")
+        }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")
+        /// Please verify the person's identity before accepting the connection request.
+        internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.")
         /// Details
         internal static let title = L10n.tr("Localizable", "profile.details.title", fallback: "Details")
       }

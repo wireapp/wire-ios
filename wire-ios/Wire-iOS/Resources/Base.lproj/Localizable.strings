@@ -847,8 +847,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Cancel Request?";
-"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
-"profile.cancel_connection_request_dialog.button_no" = "No";
+"profile.cancel_connection_request_dialog.message" = "Remove connection request to %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Cancel";
 "profile.cancel_connection_request_dialog.button_yes" = "Yes";
 
 // Unblock button
@@ -882,6 +882,8 @@
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
 
 // Device list
 "profile.devices.title" = "Devices";
