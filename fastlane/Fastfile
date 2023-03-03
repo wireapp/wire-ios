@@ -386,7 +386,7 @@ platform :ios do
                 # code_coverage: true,
                 derived_data_path: "DerivedData",
                 buildlog_path: build.build_path,
-                output_directory: "#{build.archive_path(with_filename: false)}/tests/#{scheme}",
+                output_directory: "artifacts/#{build.artifact_directory}/tests/#{scheme}",
                 output_types: "junit"
             )    
         end
