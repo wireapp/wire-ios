@@ -24,27 +24,27 @@ import CoreCryptoSwift
 extension ZMUserSession {
 
     enum CryptoStackSetupStage {
-        case proteus
+        case proteus(userID: UUID)
         case mls
     }
 
     func setupCryptoStack(stage: CryptoStackSetupStage) {
         switch stage {
-        case .proteus:
-            setupProteus()
+        case .proteus(let userID):
+            setupProteus(userID: userID)
         case .mls:
             setupMLS()
         }
     }
 
-    private func setupProteus() {
+    private func setupProteus(userID: UUID) {
         syncContext.performAndWait {
             let provider = CoreCryptoConfigProvider()
 
             do {
                 let configuration = try provider.createInitialConfiguration(
                     sharedContainerURL: sharedContainerURL,
-                    selfUser: .selfUser(in: syncContext)
+                    userID: userID
                 )
                 let coreCrypto = try SafeCoreCrypto(
                     path: configuration.path,

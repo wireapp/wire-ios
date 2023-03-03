@@ -70,7 +70,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             // WHEN
             let configuration = try self.sut.createInitialConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                selfUser: selfUser
+                userID: selfUser.remoteIdentifier
             )
 
             // THEN

@@ -270,7 +270,7 @@ public class ZMUserSession: NSObject {
         configureCaches()
 
         // Proteus needs to be setup before client registration starts
-        setupCryptoStack(stage: .proteus)
+        setupCryptoStack(stage: .proteus(userID: userId))
 
         syncManagedObjectContext.performGroupedBlockAndWait {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
