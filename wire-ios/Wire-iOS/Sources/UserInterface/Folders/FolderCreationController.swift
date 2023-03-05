@@ -80,10 +80,6 @@ final class FolderCreationController: UIViewController {
         nameSection.becomeFirstResponder()
     }
 
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
-        return overrideUserInterfaceStyle == .light ? .darkContent : .lightContent
-    }
-
     private func setupViews() {
         // TODO: if keyboard is open, it should scroll.
         let collectionView = UICollectionView(forGroupedSections: ())
