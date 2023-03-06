@@ -46,4 +46,31 @@ extension XCTestCase {
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         return url
     }
+
+    public typealias AsyncThrowingBlock = () async throws -> Void
+    public typealias ThrowingBlock = () throws -> Void
+    public typealias EquatableError = Error & Equatable
+
+    public func assertItThrows<T: EquatableError>(error expectedError: T, block: AsyncThrowingBlock) async {
+        do {
+            try await block()
+            XCTFail("No error was thrown")
+        } catch {
+            assertError(error, equals: expectedError)
+        }
+    }
+
+    public func assertItThrows<T: EquatableError>(error expectedError: T, block: ThrowingBlock) {
+        XCTAssertThrowsError(try block()) { error in
+            assertError(error, equals: expectedError)
+        }
+    }
+
+    public func assertError<T: EquatableError>(_ error: Error, equals expectedError: T) {
+        guard let error = error as? T else {
+            return XCTFail("Unexpected error: \(String(describing: error))")
+        }
+
+        XCTAssertEqual(error, expectedError)
+    }
 }
