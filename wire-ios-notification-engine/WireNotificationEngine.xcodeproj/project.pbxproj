@@ -24,6 +24,14 @@
 		EE761669299E60C9005DB75F /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		EEC80B3A29B5FE0B00099727 /* NotificationSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B3829B5FDEC00099727 /* NotificationSession+CoreCrypto.swift */; };
 		EEC80B3B29B5FE0F00099727 /* MLSDecryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B3929B5FDEC00099727 /* MLSDecryptionController.swift */; };
+		EEC80B4329B6053200099727 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4229B6053200099727 /* AppDelegate.swift */; };
+		EEC80B4529B6053200099727 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4429B6053200099727 /* SceneDelegate.swift */; };
+		EEC80B4729B6053200099727 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B4629B6053200099727 /* ViewController.swift */; };
+		EEC80B4A29B6053200099727 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4829B6053200099727 /* Main.storyboard */; };
+		EEC80B4C29B6053500099727 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4B29B6053500099727 /* Assets.xcassets */; };
+		EEC80B4F29B6053500099727 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEC80B4D29B6053500099727 /* LaunchScreen.storyboard */; };
+		EEC80B5729B6054A00099727 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; };
+		EEC80B5829B6054A00099727 /* WireMockTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC80B5629B6054A00099727 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,7 +42,28 @@
 			remoteGlobalIDString = 067ECB392487A93D00701956;
 			remoteInfo = WireNotificationEngine;
 		};
+		EEC80B5429B6053B00099727 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EEC80B3F29B6053200099727;
+			remoteInfo = WireNotificationEngineTestHost;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EEC80B5929B6054A00099727 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EEC80B5829B6054A00099727 /* WireMockTransport.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
@@ -70,6 +99,15 @@
 		EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEC80B3829B5FDEC00099727 /* NotificationSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationSession+CoreCrypto.swift"; sourceTree = "<group>"; };
 		EEC80B3929B5FDEC00099727 /* MLSDecryptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionController.swift; sourceTree = "<group>"; };
+		EEC80B4029B6053200099727 /* WireNotificationEngineTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireNotificationEngineTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC80B4229B6053200099727 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		EEC80B4429B6053200099727 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		EEC80B4629B6053200099727 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		EEC80B4929B6053200099727 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		EEC80B4B29B6053500099727 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EEC80B4E29B6053500099727 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		EEC80B5029B6053500099727 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EEC80B5629B6054A00099727 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,12 +127,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EEC80B3D29B6053200099727 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEC80B5729B6054A00099727 /* WireMockTransport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		060256312489322000E060E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EEC80B5629B6054A00099727 /* WireMockTransport.framework */,
 				EE67F6FB296F09A0001D7C88 /* WireTesting.framework */,
 				EE668BC52954BA4C00D939E7 /* WireRequestStrategy.framework */,
 			);
@@ -108,6 +155,7 @@
 				06604296247FE76A00A5F161 /* Sources */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
 				EE761670299E614B005DB75F /* WireNotificationEngineTests */,
+				EEC80B4129B6053200099727 /* WireNotificationEngineTestHost */,
 				06604295247FE76A00A5F161 /* Products */,
 				060256312489322000E060E1 /* Frameworks */,
 			);
@@ -120,6 +168,7 @@
 			children = (
 				067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */,
 				EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */,
+				EEC80B4029B6053200099727 /* WireNotificationEngineTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -221,6 +270,20 @@
 			path = CoreCrypto;
 			sourceTree = "<group>";
 		};
+		EEC80B4129B6053200099727 /* WireNotificationEngineTestHost */ = {
+			isa = PBXGroup;
+			children = (
+				EEC80B4229B6053200099727 /* AppDelegate.swift */,
+				EEC80B4429B6053200099727 /* SceneDelegate.swift */,
+				EEC80B4629B6053200099727 /* ViewController.swift */,
+				EEC80B4829B6053200099727 /* Main.storyboard */,
+				EEC80B4B29B6053500099727 /* Assets.xcassets */,
+				EEC80B4D29B6053500099727 /* LaunchScreen.storyboard */,
+				EEC80B5029B6053500099727 /* Info.plist */,
+			);
+			path = WireNotificationEngineTestHost;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -265,11 +328,30 @@
 			);
 			dependencies = (
 				EE76166B299E60C9005DB75F /* PBXTargetDependency */,
+				EEC80B5529B6053B00099727 /* PBXTargetDependency */,
 			);
 			name = WireNotificationEngineTests;
 			productName = WireNotificationEngineTests;
 			productReference = EE761665299E60C9005DB75F /* WireNotificationEngineTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EEC80B3F29B6053200099727 /* WireNotificationEngineTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEC80B5129B6053500099727 /* Build configuration list for PBXNativeTarget "WireNotificationEngineTestHost" */;
+			buildPhases = (
+				EEC80B3C29B6053200099727 /* Sources */,
+				EEC80B3D29B6053200099727 /* Frameworks */,
+				EEC80B3E29B6053200099727 /* Resources */,
+				EEC80B5929B6054A00099727 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WireNotificationEngineTestHost;
+			productName = WireNotificationEngineTestHost;
+			productReference = EEC80B4029B6053200099727 /* WireNotificationEngineTestHost.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -288,6 +370,10 @@
 					EE761664299E60C9005DB75F = {
 						CreatedOnToolsVersion = 13.2.1;
 						LastSwiftMigration = 1320;
+						TestTargetID = EEC80B3F29B6053200099727;
+					};
+					EEC80B3F29B6053200099727 = {
+						CreatedOnToolsVersion = 13.2.1;
 					};
 				};
 			};
@@ -306,6 +392,7 @@
 			targets = (
 				067ECB392487A93D00701956 /* WireNotificationEngine */,
 				EE761664299E60C9005DB75F /* WireNotificationEngineTests */,
+				EEC80B3F29B6053200099727 /* WireNotificationEngineTestHost */,
 			);
 		};
 /* End PBXProject section */
@@ -322,6 +409,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEC80B3E29B6053200099727 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEC80B4F29B6053500099727 /* LaunchScreen.storyboard in Resources */,
+				EEC80B4C29B6053500099727 /* Assets.xcassets in Resources */,
+				EEC80B4A29B6053200099727 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +453,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EEC80B3C29B6053200099727 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEC80B4729B6053200099727 /* ViewController.swift in Sources */,
+				EEC80B4329B6053200099727 /* AppDelegate.swift in Sources */,
+				EEC80B4529B6053200099727 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -364,7 +471,31 @@
 			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
 			targetProxy = EE76166A299E60C9005DB75F /* PBXContainerItemProxy */;
 		};
+		EEC80B5529B6053B00099727 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EEC80B3F29B6053200099727 /* WireNotificationEngineTestHost */;
+			targetProxy = EEC80B5429B6053B00099727 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		EEC80B4829B6053200099727 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EEC80B4929B6053200099727 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		EEC80B4D29B6053500099727 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EEC80B4E29B6053500099727 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		066042A6247FE76C00A5F161 /* Debug */ = {
@@ -586,6 +717,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngineTestHost.app/WireNotificationEngineTestHost";
 			};
 			name = Debug;
 		};
@@ -609,6 +741,69 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngineTestHost.app/WireNotificationEngineTestHost";
+			};
+			name = Release;
+		};
+		EEC80B5229B6053500099727 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WireNotificationEngineTestHost/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EEC80B5329B6053500099727 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WireNotificationEngineTestHost/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -640,6 +835,15 @@
 			buildConfigurations = (
 				EE76166D299E60C9005DB75F /* Debug */,
 				EE76166E299E60C9005DB75F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EEC80B5129B6053500099727 /* Build configuration list for PBXNativeTarget "WireNotificationEngineTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEC80B5229B6053500099727 /* Debug */,
+				EEC80B5329B6053500099727 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
