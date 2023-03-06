@@ -69,6 +69,14 @@ extension UserClient {
         }
     }
 
+    // Problem:
+    // Existing proteus sessions are qualified with user id and client id only. In a
+    // federated environment, there is not the risk of id collisions, since in two
+    // domains there possibly could be users that share the same user id and client id.
+    //
+    // Solution:
+    // Migrate to V3 proteus session ids, which incorporate the domain.
+
     static func migrateAllSessionsClientIdentifiersV3(in moc: NSManagedObjectContext) {
         let request = UserClient.sortedFetchRequest()
 
