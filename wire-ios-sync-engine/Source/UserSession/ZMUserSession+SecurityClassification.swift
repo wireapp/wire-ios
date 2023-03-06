@@ -39,12 +39,20 @@ extension ZMUserSession {
     private func classification(with user: UserType) -> SecurityClassification {
         guard isSelfClassified else { return .none }
 
-        guard let otherDomain = user.domain else { return .notClassified }
+        guard let otherDomain = prepareOtherUserDomain(from: user) else { return .notClassified }
 
         return classifiedDomainsFeature.config.domains.contains(otherDomain) ? .classified : .notClassified
     }
 
     private var isSelfClassified: Bool {
         classifiedDomainsFeature.status == .enabled && selfUser.domain != nil
+    }
+
+    private func prepareOtherUserDomain(from user: UserType) -> String? {
+        guard BackendInfo.isFederationEnabled else {
+            let localDomain = selfUser.domain
+            return user.domain ?? localDomain
+        }
+        return user.domain
     }
 }
