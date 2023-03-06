@@ -1824,9 +1824,9 @@
 		1639A81122608FEB00868AB9 /* Patches */ = {
 			isa = PBXGroup;
 			children = (
-				54FB03A01E41E273000E13DC /* LegacyPersistedDataPatches.swift */,
+				EEC80B5A29B60F7200099727 /* Legacy */,
 				2BB2076F292B787000FB6468 /* PatchApplicator.swift */,
-				54FB03A81E41F1B6000E13DC /* LegacyPersistedDataPatches+Directory.swift */,
+				EEC80B5B29B611CA00099727 /* PersistedDataPatch.swift */,
 				54F84CFC1F9950B300ABD7D5 /* DuplicatedEntityRemoval.swift */,
 				16827AE92732A3C20079405D /* InvalidDomainRemoval.swift */,
 				F11F3E881FA32463007B6D3D /* InvalidClientsRemoval.swift */,
@@ -2193,6 +2193,15 @@
 				EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */,
 			);
 			path = ClassifiedDomains;
+			sourceTree = "<group>";
+		};
+		EEC80B5A29B60F7200099727 /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				54FB03A01E41E273000E13DC /* LegacyPersistedDataPatches.swift */,
+				54FB03A81E41F1B6000E13DC /* LegacyPersistedDataPatches+Directory.swift */,
+			);
+			path = Legacy;
 			sourceTree = "<group>";
 		};
 		EECA82FD26EF34E20087ECB0 /* SelfDeletingMessages */ = {
