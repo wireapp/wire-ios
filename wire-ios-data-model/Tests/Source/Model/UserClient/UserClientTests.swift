@@ -1148,6 +1148,63 @@ extension UserClientTests {
 
     }
 
+    func testThatItMigratesSessionIdentifierFromV2ToV3_FallsBackToLocalDomainIfUserHasNoDomain() {
+        syncMOC.performGroupedBlockAndWait { [self] in
+            // given
+            let selfClient = createSelfClient(onMOC: syncMOC)
+
+            let otherClient = UserClient.insertNewObject(in: syncMOC)
+            otherClient.remoteIdentifier = UUID.create().transportString()
+            let otherUser = ZMUser.insertNewObject(in: syncMOC)
+            let otherUserID = UUID().create()
+            otherUser.remoteIdentifier = otherUserID
+            otherClient.user = otherUser
+            otherClient.needsSessionMigration = true
+
+            var preKeys: [(id: UInt16, prekey: String)] = []
+            // TODO: [John] use flag here
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
+            }
+
+            guard let preKey = preKeys.first else {
+                XCTFail("could not generate prekeys")
+                return
+            }
+
+            let userID = otherUserID.uuidString
+            let clientID = otherClient.remoteIdentifier!
+            let localDomain = "localdomain.com"
+            BackendInfo.domain = localDomain
+
+            let v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
+                                                                  clientId: clientID)
+            let v3SessionIdentifier = EncryptionSessionIdentifier(domain: localDomain,
+                                                                  userId: userID,
+                                                                  clientId: clientID)
+
+            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
+            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
+
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+                XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
+                XCTAssertFalse(sessionsDirectory.hasSession(for: v3SessionIdentifier))
+            }
+
+            otherUser.domain = nil
+
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+                // when
+                otherClient.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: sessionsDirectory)
+
+                // then
+                XCTAssertFalse(sessionsDirectory.hasSession(for: v2SessionIdentifier))
+                XCTAssertTrue(sessionsDirectory.hasSession(for: v3SessionIdentifier))
+            }
+        }
+
+    }
+
     func testThatItDoesNotMigrateSessionIdentifierFromV2ToV3_WhenUserDomainIsUnavailable() {
         self.syncMOC.performGroupedBlockAndWait { [self] in
             // given
