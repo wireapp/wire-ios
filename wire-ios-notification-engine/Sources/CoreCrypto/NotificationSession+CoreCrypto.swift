@@ -45,7 +45,10 @@ extension NotificationSession {
 
                 // TODO: Check flag
                 if syncContext.mlsController == nil {
-                    syncContext.mlsController = MLSDecryptionController(coreCrypto: safeCoreCrypto)
+                    syncContext.mlsController = MLSDecryptionController(
+                        context: syncContext,
+                        coreCrypto: safeCoreCrypto
+                    )
                 }
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
