@@ -18,30 +18,96 @@
 
 import Foundation
 import WireDataModel
+import CoreData
+import CoreCryptoSwift
 
 class MLSDecryptionController: MLSControllerProtocol {
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    // MARK: - Properties
 
-    init(coreCrypto: SafeCoreCryptoProtocol) {
+    private let coreCrypto: SafeCoreCryptoProtocol
+    private weak var context: NSManagedObjectContext?
+
+    // MARK: - Life cycle
+
+    init(context: NSManagedObjectContext, coreCrypto: SafeCoreCryptoProtocol) {
         self.coreCrypto = coreCrypto
+        self.context = context
+    }
+
+    // MARK: - Methods
+
+    // TODO: Avoid this code duplication from `MLSController`
+
+    public enum MLSMessageDecryptionError: Error {
+
+        case failedToConvertMessageToBytes
+        case failedToDecryptMessage
+
     }
 
     func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        // TODO: Add implementation
-        return nil
+        WireLogger.mls.info("decrypting message for group (\(groupID))")
+
+        guard let messageBytes = message.base64EncodedBytes else {
+            throw MLSMessageDecryptionError.failedToConvertMessageToBytes
+        }
+
+        do {
+            let decryptedMessage = try coreCrypto.perform { try $0.decryptMessage(
+                conversationId: groupID.bytes,
+                payload: messageBytes
+            )}
+
+            if let commitDelay = decryptedMessage.commitDelay {
+                return MLSDecryptResult.proposal(commitDelay)
+            }
+
+            if let message = decryptedMessage.message {
+                return MLSDecryptResult.message(
+                    message.data,
+                    senderClientId(from: decryptedMessage)
+                )
+            }
+
+            return nil
+
+        } catch {
+            WireLogger.mls.warn("failed to decrypt message for group (\(groupID)): \(String(describing: error))")
+            throw MLSMessageDecryptionError.failedToDecryptMessage
+        }
     }
 
+    private func senderClientId(from message: DecryptedMessage) -> String? {
+        guard let senderClientID = message.senderClientId else {
+            return nil
+        }
+
+        return MLSClientID(data: senderClientID.data)?.clientID
+    }
+
+    // TODO: Avoid this code duplication from `MLSController`
+
+    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
+        guard let context = context else {
+            return
+        }
+
+        context.performAndWait {
+            WireLogger.mls.info("schedule to commit pending proposals in \(groupID) at \(commitDate)")
+            let conversation = ZMConversation.fetch(with: groupID, in: context)
+            conversation?.commitPendingProposalDate = commitDate
+        }
+    }
+    
+    // MARK: - Unavailable methods
+
     func commitPendingProposals() async throws {
-        // TODO: Add implementation
+        fatalError("not implemented")
     }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws {
-        // TODO: Add implementation
-    }
-
-    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
-        // TODO: Add implementation
+        fatalError("not implemented")
     }
 
     func uploadKeyPackagesIfNeeded() {
