@@ -37,7 +37,7 @@ final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
         isAccessibilityElement = true
         shouldGroupAccessibilityChildren = true
 
-        backgroundColor = overrideUserInterfaceStyle == .dark ? UIColor.accentDarken : UIColor.accent()
+        backgroundColor = UIColor.accent()
         shape = .relative(multiplier: 1, dimension: .height)
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
@@ -46,7 +46,7 @@ final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
         ])
-        backgroundColor = overrideUserInterfaceStyle == .dark ? UIColor.accentDarken : UIColor.accent()
+        backgroundColor = UIColor.accent()
     }
 
     @available(*, unavailable)
