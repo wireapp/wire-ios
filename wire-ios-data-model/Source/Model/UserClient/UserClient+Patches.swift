@@ -35,36 +35,9 @@ extension UserClient {
             return
         }
 
-        // Important:
-        // If we're migrating from Cryptobox to Core Crypto, it's important that we
-        // migrate the session ids before moving the session files into Core Crypto.
-        //
-        // However, we would only have an instance of `ProteusService` (backed by Core
-        // Crypto) and not an instance of the `UserClientKeyStore` (backed by Cryptobox).
-        //
-        // Migration of the session ids relies on the keystore, so if we don't have an
-        // instance if the keystore already, we create one temporarily for this migration
-        // assuming that we'll perform the migration from Cryptobox to Core Crypto afterwards.
-
-        let keyStore: UserClientKeysStore
-
-        if let existingKeyStore = moc.zm_cryptKeyStore {
-            WireLogger.proteus.info("migrating all session ids to v2: using existing keystore")
-            keyStore = existingKeyStore
-        } else {
-            WireLogger.proteus.info("migrating all session ids to v2: creating temp keystore")
-
-            guard
-                let accountDirectory = moc.accountDirectoryURL,
-                let applicationContainer = moc.applicationContainerURL
-            else {
-                fatalError("Can not migration proteus session ids")
-            }
-
-            keyStore = UserClientKeysStore(
-                accountDirectory: accountDirectory,
-                applicationContainer: applicationContainer
-            )
+        guard let keyStore = keyStore(in: moc) else {
+            WireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
+            fatalError("could not migrate proteus session ids: keystore doesn't exist")
         }
 
         keyStore.encryptionContext.perform { session in
@@ -93,36 +66,9 @@ extension UserClient {
             return
         }
 
-        // Important:
-        // If we're migrating from Cryptobox to Core Crypto, it's important that we
-        // migrate the session ids before moving the session files into Core Crypto.
-        //
-        // However, we would only have an instance of `ProteusService` (backed by Core
-        // Crypto) and not an instance of the `UserClientKeyStore` (backed by Cryptobox).
-        //
-        // Migration of the session ids relies on the keystore, so if we don't have an
-        // instance if the keystore already, we create one temporarily for this migration
-        // assuming that we'll perform the migration from Cryptobox to Core Crypto afterwards.
-
-        let keyStore: UserClientKeysStore
-
-        if let existingKeyStore = moc.zm_cryptKeyStore {
-            WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
-            keyStore = existingKeyStore
-        } else {
-            WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
-
-            guard
-                let accountDirectory = moc.accountDirectoryURL,
-                let applicationContainer = moc.applicationContainerURL
-            else {
-                fatalError("Can not migration proteus session ids")
-            }
-
-            keyStore = UserClientKeysStore(
-                accountDirectory: accountDirectory,
-                applicationContainer: applicationContainer
-            )
+        guard let keyStore = keyStore(in: moc) else {
+            WireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
+            fatalError("could not migrate proteus session ids: keystore doesn't exist")
         }
 
         keyStore.encryptionContext.perform { session in
@@ -130,6 +76,36 @@ extension UserClient {
                 client.migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: session)
                 client.needsSessionMigration = false
             }
+        }
+    }
+
+    // Important:
+    // If we're migrating from Cryptobox to Core Crypto, it's important that we
+    // migrate the session ids before moving the session files into Core Crypto.
+    //
+    // However, we would only have an instance of `ProteusService` (backed by Core
+    // Crypto) and not an instance of the `UserClientKeyStore` (backed by Cryptobox).
+    //
+    // Migration of the session ids relies on the keystore, so if we don't have an
+    // instance if the keystore already, we create one temporarily for this migration
+    // assuming that we'll perform the migration from Cryptobox to Core Crypto afterwards.
+
+    static func keyStore(in context: NSManagedObjectContext) -> UserClientKeysStore? {
+        if let existingKeyStore = context.zm_cryptKeyStore {
+            WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
+            return existingKeyStore
+        } else if
+            let accountDirectory = context.accountDirectoryURL,
+            let applicationContainer = context.applicationContainerURL
+        {
+            WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
+
+            return UserClientKeysStore(
+                accountDirectory: accountDirectory,
+                applicationContainer: applicationContainer
+            )
+        } else {
+            return nil
         }
     }
 
