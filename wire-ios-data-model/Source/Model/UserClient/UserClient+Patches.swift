@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 extension UserClient {
 
@@ -78,10 +79,13 @@ extension UserClient {
     // Migrate to V3 proteus session ids, which incorporate the domain.
 
     static func migrateAllSessionsClientIdentifiersV3(in moc: NSManagedObjectContext) {
+        WireLogger.proteus.info("migrating all session ids to v3")
+
         let request = UserClient.sortedFetchRequest()
 
         guard let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
             // No clients? No migration needed.
+            WireLogger.proteus.info("migrating all session ids to v3: no clients to migrate")
             return
         }
 
@@ -99,8 +103,11 @@ extension UserClient {
         let keyStore: UserClientKeysStore
 
         if let existingKeyStore = moc.zm_cryptKeyStore {
+            WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
             keyStore = existingKeyStore
         } else {
+            WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
+
             guard
                 let accountDirectory = moc.accountDirectoryURL,
                 let applicationContainer = moc.applicationContainerURL
