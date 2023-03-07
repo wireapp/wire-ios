@@ -26,6 +26,7 @@ class ProteusServiceTests: XCTestCase {
     struct MockError: Error {}
 
     var mockCoreCrypto: MockCoreCrypto!
+    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var sut: ProteusService!
 
     // MARK: - Set up
@@ -34,11 +35,13 @@ class ProteusServiceTests: XCTestCase {
         try super.setUpWithError()
         mockCoreCrypto = MockCoreCrypto()
         mockCoreCrypto.mockProteusInit = {}
-        sut = try ProteusService(coreCrypto: mockCoreCrypto)
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        sut = try ProteusService(coreCrypto: mockSafeCoreCrypto)
     }
 
     override func tearDown() {
         mockCoreCrypto = nil
+        mockSafeCoreCrypto = nil
         sut = nil
         super.tearDown()
     }
@@ -238,19 +241,19 @@ class ProteusServiceTests: XCTestCase {
             try sut.deleteSession(id: sessionID)
         }
     }
-    
+
     // MARK: - Batched operations
 
     func test_PerformBachedOperations() throws {
         // Given
-        mockCoreCrypto.performCount = 0
+        mockSafeCoreCrypto.performCount = 0
 
         // When
         sut.performBatchedOperations {}
 
         // Then
-        XCTAssertEqual(mockCoreCrypto.performCount, 1)
-        XCTAssertEqual(mockCoreCrypto.unsafePerformCount, 0)
+        XCTAssertEqual(mockSafeCoreCrypto.performCount, 1)
+        XCTAssertEqual(mockSafeCoreCrypto.unsafePerformCount, 0)
     }
 
 }

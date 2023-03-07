@@ -12,7 +12,7 @@
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */; };
 		63172F96290AB47500DBECC9 /* MLSEncryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */; };
-		637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */; };
+		637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
 		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
@@ -97,7 +97,7 @@
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+CoreCrypto.swift"; sourceTree = "<group>"; };
 		63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionController.swift; sourceTree = "<group>"; };
-		637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+MLS.swift"; sourceTree = "<group>"; };
+		637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+CryptoStack.swift"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
 		CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoopTests.swift; sourceTree = "<group>"; };
@@ -184,7 +184,7 @@
 				BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */,
 				F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */,
 				166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */,
-				637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */,
+				637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */,
 				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
 				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
 			);
@@ -466,7 +466,7 @@
 				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
 				CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */,
 				166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */,
-				637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */,
+				637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */,
 				F125E9B51E28DB06006583A2 /* SharingSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

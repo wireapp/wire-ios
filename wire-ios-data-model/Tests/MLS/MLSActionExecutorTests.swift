@@ -32,7 +32,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCoreCrypto = MockCoreCrypto()
         mockActionsProvider = MockMLSActionsProvider()
         sut = MLSActionExecutor(
-            coreCrypto: mockCoreCrypto,
+            coreCrypto: MockSafeCoreCrypto(coreCrypto: mockCoreCrypto),
             context: uiMOC,
             actionsProvider: mockActionsProvider
         )
