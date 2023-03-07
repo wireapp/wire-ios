@@ -1321,7 +1321,7 @@ extension UserClientTests {
 
         self.syncMOC.performGroupedBlockAndWait {
             let mockProteusService = MockProteusServiceInterface()
-            mockProteusService.fingerprint_MockMethod = {
+            mockProteusService.localFingerprint_MockMethod = {
                 return localFingerprint
             }
             self.syncMOC.proteusService = mockProteusService
