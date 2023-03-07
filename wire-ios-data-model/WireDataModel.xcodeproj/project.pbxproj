@@ -4224,6 +4224,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A6891CAD7A790039E10C /* WireDataModel.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
