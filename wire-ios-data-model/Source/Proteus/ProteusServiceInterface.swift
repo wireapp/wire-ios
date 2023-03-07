@@ -53,8 +53,7 @@ public protocol ProteusServiceInterface {
     func lastPrekey() throws -> String
     var lastPrekeyID: UInt16 { get }
     func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple]
-    func fingerprint() throws -> String
-    func localFingerprint(forSession id: ProteusSessionID) throws -> String
+    func localFingerprint() throws -> String
     func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
     func fingerprint(fromPrekey prekey: String) throws -> String
     func migrateCryptoboxSessions(at url: URL) throws
