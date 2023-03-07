@@ -26,10 +26,12 @@ extension UserClient {
     /// These have less chances of collision.
 
     static func migrateAllSessionsClientIdentifiersV2(in moc: NSManagedObjectContext) {
+        WireLogger.proteus.info("migrating all session ids to v2")
+
         let request = UserClient.sortedFetchRequest()
 
         guard let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-            // No clients? No migration needed.
+            WireLogger.proteus.info("migrating all session ids to v2: no clients to migrate")
             return
         }
 
@@ -47,8 +49,11 @@ extension UserClient {
         let keyStore: UserClientKeysStore
 
         if let existingKeyStore = moc.zm_cryptKeyStore {
+            WireLogger.proteus.info("migrating all session ids to v2: using existing keystore")
             keyStore = existingKeyStore
         } else {
+            WireLogger.proteus.info("migrating all session ids to v2: creating temp keystore")
+
             guard
                 let accountDirectory = moc.accountDirectoryURL,
                 let applicationContainer = moc.applicationContainerURL
@@ -84,7 +89,6 @@ extension UserClient {
         let request = UserClient.sortedFetchRequest()
 
         guard let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-            // No clients? No migration needed.
             WireLogger.proteus.info("migrating all session ids to v3: no clients to migrate")
             return
         }
