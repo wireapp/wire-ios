@@ -130,13 +130,14 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     fileprivate func purgeEncryptedPayloadCache() {
-        guard let keyStore = context.zm_cryptKeyStore else {
-            return
-        }
-
-        keyStore.encryptionContext.perform { (session) in
-            session.purgeEncryptedPayloadCache()
-        }
+        context.proteusProvider.perform(
+            withProteusService: { _ in },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform { (session) in
+                    session.purgeEncryptedPayloadCache()
+                }
+            }
+        )
     }
 
 }
