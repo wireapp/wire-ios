@@ -50,8 +50,7 @@ extension ZMUserSession {
 
     private func prepareOtherUserDomain(from user: UserType) -> String? {
         guard BackendInfo.isFederationEnabled else {
-            let localDomain = selfUser.domain
-            return user.domain ?? localDomain
+            return user.domain ?? BackendInfo.domain
         }
         return user.domain
     }
