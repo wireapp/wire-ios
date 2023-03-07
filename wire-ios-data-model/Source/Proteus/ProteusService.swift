@@ -267,29 +267,17 @@ public final class ProteusService: ProteusServiceInterface {
     // MARK: - proteusFingerprint
 
     enum FingerprintError: Error {
-        case failedToGetFingerprint
         case failedToGetLocalFingerprint
         case failedToGetRemoteFingerprint
         case failedToGetFingerprintFromPrekey
         case prekeyNotBase64Encoded
     }
 
-    public func fingerprint() throws -> String {
-        logger.info("fetching fingerprint")
-
-        do {
-            return try coreCrypto.perform { try $0.proteusFingerprint() }
-        } catch {
-            logger.error("failed to fetch fingerprint: \(String(describing: error))")
-            throw FingerprintError.failedToGetFingerprint
-        }
-    }
-
-    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
+    public func localFingerprint() throws -> String {
         logger.info("fetching local fingerprint")
 
         do {
-            return try coreCrypto.perform { try $0.proteusFingerprintLocal(sessionId: id.rawValue) }
+            return try coreCrypto.perform { try $0.proteusFingerprint() }
         } catch {
             logger.error("failed to fetch local fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetLocalFingerprint

@@ -231,49 +231,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
-    // MARK: - fingerprint
+    // MARK: - localFingerprint
 
-    public var fingerprint_Invocations: [Void] = []
-    public var fingerprint_MockError: Error?
-    public var fingerprint_MockMethod: (() throws -> String)?
-    public var fingerprint_MockValue: String?
+    public var localFingerprint_Invocations: [Void] = []
+    public var localFingerprint_MockError: Error?
+    public var localFingerprint_MockMethod: (() throws -> String)?
+    public var localFingerprint_MockValue: String?
 
-    public func fingerprint() throws -> String {
-        fingerprint_Invocations.append(())
+    public func localFingerprint() throws -> String {
+        localFingerprint_Invocations.append(())
 
-        if let error = fingerprint_MockError {
+        if let error = localFingerprint_MockError {
             throw error
         }
 
-        if let mock = fingerprint_MockMethod {
+        if let mock = localFingerprint_MockMethod {
             return try mock()
-        } else if let mock = fingerprint_MockValue {
+        } else if let mock = localFingerprint_MockValue {
             return mock
         } else {
             fatalError("no mock for `fingerprint`")
-        }
-    }
-
-    // MARK: - localFingerprint
-
-    public var localFingerprintForSession_Invocations: [ProteusSessionID] = []
-    public var localFingerprintForSession_MockError: Error?
-    public var localFingerprintForSession_MockMethod: ((ProteusSessionID) throws -> String)?
-    public var localFingerprintForSession_MockValue: String?
-
-    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
-        localFingerprintForSession_Invocations.append(id)
-
-        if let error = localFingerprintForSession_MockError {
-            throw error
-        }
-
-        if let mock = localFingerprintForSession_MockMethod {
-            return try mock(id)
-        } else if let mock = localFingerprintForSession_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `localFingerprintForSession`")
         }
     }
 
