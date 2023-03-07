@@ -158,49 +158,50 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
 
     func setupObserver(for context: NSManagedObjectContext, onSave: @escaping SaveClosure) -> NSObjectProtocol {
         return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: context, queue: callBackQueue) { note in
-            if let insertedObjects = note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>, let updatedObjects = note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                onSave(note, insertedObjects, updatedObjects)
-            }
+            let insertedObjects = note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> ?? Set<NSManagedObject>()
+            let updatedObjects = note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> ?? Set<NSManagedObject>()
+            onSave(note, insertedObjects, updatedObjects)
         }
     }
+}
 
-    func merge(changes notification: Notification, intoContext context: NSManagedObjectContext) {
-        let moc = notification.object as! NSManagedObjectContext
-        let userInfo = moc.userInfo as NSDictionary as! [String: Any]
-        context.performGroupedBlock {
-            context.mergeUserInfo(fromUserInfo: userInfo)
-            context.mergeChanges(fromContextDidSave: notification)
-            context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
+func merge(changes notification: Notification, intoContext context: NSManagedObjectContext) {
+    let moc = notification.object as! NSManagedObjectContext
+    let userInfo = moc.userInfo as NSDictionary as! [String: Any]
+    context.performGroupedBlock {
+        context.mergeUserInfo(fromUserInfo: userInfo)
+        context.mergeChanges(fromContextDidSave: notification)
+        context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
 
-            NotificationCenter.default.post(name: contextWasMergedNotification, object: context, userInfo: notification.userInfo)
-        }
+        NotificationCenter.default.post(name: contextWasMergedNotification, object: context, userInfo: notification.userInfo)
     }
+}
 
-    func syncContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
-        merge(changes: notification, intoContext: userContext)
+func syncContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
+    merge(changes: notification, intoContext: userContext)
 
-        syncContext.performGroupedBlock {
-            self.changeClosure?(Set(insertedObjects).union(updatedObjects))
-        }
+    syncContext.performGroupedBlock {
+        self.changeClosure?(Set(insertedObjects).union(updatedObjects))
     }
+}
 
-    func userInterfaceContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
-        merge(changes: notification, intoContext: syncContext)
+func userInterfaceContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
+    merge(changes: notification, intoContext: syncContext)
 
-        let insertedObjectsIds = insertedObjects.map({ $0.objectID })
-        let updatedObjectsIds  =  updatedObjects.map({ $0.objectID })
+    let insertedObjectsIds = insertedObjects.map({ $0.objectID })
+    let updatedObjectsIds  =  updatedObjects.map({ $0.objectID })
 
-        syncContext.performGroupedBlock {
-            let insertedObjects = insertedObjectsIds.compactMap(self.syncContext.object)
-            let updatedObjects = updatedObjectsIds.compactMap(self.syncContext.object)
+    syncContext.performGroupedBlock {
+        let insertedObjects = insertedObjectsIds.compactMap(self.syncContext.object)
+        let updatedObjects = updatedObjectsIds.compactMap(self.syncContext.object)
 
-            self.changeClosure?(Set(insertedObjects).union(updatedObjects))
-        }
+        self.changeClosure?(Set(insertedObjects).union(updatedObjects))
     }
+}
 
-    func newRequestsAvailable() {
-        requestAvailableClosure?()
-    }
+func newRequestsAvailable() {
+    requestAvailableClosure?()
+}
 
 }
 
