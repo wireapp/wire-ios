@@ -18,19 +18,19 @@
 
 import Foundation
 
-enum PersistedDataPatch: Int, DataPatchInterface {
+// When we need to add the first patch, uncomment this type and add it as
+// a case.
 
-    case migrateProteusSessionIDsToV3 = 0
-
-    var version: Int {
-        return rawValue
-    }
-
-    func execute(in context: NSManagedObjectContext) {
-        switch self {
-        case .migrateProteusSessionIDsToV3:
-            UserClient.migrateAllSessionsClientIdentifiersV3(in: context)
-        }
-    }
-
-}
+//enum PersistedDataPatch: Int, DataPatchInterface {
+//
+//
+//
+//    var version: Int {
+//        return rawValue
+//    }
+//
+//    func execute(in context: NSManagedObjectContext) {
+//
+//    }
+//
+//}
