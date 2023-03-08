@@ -56,6 +56,7 @@ public protocol ProteusServiceInterface {
     func localFingerprint() throws -> String
     func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
     func fingerprint(fromPrekey prekey: String) throws -> String
+    func migrateCryptoboxSessions(at url: URL) throws
 
     /// Acquire safe Core Crypto access during across the lifetime of the given block.
     ///

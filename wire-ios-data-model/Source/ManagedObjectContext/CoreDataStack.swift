@@ -301,8 +301,10 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.createDispatchGroups()
             dispatchGroup.apply(context.add)
             context.setupLocalCachedSessionAndSelfUser()
-            context.setupUserKeyStore(accountDirectory: accountContainer,
-                                      applicationContainer: applicationContainer)
+            if !DeveloperFlag.proteusViaCoreCrypto.isOn {
+                context.setupUserKeyStore(accountDirectory: accountContainer,
+                                          applicationContainer: applicationContainer)
+            }
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
