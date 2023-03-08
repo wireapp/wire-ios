@@ -20,6 +20,7 @@
 import XCTest
 import Foundation
 import WireUtilities
+import WireTransport
 
 class NotificationSessionTests_CryptoStack: BaseTest {
 
@@ -32,11 +33,13 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         super.setUp()
         proteusFlag.isOn = false
         mlsFlag.isOn = false
+        BackendInfo.apiVersion = .v2
     }
 
     override func tearDown() {
         proteusFlag.isOn = false
         mlsFlag.isOn = false
+        BackendInfo.apiVersion = nil
         super.tearDown()
     }
 
@@ -79,6 +82,27 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         XCTAssertNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
+
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+        // GIVEN
+        mlsFlag.isOn = true
+        BackendInfo.apiVersion = .v1
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createNotificationSession()
+
+        // THEN
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+    }
+
 
     func test_CryptoStackSetup_OnInit_ProteusAndMLS() throws {
         // GIVEN

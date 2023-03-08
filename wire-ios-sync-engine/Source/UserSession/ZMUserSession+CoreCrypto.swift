@@ -42,10 +42,6 @@ extension ZMUserSession {
         }
     }
 
-    private var shouldSetupCryptoStack: Bool {
-        return DeveloperFlag.proteusViaCoreCrypto.isOn || DeveloperFlag.enableMLSSupport.isOn
-    }
-
     private func setupProteus(userID: UUID) {
         syncContext.performAndWait {
             let provider = CoreCryptoConfigProvider()
@@ -98,17 +94,26 @@ extension ZMUserSession {
         case missingCoreCrypto
     }
 
+    private var shouldSetupCryptoStack: Bool {
+        return shouldSetupProteusService || shouldSetupMLSController
+    }
+
+
     // MARK: - Proteus
 
     private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) throws {
         guard
-            DeveloperFlag.proteusViaCoreCrypto.isOn,
+            shouldSetupProteusService,
             syncContext.proteusService == nil
         else {
             return
         }
 
         syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
+    }
+
+    private var shouldSetupProteusService: Bool {
+        return DeveloperFlag.proteusViaCoreCrypto.isOn
     }
 
     // MARK: - MLS
@@ -118,7 +123,7 @@ extension ZMUserSession {
         clientID: String
     ) throws {
         guard
-            DeveloperFlag.enableMLSSupport.isOn,
+            shouldSetupMLSController,
             syncContext.mlsController == nil
         else {
             return
@@ -139,6 +144,10 @@ extension ZMUserSession {
             userDefaults: userDefaults,
             syncStatus: syncStatus
         )
+    }
+
+    private var shouldSetupMLSController: Bool {
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
     private enum MLSControllerSetupFailure: Error {

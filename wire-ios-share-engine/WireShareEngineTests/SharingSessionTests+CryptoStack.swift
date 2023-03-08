@@ -35,11 +35,13 @@ class SharingSessionTestsCryptoStack: BaseTest {
         super.setUp()
         proteusFlag.isOn = false
         mlsFlag.isOn = false
+        BackendInfo.apiVersion = .v2
     }
 
     override func tearDown() {
         proteusFlag.isOn = false
         mlsFlag.isOn = false
+        BackendInfo.apiVersion = nil
         super.tearDown()
     }
 
@@ -81,6 +83,26 @@ class SharingSessionTestsCryptoStack: BaseTest {
         XCTAssertNotNil(context.mlsController)
         XCTAssertNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
+    }
+
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+        // GIVEN
+        mlsFlag.isOn = true
+        BackendInfo.apiVersion = .v1
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createSharingSession()
+
+        // THEN
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
     }
 
     func test_CryptoStackSetup_OnInit_ProteusAndMLS() throws {

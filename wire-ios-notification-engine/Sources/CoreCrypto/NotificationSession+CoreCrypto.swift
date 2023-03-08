@@ -63,7 +63,15 @@ extension NotificationSession {
     }
 
     private var shouldSetupCryptoStack: Bool {
-        return DeveloperFlag.proteusViaCoreCrypto.isOn || DeveloperFlag.enableMLSSupport.isOn
+        return shouldSetupProteusService || shouldSetupMLSController
+    }
+
+    private var shouldSetupProteusService: Bool {
+        return DeveloperFlag.proteusViaCoreCrypto.isOn
+    }
+
+    private var shouldSetupMLSController: Bool {
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
 }

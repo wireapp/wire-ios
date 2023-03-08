@@ -31,6 +31,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         super.setUp()
         proteusFlag.isOn = true
         mlsFlag.isOn = true
+        BackendInfo.apiVersion = .v2
     }
 
     override func tearDown() {
@@ -38,6 +39,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         sut = nil
         proteusFlag.isOn = false
         mlsFlag.isOn = false
+        BackendInfo.apiVersion = nil
         super.tearDown()
     }
 
@@ -102,6 +104,29 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertNil(syncMOC.proteusService)
         XCTAssertNotNil(syncMOC.mlsController)
     }
+
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+        // GIVEN
+        proteusFlag.isOn = false
+        BackendInfo.apiVersion = .v1
+        createSelfClient()
+
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "example.domain.com"
+
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+    }
+
 
     func test_CryptoStackSetup_OnInit_AllFlagsOff() {
         // GIVEN
