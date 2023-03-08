@@ -585,12 +585,8 @@ extension UserClient {
 
         proteusProvider.perform(
             withProteusService: { proteusService in
-                guard let sessionID = self.proteusSessionID else {
-                    return
-                }
-
                 do {
-                    let fingerprint = try proteusService.localFingerprint(forSession: sessionID)
+                    let fingerprint = try proteusService.localFingerprint()
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     zmLog.error("Cannot fetch local fingerprint for \(self)")
