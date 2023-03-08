@@ -355,7 +355,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             }
 
             // Delete session and fingerprint
-            try? self.deleteSession(context: syncMOC)
+            try? syncClient.deleteSession()
             syncClient.fingerprint = .none
 
             // Mark clients as needing to be refetched
@@ -656,10 +656,10 @@ public extension UserClient {
 
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    func deleteSession(context: NSManagedObjectContext? = nil) throws {
+    func deleteSession() throws {
         guard
             !isSelfClient(),
-            let context = context ?? managedObjectContext,
+            let context = managedObjectContext,
             let sessionID = proteusSessionID
         else {
             return
