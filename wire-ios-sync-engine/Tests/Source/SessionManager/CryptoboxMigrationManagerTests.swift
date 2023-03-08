@@ -90,12 +90,12 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         // When
         proteusViaCoreCryptoFlag.isOn = true
         syncMOC.proteusService = mockProteusService
-        XCTAssertEqual(mockProteusService.migrateCryptoboxSessions_CallCount, 0)
+        XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 0)
         try sut?.perform(in: accountDirectory, syncContext: syncMOC)
 
         // Then
         XCTAssertFalse(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
-        XCTAssertEqual(mockProteusService.migrateCryptoboxSessions_CallCount, 1)
+        XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 1)
     }
 
     func test_itDoesNotPerformMigration_CoreCryptoError() {
@@ -121,11 +121,10 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         let proteusService = MockProteusServiceInterface()
 
         if let migrationError = error {
-            proteusService.migrateCryptoboxSessions_MockError = migrationError
+            proteusService.migrateCryptoboxSessionsAt_MockError = migrationError
         }
-        proteusService.migrateCryptoboxSessions_MockMethod = { _ in
-            proteusService.migrateCryptoboxSessions_CallCount += 1
-        }
+
+        proteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
 
         return proteusService
     }
