@@ -26,6 +26,11 @@ extension NotificationSession {
         sharedContainerURL: URL,
         syncContext: NSManagedObjectContext
     ) {
+        guard shouldSetupCryptoStack else {
+            WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
+            return
+        }
+
         syncContext.performAndWait {
             let provider = CoreCryptoConfigProvider()
 
@@ -43,8 +48,7 @@ extension NotificationSession {
                     syncContext.proteusService = try ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                // TODO: Check flag
-                if syncContext.mlsController == nil {
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {
                     syncContext.mlsController = MLSDecryptionController(
                         context: syncContext,
                         coreCrypto: safeCoreCrypto
@@ -56,6 +60,10 @@ extension NotificationSession {
 
             WireLogger.coreCrypto.info("success: setup crypto stack")
         }
+    }
+
+    private var shouldSetupCryptoStack: Bool {
+        return DeveloperFlag.proteusViaCoreCrypto.isOn || DeveloperFlag.enableMLSSupport.isOn
     }
 
 }
