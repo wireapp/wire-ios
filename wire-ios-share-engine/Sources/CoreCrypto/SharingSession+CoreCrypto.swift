@@ -29,6 +29,11 @@ extension SharingSession {
         sharedContainerURL: URL,
         syncContext: NSManagedObjectContext
     ) {
+        guard shouldSetupCryptoStack else {
+            WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
+            return
+        }
+
         syncContext.performAndWait {
             let provider = CoreCryptoConfigProvider()
 
@@ -46,8 +51,7 @@ extension SharingSession {
                     syncContext.proteusService = try ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                // TODO: Check flag
-                if syncContext.mlsController == nil {
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {
                     syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
                 }
             } catch {
@@ -56,6 +60,18 @@ extension SharingSession {
 
             WireLogger.coreCrypto.info("success: setup crypto stack")
         }
+    }
+
+    private var shouldSetupCryptoStack: Bool {
+        return shouldSetupProteusService || shouldSetupMLSController
+    }
+
+    private var shouldSetupProteusService: Bool {
+        return DeveloperFlag.proteusViaCoreCrypto.isOn
+    }
+
+    private var shouldSetupMLSController: Bool {
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
 }
