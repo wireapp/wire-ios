@@ -19,62 +19,64 @@
 import Foundation
 import CoreData
 
-private let zmLog = ZMSLog(tag: "Patches")
+public protocol DataPatchInterface: CaseIterable {
+
+    var version: Int { get }
+    func execute(in context: NSManagedObjectContext)
+
+}
 
 public final class PatchApplicator<T: DataPatchInterface> {
 
-    public let lastRunVersionKey: String
+    // MARK: - Properties
 
-    public init(lastRunVersionKey: String) {
-        self.lastRunVersionKey = lastRunVersionKey
+    public let name: String
+
+    var lastRunVersionKey: String {
+        return "\(name)_LastRunVersion"
     }
+
+    private lazy var logger = WireLogger(tag: "patch applicator - \(name)")
+
+    // MARK: - Life cycle
+
+    public init(name: String) {
+        self.name = name
+    }
+
+    // MARK: - Methods
 
     public func applyPatches(in context: NSManagedObjectContext) {
         // Get the current version
         let currentVersion = T.allCases.count
 
+        logger.info("current version is \(currentVersion)")
+
         defer {
+            logger.info("updating last run version with current version")
             context.setPersistentStoreMetadata(currentVersion, key: self.lastRunVersionKey)
             context.saveOrRollback()
         }
 
         // Get the previous version
-        guard let previousVersion = context.persistentStoreMetadata(forKey: self.lastRunVersionKey) as? Int
-        else {
+        guard let previousVersion = context.persistentStoreMetadata(forKey: self.lastRunVersionKey) as? Int else {
             // no version was run, this is a fresh install, skipping...
-            zmLog.info("no version was run, this is a fresh install, skipping...")
+            logger.info("no previous version found, this is a fresh install, skipping...")
             return
         }
 
-        zmLog.info("previousVersion\(previousVersion)")
-        T.allCases
-            .filter { $0.version > previousVersion }
-            .forEach {
-            $0.execute(in: context)
+        logger.info("previous version is \(previousVersion)")
+
+        let patchesToApply = T.allCases.filter {
+            $0.version > previousVersion
         }
+
+        logger.info("there are \(patchesToApply.count) patches to apply...")
+
+        for patch in patchesToApply {
+            patch.execute(in: context)
+        }
+
     }
+
 }
-
-public protocol DataPatchInterface: CaseIterable {
-    
-    var version: Int { get }
-    func execute(in context: NSManagedObjectContext)
-    
-}
-
-// When we add the first patch, uncomment this type and add an enum
-// case. The patch code should go in the execute method.
-
-//enum DataPatch: Int, DataPatchInterface {
-//
-//
-//
-//    var version: Int {
-//        return rawValue
-//    }
-//
-//    func execute(in context: NSManagedObjectContext) {
-//        switch self {
-//        }
-//    }
-//}
