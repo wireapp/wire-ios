@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 
 enum NetworkStatusViewState {
     case online
@@ -209,6 +210,7 @@ final class NetworkStatusView: UIView {
     }
 
     func updateUI(animated: Bool) {
+        DatadogWrapper.shared?.log(networkStatus: state)
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
         if application.applicationState == .background {
@@ -240,5 +242,26 @@ extension NetworkStatusView: BreathLoadingBarDelegate {
 
     func animationDidStopped() {
         delegate?.didChangeHeight(self, animated: true, state: state)
+    }
+}
+
+// MARK: Logging
+
+private struct Info: Encodable {
+    var status: String
+}
+
+extension DatadogWrapper {
+
+    func log(networkStatus: NetworkStatusViewState) {
+        do {
+            let data = try JSONEncoder().encode(Info(status: String(describing: networkStatus)))
+            let jsonString = String(data: data, encoding: .utf8)
+            let message = "NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")"
+            log(message: message, error: nil, attributes: nil, level: .info)
+        } catch {
+            let message = "NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)"
+            log(message: message, error: nil, attributes: nil, level: .info)
+        }
     }
 }
