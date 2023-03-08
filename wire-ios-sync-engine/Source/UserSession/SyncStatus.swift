@@ -132,6 +132,7 @@ extension SyncStatus {
         precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase")
 
         zmLog.debug("finished sync phase: \(phase)")
+        log("finished sync phase")
 
         if phase.isLastSlowSyncPhase {
             persistLastUpdateEventID()
