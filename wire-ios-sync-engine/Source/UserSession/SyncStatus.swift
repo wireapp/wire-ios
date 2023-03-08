@@ -257,17 +257,12 @@ extension SyncStatus {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "SYNC_STATUS: \(jsonString ?? self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .info)
+            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .debug)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .info)
+            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .error)
         }
     }
 }
 
-struct SyncStatusLog: Codable {
-    var phase: String
-    var isSyncing: Bool
-    var pushChannelEstablishedDate: String?
-    var message: String?
-}
+

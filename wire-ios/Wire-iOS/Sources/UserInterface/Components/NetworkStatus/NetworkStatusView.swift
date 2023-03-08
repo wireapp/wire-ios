@@ -247,21 +247,21 @@ extension NetworkStatusView: BreathLoadingBarDelegate {
 
 // MARK: Logging
 
-private struct Info: Encodable {
+private struct LogInfo: Encodable {
     var status: String
 }
 
-extension DatadogWrapper {
+private extension DatadogWrapper {
 
     func log(networkStatus: NetworkStatusViewState) {
         do {
-            let data = try JSONEncoder().encode(Info(status: String(describing: networkStatus)))
+            let data = try JSONEncoder().encode(LogInfo(status: String(describing: networkStatus)))
             let jsonString = String(data: data, encoding: .utf8)
             let message = "NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")"
-            log(message: message, error: nil, attributes: nil, level: .info)
+            log(message: message, error: nil, attributes: nil, level: .debug)
         } catch {
             let message = "NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)"
-            log(message: message, error: nil, attributes: nil, level: .info)
+            log(message: message, error: nil, attributes: nil, level: .error)
         }
     }
 }
