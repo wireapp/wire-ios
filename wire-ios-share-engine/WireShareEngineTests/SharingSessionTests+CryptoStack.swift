@@ -26,10 +26,89 @@ import CoreCryptoSwift
 
 class SharingSessionTestsCryptoStack: BaseTest {
 
-    func test_CryptoStackSetup_OnInit() throws {
+    private var proteusFlag = DeveloperFlag.proteusViaCoreCrypto
+    private var mlsFlag = DeveloperFlag.enableMLSSupport
+
+    // MARK: - Life cycle
+
+    override func setUp() {
+        super.setUp()
+        proteusFlag.isOn = false
+        mlsFlag.isOn = false
+        BackendInfo.apiVersion = .v2
+    }
+
+    override func tearDown() {
+        proteusFlag.isOn = false
+        mlsFlag.isOn = false
+        BackendInfo.apiVersion = nil
+        super.tearDown()
+    }
+
+    // MARK: - Tests
+
+    func test_CryptoStackSetup_OnInit_ProteusOnly() throws {
         // GIVEN
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
+        proteusFlag.isOn = true
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createSharingSession()
+
+        // THEN
+        XCTAssertNil(context.mlsController)
+        XCTAssertNotNil(context.proteusService)
+        XCTAssertNotNil(context.coreCrypto)
+    }
+
+    func test_CryptoStackSetup_OnInit_MLSOnly() throws {
+        // GIVEN
+        mlsFlag.isOn = true
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createSharingSession()
+
+        // THEN
+        XCTAssertNotNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNotNil(context.coreCrypto)
+    }
+
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+        // GIVEN
+        mlsFlag.isOn = true
+        BackendInfo.apiVersion = .v1
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createSharingSession()
+
+        // THEN
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+    }
+
+    func test_CryptoStackSetup_OnInit_ProteusAndMLS() throws {
+        // GIVEN
+        proteusFlag.isOn = true
+        mlsFlag.isOn = true
 
         let context = coreDataStack.syncContext
 
@@ -44,8 +123,26 @@ class SharingSessionTestsCryptoStack: BaseTest {
         XCTAssertNotNil(context.mlsController)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
+    }
 
-        flag.isOn = false
+    func test_CryptoStackSetup_OnInit_AllFlagsDisabled() throws {
+        // GIVEN
+        XCTAssertFalse(proteusFlag.isOn)
+        XCTAssertFalse(mlsFlag.isOn)
+
+        let context = coreDataStack.syncContext
+
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
+
+        // WHEN
+        _ = try createSharingSession()
+
+        // THEN
+        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.proteusService)
+        XCTAssertNil(context.coreCrypto)
     }
 
 }

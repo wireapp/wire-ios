@@ -250,7 +250,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else if let mock = localFingerprint_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fingerprint`")
+            fatalError("no mock for `localFingerprint`")
         }
     }
 
@@ -298,6 +298,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
+    }
+
+    // MARK: - migrateCryptoboxSessions
+
+    public var migrateCryptoboxSessionsAt_Invocations: [URL] = []
+    public var migrateCryptoboxSessionsAt_MockError: Error?
+    public var migrateCryptoboxSessionsAt_MockMethod: ((URL) throws -> Void)?
+
+    public func migrateCryptoboxSessions(at url: URL) throws {
+        migrateCryptoboxSessionsAt_Invocations.append(url)
+
+        if let error = migrateCryptoboxSessionsAt_MockError {
+            throw error
+        }
+
+        guard let mock = migrateCryptoboxSessionsAt_MockMethod else {
+            fatalError("no mock for `migrateCryptoboxSessionsAt`")
+        }
+
+        try mock(url)
     }
 
     // MARK: - performBatchedOperations

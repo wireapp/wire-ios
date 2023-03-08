@@ -24,17 +24,22 @@ import WireUtilities
 class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     var sut: ZMUserSession!
-    var flag = DeveloperFlag.proteusViaCoreCrypto
+    var proteusFlag = DeveloperFlag.proteusViaCoreCrypto
+    var mlsFlag = DeveloperFlag.enableMLSSupport
 
     override func setUp() {
         super.setUp()
-        flag.isOn = true
+        proteusFlag.isOn = true
+        mlsFlag.isOn = true
+        BackendInfo.apiVersion = .v2
     }
 
     override func tearDown() {
         sut.tearDown()
         sut = nil
-        flag.isOn = false
+        proteusFlag.isOn = false
+        mlsFlag.isOn = false
+        BackendInfo.apiVersion = nil
         super.tearDown()
     }
 
@@ -56,6 +61,92 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertNotNil(syncMOC.coreCrypto)
         XCTAssertNotNil(syncMOC.proteusService)
         XCTAssertNotNil(syncMOC.mlsController)
+    }
+
+    func test_CryptoStackSetup_OnInit_ProteusOnly() {
+        // GIVEN
+        mlsFlag.isOn = false
+        createSelfClient()
+
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "example.domain.com"
+
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertNotNil(syncMOC.coreCrypto)
+        XCTAssertNotNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+    }
+
+    func test_CryptoStackSetup_OnInit_MLSOnly() {
+        // GIVEN
+        proteusFlag.isOn = false
+        createSelfClient()
+
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "example.domain.com"
+
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertNotNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNotNil(syncMOC.mlsController)
+    }
+
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+        // GIVEN
+        proteusFlag.isOn = false
+        BackendInfo.apiVersion = .v1
+        createSelfClient()
+
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "example.domain.com"
+
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+    }
+
+    func test_CryptoStackSetup_OnInit_AllFlagsOff() {
+        // GIVEN
+        proteusFlag.isOn = false
+        mlsFlag.isOn = false
+        createSelfClient()
+
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "example.domain.com"
+
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertNil(syncMOC.coreCrypto)
+        XCTAssertNil(syncMOC.proteusService)
+        XCTAssertNil(syncMOC.mlsController)
     }
 
     func test_CryptoStackSetup_WhenThereIsNoSelfClient() {

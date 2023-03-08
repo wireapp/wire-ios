@@ -29,6 +29,11 @@ extension ZMUserSession {
     }
 
     func setupCryptoStack(stage: CryptoStackSetupStage) {
+        guard shouldSetupCryptoStack else {
+            WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
+            return
+        }
+
         switch stage {
         case .proteus(let userID):
             setupProteus(userID: userID)
@@ -46,10 +51,12 @@ extension ZMUserSession {
                     sharedContainerURL: sharedContainerURL,
                     userID: userID
                 )
+
                 let coreCrypto = try SafeCoreCrypto(
                     path: configuration.path,
                     key: configuration.key
                 )
+
                 syncContext.coreCrypto = coreCrypto
                 try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
             } catch {
@@ -87,11 +94,26 @@ extension ZMUserSession {
         case missingCoreCrypto
     }
 
+    private var shouldSetupCryptoStack: Bool {
+        return shouldSetupProteusService || shouldSetupMLSController
+    }
+
+
     // MARK: - Proteus
 
     private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) throws {
-        guard DeveloperFlag.proteusViaCoreCrypto.isOn, syncContext.proteusService == nil else { return }
+        guard
+            shouldSetupProteusService,
+            syncContext.proteusService == nil
+        else {
+            return
+        }
+
         syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
+    }
+
+    private var shouldSetupProteusService: Bool {
+        return DeveloperFlag.proteusViaCoreCrypto.isOn
     }
 
     // MARK: - MLS
@@ -100,8 +122,12 @@ extension ZMUserSession {
         coreCrypto: SafeCoreCryptoProtocol,
         clientID: String
     ) throws {
-        // TODO: check if MLS flag is on
-        guard syncContext.mlsController == nil else { return }
+        guard
+            shouldSetupMLSController,
+            syncContext.mlsController == nil
+        else {
+            return
+        }
 
         guard let syncStatus = syncStatus else {
             throw MLSControllerSetupFailure.missingSyncStatus
@@ -118,6 +144,10 @@ extension ZMUserSession {
             userDefaults: userDefaults,
             syncStatus: syncStatus
         )
+    }
+
+    private var shouldSetupMLSController: Bool {
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
     private enum MLSControllerSetupFailure: Error {
