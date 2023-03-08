@@ -310,6 +310,23 @@ public final class ProteusService: ProteusServiceInterface {
         }
     }
 
+    // MARK: - cryptoboxMigration
+
+        enum MigrationError: Error {
+            case failedToMigrateData
+        }
+
+        public func migrateCryptoboxSessions(at url: URL) throws {
+            logger.info("migrating data from Cryptobox into the CoreCrypto keystore")
+
+            do {
+                try coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: url.path) }
+            } catch {
+                logger.error("failed to migrate data from Cryptobox: \(String(describing: error))")
+                throw MigrationError.failedToMigrateData
+            }
+        }
+
     // MARK: - Batched operations
 
     public func performBatchedOperations(_ block: () throws -> Void) rethrows {

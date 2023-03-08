@@ -314,6 +314,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
+    // MARK: - migrateCryptoboxSessions
+
+    public var migrateCryptoboxSessions_Invocations: [URL] = []
+    public var migrateCryptoboxSessions_MockError: Error?
+    public var migrateCryptoboxSessions_MockMethod: ((URL) throws -> Void)?
+
+    public func migrateCryptoboxSessions(at url: URL) throws {
+        migrateCryptoboxSessions_Invocations.append(url)
+
+        if let error = migrateCryptoboxSessions_MockError {
+            throw error
+        }
+
+        guard let mock = migrateCryptoboxSessions_MockMethod else {
+            fatalError("no mock for `migrateCryptoboxSessions`")
+        }
+
+        try mock(url)
+    }
+
     // MARK: - performBatchedOperations
 
     public var performBatchedOperations_Invocations: [() throws -> Void] = []
@@ -326,7 +346,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `performBatchedOperations`")
         }
 
-        mock(block)            
+        mock(block)
     }
 
 }

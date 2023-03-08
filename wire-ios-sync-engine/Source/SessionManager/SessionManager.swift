@@ -243,6 +243,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
+    var cryptoboxMigrationManager: CryptoboxMigration = CryptoboxMigrationManager()
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
@@ -811,15 +812,39 @@ public final class SessionManager: NSObject, SessionManagerType {
                     if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
-                        let userSession = self.startBackgroundSession(for: account,
-                                                                         with: coreDataStack)
-                        completion(userSession)
+                        let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
+
+                        self.migrateCryptoboxIfNeeded(in: coreDataStack.accountContainer, syncContext: userSession.syncContext) {
+                            completion(userSession)
+                        }
+
                     }
                     onWorkDone()
                     group?.leave()
                 }
             }
         })
+    }
+
+    fileprivate func migrateCryptoboxIfNeeded(in accountDirectory: URL,
+                                              syncContext: NSManagedObjectContext,
+                                              completion: @escaping () -> Void) {
+        guard self.cryptoboxMigrationManager.isNeeded(in: accountDirectory) else {
+            completion()
+            return
+        }
+
+        /// We need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
+        self.delegate?.sessionManagerWillMigrateAccount {
+            syncContext.performAndWait {
+                do {
+                    try self.cryptoboxMigrationManager.perform(in: accountDirectory, syncContext: syncContext)
+                } catch {
+                    fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
+                }
+                completion()
+            }
+        }
     }
 
     fileprivate func deleteAccountData(for account: Account) {
