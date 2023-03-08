@@ -228,25 +228,30 @@ extension GenericMessage {
         let (users, missingClientsStrategy) = recipientUsersForMessage(in: conversation, selfUser: selfUser)
         let recipients = users.mapToDictionary { $0.clients }
 
-        let encryptedData: Data?
+        var encryptedData: Data?
 
-        if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            encryptedData = encrypt(
-                for: recipients,
-                with: missingClientsStrategy,
-                externalData: externalData,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        } else {
-            encryptedData = legacyEncrypt(
-                for: recipients,
-                with: missingClientsStrategy,
-                externalData: externalData,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        }
+        context.proteusProvider.perform(
+            withProteusService: { proteusService in
+                encryptedData = encrypt(
+                    using: proteusService,
+                    for: recipients,
+                    with: missingClientsStrategy,
+                    externalData: externalData,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            },
+            withKeyStore: { keyStore in
+                encryptedData = legacyEncrypt(
+                    using: keyStore,
+                    for: recipients,
+                    with: missingClientsStrategy,
+                    externalData: externalData,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            }
+        )
 
         guard let encryptedData = encryptedData else {
             return nil
@@ -267,23 +272,28 @@ extension GenericMessage {
         let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: recipients)
 
         let messageRecipients = recipients.mapToDictionary { $0.clients }
-        let encryptedData: Data?
+        var encryptedData: Data?
 
-        if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            encryptedData = encrypt(
-                for: messageRecipients,
-                with: missingClientsStrategy,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        } else {
-            encryptedData = legacyEncrypt(
-                for: messageRecipients,
-                with: missingClientsStrategy,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        }
+        context.proteusProvider.perform(
+            withProteusService: { proteusService in
+                encryptedData = encrypt(
+                    using: proteusService,
+                    for: messageRecipients,
+                    with: missingClientsStrategy,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            },
+            withKeyStore: { keyStore in
+                encryptedData = legacyEncrypt(
+                    using: keyStore,
+                    for: messageRecipients,
+                    with: missingClientsStrategy,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            }
+        )
 
         guard let encryptedData = encryptedData else {
             return nil
@@ -301,23 +311,28 @@ extension GenericMessage {
     ) -> EncryptedPayloadGenerator.Payload? {
         // We're targeting a specific client so we want to ignore all missing clients.
         let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClients
-        let encryptedData: Data?
+        var encryptedData: Data?
 
-        if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            encryptedData = encrypt(
-                for: recipients,
-                with: missingClientsStrategy,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        } else {
-            encryptedData = legacyEncrypt(
-                for: recipients,
-                with: missingClientsStrategy,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        }
+        context.proteusProvider.perform(
+            withProteusService: { proteusService in
+                encryptedData = encrypt(
+                    using: proteusService,
+                    for: recipients,
+                    with: missingClientsStrategy,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            },
+            withKeyStore: { keyStore in
+                encryptedData = legacyEncrypt(
+                    using: keyStore,
+                    for: recipients,
+                    with: missingClientsStrategy,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            }
+        )
 
         guard let encryptedData = encryptedData else {
             return nil
@@ -327,6 +342,7 @@ extension GenericMessage {
     }
 
     private func encrypt(
+        using proteusService: ProteusServiceInterface,
         for recipients: [ZMUser: Set<UserClient>],
         with missingClientsStrategy: MissingClientsStrategy,
         externalData: Data? = nil,
@@ -334,7 +350,6 @@ extension GenericMessage {
         in context: NSManagedObjectContext
     ) -> Data? {
         guard
-            let proteusService = context.proteusService,
             let selfClient = ZMUser.selfUser(in: context).selfClient(),
             selfClient.remoteIdentifier != nil
         else {
@@ -398,6 +413,7 @@ extension GenericMessage {
     }
 
     private func legacyEncrypt(
+        using keyStore: UserClientKeysStore,
         for recipients: [ZMUser: Set<UserClient>],
         with missingClientsStrategy: MissingClientsStrategy,
         externalData: Data? = nil,
@@ -413,7 +429,7 @@ extension GenericMessage {
 
         var messageData: Data?
 
-        selfClient.keysStore.encryptionContext.perform { sessionsDirectory in
+        keyStore.encryptionContext.perform { sessionsDirectory in
             if useQualifiedIdentifiers, let selfDomain = ZMUser.selfUser(in: context).domain {
                 let message = proteusMessage(
                     selfClient,
@@ -598,6 +614,7 @@ extension GenericMessage {
         guard !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
+            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier)", attributes: nil)
             return Proteus_ClientEntry(withClient: client, data: data)
         }
 
@@ -667,6 +684,7 @@ extension GenericMessage {
 
             guard let sender = message.sender else {
                 zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
+                WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)", attributes: nil)
                 return Set(arrayLiteral: selfUser)
             }
 
@@ -750,26 +768,32 @@ extension GenericMessage {
         }
 
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: keys))
+        var encryptedData: Data?
 
-        if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            return externalGenericMessage.encrypt(
-                for: recipients,
-                with: missingClientsStrategy,
-                externalData: data,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        } else {
-            return externalGenericMessage.legacyEncrypt(
-                for: recipients,
-                with: missingClientsStrategy,
-                externalData: data,
-                useQualifiedIdentifiers: useQualifiedIdentifiers,
-                in: context
-            )
-        }
+        context.proteusProvider.perform(
+            withProteusService: { proteusService in
+                encryptedData = externalGenericMessage.encrypt(
+                    using: proteusService,
+                    for: recipients,
+                    with: missingClientsStrategy,
+                    externalData: data,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            },
+            withKeyStore: { keyStore in
+                encryptedData = externalGenericMessage.legacyEncrypt(
+                    using: keyStore,
+                    for: recipients,
+                    with: missingClientsStrategy,
+                    externalData: data,
+                    useQualifiedIdentifiers: useQualifiedIdentifiers,
+                    in: context
+                )
+            }
+        )
 
-
+        return encryptedData
     }
 }
 
