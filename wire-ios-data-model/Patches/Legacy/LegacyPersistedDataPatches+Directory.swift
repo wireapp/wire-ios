@@ -20,6 +20,10 @@ import Foundation
 
 extension LegacyPersistedDataPatch {
 
+    // Important:
+    // You should not add new patches here. They continue to exist for legacy reasons,
+    // use `PatchApplicator` instead.
+
     /// List of patches to apply
     static let allPatchesToApply = [
         LegacyPersistedDataPatch(version: "41.0.0", block: UserClient.migrateAllSessionsClientIdentifiersV2),
@@ -42,6 +46,7 @@ extension LegacyPersistedDataPatch {
         LegacyPersistedDataPatch(version: "279.0.4", block: InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig),
         LegacyPersistedDataPatch(version: "285.0.0", block: ZMConversation.introduceAccessRoleV2),
         LegacyPersistedDataPatch(version: "290.0.1", block: ZMUser.refetchSelfUserDomain),
+        LegacyPersistedDataPatch(version: "297.0.2", block: UserClient.migrateAllSessionsClientIdentifiersV3)
     ]
 
 }
