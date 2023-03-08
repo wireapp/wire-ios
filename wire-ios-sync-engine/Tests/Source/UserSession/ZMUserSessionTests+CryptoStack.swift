@@ -127,7 +127,6 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertNil(syncMOC.mlsController)
     }
 
-
     func test_CryptoStackSetup_OnInit_AllFlagsOff() {
         // GIVEN
         proteusFlag.isOn = false
