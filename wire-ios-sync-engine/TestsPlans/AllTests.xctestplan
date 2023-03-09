@@ -47,6 +47,7 @@
       "identifier" : "549815921A43232400A7CE2E",
       "name" : "WireSyncEngine-ios"
     },
+    "testExecutionOrdering" : "random",
     "testRepetitionMode" : "fixedIterations",
     "testTimeoutsEnabled" : true
   },
