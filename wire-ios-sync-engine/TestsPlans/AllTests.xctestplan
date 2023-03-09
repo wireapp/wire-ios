@@ -23,6 +23,7 @@
         "enabled" : false
       }
     ],
+    "defaultTestExecutionTimeAllowance" : 60,
     "environmentVariableEntries" : [
       {
         "enabled" : false,
@@ -39,11 +40,15 @@
         "value" : "MockTransportRequests"
       }
     ],
+    "maximumTestRepetitions" : 2,
+    "repeatInNewRunnerProcess" : true,
     "targetForVariableExpansion" : {
       "containerPath" : "container:WireSyncEngine.xcodeproj",
       "identifier" : "549815921A43232400A7CE2E",
       "name" : "WireSyncEngine-ios"
-    }
+    },
+    "testRepetitionMode" : "fixedIterations",
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
