@@ -19,7 +19,7 @@
 #
 
 #!/bin/bash
-echo "pre-commit started"
+echo "pre-push started"
 # Run SwiftLint
 START_DATE=$(date +"%s")
 
