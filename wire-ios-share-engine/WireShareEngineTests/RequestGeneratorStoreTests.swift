@@ -60,13 +60,17 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     var mockStrategy: MockStrategy!
     var sut: RequestGeneratorStore! = nil
 
+    var previousApiVersion: APIVersion?
+
     override func setUp() {
         super.setUp()
+        previousApiVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = .v0
         mockStrategy = MockStrategy()
     }
 
     override func tearDown() {
+        BackendInfo.apiVersion = previousApiVersion
         mockStrategy = nil
         sut.tearDown()
         sut = nil
