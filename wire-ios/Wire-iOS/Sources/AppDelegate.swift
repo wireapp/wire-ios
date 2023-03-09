@@ -31,7 +31,7 @@ enum ApplicationLaunchType {
 }
 
 extension Notification.Name {
-    static let ZMUserSessionDidBecomeAvailable = Notification.Name("ZMUserSessionDidBecomeAvailableNotification")
+    static let ZMUserSessionDidBecomeAvailable = Notification.Name( "ZMUserSessionDidBecomeAvailableNotification" )
 }
 
 private let zmLog = ZMSLog(tag: "AppDelegate")
