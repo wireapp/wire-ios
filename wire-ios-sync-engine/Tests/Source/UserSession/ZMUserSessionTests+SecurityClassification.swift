@@ -159,9 +159,11 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
     }
 
     func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+        let federationFlagBackup = BackendInfo.isFederationEnabled
+        let backendDomainBackup = BackendInfo.domain
         defer {
-            BackendInfo.isFederationEnabled = false
-            BackendInfo.domain = nil
+            BackendInfo.isFederationEnabled = federationFlagBackup
+            BackendInfo.domain = backendDomainBackup
         }
         // given
         let otherUser1 = createUser(moc: syncMOC, domain: UUID().uuidString)
@@ -193,9 +195,11 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
     }
 
     func testThatItReturnsClassified_WhenFederationIsDisabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+        let federationFlagBackup = BackendInfo.isFederationEnabled
+        let backendDomainBackup = BackendInfo.domain
         defer {
-            BackendInfo.isFederationEnabled = false
-            BackendInfo.domain = nil
+            BackendInfo.isFederationEnabled = federationFlagBackup
+            BackendInfo.domain = backendDomainBackup
         }
         // given
         let otherUser1 = createUser(moc: syncMOC, domain: UUID().uuidString)
