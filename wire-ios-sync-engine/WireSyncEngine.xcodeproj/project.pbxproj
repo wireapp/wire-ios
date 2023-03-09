@@ -655,6 +655,13 @@
 			remoteGlobalIDString = 549815921A43232400A7CE2E;
 			remoteInfo = "WireSyncEngine-ios.framework";
 		};
+		A9FF8088195B17B3002CD44B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 540029AB1918CA8500578793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E186087191A56F6000FE027;
+			remoteInfo = "WireSyncEngine Test Host";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2669,6 +2676,7 @@
 			dependencies = (
 				54F4DC581A4438AC00FDB6EA /* PBXTargetDependency */,
 				3E1860D1191A649D000FE027 /* PBXTargetDependency */,
+				A9FF8089195B17B3002CD44B /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = "WireSyncEngine-iOS-Tests";
@@ -3456,6 +3464,11 @@
 			isa = PBXTargetDependency;
 			target = 549815921A43232400A7CE2E /* WireSyncEngine-ios */;
 			targetProxy = 54F4DC571A4438AC00FDB6EA /* PBXContainerItemProxy */;
+		};
+		A9FF8089195B17B3002CD44B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E186087191A56F6000FE027 /* WireSyncEngine Test Host */;
+			targetProxy = A9FF8088195B17B3002CD44B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
