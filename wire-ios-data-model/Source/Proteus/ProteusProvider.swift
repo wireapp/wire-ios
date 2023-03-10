@@ -63,6 +63,7 @@ public class ProteusProvider: ProteusProviding {
             return try keyStoreBlock(keyStore)
 
         } else {
+            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
             fatal("can't access any proteus cryptography service")
         }
     }
