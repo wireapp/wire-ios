@@ -205,6 +205,7 @@
 		EE90C2AC282EA1D200474379 /* GetPushTokensAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C2AB282EA1D200474379 /* GetPushTokensAction.swift */; };
 		EE90C2AE282EA1E000474379 /* GetPushTokensActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C2AD282EA1E000474379 /* GetPushTokensActionHandler.swift */; };
 		EE90C2B0282EA1F200474379 /* GetPushTokensActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C2AF282EA1F200474379 /* GetPushTokensActionHandlerTests.swift */; };
+		EE9BC57E28785FB100AF9AEE /* XCTestCase+APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BC57D28785FB100AF9AEE /* XCTestCase+APIVersion.swift */; };
 		EEA2EE8A28F021C100A2CBE1 /* UserClientByQualifiedUserIDTranscoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2EE8928F021C100A2CBE1 /* UserClientByQualifiedUserIDTranscoderTests.swift */; };
 		EEAC16D4281AE5F700B7A34D /* CallEventContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAC16D3281AE5F700B7A34D /* CallEventContent.swift */; };
 		EEAC16D6281AEB0200B7A34D /* CallEventContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAC16D5281AEB0200B7A34D /* CallEventContentTests.swift */; };
@@ -580,6 +581,7 @@
 		EE90C2AB282EA1D200474379 /* GetPushTokensAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPushTokensAction.swift; sourceTree = "<group>"; };
 		EE90C2AD282EA1E000474379 /* GetPushTokensActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPushTokensActionHandler.swift; sourceTree = "<group>"; };
 		EE90C2AF282EA1F200474379 /* GetPushTokensActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPushTokensActionHandlerTests.swift; sourceTree = "<group>"; };
+		EE9BC57D28785FB100AF9AEE /* XCTestCase+APIVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+APIVersion.swift"; sourceTree = "<group>"; };
 		EEA2EE8928F021C100A2CBE1 /* UserClientByQualifiedUserIDTranscoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientByQualifiedUserIDTranscoderTests.swift; sourceTree = "<group>"; };
 		EEAC16D3281AE5F700B7A34D /* CallEventContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallEventContent.swift; sourceTree = "<group>"; };
 		EEAC16D5281AEB0200B7A34D /* CallEventContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallEventContentTests.swift; sourceTree = "<group>"; };
@@ -852,6 +854,7 @@
 				1621D2261D75AB2D007108C2 /* MockModelObjectContextFactory.h */,
 				1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */,
 				EE82318827D22D79008CD77B /* String+Random.swift */,
+				EE9BC57D28785FB100AF9AEE /* XCTestCase+APIVersion.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1862,6 +1865,7 @@
 				F19561FB202A13C3005347C0 /* ZMSyncOperationSetTests.m in Sources */,
 				F18401E92073C26700E9F4CC /* AvailabilityRequestStrategyTests.swift in Sources */,
 				0693114D24F79A1100D14DF5 /* ZMLocalNotificationLocalizationTests.swift in Sources */,
+				EE9BC57E28785FB100AF9AEE /* XCTestCase+APIVersion.swift in Sources */,
 				1662ADD122B14CBA00D84071 /* VerifyLegalHoldRequestStrategyTests.swift in Sources */,
 				F19561EF202A1309005347C0 /* DependencyEntitySyncTests.swift in Sources */,
 				F18401E42073C25E00E9F4CC /* GenericMessageRequestStrategyTests.swift in Sources */,

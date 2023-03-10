@@ -66,16 +66,15 @@ private struct CodableObject: Codable {
 class Payload_CodingTests: XCTestCase {
 
     var data: Data!
-    var previousApiVersion: APIVersion?
+
     override func setUp() {
         super.setUp()
         data = try! JSONSerialization.data(withJSONObject: ["foo": "bar"], options: [])
-        previousApiVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = nil
     }
 
     override func tearDown() {
-        BackendInfo.apiVersion = previousApiVersion
+        BackendInfo.apiVersion = .v3
         data = nil
         super.tearDown()
     }
