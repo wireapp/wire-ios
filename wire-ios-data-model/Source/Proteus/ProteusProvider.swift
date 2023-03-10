@@ -29,6 +29,7 @@ public protocol ProteusProviding {
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T
 
+    var canPerform: Bool { get }
 }
 
 public class ProteusProvider: ProteusProviding {
@@ -65,6 +66,13 @@ public class ProteusProvider: ProteusProviding {
         } else {
             fatal("can't access any proteus cryptography service")
         }
+    }
+
+    public var canPerform: Bool {
+        let canUseProteusService = proteusViaCoreCrypto && context.proteusService != nil
+        let canUseKeyStore = !proteusViaCoreCrypto && context.zm_cryptKeyStore != nil
+
+        return canUseProteusService || canUseKeyStore
     }
 
 }
