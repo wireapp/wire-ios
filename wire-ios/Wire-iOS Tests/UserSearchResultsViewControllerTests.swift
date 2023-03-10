@@ -43,7 +43,7 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
     func createSUT() {
         sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
 
-        sut.view.backgroundColor = .black
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func tearDown() {
@@ -53,7 +53,7 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         otherUser = nil
         serviceUser = nil
 
-        resetColorScheme()
+        //resetColorScheme()
 
         super.tearDown()
     }
@@ -93,11 +93,10 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testThatItOverflowsWithTooManyUsers_darkMode() {
-        ColorScheme.default.variant = .dark
         createSUT()
+        sut.users = mockSearchResultUsers()
         sut.overrideUserInterfaceStyle = .dark
 
-        sut.users = mockSearchResultUsers()
         verify(matching: sut)
     }
 
