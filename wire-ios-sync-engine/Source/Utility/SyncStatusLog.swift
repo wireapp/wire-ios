@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2017 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,10 @@
 //
 
 import Foundation
-import XCTest
 
-private var previousApiVersion: APIVersion?
-
-extension XCTestCase {
-
-    func setCurrentAPIVersion(_ version: APIVersion?) {
-        previousApiVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = version
-        XCTAssertEqual(BackendInfo.apiVersion, version)
-    }
-
-    func resetCurrentAPIVersion() {
-        BackendInfo.apiVersion = previousApiVersion
-    }
+struct SyncStatusLog: Codable {
+    var phase: String
+    var isSyncing: Bool
+    var pushChannelEstablishedDate: String?
+    var message: String?
 }
