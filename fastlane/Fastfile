@@ -386,7 +386,7 @@ platform :ios do
                 # code_coverage: true,
                 derived_data_path: "DerivedData",
                 buildlog_path: build.build_path,
-                output_directory: "artifacts/#{build.artifact_directory}/tests/#{scheme}",
+                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
                 output_types: "junit"
             )    
         end
@@ -534,6 +534,7 @@ class Build
     end
 
     def artifact_directory
+        result = ""
         suffix = "" 
         if for_simulator 
             suffix = "simulator" 
@@ -543,22 +544,25 @@ class Build
 
         case @build_type
         when "Playground"
-            "playground-#{normalized_branch_name}/#{suffix}"
+            result = "playground-#{normalized_branch_name}/#{suffix}"
         when "Development"
-            "development/#{suffix}"
+            result = "development/#{suffix}"
         when "Internal"
-            "internal/#{suffix}"
+            result = "internal/#{suffix}"
         when "AppStore"
-            "release/appstore"
+            result = "release/appstore"
         when "AVS"
-            "avs-experimental/#{suffix}"
+            result = "avs-experimental/#{suffix}"
         when "RC"
-            "release/#{suffix}"
+            result = "release/#{suffix}"
         when "Beta"
-            "release/testflight"
+            result = "release/testflight"
         else
             UI.user_error! "Unknown build type: #{@build_type}"
         end
+
+        # We want to group related artifacts by the filename.
+        result + "/" + filename
     end
 
     # Force custom AVS version
