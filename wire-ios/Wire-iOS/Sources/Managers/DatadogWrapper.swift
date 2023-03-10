@@ -150,6 +150,7 @@ extension DatadogWrapper: RemoteLogger {
 // MARK: Crypto helper
 
 import CryptoKit
+import UIKit
 
 extension String {
 
