@@ -22,7 +22,7 @@ import XCTest
 private var previousApiVersion: APIVersion?
 
 extension XCTestCase {
-    
+
     func setCurrentAPIVersion(_ version: APIVersion?) {
         previousApiVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = version
