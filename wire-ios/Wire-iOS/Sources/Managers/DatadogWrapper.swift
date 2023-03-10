@@ -26,6 +26,7 @@ import WireTransport
 
 import Datadog
 import DatadogCrashReporting
+import UIKit
 
 public class DatadogWrapper {
 
@@ -150,7 +151,6 @@ extension DatadogWrapper: RemoteLogger {
 // MARK: Crypto helper
 
 import CryptoKit
-import UIKit
 
 extension String {
 
