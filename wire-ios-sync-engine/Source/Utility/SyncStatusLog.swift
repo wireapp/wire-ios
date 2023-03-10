@@ -16,32 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-final class Optional_ApplyTests: XCTestCase {
-
-    func testThatItExecutesTheBlockIfSelfIsSome() {
-        // given
-        let sut: Int? = 42
-        var closurePrameter: Int?
-
-        // when
-        sut.apply {
-            closurePrameter = $0
-        }
-
-        // then
-        XCTAssertEqual(closurePrameter, 42)
-    }
-
-    func testThatItDoesNotExecuteTheBlockIfSelfIsNone() {
-        // given
-        let sut: Int? = nil
-
-        // then
-        sut.apply { _ in
-            XCTFail()
-        }
-    }
-
+struct SyncStatusLog: Codable {
+    var phase: String
+    var isSyncing: Bool
+    var pushChannelEstablishedDate: String?
+    var message: String?
 }
