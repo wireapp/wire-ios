@@ -59,11 +59,11 @@ extension ZMUserSession {
 
                 syncContext.coreCrypto = coreCrypto
                 try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
+
+                WireLogger.coreCrypto.info("success: setup crypto stack (proteus)")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack (proteus): \(String(describing: error))")
             }
-
-            WireLogger.coreCrypto.info("success: setup crypto stack (proteus)")
         }
     }
 
@@ -80,13 +80,12 @@ extension ZMUserSession {
                 try coreCrypto.mlsInit(clientID: clientID)
                 try createMLSControllerIfNeeded(coreCrypto: coreCrypto, clientID: clientID)
 
+                WireLogger.coreCrypto.info("success: setup crypto stack (mls)")
             } catch let error as MLSControllerSetupFailure {
                 WireLogger.coreCrypto.error("fail: setup MLSController: \(String(describing: error))")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack (mls): \(String(describing: error))")
             }
-
-            WireLogger.coreCrypto.info("success: setup crypto stack (mls)")
         }
     }
 
@@ -97,7 +96,6 @@ extension ZMUserSession {
     private var shouldSetupCryptoStack: Bool {
         return shouldSetupProteusService || shouldSetupMLSController
     }
-
 
     // MARK: - Proteus
 

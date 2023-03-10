@@ -54,11 +54,12 @@ extension SharingSession {
                 if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {
                     syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
                 }
+                
+                WireLogger.coreCrypto.info("success: setup crypto stack")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
 
-            WireLogger.coreCrypto.info("success: setup crypto stack")
         }
     }
 
