@@ -42,19 +42,14 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
 
     func createSUT() {
         sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
-
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func tearDown() {
         sut = nil
-
         selfUser = nil
         otherUser = nil
         serviceUser = nil
-
-        //resetColorScheme()
-
         super.tearDown()
     }
 
