@@ -26,6 +26,7 @@ import WireTransport
 
 import Datadog
 import DatadogCrashReporting
+import UIKit
 
 public class DatadogWrapper {
 
