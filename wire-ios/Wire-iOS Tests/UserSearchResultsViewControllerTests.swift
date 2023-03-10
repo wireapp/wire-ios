@@ -21,14 +21,15 @@ import XCTest
 
 final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
 
+    // MARK: - Properties
     var sut: UserSearchResultsViewController!
     var serviceUser: MockServiceUserType!
     var selfUser: MockUserType!
     var otherUser: MockUserType!
 
+    // MARK: setUp
     override func setUp() {
         super.setUp()
-
         // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = (SelfUser.current as! MockUserType)
@@ -37,14 +38,9 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         serviceUser = MockServiceUserType.createServiceUser(name: "ServiceUser")
 
         XCTAssert(SelfUser.current.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
-
     }
 
-    func createSUT() {
-        sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
-    }
-
+    // MARK: - tearDown
     override func tearDown() {
         sut = nil
         selfUser = nil
@@ -53,8 +49,13 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    // UI Tests
+    // MARK: - Helper method
+    func createSUT() {
+        sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+    }
 
+    // MARK: - Snapshot Tests
     func testThatShowsResultsInConversationWithEmptyQuery() {
         createSUT()
         sut.users = [selfUser, otherUser].searchForMentions(withQuery: "")
@@ -88,9 +89,10 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testThatItOverflowsWithTooManyUsers_darkMode() {
+        ColorScheme.default.variant = .dark
         createSUT()
-        sut.users = mockSearchResultUsers()
         sut.overrideUserInterfaceStyle = .dark
+        sut.users = mockSearchResultUsers()
 
         verify(matching: sut)
     }
