@@ -86,9 +86,6 @@ jobs:
       - name: Test WireSystem
         if: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireSystem has changes"
           echo "Building WireSystem..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -99,9 +96,6 @@ jobs:
       - name: Test WireTesting
         if: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireTesting has changes"
           echo "Building WireTesting..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -112,9 +106,6 @@ jobs:
       - name: Test WireUtilities
         if: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireUtilities has changes"
           echo "Building WireUtilities..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -125,9 +116,6 @@ jobs:
       - name: Test WireCryptobox
         if: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireCryptobox has changes"
           echo "Building WireCryptobox..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -138,9 +126,6 @@ jobs:
       - name: Test WireTransport
         if: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireTransport has changes"
           echo "Building WireTransport..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -151,9 +136,6 @@ jobs:
       - name: Test WireLinkPreview
         if: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireLinkPreview has changes"
           echo "Building WireLinkPreview..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -164,9 +146,6 @@ jobs:
       - name: Test WireImages
         if: ${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireImages has changes"
           echo "Building WireImages..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -177,9 +156,6 @@ jobs:
       - name: Test WireProtos
         if: ${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireProtos has changes"
           echo "Building WireProtos..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireProtos -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -190,9 +166,6 @@ jobs:
       - name: Test WireMockTransport
         if: ${{ needs.detect-changes.outputs.wire-ios-mocktransport == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireMockTransport has changes"
           echo "Building WireMockTransport..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -203,9 +176,6 @@ jobs:
       - name: Test WireDataModel
         if: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireDataModel has changes"
           echo "Building WireDataModel..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -216,9 +186,6 @@ jobs:
       - name: Test WireRequestStrategy
         if: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireRequestStrategy has changes"
           echo "Building WireRequestStrategy..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -229,9 +196,6 @@ jobs:
       - name: Test WireNotificationEngine
         if: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireNotificationEngine has changes"
           echo "Building WireNotificationEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -242,9 +206,6 @@ jobs:
       - name: Test WireShareEngine
         if: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireShareEngine has changes"
           echo "Building WireShareEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -255,9 +216,6 @@ jobs:
       - name: Test WireSyncEngine
         if: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "WireSyncEngine has changes"
           echo "Building WireSyncEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
@@ -268,9 +226,6 @@ jobs:
       - name: Test Wire-iOS
         if: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
         run: |
-          echo "clean sims"
-          xcrun simctl shutdown all
-          xcrun simctl erase all
           echo "Wire-iOS has changes"
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
