@@ -49,10 +49,25 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    // MARK: - Helper method
+    // MARK: - Helper methods
     func createSUT() {
         sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+    }
+
+    func mockSearchResultUsers(file: StaticString = #file, line: UInt = #line) -> [UserType] {
+        var allUsers: [UserType] = []
+
+        for name in MockUserType.usernames {
+            let user = MockUserType.createUser(name: name)
+            user.accentColorValue = .brightOrange
+            XCTAssertFalse(user.isTeamMember, "user should not be a team member to generate snapshots with guest icon", file: file, line: line)
+            allUsers.append(user)
+        }
+
+        allUsers.append(selfUser)
+
+        return allUsers.searchForMentions(withQuery: "")
     }
 
     // MARK: - Snapshot Tests
@@ -71,21 +86,6 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         }
 
         verifyInAllColorSchemes(createSut: createSut)
-    }
-
-    func mockSearchResultUsers(file: StaticString = #file, line: UInt = #line) -> [UserType] {
-        var allUsers: [UserType] = []
-
-        for name in MockUserType.usernames {
-            let user = MockUserType.createUser(name: name)
-            user.accentColorValue = .brightOrange
-            XCTAssertFalse(user.isTeamMember, "user should not be a team member to generate snapshots with guest icon", file: file, line: line)
-            allUsers.append(user)
-        }
-
-        allUsers.append(selfUser)
-
-        return allUsers.searchForMentions(withQuery: "")
     }
 
     func testThatItOverflowsWithTooManyUsers_darkMode() {
