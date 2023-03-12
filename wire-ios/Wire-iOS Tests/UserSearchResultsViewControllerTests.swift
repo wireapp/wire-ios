@@ -46,6 +46,7 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         selfUser = nil
         otherUser = nil
         serviceUser = nil
+        resetColorScheme()
         super.tearDown()
     }
 
