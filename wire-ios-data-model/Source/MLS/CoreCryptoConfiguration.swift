@@ -19,6 +19,7 @@
 import Foundation
 import CoreCryptoSwift
 import CoreCrypto
+import WireSystem
 
 public struct CoreCryptoConfiguration {
 
@@ -85,7 +86,7 @@ public class CoreCryptoConfigProvider {
                 key: key.base64EncodedString()
             )
         } catch {
-            Logging.mls.warn("Failed to get core crypto key \(String(describing: error))")
+            WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }

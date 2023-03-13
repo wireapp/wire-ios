@@ -54,11 +54,11 @@ extension NotificationSession {
                         coreCrypto: safeCoreCrypto
                     )
                 }
+
+                WireLogger.coreCrypto.info("success: setup crypto stack")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
-
-            WireLogger.coreCrypto.info("success: setup crypto stack")
         }
     }
 

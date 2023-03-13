@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 public class CoreCryptoKeyProvider {
 
@@ -27,10 +28,14 @@ public class CoreCryptoKeyProvider {
     public func coreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
         if let key: Data = try? KeychainManager.fetchItem(item) {
+            WireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
             return key
         } else {
+            WireLogger.coreCrypto.info("Core crypto key doesn't exist. Creating...")
             let key = try KeychainManager.generateKey(numberOfBytes: 32)
+            WireLogger.coreCrypto.info("Created core crypto key: \(key.base64String()). Storing...")
             try KeychainManager.storeItem(item, value: key)
+            WireLogger.coreCrypto.info("Stored core crypto key. Returning...")
             return key
         }
     }
