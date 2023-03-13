@@ -24,6 +24,7 @@ import WireTesting
 class MockDependencyEntity: DependencyEntity, Hashable {
     public var expirationDate: Date?
     public var isExpired: Bool = false
+    public var expirationReasonCode: NSNumber? = nil
     fileprivate let uuid = UUID()
 
     public func expire() {
