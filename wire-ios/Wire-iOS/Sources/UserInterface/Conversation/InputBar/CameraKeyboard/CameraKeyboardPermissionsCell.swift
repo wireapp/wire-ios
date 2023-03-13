@@ -39,9 +39,8 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = SemanticColors.View.backgroundConversationView
-
         cameraIcon.setIcon(.cameraLens, size: .tiny, for: .normal)
-        cameraIcon.setIconColor(.white, for: .normal)
+        cameraIcon.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
         cameraIcon.isUserInteractionEnabled = false
 
         descriptionLabel.backgroundColor = .clear
