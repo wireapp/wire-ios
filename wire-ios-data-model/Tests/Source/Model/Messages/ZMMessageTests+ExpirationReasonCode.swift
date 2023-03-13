@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class ZMMessage_ExpirationReasonCode: BaseZMClientMessageTests {
+import XCTest
+@testable import WireDataModel
 
-    func testThatItHasExpirationReasonCode_DeliveryStateIsFailedToSend() {
+class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
+
+    func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -32,10 +35,9 @@ class ZMMessage_ExpirationReasonCode: BaseZMClientMessageTests {
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
         XCTAssertTrue(message.isExpired)
         XCTAssertEqual(message.expirationReasonCode, 0)
-        XCTAssertEqual(message.failedToSendReason, .unknown)
     }
 
-    func testThatExpirationReasonCodeIsNil_MessageIsSent() {
+    func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()

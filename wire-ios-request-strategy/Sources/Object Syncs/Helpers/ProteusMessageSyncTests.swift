@@ -240,12 +240,13 @@ class ProteusMessageSyncTests: MessagingTestBase {
             XCTAssertNil(message.expirationReasonCode)
 
             // when
+            let federationType = Payload.ResponseFailure.FederationFailure.FailureType.federation
             let payload = Payload.ResponseFailure(code: 533,
                                                   label: .federationRemoteError,
                                                   message: "",
                                                   data: Payload.ResponseFailure.FederationFailure(domain: "foma.wire.link",
                                                                                                   path: "/federation/api-version",
-                                                                                                  type: Payload.ResponseFailure.FederationFailure.FailureType.federation))
+                                                                                                  type: federationType))
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: payload.code,
