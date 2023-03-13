@@ -86,6 +86,7 @@ public enum SemanticColors {
         static let foregroundDefault = UIColor(light: Asset.Colors.gray90, dark: Asset.Colors.white)
         static let foregroundDefaultBlack = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let foregroundDefaultWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
+        static let foregroundWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
         static let foregroundDefaultRed = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundPlainDownArrow = UIColor(light: Asset.Colors.gray90, dark: Asset.Colors.gray20)
         static let backgroundJoinCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
@@ -100,6 +101,8 @@ public enum SemanticColors {
 
     public enum View {
         static let backgroundDefault = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
+        static let backgroundBlack = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
+        static let backgroundtWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
         static let backgroundDefaultBlack = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let backgroundDefaultWhite = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let backgroundConversationView = UIColor(light: Asset.Colors.gray10, dark: Asset.Colors.gray95)
