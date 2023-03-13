@@ -115,19 +115,19 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.createCollectionView()
 
         self.goBackButton.translatesAutoresizingMaskIntoConstraints = false
-        self.goBackButton.backgroundColor = UIColor(white: 0, alpha: 0.88)
+        self.goBackButton.backgroundColor = SemanticColors.View.backgroundBlack
         self.goBackButton.circular = true
         self.goBackButton.setIcon(.backArrow, size: .tiny, for: [])
-        self.goBackButton.setIconColor(UIColor.white, for: [])
+        self.goBackButton.setIconColor(SemanticColors.Icon.foregroundWhite, for: [])
         self.goBackButton.accessibilityIdentifier = "goBackButton"
         self.goBackButton.addTarget(self, action: #selector(goBackPressed(_:)), for: .touchUpInside)
         self.goBackButton.applyRTLTransformIfNeeded()
 
         self.cameraRollButton.translatesAutoresizingMaskIntoConstraints = false
-        self.cameraRollButton.backgroundColor = UIColor(white: 0, alpha: 0.88)
+        self.cameraRollButton.backgroundColor = SemanticColors.View.backgroundBlack
         self.cameraRollButton.circular = true
         self.cameraRollButton.setIcon(.photo, size: .tiny, for: [])
-        self.cameraRollButton.setIconColor(UIColor.white, for: [])
+        self.cameraRollButton.setIconColor(SemanticColors.Icon.foregroundWhite, for: [])
         self.cameraRollButton.accessibilityIdentifier = "cameraRollButton"
         self.cameraRollButton.addTarget(self, action: #selector(openCameraRollPressed(_:)), for: .touchUpInside)
 
@@ -334,12 +334,11 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
     }
 
     fileprivate func setupPhotoKeyboardAppearance() {
+        self.view.backgroundColor = SemanticColors.View.backgroundConversationView
 
         if permissions.areCameraAndPhotoLibraryAuthorized {
-            self.view.backgroundColor = .white
             self.collectionView.delaysContentTouches = true
         } else {
-            self.view.backgroundColor = .graphite
             self.collectionView.delaysContentTouches = false
         }
 
