@@ -28,7 +28,9 @@ enum DeniedAuthorizationType {
 
 final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
-    let settingsButton = LegacyButton(fontSpec: .normalSemiboldFont)
+    let settingsButton = Button(style: .secondaryTextButtonStyle,
+                                cornerRadius: 4,
+                                fontSpec: .normalSemiboldFont)
     let cameraIcon = IconButton()
     let descriptionLabel = UILabel()
 
@@ -36,25 +38,21 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .graphite
+        self.backgroundColor = SemanticColors.View.backgroundConversationView
 
         cameraIcon.setIcon(.cameraLens, size: .tiny, for: .normal)
         cameraIcon.setIconColor(.white, for: .normal)
         cameraIcon.isUserInteractionEnabled = false
 
         descriptionLabel.backgroundColor = .clear
-        descriptionLabel.textColor = .white
+        descriptionLabel.textColor = SemanticColors.Label.textDefault
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
-
-        settingsButton.setTitleColor(.white, for: .normal)
-        settingsButton.setTitle("keyboard_photos_access.denied.keyboard.settings".localized, for: .normal)
+        settingsButton.setTitle(L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.settings, for: .normal)
         settingsButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 30, bottom: 10, right: 30)
-        settingsButton.layer.cornerRadius = 4.0
         settingsButton.layer.masksToBounds = true
         settingsButton.addTarget(self, action: #selector(CameraKeyboardPermissionsCell.openSettings), for: .touchUpInside)
-        settingsButton.setBackgroundImageColor(UIColor.white.withAlphaComponent(0.16), for: .normal)
-        settingsButton.setBackgroundImageColor(UIColor.white.withAlphaComponent(0.24), for: .highlighted)
+
         containerView.backgroundColor = .clear
 
         containerView.addSubview(descriptionLabel)
