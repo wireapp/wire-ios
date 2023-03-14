@@ -29,6 +29,8 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         previousApiVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = .v0
 
+        BackendInfo.apiVersion = .v0
+
         syncMOC.performGroupedBlockAndWait {
             self.createSelfClient()
         }
