@@ -203,7 +203,6 @@ extension WireCallCenterV3 {
                                            senderClientId: String,
                                            targets: AVSClientList?,
                                            data: Data) {
-        guard isEnabled else { return }
 
         guard isEnabled else { return }
 
