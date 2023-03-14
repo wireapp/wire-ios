@@ -333,3 +333,12 @@ enum Payload {
     }
 
 }
+
+extension Payload.ResponseFailure {
+
+    func updateExpirationReason(for message: OTREntity, with reason: FailedToSendReason) {
+        message.expirationReasonCode = NSNumber(value: reason.rawValue)
+    }
+
+}
+
