@@ -266,6 +266,7 @@ enum Payload {
             case missingLegalholdConsent = "missing-legalhold-consent"
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
+            case federationRemoteError = "federation-remote-error"
             case unknown
 
             init(from decoder: Decoder) throws {
