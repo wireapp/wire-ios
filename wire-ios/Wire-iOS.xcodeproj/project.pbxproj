@@ -1110,6 +1110,7 @@
 		D3BF754B29B093FD008459B5 /* WarningLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BF754A29B093FD008459B5 /* WarningLabelView.swift */; };
 		D3C34E6E28C1593C004A1AF1 /* AccessTokenEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C34E6428C14EEE004A1AF1 /* AccessTokenEndpointTests.swift */; };
 		D3C34E7628C1DE4B004A1AF1 /* NotificationByIDEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C34E7528C1DE4B004A1AF1 /* NotificationByIDEndpointTests.swift */; };
+		D3C9923B29BF4C9900DD57B9 /* GuestAccountWarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C9923A29BF4C9900DD57B9 /* GuestAccountWarningView.swift */; };
 		D3DA6E7B292F67680045CC57 /* CallingActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA6E7A292F67680045CC57 /* CallingActionsView.swift */; };
 		D3DA6E7E292FDEEA0045CC57 /* CallingActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA6E7D292FDEEA0045CC57 /* CallingActionButton.swift */; };
 		D3DE46052923BB13000F1055 /* BottomSheetContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DE46042923BB13000F1055 /* BottomSheetContainerViewController.swift */; };
@@ -3101,6 +3102,7 @@
 		D3BF754A29B093FD008459B5 /* WarningLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelView.swift; sourceTree = "<group>"; };
 		D3C34E6428C14EEE004A1AF1 /* AccessTokenEndpointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenEndpointTests.swift; sourceTree = "<group>"; };
 		D3C34E7528C1DE4B004A1AF1 /* NotificationByIDEndpointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationByIDEndpointTests.swift; sourceTree = "<group>"; };
+		D3C9923A29BF4C9900DD57B9 /* GuestAccountWarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestAccountWarningView.swift; sourceTree = "<group>"; };
 		D3DA6E7A292F67680045CC57 /* CallingActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingActionsView.swift; sourceTree = "<group>"; };
 		D3DA6E7D292FDEEA0045CC57 /* CallingActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingActionButton.swift; sourceTree = "<group>"; };
 		D3DE46042923BB13000F1055 /* BottomSheetContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetContainerViewController.swift; sourceTree = "<group>"; };
@@ -6096,6 +6098,7 @@
 				8708B8321DDDFF0D00310A53 /* UserConnectionView.swift */,
 				BF7ED2D91DF1B5ED003A4397 /* OutgoingConnectionBottomBar.swift */,
 				BF7ED2D71DF1A30C003A4397 /* IncomingConnectionView.swift */,
+				D3C9923A29BF4C9900DD57B9 /* GuestAccountWarningView.swift */,
 			);
 			path = ConnectRequests;
 			sourceTree = "<group>";
@@ -8915,6 +8918,7 @@
 				5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */,
 				871BC2551D34F8F800DF0793 /* CrossfadeTransition.swift in Sources */,
 				6316C42F2657F0CE00D7E806 /* RoundedBlurView.swift in Sources */,
+				D3C9923B29BF4C9900DD57B9 /* GuestAccountWarningView.swift in Sources */,
 				16D4932A203DCCCA008DDFFA /* UserCell.swift in Sources */,
 				068500DF26BD4E4B00721F80 /* UIView+Subviews.swift in Sources */,
 				E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */,

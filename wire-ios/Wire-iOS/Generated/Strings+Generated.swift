@@ -2062,8 +2062,12 @@ internal enum L10n {
         }
       }
       internal enum ConnectionView {
+        /// Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.
+        internal static let encryptionInfo = L10n.tr("Localizable", "conversation.connection_view.encryption_info", fallback: "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.")
         /// in Contacts
         internal static let inAddressBook = L10n.tr("Localizable", "conversation.connection_view.in_address_book", fallback: "in Contacts")
+        /// Please still be careful with who you share sensitive information.
+        internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
       }
       internal enum Create {
         internal enum GroupName {

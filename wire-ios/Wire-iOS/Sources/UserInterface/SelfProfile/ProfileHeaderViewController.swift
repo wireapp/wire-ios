@@ -327,7 +327,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateWarningView() {
-        warningView.isHidden = user.isConnected
+        warningView.isHidden = user.isConnected || user.isTeamMember
         warningView.update(withUser: user)
     }
 }
