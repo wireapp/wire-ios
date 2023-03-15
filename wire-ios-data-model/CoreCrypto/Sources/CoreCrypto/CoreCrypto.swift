@@ -70,6 +70,12 @@ extension CoreCryptoSwift.MlsPublicGroupStateEncryptionType {
     }
 }
 
+extension CoreCryptoSwift.ProteusAutoPrekeyBundle {
+    func convertTo() -> ProteusAutoPrekeyBundle {
+        return ProteusAutoPrekeyBundle(id: self.id, pkb: self.pkb)
+    }
+}
+
 extension CoreCryptoSwift.MlsRatchetTreeType {
     func convertTo() -> RatchetTreeType {
         switch self {
@@ -118,6 +124,23 @@ private extension CiphersuiteName {
         case .mls256Dhkemp384Aes256gcmSha384P384:
             return CoreCryptoSwift.CiphersuiteName.mls256Dhkemp384Aes256gcmSha384P384
         }
+    }
+}
+
+public struct ProteusAutoPrekeyBundle: ConvertToInner {
+    typealias Inner = CoreCryptoSwift.ProteusAutoPrekeyBundle
+    func convert() -> Inner {
+        return CoreCryptoSwift.ProteusAutoPrekeyBundle(id: self.id, pkb: self.preKeyBundle)
+    }
+
+    /// Proteus PreKey ID
+    public var id: UInt16
+    /// CBOR-serialized Proteus PreKeyBundle
+    public var preKeyBundle: [UInt8]
+
+    public init(id: UInt16, pkb: [UInt8]) {
+        self.id = id
+        self.preKeyBundle = pkb
     }
 }
 
@@ -535,6 +558,15 @@ public class CoreCryptoWrapper {
         return try self.coreCrypto.removeClientsFromConversation(conversationId: conversationId, clients: clients).convertTo()
     }
 
+    /// Marks a conversation as child of another one
+    /// This will mostly affect the behavior of the callbacks (the parentConversationClients parameter will be filled)
+    ///
+    /// - parameter childId: conversation identifier of the child conversation
+    /// - parameter parentId: conversation identifier of the parent conversation
+    public func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
+        try self.coreCrypto.markConversationAsChildOf(childId: childId, parentId: parentId)
+    }
+
     /// Self updates the KeyPackage and automatically commits. Pending proposals will be commited.
     ///
     /// The returned ``CommitBundle`` is a TLS struct that needs to be fanned out to Delivery Service in order to validate the commit.
@@ -832,8 +864,8 @@ public class CoreCryptoWrapper {
     /// Creates a new prekey with an automatically incremented ID.
     ///
     /// - returns: A CBOR-serialized version of the PreKeyBundle corresponding to the newly generated and stored PreKey
-    public func proteusNewPrekeyAuto() throws -> [UInt8] {
-        try self.coreCrypto.proteusNewPrekeyAuto()
+    public func proteusNewPrekeyAuto() throws -> ProteusAutoPrekeyBundle {
+        try self.coreCrypto.proteusNewPrekeyAuto().convertTo()
     }
 
     /// - returns: A CBOR-serialized verison of the PreKeyBundle associated to the last resort prekey ID
@@ -878,10 +910,28 @@ public class CoreCryptoWrapper {
         try self.coreCrypto.proteusFingerprintPrekeybundle(prekey: prekey)
     }
 
-     /// Imports all the data stored by Cryptobox into the CoreCrypto keystore
-     ///
-     /// @param path - Path to the folder where Cryptobox things are stored
+    /// Imports all the data stored by Cryptobox into the CoreCrypto keystore
+    ///
+    /// - parameter path: Path to the folder where Cryptobox things are stored
     public func proteusCryptoboxMigrate(path: String) throws {
         try self.coreCrypto.proteusCryptoboxMigrate(path: path)
+    }
+
+    /// Creates an enrollment instance with private key material you can use in order to fetch
+    /// a new x509 certificate from the acme server.
+    ///
+    /// - parameter ciphersuite: For generating signing key material. Only ``CoreCryptoSwift.CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519`` is supported currently
+    /// - returns: The new ``CoreCryptoSwift.WireE2eIdentity`` object
+    public func newAcmeEnrollment(ciphersuite: CoreCryptoSwift.CiphersuiteName = CoreCryptoSwift.CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519) throws -> CoreCryptoSwift.WireE2eIdentity {
+        if ciphersuite != CoreCryptoSwift.CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519 {
+            throw CoreCryptoSwift.E2eIdentityError.NotYetSupported(message: "This ACME ciphersuite isn't supported. Only `Ciphersuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519` is as of now")
+        }
+
+        return try self.coreCrypto.newAcmeEnrollment(ciphersuite: ciphersuite)
+    }
+
+    /// - returns: The CoreCrypto version
+    public static func version() -> String {
+        return CoreCryptoSwift.version()
     }
 }
