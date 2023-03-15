@@ -101,7 +101,7 @@ extension ConversationInputBarViewController {
 
         let audioRecordViewContainer = UIView()
         audioRecordViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        audioRecordViewContainer.backgroundColor = UIColor.from(scheme: .background)
+        audioRecordViewContainer.backgroundColor = SemanticColors.View.backgroundDefault
         audioRecordViewContainer.isHidden = true
 
         addChild(audioRecordViewController)
