@@ -41,11 +41,11 @@ final class AudioButtonOverlay: UIView {
     fileprivate lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 96)
     fileprivate lazy var widthConstraint: NSLayoutConstraint = widthAnchor.constraint(equalToConstant: initialViewWidth)
 
-    let darkColor = UIColor.from(scheme: .textForeground)
-    let brightColor = UIColor.from(scheme: .textBackground)
-    let greenColor = SemanticColors.LegacyColors.strongLimeGreen
-    let grayColor = UIColor.from(scheme: .audioButtonOverlay)
-    let superviewColor = UIColor.from(scheme: .background)
+    let darkColor = SemanticColors.Label.textDefault
+    let brightColor = SemanticColors.View.backgroundDefault
+    let greenColor = SemanticColors.Icon.backgroundJoinCall
+    let grayColor = SemanticColors.View.backgroundUserCell
+    let superviewColor = SemanticColors.View.backgroundDefault
 
     let audioButton = IconButton()
     let playButton = IconButton()

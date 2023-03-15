@@ -34,13 +34,13 @@ final class WaveFormView: UIView {
         }
     }
 
-    var gradientColor: UIColor = UIColor.from(scheme: .background) {
+    var gradientColor: UIColor = SemanticColors.View.backgroundDefault {
         didSet {
             updateWaveFormColor()
         }
     }
 
-    var color: UIColor = .white {
+    var color: UIColor = SemanticColors.View.backgroundDefault {
         didSet { visualizationView.waveColor = color }
     }
 
