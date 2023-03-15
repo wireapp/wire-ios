@@ -323,17 +323,16 @@ final class CallViewController: UIViewController {
         guard establishingCallStatusView.superview == nil else { return }
         establishingCallStatusView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(establishingCallStatusView)
-        NSLayoutConstraint.activate([
-            establishingCallStatusView.topAnchor.constraint(equalTo: view.topAnchor, constant: 46.0),
-            establishingCallStatusView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            establishingCallStatusView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        NSLayoutConstraint.activate(
+            NSLayoutConstraint.forView(view: establishingCallStatusView, inContainer: view, withInsets: .zero)
+        )
         guard let user = voiceChannel.getSecondParticipant(), let session = ZMUserSession.shared() else { return }
         user.fetchProfileImage(session: session,
-                                     imageCache: UIImage.defaultUserImageCache,
-                                     sizeLimit: UserImageView.Size.big.rawValue,
-                                     isDesaturated: false,
-                                     completion: { [weak self] (image, _) in
+                               imageCache: UIImage.defaultUserImageCache,
+                               sizeLimit: UserImageView.Size.normal.rawValue,
+                               isDesaturated: false,
+                               completion: { [weak self] (image, _) in
+            guard let image = image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })
     }
