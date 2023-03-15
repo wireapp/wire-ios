@@ -38,6 +38,8 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
+        message.conversation?.domain = nil
+        message.failedToSendReason = .unknown
         super.tearDown()
     }
 
@@ -49,8 +51,22 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verify(view: sut)
+        verifyInAllPhoneWidths(view: sut)
     }
+//
+//    func testThatItConfiguresWithFailedToSendAndReason() {
+//        // GIVEN
+//        recordMode = true
+//        message.deliveryState = .failedToSend
+//        message.failedToSendReason = .federationRemoteError
+//        message.conversation?.domain = "anta.wire.link"
+//
+//        // WHEN
+//        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+//
+//        // THEN
+//        verifyInAllPhoneWidths(view: sut)
+//    }
 
     func testThatItConfiguresWith1To1ConversationReadReceipt() {
         // GIVEN
