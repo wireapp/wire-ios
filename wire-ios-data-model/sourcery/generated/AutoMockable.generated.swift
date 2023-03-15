@@ -10,4 +10,26 @@ import UIKit
 import AppKit
 #endif
 
+
 @testable import WireDataModel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
