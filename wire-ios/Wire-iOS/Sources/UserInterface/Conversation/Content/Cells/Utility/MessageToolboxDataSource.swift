@@ -98,6 +98,8 @@ class MessageToolboxDataSource {
      */
 
     func updateContent(forceShowTimestamp: Bool, widthConstraint: CGFloat) -> SlideDirection? {
+        typealias FailedToSendMessage = L10n.Localizable.Content.System.FailedtosendMessage
+
         // Compute the state
         let likers = message.likers
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
@@ -114,8 +116,17 @@ class MessageToolboxDataSource {
         }
         // 2) Failed to send
         else if failedToSend && isSentBySelfUser {
-            let detailsString = "content.system.failedtosend_message_timestamp".localized && attributes
-            content = .sendFailure(detailsString)
+            var detailsString: String
+
+            switch message.failedToSendReason {
+            case .unknown:
+                detailsString = FailedToSendMessage.generalReason
+            case .federationRemoteError:
+                detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
+                                                                                URL.wr_backendOfflineLearnMore.absoluteString)
+            }
+
+            content = .sendFailure(detailsString && attributes)
         }
         // 3) Likers
         else if !showTimestamp {

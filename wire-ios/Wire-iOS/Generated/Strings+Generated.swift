@@ -1640,12 +1640,6 @@ internal enum L10n {
         internal static func ephemeralTimeRemaining(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.ephemeral_time_remaining", String(describing: p1), fallback: "%@ left")
         }
-        /// Sending failed.
-        internal static let failedtosendMessageTimestamp = L10n.tr("Localizable", "content.system.failedtosend_message_timestamp", fallback: "Sending failed.")
-        /// Delete
-        internal static let failedtosendMessageTimestampDelete = L10n.tr("Localizable", "content.system.failedtosend_message_timestamp_delete", fallback: "Delete")
-        /// Resend
-        internal static let failedtosendMessageTimestampResend = L10n.tr("Localizable", "content.system.failedtosend_message_timestamp_resend", fallback: "Resend")
         /// All fingerprints are verified
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
@@ -1945,6 +1939,16 @@ internal enum L10n {
               }
             }
           }
+        }
+        internal enum FailedtosendMessage {
+          /// Message could not be sent as the owning backend **%@** appears to be offline. [Learn more](%@)
+          internal static func federationRemoteErrorReason(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_message.federation_remote_error_reason", String(describing: p1), String(describing: p2), fallback: "Message could not be sent as the owning backend **%@** appears to be offline. [Learn more](%@)")
+          }
+          /// Message could not be sent due to connectivity issues.
+          internal static let generalReason = L10n.tr("Localizable", "content.system.failedtosend_message.general_reason", fallback: "Message could not be sent due to connectivity issues.")
+          /// Retry
+          internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
         }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
