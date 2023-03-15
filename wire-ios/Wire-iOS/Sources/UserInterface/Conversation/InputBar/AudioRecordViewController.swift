@@ -71,7 +71,9 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     init(audioRecorder: AudioRecorderType? = nil) {
         let maxAudioLength = ZMUserSession.shared()?.maxAudioLength
         let maxUploadSize = ZMUserSession.shared()?.maxUploadFileSize
-        self.recorder = audioRecorder ?? AudioRecorder(format: .wav, maxRecordingDuration: maxAudioLength, maxFileSize: maxUploadSize)
+        self.recorder = audioRecorder ?? AudioRecorder(format: .wav,
+                                                       maxRecordingDuration: maxAudioLength,
+                                                       maxFileSize: maxUploadSize)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -141,11 +143,11 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             }
         }
 
-        topContainerView.backgroundColor = UIColor.from(scheme: .background)
-        bottomContainerView.backgroundColor = UIColor.from(scheme: .background)
+        topContainerView.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        bottomContainerView.backgroundColor = SemanticColors.View.backgroundDefaultWhite
 
-        topSeparator.backgroundColor = UIColor.from(scheme: .separator)
-        rightSeparator.backgroundColor = UIColor.from(scheme: .separator)
+        topSeparator.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+        rightSeparator.backgroundColor = SemanticColors.View.backgroundSeparatorCell
 
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(topContainerTapped))
         topContainerView.addGestureRecognizer(tapRecognizer)
@@ -156,15 +158,15 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         timeLabel.accessibilityLabel = "audioRecorderTimeLabel"
         timeLabel.font = FontSpec(.small, .none).font!
-        timeLabel.textColor = UIColor.from(scheme: .textForeground)
+        timeLabel.textColor = SemanticColors.Label.textDefault
 
         topTooltipLabel.text = "conversation.input_bar.audio_message.tooltip.pull_send".localized(uppercased: true)
         topTooltipLabel.accessibilityLabel = "audioRecorderTopTooltipLabel"
         topTooltipLabel.font = FontSpec(.small, .none).font!
-        topTooltipLabel.textColor = UIColor.from(scheme: .textDimmed)
+        topTooltipLabel.textColor = SemanticColors.Label.textDefault
 
         cancelButton.setIcon(.cross, size: .tiny, for: [])
-        cancelButton.setIconColor(UIColor.from(scheme: .textForeground), for: .normal)
+        cancelButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonPressed(_:)), for: .touchUpInside)
         cancelButton.accessibilityLabel = "audioRecorderCancel"
 
