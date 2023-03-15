@@ -57,8 +57,10 @@ class WarningLabelView: UIView {
     func update(withUser user: UserType) {
         typealias profileDetails = L10n.Localizable.Profile.Details
         if user.isPendingApprovalBySelfUser {
+            self.isHidden = false
             label.text = profileDetails.requestedIdentityWarning
         }
+        self.isHidden = user.isConnected || user.isTeamMember
         guard let name = user.name else { return }
         label.text = profileDetails.identityWarning(name)
 
