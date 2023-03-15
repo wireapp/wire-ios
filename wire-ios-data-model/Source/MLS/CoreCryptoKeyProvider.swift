@@ -26,7 +26,13 @@ public class CoreCryptoKeyProvider {
     }
 
     public func coreCryptoKey() throws -> Data {
+        removeLegacyKeyIfNeeded()
+        return try fetchOrCreateCoreCryptoKey()
+    }
+
+    private func fetchOrCreateCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
+
         if let key: Data = try? KeychainManager.fetchItem(item) {
             WireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
             return key
@@ -39,9 +45,24 @@ public class CoreCryptoKeyProvider {
             return key
         }
     }
+
+    private func removeLegacyKeyIfNeeded() {
+        let legacyItem = LegacyCoreCryptoKeychainItem()
+
+        do {
+            _ = try KeychainManager.fetchItem(legacyItem) as Data
+            WireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
+            try KeychainManager.deleteItem(legacyItem)
+            WireLogger.coreCrypto.info("Deleted legacy core crypto key")
+        } catch KeychainManager.Error.failedToDeleteItemFromKeychain(let error) {
+            WireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
+        } catch {
+            // key was not found. no action needed
+        }
+    }
 }
 
-struct CoreCryptoKeychainItem: KeychainItemProtocol {
+class CoreCryptoKeychainItem: KeychainItemProtocol {
 
     static let tag = "com.wire.mls.key".data(using: .utf8)!
 
@@ -49,7 +70,8 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: Self.tag,
-            kSecReturnData: true
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
         ]
     }
 
@@ -57,7 +79,32 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: Self.tag,
-            kSecValueData: value
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
+}
+
+class LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
+
+    static let tag = "com.wire.mls.key".data(using: .utf8)!
+
+    var getQuery: [CFString: Any] {
+        return [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: Self.tag,
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
+        ]
+    }
+
+    func setQuery<T>(value: T) -> [CFString: Any] {
+        return [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: Self.tag,
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
         ]
     }
 }
