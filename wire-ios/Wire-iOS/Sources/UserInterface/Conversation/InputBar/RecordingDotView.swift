@@ -23,7 +23,7 @@ final class RecordingDotView: UIView {
     public init() {
         super.init(frame: CGRect.zero)
 
-        backgroundColor = SemanticColors.LegacyColors.vividRed
+        backgroundColor = SemanticColors.Icon.foregroundDefaultRed
     }
 
     @available(*, unavailable)
