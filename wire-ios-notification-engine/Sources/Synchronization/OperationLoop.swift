@@ -96,8 +96,8 @@ public final class RequestGeneratorStore {
 
 final class RequestGeneratorObserver {
 
-    private let context: NSManagedObjectContext
-    public var observedGenerator: ZMTransportRequestGenerator?
+    private let context : NSManagedObjectContext
+    public var observedGenerator: ZMTransportRequestGenerator? = nil
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -148,9 +148,9 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
 
     func setupObserver(for context: NSManagedObjectContext, onSave: @escaping SaveClosure) -> NSObjectProtocol {
         return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: context, queue: callBackQueue) { note in
-            if let insertedObjects = note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>, let updatedObjects = note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                onSave(note, insertedObjects, updatedObjects)
-            }
+            let insertedObjects = (note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>) ?? Set<NSManagedObject>()
+            let updatedObjects = (note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>) ?? Set<NSManagedObject>()
+            onSave(note, insertedObjects, updatedObjects)
         }
     }
 
@@ -229,7 +229,7 @@ final class RequestGeneratingOperationLoop {
     }
 
     fileprivate func enqueueRequests() {
-        var result: ZMTransportEnqueueResult
+        var result : ZMTransportEnqueueResult
 
         repeat {
             result = transportSession.attemptToEnqueueSyncRequest(generator: { [weak self] in self?.requestGeneratorObserver.nextRequest() })
