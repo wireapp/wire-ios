@@ -604,9 +604,9 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusNewPrekeyAuto
 
-    var mockProteusNewPrekeyAuto: (() throws -> [UInt8])?
+    var mockProteusNewPrekeyAuto: (() throws -> ProteusAutoPrekeyBundle)?
 
-    func proteusNewPrekeyAuto() throws -> [UInt8] {
+    func proteusNewPrekeyAuto() throws -> ProteusAutoPrekeyBundle {
         guard let mock = mockProteusNewPrekeyAuto else {
             fatalError("no mock for `proteusNewPrekeyAuto`")
         }
@@ -708,5 +708,17 @@ class MockCoreCrypto: CoreCryptoProtocol {
         }
 
         try mock()
+    }
+
+    // MARK: - markConversationAsChildOf
+
+    var mockMarkConversationAsChildOf: ((ConversationId, ConversationId) throws -> ())?
+
+    func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
+        guard let mock = mockMarkConversationAsChildOf else {
+            fatalError("no mock for `markConversationAsChildOf")
+        }
+
+        try mock(childId, parentId)
     }
 }
