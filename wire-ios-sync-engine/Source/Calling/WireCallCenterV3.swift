@@ -152,8 +152,9 @@ public class WireCallCenterV3: NSObject {
     }
 
     func tearDown() {
-            isEnabled = false
-        }
+        isEnabled = false
+    }
+
 }
 
 // MARK: - Snapshots
@@ -414,6 +415,7 @@ extension WireCallCenterV3 {
     /// Call this method when the network quality of a participant changes and avs calls the `wcall_network_quality_h`.
     func callParticipantNetworkQualityChanged(conversationId: AVSIdentifier, client: AVSClient, quality: NetworkQuality) {
         guard isEnabled else { return }
+
         let snapshot = callSnapshots[conversationId]?.callParticipants
         snapshot?.callParticipantNetworkQualityChanged(client: client, networkQuality: quality)
     }
