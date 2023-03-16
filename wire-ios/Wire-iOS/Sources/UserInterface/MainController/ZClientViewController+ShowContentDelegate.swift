@@ -32,7 +32,7 @@ extension ZClientViewController {
     }
 
     public func showConnectionRequest(userId: UUID) {
-        let searchUserViewConroller = SearchUserViewConroller(userId: userId, profileViewControllerDelegate: self)
+        let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self)
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
     }
