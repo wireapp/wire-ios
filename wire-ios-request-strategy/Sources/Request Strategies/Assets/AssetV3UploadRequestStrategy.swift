@@ -27,6 +27,8 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     internal var upstreamSync: ZMUpstreamModifiedObjectSync!
     internal var preprocessor: AssetsPreprocessor
 
+    public var shouldUseBackgroundSession = true
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
 
@@ -118,11 +120,33 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
 
-        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention, apiVersion: apiVersion) else { fatal("Could not create asset request") }
+        var request: ZMTransportRequest?
+
+        if shouldUseBackgroundSession {
+            request = requestFactory.backgroundUpstreamRequestForAsset(
+                message: message,
+                withData: data,
+                shareable: false,
+                retention: retention,
+                apiVersion: apiVersion
+            )
+        } else {
+            request = requestFactory.upstreamRequestForAsset(
+                withData: data,
+                shareable: false,
+                retention: retention,
+                apiVersion: apiVersion
+            )
+        }
+
+        guard let request = request else {
+            fatal("Could not create asset request")
+        }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
             message.associatedTaskIdentifier = identifier
         })
+
         request.add(ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
             message.progress = progress
             self.managedObjectContext.enqueueDelayedSave()

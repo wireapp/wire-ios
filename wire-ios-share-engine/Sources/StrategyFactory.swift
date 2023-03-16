@@ -109,7 +109,23 @@ class StrategyFactory {
     // MARK: - Asset V3
 
     private func createAssetV3UploadRequestStrategy() -> AssetV3UploadRequestStrategy {
-         return AssetV3UploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        let strategy = AssetV3UploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+
+        // WORKAROUND:
+        // There are some issues with uploading file using a background session from the share extension.
+        // It's not clear exactly why, but we've observed that sometimes when sending an asset, we get up to
+        // the point of sending the asset upload request (using a background session) but we don't get the
+        // response until up to a minute later. However, if we observe the network traffic using a tool like
+        // proxyman, the response is returned almost immediately. For some reason it doesn't get delivered
+        // to the url session that made the request until later. It may be an issue outside of our control,
+        // possible with an iOS version.
+        //
+        // The workaround is to avoid using a backgound session for the upload request. The file will be
+        // uploaded using a normal foreground session instead. The share extension doesn't dismiss anyway
+        // until all uploads are complete, so a background session is not technically needed.
+        strategy.shouldUseBackgroundSession = false
+
+        return strategy
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
