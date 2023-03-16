@@ -17,12 +17,16 @@
 //
 
 import Foundation
+import WireSystem
+import WireTransport
+
 #if DATADOG_IMPORT
+
+// MARK: - DATADOG ENABLED
+
 import Datadog
 import DatadogCrashReporting
-import WireTransport
 import UIKit
-import WireSystem
 
 public class DatadogWrapper {
 
@@ -144,6 +148,58 @@ extension DatadogWrapper: RemoteLogger {
 
 }
 
+// MARK: Crypto helper
+
+import CryptoKit
+
+extension String {
+
+    var sha256String: String {
+        let inputData = Data(self.utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
+    }
+
+    var alphanumericString: String {
+        let pattern = "[^A-Za-z0-9]+"
+        return self.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
+    }
+}
+
+#else
+
+// MARK: - DATADOG DISABLED
+
+public enum LogLevel {
+
+    case debug
+    case info
+    case notice
+    case warn
+    case error
+    case critical
+
+}
+public class DatadogWrapper {
+
+    public static let shared: DatadogWrapper? = nil
+
+    public func log(
+        level: LogLevel,
+        message: String,
+        error: Error? = nil,
+        attributes: [String: Encodable]? = nil
+    ) {}
+
+    public func startMonitoring() {}
+
+    public var datadogUserId: String = "NONE"
+}
+
+#endif
+
+// MARK: - COMMON
+
 extension RemoteMonitoring.Level {
 
     var logLevel: LogLevel {
@@ -171,74 +227,28 @@ extension RemoteMonitoring.Level {
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
 
-    public func debug(_ message: String, attributes: LogAttributes?) {
-        log(level: .debug, message: message, attributes: attributes)
+    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+        log(level: .debug, message: message.logDescription, attributes: attributes)
     }
 
-    public func info(_ message: String, attributes: LogAttributes?) {
-        log(level: .info, message: message, attributes: attributes)
+    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
+        log(level: .info, message: message.logDescription, attributes: attributes)
     }
 
-    public func notice(_ message: String, attributes: LogAttributes?) {
-        log(level: .notice, message: message, attributes: attributes)
+    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+        log(level: .notice, message: message.logDescription, attributes: attributes)
     }
 
-    public func warn(_ message: String, attributes: LogAttributes?) {
-        log(level: .warn, message: message, attributes: attributes)
+    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+        log(level: .warn, message: message.logDescription, attributes: attributes)
     }
 
-    public func error(_ message: String, attributes: LogAttributes?) {
-        log(level: .error, message: message, attributes: attributes)
+    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
+        log(level: .error, message: message.logDescription, attributes: attributes)
     }
 
-    public func critical(_ message: String, attributes: LogAttributes?) {
-        log(level: .critical, message: message, attributes: attributes)
+    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+        log(level: .critical, message: message.logDescription, attributes: attributes)
     }
 
 }
-
-// MARK: - Crypto helper
-
-import CryptoKit
-
-extension String {
-
-    var sha256String: String {
-        let inputData = Data(self.utf8)
-        let hashed = SHA256.hash(data: inputData)
-        return hashed.compactMap { String(format: "%02x", $0) }.joined()
-    }
-
-    var alphanumericString: String {
-        let pattern = "[^A-Za-z0-9]+"
-        return self.replacingOccurrences(of: pattern, with: "", options: [.regularExpression])
-    }
-}
-
-#else
-
-public enum LogLevel {
-
-    case debug
-    case critical
-    case info
-    case warn
-
-}
-public class DatadogWrapper {
-
-    public static let shared: DatadogWrapper? = nil
-
-    public func log(
-        level: LogLevel,
-        message: String,
-        error: Error? = nil,
-        attributes: [String: Encodable]? = nil
-    ) {}
-
-    public func startMonitoring() {}
-
-    public var datadogUserId: String = "NONE"
-}
-
-#endif
