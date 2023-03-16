@@ -27,17 +27,17 @@ let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 public final class RequestGeneratorStore {
 
     let requestGenerators: [ZMTransportRequestGenerator]
-    public let changeTrackers : [ZMContextChangeTracker]
+    public let changeTrackers: [ZMContextChangeTracker]
     private var isTornDown = false
 
-    private let strategies : [AnyObject]
+    private let strategies: [AnyObject]
 
     public init(strategies: [AnyObject]) {
 
         self.strategies = strategies
 
-        var requestGenerators : [ZMTransportRequestGenerator] = []
-        var changeTrackers : [ZMContextChangeTracker] = []
+        var requestGenerators: [ZMTransportRequestGenerator] = []
+        var changeTrackers: [ZMContextChangeTracker] = []
 
         for strategy in strategies {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
@@ -94,7 +94,6 @@ public final class RequestGeneratorStore {
     }
 }
 
-
 final class RequestGeneratorObserver {
 
     private let context : NSManagedObjectContext
@@ -111,7 +110,7 @@ final class RequestGeneratorObserver {
 
 }
 
-final class OperationLoop : NSObject, RequestAvailableObserver {
+final class OperationLoop: NSObject, RequestAvailableObserver {
 
     typealias RequestAvailableClosure = () -> Void
     typealias ChangeClosure = (_ changed: Set<NSManagedObject>) -> Void
@@ -204,7 +203,6 @@ final class RequestGeneratingOperationLoop {
     private let requestGeneratorObserver: RequestGeneratorObserver
     private unowned let transportSession: ZMTransportSession
 
-
     init(userContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, callBackQueue: OperationQueue = .main, requestGeneratorStore: RequestGeneratorStore, transportSession: ZMTransportSession) {
         self.callBackQueue = callBackQueue
         self.requestGeneratorStore = requestGeneratorStore
@@ -212,7 +210,7 @@ final class RequestGeneratingOperationLoop {
         self.transportSession = transportSession
         self.operationLoop = OperationLoop(userContext: userContext, syncContext: syncContext, callBackQueue: callBackQueue)
 
-        operationLoop.changeClosure =  { [weak self] changes in self?.objectsDidChange(changes: changes) }
+        operationLoop.changeClosure = { [weak self] changes in self?.objectsDidChange(changes: changes) }
         operationLoop.requestAvailableClosure = { [weak self] in self?.enqueueRequests() }
         requestGeneratorObserver.observedGenerator = { [weak self] in self?.requestGeneratorStore.nextRequest() }
     }
@@ -239,5 +237,3 @@ final class RequestGeneratingOperationLoop {
 
     }
 }
-
-
