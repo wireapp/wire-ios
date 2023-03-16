@@ -85,7 +85,7 @@ final class TextSearchInputView: UIView {
 
         clearButton.setIconColor(SearchBarColors.backgroundButton, for: .normal)
 
-        spinner.color = UIColor.from(scheme: .textDimmed, variant: .light)
+        spinner.color = SemanticColors.Icon.foregroundDefault
         spinner.iconSize = StyleKitIcon.Size.tiny.rawValue
         [searchInput, iconView, clearButton, placeholderLabel, spinner].forEach(addSubview)
 

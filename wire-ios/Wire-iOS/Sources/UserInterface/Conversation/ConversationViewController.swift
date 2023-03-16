@@ -158,7 +158,7 @@ final class ConversationViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
         UIView.performWithoutAnimation({
-            self.view.backgroundColor = UIColor.from(scheme: .textBackground)
+            self.view.backgroundColor = SemanticColors.View.backgroundConversationView
         })
 
         setupInputBarController()
