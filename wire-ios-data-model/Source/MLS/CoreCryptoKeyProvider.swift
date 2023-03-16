@@ -25,25 +25,35 @@ public class CoreCryptoKeyProvider {
 
     }
 
-    public func coreCryptoKey() throws -> Data {
+    public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
         removeLegacyKeyIfNeeded()
-        return try fetchOrCreateCoreCryptoKey()
+
+        do {
+            return try fetchCoreCryptoKey()
+        } catch {
+            if createIfNeeded {
+                return try createCoreCryptoKey()
+            } else {
+                throw error
+            }
+        }
     }
 
-    private func fetchOrCreateCoreCryptoKey() throws -> Data {
+    private func fetchCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
+        let key: Data = try KeychainManager.fetchItem(item)
+        WireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
+        return key
+    }
 
-        if let key: Data = try? KeychainManager.fetchItem(item) {
-            WireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
-            return key
-        } else {
-            WireLogger.coreCrypto.info("Core crypto key doesn't exist. Creating...")
-            let key = try KeychainManager.generateKey(numberOfBytes: 32)
-            WireLogger.coreCrypto.info("Created core crypto key: \(key.base64String()). Storing...")
-            try KeychainManager.storeItem(item, value: key)
-            WireLogger.coreCrypto.info("Stored core crypto key. Returning...")
-            return key
-        }
+    private func createCoreCryptoKey() throws -> Data {
+        let item = CoreCryptoKeychainItem()
+        WireLogger.coreCrypto.info("Core crypto key doesn't exist. Creating...")
+        let key = try KeychainManager.generateKey(numberOfBytes: 32)
+        WireLogger.coreCrypto.info("Created core crypto key: \(key.base64String()). Storing...")
+        try KeychainManager.storeItem(item, value: key)
+        WireLogger.coreCrypto.info("Stored core crypto key. Returning...")
+        return key
     }
 
     private func removeLegacyKeyIfNeeded() {
@@ -62,7 +72,7 @@ public class CoreCryptoKeyProvider {
     }
 }
 
-class CoreCryptoKeychainItem: KeychainItemProtocol {
+struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
     static let tag = "com.wire.mls.key".data(using: .utf8)!
 
@@ -86,7 +96,7 @@ class CoreCryptoKeychainItem: KeychainItemProtocol {
 
 }
 
-class LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
+struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
 
     static let tag = "com.wire.mls.key".data(using: .utf8)!
 
