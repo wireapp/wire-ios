@@ -1457,7 +1457,7 @@
 		EF21A07121305FD700B9120C /* DeleteMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF21A06F21305F6A00B9120C /* DeleteMessageTests.swift */; };
 		EF223F5D2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF223F5C2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift */; };
 		EF223F612327EE90004480FA /* ZMConversationList+HasConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */; };
-		EF22DC7D224BBE3B001EDE8E /* SearchUserViewConroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF22DC7C224BBE3B001EDE8E /* SearchUserViewConroller.swift */; };
+		EF22DC7D224BBE3B001EDE8E /* SearchUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF22DC7C224BBE3B001EDE8E /* SearchUserViewController.swift */; };
 		EF22DC7F224BC5C2001EDE8E /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF22DC7E224BC5C2001EDE8E /* UIViewController+Alert.swift */; };
 		EF23740E230D37EE006F53F3 /* NetworkConditionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF23740D230D37EE006F53F3 /* NetworkConditionHelper.swift */; };
 		EF237410230D49EC006F53F3 /* NetworkConditionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF23740F230D49EC006F53F3 /* NetworkConditionHelperTests.swift */; };
@@ -3422,7 +3422,7 @@
 		EF21A06F21305F6A00B9120C /* DeleteMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteMessageTests.swift; sourceTree = "<group>"; };
 		EF223F5C2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewControllerViewModelTests.swift; sourceTree = "<group>"; };
 		EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationList+HasConversation.swift"; sourceTree = "<group>"; };
-		EF22DC7C224BBE3B001EDE8E /* SearchUserViewConroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewConroller.swift; sourceTree = "<group>"; };
+		EF22DC7C224BBE3B001EDE8E /* SearchUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewController.swift; sourceTree = "<group>"; };
 		EF22DC7E224BC5C2001EDE8E /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		EF23740D230D37EE006F53F3 /* NetworkConditionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConditionHelper.swift; sourceTree = "<group>"; };
 		EF23740F230D49EC006F53F3 /* NetworkConditionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConditionHelperTests.swift; sourceTree = "<group>"; };
@@ -6324,7 +6324,7 @@
 		8FC852BC199245760008B66B /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
-				EF22DC7C224BBE3B001EDE8E /* SearchUserViewConroller.swift */,
+				EF22DC7C224BBE3B001EDE8E /* SearchUserViewController.swift */,
 				EF3CB75421DD157B0030C3E8 /* ProfileViewController.swift */,
 				A9D19B172385245E00F6E14A /* ProfileViewControllerViewModel.swift */,
 				5E628020221ED0A60039A8AB /* ProfileActionsFactory.swift */,
@@ -8450,7 +8450,7 @@
 				7C440E83234B35CB00D91B5F /* FolderPickerViewController.swift in Sources */,
 				5E39FC61225CBBEF00C682B8 /* PasscodeRules+Shared.swift in Sources */,
 				EEC94D4223BF49D6003AF93D /* UserType+Helpers.swift in Sources */,
-				EF22DC7D224BBE3B001EDE8E /* SearchUserViewConroller.swift in Sources */,
+				EF22DC7D224BBE3B001EDE8E /* SearchUserViewController.swift in Sources */,
 				87B8C3421DF9788B0015EC89 /* TweetOpening.swift in Sources */,
 				A97FA6FE23B5883A005257A8 /* StartUIDelegate.swift in Sources */,
 				87CB36BA1D74782B007AB4E5 /* LikeButton.swift in Sources */,
