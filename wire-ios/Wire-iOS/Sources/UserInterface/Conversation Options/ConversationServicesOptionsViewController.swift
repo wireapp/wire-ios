@@ -20,11 +20,14 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class ConversationServicesOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SpinnerCapable, ConversationServicesOptionsViewModelDelegate {
+final class ConversationServicesOptionsViewController: UIViewController,
+                                                       UITableViewDelegate,
+                                                       UITableViewDataSource,
+                                                       SpinnerCapable,
+                                                       ConversationServicesOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
-    private let variant: ColorSchemeVariant
 
     var dismissSpinner: SpinnerCompletion?
 
@@ -38,14 +41,12 @@ final class ConversationServicesOptionsViewController: UIViewController, UITable
             userSession: userSession
         )
         self.init(
-            viewModel: .init(configuration: configuration),
-            variant: ColorScheme.default.variant
+            viewModel: .init(configuration: configuration)
         )
     }
 
-    init(viewModel: ConversationServicesOptionsViewModel, variant: ColorSchemeVariant) {
+    init(viewModel: ConversationServicesOptionsViewModel) {
         self.viewModel = viewModel
-        self.variant = variant
         super.init(nibName: nil, bundle: nil)
         setupViews()
         createConstraints()
@@ -125,7 +126,7 @@ final class ConversationServicesOptionsViewController: UIViewController, UITable
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: row.cellType.reuseIdentifier, for: indexPath) as! CellConfigurationConfigurable
-        cell.configure(with: row, variant: variant)
+        cell.configure(with: row)
         return cell as! UITableViewCell
     }
 

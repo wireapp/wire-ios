@@ -158,9 +158,9 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
 
     func setupObserver(for context: NSManagedObjectContext, onSave: @escaping SaveClosure) -> NSObjectProtocol {
         return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: context, queue: callBackQueue) { note in
-            let insertedObjects = note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> ?? Set<NSManagedObject>()
-            let updatedObjects = note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> ?? Set<NSManagedObject>()
-            onSave(note, insertedObjects, updatedObjects)
+          let insertedObjects = (note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>) ?? Set<NSManagedObject>()
+          let updatedObjects = (note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>) ?? Set<NSManagedObject>()
+          onSave(note, insertedObjects, updatedObjects)
         }
     }
 
