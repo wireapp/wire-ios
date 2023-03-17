@@ -118,6 +118,12 @@ class FrameworkVersionTests: XCTestCase {
 // MARK: - Test patches
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItApplyPatchesWhenNoVersion() {
 
         // GIVEN

@@ -21,6 +21,12 @@ import WireTesting
 
 class TeamDeletionRuleTests: BaseZMClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItDoesntDeleteConversationsWhichArePartOfATeamWhenTeamGetsDeleted() {
         // given
         let team = Team.insertNewObject(in: uiMOC)
