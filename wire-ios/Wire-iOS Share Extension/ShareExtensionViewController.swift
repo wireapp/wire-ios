@@ -163,9 +163,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func recreateSharingSession(account: Account?) throws {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-            let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
-            let accountIdentifier = account?.userIdentifier
-            else { return }
+              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
+              let accountIdentifier = account?.userIdentifier
+        else { return }
 
         let legacyConfig = AppLockController.LegacyConfig.fromBundle()
 
@@ -461,7 +461,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
             guard let `self` = self,
-                self.localAuthenticationStatus == .granted else { return }
+                  self.localAuthenticationStatus == .granted else { return }
 
             self.showChooseConversation()
         }
@@ -561,7 +561,7 @@ extension ShareExtensionViewController {
 
             DispatchQueue.main.async {
                 if case .granted = result, let context = context as? LAContext {
-                  try? self.sharingSession?.unlockDatabase(with: context)
+                    try? self.sharingSession?.unlockDatabase(with: context)
                 }
 
                 self.authenticationEvaluated(with: result, completion: completion)
