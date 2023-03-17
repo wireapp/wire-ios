@@ -234,10 +234,6 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                     return completion()
                 }
 
-                if url?.fileSize > AccountManager.fileSizeLimitInBytes {
-                    weakSelf.error = .fileSizeTooBig
-                    return completion()
-                }
                 weakSelf.prepareAsFileData(name: url?.lastPathComponent, completion: completion)
             }
         } else if typePass {
@@ -291,11 +287,22 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             }
 
             if let data = data as? Data {
+                guard data.count <= AccountManager.fileSizeLimitInBytes else {
+                    self?.error = .fileSizeTooBig
+                    return completion()
+                }
+
                 self?.prepareForSending(withUTI: UTIString,
                                         name: name,
                                         data: data,
                                         completion: prepareColsure)
             } else if let dataURL = data as? URL {
+
+                guard dataURL.fileSize ?? .max <= AccountManager.fileSizeLimitInBytes else {
+                    self?.error = .fileSizeTooBig
+                    return completion()
+                }
+
                 self?.prepareForSending(withUTI: UTIString,
                                         name: name,
                                         dataURL: dataURL,
