@@ -118,6 +118,12 @@ class FrameworkVersionTests: XCTestCase {
 // MARK: - Test patches
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItApplyPatchesWhenNoVersion() {
 
         // GIVEN
@@ -213,7 +219,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
 
             // THEN
-            let readData = try! Data(contentsOf: newSession)
+            let readData = try? Data(contentsOf: newSession)
             XCTAssertEqual(readData, previousData)
             XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
             XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
