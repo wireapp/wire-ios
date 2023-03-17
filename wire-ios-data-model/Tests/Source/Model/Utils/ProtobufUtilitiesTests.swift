@@ -23,6 +23,12 @@ import WireTesting
 
 class ProtobufUtilitiesTests: BaseZMClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItSetsAndReadsTheLoudness() {
 
         // given

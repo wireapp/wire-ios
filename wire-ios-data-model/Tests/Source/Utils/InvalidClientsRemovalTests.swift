@@ -22,6 +22,12 @@ import WireTesting
 
 class InvalidClientsRemovalTests: DiskDatabaseTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItDoesNotRemoveValidClients() throws {
         // Given
         let user = ZMUser.insertNewObject(in: self.moc)

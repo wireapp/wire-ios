@@ -23,6 +23,12 @@ import WireCryptobox
 
 final class UserClientTests: ZMBaseManagedObjectTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func clientWithTrustedClientCount(_ trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient {
         let client = UserClient.insertNewObject(in: self.uiMOC)
 

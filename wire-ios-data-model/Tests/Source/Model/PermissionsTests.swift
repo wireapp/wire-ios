@@ -21,6 +21,12 @@ import WireTesting
 
 class PermissionsTests: BaseZMClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     private let allPermissions: Permissions = [
         .createConversation,
         .deleteConversation,

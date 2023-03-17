@@ -21,6 +21,12 @@ import XCTest
 
 class CacheAssetTests: BaseZMAssetClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     // MARK: - Fixtures
 
     func fileAsset() -> WireDataModel.CacheAsset {

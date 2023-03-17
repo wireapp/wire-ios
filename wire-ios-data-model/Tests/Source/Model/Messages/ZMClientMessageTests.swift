@@ -20,6 +20,13 @@ import XCTest
 @testable import WireDataModel
 
 final class ClientMessageTests: BaseZMClientMessageTests {
+
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItDoesNotCreateTextMessagesFromUpdateEventIfThereIsAlreadyAClientMessageWithTheSameNonce() {
         // given
         let nonce = UUID.create()
