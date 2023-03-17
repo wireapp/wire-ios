@@ -63,14 +63,14 @@ final class SecurityLevelView: UIView {
         switch classification {
 
         case .classified:
-            securityLevelLabel.textColor = isUpdatedCallingUI ? .accent() : SemanticColors.Label.textDefault
-            backgroundColor = isUpdatedCallingUI ? .accentDimmedFlat : SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.checkmark, size: .tiny, color: SemanticColors.Icon.backgroundCheckMarkSelected)
-            topBorder.backgroundColor = isUpdatedCallingUI ? .accent() : SemanticColors.View.backgroundSeparatorCell
+            securityLevelLabel.textColor = isUpdatedCallingUI ? SemanticColors.Label.textSecurityEnabled : SemanticColors.Label.textDefault
+            backgroundColor = isUpdatedCallingUI ? SemanticColors.View.backgroundSecurityEnabled : SemanticColors.View.backgroundSecurityLevel
+            iconImageView.setIcon(.checkmark, size: .tiny, color: isUpdatedCallingUI ? SemanticColors.Icon.backgroundSecurityEnabledCheckMark : SemanticColors.Icon.backgroundCheckMarkSelected)
+            topBorder.backgroundColor = isUpdatedCallingUI ? SemanticColors.View.borderSecurityEnabled : SemanticColors.View.backgroundSeparatorCell
 
         case .notClassified:
             securityLevelLabel.textColor = isUpdatedCallingUI ? SemanticColors.Label.textDefaultWhite : SemanticColors.Label.textDefault
-            backgroundColor = isUpdatedCallingUI ? .accent() : SemanticColors.View.backgroundSecurityLevel
+            backgroundColor = isUpdatedCallingUI ? SemanticColors.View.backgroundSecurityDisabled : SemanticColors.View.backgroundSecurityLevel
             iconImageView.setIcon(.exclamationMarkCircle, size: .tiny, color: SemanticColors.Icon.foregroundCheckMarkSelected)
             topBorder.backgroundColor = isUpdatedCallingUI ? .clear : SemanticColors.View.backgroundSeparatorCell
 
@@ -80,7 +80,7 @@ final class SecurityLevelView: UIView {
         }
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
-        let securityLevelText = isUpdatedCallingUI ? SecurityLocalization.securityLevel.capitalizingFirstLetter() : SecurityLocalization.securityLevel.uppercased()
+        let securityLevelText = SecurityLocalization.securityLevel.uppercased()
         securityLevelLabel.text = [securityLevelText, levelText].joined(separator: " ")
 
         accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
@@ -122,7 +122,7 @@ final class SecurityLevelView: UIView {
           iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
           iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
           iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-          iconImageView.trailingAnchor.constraint(equalTo: securityLevelLabel.leadingAnchor, constant: -10.0)
+          iconImageView.trailingAnchor.constraint(equalTo: securityLevelLabel.leadingAnchor, constant: -4.0)
         ])
     }
 }
