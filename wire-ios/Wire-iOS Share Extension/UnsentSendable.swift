@@ -54,7 +54,7 @@ extension UnsentSendableError: LocalizedError {
     }
 }
 
-/// This protocol defines the basic methods that an Object needes to conform to 
+/// This protocol defines the basic methods that an Object needes to conform to
 /// in order to be prepared and sent. A consumer should ask the objects if they need to perform
 /// perparation operations and call `prepare` before calling `send`.
 protocol UnsentSendable {
@@ -159,7 +159,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
             // Tries to load the content from local URL...
 
             if let cfUrl = (url as? URL) as CFURL?,
-                let imageSource = CGImageSourceCreateWithURL(cfUrl, nil) {
+               let imageSource = CGImageSourceCreateWithURL(cfUrl, nil) {
                 let options: [NSString: Any] = [
                     kCGImageSourceThumbnailMaxPixelSize: longestDimension,
                     kCGImageSourceCreateThumbnailFromImageAlways: true,
