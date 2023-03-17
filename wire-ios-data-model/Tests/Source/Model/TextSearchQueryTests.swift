@@ -30,6 +30,12 @@ private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 
 class TextSearchQueryTests: BaseZMClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItOnlyReturnsResultFromTheCorrectConversationNotYetIndexed() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
