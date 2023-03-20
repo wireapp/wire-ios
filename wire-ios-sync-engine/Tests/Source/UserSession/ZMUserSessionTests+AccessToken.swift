@@ -44,6 +44,10 @@ class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         shouldRenew: Bool
     ) {
         // given
+        var previousApiVersion = BackendInfo.apiVersion
+        defer {
+            BackendInfo.apiVersion = previousApiVersion
+        }
         BackendInfo.apiVersion = apiVersion
 
         let userClient = UserClient.insertNewObject(in: uiMOC)
