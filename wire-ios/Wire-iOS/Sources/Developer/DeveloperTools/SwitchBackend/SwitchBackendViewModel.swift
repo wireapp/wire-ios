@@ -1,0 +1,93 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireTransport
+
+@available(iOS 14, *)
+final class SwitchBackendViewModel: ObservableObject {
+
+    // MARK: - Models
+
+    struct Item: Identifiable {
+
+        let id = UUID()
+        let title: String
+        let value: EnvironmentType
+
+    }
+
+    enum Event {
+
+        case itemTapped(Item)
+
+    }
+
+    // MARK: - State
+
+    let items: [Item]
+
+    @Published
+    var selectedItemID: Item.ID
+
+    @Published
+    var isAlertPresented = false
+
+    @Published
+    var alertMessage = ""
+
+    // MARK: - Life cycle
+
+    init() {
+        items = [
+            Item(title: "Production", value: .production),
+            Item(title: "Staging", value: .staging),
+            Item(title: "Anta", value: .anta),
+            Item(title: "Bella", value: .bella),
+            Item(title: "Chala", value: .chala)
+        ]
+
+        let selectedType = BackendEnvironment.shared.environmentType.value
+
+        // Initial selection
+        let selectedItem = items.first { item in
+            item.value == selectedType
+        }!
+
+        selectedItemID = selectedItem.id
+    }
+
+    // MARK: - Events
+
+    func handleEvent(_ event: Event) {
+        switch event {
+        case let .itemTapped(item):
+            selectedItemID = item.id
+
+            if let environment = BackendEnvironment(type: item.value) {
+                BackendEnvironment.shared = environment
+                alertMessage = "Backend switched! Please restart the app"
+                isAlertPresented = true
+            } else {
+                alertMessage = "Failed to switch backend"
+                isAlertPresented = true
+            }
+        }
+    }
+
+}
