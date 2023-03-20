@@ -31,6 +31,11 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
     // MARK: - Life cycle
 
+    override class func setUp() {
+        super.setUp()
+        createCoreCryptoKeyIfNeeded()
+    }
+
     override func setUp() {
         super.setUp()
         proteusFlag.isOn = false
@@ -43,6 +48,13 @@ class SharingSessionTestsCryptoStack: BaseTest {
         mlsFlag.isOn = false
         BackendInfo.apiVersion = nil
         super.tearDown()
+    }
+
+    // MARK: - Key generation
+
+    class func createCoreCryptoKeyIfNeeded() {
+        let keyProvider = CoreCryptoKeyProvider()
+        _ = try? keyProvider.coreCryptoKey(createIfNeeded: true)
     }
 
     // MARK: - Tests
