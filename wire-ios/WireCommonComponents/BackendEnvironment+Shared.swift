@@ -30,7 +30,6 @@ extension BackendEnvironment {
         }
 
         guard let environment = BackendEnvironment(type: environmentType) else {
-            WireLogger.environment.critical("failed to initialize environment")
             fatalError("Malformed backend configuration data")
         }
         return environment
