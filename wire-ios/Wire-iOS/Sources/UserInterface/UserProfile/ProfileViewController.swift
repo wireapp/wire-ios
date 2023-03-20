@@ -55,7 +55,7 @@ final class ProfileViewController: UIViewController {
     private let incomingRequestFooter: IncomingRequestFooterView = IncomingRequestFooterView()
     private let usernameDetailsView: UserNameDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
-    private var  incomingRequestFooterBottomConstraint: NSLayoutConstraint?
+    private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
 
     private let profileTitleView: ProfileTitleView = ProfileTitleView()
 
