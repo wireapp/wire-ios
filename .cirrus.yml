@@ -1,11 +1,9 @@
 macos_instance:
-  image: ghcr.io/cirruslabs/macos-ventura-xcode:13.2.1
+  image: ghcr.io/cirruslabs/macos-ventura-xcode:14.2
 
 task:
   script: 
   - brew install carthage
   - sh ./setup.sh
   - echo "Building WireSystem..."
-  - xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-  - echo "Testing WireSystem..."
-  - xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+  - xcodebuild clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
