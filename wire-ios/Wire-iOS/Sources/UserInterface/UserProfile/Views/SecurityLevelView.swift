@@ -60,23 +60,10 @@ final class SecurityLevelView: UIView {
         }
         let isUpdatedCallingUI = DeveloperFlag.isUpdatedCallingUI
 
-        switch classification {
-
-        case .classified:
-            securityLevelLabel.textColor = isUpdatedCallingUI ? SemanticColors.Label.textSecurityEnabled : SemanticColors.Label.textDefault
-            backgroundColor = isUpdatedCallingUI ? SemanticColors.View.backgroundSecurityEnabled : SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.checkmark, size: .tiny, color: isUpdatedCallingUI ? SemanticColors.Icon.backgroundSecurityEnabledCheckMark : SemanticColors.Icon.backgroundCheckMarkSelected)
-            topBorder.backgroundColor = isUpdatedCallingUI ? SemanticColors.View.borderSecurityEnabled : SemanticColors.View.backgroundSeparatorCell
-
-        case .notClassified:
-            securityLevelLabel.textColor = isUpdatedCallingUI ? SemanticColors.Label.textDefaultWhite : SemanticColors.Label.textDefault
-            backgroundColor = isUpdatedCallingUI ? SemanticColors.View.backgroundSecurityDisabled : SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.exclamationMarkCircle, size: .tiny, color: SemanticColors.Icon.foregroundCheckMarkSelected)
-            topBorder.backgroundColor = isUpdatedCallingUI ? .clear : SemanticColors.View.backgroundSeparatorCell
-
-        default:
-            isHidden = true
-            assertionFailure("should not reach this point")
+        if isUpdatedCallingUI {
+            configureUpdatedCallingUI(with: classification)
+        } else {
+            configureLegacyCallingUI(with: classification)
         }
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
@@ -124,6 +111,49 @@ final class SecurityLevelView: UIView {
           iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
           iconImageView.trailingAnchor.constraint(equalTo: securityLevelLabel.leadingAnchor, constant: -4.0)
         ])
+    }
+
+    private func configureUpdatedCallingUI(with classification: SecurityClassification) {
+        switch classification {
+
+        case .classified:
+            securityLevelLabel.textColor = SemanticColors.Label.textSecurityEnabled
+            backgroundColor = SemanticColors.View.backgroundSecurityEnabled
+            iconImageView.setIcon(.checkmark, size: .tiny, color: SemanticColors.Icon.backgroundSecurityEnabledCheckMark)
+            topBorder.backgroundColor = SemanticColors.View.borderSecurityEnabled
+
+        case .notClassified:
+            securityLevelLabel.textColor = SemanticColors.Label.textDefaultWhite
+            backgroundColor = SemanticColors.View.backgroundSecurityDisabled
+            iconImageView.image = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.foregroundCheckMarkSelected)
+            topBorder.backgroundColor = .clear
+
+        default:
+            isHidden = true
+            assertionFailure("should not reach this point")
+        }
+    }
+
+    private func configureLegacyCallingUI(with classification: SecurityClassification) {
+        switch classification {
+
+        case .classified:
+            securityLevelLabel.textColor = SemanticColors.Label.textDefault
+            backgroundColor = SemanticColors.View.backgroundSecurityLevel
+            iconImageView.setIcon(.checkmark, size: .tiny, color: SemanticColors.Icon.backgroundCheckMarkSelected)
+            topBorder.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+
+        case .notClassified:
+            securityLevelLabel.textColor = SemanticColors.Label.textDefault
+            backgroundColor = SemanticColors.View.backgroundSecurityLevel
+            iconImageView.setIcon(.exclamationMarkCircle, size: .tiny, color: SemanticColors.Icon.foregroundCheckMarkSelected)
+            topBorder.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+
+        default:
+            isHidden = true
+            assertionFailure("should not reach this point")
+        }
+
     }
 }
 

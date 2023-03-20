@@ -168,6 +168,7 @@ internal enum Asset {
     internal static let conversationsOutline = ImageAsset(name: "Conversations Outline")
     internal static let foldersFilled = ImageAsset(name: "Folders Filled")
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
+    internal static let attention = ImageAsset(name: "Attention")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
