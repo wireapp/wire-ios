@@ -141,8 +141,9 @@ extension AVSMediaManager {
 
         switch propertyName {
         case SettingsPropertyName.messageSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
+            guard let url = soundValue?.fileURL() else { return }
+            self.register(url, forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
+            self.register(url, forMedia: MediaManagerSound.messageReceivedSound.rawValue)
 
         case SettingsPropertyName.callSoundName.rawValue:
             self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemInCallSound.rawValue)

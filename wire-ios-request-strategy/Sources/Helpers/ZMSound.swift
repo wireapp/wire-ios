@@ -41,21 +41,43 @@ public enum ZMSound: String, CustomStringConvertible {
     case WireCall   = "ringing_from_them"
     case WirePing   = "ping_from_them"
     case WireText   = "new_message"
+    case Horn       = "horn"
+
+    var osIdentyfier: String? {
+        switch self {
+        case .None: return nil
+        case .Bell: return "sms-received5"
+        case .Calipso: return "Calypso"
+        case .Chime: return "sms-received2"
+        case .Circles:
+            return nil
+        case .Glass: return "sms-received3"
+        case .Hello: return "sms_alert_hello"//
+        case .Input: return "sms_alert_input"//
+        case .Keys: return "sms_alert_keys"//
+        case .Note: return "sms_alert_note"//
+        case .Popcorn: return "sms_alert_popcorn"//
+        case .Synth: return "sms_alert_synth"//
+        case .Telegraph: return "Telegraph" //
+        case .TriTone: return "sms-received1"
+        case .Harp: return ""
+        case .Marimba: return ""
+        case .OldPhone: return ""
+        case .Opening: return ""
+        case .WireCall: return nil
+        case .WirePing: return nil
+        case .WireText: return nil
+        case .Horn: return "sms-received4"
+        }
+    }
 
     public static let soundEffects = [
         Bell,
         Calipso,
         Chime,
-        Circles,
         Glass,
-        Hello,
-        Input,
-        Keys,
-        Note,
-        Popcorn,
-        Synth,
-        Telegraph,
-        TriTone]
+        TriTone,
+        Horn]
 
     public static let ringtones = [
         Harp,
@@ -108,7 +130,10 @@ public enum ZMSound: String, CustomStringConvertible {
             }
             return URL(fileURLWithPath: path)
         default:
-            guard let path = Bundle.main.path(forResource: self.rawValue, ofType: type(of: self).fileExtension) else {
+            if let osIdentyfier = self.osIdentyfier {
+              return URL(fileURLWithPath: "/System/Library/Audio/UISounds/\(osIdentyfier).caf")
+            }
+            guard let path = Bundle.main.path(forResource: self.rawValue, ofType: "caf") else {
                 return nil
             }
             return URL(fileURLWithPath: path)
