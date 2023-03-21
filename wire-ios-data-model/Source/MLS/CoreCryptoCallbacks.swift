@@ -39,7 +39,8 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
     func clientIsExistingGroupUser(
         conversationId: ConversationId,
         clientId: ClientId,
-        existingClients: [ClientId]
+        existingClients: [ClientId],
+        parentConversationClients: [ClientId]?
     ) -> Bool {
         guard let mlsClientID = MLSClientID(data: clientId.data) else {
             return false

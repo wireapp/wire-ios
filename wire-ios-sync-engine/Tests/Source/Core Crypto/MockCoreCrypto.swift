@@ -253,8 +253,8 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return []
     }
 
-    func proteusNewPrekeyAuto() throws -> [UInt8] {
-        return []
+    func proteusNewPrekeyAuto() throws -> ProteusAutoPrekeyBundle {
+        return .init(id: 0, pkb: [])
     }
 
     func proteusLastResortPrekey() throws -> [UInt8] {
@@ -291,6 +291,10 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     func proteusLastErrorCode() -> UInt32 {
         return 0
+    }
+
+    func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
+
     }
 
 }
