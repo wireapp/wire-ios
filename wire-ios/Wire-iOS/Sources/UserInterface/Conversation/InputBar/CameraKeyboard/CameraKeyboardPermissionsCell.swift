@@ -28,6 +28,8 @@ enum DeniedAuthorizationType {
 
 final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
+    // MARK: - Properties
+
     let settingsButton = Button(style: .secondaryTextButtonStyle,
                                 cornerRadius: 4,
                                 fontSpec: .normalSemiboldFont)
@@ -35,6 +37,8 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     let descriptionLabel = UILabel()
 
     private let containerView = UIView()
+
+    // MARK: - Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,6 +74,8 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         configure(deniedAuthorization: deniedAuthorization)
     }
 
+    // MARK: - Configure elements
+
     func configure(deniedAuthorization: DeniedAuthorizationType) {
         var title = ""
 
@@ -90,11 +96,15 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     }
 
+    // MARK: - Actions
+
     @objc
     private func openSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) else { return }
         UIApplication.shared.open(url)
     }
+
+    // MARK: - UI Constraints
 
     private func createConstraints(deniedAuthorization: DeniedAuthorizationType) {
 
