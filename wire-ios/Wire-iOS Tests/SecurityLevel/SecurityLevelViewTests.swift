@@ -32,7 +32,7 @@ final class SecurityLevelViewTests: ZMSnapshotTestCase {
         deprecatedUIFlagStateBackup = callingUIFlag.isOn
         callingUIFlag.isOn = false
         sut = SecurityLevelView()
-        sut.backgroundColor = .white
+        sut.backgroundColor = SemanticColors.View.backgroundDefaultWhite
         sut.translatesAutoresizingMaskIntoConstraints = true
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 24)
     }

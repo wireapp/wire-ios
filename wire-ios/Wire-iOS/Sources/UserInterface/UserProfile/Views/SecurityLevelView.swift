@@ -35,6 +35,10 @@ final class SecurityLevelView: UIView {
     private let bottomBorder = UIView()
     typealias SecurityLocalization = L10n.Localizable.SecurityClassification
 
+    typealias ViewColors = SemanticColors.View
+    typealias LabelColors = SemanticColors.Label
+    typealias IconColors = SemanticColors.Icon
+
     init() {
         super.init(frame: .zero)
 
@@ -117,18 +121,18 @@ final class SecurityLevelView: UIView {
         switch classification {
 
         case .classified:
-            securityLevelLabel.textColor = SemanticColors.Label.textSecurityEnabled
-            backgroundColor = SemanticColors.View.backgroundSecurityEnabled
-            iconImageView.image = Asset.Images.check.image.withTintColor(SemanticColors.Icon.backgroundSecurityEnabledCheckMark)
-            topBorder.backgroundColor = SemanticColors.View.borderSecurityEnabled
+            securityLevelLabel.textColor = LabelColors.textSecurityEnabled
+            backgroundColor = ViewColors.backgroundSecurityEnabled
+            iconImageView.image = Asset.Images.check.image.withTintColor(IconColors.backgroundSecurityEnabledCheckMark)
+            topBorder.backgroundColor = ViewColors.borderSecurityEnabled
 
         case .notClassified:
-            securityLevelLabel.textColor = SemanticColors.Label.textDefaultWhite
-            backgroundColor = SemanticColors.View.backgroundSecurityDisabled
-            iconImageView.image = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.foregroundCheckMarkSelected)
+            securityLevelLabel.textColor = LabelColors.textDefaultWhite
+            backgroundColor = ViewColors.backgroundSecurityDisabled
+            iconImageView.image = Asset.Images.attention.image.withTintColor(IconColors.foregroundCheckMarkSelected)
             topBorder.backgroundColor = .clear
 
-        default:
+        case .none:
             isHidden = true
             assertionFailure("should not reach this point")
         }
@@ -138,18 +142,20 @@ final class SecurityLevelView: UIView {
         switch classification {
 
         case .classified:
-            securityLevelLabel.textColor = SemanticColors.Label.textDefault
-            backgroundColor = SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.checkmark, size: .tiny, color: SemanticColors.Icon.backgroundCheckMarkSelected)
-            topBorder.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+            securityLevelLabel.textColor = LabelColors.textDefault
+            backgroundColor = ViewColors.backgroundSecurityLevel
+            iconImageView.setTemplateIcon(.checkmark, size: .tiny)
+            iconImageView.tintColor = IconColors.backgroundCheckMarkSelected
+            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
 
         case .notClassified:
-            securityLevelLabel.textColor = SemanticColors.Label.textDefault
-            backgroundColor = SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.exclamationMarkCircle, size: .tiny, color: SemanticColors.Icon.foregroundCheckMarkSelected)
-            topBorder.backgroundColor = SemanticColors.View.backgroundSeparatorCell
+            securityLevelLabel.textColor = LabelColors.textDefault
+            backgroundColor = ViewColors.backgroundSecurityLevel
+            iconImageView.setTemplateIcon(.exclamationMarkCircle, size: .tiny)
+            iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
+            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
 
-        default:
+        case .none:
             isHidden = true
             assertionFailure("should not reach this point")
         }
