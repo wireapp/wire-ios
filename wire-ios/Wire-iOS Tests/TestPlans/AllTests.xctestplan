@@ -41,7 +41,6 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "AppLockModuleInteractorTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()"
       ],
       "target" : {
