@@ -49,7 +49,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
-    
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
