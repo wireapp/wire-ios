@@ -60,10 +60,14 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
             }
         }
     }
+
     fileprivate enum CameraKeyboardSection: UInt {
         case camera = 0, photos = 1
     }
-    private let mediaSharingRestrictionsMananger = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+
+    private let mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
+        sessionRestriction: ZMUserSession.shared()
+    )
 
     let assetLibrary: AssetLibrary?
     let imageManagerType: ImageManagerProtocol.Type
@@ -86,11 +90,24 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.permissions = permissions
         super.init(nibName: nil, bundle: nil)
         self.assetLibrary?.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(splitLayoutChanged(_:)), name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize, object: self.splitLayoutObservable)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(splitLayoutChanged(_:)),
+            name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
+            object: self.splitLayoutObservable
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
 
         if let userSession = ZMUserSession.shared() {
-            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                userSession: userSession
+            )
         }
     }
 
@@ -241,7 +258,13 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     func scrollToCamera(animated: Bool) {
         let endOfListX = UIApplication.isLeftToRightLayout ? 0 : self.collectionView.contentSize.width - 10
-        self.collectionView.scrollRectToVisible(CGRect(x: endOfListX, y: 0, width: 10, height: 10), animated: animated)
+        self.collectionView.scrollRectToVisible(
+            CGRect(x: endOfListX,
+                   y: 0,
+                   width: 10,
+                   height: 10),
+            animated: animated
+        )
     }
 
     // MARK: - Actions
@@ -272,7 +295,12 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
             }
 
             DispatchQueue.main.async(execute: {
-                self.delegate?.cameraKeyboardViewController(self, didSelectImageData: returnData, isFromCamera: false, uti: uti)
+                self.delegate?.cameraKeyboardViewController(
+                    self,
+                    didSelectImageData: returnData,
+                    isFromCamera: false,
+                    uti: uti
+                )
             })
         }
 
@@ -359,7 +387,10 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                 self.isLoadingViewVisible = true
             })
 
-            AVURLAsset.convertVideoToUploadFormat(at: url, fileLengthLimit: Int64(fileLengthLimit)) { resultURL, asset, error in
+            AVURLAsset.convertVideoToUploadFormat(
+                at: url,
+                fileLengthLimit: Int64(fileLengthLimit)
+            ) { resultURL, asset, error in
                 DispatchQueue.main.async(execute: {
                     self.isLoadingViewVisible = false
                 })
@@ -369,7 +400,11 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                       let asset = asset else { return }
 
                 DispatchQueue.main.async(execute: {
-                    self.delegate?.cameraKeyboardViewController(self, didSelectVideo: resultURL, duration: CMTimeGetSeconds(asset.duration))
+                    self.delegate?.cameraKeyboardViewController(
+                        self,
+                        didSelectVideo: resultURL,
+                        duration: CMTimeGetSeconds(asset.duration)
+                    )
                 })
             }
         }
