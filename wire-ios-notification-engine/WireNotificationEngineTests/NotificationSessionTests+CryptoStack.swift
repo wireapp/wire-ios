@@ -21,6 +21,7 @@ import XCTest
 import Foundation
 import WireUtilities
 import WireTransport
+import WireDataModel
 
 class NotificationSessionTests_CryptoStack: BaseTest {
 
@@ -28,6 +29,11 @@ class NotificationSessionTests_CryptoStack: BaseTest {
     private var mlsFlag = DeveloperFlag.enableMLSSupport
 
     // MARK: - Life cycle
+
+    override class func setUp() {
+        super.setUp()
+        createCoreCryptoKeyIfNeeded()
+    }
 
     override func setUp() {
         super.setUp()
@@ -41,6 +47,13 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         mlsFlag.isOn = false
         BackendInfo.apiVersion = nil
         super.tearDown()
+    }
+
+    // MARK: - Key generation
+
+    class func createCoreCryptoKeyIfNeeded() {
+        let keyProvider = CoreCryptoKeyProvider()
+        _ = try? keyProvider.coreCryptoKey(createIfNeeded: true)
     }
 
     // MARK: - Tests

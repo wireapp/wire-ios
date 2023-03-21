@@ -31,7 +31,7 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
     var coreCryptoKeyMock: CoreCryptoKeyMock?
 
-    override func coreCryptoKey() throws -> Data {
+    override func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
         guard let mock = coreCryptoKeyMock else { throw MockError.unmockedMethodCalled }
         return try mock()
     }
@@ -70,7 +70,8 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             // WHEN
             let configuration = try self.sut.createInitialConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                userID: selfUser.remoteIdentifier
+                userID: selfUser.remoteIdentifier,
+                createKeyIfNeeded: true
             )
 
             // THEN
@@ -96,7 +97,8 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             // WHEN
             let configuration = try self.sut.createFullConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                selfUser: selfUser
+                selfUser: selfUser,
+                createKeyIfNeeded: true
             )
 
             // THEN
@@ -119,7 +121,8 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
                 // WHEN
                 _ = try sut.createFullConfiguration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                    selfUser: selfUser
+                    selfUser: selfUser,
+                    createKeyIfNeeded: true
                 )
             }
         }
@@ -143,7 +146,8 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
                 // WHEN
                 _ = try sut.createFullConfiguration(
                     sharedContainerURL: OtrBaseTest.sharedContainerURL,
-                    selfUser: selfUser
+                    selfUser: selfUser,
+                    createKeyIfNeeded: true
                 )
             }
         }

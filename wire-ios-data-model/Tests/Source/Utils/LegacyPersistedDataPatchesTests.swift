@@ -186,7 +186,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
     }
 
-    func testThatItMigratesClientsSessionIdentifiers() {
+    func testThatItMigratesClientsSessionIdentifiers() throws {
 
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -220,6 +220,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
             // THEN
             let readData = try? Data(contentsOf: newSession)
+            XCTAssertNotNil(readData)
             XCTAssertEqual(readData, previousData)
             XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
             XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))

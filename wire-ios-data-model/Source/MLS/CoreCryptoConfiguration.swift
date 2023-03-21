@@ -49,14 +49,16 @@ public class CoreCryptoConfigProvider {
 
     public func createFullConfiguration(
         sharedContainerURL: URL,
-        selfUser: ZMUser
+        selfUser: ZMUser,
+        createKeyIfNeeded: Bool
     ) throws -> CoreCryptoConfiguration {
 
         let qualifiedClientID = try clientID(of: selfUser)
 
         let initialConfig = try createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
-            userID: selfUser.remoteIdentifier
+            userID: selfUser.remoteIdentifier,
+            createKeyIfNeeded: createKeyIfNeeded
         )
 
         return CoreCryptoConfiguration(
@@ -68,7 +70,8 @@ public class CoreCryptoConfigProvider {
 
     public func createInitialConfiguration(
         sharedContainerURL: URL,
-        userID: UUID
+        userID: UUID,
+        createKeyIfNeeded: Bool
     ) throws -> (path: String, key: String) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
@@ -80,7 +83,7 @@ public class CoreCryptoConfigProvider {
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
-            let key = try coreCryptoKeyProvider.coreCryptoKey()
+            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
             return (
                 path: coreCryptoDirectory.path,
                 key: key.base64EncodedString()
