@@ -47,11 +47,8 @@ struct SwitchBackendView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onTapGesture {
             viewModel.handleEvent(.itemTapped(item))
-        }.alert(isPresented: $viewModel.isAlertPresented) {
-            Alert(
-                title: Text(""),
-                message: Text(viewModel.alertMessage)
-            )
+        }.alert(item: $viewModel.alertItem) { alertItem in
+            Alert(title: Text(""), message: Text(alertItem.message))
         }
 
     }

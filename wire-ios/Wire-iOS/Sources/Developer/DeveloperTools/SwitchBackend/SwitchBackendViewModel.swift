@@ -46,10 +46,14 @@ final class SwitchBackendViewModel: ObservableObject {
     var selectedItemID: Item.ID
 
     @Published
-    var isAlertPresented = false
+    var alertItem: AlertItem?
 
-    @Published
-    var alertMessage = ""
+    struct AlertItem: Identifiable {
+
+        let id = UUID()
+        let message: String
+
+    }
 
     // MARK: - Life cycle
 
@@ -81,11 +85,9 @@ final class SwitchBackendViewModel: ObservableObject {
 
             if let environment = BackendEnvironment(type: item.value) {
                 BackendEnvironment.shared = environment
-                alertMessage = "Backend switched! Please restart the app"
-                isAlertPresented = true
+                alertItem = AlertItem(message: "Backend switched! Please restart the app")
             } else {
-                alertMessage = "Failed to switch backend"
-                isAlertPresented = true
+                alertItem = AlertItem(message: "Failed to switch backend")
             }
         }
     }
