@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,10 +21,17 @@ import WireDataModel
 
 extension NSManagedObjectContext {
 
-    // TODO: [John] use flag here
-
     @objc
-    public func deleteAndCreateNewEncryptionContext() {
-        zm_cryptKeyStore.deleteAndCreateNewBox()
+    public func tearDownCryptoStack() {
+        proteusProvider.perform(
+            withProteusService: { _ in },
+            withKeyStore: { keyStore in keyStore.deleteAndCreateNewBox() }
+        )
+
+        proteusService = nil
+        mlsController = nil
+        try? coreCrypto?.tearDown()
+        coreCrypto = nil
     }
+
 }
