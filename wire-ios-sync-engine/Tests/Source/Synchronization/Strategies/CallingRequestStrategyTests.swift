@@ -27,6 +27,12 @@ class CallingRequestStrategyTests: MessagingTest {
     var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
@@ -220,6 +226,8 @@ class CallingRequestStrategyTests: MessagingTest {
         BackendInfo.isFederationEnabled = true
 
         let selfClient = createSelfClient()
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "foo.com"
 
         // One user with two clients connected to self.
         let user1 = ZMUser.insertNewObject(in: syncMOC)
@@ -241,7 +249,7 @@ class CallingRequestStrategyTests: MessagingTest {
         conversation.domain = "foo.com"
         conversation.messageProtocol = .proteus
         conversation.addParticipantsAndUpdateConversationState(
-            users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+            users: [selfUser, user1, user2],
             role: nil
         )
 
@@ -299,6 +307,8 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {
         // Given
         let selfClient = createSelfClient()
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.domain = "foo.com"
 
         // One user with two clients connected to self.
         let user1 = ZMUser.insertNewObject(in: syncMOC)
@@ -320,7 +330,7 @@ class CallingRequestStrategyTests: MessagingTest {
         conversation.mlsGroupID = MLSGroupID([1, 2, 3])
         conversation.messageProtocol = .mls
         conversation.addParticipantsAndUpdateConversationState(
-            users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+            users: [selfUser, user1, user2],
             role: nil
         )
 

@@ -23,6 +23,12 @@ import WireTransport
 
 class APSSignalingKeyStoreTests: MessagingTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItCreatesKeyStoreFromUserClientWithKeys() {
         // given
         let keySize = Int(APSSignalingKeysStore.defaultKeyLengthBytes)

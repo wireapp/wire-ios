@@ -51,6 +51,12 @@ class MessagingTestBase: ZMTBaseTest {
         return self.coreDataStack.eventContext
     }
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     override func setUp() {
         super.setUp()
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
