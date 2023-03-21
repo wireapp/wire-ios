@@ -325,7 +325,7 @@
 		549552541D645683004F21F6 /* AddressBookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549552511D64567C004F21F6 /* AddressBookTests.swift */; };
 		549710081F6FF5C100026EDD /* NotificationInContext+UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549710071F6FF5C100026EDD /* NotificationInContext+UserSession.swift */; };
 		5497100A1F6FFE9900026EDD /* ClientUpdateNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549710091F6FFE9900026EDD /* ClientUpdateNotification.swift */; };
-		54973A361DD48CAB007F8702 /* NSManagedObject+EncryptionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54973A351DD48CAB007F8702 /* NSManagedObject+EncryptionContext.swift */; };
+		54973A361DD48CAB007F8702 /* NSManagedObject+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54973A351DD48CAB007F8702 /* NSManagedObject+CryptoStack.swift */; };
 		549815CD1A432BC700A7CE2E /* ZMBlacklistDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = F9FD798619EE742600D70FCD /* ZMBlacklistDownloader.m */; };
 		549815CE1A432BC700A7CE2E /* ZMBlacklistVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = F9FD798C19EE9B9A00D70FCD /* ZMBlacklistVerificator.m */; };
 		549815DC1A432BC700A7CE2E /* NSError+ZMUserSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E05F253192A50CC00F22D80 /* NSError+ZMUserSession.m */; };
@@ -965,7 +965,7 @@
 		549552511D64567C004F21F6 /* AddressBookTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBookTests.swift; sourceTree = "<group>"; };
 		549710071F6FF5C100026EDD /* NotificationInContext+UserSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotificationInContext+UserSession.swift"; sourceTree = "<group>"; };
 		549710091F6FFE9900026EDD /* ClientUpdateNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientUpdateNotification.swift; sourceTree = "<group>"; };
-		54973A351DD48CAB007F8702 /* NSManagedObject+EncryptionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+EncryptionContext.swift"; sourceTree = "<group>"; };
+		54973A351DD48CAB007F8702 /* NSManagedObject+CryptoStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+CryptoStack.swift"; sourceTree = "<group>"; };
 		549815931A43232400A7CE2E /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		549815961A43232400A7CE2E /* WireSyncEngine-ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireSyncEngine-ios-Info.plist"; sourceTree = "<group>"; };
 		54991D571DEDCF2B007E282F /* AddressBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBook.swift; sourceTree = "<group>"; };
@@ -2041,7 +2041,7 @@
 				F992985A1BE1404D0058D42F /* ZMClientRegistrationStatus+Internal.h */,
 				F9FD167A1BDFCDAD00725F5C /* ZMClientRegistrationStatus.m */,
 				A9C02604266F5B4B002E542B /* ZMClientRegistrationStatus.swift */,
-				54973A351DD48CAB007F8702 /* NSManagedObject+EncryptionContext.swift */,
+				54973A351DD48CAB007F8702 /* NSManagedObject+CryptoStack.swift */,
 				163FB9982057E3F200E74F83 /* AuthenticationStatusProvider.swift */,
 				F9B171F51C0EF21100E6EEC6 /* ClientUpdateStatus.swift */,
 				166264732166093800300F45 /* CallEventStatus.swift */,
@@ -3442,7 +3442,7 @@
 				5E0EB1F421008C1900B5DC2B /* CompanyLoginRequester.swift in Sources */,
 				16A764611F3E0B0B00564F21 /* CallKitManager.swift in Sources */,
 				BF491CD11F03D7CF0055EE44 /* PermissionsDownloadRequestStrategy.swift in Sources */,
-				54973A361DD48CAB007F8702 /* NSManagedObject+EncryptionContext.swift in Sources */,
+				54973A361DD48CAB007F8702 /* NSManagedObject+CryptoStack.swift in Sources */,
 				165D3A3D1E1D60520052E654 /* ZMConversation+VoiceChannel.swift in Sources */,
 				EE1DEBC723D5F1F30087EE1F /* NSManagedObjectContext+TypingUsers.swift in Sources */,
 				EEE186B4259CC92D008707CA /* ZMUserSession+AppLock.swift in Sources */,

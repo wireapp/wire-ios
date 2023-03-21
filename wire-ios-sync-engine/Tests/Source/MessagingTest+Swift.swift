@@ -55,8 +55,12 @@ extension MessagingTest {
     }
 
     @objc
-    public func setDefaultAPIVersion() {
+    public func setDefaults() {
         setCurrentAPIVersion(.v0)
+        BackendInfo.domain = "example.com"
+
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        proteusViaCoreCrypto.isOn = false
     }
 
     @objc

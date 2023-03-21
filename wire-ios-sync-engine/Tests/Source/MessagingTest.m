@@ -123,7 +123,7 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setUp;
 {
     [super setUp];
-    [self setDefaultAPIVersion];
+    [self setDefaults];
     BackgroundActivityFactory.sharedFactory.activityManager = UIApplication.sharedApplication;
     [BackgroundActivityFactory.sharedFactory resume];
     

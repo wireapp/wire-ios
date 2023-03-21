@@ -25,6 +25,7 @@ public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func mlsInit(clientID: String) throws
+    func tearDown() throws
 }
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
@@ -35,6 +36,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let coreCrypto: CoreCryptoProtocol
     private let safeContext: SafeFileContext
     private var didInitializeMLS = false
+    private let databasePath: String
 
     public convenience init(coreCryptoConfiguration config: CoreCryptoConfiguration) throws {
         guard let clientID = config.clientIDBytes else {
@@ -75,8 +77,13 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
         self.coreCrypto = coreCrypto
+        self.databasePath = databasePath
         let directoryPathUrl = URL(fileURLWithPath: databasePath).deletingLastPathComponent()
         self.safeContext = SafeFileContext(fileURL: directoryPathUrl)
+    }
+
+    public func tearDown() throws {
+        _ = try FileManager.default.removeItem(atPath: databasePath)
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
