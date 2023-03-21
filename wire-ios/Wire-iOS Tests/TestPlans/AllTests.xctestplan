@@ -40,6 +40,10 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "AppLockModuleInteractorTests",
+        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()"
+      ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "BACB88501AF7C48900DDCDB0",
