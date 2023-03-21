@@ -21,6 +21,8 @@ import AVFoundation
 import Photos
 @testable import Wire
 
+// MARK: - CameraKeyboardViewControllerDelegateMock
+
 final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControllerDelegate {
 
     var cameraKeyboardWantsToOpenCameraRollHitCount: UInt = 0
@@ -44,10 +46,14 @@ final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControll
     }
 }
 
+// MARK: - SplitLayoutObservableMock
+
 final class SplitLayoutObservableMock: NSObject, SplitLayoutObservable {
     var layoutSize: SplitViewControllerLayoutSize = .compact
     var leftViewControllerWidth: CGFloat = 0
 }
+
+// MARK: - MockAssetLibrary
 
 private final class MockAssetLibrary: AssetLibrary {
     fileprivate override var count: UInt { return 5 }
@@ -56,6 +62,8 @@ private final class MockAssetLibrary: AssetLibrary {
         // no op
     }
 }
+
+// MARK: - MockImageManager
 
 private final class MockImageManager: ImageManagerProtocol {
 
@@ -78,18 +86,27 @@ private final class MockImageManager: ImageManagerProtocol {
     static var defaultInstance: ImageManagerProtocol = MockImageManager()
 }
 
+// MARK: - CallingMockCameraKeyboardViewController
+
 private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewController {
     override var shouldBlockCallingRelatedActions: Bool {
         return true
     }
 }
 
+// MARK: - CameraKeyboardViewControllerTests
+
 final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
+
+    // MARK: - Properties
+
     var sut: CameraKeyboardViewController!
     var splitView: SplitLayoutObservableMock!
     var delegateMock: CameraKeyboardViewControllerDelegateMock!
     fileprivate var mockAssetLibrary: MockAssetLibrary!
     fileprivate var mockImageManager: MockImageManager!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -99,6 +116,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         splitView = SplitLayoutObservableMock()
         delegateMock = CameraKeyboardViewControllerDelegateMock()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
@@ -110,6 +129,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Helper methods
 
     @discardableResult
     private func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
@@ -139,6 +160,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         sut = CameraKeyboardViewController(splitLayoutObservable: splitView,
                                            permissions: permissions)
     }
+
+    // MARK: - Tests
 
     func testWithCallingOverlay() {
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
@@ -180,6 +203,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         XCTAssertEqual(self.sut.collectionView.numberOfItems(inSection: 0), 1)
     }
 
+    // MARK: - Tests for InitialStateLayoutSizeCompact
+
     private func initialStateLayoutSizeCompact(with permissions: PhotoPermissionsController,
                                                file: StaticString = #file,
                                                testName: String = #function,
@@ -214,6 +239,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         let permissions = MockPhotoPermissionsController(camera: false, library: true)
         initialStateLayoutSizeCompact(with: permissions)
     }
+
+    // MARK: - Tests for InitialStateLayoutSizeRegularPortrait
 
     private func initialStateLayoutSizeRegularPortrait(with permissions: PhotoPermissionsController,
                                                        file: StaticString = #file,
@@ -251,6 +278,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         initialStateLayoutSizeRegularPortrait(with: permissions)
     }
 
+    // MARK: - Tests for InitialStateLayoutSizeRegularLandscape
+
     func initialStateLayoutSizeRegularLandscape(with permissions: PhotoPermissionsController,
                                                 file: StaticString = #file,
                                                 testName: String = #function,
@@ -283,6 +312,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         let permissions = MockPhotoPermissionsController(camera: false, library: true)
         initialStateLayoutSizeRegularLandscape(with: permissions)
     }
+
+    // MARK: - Tests for CameraScrolledHorizontallySomePercent
 
     private func cameraScrolledHorizontallySomePercent(with permissions: PhotoPermissionsController,
                                                        file: StaticString = #file,
@@ -320,6 +351,8 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         let permissions = MockPhotoPermissionsController(camera: false, library: true)
         cameraScrolledHorizontallySomePercent(with: permissions)
     }
+
+    // MARK: - Tests for CameraScrolledHorizontallyAwayPercent
 
     private func cameraScrolledHorizontallyAwayPercent(with permissions: PhotoPermissionsController,
                                                        file: StaticString = #file,
