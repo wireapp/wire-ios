@@ -49,7 +49,8 @@ extension ZMUserSession {
             do {
                 let configuration = try provider.createInitialConfiguration(
                     sharedContainerURL: sharedContainerURL,
-                    userID: userID
+                    userID: userID,
+                    createKeyIfNeeded: true
                 )
 
                 let coreCrypto = try SafeCoreCrypto(

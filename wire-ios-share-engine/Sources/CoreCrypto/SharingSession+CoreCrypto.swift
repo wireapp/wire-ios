@@ -40,7 +40,8 @@ extension SharingSession {
             do {
                 let configuration = try provider.createFullConfiguration(
                     sharedContainerURL: sharedContainerURL,
-                    selfUser: .selfUser(in: syncContext)
+                    selfUser: .selfUser(in: syncContext),
+                    createKeyIfNeeded: false
                 )
 
                 let safeCoreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: configuration)
@@ -54,7 +55,7 @@ extension SharingSession {
                 if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {
                     syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
                 }
-                
+
                 WireLogger.coreCrypto.info("success: setup crypto stack")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")

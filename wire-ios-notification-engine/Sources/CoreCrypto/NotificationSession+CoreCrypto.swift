@@ -37,7 +37,8 @@ extension NotificationSession {
             do {
                 let configuration = try provider.createFullConfiguration(
                     sharedContainerURL: sharedContainerURL,
-                    selfUser: .selfUser(in: syncContext)
+                    selfUser: .selfUser(in: syncContext),
+                    createKeyIfNeeded: false
                 )
 
                 let safeCoreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: configuration)
