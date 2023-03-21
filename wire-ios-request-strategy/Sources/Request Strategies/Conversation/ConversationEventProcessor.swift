@@ -107,7 +107,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
 
     func processMemberJoin(payload: MemberJoinPayload, originalEvent: ZMUpdateEvent) {
-        syncConversationIfNeeded(qualifiedID: payload.qualifiedID, in: context) {
+        context.performAndWait {
             guard
                 let conversation = self.fetchOrCreateConversation(id: payload.id, qualifiedID: payload.qualifiedID, in: self.context)
             else {
@@ -140,6 +140,25 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: self.context)
                 }
                 conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+            }
+        }
+
+        // MLS specific sync
+        syncConversationIfNeeded(qualifiedID: payload.qualifiedID, in: context) {
+            guard
+                let conversation = self.fetchOrCreateConversation(id: payload.id, qualifiedID: payload.qualifiedID, in: self.context)
+            else {
+                Logging.eventProcessing.warn("Member join update missing conversation, aborting...")
+                return
+            }
+
+            if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: self.context, conversation: conversation)! }) {
+                let selfUser = ZMUser.selfUser(in: self.context)
+                let users = Set(usersAndRoles.map { $0.0 })
+
+                if users.contains(selfUser) {
+                    self.updateMLSStatus(for: conversation, context: self.context)
+                }
             }
         }
     }
