@@ -19,8 +19,6 @@
 		01E29C8C2996A2710024E1A7 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		017ABBBA299541F50004C243 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E56CA37428588C4F00CD2045 /* Colors.xcassets */; };
-		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
 		060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */; };
 		061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */; };
 		061282632379C25500C1A53C /* UITextView+ReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */; };
@@ -819,7 +817,6 @@
 		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */; };
 		A91833132419347F00CBD0B7 /* TokenFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833122419347F00CBD0B7 /* TokenFieldTests.swift */; };
 		A9184F0925C097EF00AE7842 /* MockConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9184F0825C097EE00AE7842 /* MockConversation.swift */; };
-		A9207B2C2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9207B2B2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift */; };
 		A923F1C02428C12A003F361F /* URLs+zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1BF2428C12A003F361F /* URLs+zip.swift */; };
 		A923F1C72428C71A003F361F /* ZipFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1C42428C572003F361F /* ZipFileTests.swift */; };
 		A923F1C924290325003F361F /* SplitViewControllerTransitionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1C824290325003F361F /* SplitViewControllerTransitionContext.swift */; };
@@ -2763,7 +2760,6 @@
 		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentTests.swift; sourceTree = "<group>"; };
 		A91833122419347F00CBD0B7 /* TokenFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenFieldTests.swift; sourceTree = "<group>"; };
 		A9184F0825C097EE00AE7842 /* MockConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
-		A9207B2B2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperOptionsControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		A923F1BF2428C12A003F361F /* URLs+zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLs+zip.swift"; sourceTree = "<group>"; };
 		A923F1C42428C572003F361F /* ZipFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipFileTests.swift; sourceTree = "<group>"; };
 		A923F1C824290325003F361F /* SplitViewControllerTransitionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewControllerTransitionContext.swift; sourceTree = "<group>"; };
@@ -6397,14 +6393,6 @@
 			path = Token;
 			sourceTree = "<group>";
 		};
-		A9207B2A2715E7D2008C1F22 /* DeveloperOptions */ = {
-			isa = PBXGroup;
-			children = (
-				A9207B2B2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift */,
-			);
-			path = DeveloperOptions;
-			sourceTree = "<group>";
-		};
 		A923F1C32428C562003F361F /* ZipFile */ = {
 			isa = PBXGroup;
 			children = (
@@ -6651,7 +6639,6 @@
 				A9712D5B2743C44E0008F380 /* Giphy */,
 				A961465E273C0B6600986596 /* SearchGroup */,
 				A97559F22729AA4500217714 /* Collection */,
-				A9207B2A2715E7D2008C1F22 /* DeveloperOptions */,
 				63750519262477BE0083DC27 /* Components */,
 				87BEB0D71C734D550094BFE9 /* Mocks */,
 				064AB3D425BAE36A00380D9B /* PasswordRules */,
@@ -9566,7 +9553,6 @@
 				EF159F381FD59607006E0A9C /* TextFieldValidatorTests.swift in Sources */,
 				7C440E86234B460400D91B5F /* FolderPickerControllerSnapshotTests.swift in Sources */,
 				1658C19620A1E2FA00148F6D /* MockVoiceChannel.swift in Sources */,
-				A9207B2C2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift in Sources */,
 				5502C6E522B7B800000684B7 /* LegalHoldAlertFactoryTests.swift in Sources */,
 				D35EEDC028C2004000949F02 /* SimpleNotificationService.swift in Sources */,
 				D3C34E6E28C1593C004A1AF1 /* AccessTokenEndpointTests.swift in Sources */,
