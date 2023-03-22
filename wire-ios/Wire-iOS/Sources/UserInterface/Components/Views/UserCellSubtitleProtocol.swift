@@ -23,13 +23,11 @@ import WireCommonComponents
 protocol UserCellSubtitleProtocol: AnyObject {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString?
 
-    static var correlationFormatters: [ColorSchemeVariant: AddressBookCorrelationFormatter] { get set }
-
     static var boldFont: FontSpec { get }
     static var lightFont: FontSpec { get }
 }
 
-extension UserCellSubtitleProtocol where Self: UIView & Themeable {
+extension UserCellSubtitleProtocol where Self: UIView {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString? {
         guard let user = user else { return nil }
 
@@ -44,24 +42,12 @@ extension UserCellSubtitleProtocol where Self: UIView & Themeable {
         }
 
         if let user = user as? ZMUser, let addressBookName = user.addressBookEntry?.cachedName {
-            let formatter = Self.correlationFormatter(for: colorSchemeVariant)
+            let color = SemanticColors.Label.textDefault
+            let formatter = AddressBookCorrelationFormatter(lightFont: Self.lightFont, boldFont: Self.boldFont, color: color)
             components.append(formatter.correlationText(for: user, addressBookName: addressBookName))
         }
 
         return components.compactMap({ $0 }).joined(separator: " " + String.MessageToolbox.middleDot + " " && UserCell.lightFont.font!)
-    }
-
-    private static func correlationFormatter(for colorSchemeVariant: ColorSchemeVariant) -> AddressBookCorrelationFormatter {
-        if let formatter = correlationFormatters[colorSchemeVariant] {
-            return formatter
-        }
-
-        let color = UIColor.from(scheme: .sectionText, variant: colorSchemeVariant)
-        let formatter = AddressBookCorrelationFormatter(lightFont: lightFont, boldFont: boldFont, color: color)
-
-        correlationFormatters[colorSchemeVariant] = formatter
-
-        return formatter
     }
 
 }
