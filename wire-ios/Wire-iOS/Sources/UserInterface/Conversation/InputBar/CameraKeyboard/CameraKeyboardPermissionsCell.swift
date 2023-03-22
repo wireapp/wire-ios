@@ -28,33 +28,34 @@ enum DeniedAuthorizationType {
 
 final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
-    let settingsButton = LegacyButton(fontSpec: .normalSemiboldFont)
+    // MARK: - Properties
+
+    let settingsButton = Button(style: .secondaryTextButtonStyle,
+                                cornerRadius: 4,
+                                fontSpec: .normalSemiboldFont)
     let cameraIcon = IconButton()
     let descriptionLabel = UILabel()
 
     private let containerView = UIView()
 
+    // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .graphite
-
+        self.backgroundColor = SemanticColors.View.backgroundConversationView
         cameraIcon.setIcon(.cameraLens, size: .tiny, for: .normal)
-        cameraIcon.setIconColor(.white, for: .normal)
+        cameraIcon.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
         cameraIcon.isUserInteractionEnabled = false
 
         descriptionLabel.backgroundColor = .clear
-        descriptionLabel.textColor = .white
+        descriptionLabel.textColor = SemanticColors.Label.textDefault
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
-
-        settingsButton.setTitleColor(.white, for: .normal)
-        settingsButton.setTitle("keyboard_photos_access.denied.keyboard.settings".localized, for: .normal)
+        settingsButton.setTitle(L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.settings, for: .normal)
         settingsButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 30, bottom: 10, right: 30)
-        settingsButton.layer.cornerRadius = 4.0
         settingsButton.layer.masksToBounds = true
         settingsButton.addTarget(self, action: #selector(CameraKeyboardPermissionsCell.openSettings), for: .touchUpInside)
-        settingsButton.setBackgroundImageColor(UIColor.white.withAlphaComponent(0.16), for: .normal)
-        settingsButton.setBackgroundImageColor(UIColor.white.withAlphaComponent(0.24), for: .highlighted)
+
         containerView.backgroundColor = .clear
 
         containerView.addSubview(descriptionLabel)
@@ -72,6 +73,8 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         self.init(frame: frame)
         configure(deniedAuthorization: deniedAuthorization)
     }
+
+    // MARK: - Configure elements
 
     func configure(deniedAuthorization: DeniedAuthorizationType) {
         var title = ""
@@ -93,11 +96,15 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     }
 
+    // MARK: - Actions
+
     @objc
     private func openSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) else { return }
         UIApplication.shared.open(url)
     }
+
+    // MARK: - UI Constraints
 
     private func createConstraints(deniedAuthorization: DeniedAuthorizationType) {
 
