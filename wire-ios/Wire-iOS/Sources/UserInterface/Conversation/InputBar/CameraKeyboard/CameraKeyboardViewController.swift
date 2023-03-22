@@ -175,7 +175,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.createCollectionView()
 
         self.goBackButton.translatesAutoresizingMaskIntoConstraints = false
-        self.goBackButton.backgroundColor = SemanticColors.View.backgroundBlack
+        self.goBackButton.backgroundColor = .black
         self.goBackButton.circular = true
         self.goBackButton.setIcon(.backArrow, size: .tiny, for: [])
         self.goBackButton.setIconColor(SemanticColors.Icon.foregroundWhite, for: [])
@@ -184,7 +184,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.goBackButton.applyRTLTransformIfNeeded()
 
         self.cameraRollButton.translatesAutoresizingMaskIntoConstraints = false
-        self.cameraRollButton.backgroundColor = SemanticColors.View.backgroundBlack
+        self.cameraRollButton.backgroundColor = .black
         self.cameraRollButton.circular = true
         self.cameraRollButton.setIcon(.photo, size: .tiny, for: [])
         self.cameraRollButton.setIconColor(SemanticColors.Icon.foregroundWhite, for: [])
