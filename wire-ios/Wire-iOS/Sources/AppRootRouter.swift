@@ -201,10 +201,14 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showDatabaseLoadingFailure(completion: completionBlock)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completionBlock)
-        case .unauthenticated(error: let error):
-            screenCurtain.delegate = nil
-            configureUnauthenticatedAppearance()
-            showUnauthenticatedFlow(error: error, completion: completionBlock)
+        case .unauthenticated(let error):
+            if error == NSError(code: .needsAuthenticationAfterMigration, userInfo: nil) {
+                authenticationCoordinator?.stateController.unwindState()
+            } else {
+                screenCurtain.delegate = nil
+                configureUnauthenticatedAppearance()
+                showUnauthenticatedFlow(error: error, completion: completionBlock)
+            }
         case .authenticated(completedRegistration: let completedRegistration):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
