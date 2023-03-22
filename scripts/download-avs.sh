@@ -99,12 +99,12 @@ else
     fi
 
     # guard access token exists
-    if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
-      echo "❌  GITHUB_ACCESS_TOKEN not set ⚠️"
+    if [[ -z "${GITHUB_AVS_ACCESS_TOKEN}" ]]; then
+      echo "❌  GITHUB_AVS_ACCESS_TOKEN not set ⚠️"
       exit 1
     fi
 
-    CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}"
+    CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_AVS_ACCESS_TOKEN}"
 
   else
     echo "❌  Can't find git. Please make sure it is installed ⚠️"
