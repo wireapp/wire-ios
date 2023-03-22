@@ -87,7 +87,10 @@ else
 
   # prepare credentials
   if hash git 2>/dev/null; then
-    GITHUB_USERNAME="`git config user.email`"
+    # get user name or fallback to git configured email
+  	if [[ -z "${GITHUB_USERNAME}" ]]; then
+      GITHUB_USERNAME="`git config user.email`"
+    fi
 
     # guard username exists
     if [[ -z "${GITHUB_USERNAME}" ]]; then
