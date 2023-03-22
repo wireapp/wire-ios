@@ -75,4 +75,19 @@ final class ValidatedTextFieldTests: XCTestCase {
         verify(matching: sut)
     }
 
+    func test_ItValidatesInput_WhenTextIsSet() {
+        // Given
+        let didValidate = expectation(description: "didValidate")
+        sut.enableConfirmButton = {
+            didValidate.fulfill()
+            return true
+        }
+
+        // When
+        sut.text = "foo"
+
+        // Then
+        waitForExpectations(timeout: 0.5)
+    }
+
 }
