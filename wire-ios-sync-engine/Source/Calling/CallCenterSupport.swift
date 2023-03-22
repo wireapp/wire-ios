@@ -39,6 +39,7 @@ public enum AVSConversationType: Int32 {
     case oneToOne = 0
     case group = 1
     case conference = 2
+    case mlsConference = 3
 
 }
 

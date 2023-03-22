@@ -87,7 +87,10 @@ else
 
   # prepare credentials
   if hash git 2>/dev/null; then
-    GITHUB_USERNAME="`git config user.email`"
+    # get user name or fallback to git configured email
+  	if [[ -z "${GITHUB_USERNAME}" ]]; then
+      GITHUB_USERNAME="`git config user.email`"
+    fi
 
     # guard username exists
     if [[ -z "${GITHUB_USERNAME}" ]]; then
@@ -96,12 +99,12 @@ else
     fi
 
     # guard access token exists
-    if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
-      echo "❌  GITHUB_ACCESS_TOKEN not set ⚠️"
+    if [[ -z "${GITHUB_AVS_ACCESS_TOKEN}" ]]; then
+      echo "❌  GITHUB_AVS_ACCESS_TOKEN not set ⚠️"
       exit 1
     fi
 
-    CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}"
+    CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_AVS_ACCESS_TOKEN}"
 
   else
     echo "❌  Can't find git. Please make sure it is installed ⚠️"

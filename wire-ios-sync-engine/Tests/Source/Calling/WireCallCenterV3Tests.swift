@@ -718,11 +718,12 @@ class WireCallCenterV3Tests: MessagingTest {
 
         // then
         XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 1)
-        if let event = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
+        if let (event, conversationType) = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
             XCTAssertEqual(event.conversationId, oneOnOneConversationID)
             XCTAssertEqual(event.userId, userId)
             XCTAssertEqual(event.clientId, clientId)
             XCTAssertEqual(event.data, data)
+            XCTAssertEqual(conversationType, .oneToOne)
         }
     }
 
