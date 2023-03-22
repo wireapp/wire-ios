@@ -178,7 +178,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.goBackButton.backgroundColor = .black
         self.goBackButton.circular = true
         self.goBackButton.setIcon(.backArrow, size: .tiny, for: [])
-        self.goBackButton.setIconColor(SemanticColors.Icon.foregroundWhite, for: [])
+        self.goBackButton.setIconColor(.white, for: [])
         self.goBackButton.accessibilityIdentifier = "goBackButton"
         self.goBackButton.addTarget(self, action: #selector(goBackPressed(_:)), for: .touchUpInside)
         self.goBackButton.applyRTLTransformIfNeeded()
@@ -187,7 +187,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.cameraRollButton.backgroundColor = .black
         self.cameraRollButton.circular = true
         self.cameraRollButton.setIcon(.photo, size: .tiny, for: [])
-        self.cameraRollButton.setIconColor(SemanticColors.Icon.foregroundWhite, for: [])
+        self.cameraRollButton.setIconColor(.white, for: [])
         self.cameraRollButton.accessibilityIdentifier = "cameraRollButton"
         self.cameraRollButton.addTarget(self, action: #selector(openCameraRollPressed(_:)), for: .touchUpInside)
 
