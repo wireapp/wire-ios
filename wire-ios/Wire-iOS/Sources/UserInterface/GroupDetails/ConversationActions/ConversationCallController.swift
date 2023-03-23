@@ -52,10 +52,24 @@ final class ConversationCallController: NSObject {
         }
     }
 
-    func startVideoCall(started: (() -> Void)?) {
-        conversation.confirmJoiningCallIfNeeded(alertPresenter: target) { [conversation] in
-            started?()
-            conversation.startVideoCall()
+    func startVideoCall(started: Completion?) {
+        let startCall = { [weak self] in
+            guard let `self` = self else { return }
+            self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
+                started?()
+                self.conversation.startVideoCall()
+            }
+        }
+
+        if conversation.localParticipants.count <= 4 {
+            startCall()
+        } else {
+            confirmGroupCall {[weak self] accepted in
+                self?.target.setNeedsStatusBarAppearanceUpdate()
+
+                guard accepted else { return }
+                startCall()
+            }
         }
     }
 
