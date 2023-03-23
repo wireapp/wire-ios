@@ -22,7 +22,10 @@ extension UIAlertController {
 
     typealias ConversationCallManyParticipants = L10n.Localizable.Conversation.Call.ManyParticipantsConfirmation
 
-    static func ongoingCallJoinCallConfirmation(forceAlertModal: Bool = false, completion: @escaping (Bool) -> Void) -> UIAlertController {
+    static func ongoingCallJoinCallConfirmation(
+        forceAlertModal: Bool = false,
+        completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
         return ongoingCallConfirmation(
             titleKey: "call.alert.ongoing.alert_title",
             messageKey: "call.alert.ongoing.join.message",
@@ -32,7 +35,10 @@ extension UIAlertController {
         )
     }
 
-    static func confirmGroupCall(participants: Int, completion: @escaping (Bool) -> Void) -> UIAlertController {
+    static func confirmGroupCall(
+        participants: Int,
+        completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
         let controller = UIAlertController(
             title: ConversationCallManyParticipants.title(participants),
             message: nil,
@@ -59,7 +65,7 @@ extension UIAlertController {
         buttonTitleKey: String,
         forceAlertModal: Bool,
         completion: @escaping (Bool) -> Void
-        ) -> UIAlertController {
+    ) -> UIAlertController {
 
         let defaultStyle: UIAlertController.Style = .alert
         let effectiveStyle = forceAlertModal ? .alert : defaultStyle
