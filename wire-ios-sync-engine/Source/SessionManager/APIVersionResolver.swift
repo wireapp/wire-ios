@@ -100,12 +100,13 @@ final class APIVersionResolver {
             BackendInfo.apiVersion = commonProductionVersions.max()
         }
 
+        let previousBackendDomain = BackendInfo.domain
         BackendInfo.domain = payload.domain
 
         let wasFederationEnabled = BackendInfo.isFederationEnabled
         BackendInfo.isFederationEnabled = payload.federation
 
-        if !wasFederationEnabled && BackendInfo.isFederationEnabled {
+        if previousBackendDomain == payload.domain && !wasFederationEnabled && BackendInfo.isFederationEnabled {
             delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
         }
 
