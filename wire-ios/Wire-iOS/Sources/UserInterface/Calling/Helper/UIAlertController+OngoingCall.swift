@@ -21,15 +21,16 @@ import UIKit
 extension UIAlertController {
 
     typealias ConversationCallManyParticipants = L10n.Localizable.Conversation.Call.ManyParticipantsConfirmation
+    typealias OngoingCallAlert = L10n.Localizable.Call.Alert.Ongoing
 
     static func ongoingCallJoinCallConfirmation(
         forceAlertModal: Bool = false,
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
         return ongoingCallConfirmation(
-            titleKey: "call.alert.ongoing.alert_title",
-            messageKey: "call.alert.ongoing.join.message",
-            buttonTitleKey: "call.alert.ongoing.join.button",
+            titleKey: OngoingCallAlert.alertTitle,
+            messageKey: OngoingCallAlert.Join.message,
+            buttonTitleKey: OngoingCallAlert.Join.button,
             forceAlertModal: forceAlertModal,
             completion: completion
         )
@@ -71,11 +72,11 @@ extension UIAlertController {
         let effectiveStyle = forceAlertModal ? .alert : defaultStyle
 
         let controller = UIAlertController(
-            title: effectiveStyle == .alert ? titleKey.localized : messageKey.localized,
-            message: effectiveStyle == .alert ? messageKey.localized : nil,
+            title: effectiveStyle == .alert ? titleKey : messageKey,
+            message: effectiveStyle == .alert ? messageKey : nil,
             preferredStyle: effectiveStyle
         )
-        controller.addAction(.init(title: buttonTitleKey.localized, style: .default) { _ in completion(true) })
+        controller.addAction(.init(title: buttonTitleKey, style: .default) { _ in completion(true) })
         controller.addAction(.cancel { completion(false) })
         return controller
     }
