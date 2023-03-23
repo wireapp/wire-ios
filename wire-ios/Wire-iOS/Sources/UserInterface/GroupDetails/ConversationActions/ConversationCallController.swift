@@ -24,6 +24,7 @@ final class ConversationCallController: NSObject {
 
     private unowned let target: UIViewController
     private let conversation: ZMConversation
+    private let confirmGroupCallParticipantsLimit = 4
 
     init(conversation: ZMConversation, target: UIViewController) {
         self.conversation = conversation
@@ -40,7 +41,7 @@ final class ConversationCallController: NSObject {
             }
         }
 
-        if conversation.localParticipants.count <= 4 {
+        if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
             startCall()
         } else {
             confirmGroupCall {[weak self] accepted in
@@ -61,7 +62,7 @@ final class ConversationCallController: NSObject {
             }
         }
 
-        if conversation.localParticipants.count <= 4 {
+        if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
             startVideoCall()
         } else {
             confirmGroupCall {[weak self] accepted in
