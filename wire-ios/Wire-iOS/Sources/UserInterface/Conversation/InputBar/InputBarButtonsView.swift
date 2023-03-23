@@ -155,7 +155,12 @@ final class InputBarButtonsView: UIView {
 
         guard bounds.size.width >= minButtonWidth * 2 else { return }
 
-        // Drop existing constraints
+        defer {
+            showRow(0, animated: true)
+        }
+
+        buttonInnerContainer.removeSubviews()
+
         buttons.forEach {
             $0.roundCorners(edge: .leading)
             $0.roundCorners(edge: .trailing)
