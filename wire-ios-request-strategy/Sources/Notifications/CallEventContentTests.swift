@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireRequestStrategy
 
-class CallEventContentTests: XCTestCase {
+class CallEventContentTests: ZMTestCase {
 
     private let decoder = JSONDecoder()
     private let remoteMute = "REMOTEMUTE"

@@ -21,8 +21,9 @@ import XCTest
 import SnapshotTesting
 
 @testable import Wire
+import WireTesting
 
-class CallParticipantViewTests: XCTestCase {
+class CallParticipantViewTests: ZMTestCase {
     var size = XCTestCase.DeviceSizeIPhone5
     var sut: CallParticipantView!
     var stubProvider = StreamStubProvider()

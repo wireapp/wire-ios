@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 
 @testable import WireUtilities
+import WireTesting
 
-class ArrayShiftTests: XCTestCase {
+class ArrayShiftTests: ZMTestCase {
     func testRightShift() {
         // GIVEN
         let sut = [0, 1, 2, 3, 4]

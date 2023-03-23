@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
+class AuthenticationEmailVerificationRequiredErrorHandlerTests: ZMTestCase {
 
     var sut = AuthenticationEmailVerificationRequiredErrorHandler()
 

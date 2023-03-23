@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class CompanyLoginRequesterTests: XCTestCase {
+class CompanyLoginRequesterTests: ZMTestCase {
 
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class String_FingerprintTests: XCTestCase {
+final class String_FingerprintTests: ZMTestCase {
     let fingerprintString: String = "05 1c f4 ca 74 4b 80"
 
     func testFingerprintAttributes() {

@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ZClientViewControllerTests: XCTestCase {
+final class ZClientViewControllerTests: ZMTestCase {
     var sut: ZClientViewController!
     var userSessionMock: MockZMUserSession!
 

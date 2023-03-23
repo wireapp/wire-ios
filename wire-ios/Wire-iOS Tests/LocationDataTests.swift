@@ -20,8 +20,9 @@
 import WireDataModel
 import XCTest
 import MapKit
+import WireTesting
 
-final class LocationDataTests: XCTestCase {
+final class LocationDataTests: ZMTestCase {
 
     class override func tearDown() {
         Settings.shared.reset()

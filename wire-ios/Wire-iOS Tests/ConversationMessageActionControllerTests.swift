@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtureTestHelper {
+final class ConversationMessageActionControllerTests: ZMTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {

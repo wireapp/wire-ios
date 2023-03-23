@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
+final class CallControllerTests: ZMTestCase, CoreDataFixtureTestHelper {
 
     var coreDataFixture: CoreDataFixture!
     var sut: CallController!

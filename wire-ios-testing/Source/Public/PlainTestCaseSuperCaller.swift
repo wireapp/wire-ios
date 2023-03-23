@@ -19,7 +19,7 @@
 import XCTest
 
 public class PlainTestCaseSuperCaller: XCTestCaseSuperCaller {
-    public func callSuperInvokeTest<TestCase: XCTestCase>(fire method: () -> Void, on testCase: TestCase) {
-        return callSuper(fire: method, on: testCase)
+    @objc public func callSuperInvokeTest(fire superCall: () -> Void, on testCase: XCTestCase) {
+        superCall()
     }
 }

@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-class ZMMovedIndexTests: XCTestCase {
+class ZMMovedIndexTests: ZMTestCase {
     func testThatItGeneratesAHash() {
         // GIVEN
         let index = ZMMovedIndex(from: 0, to: 0)

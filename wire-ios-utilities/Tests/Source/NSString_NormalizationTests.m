@@ -19,8 +19,9 @@
 
 #import <XCTest/XCTest.h>
 #import "NSString+Normalization.h"
+@import WireTesting;
 
-@interface NSString_NormalizationTests : XCTestCase
+@interface NSString_NormalizationTests : ZMTestCase
 
 @end
 

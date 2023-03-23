@@ -18,8 +18,9 @@
 
 @testable import Wire
 import XCTest
+import WireTesting
 
-final class ConversationRenamedCellTests: XCTestCase {
+final class ConversationRenamedCellTests: ZMTestCase {
 
     override func setUp() {
         super.setUp()

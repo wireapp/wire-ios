@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class LinkPreviewDetectorTests: XCTestCase {
+class LinkPreviewDetectorTests: ZMTestCase {
 
     var sut: LinkPreviewDetector!
     var mockImageTask: MockURLSessionDataTask!

@@ -20,7 +20,7 @@ import Foundation
 @testable import WireRequestStrategy
 import XCTest
 
-final class AssetDownloadRequestFactoryTests: XCTestCase {
+final class AssetDownloadRequestFactoryTests: ZMTestCase {
 
     override func tearDown() {
         BackendInfo.domain = nil

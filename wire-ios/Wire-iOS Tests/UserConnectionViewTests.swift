@@ -19,6 +19,7 @@
 import Foundation
 @testable import Wire
 import XCTest
+import WireTesting
 
 extension UIView {
     func layoutForTest(in size: CGSize = CGSize(width: 320, height: 480)) {
@@ -27,7 +28,7 @@ extension UIView {
     }
 }
 
-final class UserConnectionViewTests: XCTestCase {
+final class UserConnectionViewTests: ZMTestCase {
 
     func sutForUser(_ mockUser: MockUserType = SwiftMockLoader.mockUsers().first!, isFederated: Bool = false) -> UserConnectionView {
         mockUser.isPendingApprovalByOtherUser = true

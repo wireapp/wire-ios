@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class UserNameDetailViewTests: XCTestCase {
+class UserNameDetailViewTests: ZMTestCase {
     var sut: UserNameDetailView!
 
     override func tearDown() {

@@ -63,7 +63,7 @@ private struct CodableObject: Codable {
     init() { }
 }
 
-class Payload_CodingTests: XCTestCase {
+class Payload_CodingTests: ZMTestCase {
 
     var data: Data!
 

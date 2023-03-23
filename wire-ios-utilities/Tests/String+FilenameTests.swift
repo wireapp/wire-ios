@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-class String_FilenameTests: XCTestCase {
+class String_FilenameTests: ZMTestCase {
 
     func testShortUserNameToFileName() {
         // GIVEN

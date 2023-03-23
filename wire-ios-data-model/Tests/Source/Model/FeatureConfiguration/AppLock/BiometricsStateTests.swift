@@ -20,7 +20,7 @@ import XCTest
 import LocalAuthentication
 @testable import WireDataModel
 
-class BiometricsStateTests: XCTestCase {
+class BiometricsStateTests: ZMTestCase {
 
     private var sut: BiometricsState!
 

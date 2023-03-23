@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class URLActionRouterTests: XCTestCase {
+final class URLActionRouterTests: ZMTestCase {
 
     // MARK: Presenting Alerts
 

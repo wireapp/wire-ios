@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import Down
+import WireTesting
 
-final class LinkInteractionTextViewTests: XCTestCase {
+final class LinkInteractionTextViewTests: ZMTestCase {
 
     var sut: LinkInteractionTextView!
 

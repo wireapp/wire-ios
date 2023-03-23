@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class AppLockModuleViewTests: XCTestCase {
+final class AppLockModuleViewTests: ZMTestCase {
 
     private var sut: AppLockModule.View!
     private var presenter: AppLockModule.MockPresenter!

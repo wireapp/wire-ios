@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class AtomicIntegerTests: XCTestCase {
+class AtomicIntegerTests: ZMTestCase {
 
     func testThatItIncrementsNumber() {
         // GIVEN

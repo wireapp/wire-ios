@@ -18,8 +18,8 @@
 
 import XCTest
 
-public protocol XCTestCaseSuperCaller: SuperCaller {
-    func callSuperInvokeTest<TestCase: XCTestCase>(fire method: () -> Void, on testCase: TestCase)
+@objc public protocol XCTestCaseSuperCaller {
+    func callSuperInvokeTest(fire superCall: () -> Void, on testCase: XCTestCase)
 }
 
 public protocol XCTestCaseSuperCallerContainer {
@@ -28,6 +28,6 @@ public protocol XCTestCaseSuperCallerContainer {
 
 extension XCTestCase: XCTestCaseSuperCallerContainer {
     public var superCaller: XCTestCaseSuperCaller {
-        return FlankyTestDetectorSuperCaller()
+        return FlakyTestDetectorSuperCaller()
     }
 }

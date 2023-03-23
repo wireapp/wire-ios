@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class NSAttributedStringDownTests: XCTestCase {
+final class NSAttributedStringDownTests: ZMTestCase {
 
     func testThatItReturnsH1Character() {
         // GIVEN

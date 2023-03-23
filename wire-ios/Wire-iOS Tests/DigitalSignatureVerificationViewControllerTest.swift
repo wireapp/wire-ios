@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class DigitalSignatureVerificationViewControllerTest: XCTestCase {
+class DigitalSignatureVerificationViewControllerTest: ZMTestCase {
 
     var sut: DigitalSignatureVerificationViewController!
 

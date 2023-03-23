@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ProfileActionsFactoryTests: XCTestCase {
+final class ProfileActionsFactoryTests: ZMTestCase {
 
     var selfUserTeam: UUID!
     var selfUser: MockUserType!

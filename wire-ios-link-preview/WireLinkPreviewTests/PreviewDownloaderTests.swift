@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class PreviewDownloaderTests: XCTestCase {
+class PreviewDownloaderTests: ZMTestCase {
 
     private let url = URL(string: "https://twitter.com/ericasadun/status/743868311843151872")!
     private var mockSession: MockURLSession! = nil

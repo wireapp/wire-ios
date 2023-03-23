@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class EquatableOneOfTests: XCTestCase {
+class EquatableOneOfTests: ZMTestCase {
 
     func testThatItReportsContainmentVariadicFunction() {
         // Given

@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class ColorComponentsTests: XCTestCase {
+final class ColorComponentsTests: ZMTestCase {
     func testThatWhiteColorComponentsAreCorrect() {
         /// GIVEN
         let whiteColor = UIColor.white

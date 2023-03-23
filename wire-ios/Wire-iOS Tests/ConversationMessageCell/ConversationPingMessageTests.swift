@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationPingMessageTests: XCTestCase {
+final class ConversationPingMessageTests: ZMTestCase {
 
     func testPing() {
         // GIVEN

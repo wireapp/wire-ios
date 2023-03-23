@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 extension String {
     func resolvingEmoticonShortcuts(configuration: EmoticonSubstitutionConfiguration = EmoticonSubstitutionConfiguration.sharedInstance) -> String {
@@ -38,7 +39,7 @@ extension String {
     }
 }
 
-final class NSString_EmoticonSubstitutionTests: XCTestCase {
+final class NSString_EmoticonSubstitutionTests: ZMTestCase {
 
     var sut: EmoticonSubstitutionConfiguration!
 

@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class ArrayPartitionByKeyPathTests: XCTestCase {
+class ArrayPartitionByKeyPathTests: ZMTestCase {
 
     func testPartitionByOptionalValue() {
         // given

@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSystem
 
-class CacheTests: XCTestCase {
+class CacheTests: ZMTestCase {
     func testThatItStoresAndReadsValue() {
         // GIVEN
         let cache = Cache<String, String>(maxCost: 1000, maxElementsCount: 10)

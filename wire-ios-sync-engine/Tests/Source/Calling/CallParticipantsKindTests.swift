@@ -21,7 +21,7 @@ import XCTest
 
 @testable import WireSyncEngine
 
-class CallParticipantsKindTests: XCTestCase {
+class CallParticipantsKindTests: ZMTestCase {
     var client: AVSClient!
 
     override func setUp() {

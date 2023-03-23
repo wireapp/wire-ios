@@ -19,6 +19,7 @@
 import XCTest
 import WireCommonComponents
 @testable import Wire
+import WireTesting
 
 final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
     var needsRichProfileUpdate: Bool = false
@@ -50,7 +51,7 @@ final class ZMMockTracking: TrackingInterface {
     var disableCrashAndAnalyticsSharing: Bool = false
 }
 
-final class SettingsPropertyTests: XCTestCase {
+final class SettingsPropertyTests: ZMTestCase {
     var userDefaults: UserDefaults!
 
     override func setUp() {

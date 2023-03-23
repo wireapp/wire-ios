@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
+final class ConversationInputBarViewControllerDelegateTests: ZMTestCase {
 
     var coreDataFixture: CoreDataFixture!
     private var mockDelegate: MockDelegate!

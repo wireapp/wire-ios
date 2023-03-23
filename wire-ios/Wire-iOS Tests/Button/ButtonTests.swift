@@ -18,8 +18,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class ButtonTests: XCTestCase {
+final class ButtonTests: ZMTestCase {
     var sut: Wire.LegacyButton!
 
     override func setUp() {

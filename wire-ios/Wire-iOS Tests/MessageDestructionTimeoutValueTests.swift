@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class MessageDestructionTimeoutValueTests: XCTestCase {
+final class MessageDestructionTimeoutValueTests: ZMTestCase {
 
     func testThatItReturnsTheCorrectFormattedStringForNoneTimeout() {
         XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, "Off")

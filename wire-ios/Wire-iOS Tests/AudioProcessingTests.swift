@@ -19,8 +19,9 @@
 import XCTest
 import WireCommonComponents
 @testable import Wire
+import WireTesting
 
-class AudioProcessingTests: XCTestCase {
+class AudioProcessingTests: ZMTestCase {
 
     func testScalarFromAmplitude() {
         XCTAssertGreaterThan(scalar(0), 0) // We have minimum threshold above 0

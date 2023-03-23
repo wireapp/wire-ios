@@ -17,10 +17,10 @@
 //
 
 import Foundation
-
+import WireTesting
 @testable import WireDataModel
 
-class GenericMessageTests_External: XCTestCase {
+class GenericMessageTests_External: ZMTestCase {
     var sut: GenericMessage!
 
     override func setUp() {

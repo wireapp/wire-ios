@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class UnknownMessageCellTests: XCTestCase {
+final class UnknownMessageCellTests: ZMTestCase {
 
     func testCell() {
         let systemMessage = MockMessageFactory.systemMessage(with: .invalid)

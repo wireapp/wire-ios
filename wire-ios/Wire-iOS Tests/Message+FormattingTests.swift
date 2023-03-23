@@ -19,8 +19,9 @@
 import XCTest
 import WireLinkPreview
 @testable import Wire
+import WireTesting
 
-class Message_FormattingTests: XCTestCase {
+class Message_FormattingTests: ZMTestCase {
 
     let previewURL = "http://www.example.com/1"
     let regularURL = "http://www.example.com/2"

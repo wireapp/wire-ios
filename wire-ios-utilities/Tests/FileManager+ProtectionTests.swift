@@ -18,8 +18,9 @@
 
 import Foundation
 import XCTest
+import WireTesting
 
-class FileManagerProtectionTests: XCTestCase {
+class FileManagerProtectionTests: ZMTestCase {
 
     var fileManager: FileManagerThatRecordsFileProtectionAttributes!
 

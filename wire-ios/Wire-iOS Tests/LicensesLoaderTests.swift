@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class LicensesLoaderTests: XCTestCase {
+final class LicensesLoaderTests: ZMTestCase {
 
     var memoryManager: NSObject!
     var loader: LicensesLoader!

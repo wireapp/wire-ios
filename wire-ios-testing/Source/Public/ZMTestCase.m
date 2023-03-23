@@ -16,10 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+#import <Foundation/Foundation.h>
+#import <WireTesting/ZMTestCase.h>
+#import <WireTesting/WireTesting-Swift.h>
 
-public class ZMTestCase: XCTestCase {
-    public override func invokeTest() {
-        superCaller.callSuperInvokeTest(fire: super.invokeTest, on: self)
-    }
+@implementation ZMTestCase
+
+- (void)invokeTest
+{
+    [self.superCaller callSuperInvokeTestWithFire: ^{
+        [super invokeTest];
+    } on: self];
 }
+
+@end

@@ -18,9 +18,10 @@
 
 
 @import XCTest;
+@import WireTesting;
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 
-@interface ZMTemporaryFileListForBackgroundRequestTests : XCTestCase
+@interface ZMTemporaryFileListForBackgroundRequestTests : ZMTestCase
 
 @property (nonatomic) ZMTemporaryFileListForBackgroundRequests *sut;
 

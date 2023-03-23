@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-final class UnownedObjectTests: XCTestCase {
+final class UnownedObjectTests: ZMTestCase {
 
     func testThatCreatingAnUnownedObjectWithALocallyScopedObjectIsValid() {
         let nsnumber = 10 as AnyObject

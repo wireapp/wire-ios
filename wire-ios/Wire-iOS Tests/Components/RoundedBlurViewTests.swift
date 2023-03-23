@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class RoundedBlurViewTests: XCTestCase {
+final class RoundedBlurViewTests: ZMTestCase {
 
     private var sut: RoundedBlurView!
 

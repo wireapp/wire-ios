@@ -19,10 +19,9 @@
 
 #import <XCTest/XCTest.h>
 #import "NSSet+Zeta.h"
+@import WireTesting;
 
-
-
-@interface NSSetAdditionsTests : XCTestCase
+@interface NSSetAdditionsTests : ZMTestCase
 @end
 
 

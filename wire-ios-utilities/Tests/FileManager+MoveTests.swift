@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 @testable import WireUtilities
+import WireTesting
 
-class FileManagerMoveTests: XCTestCase {
+class FileManagerMoveTests: ZMTestCase {
 
     override func setUp() {
         super.setUp()

@@ -19,8 +19,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class UIAlertControllerCompanyLoginSnapshotTests: XCTestCase {
+final class UIAlertControllerCompanyLoginSnapshotTests: ZMTestCase {
     var sut: UIAlertController!
 
     override func tearDown() {

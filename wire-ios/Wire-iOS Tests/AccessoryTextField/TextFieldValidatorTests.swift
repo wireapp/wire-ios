@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class TextFieldValidatorTests: XCTestCase {
+final class TextFieldValidatorTests: ZMTestCase {
 
     var sut: TextFieldValidator!
 

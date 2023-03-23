@@ -19,8 +19,9 @@
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
+final class GiphyConfirmationViewControllerSnapshotTests: ZMTestCase {
     var sut: GiphyConfirmationViewController!
 
     override func setUp() {

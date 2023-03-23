@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireTransport
 
-class RequestLoopDetectionTests: XCTestCase {
+class RequestLoopDetectionTests: ZMTestCase {
 
     func testThatItDetectsALoopWithOneRepeatedRequest() {
 

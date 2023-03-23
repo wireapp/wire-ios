@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireTesting
 @testable import WireDataModel
 import XCTest
 
-class GenericMessageTests: XCTestCase {
+class GenericMessageTests: ZMTestCase {
 
     func testThatConsidersTextMessageTypeAsKnownMessage() {
         let textMessageType = GenericMessage(content: Text(content: "hello"))

@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelegate {
     var didCancelCalledCount: Int = 0
@@ -31,7 +32,7 @@ private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelega
     }
 }
 
-final class ReplyComposingViewTests: XCTestCase {
+final class ReplyComposingViewTests: ZMTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         self.verifyDeallocation {

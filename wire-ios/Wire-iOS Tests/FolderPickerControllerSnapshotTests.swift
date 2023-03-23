@@ -19,8 +19,9 @@
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class FolderPickerControllerSnapshotTests: XCTestCase {
+final class FolderPickerControllerSnapshotTests: ZMTestCase {
 
     var directory: MockConversationDirectory!
     var mockConversation: MockConversation!

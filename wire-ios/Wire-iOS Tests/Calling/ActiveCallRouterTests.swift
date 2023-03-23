@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
-class ActiveCallRouterTests: XCTestCase {
+class ActiveCallRouterTests: ZMTestCase {
 
     var sut: ActiveCallRouter!
 

@@ -18,10 +18,11 @@
 
 
 @import WireTransport;
+@import WireTesting;
 @import XCTest;
 @import OCMock;
 
-@interface ZMTransportCodecTests : XCTestCase
+@interface ZMTransportCodecTests : ZMTestCase
 
 
 @end

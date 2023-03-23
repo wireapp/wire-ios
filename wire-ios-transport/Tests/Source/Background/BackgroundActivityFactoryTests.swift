@@ -21,7 +21,7 @@ import XCTest
 import WireTesting
 @testable import WireTransport
 
-class BackgroundActivityFactoryTests: XCTestCase {
+class BackgroundActivityFactoryTests: ZMTestCase {
 
     var factory: BackgroundActivityFactory!
     var activityManager: MockBackgroundActivityManager!

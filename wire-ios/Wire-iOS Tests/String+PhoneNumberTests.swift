@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class String_PhoneNumberTests: XCTestCase {
+final class String_PhoneNumberTests: ZMTestCase {
 
     var sut: String!
 

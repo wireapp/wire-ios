@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class RequestPasswordControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+final class RequestPasswordControllerSnapshotTests: ZMTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: RequestPasswordController!

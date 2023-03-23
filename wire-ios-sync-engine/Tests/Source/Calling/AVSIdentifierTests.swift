@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
-class AVSIdentifierTests: XCTestCase {
+class AVSIdentifierTests: ZMTestCase {
 
     let uuid = UUID()
     let domain = "wire.com"

@@ -19,8 +19,9 @@ import Foundation
 import XCTest
 import Countly
 @testable import Wire
+import WireTesting
 
-final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper {
+final class AnalyticsCountlyProviderTests: ZMTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: Analytics!

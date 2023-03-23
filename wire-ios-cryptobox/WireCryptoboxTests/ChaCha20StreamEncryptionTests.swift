@@ -17,11 +17,12 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireCryptobox
 
 private typealias Sut = ChaCha20Poly1305.StreamEncryption
 
-class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
+class ChaCha20StreamEncryptionFileHeaderTests: ZMTestCase {
 
     func testThatWrittenFileHeaderCanBeRead() throws {
         // given
@@ -80,7 +81,7 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 
 }
 
-class ChaCha20StreamEncryptionTests: XCTestCase {
+class ChaCha20StreamEncryptionTests: ZMTestCase {
 
     var directoryURL: URL!
 

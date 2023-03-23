@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class FunctionalTests: XCTestCase {
+class FunctionalTests: ZMTestCase {
 
     func testThatTheGeneratedSwiftArrayIsSimilarToTheBaseArray() {
 

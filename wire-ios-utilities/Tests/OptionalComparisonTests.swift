@@ -19,7 +19,7 @@
 import XCTest
 import WireTesting
 
-class OptionalComparisonTests: XCTestCase {
+class OptionalComparisonTests: ZMTestCase {
 
     func testThatItComparesTwoOptionalsGreaterThanAndLessThan() {
         // given

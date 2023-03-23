@@ -19,10 +19,10 @@
 import Foundation
 import XCTest
 import SnapshotTesting
-
 @testable import Wire
+import WireTesting
 
-class NotificationLabelTests: XCTestCase {
+class NotificationLabelTests: ZMTestCase {
     var sut: NotificationLabel!
     let message = "Double Tap on a tile for fullscreen"
 

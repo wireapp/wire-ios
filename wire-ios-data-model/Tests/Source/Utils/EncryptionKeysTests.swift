@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-class EncryptionKeysTests: XCTestCase {
+class EncryptionKeysTests: ZMTestCase {
 
     var account: Account!
 

@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class ValidatedTextFieldTests: XCTestCase {
+final class ValidatedTextFieldTests: ZMTestCase {
     var sut: ValidatedTextField!
 
     override func setUp() {

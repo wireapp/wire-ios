@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-class RichAssetFileTypeTests: XCTestCase {
+class RichAssetFileTypeTests: ZMTestCase {
 
     func testThatItParsesWalletPassCorrectly() {
         assertFileType("application/vnd.apple.pkpass", .walletPass)

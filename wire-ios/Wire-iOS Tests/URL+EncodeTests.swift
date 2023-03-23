@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class URL_EncodeTests: XCTestCase {
+final class URL_EncodeTests: ZMTestCase {
 
     var sut: URL!
 

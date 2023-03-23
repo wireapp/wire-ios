@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class ScreenCurtainTests: XCTestCase, ScreenCurtainDelegate {
+final class ScreenCurtainTests: ZMTestCase, ScreenCurtainDelegate {
 
     var sut: ScreenCurtain!
     var shouldShowScreenCurtain = false

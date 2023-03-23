@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import Ziphy
+import WireTesting
 
-final class GiphySearchViewControllerTests: XCTestCase {
+final class GiphySearchViewControllerTests: ZMTestCase {
 
     weak var sut: GiphySearchViewController!
 

@@ -17,8 +17,10 @@
 //
 
 import XCTest
+import WireTesting
+import WireDataModel
 
-class BackupMetadataTests: XCTestCase {
+class BackupMetadataTests: ZMTestCase {
 
     var url: URL!
 

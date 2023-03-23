@@ -18,8 +18,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class ProfileTitleViewSnapshotTests: XCTestCase {
+final class ProfileTitleViewSnapshotTests: ZMTestCase {
 
     var sut: ProfileTitleView!
     var mockUser: MockUserType!

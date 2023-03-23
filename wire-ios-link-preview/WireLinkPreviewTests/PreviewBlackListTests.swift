@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class PreviewBlackListTests: XCTestCase {
+class PreviewBlackListTests: ZMTestCase {
 
     var hosts: [String]!
 

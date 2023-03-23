@@ -22,7 +22,7 @@
 
 #import "ZMKeychain.h"
 
-@interface ZMKeychainTests : XCTestCase
+@interface ZMKeychainTests : ZMTestCase
 
 @end
 

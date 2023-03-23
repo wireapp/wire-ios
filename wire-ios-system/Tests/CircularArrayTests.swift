@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSystem
 
-class CircularArrayTests: XCTestCase {
+class CircularArrayTests: ZMTestCase {
 
     func testThatItReturnsContentWhenNotWrapping() {
 

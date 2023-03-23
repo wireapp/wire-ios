@@ -19,7 +19,7 @@
 import XCTest
 import WireUtilities
 
-class DictionaryTests: XCTestCase {
+class DictionaryTests: ZMTestCase {
 
     func testThatItMapsKeys() {
 

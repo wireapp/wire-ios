@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class TransformTextViewTests: XCTestCase {
+class TransformTextViewTests: ZMTestCase {
 
     // MARK: TextTransformNone
 

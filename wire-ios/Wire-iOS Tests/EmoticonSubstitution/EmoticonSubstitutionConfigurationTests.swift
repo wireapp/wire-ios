@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class EmoticonSubstitutionConfigurationTests: XCTestCase {
+final class EmoticonSubstitutionConfigurationTests: ZMTestCase {
 
     func testThatParsingFileReturnsAConfiguration() {
         // Given

@@ -20,7 +20,7 @@
 #import <XCTest/XCTest.h>
 #import <WireSystem/WireSystem.h>
 
-@interface ZMSAssertionTests : XCTestCase
+@interface ZMSAssertionTests : ZMTestCase
 
 @end
 

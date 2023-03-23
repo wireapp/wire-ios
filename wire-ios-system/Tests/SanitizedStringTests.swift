@@ -17,8 +17,8 @@
 //
 
 import Foundation
-
 import XCTest
+import WireTesting
 @testable import WireSystem
 
 struct Item {
@@ -34,7 +34,7 @@ extension Item: SafeForLoggingStringConvertible {
     }
 }
 
-class SanitizedStringTests: XCTestCase {
+class SanitizedStringTests: ZMTestCase {
 
     var item: Item!
 

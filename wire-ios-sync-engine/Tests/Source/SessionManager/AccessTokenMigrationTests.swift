@@ -46,7 +46,7 @@ class AccessTokenRenewerMock: AccessTokenRenewing {
 
 }
 
-class AccessTokenMigrationTests: XCTestCase {
+class AccessTokenMigrationTests: ZMTestCase {
 
     func test_itSetsObserver_AndRenewsAccessToken() async throws {
         // Given

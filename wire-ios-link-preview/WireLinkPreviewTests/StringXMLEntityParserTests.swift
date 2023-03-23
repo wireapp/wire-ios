@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-final class StringXMLEntityParserTests: XCTestCase {
+final class StringXMLEntityParserTests: ZMTestCase {
 
     func testThatItIgnoresEmptyString() {
         // given 

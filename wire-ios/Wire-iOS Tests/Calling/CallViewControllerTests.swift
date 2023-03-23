@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 extension XCTestCase {
     public func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
@@ -38,7 +39,7 @@ extension XCTestCase {
     }
 }
 
-final class CallViewControllerTests: XCTestCase {
+final class CallViewControllerTests: ZMTestCase {
 
     var mockVoiceChannel: MockVoiceChannel!
     var conversation: ZMConversation!

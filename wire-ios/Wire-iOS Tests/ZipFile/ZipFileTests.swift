@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ZipFileTests: XCTestCase {
+final class ZipFileTests: ZMTestCase {
 
     func testThatFileURLsCanBeZipped() {
         // GIVEN

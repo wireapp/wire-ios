@@ -19,6 +19,7 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
 final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptionsViewModelConfiguration {
     // MARK: Properties
@@ -39,7 +40,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     }
 }
 
-final class ConversationServicesOptionsViewControllerTests: XCTestCase {
+final class ConversationServicesOptionsViewControllerTests: ZMTestCase {
 
     // MARK: Renders Services Screen When Services are either Allowed or not allowed
 

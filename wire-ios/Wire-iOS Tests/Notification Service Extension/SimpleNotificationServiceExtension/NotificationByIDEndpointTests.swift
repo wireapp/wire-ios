@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire_Notification_Service_Extension
+import WireTesting
 
-class NotificationByIDEndpointTests: XCTestCase {
+class NotificationByIDEndpointTests: ZMTestCase {
 
     // MARK: - Request generation
 

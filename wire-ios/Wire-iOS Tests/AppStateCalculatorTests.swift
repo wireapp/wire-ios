@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class AppStateCalculatorTests: XCTestCase {
+final class AppStateCalculatorTests: ZMTestCase {
 
     var sut: AppStateCalculator!
     var delegate: MockAppStateCalculatorDelegate!

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class EmptySearchResultsViewTests: XCTestCase {
+final class EmptySearchResultsViewTests: ZMTestCase {
 
     func testNoResultsForUsers() {
         // given

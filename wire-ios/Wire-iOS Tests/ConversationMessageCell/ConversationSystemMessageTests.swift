@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationSystemMessageTests: XCTestCase {
+final class ConversationSystemMessageTests: ZMTestCase {
 
     override func setUp() {
         super.setUp()

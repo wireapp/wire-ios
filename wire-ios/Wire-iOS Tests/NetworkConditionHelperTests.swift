@@ -18,8 +18,9 @@
 import XCTest
 @testable import Wire
 import CoreTelephony
+import WireTesting
 
-final class NetworkConditionHelperTests: XCTestCase {
+final class NetworkConditionHelperTests: ZMTestCase {
 
     var sut: NetworkConditionHelper!
 

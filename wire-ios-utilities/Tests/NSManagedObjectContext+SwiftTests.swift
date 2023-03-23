@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireUtilities
 
-final class NSManagedObjectContext_SwiftTests: XCTestCase {
+final class NSManagedObjectContext_SwiftTests: ZMTestCase {
 
     struct TestError: Error {}
 

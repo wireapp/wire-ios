@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class MediaPreviewViewSnapshotTests: XCTestCase {
+final class MediaPreviewViewSnapshotTests: ZMTestCase {
 
     var sut: MediaPreviewView!
 

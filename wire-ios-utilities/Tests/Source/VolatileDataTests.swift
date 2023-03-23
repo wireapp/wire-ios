@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireUtilities
 
-class VolatileDataTests: XCTestCase {
+class VolatileDataTests: ZMTestCase {
 
     typealias Byte = UInt8
 

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
+final class ConversationContentViewControllerTests: ZMTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: ConversationContentViewController!

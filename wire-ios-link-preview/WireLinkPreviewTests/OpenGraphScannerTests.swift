@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class OpenGraphScannerTests: XCTestCase {
+class OpenGraphScannerTests: ZMTestCase {
 
     func testThatItCanParseCorrectlyStrippedSampleData_Twitter() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.twitterData())

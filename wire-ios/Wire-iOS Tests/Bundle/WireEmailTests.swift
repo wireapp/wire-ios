@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class WireEmailTests: XCTestCase {
+final class WireEmailTests: ZMTestCase {
     func testThatCallingSupportEmailIsCorrect() {
         XCTAssertEqual(WireEmail.shared.callingSupportEmail, "calling-ios@wire.com")
     }

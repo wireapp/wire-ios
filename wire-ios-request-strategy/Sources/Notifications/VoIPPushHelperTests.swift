@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireRequestStrategy
 
-class VoIPPushHelperTests: XCTestCase {
+class VoIPPushHelperTests: ZMTestCase {
 
     // MARK: - Set up
 

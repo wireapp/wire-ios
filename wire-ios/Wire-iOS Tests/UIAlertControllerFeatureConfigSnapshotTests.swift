@@ -19,8 +19,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
+final class UIAlertControllerFeatureConfigSnapshotTests: ZMTestCase {
 
     private func createSut(for featureChange: FeatureService.FeatureChange) -> UIAlertController? {
         let result = UIAlertController.fromFeatureChange(featureChange,

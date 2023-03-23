@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 enum ConversationCellType: Int {
     case text
@@ -29,7 +30,7 @@ enum ConversationCellType: Int {
     case count
 }
 
-final class DeleteMessageTests: XCTestCase {
+final class DeleteMessageTests: ZMTestCase {
 
     var sut: DeleteMessageTests!
 

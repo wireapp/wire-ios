@@ -19,8 +19,9 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 import WireCommonComponents
+import WireTesting
 
-final class MessageActionTests: XCTestCase {
+final class MessageActionTests: ZMTestCase {
 
     func testForSystemIcons() {
         MessageAction.allCases.forEach { action in

@@ -19,10 +19,11 @@
 import XCTest
 import WireCommonComponents
 @testable import Wire
+import WireTesting
 
 private final class MockBackupExcluder: BackupExcluder {}
 
-final class BackupExcluderTests: XCTestCase { /// TODO: test protocol instead
+final class BackupExcluderTests: ZMTestCase { /// TODO: test protocol instead
     private var sut: MockBackupExcluder!
     let filename = "test.txt"
 

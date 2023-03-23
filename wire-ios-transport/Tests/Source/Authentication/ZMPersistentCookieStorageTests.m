@@ -23,7 +23,7 @@
 #import "ZMPersistentCookieStorage.h"
 
 
-@interface ZMPersistentCookieStorageTests : XCTestCase
+@interface ZMPersistentCookieStorageTests : ZMTestCase
 
 @property (nonatomic, readonly) NSUUID *userIdentifier;
 @property (nonatomic) ZMPersistentCookieStorage *sut;

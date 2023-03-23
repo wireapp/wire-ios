@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class AppLockModuleRouterTests: XCTestCase {
+final class AppLockModuleRouterTests: ZMTestCase {
 
     private var sut: AppLockModule.Router!
 

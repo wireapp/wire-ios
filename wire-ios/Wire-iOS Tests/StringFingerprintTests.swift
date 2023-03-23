@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class StringFingerprintTests: XCTestCase {
+final class StringFingerprintTests: ZMTestCase {
     func testThatFingerprintSplitsProperlyFor2() {
         // given
         let testStrings = ["abc", "mfngsdnfgljsfgjdns", "!!@#!@#!@#AASDF", ""]

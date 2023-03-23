@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
+final class NSMutableAttributedStringReplaceEmojiTests: ZMTestCase {
 
     func testThatReplaceEmojiAtTheEndWithoutExcludedRange() {
         // GIVEN

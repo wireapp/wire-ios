@@ -18,10 +18,11 @@
 
 @testable import Wire
 import XCTest
+import WireTesting
 
 // MARK: - Mentions
 
-final class TextMessageMentionsTests: XCTestCase {
+final class TextMessageMentionsTests: ZMTestCase {
     var otherUser: MockUserType!
     var selfUser: MockUserType!
 

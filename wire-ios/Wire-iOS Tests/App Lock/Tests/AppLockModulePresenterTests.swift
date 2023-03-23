@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class AppLockModulePresenterTests: XCTestCase {
+final class AppLockModulePresenterTests: ZMTestCase {
 
     private var sut: AppLockModule.Presenter!
     private var interactor: AppLockModule.MockInteractor!

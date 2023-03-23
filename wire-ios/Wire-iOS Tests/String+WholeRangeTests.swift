@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class StringWholeRangeTests: XCTestCase {
+final class StringWholeRangeTests: ZMTestCase {
 
     func testWholeRangeReturnsCorrectLength() {
         // GIVEN

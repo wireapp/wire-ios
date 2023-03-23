@@ -21,6 +21,7 @@ import XCTest
 import avs
 
 @testable import Wire
+import WireTesting
 
 class MockAVSVideoPreview: AVSVideoPreview {
     var isCapturing: Bool = false
@@ -34,7 +35,7 @@ class MockAVSVideoPreview: AVSVideoPreview {
     }
 }
 
-class SelfCallParticipantViewTests: XCTestCase {
+class SelfCallParticipantViewTests: ZMTestCase {
     var sut: SelfCallParticipantView!
     var stubProvider = StreamStubProvider()
     var previewViewMock = MockAVSVideoPreview()

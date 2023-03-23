@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class DeveloperOptionsControllerSnapshotTests: XCTestCase {
+final class DeveloperOptionsControllerSnapshotTests: ZMTestCase {
 
     var sut: DeveloperOptionsController!
 

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class MessageTests: XCTestCase {
+final class MessageTests: ZMTestCase {
 
     func testThatDayFormatterProduceCorrectStringForTheLastDayOfAYear() {
         // GIVEN

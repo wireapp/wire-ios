@@ -20,8 +20,9 @@ import XCTest
 @testable import Wire
 import Down
 import WireCommonComponents
+import WireTesting
 
-final class MarkdownTextViewTests: XCTestCase {
+final class MarkdownTextViewTests: ZMTestCase {
 
     var sut: MarkdownTextView!
     var bar: MarkdownBarView!

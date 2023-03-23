@@ -19,8 +19,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class UserImageViewContainerSnapshotTests: XCTestCase {
+final class UserImageViewContainerSnapshotTests: ZMTestCase {
 
     var sut: UserImageViewContainer!
     var mockUser: MockUserType!

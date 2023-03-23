@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ImageMessageViewTests: XCTestCase {
+final class ImageMessageViewTests: ZMTestCase {
     var sut: ImageMessageView!
     var mockSelfUser: MockUserType!
 

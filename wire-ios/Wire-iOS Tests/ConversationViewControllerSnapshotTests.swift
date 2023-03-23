@@ -19,8 +19,9 @@
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+final class ConversationViewControllerSnapshotTests: ZMTestCase, CoreDataFixtureTestHelper {
 
     var sut: ConversationViewController!
     var mockConversation: ZMConversation!

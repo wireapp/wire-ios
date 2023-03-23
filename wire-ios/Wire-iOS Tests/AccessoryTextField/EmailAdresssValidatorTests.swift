@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class EmailAdresssValidatorTests: XCTestCase {
+final class EmailAdresssValidatorTests: ZMTestCase {
 
     func testThatValidEmailsPassValidation() {
         // GIVEN

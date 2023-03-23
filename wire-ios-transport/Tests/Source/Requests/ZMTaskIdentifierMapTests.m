@@ -19,11 +19,12 @@
 
 @import XCTest;
 @import WireSystem;
+@import WireTesting;
 #import "ZMTaskIdentifierMap.h"
 
 
 
-@interface ZMTaskIdentifierMapTests : XCTestCase
+@interface ZMTaskIdentifierMapTests : ZMTestCase
 
 @property (nonatomic) ZMTaskIdentifierMap *sut;
 

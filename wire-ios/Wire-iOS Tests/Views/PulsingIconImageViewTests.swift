@@ -20,6 +20,7 @@ import Foundation
 import XCTest
 import WireCommonComponents
 @testable import Wire
+import WireTesting
 
 private class MockPulsingIconImageView: PulsingIconImageView {
     var didStartPulsing: Bool = false
@@ -44,7 +45,7 @@ private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
     var accessibilityLabel: String { return "" }
 }
 
-class PulsingIconImageViewTests: XCTestCase {
+class PulsingIconImageViewTests: ZMTestCase {
     private var sut: MockPulsingIconImageView!
     private var style: MockPulsingIconImageStyle!
 

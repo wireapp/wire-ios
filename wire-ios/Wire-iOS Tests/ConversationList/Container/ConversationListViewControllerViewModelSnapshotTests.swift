@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
+final class ConversationListViewControllerViewModelSnapshotTests: ZMTestCase {
     var sut: ConversationListViewController.ViewModel!
     var mockView: UIView!
     fileprivate var mockViewController: MockConversationListContainer!

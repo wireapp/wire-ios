@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConnectRequestsCellSnapshotTests: XCTestCase {
+final class ConnectRequestsCellSnapshotTests: ZMTestCase {
 
     var sut: ConnectRequestsCell!
 

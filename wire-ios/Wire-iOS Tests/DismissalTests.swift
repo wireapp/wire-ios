@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class DismissalTests: XCTestCase {
+final class DismissalTests: ZMTestCase {
 
     var sut: UIViewController!
 

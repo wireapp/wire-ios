@@ -19,10 +19,11 @@
 
 #import <XCTest/XCTest.h>
 #import <WireSystem/WireSystem.h>
+@import WireTesting;
 
 static NSString* ZMLogTag = @"Testing";
 
-@interface ZMLoggingTests : XCTestCase
+@interface ZMLoggingTests : ZMTestCase
 @end
 
 @implementation ZMLoggingTests

@@ -19,8 +19,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class SkeletonViewControllerTests: XCTestCase {
+final class SkeletonViewControllerTests: ZMTestCase {
     var sut: SkeletonViewController!
     var mockAccount: Account!
 

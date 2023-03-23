@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-class StringLengthValidatorTests: XCTestCase {
+class StringLengthValidatorTests: ZMTestCase {
     func testThatUnicode5EmojiContainsTagsPassesValidation() {
         let originalValue = "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
         var value: AnyObject? = originalValue as AnyObject?

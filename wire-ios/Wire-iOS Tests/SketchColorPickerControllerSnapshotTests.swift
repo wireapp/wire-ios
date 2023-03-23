@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class SketchColorPickerControllerSnapshotTests: XCTestCase {
+final class SketchColorPickerControllerSnapshotTests: ZMTestCase {
 
     var sut: SketchColorPickerController!
 

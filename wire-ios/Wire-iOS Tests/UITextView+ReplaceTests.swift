@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class UITextView_ReplaceTests: XCTestCase {
+class UITextView_ReplaceTests: ZMTestCase {
 
     var sut: UITextView!
 

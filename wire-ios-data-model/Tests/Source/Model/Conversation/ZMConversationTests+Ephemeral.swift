@@ -17,9 +17,10 @@
 //
 
 import Foundation
+import WireTesting
 @testable import WireDataModel
 
-final class MessageDestructionTimeoutValueTests: XCTestCase {
+final class MessageDestructionTimeoutValueTests: ZMTestCase {
 
     func testThatItReturnsTheCorrectTimeouts() {
         XCTAssertEqual(MessageDestructionTimeoutValue.none.rawValue, 0)

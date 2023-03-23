@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class OrderedSetTests: XCTestCase {
+class OrderedSetTests: ZMTestCase {
 
     func testThatItAddsValuesFromAnNSOrderedSet() {
         // given

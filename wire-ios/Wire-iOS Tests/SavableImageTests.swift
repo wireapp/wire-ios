@@ -19,6 +19,7 @@
 import XCTest
 @testable import Wire
 import Photos
+import WireTesting
 
 final class MockAssetChangeRequest: AssetChangeRequestProtocol {
     static var url: URL?
@@ -54,7 +55,7 @@ final class MockOwner {
     var savableImage: SavableImage!
 }
 
-final class SavableImageTests: XCTestCase {
+final class SavableImageTests: ZMTestCase {
 
     weak var sut: SavableImage!
     var imageData: Data!

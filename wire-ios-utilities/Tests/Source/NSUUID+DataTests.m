@@ -21,7 +21,7 @@
 @import WireUtilities;
 @import WireTesting;
 
-@interface NSUUIDDataTests : XCTestCase
+@interface NSUUIDDataTests : ZMTestCase
 
 @end
 

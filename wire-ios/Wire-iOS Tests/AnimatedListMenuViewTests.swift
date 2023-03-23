@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class AnimatedListMenuViewTests: XCTestCase {
+final class AnimatedListMenuViewTests: ZMTestCase {
 
     func testThatProgressIsClamped() {
         // GIVEN

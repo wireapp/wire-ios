@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class URL_StringTests: XCTestCase {
+final class URL_StringTests: ZMTestCase {
     func testThatURLSchemeIsRemoved() {
         // GIVEN
         let sut = URL(string: "https://www.example.org/abc?1234/")

@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class CurryingTests: XCTestCase {
+final class CurryingTests: ZMTestCase {
 
     func testThatItCurries_1ParameterFunction() {
         // Given

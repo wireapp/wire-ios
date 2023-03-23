@@ -20,8 +20,9 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 import WireCommonComponents
+import WireTesting
 
-final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
+final class VerticalColumnCollectionViewLayoutTests: ZMTestCase {
 
     var tiles: [ColorTile]! = [
         // square, downscale

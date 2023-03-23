@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class SoundEventRulesWatchDogTests: XCTestCase {
+final class SoundEventRulesWatchDogTests: ZMTestCase {
     private let IgnoreTime: TimeInterval = 60
     var watchDog: SoundEventRulesWatchDog!
 

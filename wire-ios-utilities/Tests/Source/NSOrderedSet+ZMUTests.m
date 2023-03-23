@@ -19,9 +19,9 @@
 
 #import <XCTest/XCTest.h>
 #import "NSOrderedSet+Zeta.h"
+@import WireTesting;
 
-
-@interface NSOrderedSetAdditionTests : XCTestCase
+@interface NSOrderedSetAdditionTests : ZMTestCase
 
 @property (nonatomic) NSArray *sortDescriptors;
 

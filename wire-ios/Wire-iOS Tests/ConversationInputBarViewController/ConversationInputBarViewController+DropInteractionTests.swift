@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
+final class ConversationInputBarViewControllerDropInteractionTests: ZMTestCase {
 
     func testThatItHandlesDroppingFiles_FlagEnabled() {
         // GIVEN

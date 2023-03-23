@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class SearchResultsViewControllerTests: XCTestCase {
+final class SearchResultsViewControllerTests: ZMTestCase {
     weak var sut: SearchResultsViewController!
 
     func testThatSearchResultsViewControllerIsNotRetained() {

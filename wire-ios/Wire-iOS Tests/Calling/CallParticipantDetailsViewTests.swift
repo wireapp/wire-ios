@@ -20,8 +20,9 @@ import Foundation
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
-class CallParticipantDetailsViewTests: XCTestCase {
+class CallParticipantDetailsViewTests: ZMTestCase {
 
     var sut: CallParticipantDetailsView!
 

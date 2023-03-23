@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireTransport
 
-class RequestLogTests: XCTestCase {
+class RequestLogTests: ZMTestCase {
 
     func testParsingEndpoint() throws {
         let request = NSURLRequest(url: URL(string: "https://prod-nginz-https.wire.com/v2/access")!)

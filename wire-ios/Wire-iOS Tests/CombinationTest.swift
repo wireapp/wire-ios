@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 struct Mutator<SUT: Copyable, Variant: Hashable> {
     typealias Applicator = (SUT, Variant) -> (SUT)
@@ -92,7 +93,7 @@ extension BoolPair: Copyable {
     }
 }
 
-class CombinationTestTest: XCTestCase {
+class CombinationTestTest: ZMTestCase {
     func testBoolConjunctionCombination() {
         let boolCombinations = Set<Bool>(arrayLiteral: false, true)
 

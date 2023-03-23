@@ -20,8 +20,9 @@ import XCTest
 @testable import Wire
 import PassKit
 import AVKit
+import WireTesting
 
-final class MessagePresenterTests: XCTestCase {
+final class MessagePresenterTests: ZMTestCase {
 
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!

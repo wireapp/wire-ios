@@ -19,12 +19,13 @@
 import XCTest
 @testable import Wire
 import WireSyncEngine
+import WireTesting
 
 func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> Bool {
     return lhs.isEqual(toConfiguration: rhs)
 }
 
-final class CallInfoConfigurationTests: XCTestCase {
+final class CallInfoConfigurationTests: ZMTestCase {
 
     var mockOtherUser: MockUserType!
     var mockSelfUser: MockUserType!

@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import WireTesting
 
-class FileManager_CryptoboxTests: XCTestCase {
+class FileManager_CryptoboxTests: ZMTestCase {
 
     func testThatItReturnsTheCryptoboxPath() {
         // given
@@ -54,7 +55,7 @@ class FileManager_CryptoboxTests: XCTestCase {
     }
 }
 
-class FileManager_CacheTests: XCTestCase {
+class FileManager_CacheTests: ZMTestCase {
 
     func testThatItReturnsTheCachesDirectory_WithAccountId() {
         // given

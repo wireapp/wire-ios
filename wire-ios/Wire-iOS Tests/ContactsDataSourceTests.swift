@@ -17,8 +17,9 @@
 import UIKit
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ContactsDataSourceTests: XCTestCase {
+final class ContactsDataSourceTests: ZMTestCase {
 
     var dataSource: ContactsDataSource!
 

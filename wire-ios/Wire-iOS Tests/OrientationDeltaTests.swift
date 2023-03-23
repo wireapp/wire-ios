@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 
 @testable import Wire
+import WireTesting
 
-class OrientationDeltaTests: XCTestCase {
+class OrientationDeltaTests: ZMTestCase {
     var sut: OrientationDelta!
 
     func testDeltaRotatedLeft() {

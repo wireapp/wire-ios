@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class VersionTests: XCTestCase {
+import WireTesting
+import WireDataModel
+
+final class VersionTests: ZMTestCase {
 
     func testThatItComparesCorrectly() {
         let version1 = Version(string: "0.1")

@@ -20,7 +20,7 @@
 #import <XCTest/XCTest.h>
 #import "ZMSTimePoint.h"
 
-@interface ZMTimePointTests : XCTestCase
+@interface ZMTimePointTests : ZMTestCase
 
 @end
 

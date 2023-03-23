@@ -18,8 +18,8 @@
 
 import XCTest
 
-public class FlankyTestDetectorSuperCaller: XCTestCaseSuperCaller {    
-    public enum FlankyReps {
+public class FlakyTestDetectorSuperCaller: XCTestCaseSuperCaller {
+    public enum FlakyReps {
         case fixed(repsCount: Int)
         case env(defaultRepsCount: Int)
         
@@ -33,34 +33,34 @@ public class FlankyTestDetectorSuperCaller: XCTestCaseSuperCaller {
         }
     }
     
-    private let reps: FlankyReps
+    private let reps: FlakyReps
     
-    public init(reps: FlankyReps = .env(defaultRepsCount: 5)) {
+    public init(reps: FlakyReps = .env(defaultRepsCount: 20)) {
         
         self.reps = reps
     }
     
-    public func callSuperInvokeTest<TestCase: XCTestCase>(fire method: () -> Void, on testCase: TestCase) {
+    public func callSuperInvokeTest(fire superCall: () -> Void, on testCase: XCTestCase) {
         var failureCounts: [Int] = []
         failureCounts.reserveCapacity(reps.count)
         for _ in 0...reps.count {
             let failureCountSnapshot = testCase.testRun?.totalFailureCount ?? 0
-            callSuper(fire: method, on: testCase)
+            superCall()
             let newFailureCount = testCase.testRun?.totalFailureCount ?? 0
             failureCounts.append(newFailureCount - failureCountSnapshot)
         }
         let targettedFailureCount = failureCounts.first
-        let flankyDetected = !failureCounts.allSatisfy { $0 == targettedFailureCount }
-        guard !flankyDetected else {
-            testCase.record(XCTIssue(type: XCTIssue.IssueType.assertionFailure, compactDescription: "Flanky test detected in: \(testCase.name)"))
+        let flakyDetected = !failureCounts.allSatisfy { $0 == targettedFailureCount }
+        guard !flakyDetected else {
+            testCase.record(XCTIssue(type: XCTIssue.IssueType.assertionFailure, compactDescription: "Flaky test detected: \(testCase.name)"))
             return
         }
     }
     
-    private static func envOrGiven(reps: FlankyReps) -> FlankyReps {
+    private static func envOrGiven(reps: FlakyReps) -> FlakyReps {
         switch reps {
         case .env:
-            guard let repsCountString = ProcessInfo.processInfo.environment["FLANKY_REPS_COUNT"],
+            guard let repsCountString = ProcessInfo.processInfo.environment["FLAKY_REPS_COUNT"],
                   let repsCount = Int(repsCountString)
             else {
                 return reps

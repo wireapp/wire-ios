@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class BackgroundViewControllerTests: XCTestCase {
+final class BackgroundViewControllerTests: ZMTestCase {
 
     var selfUser: MockUserType!
 

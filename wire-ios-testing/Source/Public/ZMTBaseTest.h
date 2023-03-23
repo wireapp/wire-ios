@@ -19,14 +19,16 @@
 
 #import <XCTest/XCTest.h>
 #import <WireTesting/ZMTFailureRecorder.h>
+#import <WireTesting/ZMTestCase.h>
 @import WireSystem;
+
 
 extern void PrintTimeoutWarning(XCTestCase *_Nonnull test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout);
 
 typedef BOOL(^VerificationBlock)(void);
 
 
-@interface ZMTBaseTest : XCTestCase
+@interface ZMTBaseTest : ZMTestCase
 
 /// Calls @c -verify during @c -tearDown
 - (void)verifyMockLater:(nonnull id)mock;

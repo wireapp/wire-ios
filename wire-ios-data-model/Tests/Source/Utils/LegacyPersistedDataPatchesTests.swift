@@ -21,7 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 // MARK: - Framework comparison
-class FrameworkVersionTests: XCTestCase {
+class FrameworkVersionTests: ZMTestCase {
 
     func testThatCorrectVersionsAreParsed() {
 

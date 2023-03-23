@@ -18,8 +18,9 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper {
+final class AnalyticsCallingTrackerTests: ZMTestCase, CoreDataFixtureTestHelper {
 
     var sut: AnalyticsCallingTracker!
     var analytics: Analytics!

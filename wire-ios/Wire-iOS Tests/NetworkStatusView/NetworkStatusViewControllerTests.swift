@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 final class MockConversationRootViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
@@ -43,7 +44,7 @@ final class MockConversationListViewController: UIViewController, NetworkStatusB
     }
 }
 
-final class NetworkStatusViewControllerTests: XCTestCase {
+final class NetworkStatusViewControllerTests: ZMTestCase {
     var sutRoot: NetworkStatusViewController!
     var sutList: NetworkStatusViewController!
 
@@ -186,7 +187,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     }
 }
 
-final class NetworkStatusViewControllerRetainTests: XCTestCase {
+final class NetworkStatusViewControllerRetainTests: ZMTestCase {
 
     weak var sut: NetworkStatusViewController! = nil
 

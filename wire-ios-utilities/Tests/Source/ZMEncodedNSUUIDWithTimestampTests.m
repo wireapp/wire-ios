@@ -26,7 +26,7 @@
 static unsigned long SampleTimestamp = 1398634400; // Sun, 27 Apr 2014 21:33:20 GMT
 static unsigned long HOUR_IN_SEC = 60 * 60;
 
-@interface ZMEncodedNSUUIDWithTimestampTests : XCTestCase
+@interface ZMEncodedNSUUIDWithTimestampTests : ZMTestCase
 
 @end
 

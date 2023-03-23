@@ -18,9 +18,10 @@
 
 import XCTest
 import WireTransport
+import WireTesting
 
 @available(iOS 15, *)
-class NetworkSessionTests: XCTestCase {
+class NetworkSessionTests: ZMTestCase {
 
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!

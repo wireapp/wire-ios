@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-class UnregisteredUserTests: XCTestCase {
+class UnregisteredUserTests: ZMTestCase {
 
     func testThatItValidatesTheUserName() {
         // GIVEN

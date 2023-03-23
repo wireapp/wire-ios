@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class LegalHoldAlertFactoryTests: XCTestCase {
+final class LegalHoldAlertFactoryTests: ZMTestCase {
 
     var user: MockUserType!
 

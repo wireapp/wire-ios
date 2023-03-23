@@ -19,8 +19,9 @@
 
 @import WireSystem;
 @import XCTest;
+@import WireTesting;
 
-@interface ZMDefinesTest : XCTestCase
+@interface ZMDefinesTest : ZMTestCase
 
 @end
 

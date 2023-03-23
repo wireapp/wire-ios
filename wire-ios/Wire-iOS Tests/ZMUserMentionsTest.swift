@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class ZMUserMentionsTest: XCTestCase {
+class ZMUserMentionsTest: ZMTestCase {
 
     var selfUser: MockUserType!
     var otherUser: MockUserType!

@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
 struct MockCallStatusViewInputType: CallStatusViewInputType {
     var state: CallStatusViewState
@@ -37,7 +38,7 @@ extension MockCallStatusViewInputType {
     }
 }
 
-class CallStatusViewInputTypeTests: XCTestCase {
+class CallStatusViewInputTypeTests: ZMTestCase {
 
     func testShouldShowBitRateLabel() {
         var sut: CallStatusViewInputType

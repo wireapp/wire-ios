@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 import WireLinkPreview
 
-class NSDataDetectorAttachmentTests: XCTestCase {
+class NSDataDetectorAttachmentTests: ZMTestCase {
 
     var detector: NSDataDetector!
 

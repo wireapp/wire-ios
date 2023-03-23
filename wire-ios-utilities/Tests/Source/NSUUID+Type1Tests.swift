@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class NSUUIDType1Tests: XCTestCase {
+class NSUUIDType1Tests: ZMTestCase {
 
     /// type 1 sample UUID sorted by timestamp, and corresponding unix timestamp (with accuracy up to 0.01)
     static let sortedType1UUIDStrings: [(String, TimeInterval)] = [

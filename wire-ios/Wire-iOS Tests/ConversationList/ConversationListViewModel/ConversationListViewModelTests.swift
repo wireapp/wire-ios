@@ -18,6 +18,7 @@
 import XCTest
 @testable import Wire
 import DifferenceKit
+import WireTesting
 
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
@@ -53,7 +54,7 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
     }
 }
 
-final class ConversationListViewModelTests: XCTestCase {
+final class ConversationListViewModelTests: ZMTestCase {
 
     var sut: ConversationListViewModel!
     var mockUserSession: MockZMUserSession!

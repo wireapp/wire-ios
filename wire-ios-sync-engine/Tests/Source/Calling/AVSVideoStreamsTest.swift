@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
-class AVSVideoStreamsTest: XCTestCase {
+class AVSVideoStreamsTest: ZMTestCase {
     func testThatJSONStringValue_ConformsToAVSAPI() {
         // given
         let conversationId = UUID()

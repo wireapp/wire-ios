@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-class KeychainManagerTests: XCTestCase {
+class KeychainManagerTests: ZMTestCase {
 
     var account: Account!
 

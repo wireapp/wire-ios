@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireTransport
 
 class MockURLProtectionSpace: URLProtectionSpace {
@@ -29,7 +30,7 @@ class MockURLProtectionSpace: URLProtectionSpace {
 }
 
 @available(iOS 13.0, *)
-class NativePushChannelTests_ServerTrust: XCTestCase {
+class NativePushChannelTests_ServerTrust: ZMTestCase {
 
     var mockEnvironment: MockEnvironment!
     var mockSchedulerSession: FakeSchedulerSession!

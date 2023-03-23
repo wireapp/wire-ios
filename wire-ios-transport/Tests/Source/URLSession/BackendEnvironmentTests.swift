@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireTransport
 
-class BackendEnvironmentTests: XCTestCase {
+class BackendEnvironmentTests: ZMTestCase {
 
     var backendBundle: Bundle!
     var defaultsProd: UserDefaults!

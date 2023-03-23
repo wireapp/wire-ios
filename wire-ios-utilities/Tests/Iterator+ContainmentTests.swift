@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-class IteratorContainmentTests: XCTestCase {
+class IteratorContainmentTests: ZMTestCase {
 
     func testThatItReturnsFalseForAnyInEmptySequence() {
         XCTAssertFalse([].any { _ in return true })

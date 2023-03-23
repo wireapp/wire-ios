@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class ArraySafeIndexTests: XCTestCase {
+class ArraySafeIndexTests: ZMTestCase {
 
     var array: [Int]!
 

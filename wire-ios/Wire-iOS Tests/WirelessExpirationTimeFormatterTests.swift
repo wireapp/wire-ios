@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class WirelessExpirationTimeFormatterTests: XCTestCase {
+class WirelessExpirationTimeFormatterTests: ZMTestCase {
 
     func testExpirationTimeFormatting_LargerThan2Hours() {
         assert(remainingTime: 12_000, expected: "4h left")

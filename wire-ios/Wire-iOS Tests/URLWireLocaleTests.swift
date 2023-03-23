@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class URLWireLocaleTests: XCTestCase {
+class URLWireLocaleTests: ZMTestCase {
 
     func testThatLocaleParameterGetsAppended() {
         // GIVEN

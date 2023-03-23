@@ -18,7 +18,7 @@
 
 import XCTest
 
-class SessionManagerConfigurationTests: XCTestCase {
+class SessionManagerConfigurationTests: ZMTestCase {
 
     func testItDecodesConfiguration() throws {
         // Given

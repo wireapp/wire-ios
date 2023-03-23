@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class Data_FingerprintStringTestsTests: XCTestCase {
+final class Data_FingerprintStringTestsTests: ZMTestCase {
 
     func testThatFingerPrintDataIsConvertedToSpacedString() {
         // GIVEN

@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class UITraitEnvironmentTests: XCTestCase {
+final class UITraitEnvironmentTests: ZMTestCase {
 
     var sut: UITraitEnvironment!
     let compactMargins = HorizontalMargins(userInterfaceSizeClass: .compact)

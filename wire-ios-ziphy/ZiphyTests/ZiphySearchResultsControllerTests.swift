@@ -19,7 +19,7 @@
 import XCTest
 @testable import Ziphy
 
-class ZiphySearchResultsControllerTests: XCTestCase {
+class ZiphySearchResultsControllerTests: ZMTestCase {
 
     var requester: MockPaginatedRequester!
     var downloadRequester: MockZiphyRequester!

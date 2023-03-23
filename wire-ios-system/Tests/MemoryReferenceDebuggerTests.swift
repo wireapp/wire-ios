@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireSystem
 
-class ReferenceAllocationTests: XCTestCase {
+class ReferenceAllocationTests: ZMTestCase {
     func testThatExistingObjectIsMarkedAsValid() {
         // GIVEN
         let object = TestClass()
@@ -53,7 +54,7 @@ class ReferenceAllocationTests: XCTestCase {
     }
 }
 
-class MemoryReferenceDebuggerTests: XCTestCase {
+class MemoryReferenceDebuggerTests: ZMTestCase {
 
     func testThatItDoesNotTrackNils() {
         // WHEN

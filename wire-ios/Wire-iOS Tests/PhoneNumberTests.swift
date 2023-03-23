@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class PhoneNumberTests: XCTestCase {
+final class PhoneNumberTests: ZMTestCase {
 
     func testThatPhoneNumberStructWithLeadingZeroCanBeCompared() {
         // GIVEN

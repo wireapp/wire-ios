@@ -18,8 +18,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class WipeCompletionViewControllerTests: XCTestCase {
+final class WipeCompletionViewControllerTests: ZMTestCase {
     var sut: WipeCompletionViewController!
 
     override func setUp() {

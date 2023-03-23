@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class SwitchingAccountRouterTests: XCTestCase {
+final class SwitchingAccountRouterTests: ZMTestCase {
 
     var sut: TestableSwitichingAccountRouter!
 

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class UserRightTests: XCTestCase {
+class UserRightTests: ZMTestCase {
 
     // MARK: - Properties
 

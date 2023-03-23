@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireCryptobox
 
-final class GenericHashBuilderTests: XCTestCase {
+final class GenericHashBuilderTests: ZMTestCase {
     func testThatItHashesTheData() {
         // GIVEN
         let data = "some data".data(using: .utf8)!

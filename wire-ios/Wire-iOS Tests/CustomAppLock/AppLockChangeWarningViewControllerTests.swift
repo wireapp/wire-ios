@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-class AppLockChangeWarningViewControllerTests: XCTestCase {
+class AppLockChangeWarningViewControllerTests: ZMTestCase {
 
     func testWarningThatAppLockIsActive() {
         verifyInAllColorSchemes(createSut: { AppLockChangeWarningViewController(isAppLockActive: true) })

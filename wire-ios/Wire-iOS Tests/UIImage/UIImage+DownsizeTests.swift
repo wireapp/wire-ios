@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class UIImageDownsizeTests: XCTestCase {
+final class UIImageDownsizeTests: ZMTestCase {
     var sut: UIImage!
     let targetLength: CGFloat = 320
 

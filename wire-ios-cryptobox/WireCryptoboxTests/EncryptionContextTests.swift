@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireCryptobox
 
-class EncryptionContextTests: XCTestCase {
+class EncryptionContextTests: ZMTestCase {
 
     /// This test verifies that the critical section (in usingSessions)
     /// can not be entered at the same time on two different EncryptionContext

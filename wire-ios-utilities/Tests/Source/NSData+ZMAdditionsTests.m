@@ -24,7 +24,7 @@
 #import "NSData+ZMAdditions.h"
 #import <XCTest/XCTest.h>
 
-@interface NSData_ZMAdditionsTests : XCTestCase
+@interface NSData_ZMAdditionsTests : ZMTestCase
 
 @end
 

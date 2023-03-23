@@ -18,8 +18,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class SpinnerButtonTests: XCTestCase {
+final class SpinnerButtonTests: ZMTestCase {
     var sut: SpinnerButton!
 
     override func tearDown() {

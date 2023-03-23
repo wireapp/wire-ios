@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireTransport
 
 @objc class NotificationObserver: NSObject, RequestAvailableObserver {
@@ -29,7 +30,7 @@ import XCTest
 
 }
 
-class RequestAvailableNotificationTests: XCTestCase {
+class RequestAvailableNotificationTests: ZMTestCase {
 
     var sut = NotificationObserver()
 

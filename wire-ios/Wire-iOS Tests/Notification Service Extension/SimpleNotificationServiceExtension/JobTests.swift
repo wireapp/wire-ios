@@ -18,9 +18,10 @@
 
 import XCTest
 @testable import Wire_Notification_Service_Extension
+import WireTesting
 
 @available(iOS 15, *)
-class JobTests: XCTestCase {
+class JobTests: ZMTestCase {
 
     var mockNetworkSession: MockNetworkSession!
     var mockAccessAPIClient: MockAccessAPIClient!

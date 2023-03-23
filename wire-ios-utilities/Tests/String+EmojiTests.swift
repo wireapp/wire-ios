@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-class String_EmojiTests: XCTestCase {
+class String_EmojiTests: ZMTestCase {
 
     func testThatItDetectsAnEmoji() {
         XCTAssertTrue("🍔".containsEmoji)

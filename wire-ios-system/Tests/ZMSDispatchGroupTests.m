@@ -21,7 +21,7 @@
 #import <XCTest/XCTest.h>
 
 
-@interface ZMSDispatchGroupTests : XCTestCase
+@interface ZMSDispatchGroupTests : ZMTestCase
 
 @end
 

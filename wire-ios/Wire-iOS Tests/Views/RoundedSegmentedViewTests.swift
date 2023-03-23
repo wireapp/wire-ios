@@ -19,8 +19,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-class RoundedSegmentedViewTests: XCTestCase {
+class RoundedSegmentedViewTests: ZMTestCase {
     var sut: RoundedSegmentedView!
 
     override func setUp() {

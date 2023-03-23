@@ -20,6 +20,7 @@ import Foundation
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
 class OrientableViewMock: OrientableView {
     func layoutForOrientation() {}
@@ -35,7 +36,7 @@ class GridViewDelegateMock: GridViewDelegate {
     }
 }
 
-class GridViewTests: XCTestCase {
+class GridViewTests: ZMTestCase {
 
     var sut: GridView!
     var gridViewDelegateMock: GridViewDelegateMock!

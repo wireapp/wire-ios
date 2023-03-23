@@ -21,7 +21,7 @@
 @import XCTest;
 @import WireTesting;
 
-@interface Collections_ZMTSafeTypesTests : XCTestCase
+@interface Collections_ZMTSafeTypesTests : ZMTestCase
 
 @end
 

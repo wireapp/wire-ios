@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConnectRequestsCellTests: XCTestCase {
+final class ConnectRequestsCellTests: ZMTestCase {
     var sut: ConnectRequestsCell!
 
     override func setUp() {

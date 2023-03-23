@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class FullscreenImageViewControllerTests: XCTestCase {
+final class FullscreenImageViewControllerTests: ZMTestCase {
 
     var sut: FullscreenImageViewController!
 

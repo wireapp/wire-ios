@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class MetaStreamContainerTests: XCTestCase {
+class MetaStreamContainerTests: ZMTestCase {
 
     var sut: MetaStreamContainer! = nil
 

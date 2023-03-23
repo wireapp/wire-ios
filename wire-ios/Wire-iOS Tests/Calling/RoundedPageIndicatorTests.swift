@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-class RoundedPageIndicatorTests: XCTestCase {
+class RoundedPageIndicatorTests: ZMTestCase {
 
     var sut: RoundedPageIndicator!
     let frame = CGRect(x: 0, y: 0, width: 120, height: 24)

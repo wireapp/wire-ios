@@ -25,6 +25,7 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireTransport
 
 struct CertificateData: Decodable {
@@ -53,7 +54,7 @@ extension SecTrust {
 
 }
 
-class BackendTrustProviderTests: XCTestCase {
+class BackendTrustProviderTests: ZMTestCase {
 
     var pinnedHosts: [String]!
     var certificates: CertificateData!

@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 import WireProtos
 
-class ProtosTests: XCTestCase {
+class ProtosTests: ZMTestCase {
 
     func testThatItCompiles() {
         // We need at least one test or the build machine will be unhappy

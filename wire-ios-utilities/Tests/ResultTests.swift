@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class ResultTests: XCTestCase {
+class ResultTests: ZMTestCase {
     func testThatItCanMapAResult_Success() {
         // Given
         let sut = Result<Int>.success(42)

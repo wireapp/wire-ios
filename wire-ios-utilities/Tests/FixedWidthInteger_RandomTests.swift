@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-class FixedWidthInteger_RandomTests: XCTestCase {
+class FixedWidthInteger_RandomTests: ZMTestCase {
 
     func testThatTheGeneratedNumberIsInRangeWithUInt() {
 

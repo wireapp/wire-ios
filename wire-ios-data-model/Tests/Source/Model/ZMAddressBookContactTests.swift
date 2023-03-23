@@ -18,8 +18,9 @@
 
 import Foundation
 import XCTest
+import WireTesting
 
-class ZMAddressBookContactTests: XCTestCase {
+class ZMAddressBookContactTests: ZMTestCase {
 
     func testThatTwoContactsAreTheSame() {
 

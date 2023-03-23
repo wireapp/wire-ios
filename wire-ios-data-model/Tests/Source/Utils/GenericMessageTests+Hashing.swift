@@ -17,10 +17,10 @@
 //
 
 import XCTest
-
+import WireTesting
 @testable import WireDataModel
 
-class GenericMessageTests_Hashing: XCTestCase {
+class GenericMessageTests_Hashing: ZMTestCase {
 
     // MARK: - Text
 

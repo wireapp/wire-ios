@@ -19,7 +19,7 @@
 import XCTest
 @testable import Ziphy
 
-class ZiphyPaginationControllerTests: XCTestCase {
+class ZiphyPaginationControllerTests: ZMTestCase {
 
     var paginationController: ZiphyPaginationController!
 

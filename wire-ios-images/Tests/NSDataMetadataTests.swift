@@ -22,7 +22,7 @@ import WireTesting
 import ImageIO
 @testable import WireImages
 
-class NSDataMetadataTests: XCTestCase {
+class NSDataMetadataTests: ZMTestCase {
     func testThatItThrowsForEmptyData() {
         // GIVEN
         let data = Data()

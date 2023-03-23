@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class OpenGraphDataTests: XCTestCase {
+class OpenGraphDataTests: ZMTestCase {
 
     func testThatItCreatesAValidOpenGraphDataFromPropertyMapping() {
         // given

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class IncomingConnectionViewTests: XCTestCase {
+final class IncomingConnectionViewTests: ZMTestCase {
 
     override func setUp() {
         super.setUp()

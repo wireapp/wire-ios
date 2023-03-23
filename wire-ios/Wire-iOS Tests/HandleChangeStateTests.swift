@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class HandleChangeStateTests: XCTestCase {
+class HandleChangeStateTests: ZMTestCase {
 
     // MARK: Validation Fail Tests
 

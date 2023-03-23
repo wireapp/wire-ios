@@ -19,8 +19,9 @@
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class TextSearchResultsViewSnapshotTests: XCTestCase {
+final class TextSearchResultsViewSnapshotTests: ZMTestCase {
     var sut: TextSearchResultsView!
 
     override func setUp() {

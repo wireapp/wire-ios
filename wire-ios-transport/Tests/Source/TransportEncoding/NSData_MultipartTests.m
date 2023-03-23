@@ -19,8 +19,9 @@
 
 @import XCTest;
 @import WireTransport;
+@import WireTesting;
 
-@interface NSData_MultipartTests : XCTestCase
+@interface NSData_MultipartTests : ZMTestCase
 
 @end
 
@@ -164,7 +165,7 @@
 @end
 
 
-@interface ZMMultipartBodyItemTests : XCTestCase
+@interface ZMMultipartBodyItemTests : ZMTestCase
 
 @end
 

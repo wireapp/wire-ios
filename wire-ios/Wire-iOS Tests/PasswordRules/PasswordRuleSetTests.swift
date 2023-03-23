@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class PasswordRuleSetTests: XCTestCase {
+class PasswordRuleSetTests: ZMTestCase {
 
     var defaultRuleSet: PasswordRuleSet!
 

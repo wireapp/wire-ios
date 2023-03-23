@@ -19,8 +19,9 @@
 import XCTest
 
 @testable import Wire
+import WireTesting
 
-class VoiceChannelStreamArrangementTests: XCTestCase {
+class VoiceChannelStreamArrangementTests: ZMTestCase {
     private var sut: MockVoiceChannel!
     var mockUser1: ZMUser!
     var mockUser2: ZMUser!

@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class CompanyLoginVerificationTokenTests: XCTestCase {
+class CompanyLoginVerificationTokenTests: ZMTestCase {
 
     var defaults: UserDefaults!
 

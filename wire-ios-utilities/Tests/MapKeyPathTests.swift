@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import WireUtilities
+import WireTesting
 
 private struct Person {
     let name: String
@@ -34,7 +35,7 @@ private struct Office: Equatable {
     let isInBerlin: Bool
 }
 
-class MapKeyPathTests: XCTestCase {
+class MapKeyPathTests: ZMTestCase {
 
     // MARK: - Optional
 

@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelegate {
     var shouldAccept = true
@@ -35,7 +36,7 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
     }
 }
 
-final class CharacterInputFieldTests: XCTestCase {
+final class CharacterInputFieldTests: ZMTestCase {
     var sut: CharacterInputField! = nil
     var delegate: TestCharacterInputFieldDelegate! = nil
 
@@ -199,7 +200,7 @@ final class CharacterInputFieldTests: XCTestCase {
     }
 }
 
-final class CharacterInputFieldScreenshotTests: XCTestCase {
+final class CharacterInputFieldScreenshotTests: ZMTestCase {
     var sut: CharacterInputField! = nil
 
     override func setUp() {

@@ -19,9 +19,9 @@
 
 #import <XCTest/XCTest.h>
 #import "NSURL+QueryComponents.h"
+@import WireTesting;
 
-
-@interface NSURLQueryComponentsTest : XCTestCase
+@interface NSURLQueryComponentsTest : ZMTestCase
 
 @end
 

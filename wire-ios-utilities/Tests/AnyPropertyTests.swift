@@ -18,6 +18,7 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
 // MARK: Type Erased Scenario
 
@@ -71,7 +72,7 @@ class AnyMessage {
 
 // MARK: - Tests
 
-class AnyPropertyTests: XCTestCase {
+class AnyPropertyTests: ZMTestCase {
 
     var textMessage: TextMessage!
     var imageMessage: ImageMessage!

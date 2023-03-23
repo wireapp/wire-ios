@@ -18,8 +18,9 @@
 
 import XCTest
 import WireCommonComponents
+import WireTesting
 
-final class ExtensionSettingsTests: XCTestCase {
+final class ExtensionSettingsTests: ZMTestCase {
 
     var defaults: UserDefaults!
     var settings: ExtensionSettings!

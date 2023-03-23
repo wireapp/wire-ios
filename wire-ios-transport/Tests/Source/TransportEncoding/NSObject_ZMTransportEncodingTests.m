@@ -18,9 +18,10 @@
 
 
 @import WireTransport;
+@import WireTesting;
 @import XCTest;
 
-@interface NSObjectZMTransportEncodingTests : XCTestCase
+@interface NSObjectZMTransportEncodingTests : ZMTestCase
 @end
 
 @interface NSObjectZMTransportEncodingTests (NSDate)

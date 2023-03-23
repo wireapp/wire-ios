@@ -19,8 +19,9 @@
 import XCTest
 import WireDataModel
 import WireLinkPreview
+import WireTesting
 
-class LinkPreview_ProtobufTests: XCTestCase {
+class LinkPreview_ProtobufTests: ZMTestCase {
 
     func testThatItCreatesAValidArticle_OldStyleProtos() {
         // given

@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class NSDataImageTests: XCTestCase {
+final class NSDataImageTests: ZMTestCase {
     func testThatNonAnimateGifIsIdentified() {
         // given
         let sut: NSData = self.data(forResource: "not_animated", extension: "gif")! as NSData

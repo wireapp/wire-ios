@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-class PBMessageValidationTests: XCTestCase {
+class PBMessageValidationTests: ZMTestCase {
     // MARK: Generic Message
 
     func testThatItCreatesGenericMessageWithValidFields() {
@@ -310,7 +311,7 @@ class PBMessageValidationTests: XCTestCase {
 
 }
 
-class ModelValidationTests: XCTestCase {
+class ModelValidationTests: ZMTestCase {
 
     // MARK: Generic Message
 

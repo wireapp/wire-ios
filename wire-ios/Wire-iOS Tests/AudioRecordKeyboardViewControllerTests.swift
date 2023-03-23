@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     var didCancelHitCount = 0
@@ -94,7 +95,7 @@ final class MockAudioRecorder: AudioRecorderType {
 
 }
 
-final class AudioRecordKeyboardViewControllerTests: XCTestCase {
+final class AudioRecordKeyboardViewControllerTests: ZMTestCase {
     var sut: AudioRecordKeyboardViewController!
     var audioRecorder: MockAudioRecorder!
     var mockDelegate: MockAudioRecordKeyboardDelegate!

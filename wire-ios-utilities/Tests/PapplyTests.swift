@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class PartialApplicationTests: XCTestCase {
+final class PartialApplicationTests: ZMTestCase {
     func testThatItPartiallyApplies_1ParameterFunction() {
         // Given
         let foo: (String) -> String = { $0 }

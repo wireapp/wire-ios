@@ -18,10 +18,11 @@
 
 import XCTest
 import WireProtos
+import WireTesting
 
 @testable import WireDataModel
 // swiftlint:disable line_length
-class ProtosTests: XCTestCase {
+class ProtosTests: ZMTestCase {
 
     func testTextMessageEncodingPerformance() {
         measure { () -> Void in

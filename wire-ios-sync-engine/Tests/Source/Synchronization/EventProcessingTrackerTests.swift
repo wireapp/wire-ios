@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-final class EventProcessingTrackerTests: XCTestCase {
+final class EventProcessingTrackerTests: ZMTestCase {
 
     var sut: EventProcessingTracker!
 

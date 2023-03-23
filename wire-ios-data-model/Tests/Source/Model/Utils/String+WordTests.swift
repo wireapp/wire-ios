@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-final class StringWordsTests: XCTestCase {
+final class StringWordsTests: ZMTestCase {
 
     func testThatSentenceIsSplitted() {
         // given

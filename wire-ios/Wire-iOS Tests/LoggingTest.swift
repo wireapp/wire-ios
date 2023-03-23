@@ -18,8 +18,9 @@
 
 import XCTest
 import WireSystem
+import WireTesting
 
-class LoggingTest: XCTestCase {
+class LoggingTest: ZMTestCase {
 
     func testThatCurrentLogIsNotEmpty() {
         // given

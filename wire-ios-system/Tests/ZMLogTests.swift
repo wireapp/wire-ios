@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import WireSystem
+import WireTesting
 
-class ZMLogTests: XCTestCase {
+class ZMLogTests: ZMTestCase {
 
     override func setUp() {
         super.setUp()

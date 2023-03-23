@@ -20,9 +20,10 @@ import Foundation
 import XCTest
 import WireCommonComponents
 @testable import Wire
+import WireTesting
 
 // cutAndPrefixedWithEllipsis
-final class NSAttributedStringHighlightTests: XCTestCase {
+final class NSAttributedStringHighlightTests: ZMTestCase {
     func testThatItReturnsEmptyStringOnEmpty() {
         // GIVEN
         let sut = NSMutableAttributedString(string: "", attributes: [:])
@@ -97,7 +98,7 @@ final class NSAttributedStringHighlightTests: XCTestCase {
 }
 
 // allRanges on String
-final class StringAllRangesOfStringTests: XCTestCase {
+final class StringAllRangesOfStringTests: ZMTestCase {
     func testThatItIgnoresEmptyString() {
         // GIVEN
         let sut = ""
@@ -163,7 +164,7 @@ final class StringAllRangesOfStringTests: XCTestCase {
 }
 
 // rangeOfStrings on String
-final class StringRangeOfStringTests: XCTestCase {
+final class StringRangeOfStringTests: ZMTestCase {
     func testThatRangeOfStringsIgnoresEmptyStringNoQuery() {
         // GIVEN
         let string = ""

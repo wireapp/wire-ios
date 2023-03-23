@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import Down
+import WireTesting
 
-final class MarkdownTextStorageTests: XCTestCase {
+final class MarkdownTextStorageTests: ZMTestCase {
 
     var sut: MarkdownTextStorage!
 

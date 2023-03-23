@@ -18,8 +18,9 @@
 
 import Foundation
 import XCTest
+import WireTesting
 
-class EmojiOnlyStringTests: XCTestCase {
+class EmojiOnlyStringTests: ZMTestCase {
 
     func testThatCommonEmojisAreDetected() {
         // given

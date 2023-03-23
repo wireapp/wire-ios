@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationMessageSectionControllerTests: XCTestCase {
+final class ConversationMessageSectionControllerTests: ZMTestCase {
 
     // MARK: - Dequeuing
 

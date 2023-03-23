@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class SettingsTests: XCTestCase {
+final class SettingsTests: ZMTestCase {
     class override func tearDown() {
         Settings.shared.reset()
     }

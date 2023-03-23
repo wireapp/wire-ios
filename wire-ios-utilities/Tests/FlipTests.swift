@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class FlipTests: XCTestCase {
+final class FlipTests: ZMTestCase {
 
     func testThatItFlips_1ParameterFunction() {
         // Given

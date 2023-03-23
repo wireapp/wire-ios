@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol SuperCaller {
-    func callSuper<T, Result>(fire method: () -> Result, on object: T) -> Result
-}
+#ifndef ZMTestCase_h
+#define ZMTestCase_h
+#import <XCTest/XCTest.h>
 
-public extension SuperCaller {
-    func callSuper<T, Result>(fire method: () -> Result, on object: T) -> Result {
-        return method()
-    }
-}
+@interface ZMTestCase : XCTestCase
+- (void)invokeTest;
+@end
+
+#endif /* ZMTestCase_h */

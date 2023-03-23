@@ -19,8 +19,9 @@
 import SnapshotTesting
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
+final class PreBackendSwitchViewControllerSnapshotTests: ZMTestCase {
     var sut: PreBackendSwitchViewController!
 
     override func setUp() {

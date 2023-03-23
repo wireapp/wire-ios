@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-class String_StrippingTests: XCTestCase {
+class String_StrippingTests: ZMTestCase {
 
     // MARK: - Mutating method
 

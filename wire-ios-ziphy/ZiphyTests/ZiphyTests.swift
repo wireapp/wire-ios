@@ -19,7 +19,7 @@
 import XCTest
 @testable import Ziphy
 
-final class ZiphTests: XCTestCase {
+final class ZiphTests: ZMTestCase {
 
     var sut: Ziph!
 

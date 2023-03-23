@@ -20,7 +20,7 @@
 #import <XCTest/XCTest.h>
 #import "ZMSTestDetection.h"
 
-@interface ZMSTestDetectionTests : XCTestCase
+@interface ZMSTestDetectionTests : ZMTestCase
 
 @property (nonatomic) BOOL testVariableWasOn;
 

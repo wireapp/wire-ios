@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class CountryTests: XCTestCase {
+final class CountryTests: ZMTestCase {
 
     func testThatCountryFromDeviceGivesCurrentCountry() {
         // GIVEN

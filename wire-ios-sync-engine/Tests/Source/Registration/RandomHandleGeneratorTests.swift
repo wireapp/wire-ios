@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
-class RandomHandleGeneratorTests: XCTestCase {
+class RandomHandleGeneratorTests: ZMTestCase {
 
     func testNormalizationOfString() {
         XCTAssertEqual("Maria LaRochelle".normalizedForUserHandle, "marialarochelle")

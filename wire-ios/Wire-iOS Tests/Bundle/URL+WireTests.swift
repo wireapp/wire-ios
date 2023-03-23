@@ -19,8 +19,9 @@
 import XCTest
 import WireTransport
 @testable import Wire
+import WireTesting
 
-final class URL_WireTests: XCTestCase {
+final class URL_WireTests: ZMTestCase {
 
     var be: BackendEnvironment!
 

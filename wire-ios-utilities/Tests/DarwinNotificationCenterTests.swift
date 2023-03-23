@@ -18,8 +18,9 @@
 
 import XCTest
 import WireUtilities
+import WireTesting
 
-class DarwinNotificationCenterTests: XCTestCase {
+class DarwinNotificationCenterTests: ZMTestCase {
 
     func testThatItInvokesHandlers() {
         // given

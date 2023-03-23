@@ -21,7 +21,7 @@
 @import WireUtilities;
 @import WireTransport;
 
-@interface ZMDataBufferTests : XCTestCase
+@interface ZMDataBufferTests : ZMTestCase
 
 @property (nonatomic) DataBuffer *sut;
 

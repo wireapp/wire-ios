@@ -21,8 +21,9 @@ import XCTest
 import AppCenterCrashes
 import WireCommonComponents
 import WireDataModel
+import WireTesting
 
-final class AnalyticsTests: XCTestCase {
+final class AnalyticsTests: ZMTestCase {
 
     var coreDataFixture: CoreDataFixture!
 

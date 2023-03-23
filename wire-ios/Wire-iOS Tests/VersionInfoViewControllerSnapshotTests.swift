@@ -19,8 +19,9 @@
 import XCTest
 import SnapshotTesting
 @testable import Wire
+import WireTesting
 
-final class VersionInfoViewControllerSnapshotTests: XCTestCase {
+final class VersionInfoViewControllerSnapshotTests: ZMTestCase {
 
     var sut: VersionInfoViewController!
 

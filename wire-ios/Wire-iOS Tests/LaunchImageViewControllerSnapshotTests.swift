@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class LaunchImageViewControllerSnapshotTests: XCTestCase {
+final class LaunchImageViewControllerSnapshotTests: ZMTestCase {
 
     var sut: LaunchImageViewController!
 

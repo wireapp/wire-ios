@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireCryptobox
 
-class ChaCha20AEADEncryptionTests: XCTestCase {
+class ChaCha20AEADEncryptionTests: ZMTestCase {
 
     private let context = Data.secureRandomData(length: 8)
 

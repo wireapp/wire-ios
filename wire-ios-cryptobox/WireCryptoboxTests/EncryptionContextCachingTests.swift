@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireCryptobox
 
 let someTextToEncrypt = "ENCRYPT THIS!"
@@ -32,7 +33,7 @@ class DebugEncryptor: Encryptor {
     }
 }
 
-class EncryptionContextCachingTests: XCTestCase {
+class EncryptionContextCachingTests: ZMTestCase {
     func testThatItDoesNotCachePerDefault() {
         // GIVEN
         let tempDir = createTempFolder()

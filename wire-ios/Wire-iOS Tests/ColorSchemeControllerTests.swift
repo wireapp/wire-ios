@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ColorSchemeControllerTests: XCTestCase {
+final class ColorSchemeControllerTests: ZMTestCase {
 
     var sut: ColorSchemeController!
     var originalColorScheme: Any! = nil

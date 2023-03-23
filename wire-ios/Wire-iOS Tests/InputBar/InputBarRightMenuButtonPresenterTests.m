@@ -22,7 +22,7 @@
 
 #import "InputBarRightMenuButtonPresenter.h"
 
-@interface InputBarRightMenuButtonPresenterTests: XCTestCase
+@interface InputBarRightMenuButtonPresenterTests: ZMTestCase
 
 @property (nonatomic, strong) InputBarRightMenuButtonPresenter *presenter;
 

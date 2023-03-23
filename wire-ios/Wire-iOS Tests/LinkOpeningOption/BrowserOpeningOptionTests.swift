@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class BrowserOpeningOptionTests: XCTestCase {
+final class BrowserOpeningOptionTests: ZMTestCase {
 
     class override func tearDown() {
         Settings.shared.reset()

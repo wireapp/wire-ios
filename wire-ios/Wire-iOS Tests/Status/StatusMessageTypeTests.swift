@@ -17,6 +17,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 func localizeString (stringToLocalize: String, language: String) -> String? {
     guard let path = Bundle.main.path(forResource: language, ofType: "lproj") else { return nil }
@@ -25,7 +26,7 @@ func localizeString (stringToLocalize: String, language: String) -> String? {
     return languageBundle! .localizedString(forKey: stringToLocalize, value: "", table: nil)
 }
 
-final class StatusMessageTypeTests: XCTestCase {
+final class StatusMessageTypeTests: ZMTestCase {
 
     func testForAllLanguageIsLocalized() {
         // GIVEN

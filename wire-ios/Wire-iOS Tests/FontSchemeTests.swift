@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 import WireCommonComponents
+import WireTesting
 
-final class FontSchemeTests: XCTestCase {
+final class FontSchemeTests: ZMTestCase {
 
     fileprivate func insertFontSizeItems(_ points: [FontSize: CGFloat], _ multiplier: CGFloat, _ fixedFontNames: inout [FontSpec: String], _ fontTextStyle: FontTextStyle) {
         let allFontSizeTuples: [(fontSize: FontSize, point: CGFloat)] = [(fontSize: .large, point: round(points[FontSize.large]! * multiplier)),

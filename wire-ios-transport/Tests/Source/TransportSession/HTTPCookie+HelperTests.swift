@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+import WireTesting
 @testable import WireTransport
 
-final class HTTPCookieHelperTests: XCTestCase {
+final class HTTPCookieHelperTests: ZMTestCase {
 
     func testThatItCanCreateACookieFromAString() {
         // given

@@ -17,9 +17,10 @@
 // 
 
 import Foundation
+import WireTesting
 import XCTest
 
-class OtrBaseTest: XCTestCase {
+class OtrBaseTest: ZMTestCase {
     override func setUp() {
         super.setUp()
 

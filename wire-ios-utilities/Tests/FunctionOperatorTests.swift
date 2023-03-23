@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class FunctionOperatorTests: XCTestCase {
+final class FunctionOperatorTests: ZMTestCase {
 
     func testThaItNegatesABooleanTestFunction() {
         // given

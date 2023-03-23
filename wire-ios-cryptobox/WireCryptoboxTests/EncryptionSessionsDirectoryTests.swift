@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 @testable import WireCryptobox
 import WireSystem
+import WireTesting
 
-class EncryptionSessionsDirectoryTests: XCTestCase {
+class EncryptionSessionsDirectoryTests: ZMTestCase {
 
     var contextAlice: EncryptionContext!
     var contextBob: EncryptionContext!

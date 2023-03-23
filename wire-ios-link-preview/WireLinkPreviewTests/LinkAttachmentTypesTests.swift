@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class LinkAttachmentTypesTests: XCTestCase {
+class LinkAttachmentTypesTests: ZMTestCase {
 
     func testThatItEncodesAndDecodesWithNSCoder() {
         // GIVEN

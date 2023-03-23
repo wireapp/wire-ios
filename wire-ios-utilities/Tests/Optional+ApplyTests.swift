@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class Optional_ApplyTests: XCTestCase {
+final class Optional_ApplyTests: ZMTestCase {
 
     func testThatItExecutesTheBlockIfSelfIsSome() {
         // given

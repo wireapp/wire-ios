@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class AVURLAsset_conversionTests: XCTestCase {
+final class AVURLAsset_conversionTests: ZMTestCase {
 
     func testThatVideoIsConvertedToUploadFormat() {
         // GIVEN

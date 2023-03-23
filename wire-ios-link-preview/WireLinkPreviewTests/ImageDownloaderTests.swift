@@ -17,9 +17,10 @@
 // 
 
 import XCTest
+import WireTesting
 @testable import WireLinkPreview
 
-class ImageDownloaderTests: XCTestCase {
+class ImageDownloaderTests: ZMTestCase {
 
     var sut: ImageDownloader!
     var mockSession: MockURLSession!

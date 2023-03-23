@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class Data_ImageTypeTests: XCTestCase {
+final class Data_ImageTypeTests: ZMTestCase {
 
     var sut: Data!
 

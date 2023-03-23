@@ -20,7 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class SearchGroupSelectorSnapshotTests: XCTestCase {
+final class SearchGroupSelectorSnapshotTests: ZMTestCase {
     var sut: SearchGroupSelector!
 
     override func setUp() {

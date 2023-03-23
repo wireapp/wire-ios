@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-class GenericMessageHelperTests: XCTestCase {
+class GenericMessageHelperTests: ZMTestCase {
 
     func testCreatingADataTransferMessageWithATrackingIdentifier() {
         // Given

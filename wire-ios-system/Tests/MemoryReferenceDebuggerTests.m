@@ -19,7 +19,7 @@
 #import <XCTest/XCTest.h>
 @import WireSystem;
 
-@interface MemoryReferenceDebuggerObjcTests : XCTestCase
+@interface MemoryReferenceDebuggerObjcTests : ZMTestCase
 
 @end
 

@@ -17,8 +17,9 @@
 //
 
 import XCTest
+import WireTesting
 
-final class UIColorMixingTests: XCTestCase {
+final class UIColorMixingTests: ZMTestCase {
     func testThatBlackAndWhiteIsMixedToGrey() {
         /// GIVEN
         let whiteColor = UIColor.white

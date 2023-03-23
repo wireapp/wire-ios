@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class ConversationTitleViewTests: XCTestCase {
+final class ConversationTitleViewTests: ZMTestCase {
 
     var sut: ConversationTitleView!
     var conversation: SwiftMockConversation!

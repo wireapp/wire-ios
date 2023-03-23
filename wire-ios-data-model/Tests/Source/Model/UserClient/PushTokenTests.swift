@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireTesting
 @testable import WireDataModel
 
-final class PushTokenTests: XCTestCase {
+final class PushTokenTests: ZMTestCase {
 
     // MARK: - Set up
 

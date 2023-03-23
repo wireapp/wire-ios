@@ -18,11 +18,12 @@
 
 
 @import XCTest;
+@import WireTesting;
 
 #import <WireUtilities/WireUtilities.h>
 #import <WireUtilities/WireUtilities-Swift.h>
 
-@interface ZMAccentColorValidatorTests : XCTestCase
+@interface ZMAccentColorValidatorTests : ZMTestCase
 
 @end
 

@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
+final class ConversationCellBurstTimestampViewSnapshotTests: ZMTestCase {
     var sut: ConversationCellBurstTimestampView!
 
     override func setUp() {

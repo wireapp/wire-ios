@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class CountryCodeTableViewControllerTests: XCTestCase {
+final class CountryCodeTableViewControllerTests: ZMTestCase {
 
     var sut: CountryCodeTableViewController!
 

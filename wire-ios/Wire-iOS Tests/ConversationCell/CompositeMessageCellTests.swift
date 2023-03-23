@@ -17,8 +17,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class CompositeMessageCellTests: XCTestCase {
+final class CompositeMessageCellTests: ZMTestCase {
 
     typealias CellConfiguration = (MockMessage) -> Void
 

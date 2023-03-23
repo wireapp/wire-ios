@@ -19,8 +19,9 @@
 
 #import <XCTest/XCTest.h>
 #import "NSOperationQueue+Helpers.h"
+@import WireTesting;
 
-@interface NSOperationQueueHelpersTests : XCTestCase
+@interface NSOperationQueueHelpersTests : ZMTestCase
 
 @end
 

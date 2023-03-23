@@ -19,10 +19,11 @@
 
 @import XCTest;
 @import OCMock;
+@import WireTesting;
 
 #import "NSUserDefaults+SharedUserDefaults.h"
 
-@interface NSUserDefaults_SharedUserDefaultsTests : XCTestCase
+@interface NSUserDefaults_SharedUserDefaultsTests : ZMTestCase
 
 @end
 

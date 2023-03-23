@@ -19,9 +19,9 @@
 
 #import <XCTest/XCTest.h>
 #import "NSDate+Utility.h"
+@import WireTesting;
 
-
-@interface NSDate_UtilityTests : XCTestCase
+@interface NSDate_UtilityTests : ZMTestCase
 
 @end
 

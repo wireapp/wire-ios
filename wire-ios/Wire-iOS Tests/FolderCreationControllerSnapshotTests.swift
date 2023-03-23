@@ -19,8 +19,9 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
+import WireTesting
 
-final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+final class FolderCreationControllerSnapshotTests: ZMTestCase, CoreDataFixtureTestHelper {
 
     var sut: FolderCreationController!
 

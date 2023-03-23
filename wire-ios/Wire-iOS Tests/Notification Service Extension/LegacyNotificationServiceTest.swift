@@ -20,8 +20,9 @@ import Foundation
 import XCTest
 import WireNotificationEngine
 import Wire_Notification_Service_Extension
+import WireTesting
 
-final class LegacyNotificationServiceTests: XCTestCase {
+final class LegacyNotificationServiceTests: ZMTestCase {
 
     var sut: LegacyNotificationService!
     var request: UNNotificationRequest!

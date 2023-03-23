@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 extension MockMessage: AudioTrack {
 
@@ -51,7 +52,7 @@ extension MockMessage: AudioTrack {
     }
 }
 
-final class AudioMessageViewTests: XCTestCase {
+final class AudioMessageViewTests: ZMTestCase {
 
     var sut: AudioMessageView!
     var mediaPlaybackManager: MediaPlaybackManager!

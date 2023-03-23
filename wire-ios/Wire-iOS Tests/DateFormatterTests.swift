@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class DateFormatterTests: XCTestCase {
+final class DateFormatterTests: ZMTestCase {
 
     override func tearDown() {
         XCTestCase.resetDayFormatter()

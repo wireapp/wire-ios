@@ -19,7 +19,7 @@
 import XCTest
 @testable import Ziphy
 
-class ZiphyRequestGeneratorTests: XCTestCase {
+class ZiphyRequestGeneratorTests: ZMTestCase {
 
     var generator: ZiphyRequestGenerator!
 

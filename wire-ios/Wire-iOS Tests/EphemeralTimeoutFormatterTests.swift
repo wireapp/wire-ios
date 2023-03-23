@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-final class EphemeralTimeoutFormatterTests: XCTestCase {
+final class EphemeralTimeoutFormatterTests: ZMTestCase {
 
     let secondsInYear: TimeInterval = 31536000
 

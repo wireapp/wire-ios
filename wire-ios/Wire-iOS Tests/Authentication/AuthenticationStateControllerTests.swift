@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
 class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDelegate {
 
@@ -31,7 +32,7 @@ class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDe
 
 }
 
-class AuthenticationStateControllerTests: XCTestCase {
+class AuthenticationStateControllerTests: ZMTestCase {
 
     var stateController: AuthenticationStateController!
     var delegate: MockAuthenticationStateControllerDelegate!

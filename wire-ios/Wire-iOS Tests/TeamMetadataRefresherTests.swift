@@ -18,8 +18,9 @@
 
 import XCTest
 @testable import Wire
+import WireTesting
 
-class TeamMetadataRefresherTests: XCTestCase {
+class TeamMetadataRefresherTests: ZMTestCase {
 
     private var mockSelfUser: MockUserType!
 

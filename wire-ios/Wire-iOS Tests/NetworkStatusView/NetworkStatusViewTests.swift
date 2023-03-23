@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import Wire
+import WireTesting
 
 class MockContainer: NetworkStatusViewDelegate {
     var shouldAnimateNetworkStatusView: Bool = true
@@ -30,7 +31,7 @@ class MockContainer: NetworkStatusViewDelegate {
     }
 }
 
-final class NetworkStatusViewTests: XCTestCase {
+final class NetworkStatusViewTests: ZMTestCase {
     var sut: NetworkStatusView!
     var mockApplication: MockApplication!
     var mockContainer: MockContainer!

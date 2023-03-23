@@ -21,8 +21,9 @@ import WireCommonComponents
 @testable import Wire
 
 import MobileCoreServices
+import WireTesting
 
-final class FilePreviewGeneratorTests: XCTestCase {
+final class FilePreviewGeneratorTests: ZMTestCase {
     func testThatItDoesNotBreakOn0x0PDF() {
         // given
         let pdfPath = Bundle(for: type(of: self)).path(forResource: "0x0", ofType: "pdf")!
