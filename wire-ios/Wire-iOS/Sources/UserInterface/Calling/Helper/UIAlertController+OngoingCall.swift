@@ -28,9 +28,9 @@ extension UIAlertController {
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
         return ongoingCallConfirmation(
-            titleKey: OngoingCallAlert.alertTitle,
-            messageKey: OngoingCallAlert.Join.message,
-            buttonTitleKey: OngoingCallAlert.Join.button,
+            title: OngoingCallAlert.alertTitle,
+            message: OngoingCallAlert.Join.message,
+            buttonTitle: OngoingCallAlert.Join.button,
             forceAlertModal: forceAlertModal,
             completion: completion
         )
@@ -61,9 +61,9 @@ extension UIAlertController {
     // MARK: - Helper
 
     private static func ongoingCallConfirmation(
-        titleKey: String,
-        messageKey: String,
-        buttonTitleKey: String,
+        title: String,
+        message: String,
+        buttonTitle: String,
         forceAlertModal: Bool,
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
@@ -72,11 +72,11 @@ extension UIAlertController {
         let effectiveStyle = forceAlertModal ? .alert : defaultStyle
 
         let controller = UIAlertController(
-            title: effectiveStyle == .alert ? titleKey : messageKey,
-            message: effectiveStyle == .alert ? messageKey : nil,
+            title: effectiveStyle == .alert ? title : message,
+            message: effectiveStyle == .alert ? message : nil,
             preferredStyle: effectiveStyle
         )
-        controller.addAction(.init(title: buttonTitleKey, style: .default) { _ in completion(true) })
+        controller.addAction(.init(title: buttonTitle, style: .default) { _ in completion(true) })
         controller.addAction(.cancel { completion(false) })
         return controller
     }
