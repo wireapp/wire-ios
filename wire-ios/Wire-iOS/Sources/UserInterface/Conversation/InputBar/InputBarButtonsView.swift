@@ -151,25 +151,23 @@ final class InputBarButtonsView: UIView {
     }
 
     private func layoutAndConstrainButtonRows() {
-        let minButtonWidth: CGFloat = constants.minimumButtonWidth(forWidth: bounds.width)
+        let minButtonWidth = constants.minimumButtonWidth(forWidth: bounds.width)
 
-        guard bounds.size.width >= minButtonWidth * 2 else { return }
-
-        defer {
-            showRow(0, animated: true)
+        guard bounds.size.width >= minButtonWidth * 2 else {
+            return
         }
 
         buttonInnerContainer.removeSubviews()
 
-        buttons.forEach {
-            $0.roundCorners(edge: .leading)
-            $0.roundCorners(edge: .trailing)
-            $0.removeFromSuperview()
-            buttonInnerContainer.addSubview($0)
+        for button in buttons {
+            button.roundCorners(edge: .leading)
+            button.roundCorners(edge: .trailing)
+            button.removeFromSuperview()
+            buttonInnerContainer.addSubview(button)
         }
 
         let ratio = floorf(Float(bounds.width / minButtonWidth))
-        let numberOfButtons: Int = Int(ratio)
+        let numberOfButtons = Int(ratio)
         multilineLayout = numberOfButtons < buttons.count
 
         let (firstRow, secondRow): ([UIButton], [UIButton])
@@ -190,22 +188,31 @@ final class InputBarButtonsView: UIView {
         firstRow.last?.roundCorners(edge: .trailing, radius: 12)
         secondRow.first?.roundCorners(edge: .leading, radius: 12)
 
-        var constraints = constrainRowOfButtons(firstRow,
-                                                inset: 0,
-                                                rowIsFull: true,
-                                                referenceButton: .none)
+        var constraints = constrainRowOfButtons(
+            firstRow,
+            inset: 0,
+            rowIsFull: true,
+            referenceButton: .none
+        )
 
         defer {
             NSLayoutConstraint.activate(constraints)
+            showRow(0, animated: true)
         }
 
-        guard !secondRow.isEmpty else { return }
+        guard !secondRow.isEmpty else {
+            return
+        }
 
         let filled = secondRow.count == numberOfButtons
         let referenceButton = firstRow.count > 1 ? firstRow[1] : firstRow[0]
 
-        constraints.append(contentsOf: constrainRowOfButtons(secondRow, inset: constants.buttonsBarHeight, rowIsFull: filled, referenceButton: referenceButton)
-        )
+        constraints.append(contentsOf: constrainRowOfButtons(
+            secondRow,
+            inset: constants.buttonsBarHeight,
+            rowIsFull: filled,
+            referenceButton: referenceButton
+        ))
 
         setupAccessibility()
     }
