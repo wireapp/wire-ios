@@ -142,6 +142,10 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         super.tearDown()
     }
 
+    override func invokeTest() {
+        superCaller.callSuperInvokeTest(fire: super.invokeTest, on: self)
+    }
+
     func removeContentsOfDocumentsDirectory() {
         do {
             let contents = try FileManager.default.contentsOfDirectory(at: documentsDirectory!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
