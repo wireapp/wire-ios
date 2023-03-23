@@ -28,6 +28,6 @@ public protocol XCTestCaseSuperCallerContainer {
 
 extension XCTestCase: XCTestCaseSuperCallerContainer {
     public var superCaller: XCTestCaseSuperCaller {
-        return FlakyTestDetectorSuperCaller()
+        return PlainTestCaseSuperCaller()
     }
 }
