@@ -195,7 +195,6 @@ final class ProfileHeaderViewController: UIViewController {
         updateGroupRoleIndicator()
         updateHandleLabel()
         updateTeamLabel()
-        updateWarningView()
 
         addChild(availabilityTitleViewController)
 
@@ -286,7 +285,7 @@ final class ProfileHeaderViewController: UIViewController {
         updateTeamLabel()
         updateImageButton()
         updateAvailabilityVisibility()
-        updateWarningView()
+        warningView.update(withUser: user)
     }
 
     private func updateHandleLabel() {
@@ -324,11 +323,6 @@ final class ProfileHeaderViewController: UIViewController {
             imageView.accessibilityTraits = [.image]
             imageView.isUserInteractionEnabled = false
         }
-    }
-
-    private func updateWarningView() {
-        warningView.isHidden = user.isConnected
-        warningView.update(withUser: user)
     }
 }
 

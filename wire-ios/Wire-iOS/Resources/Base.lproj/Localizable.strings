@@ -295,6 +295,8 @@
 "conversation.call.many_participants_confirmation.call" = "Call";
 
 "conversation.connection_view.in_address_book" = "in Contacts";
+"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "Send Message";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";

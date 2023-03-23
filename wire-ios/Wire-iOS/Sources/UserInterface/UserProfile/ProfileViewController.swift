@@ -55,7 +55,7 @@ final class ProfileViewController: UIViewController {
     private let incomingRequestFooter: IncomingRequestFooterView = IncomingRequestFooterView()
     private let usernameDetailsView: UserNameDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
-    private var  incomingRequestFooterBottomConstraint: NSLayoutConstraint?
+    private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
 
     private let profileTitleView: ProfileTitleView = ProfileTitleView()
 
@@ -156,10 +156,6 @@ final class ProfileViewController: UIViewController {
         }
 
         presentAlert(controller, targetView: targetView)
-    }
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ColorScheme.default.statusBarStyle
     }
 
     override func loadView() {
