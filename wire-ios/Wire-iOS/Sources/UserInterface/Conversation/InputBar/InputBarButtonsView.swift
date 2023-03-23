@@ -157,33 +157,35 @@ final class InputBarButtonsView: UIView {
             return
         }
 
+        // Reset the container.
         buttonInnerContainer.removeSubviews()
 
+        // Reset the buttons.
         for button in buttons {
-            button.roundCorners(edge: .leading)
-            button.roundCorners(edge: .trailing)
+            button.removeRoundedCorners()
             button.removeFromSuperview()
             buttonInnerContainer.addSubview(button)
         }
 
-        let ratio = floorf(Float(bounds.width / minButtonWidth))
-        let numberOfButtons = Int(ratio)
-        multilineLayout = numberOfButtons < buttons.count
+        // Distribute buttons over rows.
+        let maxNumberOfButtonsPerRow = Int(floorf(Float(bounds.width / minButtonWidth)))
+        let isMultilineLayout = buttons.count > maxNumberOfButtonsPerRow
 
-        let (firstRow, secondRow): ([UIButton], [UIButton])
+        let firstRow, secondRow: [UIButton]
 
-        expandRowButton.isHidden = !multilineLayout
-
-        if multilineLayout {
+        if isMultilineLayout {
             firstRow = buttons.prefix(customButtonCount) + [expandRowButton]
             secondRow = [UIButton](buttons.suffix(buttons.count - customButtonCount))
             buttonRowHeight.constant = constants.buttonsBarHeight * 2
+            expandRowButton.isHidden = false
         } else {
             firstRow = buttons
             secondRow = []
             buttonRowHeight.constant = constants.buttonsBarHeight
+            expandRowButton.isHidden = true
         }
 
+        // Round buttons.
         firstRow.first?.roundCorners(edge: .leading, radius: 12)
         firstRow.last?.roundCorners(edge: .trailing, radius: 12)
         secondRow.first?.roundCorners(edge: .leading, radius: 12)
@@ -204,7 +206,7 @@ final class InputBarButtonsView: UIView {
             return
         }
 
-        let filled = secondRow.count == numberOfButtons
+        let filled = secondRow.count == maxNumberOfButtonsPerRow
         let referenceButton = firstRow.count > 1 ? firstRow[1] : firstRow[0]
 
         constraints.append(contentsOf: constrainRowOfButtons(
