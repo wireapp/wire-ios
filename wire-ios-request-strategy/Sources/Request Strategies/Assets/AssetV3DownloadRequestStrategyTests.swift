@@ -78,7 +78,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         otrKey: Data = Data.randomEncryptionKey(),
         sha: Data  = Data.randomEncryptionKey()
     ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
-
+        
         let isFederationEnabled = apiVersion > .v0
         let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let messageDomain = isFederationEnabled ? UUID.create().transportString() : nil
@@ -100,7 +100,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.saveOrRollback()
         return (message, assetId, token, domain)
     }
-
+    
     fileprivate func deleteDownloadedFileFor(message: ZMAssetClientMessage) {
         coreDataStack.viewContext.zm_fileAssetCache.deleteAssetData(message)
         coreDataStack.syncContext.zm_fileAssetCache.deleteAssetData(message)
@@ -332,7 +332,9 @@ extension AssetV3DownloadRequestStrategyTests {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
 
         var message: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
@@ -382,10 +384,10 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-//        When the backend redirects to the cloud service to get the image, it could be that the
-//        network bandwidth of the device is really bad. If the time interval is pretty long before
-//        the connectivity returns, the cloud responds with an error having status code 403
-//        -> retry the image request and do not delete the asset client message.
+    //        When the backend redirects to the cloud service to get the image, it could be that the
+    //        network bandwidth of the device is really bad. If the time interval is pretty long before
+    //        the connectivity returns, the cloud responds with an error having status code 403
+    //        -> retry the image request and do not delete the asset client message.
     func testThatItMarksDownloadAsFailedIfCannotDownload_TemporaryError_403_V3() {
         let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
@@ -492,7 +494,9 @@ extension AssetV3DownloadRequestStrategyTests {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
 
@@ -531,7 +535,9 @@ extension AssetV3DownloadRequestStrategyTests {
     func testThatItRecategorizeMessageAfterDownloadingAssetContent() {
         let plainTextData = self.verySmallJPEGData()
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 
@@ -543,13 +549,13 @@ extension AssetV3DownloadRequestStrategyTests {
             var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
             imageMetaData.tag = "medium"
             asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
-                                                        mimeType: "image/jpeg",
-                                                        name: nil,
-                                                        imageMetaData: imageMetaData)
+                                                       mimeType: "image/jpeg",
+                                                       name: nil,
+                                                       imageMetaData: imageMetaData)
             asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
-                                                          sha256: sha,
-                                                          assetId: "someId",
-                                                          assetToken: "someToken")
+                                                         sha256: sha,
+                                                         assetId: "someId",
+                                                         assetToken: "someToken")
 
             let genericMessage = GenericMessage(content: asset, nonce: messageId)
 
@@ -596,14 +602,16 @@ extension AssetV3DownloadRequestStrategyTests {
 
     func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() {
         guard let plainTextData = ("<svg width=\"100\" height=\"100\">"
-            + "<rect width=\"100\" height=\"100\"/>"
-            + "</svg>").data(using: .utf8) else {
-                XCTFail("Unable to convert SVG to Data")
-                return
+                                   + "<rect width=\"100\" height=\"100\"/>"
+                                   + "</svg>").data(using: .utf8) else {
+            XCTFail("Unable to convert SVG to Data")
+            return
         }
 
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 
@@ -615,13 +623,13 @@ extension AssetV3DownloadRequestStrategyTests {
             var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
             imageMetaData.tag = "medium"
             asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
-                                                        mimeType: "image/svg+xml",
-                                                        name: nil,
-                                                        imageMetaData: imageMetaData)// Even if we treat them as files, SVGs are sent as images.
+                                                       mimeType: "image/svg+xml",
+                                                       name: nil,
+                                                       imageMetaData: imageMetaData)// Even if we treat them as files, SVGs are sent as images.
             asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
-                                                          sha256: sha,
-                                                          assetId: "someId",
-                                                          assetToken: "someToken")
+                                                         sha256: sha,
+                                                         assetId: "someId",
+                                                         assetToken: "someToken")
 
             let genericMessage = GenericMessage(content: asset, nonce: messageId)
 

@@ -55,7 +55,8 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
         let key = Data.randomEncryptionKey()
         let encryptedData = imageData.zmEncryptPrefixingPlainTextIV(key: key)
-        let sha = encryptedData.zmSHA256Digest()
+
+        let sha = encryptedData!.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
 
         do {
@@ -71,7 +72,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         conversation.append(message)
         syncMOC.saveOrRollback()
 
-        return (message, encryptedData)
+        return (message, encryptedData!)
     }
 
     func createFileMessage() -> ZMAssetClientMessage {

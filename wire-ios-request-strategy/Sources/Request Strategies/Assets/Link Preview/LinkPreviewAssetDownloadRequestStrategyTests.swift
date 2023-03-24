@@ -297,7 +297,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let assetID = UUID.create().transportString()
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
-        let encrypted = data.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encrypted = data.zmEncryptPrefixingPlainTextIV(key: otrKey) else { return }
         let linkPreview = createLinkPreview(assetID, otrKey: otrKey, sha256: encrypted.zmSHA256Digest())
         let nonce = UUID.create()
 

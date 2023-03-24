@@ -320,7 +320,9 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
