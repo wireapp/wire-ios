@@ -316,14 +316,9 @@ private extension AppDelegate {
     }
 
     private var requiredPushTokenType: PushToken.TokenType {
-        // From iOS 15 our "unrestricted-voip" entitlement is no longer supported,
-        // so users should register for standard push tokens instead and use the
-        // notification service extension.
-        if #available(iOS 15.0, *) {
-            return .standard
-        } else {
-            return .voip
-        }
+        // Previously VoIP push were available for iOS <15
+        // this forces transition to standard ones.
+        return .standard
     }
 
 }
