@@ -39,7 +39,7 @@ extension GenericMessage {
         }
 
         do {
-            let encryptedData = try messageData.zmEncryptPrefixingPlainTextIV(key: aesKey) 
+            let encryptedData = try messageData.zmEncryptPrefixingPlainTextIV(key: aesKey)
             let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
             return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
         } catch {

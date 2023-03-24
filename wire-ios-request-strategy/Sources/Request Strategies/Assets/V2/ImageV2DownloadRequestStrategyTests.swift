@@ -73,7 +73,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         message.sender = sender
         conversation.append(message)
         syncMOC.saveOrRollback()
-        
+
         return (message, encryptedData)
     }
 

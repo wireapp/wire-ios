@@ -78,7 +78,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         otrKey: Data = Data.randomEncryptionKey(),
         sha: Data  = Data.randomEncryptionKey()
     ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
-        
+
         let isFederationEnabled = apiVersion > .v0
         let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let messageDomain = isFederationEnabled ? UUID.create().transportString() : nil
@@ -100,7 +100,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.saveOrRollback()
         return (message, assetId, token, domain)
     }
-    
+
     fileprivate func deleteDownloadedFileFor(message: ZMAssetClientMessage) {
         coreDataStack.viewContext.zm_fileAssetCache.deleteAssetData(message)
         coreDataStack.syncContext.zm_fileAssetCache.deleteAssetData(message)

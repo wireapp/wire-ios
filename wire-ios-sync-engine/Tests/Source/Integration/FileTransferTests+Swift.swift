@@ -91,7 +91,8 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()
@@ -141,7 +142,8 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't Encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()
@@ -201,7 +203,8 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()
@@ -339,7 +342,8 @@ extension FileTransferTests_Swift {
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        guard let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()
@@ -410,7 +414,8 @@ extension FileTransferTests_Swift {
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        guard let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()
@@ -514,7 +519,8 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()
@@ -571,7 +577,8 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+        guard let encryptedAsset = try? assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            XCTFail("Can't encrypt asset")
             return
         }
         let sha256 = encryptedAsset.zmSHA256Digest()

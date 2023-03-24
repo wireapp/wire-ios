@@ -737,7 +737,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         let properties = ZMIImageProperties(size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), length: UInt(imageData.count), mimeType: "image/jpeg")
 
         let otrKey = Data.randomEncryptionKey()
-        encryptedData = imageData.zmEncryptPrefixingPlainTextIV(key: otrKey)!
+        encryptedData = try! imageData.zmEncryptPrefixingPlainTextIV(key: otrKey)
 
         let sha = encryptedData.zmSHA256Digest()
 
