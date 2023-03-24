@@ -56,6 +56,7 @@ extension NSData_ZMSCryptoTests {
 
         // when
         guard let encryptedData = try? data.zmEncryptPrefixingPlainTextIV(key: key) else {
+            XCTFail("Could not encrypt data")
             return
         }
 
