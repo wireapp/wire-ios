@@ -106,12 +106,20 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupObserver()
+        setup()
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        setup()
+    }
+
+    private func setup() {
         setupObserver()
+
+        if let datadog = DatadogWrapper.shared {
+            datadog.startMonitoring()
+        }
     }
 
     private func setupObserver() {
@@ -120,6 +128,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
         CrashReporter.setupAppCenterIfNeeded()
@@ -250,7 +259,12 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     /// Invoked when the user wants to post.
     @objc
     private func appendPostTapped() {
-        guard let sharingSession = sharingSession else { return }
+        WireLogger.shareExtension.info("user wants to send content with \(postContent?.attachments.count ?? 0) attachments")
+
+        guard let sharingSession = sharingSession else {
+            WireLogger.shareExtension.error("failed to send attachments: no sharing session")
+            return
+        }
 
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
@@ -259,21 +273,25 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             switch progress {
             case .preparing:
+                WireLogger.shareExtension.info("progress event: preparing")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
                     guard !postContent.sentAllSendables && nil == self.progressViewController else { return }
                     self.presentSendingProgress(mode: .preparing)
                 }
 
             case .startingSending:
+                WireLogger.shareExtension.info("progress event: start sending")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
                     guard postContent.sentAllSendables && nil == self.progressViewController else { return }
                     self.presentSendingProgress(mode: .sending)
                 }
 
             case .sending(let progress):
+                WireLogger.shareExtension.info("progress event: sending with progress: (\(progress))")
                 self.progressViewController?.progress = progress
 
             case .done:
+                WireLogger.shareExtension.info("progress event: done")
                 UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
                     self.view.alpha = 0
                     self.navigationController?.view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
@@ -282,12 +300,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 })
 
             case .conversationDidDegrade((let users, let strategyChoice)):
+                WireLogger.shareExtension.warn("progress event: converation did degrade")
                 if let conversation = postContent.target {
                     self.conversationDidDegrade(
                         change: ConversationDegradationInfo(conversation: conversation, users: users),
                         callback: strategyChoice)
                 }
             case .timedOut:
+                WireLogger.shareExtension.error("progress event: timed out")
                 self.popConfigurationViewController()
 
                 let alert = UIAlertController.alertWithOKButton(title: "share_extension.timeout.title".localized, message: "share_extension.timeout.message".localized)
@@ -295,6 +315,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 self.present(alert, animated: true)
 
             case .error(let error):
+                WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
                 if let errorDescription = (error as? UnsentSendableError )?.errorDescription {
                     let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription)
 
@@ -303,6 +324,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     }
                 }
             case .fileSharingRestriction:
+                WireLogger.shareExtension.warn("progress event: file sharing restricted")
                 let alert = UIAlertController.alertWithOKButton(title: "feature.flag.file_sharing.alert.title".localized,
                                                                 message: "feature.flag.file_sharing.alert.message" .localized)
                 self.present(alert, animated: true)

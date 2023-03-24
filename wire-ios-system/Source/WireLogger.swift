@@ -152,4 +152,7 @@ public extension WireLogger {
 
   static let mls = WireLogger(tag: "mls")
 
+  /// For logs related to any mls related flow.
+  static let shareExtension = WireLogger(tag: "share-extension")
+
 }
