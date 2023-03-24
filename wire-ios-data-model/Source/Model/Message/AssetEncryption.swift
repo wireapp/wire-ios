@@ -91,7 +91,9 @@ fileprivate extension Cache {
         }
 
         let encryptionKey = Data.randomEncryptionKey()
-        let encryptedData = plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
+        guard let encryptedData = plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey) else {
+            return nil
+        }
         let hash = encryptedData.zmSHA256Digest()
         self.storeAssetData(encryptedData, key: encryptedEntryKey, createdAt: Date())
 

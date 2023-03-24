@@ -249,7 +249,7 @@ extension ZMAssetClientMessageTests {
 
         let otrKey = Data.randomEncryptionKey()
         let encryptedData = data.zmEncryptPrefixingPlainTextIV(key: otrKey)
-        let sha256 = encryptedData.zmSHA256Digest()
+        let sha256 = encryptedData!.zmSHA256Digest()
         let preview = WireProtos.Asset.Preview(
             size: UInt64(data.count),
             mimeType: mimeType,
@@ -842,7 +842,7 @@ extension ZMAssetClientMessageTests {
             let processedData = sampleProcessedImageData(format)
             let otrKey = Data.randomEncryptionKey()
             let encryptedData = processedData.zmEncryptPrefixingPlainTextIV(key: otrKey)
-            let sha256 = encryptedData.zmSHA256Digest()
+            let sha256 = encryptedData!.zmSHA256Digest()
             let encryptionKeys = ZMImageAssetEncryptionKeys(otrKey: otrKey, sha256: sha256)
             let imageAsset = ImageAsset(mediumProperties: storeProcessed ? self.sampleImageProperties(.medium) : nil,
                                         processedProperties: storeProcessed ? self.sampleImageProperties(format) : nil,
@@ -855,7 +855,7 @@ extension ZMAssetClientMessageTests {
                 directory.storeAssetData(assetMessage, format: format, encrypted: false, data: processedData)
             }
             if storeEncrypted {
-                directory.storeAssetData(assetMessage, format: format, encrypted: true, data: encryptedData)
+                directory.storeAssetData(assetMessage, format: format, encrypted: true, data: encryptedData!)
             }
         }
 

@@ -268,7 +268,9 @@ extension FileAssetCacheTests {
         let message = createMessageForCaching()
         let plainTextData = Data.secureRandomData(ofLength: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
         sut.storeAssetData(message, encrypted: true, data: encryptedData)
         let sha = encryptedData.zmSHA256Digest()
 

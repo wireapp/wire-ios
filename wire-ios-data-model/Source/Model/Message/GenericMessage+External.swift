@@ -34,10 +34,13 @@ extension GenericMessage {
         guard
             let aesKey = NSData.randomEncryptionKey(),
             let messageData = try? message.serializedData()
-            else {
-                return nil
+        else {
+            return nil
         }
-        let encryptedData = messageData.zmEncryptPrefixingPlainTextIV(key: aesKey)
+
+        guard let encryptedData = messageData.zmEncryptPrefixingPlainTextIV(key: aesKey) else {
+            return nil
+        }
         let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
         return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
     }
