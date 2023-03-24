@@ -125,9 +125,9 @@ public extension Data {
         }
 
         encryptedData.count = copiedBytes
-        let outputBytes = encryptedData.prefix(ivSize)
+        let output = iv + encryptedData
 
-        return Data(outputBytes)
+        return output
 
     }
 

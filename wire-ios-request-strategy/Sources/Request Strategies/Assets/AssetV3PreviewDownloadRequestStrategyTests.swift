@@ -320,7 +320,9 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        guard let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+
+        guard let encryptedData = try? plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
+            XCTFail("Could not encrypt the text data")
             return
         }
         let sha = encryptedData.zmSHA256Digest()
