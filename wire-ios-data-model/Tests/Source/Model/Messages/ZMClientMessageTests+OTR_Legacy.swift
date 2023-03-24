@@ -19,7 +19,22 @@
 import XCTest
 @testable import WireDataModel
 
-final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {}
+final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
+
+    override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
+        super.setUp()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+
+}
 
 // MARK: - Payload creation
 extension ClientMessageTests_OTR_Legacy {

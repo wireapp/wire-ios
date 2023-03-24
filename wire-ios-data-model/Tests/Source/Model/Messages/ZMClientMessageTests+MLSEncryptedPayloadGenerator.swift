@@ -21,6 +21,19 @@ import Foundation
 
 final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessageTests {
 
+    override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
+        super.setUp()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+
     let encryptionFunction: (Data) throws -> Data = {
         $0.zmSHA256Digest()
     }
