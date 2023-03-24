@@ -69,11 +69,6 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        if DeveloperFlag.nseDebugEntryPoint.isOn {
-            contentHandler(request.debugContent)
-            return
-        }
-
       self.contentHandler = contentHandler
 
       guard let accountID = request.content.accountID else {
@@ -234,8 +229,7 @@ extension UNNotificationContent {
 
   static func debugMessageIfNeeded(message: String) -> UNNotificationContent {
       DatadogWrapper.shared?.log(level: .debug, message: message)
-      guard DeveloperFlag.nseDebugging.isOn else { return .empty }
-      return debug(message: message)
+      return .empty
   }
 
   static func debug(message: String) -> UNNotificationContent {
