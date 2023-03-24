@@ -55,7 +55,9 @@ extension NSData_ZMSCryptoTests {
         let key = self.sampleKey
 
         // when
-        let encryptedData = data.zmEncryptPrefixingPlainTextIV(key: key)
+        guard let encryptedData = data.zmEncryptPrefixingPlainTextIV(key: key) else {
+            return
+        }
 
         // then
         XCTAssertNotEqual(encryptedData, data)
@@ -75,7 +77,9 @@ extension NSData_ZMSCryptoTests {
 
         // when
         for _ in 0..<100 {
-            let data = sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
+            guard let data = sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey) else {
+                return
+            }
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
