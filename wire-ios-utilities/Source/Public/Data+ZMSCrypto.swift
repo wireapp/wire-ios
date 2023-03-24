@@ -20,6 +20,17 @@ import Foundation
 import CryptoKit
 import CommonCrypto
 
+/// Advanced Encryption Standard errors
+public enum AESError: Error {
+
+    /// The key length is incorrect
+    case keySizeError
+
+    /// Encryption failed
+    case encryptionFailed
+
+}
+
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
 public extension Data {
 
@@ -79,11 +90,11 @@ public extension Data {
         return (self as NSData).zmDecryptPrefixedIV(withKey: key)
     }
 
-    func zmEncryptPrefixingPlainTextIV(key: Data) -> Data? {
+    func zmEncryptPrefixingPlainTextIV(key: Data) throws -> Data {
 
         let keyLength = key.count
         guard keyLength == kCCKeySizeAES256 else {
-            return nil
+            throw AESError.keySizeError
         }
 
         let dataLength = size_t(self.count + kCCBlockSizeAES128)
@@ -110,7 +121,7 @@ public extension Data {
         )
 
         guard status == kCCSuccess else {
-            return nil
+            throw AESError.encryptionFailed
         }
 
         encryptedData.count = copiedBytes

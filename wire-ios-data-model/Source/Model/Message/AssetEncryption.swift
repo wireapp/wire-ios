@@ -91,13 +91,15 @@ fileprivate extension Cache {
         }
 
         let encryptionKey = Data.randomEncryptionKey()
-        guard let encryptedData = plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey) else {
+        do {
+            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
+            let hash = encryptedData.zmSHA256Digest()
+            self.storeAssetData(encryptedData, key: encryptedEntryKey, createdAt: Date())
+
+            return ZMImageAssetEncryptionKeys(otrKey: encryptionKey, sha256: hash)
+        } catch {
             return nil
         }
-        let hash = encryptedData.zmSHA256Digest()
-        self.storeAssetData(encryptedData, key: encryptedEntryKey, createdAt: Date())
-
-        return ZMImageAssetEncryptionKeys(otrKey: encryptionKey, sha256: hash)
     }
 }
 

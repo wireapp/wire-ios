@@ -38,11 +38,15 @@ extension GenericMessage {
             return nil
         }
 
-        guard let encryptedData = messageData.zmEncryptPrefixingPlainTextIV(key: aesKey) else {
+        do {
+            let encryptedData = try messageData.zmEncryptPrefixingPlainTextIV(key: aesKey) 
+            let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
+            return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
+        } catch {
+            zmLog.error("Cannot encrypt data with keys, error: \(error)")
             return nil
         }
-        let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
-        return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
+
     }
 
     /// Creates a genericMessage from a ZMUpdateEvent and  External
