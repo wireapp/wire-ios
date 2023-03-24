@@ -35,7 +35,12 @@ class CallEventHandler: CallEventHandlerProtocol {
 
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
         guard #available(iOS 14.5, *) else { return }
-        CXProvider.reportNewIncomingVoIPPushPayload(payload) { _ in }
+        WireLogger.calling.info("waking up main app to handle call event")
+        CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
+            if let error = error {
+                WireLogger.calling.error("failed to wake up main app: \(error.localizedDescription)")
+            }
+        }
     }
 
 }
