@@ -91,7 +91,9 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remoteData = WireProtos.Asset.RemoteData(withOTRKey: otrKey,
@@ -139,7 +141,9 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
@@ -197,7 +201,9 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce, expiresAfterTimeInterval: 30)
@@ -333,7 +339,9 @@ extension FileTransferTests_Swift {
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256, assetId: thumbnailIDString, assetToken: nil)
@@ -402,7 +410,9 @@ extension FileTransferTests_Swift {
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256, assetId: thumbnailIDString, assetToken: nil)
@@ -504,7 +514,9 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
@@ -559,7 +571,9 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        guard let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
+            return
+        }
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
