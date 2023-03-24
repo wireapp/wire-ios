@@ -18,6 +18,7 @@
 
 import Foundation
 import CryptoKit
+import CommonCrypto
 
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
 public extension Data {
@@ -78,8 +79,45 @@ public extension Data {
         return (self as NSData).zmDecryptPrefixedIV(withKey: key)
     }
 
-    func zmEncryptPrefixingPlainTextIV(key: Data) -> Data {
-        return (self as NSData).zmEncryptPrefixingPlainTextIV(withKey: key)
+    func zmEncryptPrefixingPlainTextIV(key: Data) -> Data? {
+
+        let keyLength = key.count
+        guard keyLength == kCCKeySizeAES256 else {
+            return nil
+        }
+
+        let dataLength = size_t(self.count + kCCBlockSizeAES128)
+        var encryptedData = Data(count: dataLength)
+        var copiedBytes: size_t = 0
+
+        let ivSize = kCCBlockSizeAES128
+        let iv = Data.secureRandomData(length: UInt(ivSize))
+
+        let encryptedDataBytes = encryptedData.withUnsafeMutableBytes {
+            return $0.baseAddress
+        }
+        let status = CCCrypt(CCOperation(kCCEncrypt),
+                             CCAlgorithm(kCCAlgorithmAES),
+                             CCOptions(kCCOptionPKCS7Padding),
+                             Array(key),
+                             keyLength,
+                             Array(iv),
+                             Array(self),
+                             self.count,
+                             encryptedDataBytes,
+                             encryptedData.count,
+                             &copiedBytes
+        )
+
+        guard status == kCCSuccess else {
+            return nil
+        }
+
+        encryptedData.count = copiedBytes
+        let outputBytes = encryptedData.prefix(ivSize)
+
+        return Data(outputBytes)
+
     }
 
     func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {
