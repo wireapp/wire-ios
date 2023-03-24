@@ -19,13 +19,32 @@
 import Foundation
 import WireRequestStrategy
 
-public enum NotificationSessionError: Error {
+public enum NotificationSessionError: LocalizedError {
 
     case accountNotAuthenticated
     case noEventID
     case invalidEventID
     case alreadyFetchedEvent
     case unknown
+
+    public var errorDescription: String? {
+        switch self {
+        case .accountNotAuthenticated:
+            return "user is not authenticated"
+
+        case .noEventID:
+            return "event id is missing in push payload"
+
+        case .invalidEventID:
+            return "invalid event id"
+
+        case .alreadyFetchedEvent:
+            return "event was already fetched"
+
+        case .unknown:
+            return "unknown"
+        }
+    }
 
 }
 

@@ -63,33 +63,46 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
         return groupID
     }
 
+    // MARK: - Life cycle
+
+    override init() {
+        WireLogger.notifications.info("initializing new legacy notification service")
+        super.init()
+    }
+
     // MARK: - Methods
 
     public override func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
+        WireLogger.notifications.info("legacy notification service will process request (\(request.identifier))")
+
         self.contentHandler = contentHandler
 
         guard let accountID = request.content.accountID else {
-            contentHandler(.debugMessageIfNeeded(message: "Missing account id."))
-            return
+            WireLogger.notifications.error("failed to process request: payload missing account ID")
+            return finishWithoutShowingNotification()
         }
 
-        guard let session = try? createSession(accountID: accountID) else {
-            contentHandler(.debugMessageIfNeeded(message: "Failed to create session."))
-            return
+        do {
+            session = try createSession(accountID: accountID)
+        } catch {
+            WireLogger.notifications.error("failed to process process request: could not create session: \(error.localizedDescription)")
+            return finishWithoutShowingNotification()
         }
 
-        session.processPushNotification(with: request.content.userInfo)
-
-        // Retain the session otherwise it will tear down.
-        self.session = session
+        session?.processPushNotification(with: request.content.userInfo)
     }
 
     public override func serviceExtensionTimeWillExpire() {
-        guard let contentHandler = contentHandler else { return }
-        contentHandler(.debugMessageIfNeeded(message: "Extension is expiring."))
+        WireLogger.notifications.warn("legacy service extension will expire")
+        finishWithoutShowingNotification()
+    }
+
+    private func finishWithoutShowingNotification() {
+        WireLogger.notifications.info("finishing without showing notification")
+        contentHandler?(.empty)
         tearDown()
     }
 
@@ -97,29 +110,33 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
         _ notification: ZMLocalNotification?,
         unreadConversationCount: Int
     ) {
+        guard let notification = notification else {
+            WireLogger.notifications.info("session did not generate a notification")
+            return finishWithoutShowingNotification()
+        }
+
+        WireLogger.notifications.info("session did generate a notification")
+
         defer { tearDown() }
 
         guard let contentHandler = contentHandler else { return }
 
-        guard let content = notification?.content else {
-            contentHandler(.debugMessageIfNeeded(message: "No notification generated."))
-            return
-        }
-
-        guard let mutabaleContent = content as? UNMutableNotificationContent else {
-            contentHandler(.debugMessageIfNeeded(message: "Content not mutable."))
-            return
+        guard let content = notification.content as? UNMutableNotificationContent else {
+            WireLogger.notifications.error("generated notification is not mutable")
+            return finishWithoutShowingNotification()
         }
 
         if #available(iOS 15, *) {
-            mutabaleContent.interruptionLevel = .timeSensitive
+            content.interruptionLevel = .timeSensitive
         }
 
-        let badgeCount = totalUnreadCount(unreadConversationCount)
-        mutabaleContent.badge = badgeCount
-        Logging.push.safePublic("Updated badge count to \(SanitizedString(stringLiteral: String(describing: badgeCount)))")
+        if let badgeCount = totalUnreadCount(unreadConversationCount) {
+            WireLogger.notifications.info("setting badge count to \(badgeCount.intValue)")
+            content.badge = badgeCount
+        }
 
-        contentHandler(mutabaleContent)
+        WireLogger.notifications.info("showing notification to user")
+        contentHandler(content)
     }
 
     public func reportCallEvent(
@@ -136,22 +153,8 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
     }
 
     public func notificationSessionDidFailWithError(error: NotificationSessionError) {
-        switch error {
-        case .accountNotAuthenticated:
-            contentHandler?(.debugMessageIfNeeded(message: "user is not authenticated"))
-
-        case .noEventID:
-            contentHandler?(.debugMessageIfNeeded(message: "no event id in push payload"))
-
-        case .invalidEventID:
-            contentHandler?(.debugMessageIfNeeded(message: "event id is invalid"))
-
-        case .alreadyFetchedEvent:
-            contentHandler?(.debugMessageIfNeeded(message: "already fetched event"))
-
-        case .unknown:
-            contentHandler?(.debugMessageIfNeeded(message: "unknown error"))
-        }
+        WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+        finishWithoutShowingNotification()
     }
 
     // MARK: - Helpers
@@ -227,17 +230,6 @@ extension UNNotificationContent {
         return Self()
     }
 
-    static func debugMessageIfNeeded(message: String) -> UNNotificationContent {
-        DatadogWrapper.shared?.log(level: .debug, message: message)
-        return .empty
-    }
-
-    static func debug(message: String) -> UNNotificationContent {
-        let content = UNMutableNotificationContent()
-        content.title = "DEBUG 👀"
-        content.body = message
-        return content
-    }
 
     var accountID: UUID? {
         guard
