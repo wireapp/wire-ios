@@ -199,32 +199,6 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
 
 // MARK: - Extensions
 
-extension UNNotificationRequest {
-
-    var mutableContent: UNMutableNotificationContent? {
-        return content.mutableCopy() as? UNMutableNotificationContent
-    }
-
-    var debugContent: UNNotificationContent {
-        let content = UNMutableNotificationContent()
-        content.title = "DEBUG 👀"
-
-        guard
-            let notificationData = self.content.userInfo["data"] as? [String: Any],
-            let userID = notificationData["user"] as? String,
-            let data = notificationData["data"] as? [String: Any],
-            let eventID = data["id"] as? String
-        else {
-            content.body = "Received a push"
-            return content
-        }
-
-        content.body = "USER: \(userID), EVENT: \(eventID)"
-        return content
-    }
-
-}
-
 extension UNNotificationContent {
 
     // With the "filtering" entitlement, we can tell iOS to not display a user notification by
