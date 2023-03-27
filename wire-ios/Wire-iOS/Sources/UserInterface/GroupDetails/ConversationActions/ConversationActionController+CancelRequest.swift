@@ -29,22 +29,22 @@ enum CancelConnectionRequestResult {
 
     private var localizationKey: String {
         switch self {
-        case .cancel: return "profile.cancel_connection_request_dialog.button_no"
+        case .cancel: return "profile.cancel_connection_request_dialog.button_cancel"
         case .cancelRequest: return "profile.cancel_connection_request_dialog.button_yes"
         }
     }
 
     private var style: UIAlertAction.Style {
-        guard case .cancel = self else { return .destructive }
-        return .cancel
+        guard case .cancel = self else { return .cancel }
+        return .default
     }
 
     func action(_ handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertAction {
         return .init(title: title, style: style) { _ in handler(self) }
     }
 
-    static func title(for user: UserType) -> String {
-        return "profile.cancel_connection_request_dialog.message".localized(args: user.name ?? "")
+    static func message(for user: UserType) -> String {
+         return L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
     }
 
     static var all: [CancelConnectionRequestResult] {
@@ -52,7 +52,8 @@ enum CancelConnectionRequestResult {
     }
 
     static func controller(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertController {
-        let controller = UIAlertController(title: title(for: user), message: nil, preferredStyle: .actionSheet)
+        let title = L10n.Localizable.Profile.CancelConnectionRequestDialog.title
+        let controller = UIAlertController(title: title, message: message(for: user), preferredStyle: .alert)
         all.map { $0.action(handler) }.forEach(controller.addAction)
         return controller
     }
