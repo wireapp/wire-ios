@@ -352,10 +352,9 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         sut = ProfileViewController(user: mockUser,
                                     viewer: selfUser,
                                     context: .profileViewer)
-        let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
         // THEN
-        verify(matching: navWrapperController)
+        verify(matching: sut)
     }
 }
