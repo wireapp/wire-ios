@@ -112,6 +112,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
+        WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
+
         var eventIds: [UUID] = []
         var parsedEvents: [ZMUpdateEvent] = []
         var latestEventId: UUID?
