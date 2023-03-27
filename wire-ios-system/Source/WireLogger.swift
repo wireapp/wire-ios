@@ -142,5 +142,7 @@ public extension WireLogger {
 
     static let proteus = WireLogger(tag: "proteus")
     static let shareExtension = WireLogger(tag: "share-extension")
+    static let notifications = WireLogger(tag: "notifications")
+    static let calling = WireLogger(tag: "calling")
 
 }
