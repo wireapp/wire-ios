@@ -43,7 +43,7 @@ extension GenericMessage {
             let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
             return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
         } catch {
-            zmLog.error("Cannot encrypt data with keys, error: \(error)")
+            WireLogger.messaging.error("failed to encrypt generic message: \(error.localizedDescription)")
             return nil
         }
 
