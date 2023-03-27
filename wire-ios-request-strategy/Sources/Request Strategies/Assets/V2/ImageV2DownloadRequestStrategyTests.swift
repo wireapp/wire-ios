@@ -42,7 +42,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     // MARK: Helpers
 
-    func createV2ImageMessage(withAssetId assetId: UUID?) -> (ZMAssetClientMessage, Data) {
+    func createV2ImageMessage(withAssetId assetId: UUID?) throws -> (ZMAssetClientMessage, Data) {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
 
@@ -54,10 +54,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
         let key = Data.randomEncryptionKey()
-        guard let encryptedData = try? imageData.zmEncryptPrefixingPlainTextIV(key: key) else {
-            XCTFail("Could not encrypt the image")
-            return (message, Data())
-        }
+        let encryptedData = try imageData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
 
@@ -102,9 +99,14 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     func testRequestToDownloadAssetIsCreated() {
         // GIVEN
-        var message: ZMAssetClientMessage!
+        var message: ZMAssetClientMessage?
         self.syncMOC.performGroupedBlock {
-            message = self.createV2ImageMessage(withAssetId: UUID()).0
+            message = try? self.createV2ImageMessage(withAssetId: UUID()).0
+
+            guard let message = message else {
+                XCTFail("no message")
+                return
+            }
 
             // remove image data or it won't be downloaded
             self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
@@ -113,6 +115,11 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
+            guard let message = message else {
+                XCTFail("failed to create message")
+                return
+            }
+
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -124,7 +131,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     func testRequestToDownloadAssetIsNotCreated_WhenAssetIdIsNotAvailable() {
         // GIVEN
         self.syncMOC.performGroupedBlock {
-            let (message, _) = self.createV2ImageMessage(withAssetId: nil)
+            guard let (message, _) = try? self.createV2ImageMessage(withAssetId: nil) else {
+                XCTFail("failed to create message")
+                return
+            }
 
             // remove image data or it won't be downloaded
             self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
@@ -144,7 +154,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     func testRequestToDownloadFileAssetIsNotCreated_BeforeRequestingDownloaded() {
         syncMOC.performGroupedBlock {
             // GIVEN
-            let (message, _) = self.createV2ImageMessage(withAssetId: nil)
+            guard let (message, _) = try? self.createV2ImageMessage(withAssetId: nil) else {
+                XCTFail("failed to create message")
+                return
+            }
 
             // remove image data or it won't be downloaded
             self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
@@ -165,7 +178,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     func testRequestToDownloadFileAssetIsNotCreated_WhenAlreadyDownloaded() {
         syncMOC.performGroupedBlock {
             // GIVEN
-            let (message, _) = self.createV2ImageMessage(withAssetId: nil)
+            guard let (message, _) = try? self.createV2ImageMessage(withAssetId: nil) else {
+                XCTFail("failed to create message")
+                return
+            }
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -184,9 +200,12 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     // MARK: - Response Handling
 
     func testThatMessageIsDeleted_WhenResponseSaysItDoesntExistOnBackend() {
-        let (nonce, conversation) = syncMOC.performGroupedAndWait { _ -> (UUID, ZMConversation) in
+        let nonceAndConversation: (UUID, ZMConversation)? = syncMOC.performGroupedAndWait { _ -> (UUID, ZMConversation)? in
             // GIVEN
-            let (message, _) = self.createV2ImageMessage(withAssetId: UUID.create())
+            guard let (message, _) = try? self.createV2ImageMessage(withAssetId: UUID.create()) else {
+                XCTFail("failed to create message")
+                return nil
+            }
             let nonceAndConversation = (message.nonce!, message.conversation!)
 
             // WHEN
@@ -201,6 +220,11 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedAndWait { moc in
+            guard let (nonce, conversation) = nonceAndConversation else {
+                XCTFail("failed to get nonce and conversation")
+                return
+            }
+
             // GIVEN
             moc.processPendingChanges() // Make sure the deletion has been processed
             let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc, prefetchResult: nil)
@@ -216,7 +240,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         var encryptedData: Data!
         self.syncMOC.performGroupedBlock {
-            let messageAndEncryptedData = self.createV2ImageMessage(withAssetId: UUID())
+            guard let messageAndEncryptedData = try? self.createV2ImageMessage(withAssetId: UUID()) else {
+                XCTFail("failed to create message")
+                return
+            }
             message = messageAndEncryptedData.0
             encryptedData = messageAndEncryptedData.1
 

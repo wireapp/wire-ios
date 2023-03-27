@@ -328,14 +328,11 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 // tests on result of request
 extension AssetV3DownloadRequestStrategyTests {
 
-    func testThatItMarksDownloadAsSuccessIfSuccessfulDownloadAndDecryption_V3() {
+    func testThatItMarksDownloadAsSuccessIfSuccessfulDownloadAndDecryption_V3() throws {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        guard let encryptedData = try? plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
-            XCTFail("Could not encrypt data")
-            return
-        }
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
 
         var message: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
@@ -490,15 +487,12 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItSendsNonCoreDataChangeNotification_AfterSuccessfullyDownloadingAsset() {
+    func testThatItSendsNonCoreDataChangeNotification_AfterSuccessfullyDownloadingAsset() throws {
 
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        guard let encryptedData = try? plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
-            XCTFail("Could not encrypt data")
-            return
-        }
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
 
@@ -534,13 +528,10 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItRecategorizeMessageAfterDownloadingAssetContent() {
+    func testThatItRecategorizeMessageAfterDownloadingAssetContent() throws {
         let plainTextData = self.verySmallJPEGData()
         let key = Data.randomEncryptionKey()
-        guard let encryptedData = try? plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
-            XCTFail("Could not encrypt data")
-            return
-        }
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 
@@ -603,7 +594,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() {
+    func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() throws {
         guard let plainTextData = ("<svg width=\"100\" height=\"100\">"
                                    + "<rect width=\"100\" height=\"100\"/>"
                                    + "</svg>").data(using: .utf8) else {
@@ -612,10 +603,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
 
         let key = Data.randomEncryptionKey()
-        guard let encryptedData = try? plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
-            XCTFail("Could not encrypt data")
-            return
-        }
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 

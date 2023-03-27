@@ -233,7 +233,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(original?.size, size)
     }
 
-    func testThatItMergesMultipleGenericAssetMessagesForFileMessages() {
+    func testThatItMergesMultipleGenericAssetMessagesForFileMessages() throws {
         let nonce = UUID.create()
         let mimeType = "text/plain"
         let filename = "document.txt"
@@ -248,10 +248,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
 
         let otrKey = Data.randomEncryptionKey()
-        guard let encryptedData = try? data.zmEncryptPrefixingPlainTextIV(key: otrKey) else {
-            XCTFail("Could not encrypt data")
-            return
-        }
+        let encryptedData = try data.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedData.zmSHA256Digest()
         let preview = WireProtos.Asset.Preview(
             size: UInt64(data.count),

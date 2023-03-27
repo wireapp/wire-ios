@@ -316,15 +316,11 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItStoresAndDecryptsTheRawDataInTheImageCacheWhenItReceivesAResponse() {
+    func testThatItStoresAndDecryptsTheRawDataInTheImageCacheWhenItReceivesAResponse() throws {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-
-        guard let encryptedData = try? plainTextData.zmEncryptPrefixingPlainTextIV(key: key) else {
-            XCTFail("Could not encrypt the text data")
-            return
-        }
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
