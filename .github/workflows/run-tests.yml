@@ -192,16 +192,6 @@ jobs:
           echo "Testing WireRequestStrategy..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
-          
-      - name: Test WireNotificationEngine
-        if: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
-        run: |
-          echo "WireNotificationEngine has changes"
-          echo "Building WireNotificationEngine..."
-          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          echo "Testing WireNotificationEngine..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
-          exit ${PIPESTATUS[0]}
 
       - name: Test WireShareEngine
         if: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
@@ -230,6 +220,19 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           echo "Testing Wire-iOS..."
+          
+      # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
+      # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
+      # after the Wire-iOS.
+      - name: Test WireNotificationEngine
+        if: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
+        run: |
+          echo "WireNotificationEngine has changes"
+          echo "Building WireNotificationEngine..."
+          xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          echo "Testing WireNotificationEngine..."
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
+          exit ${PIPESTATUS[0]}
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2' | xcpretty
           exit ${PIPESTATUS[0]}
       
