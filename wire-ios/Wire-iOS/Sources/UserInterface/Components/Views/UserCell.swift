@@ -340,7 +340,6 @@ extension UserCell {
         return summary && UserCell.boldFont.font!
     }
 
-    static var correlationFormatters: [ColorSchemeVariant: AddressBookCorrelationFormatter] = [:]
 }
 
 // MARK: - Availability
