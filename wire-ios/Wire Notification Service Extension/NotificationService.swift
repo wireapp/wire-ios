@@ -38,12 +38,9 @@ public class NotificationService: UNNotificationServiceExtension {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
         DatadogWrapper.shared?.startMonitoring()
-        DatadogWrapper.shared?.log(level: .debug, message: "request: \(request.debugDescription)")
-        if DeveloperFlag.breakMyNotifications.isOn {
-            // By doing nothing, we hope to get in a state where iOS will no
-            // longer deliver pushes to us.
-            return
-        } else if DeveloperFlag.nseV2.isOn {
+        WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
+
+        if DeveloperFlag.nseV2.isOn {
             simpleService.didReceive(
                 request,
                 withContentHandler: contentHandler
@@ -57,11 +54,7 @@ public class NotificationService: UNNotificationServiceExtension {
     }
 
     public override func serviceExtensionTimeWillExpire() {
-        if DeveloperFlag.breakMyNotifications.isOn {
-            // By doing nothing, we hope to get in a state where iOS will no
-            // longer deliver pushes to us.
-            return
-        } else if DeveloperFlag.nseV2.isOn {
+        if DeveloperFlag.nseV2.isOn {
             simpleService.serviceExtensionTimeWillExpire()
         } else {
             legacyService.serviceExtensionTimeWillExpire()
