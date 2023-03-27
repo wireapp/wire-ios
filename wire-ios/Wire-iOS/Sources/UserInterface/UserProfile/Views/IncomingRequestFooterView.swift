@@ -63,12 +63,12 @@ class IncomingRequestFooterView: UIView {
         acceptButton.accessibilityIdentifier = "accept"
         acceptButton.setTitle("inbox.connection_request.connect_button_title".localized(uppercased: true), for: .normal)
         acceptButton.addTarget(self, action: #selector(acceptButtonTapped), for: .touchUpInside)
-        acceptButton.layer.cornerRadius = 8
+        acceptButton.layer.cornerRadius = 16
 
         ignoreButton.accessibilityIdentifier = "ignore"
         ignoreButton.setTitle("inbox.connection_request.ignore_button_title".localized(uppercased: true), for: .normal)
         ignoreButton.addTarget(self, action: #selector(ignoreButtonTapped), for: .touchUpInside)
-        ignoreButton.layer.cornerRadius = 8
+        ignoreButton.layer.cornerRadius = 16
 
         titleLabel.textColor = SemanticColors.Label.textDefault
         backgroundColor = SemanticColors.View.backgroundDefault
