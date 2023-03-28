@@ -35,10 +35,12 @@ extension ZMUserSession {
         }
 
         switch stage {
-        case .proteus(let userID):
+        case .proteus(let userID) where shouldSetupProteusService:
             setupProteus(userID: userID)
-        case .mls:
+        case .mls where shouldSetupMLSController:
             setupMLS()
+        default:
+            break
         }
     }
 
