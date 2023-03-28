@@ -144,5 +144,6 @@ public extension WireLogger {
     static let shareExtension = WireLogger(tag: "share-extension")
     static let notifications = WireLogger(tag: "notifications")
     static let calling = WireLogger(tag: "calling")
+    static let messaging = WireLogger(tag: "messaging")
 
 }

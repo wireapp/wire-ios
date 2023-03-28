@@ -48,14 +48,14 @@ class NSData_ZMSCryptoTests: XCTestCase {
 // MARK: - Encryption with plaintext IV
 extension NSData_ZMSCryptoTests {
 
-    func testThatItEncryptsAndDecryptsData_plaintextIV() {
+    func testThatItEncryptsAndDecryptsData_plaintextIV() throws {
 
         // given
         let data = self.sampleDecryptedImageData
         let key = self.sampleKey
 
         // when
-        let encryptedData = data.zmEncryptPrefixingPlainTextIV(key: key)
+        let encryptedData = try data.zmEncryptPrefixingPlainTextIV(key: key)
 
         // then
         XCTAssertNotEqual(encryptedData, data)
@@ -67,7 +67,7 @@ extension NSData_ZMSCryptoTests {
         AssertOptionalEqual(decryptedData, expression2: data)
     }
 
-    func testThatTheEncodedDataIsDifferentEveryTime_plaintextIV() {
+    func testThatTheEncodedDataIsDifferentEveryTime_plaintextIV() throws {
 
         // given
         var generatedDataSet = Set<Data>()
@@ -75,7 +75,7 @@ extension NSData_ZMSCryptoTests {
 
         // when
         for _ in 0..<100 {
-            let data = sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
+            let data = try sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
