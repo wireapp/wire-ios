@@ -159,9 +159,21 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusDecrypt
 
-    enum DecryptionError: Error, Equatable {
-        case failedToDecryptData(ProteusError?)
-        case failedToEstablishSessionFromMessage(ProteusError?)
+    public enum DecryptionError: Error, Equatable {
+
+        case failedToDecryptData(ProteusError)
+        case failedToEstablishSessionFromMessage(ProteusError)
+
+        public var proteusError: ProteusError {
+            switch self {
+            case .failedToDecryptData(let proteusError):
+                return proteusError
+
+            case .failedToEstablishSessionFromMessage(let proteusError):
+                return proteusError
+            }
+        }
+
     }
 
     public func decrypt(
@@ -344,8 +356,8 @@ public final class ProteusService: ProteusServiceInterface {
 
 private extension CoreCryptoProtocol {
 
-    var lastProteusError: ProteusError? {
-        return ProteusError(code: proteusLastErrorCode())
+    var lastProteusError: ProteusError {
+        return ProteusError(proteusCode:  proteusLastErrorCode())
     }
 
 }

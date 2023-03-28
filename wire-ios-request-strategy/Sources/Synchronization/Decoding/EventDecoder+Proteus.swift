@@ -57,7 +57,7 @@ extension EventDecoder {
             return nil
         }
 
-        func fail(error: CBoxResult? = nil) {
+        func fail(error: ProteusError? = nil) {
             if senderClient.isInserted {
                 selfUser.selfClient()?.addNewClientToIgnored(senderClient)
             }
@@ -82,7 +82,11 @@ extension EventDecoder {
             (createdNewSession, decryptedEvent) = result
 
         } catch let error as CBoxResult {
-            fail(error: error)
+            fail(error: ProteusError(cboxResult: error))
+            return nil
+
+        } catch let error as ProteusService.DecryptionError {
+            fail(error: error.proteusError)
             return nil
 
         } catch {
@@ -131,7 +135,7 @@ extension EventDecoder {
 
     // Appends a system message for a failed decryption
     private func appendFailedToDecryptMessage(
-        after error: CBoxResult?,
+        after error: ProteusError?,
         for event: ZMUpdateEvent,
         sender: UserClient,
         in context: NSManagedObjectContext
@@ -139,7 +143,7 @@ extension EventDecoder {
         zmLog.safePublic("Failed to decrypt message with error: \(error), client id <\(sender.safeRemoteIdentifier))>")
         zmLog.error("event debug: \(event.debugInformation)")
 
-        if error == CBOX_OUTDATED_MESSAGE || error == CBOX_DUPLICATE_MESSAGE {
+        if error == .outdatedMessage || error == .duplicateMessage {
             // Do not notify the user if the error is just "duplicated".
             return
         }
