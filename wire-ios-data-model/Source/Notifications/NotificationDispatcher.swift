@@ -39,7 +39,12 @@ import CoreData
     public var isEnabled = true {
         didSet {
             guard oldValue != isEnabled else { return }
-            isEnabled ? startObserving() : stopObserving()
+
+            if isEnabled {
+                startObserving()
+            } else {
+                stopObserving()
+            }
         }
     }
 
