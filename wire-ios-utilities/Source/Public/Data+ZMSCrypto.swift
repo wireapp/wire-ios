@@ -79,7 +79,7 @@ public extension Data {
     }
 
     func base64String() -> String {
-        return (self as NSData).base64String()
+        return self.base64EncodedString(options: .lineLength64Characters)
     }
 
     func zmEncryptPrefixingIV(key: Data) -> Data {
@@ -142,6 +142,8 @@ public extension Data {
     static func randomEncryptionKey() -> Data {
         return NSData.randomEncryptionKey()
     }
+
+
 
 }
 
