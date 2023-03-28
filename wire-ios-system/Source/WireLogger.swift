@@ -146,4 +146,8 @@ public extension WireLogger {
     static let calling = WireLogger(tag: "calling")
     static let messaging = WireLogger(tag: "messaging")
 
+    /// For logs related to messaging flow.
+
+    static let messaging = WireLogger(tag: "messaging")
+
 }
