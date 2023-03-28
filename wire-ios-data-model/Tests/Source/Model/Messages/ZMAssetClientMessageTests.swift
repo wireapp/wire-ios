@@ -233,7 +233,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(original?.size, size)
     }
 
-    func testThatItMergesMultipleGenericAssetMessagesForFileMessages() {
+    func testThatItMergesMultipleGenericAssetMessagesForFileMessages() throws {
         let nonce = UUID.create()
         let mimeType = "text/plain"
         let filename = "document.txt"
@@ -248,7 +248,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
 
         let otrKey = Data.randomEncryptionKey()
-        let encryptedData = data.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedData = try data.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedData.zmSHA256Digest()
         let preview = WireProtos.Asset.Preview(
             size: UInt64(data.count),
@@ -829,7 +829,7 @@ extension ZMAssetClientMessageTests {
         return ZMIImageProperties(size: CGSize(width: CGFloat(300*mult), height: CGFloat(100*mult)), length: UInt(100*mult), mimeType: "image/jpeg")!
     }
 
-    func createV2AssetClientMessageWithSampleImageAndEncryptionKeys(_ storeOriginal: Bool, storeEncrypted: Bool, storeProcessed: Bool, imageData: Data? = nil) -> ZMAssetClientMessage {
+    func createV2AssetClientMessageWithSampleImageAndEncryptionKeys(_ storeOriginal: Bool, storeEncrypted: Bool, storeProcessed: Bool, imageData: Data? = nil) throws -> ZMAssetClientMessage {
         let directory = self.uiMOC.zm_fileAssetCache!
         let nonce = UUID.create()
         let imageData = imageData ?? sampleImageData()
@@ -841,7 +841,8 @@ extension ZMAssetClientMessageTests {
         for format in [ZMImageFormat.medium, ZMImageFormat.preview] {
             let processedData = sampleProcessedImageData(format)
             let otrKey = Data.randomEncryptionKey()
-            let encryptedData = processedData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+            let encryptedData = try processedData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+
             let sha256 = encryptedData.zmSHA256Digest()
             let encryptionKeys = ZMImageAssetEncryptionKeys(otrKey: otrKey, sha256: sha256)
             let imageAsset = ImageAsset(mediumProperties: storeProcessed ? self.sampleImageProperties(.medium) : nil,
@@ -874,9 +875,9 @@ extension ZMAssetClientMessageTests {
         return assetMessage
     }
 
-    func testThatImageDataCanBeFetchedAsynchrounously() {
+    func testThatImageDataCanBeFetchedAsynchrounously() throws {
         // given
-        let message = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
+        let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
         uiMOC.saveOrRollback()
 
         // expect
@@ -890,10 +891,10 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItReturnsImageDataIdentifier() {
+    func testThatItReturnsImageDataIdentifier() throws {
         // given
-        let message1 = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
-        let message2 = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
+        let message1 = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
+        let message2 = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
 
         // when
         let id1 = message1.imageMessageData?.imageDataIdentifier
@@ -907,28 +908,28 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(id1, message1.imageMessageData?.imageDataIdentifier) // not random!
     }
 
-    func testThatItHasDownloadedFileWhenTheImageIsOnDisk() {
+    func testThatItHasDownloadedFileWhenTheImageIsOnDisk() throws {
 
         // given
-        let message = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
+        let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
 
         // then
         XCTAssertTrue(message.hasDownloadedFile)
     }
 
-    func testThatItHasDownloadedFileWhenTheOriginalIsOnDisk() {
+    func testThatItHasDownloadedFileWhenTheOriginalIsOnDisk() throws {
 
         // given
-        let message = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
+        let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
 
         // then
         XCTAssertTrue(message.hasDownloadedFile)
     }
 
-    func testThatDoesNotHaveDownloadedFileWhenTheImageIsNotOnDisk() {
+    func testThatDoesNotHaveDownloadedFileWhenTheImageIsNotOnDisk() throws {
 
         // given
-        let message = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
+        let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
 
         // when
         self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: .medium, encrypted: false)
@@ -937,10 +938,10 @@ extension ZMAssetClientMessageTests {
         XCTAssertFalse(message.hasDownloadedFile)
     }
 
-    func testThatRequestingFileDownloadFiresANotification() {
+    func testThatRequestingFileDownloadFiresANotification() throws {
 
         // given
-        let message = self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
+        let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
         message.managedObjectContext?.saveOrRollback()
 
         // expect

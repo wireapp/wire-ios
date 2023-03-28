@@ -261,14 +261,14 @@ extension FileAssetCacheTests {
     }
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
-    func testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256() {
+    func testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256() throws {
 
         // given
         let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainTextData = Data.secureRandomData(ofLength: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         sut.storeAssetData(message, encrypted: true, data: encryptedData)
         let sha = encryptedData.zmSHA256Digest()
 
