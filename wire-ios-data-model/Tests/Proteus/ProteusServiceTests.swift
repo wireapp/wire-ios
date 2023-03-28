@@ -87,12 +87,16 @@ class ProteusServiceTests: XCTestCase {
             return true
         }
 
+        mockCoreCrypto.mockProteusLastErrorCode = {
+            return 209
+        }
+
         mockCoreCrypto.mockProteusDecrypt = { _, _ in
             throw MockError()
         }
 
         // Then
-        assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData) {
+        assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
             // When
             _ = try sut.decrypt(
                 data: encryptedData,
@@ -140,12 +144,16 @@ class ProteusServiceTests: XCTestCase {
             return false
         }
 
+        mockCoreCrypto.mockProteusLastErrorCode = {
+            return 209
+        }
+
         mockCoreCrypto.mockProteusSessionFromMessage = { _, _ in
             throw MockError()
         }
 
         // Then
-        assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage) {
+        assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
             // When
             _ = try sut.decrypt(
                 data: encryptedData,
