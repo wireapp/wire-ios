@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ProteusError: Error {
+public enum ProteusError: Error, Equatable {
 
     case storageError
     case sessionNotFound
@@ -32,9 +32,13 @@ public enum ProteusError: Error {
     case identityError
     case prekeyNotFound
     case panic
+    case unknown(code: UInt32)
 
-    init?(code: Int) {
+    init?(code: UInt32) {
         switch code {
+        case 0:
+            return nil
+
         case 501:
             self = .storageError
 
@@ -72,7 +76,7 @@ public enum ProteusError: Error {
             self = .panic
 
         default:
-            return nil
+            self = .unknown(code: code)
         }
     }
 

@@ -159,9 +159,9 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusDecrypt
 
-    enum DecryptionError: Error {
-        case failedToDecryptData
-        case failedToEstablishSessionFromMessage
+    enum DecryptionError: Error, Equatable {
+        case failedToDecryptData(ProteusError?)
+        case failedToEstablishSessionFromMessage(ProteusError?)
     }
 
     public func decrypt(
@@ -173,31 +173,36 @@ public final class ProteusService: ProteusServiceInterface {
         if sessionExists(id: id) {
             logger.info("session exists, decrypting...")
 
-            do {
-                let decryptedBytes = try coreCrypto.perform { try $0.proteusDecrypt(
-                    sessionId: id.rawValue,
-                    ciphertext: data.bytes
-                )}
-
-                return (didCreateSession: false, decryptedData: decryptedBytes.data)
-            } catch {
-                logger.error("failed to decrypt data: \(String(describing: error))")
-                throw DecryptionError.failedToDecryptData
+            let decryptedBytes: Bytes = try coreCrypto.perform {
+                do {
+                    return try $0.proteusDecrypt(
+                        sessionId: id.rawValue,
+                        ciphertext: data.bytes
+                    )
+                } catch {
+                    logger.error("failed to decrypt data: \(error.localizedDescription)")
+                    throw DecryptionError.failedToDecryptData($0.lastProteusError)
+                }
             }
+
+            return (didCreateSession: false, decryptedData: decryptedBytes.data)
+
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
 
-            do {
-                let decryptedBytes = try coreCrypto.perform { try $0.proteusSessionFromMessage(
-                    sessionId: id.rawValue,
-                    envelope: data.bytes
-                )}
-
-                return (didCreateSession: true, decryptedData: decryptedBytes.data)
-            } catch {
-                logger.error("failed to establish session from message: \(String(describing: error))")
-                throw DecryptionError.failedToEstablishSessionFromMessage
+            let decryptedBytes: Bytes = try coreCrypto.perform {
+                do {
+                    return try $0.proteusSessionFromMessage(
+                        sessionId: id.rawValue,
+                        envelope: data.bytes
+                    )
+                } catch {
+                    logger.error("failed to establish session from message: \(String(describing: error))")
+                    throw DecryptionError.failedToEstablishSessionFromMessage($0.lastProteusError)
+                }
             }
+
+            return (didCreateSession: true, decryptedData: decryptedBytes.data)
         }
     }
 
@@ -333,6 +338,14 @@ public final class ProteusService: ProteusServiceInterface {
         try coreCrypto.perform { _ in
             try block()
         }
+    }
+
+}
+
+private extension CoreCryptoProtocol {
+
+    var lastProteusError: ProteusError? {
+        return ProteusError(code: proteusLastErrorCode())
     }
 
 }
