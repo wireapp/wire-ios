@@ -96,8 +96,8 @@ public final class RequestGeneratorStore {
 
 final class RequestGeneratorObserver {
 
-    private let context : NSManagedObjectContext
-    public var observedGenerator: ZMTransportRequestGenerator? = nil
+    private let context: NSManagedObjectContext
+    public var observedGenerator: ZMTransportRequestGenerator?
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -229,7 +229,7 @@ final class RequestGeneratingOperationLoop {
     }
 
     fileprivate func enqueueRequests() {
-        var result : ZMTransportEnqueueResult
+        var result: ZMTransportEnqueueResult
 
         repeat {
             result = transportSession.attemptToEnqueueSyncRequest(generator: { [weak self] in self?.requestGeneratorObserver.nextRequest() })

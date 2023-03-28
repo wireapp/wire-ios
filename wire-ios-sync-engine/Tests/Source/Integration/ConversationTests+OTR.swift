@@ -331,7 +331,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertEqual(msg?.underlyingMessage?.text.content, expectedText)
     }
 
-    func testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(_ format: ZMImageFormat) {
+    func testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(_ format: ZMImageFormat) throws {
         // GIVEN
         XCTAssertTrue(login())
 
@@ -340,7 +340,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         // WHEN
         let observer = ConversationChangeObserver(conversation: conversation)
         observer?.clearNotifications()
-        remotelyInsertOTRImage(into: groupConversation, imageFormat: format)
+        try remotelyInsertOTRImage(into: groupConversation, imageFormat: format)
 
         // THEN
         let changes: [ConversationChangeInfo]? = observer?.notifications.compactMap({ $0 as? ConversationChangeInfo})
@@ -350,12 +350,12 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertTrue(note?.lastModifiedDateChanged ?? false)
     }
 
-    func testThatItSendsANotificationWhenReceivingAnOtrMediumAssetMessageThroughThePushChannel() {
-        testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(.medium)
+    func testThatItSendsANotificationWhenReceivingAnOtrMediumAssetMessageThroughThePushChannel() throws {
+        try testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(.medium)
     }
 
-    func testThatItSendsANotificationWhenReceivingAnOtrPreviewAssetMessageThroughThePushChannel() {
-        testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(.preview)
+    func testThatItSendsANotificationWhenReceivingAnOtrPreviewAssetMessageThroughThePushChannel() throws {
+        try testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(.preview)
     }
 
     func testThatItUnarchivesAnArchivedConversationWhenReceivingAnEncryptedMessage() {
@@ -420,13 +420,13 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertNotNil(genericMessage)
     }
 
-    func testThatAssetMediumIsRedownloadedIfNothingIsStored(for useCase: AssetMediumTestUseCase) {
+    func testThatAssetMediumIsRedownloadedIfNothingIsStored(for useCase: AssetMediumTestUseCase) throws {
         // GIVEN
         XCTAssertTrue(login())
 
         var encryptedImageData = Data()
         let imagedata = verySmallJPEGData()
-        let genericMessage = otrAssetGenericMessage(format: .medium, imageData: imagedata, encryptedData: &encryptedImageData)
+        let genericMessage = try otrAssetGenericMessage(format: .medium, imageData: imagedata, encryptedData: &encryptedImageData)
         let assetId = UUID.create()
 
         mockTransportSession.performRemoteChanges { session in
@@ -475,12 +475,12 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertNotNil(assetMessage.imageMessageData?.imageData)
     }
 
-    func testThatAssetMediumIsRedownloadedIfNoDecryptedMessageDataIsStored() {
-        testThatAssetMediumIsRedownloadedIfNothingIsStored(for: .decryptionCrash)
+    func testThatAssetMediumIsRedownloadedIfNoDecryptedMessageDataIsStored() throws {
+        try testThatAssetMediumIsRedownloadedIfNothingIsStored(for: .decryptionCrash)
     }
 
-    func testThatAssetMediumIsRedownloadedIfNoMessageDataIsStored() {
-        testThatAssetMediumIsRedownloadedIfNothingIsStored(for: .cacheCleared)
+    func testThatAssetMediumIsRedownloadedIfNoMessageDataIsStored() throws {
+        try testThatAssetMediumIsRedownloadedIfNothingIsStored(for: .cacheCleared)
     }
 
     // MARK: ConversationTestsOTR (Trust)
@@ -711,10 +711,10 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
     }
 
     @discardableResult
-    func remotelyInsertOTRImage(into conversation: MockConversation, imageFormat format: ZMImageFormat) -> GenericMessage {
+    func remotelyInsertOTRImage(into conversation: MockConversation, imageFormat format: ZMImageFormat) throws -> GenericMessage {
         var encryptedImageData = Data()
         let imageData = self.verySmallJPEGData()
-        let message = otrAssetGenericMessage(format: format, imageData: imageData, encryptedData: &encryptedImageData)
+        let message = try otrAssetGenericMessage(format: format, imageData: imageData, encryptedData: &encryptedImageData)
 
         mockTransportSession.performRemoteChanges { session in
             guard
@@ -733,11 +733,11 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         return message
     }
 
-    func otrAssetGenericMessage(format: ZMImageFormat, imageData: Data, encryptedData: inout Data) -> GenericMessage {
+    func otrAssetGenericMessage(format: ZMImageFormat, imageData: Data, encryptedData: inout Data) throws -> GenericMessage {
         let properties = ZMIImageProperties(size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), length: UInt(imageData.count), mimeType: "image/jpeg")
 
         let otrKey = Data.randomEncryptionKey()
-        encryptedData = imageData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        encryptedData = try imageData.zmEncryptPrefixingPlainTextIV(key: otrKey)
 
         let sha = encryptedData.zmSHA256Digest()
 

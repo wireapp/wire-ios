@@ -292,12 +292,12 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
     // MARK: - Response Handling
 
-    func testThatItDecryptsTheImageDataInTheRequestResponseAndDeletesTheEncryptedVersion() {
+    func testThatItDecryptsTheImageDataInTheRequestResponseAndDeletesTheEncryptedVersion() throws {
 
         let assetID = UUID.create().transportString()
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
-        let encrypted = data.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encrypted = try data.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let linkPreview = createLinkPreview(assetID, otrKey: otrKey, sha256: encrypted.zmSHA256Digest())
         let nonce = UUID.create()
 
