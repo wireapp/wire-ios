@@ -90,7 +90,8 @@ extension EventDecoder {
             return nil
 
         } catch {
-            fatalError("Unknown error in decrypting payload, \(error)")
+            fail(error: nil)
+            return nil
         }
 
         // New client discovered?
