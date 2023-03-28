@@ -41,7 +41,9 @@ final class WaveFormView: UIView {
     }
 
     var color: UIColor = SemanticColors.View.backgroundDefault {
-        didSet { visualizationView.waveColor = color }
+        didSet {
+            visualizationView.waveColor = color
+        }
     }
 
     init() {

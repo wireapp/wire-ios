@@ -95,7 +95,7 @@ final class AudioEffectCell: UICollectionViewCell {
     }
 
     fileprivate func updateForSelectedState() {
-        let color: UIColor = isSelected ? UIColor.accent() : UIColor.white
+        let color: UIColor = isSelected ? UIColor.accent() : SemanticColors.Icon.foregroundDefaultBlack
         iconView.setIconColor(color, for: .normal)
     }
 
