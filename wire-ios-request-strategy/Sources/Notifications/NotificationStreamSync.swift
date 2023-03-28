@@ -56,6 +56,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             return nil
         }
 
+        WireLogger.notifications.info("generated request to fetch events")
         notificationsTracker?.registerStartStreamFetching()
         request.add(ZMCompletionHandler(on: self.managedObjectContext, block: { _ in
             self.notificationsTracker?.registerFinishStreamFetching()
@@ -100,6 +101,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         let source = ZMUpdateEventSource.pushNotification
 
         guard let eventsDictionaries = eventDictionariesFrom(payload: payload) else {
+            WireLogger.notifications.warn("failed to decode events from response")
             return nil
         }
 

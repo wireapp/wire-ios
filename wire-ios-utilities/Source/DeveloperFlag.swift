@@ -23,11 +23,7 @@ public enum DeveloperFlag: String, CaseIterable {
     public static var storage = UserDefaults.standard
 
     case showCreateMLSGroupToggle
-    case breakMyNotifications
     case nseV2
-    case nseDebugging
-    case nseDebugEntryPoint
-    case useDevelopmentBackendAPI
     case deprecatedCallingUI
 
     public var description: String {
@@ -35,20 +31,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .showCreateMLSGroupToggle:
             return "Turn on to show the MLS toggle when creating a new group."
 
-        case .breakMyNotifications:
-            return "Turn on to get your app in a state where it no longer receives notifications."
-
         case .nseV2:
             return "Turn on to use the new implementation of the notification service extension."
-
-        case .nseDebugging:
-            return "Turn on to make the notification service extension (NSE) display debug notifications."
-
-        case .nseDebugEntryPoint:
-            return "Turn on to display a notification immediately at the entry point of the notification service extension, skipping any further push processing."
-
-        case .useDevelopmentBackendAPI:
-            return "Turn on to use the developement backend API version instead of the latest production API version."
 
         case .deprecatedCallingUI:
             return "Turn on to use deprecated calling UI"
