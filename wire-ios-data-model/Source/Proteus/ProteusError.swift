@@ -46,7 +46,7 @@ public enum ProteusError: Int, Error, Equatable {
 
     case remoteIdentityChanged
 
-    /// The signature of a decrypte message is invalid.
+    /// The signature of a decrypted message is invalid.
     ///
     /// The message being decrypted is incomplete or has otherwise been tampered with.
 
@@ -82,12 +82,12 @@ public enum ProteusError: Int, Error, Equatable {
     /// A message is too old.
     ///
     /// The message being decrypted is unreasonably old and cannot be decrypted
-    /// any logner due to the key material no longer being availble. The message
+    /// any longer due to the key material no longer being available. The message
     /// should be dropped.
 
     case outdatedMessage
 
-    /// A CBox has been openend with an incomplete or mismatching identiy using
+    /// A CBox has been opened with an incomplete or mismatching identity using
     /// 'CryptoBox.openWith'.
 
     case identityError
