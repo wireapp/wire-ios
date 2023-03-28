@@ -50,10 +50,6 @@
 /// This function keeps both original and encrypted data in memory. Do not use for large amount of data.
 - (NSData *)zmDecryptPrefixedIVWithKey:(NSData *)key;
 
-/// Encodes the data using AES256 CBC Padding prefixing a random IV to the encrypted data
-/// This function keeps both original and encrypted data in memory. Do not use for large amount of data.
-- (NSData *)zmEncryptPrefixingPlainTextIVWithKey:(NSData *)key;
-
 /// Decodes the data using AES256 CBC Padding assuming that the first block is the plaintext IV
 /// This function keeps both original and encrypted data in memory. Do not use for large amount of data.
 - (NSData *)zmDecryptPrefixedPlainTextIVWithKey:(NSData *)key;
