@@ -87,6 +87,8 @@ final class APIVersionResolver {
 
         let commonProductionVersions = backendProdVersions.intersection(clientProdVersions)
 
+        BackendInfo.preferredAPIVersion = .v3
+
         if commonProductionVersions.isEmpty {
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
