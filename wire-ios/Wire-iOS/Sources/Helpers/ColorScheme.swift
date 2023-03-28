@@ -288,9 +288,3 @@ extension UIColor {
         return background.mix(UIColor(for: accentColor), amount: coefficient)
     }
 }
-
-extension ColorSchemeVariant {
-    func mainColor(color: UIColor?) -> UIColor {
-        return color ?? UIColor.from(scheme: .textForeground, variant: self)
-    }
-}

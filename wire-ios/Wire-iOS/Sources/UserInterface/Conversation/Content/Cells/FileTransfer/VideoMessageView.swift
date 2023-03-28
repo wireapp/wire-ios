@@ -49,8 +49,6 @@ final class VideoMessageView: UIView, TransferView {
     }()
     private let loadingView = ThreeDotsLoadingView()
 
-    private let normalColor = UIColor.black.withAlphaComponent(0.4)
-    private let failureColor = UIColor.red.withAlphaComponent(0.24)
     private var allViews: [UIView] = []
     private var state: FileMessageViewState = .unavailable
 
@@ -148,7 +146,7 @@ final class VideoMessageView: UIView, TransferView {
 
         if state != .unavailable {
             updateTimeLabel(withFileMessageData: fileMessageData)
-            self.timeLabel.textColor = UIColor.from(scheme: .textForeground)
+            self.timeLabel.textColor = SemanticColors.Label.textDefault
 
             fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
                 guard let image = image else { return }
@@ -199,7 +197,7 @@ final class VideoMessageView: UIView, TransferView {
 
     private func updatePreviewImage(_ image: MediaAsset) {
         previewImageView.mediaAsset = image
-        timeLabel.textColor = UIColor.from(scheme: .textForeground, variant: .dark)
+        timeLabel.textColor = .white
         updateVisibleViews()
     }
 
