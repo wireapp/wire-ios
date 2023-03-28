@@ -275,8 +275,6 @@ extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
         }
     }
 
-    public func didCompleteProcessingImageOwner(_ imageOwner: ZMImageOwner) {}
-
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
         let dispatchGroup = syncMOC.dispatchGroup
         dispatchGroup?.enter()
