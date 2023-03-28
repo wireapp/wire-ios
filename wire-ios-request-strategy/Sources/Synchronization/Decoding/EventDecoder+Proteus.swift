@@ -32,6 +32,8 @@ extension EventDecoder {
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
     ) -> ZMUpdateEvent? {
+        WireLogger.updateEvent.info("decrypting proteus event...")
+
         guard !event.wasDecrypted else {
             return event
         }
@@ -47,6 +49,7 @@ extension EventDecoder {
             let recipientID = event.recipientID,
             selfUser.selfClient()?.remoteIdentifier == recipientID
         else {
+            WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...")
             return nil
         }
 
@@ -54,6 +57,7 @@ extension EventDecoder {
             from: event,
             in: context
         ) else {
+            WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...")
             return nil
         }
 
@@ -76,21 +80,27 @@ extension EventDecoder {
                 using: decryptFunction
             ) else {
                 fail()
+                WireLogger.updateEvent.error("decrypting proteus event... failed: could not decrypt, dropping...")
                 return nil
             }
 
             (createdNewSession, decryptedEvent) = result
 
         } catch let error as CBoxResult {
-            fail(error: ProteusError(cboxResult: error))
+            let proteusError = ProteusError(cboxResult: error)
+            fail(error: proteusError)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")")
             return nil
 
         } catch let error as ProteusService.DecryptionError {
-            fail(error: error.proteusError)
+            let proteusError = error.proteusError
+            fail(error: proteusError)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)")
             return nil
 
         } catch {
             fail(error: nil)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with unkown error: \(error.localizedDescription)")
             return nil
         }
 
