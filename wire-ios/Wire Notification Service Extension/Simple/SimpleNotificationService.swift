@@ -36,6 +36,7 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
     // MARK: - Life cycle
 
     override init() {
+        WireLogger.notifications.info("initializing new simple notification service")
         super.init()
     }
 
@@ -45,25 +46,23 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping ContentHandler
     ) {
-        logger.trace("\(request.identifier, privacy: .public): received request. Service is \(String(describing: self), privacy: .public)")
+        WireLogger.notifications.info("simple notification service will process request: \(request.identifier)")
 
         guard #available(iOS 15, *) else {
-            logger.error("\(request.identifier, privacy: .public): iOS 15 is not available")
-            contentHandler(.debugMessageIfNeeded(message: "iOS 15 not available"))
-            return
+            WireLogger.notifications.error("iOS 15 is not available")
+            return finishWithoutShowingNotification()
         }
 
         let task = Task { [weak self] in
             do {
-                logger.trace("\(request.identifier, privacy: .public): initializing job")
+                WireLogger.notifications.info("initializing job for request (\(request.identifier))")
                 let job = try Job(request: request)
                 let content = try await job.execute()
-                logger.trace("\(request.identifier, privacy: .public): showing notification")
+                WireLogger.notifications.info("showing notification for request (\(request.identifier))")
                 contentHandler(content)
             } catch {
-                let message = "\(request.identifier): failed with error: \(String(describing: error))"
-                logger.error("\(message, privacy: .public)")
-                contentHandler(.debugMessageIfNeeded(message: message))
+                WireLogger.notifications.error("job for request (\(request.identifier)) failed: \(error.localizedDescription)")
+                finishWithoutShowingNotification()
             }
             self?.currentTasks[request.identifier] = nil
         }
@@ -72,12 +71,15 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
     }
 
     override func serviceExtensionTimeWillExpire() {
-        logger.warning("extension (\(String(describing: self), privacy: .public) is expiring")
-        currentTasks.values.forEach { task in
-            task.cancel()
-        }
+        WireLogger.notifications.warn("simple notification service will expire")
+        currentTasks.values.forEach { task in task.cancel() }
         currentTasks = [:]
-        latestContentHandler?(.debugMessageIfNeeded(message: "extension (\(String(describing: self)) is expiring"))
+        finishWithoutShowingNotification()
+    }
+
+    private func finishWithoutShowingNotification() {
+        WireLogger.notifications.info("finishing without showing notification")
+        latestContentHandler?(.empty)
     }
 
 }
