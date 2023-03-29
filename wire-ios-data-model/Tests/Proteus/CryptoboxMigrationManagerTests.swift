@@ -19,9 +19,9 @@
 import Foundation
 import XCTest
 import WireTransport
-@testable import WireSyncEngine
+@testable import WireDataModel
 
-class CryptoboxMigrationManagerTests: MessagingTest {
+class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     var sut: CryptoboxMigrationManager?
     var proteusViaCoreCryptoFlag = DeveloperFlag.proteusViaCoreCrypto
@@ -37,10 +37,25 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         super.tearDown()
     }
 
+    var applicationContainer: URL {
+        return FileManager.default
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
+            .first!
+            .appendingPathComponent("CryptoBoxMigrationManagerTests")
+    }
+
+    func accountDirectoryURL(userID: UUID) -> URL {
+        return CoreDataStack.accountDataFolder(
+            accountIdentifier: userID,
+            applicationContainer: applicationContainer
+        )
+    }
+
     // MARK: - Verifying if migration is needed
 
     func test_itReturnsTrue_WhenMigrationIsNeeded() {
         // Given
+        let accountDirectory = accountDirectoryURL(userID: .create())
         let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
 
@@ -48,11 +63,12 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         proteusViaCoreCryptoFlag.isOn = true
 
         // Then
-        XCTAssertTrue(sut!.isNeeded(in: accountDirectory))
+        XCTAssertTrue(sut!.isMigrationNeeded(accountDirectory: accountDirectory))
     }
 
     func test_itReturnsFalse_WhenMigrationIsNotNeeded_ProteusViaCoreCryptoFlagIsDisabled() {
         // Given
+        let accountDirectory = accountDirectoryURL(userID: .create())
         let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
 
@@ -60,11 +76,12 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         proteusViaCoreCryptoFlag.isOn = false
 
         // Then
-        XCTAssertFalse(sut!.isNeeded(in: accountDirectory))
+        XCTAssertFalse(sut!.isMigrationNeeded(accountDirectory: accountDirectory))
     }
 
     func test_itReturnsFalse_WhenMigrationIsNotNeeded_AccountDirectoryDoesNotExist() throws {
         // Given
+        let accountDirectory = accountDirectoryURL(userID: .create())
         let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
         let fileManager = FileManager.default
         if fileManager.fileExists(atPath: cryptoboxDirectory.path) {
@@ -76,13 +93,14 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         proteusViaCoreCryptoFlag.isOn = true
 
         // Then
-        XCTAssertFalse(sut!.isNeeded(in: cryptoboxDirectory))
+        XCTAssertFalse(sut!.isMigrationNeeded(accountDirectory: cryptoboxDirectory))
     }
 
     // MARK: - Perform migration
 
     func test_itPerformsMigrations() throws {
         // Given
+        let accountDirectory = accountDirectoryURL(userID: .create())
         let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
         let mockProteusService = mockProteusService(with: nil)
@@ -91,7 +109,7 @@ class CryptoboxMigrationManagerTests: MessagingTest {
         proteusViaCoreCryptoFlag.isOn = true
         syncMOC.proteusService = mockProteusService
         XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 0)
-        try sut?.perform(in: accountDirectory, syncContext: syncMOC)
+        try sut?.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
 
         // Then
         XCTAssertFalse(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
@@ -100,15 +118,16 @@ class CryptoboxMigrationManagerTests: MessagingTest {
 
     func test_itDoesNotPerformMigration_CoreCryptoError() {
         // Given
+        let accountDirectory = accountDirectoryURL(userID: .create())
         let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
 
         // When
         proteusViaCoreCryptoFlag.isOn = true
-        syncMOC.proteusService = mockProteusService(with: CryptoboxMigrationError.failedToMigrateData)
+        syncMOC.proteusService = mockProteusService(with: CryptoboxMigrationManager.Failure.failedToMigrateData)
 
-        XCTAssertThrowsError(try sut?.perform(in: accountDirectory, syncContext: syncMOC)) { error in
-            XCTAssertEqual(error as? CryptoboxMigrationError, CryptoboxMigrationError.failedToMigrateData)
+        XCTAssertThrowsError(try sut?.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
+            XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
         }
 
         // Then
