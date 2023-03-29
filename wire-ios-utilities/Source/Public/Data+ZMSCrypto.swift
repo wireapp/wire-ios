@@ -143,8 +143,6 @@ public extension Data {
         return NSData.randomEncryptionKey()
     }
 
-
-
 }
 
 private extension Range where Index == Int {
