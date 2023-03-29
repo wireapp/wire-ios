@@ -35,9 +35,9 @@ extension ZMUserSession {
         }
 
         switch stage {
-        case .proteus(let userID) where shouldSetupProteusService:
+        case .proteus(let userID) where shouldSetupProteus:
             setupProteus(userID: userID)
-        case .mls where shouldSetupMLSController:
+        case .mls where shouldSetupMLS:
             setupMLS()
         default:
             break
@@ -111,14 +111,14 @@ extension ZMUserSession {
     }
 
     private var shouldSetupCryptoStack: Bool {
-        return shouldSetupProteusService || shouldSetupMLSController
+        return shouldSetupProteus || shouldSetupMLS
     }
 
     // MARK: - Proteus
 
     private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) throws {
         guard
-            shouldSetupProteusService,
+            shouldSetupProteus,
             syncContext.proteusService == nil
         else {
             return
@@ -127,7 +127,7 @@ extension ZMUserSession {
         syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
     }
 
-    private var shouldSetupProteusService: Bool {
+    private var shouldSetupProteus: Bool {
         return DeveloperFlag.proteusViaCoreCrypto.isOn
     }
 
@@ -138,7 +138,7 @@ extension ZMUserSession {
         clientID: String
     ) throws {
         guard
-            shouldSetupMLSController,
+            shouldSetupMLS,
             syncContext.mlsController == nil
         else {
             return
@@ -161,7 +161,7 @@ extension ZMUserSession {
         )
     }
 
-    private var shouldSetupMLSController: Bool {
+    private var shouldSetupMLS: Bool {
         return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
