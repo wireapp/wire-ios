@@ -49,6 +49,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var underlyingLastPrekeyID: UInt16!
 
 
+    // MARK: - completeInitialization
+
+    public var completeInitialization_Invocations: [Void] = []
+    public var completeInitialization_MockError: Error?
+    public var completeInitialization_MockMethod: (() throws -> Void)?
+
+    public func completeInitialization() throws {
+        completeInitialization_Invocations.append(())
+
+        if let error = completeInitialization_MockError {
+            throw error
+        }
+
+        guard let mock = completeInitialization_MockMethod else {
+            fatalError("no mock for `completeInitialization`")
+        }
+
+        try mock()            
+    }
+
     // MARK: - establishSession
 
     public var establishSessionIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []

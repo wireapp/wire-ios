@@ -26,6 +26,13 @@ import Foundation
 // sourcery: AutoMockable
 public protocol ProteusServiceInterface {
 
+    /// Completes the initialization, enabling the serivce to be used.
+    ///
+    /// This should be called after performing a possible cryptobox migration
+    /// via `migrateCryptoboxSessions` and before any other method is called.
+
+    func completeInitialization() throws
+
     func establishSession(id: ProteusSessionID, fromPrekey: String) throws
     func deleteSession(id: ProteusSessionID) throws
     func sessionExists(id: ProteusSessionID) -> Bool

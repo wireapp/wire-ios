@@ -847,6 +847,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     ) {
         guard self.cryptoboxMigrationManager.isNeeded(in: accountDirectory) else {
             WireLogger.proteus.info("cryptobox migration is not needed")
+
+            syncContext.performAndWait {
+                do {
+                    try syncContext.proteusService?.completeInitialization()
+                } catch {
+                    fatalError("failed to complete proteus initialization")
+                }
+            }
+
             completion()
             return
         }
@@ -865,7 +874,14 @@ public final class SessionManager: NSObject, SessionManagerType {
                     fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
                 }
 
+                do {
+                    try syncContext.proteusService?.completeInitialization()
+                } catch {
+                    fatalError("failed to complete proteus initialization")
+                }
+
                 WireLogger.proteus.info("cryptobox migration success")
+
                 completion()
             }
         }
