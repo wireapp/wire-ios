@@ -31,10 +31,12 @@ protocol CryptoboxMigration {
 
 class CryptoboxMigrationManager: CryptoboxMigration {
 
+    let fileManager = FileManager.default
+
     func isNeeded(in accountDirectory: URL) -> Bool {
         guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
 
-        let cryptoboxDirectory = getDirectory(in: accountDirectory)
+        let cryptoboxDirectory = cryptoboxDirectory(in: accountDirectory)
         let cryptoboxDirectoryExists = FileManager.default.fileExists(atPath: cryptoboxDirectory.path)
         return cryptoboxDirectoryExists
     }
@@ -51,7 +53,7 @@ class CryptoboxMigrationManager: CryptoboxMigration {
 
             do {
                 WireLogger.proteus.info("migrating cryptobox data...")
-                let cryptoboxDirectory = getDirectory(in: accountDirectory)
+                let cryptoboxDirectory = cryptoboxDirectory(in: accountDirectory)
                 try proteusService.migrateCryptoboxSessions(at: cryptoboxDirectory)
                 WireLogger.proteus.info("migrating cryptobox data... success")
             } catch {
@@ -69,17 +71,17 @@ class CryptoboxMigrationManager: CryptoboxMigration {
 
     // MARK: - Helpers
 
-    private func getDirectory(in accountDirectory: URL) -> URL {
-        return FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
+    private func removeDirectory(in accountDirectory: URL) throws {
+        let cryptoboxDirectory = cryptoboxDirectory(in: accountDirectory)
+        guard fileManager.fileExists(atPath: cryptoboxDirectory.path) else { return }
+        try fileManager.removeItem(at: cryptoboxDirectory)
     }
 
-    private func removeDirectory(in accountDirectory: URL) throws {
-        let cryptoboxDirectory = getDirectory(in: accountDirectory)
-
-        let fileManager = FileManager.default
-        if fileManager.fileExists(atPath: cryptoboxDirectory.path) {
-            try fileManager.removeItem(at: cryptoboxDirectory)
-        }
+    private func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+        return FileManager.keyStoreURL(
+            accountDirectory: accountDirectory,
+            createParentIfNeeded: false
+        )
     }
 
 }
