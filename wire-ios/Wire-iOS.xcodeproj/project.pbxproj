@@ -8277,7 +8277,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/../Cartfile.resolved",
-				"$(SRCROOT)/../avs-versions",
 			);
 			name = EmbedBuildInfo;
 			outputPaths = (
@@ -8285,7 +8284,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Generating ComponentsVersions.plist\"\nsource ../avs-versions\n${SRCROOT}/Scripts/embedBuildInfo --output ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/ComponentsVersions.plist\n";
+			shellScript = "echo \"Generating ComponentsVersions.plist\"\n${SRCROOT}/Scripts/embedBuildInfo --output ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/ComponentsVersions.plist\n";
 		};
 		BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */ = {
 			isa = PBXShellScriptBuildPhase;
