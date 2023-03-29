@@ -680,12 +680,7 @@ extension WireCallCenterV3 {
 
         guard
             let context = uiMOC,
-            let conversation = ZMConversation.fetch(
-                with: callEvent.conversationId.identifier,
-                domain: callEvent.conversationId.domain,
-                in: context
-            ),
-            let conversationType = conversation.avsConversationType
+            let conversationType = self.conversationType(from: callEvent)
         else {
             Self.logger.warning("can't handle call event: unable to determine conversation type")
             completionHandler()
@@ -706,6 +701,24 @@ extension WireCallCenterV3 {
         }
 
         completionHandler()
+    }
+
+    private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
+        guard let context = uiMOC else { return nil }
+
+        var conversationType: AVSConversationType?
+
+        context.performAndWait {
+            let conversation = ZMConversation.fetch(
+                with: callEvent.conversationId.identifier,
+                domain: callEvent.conversationId.domain,
+                in: context
+            )
+
+            conversationType = conversation?.avsConversationType
+        }
+
+        return conversationType
     }
 
     /// Handles a change in calling state.
