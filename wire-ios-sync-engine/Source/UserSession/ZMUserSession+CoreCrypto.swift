@@ -75,6 +75,10 @@ extension ZMUserSession {
             let provider = CoreCryptoConfigProvider()
 
             do {
+                if syncContext.coreCrypto == nil {
+                    try createCoreCryptoForMLS(with: provider)
+                }
+
                 guard let coreCrypto = syncContext.coreCrypto else {
                     throw CryptoStackSetupError.missingCoreCrypto
                 }
@@ -90,6 +94,16 @@ extension ZMUserSession {
                 WireLogger.coreCrypto.error("fail: setup crypto stack (mls): \(String(describing: error))")
             }
         }
+    }
+
+    private func createCoreCryptoForMLS(with provider: CoreCryptoConfigProvider) throws {
+        let config = try provider.createFullConfiguration(
+            sharedContainerURL: sharedContainerURL,
+            selfUser: .selfUser(in: syncContext),
+            createKeyIfNeeded: true
+        )
+
+        syncContext.coreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: config)
     }
 
     private enum CryptoStackSetupError: Error {
