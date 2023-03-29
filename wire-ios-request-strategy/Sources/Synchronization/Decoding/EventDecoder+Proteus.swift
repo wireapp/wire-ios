@@ -32,6 +32,8 @@ extension EventDecoder {
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
     ) -> ZMUpdateEvent? {
+        WireLogger.updateEvent.info("decrypting proteus event...")
+
         guard !event.wasDecrypted else {
             return event
         }
@@ -47,6 +49,7 @@ extension EventDecoder {
             let recipientID = event.recipientID,
             selfUser.selfClient()?.remoteIdentifier == recipientID
         else {
+            WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...")
             return nil
         }
 
@@ -54,10 +57,11 @@ extension EventDecoder {
             from: event,
             in: context
         ) else {
+            WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...")
             return nil
         }
 
-        func fail(error: CBoxResult? = nil) {
+        func fail(error: ProteusError? = nil) {
             if senderClient.isInserted {
                 selfUser.selfClient()?.addNewClientToIgnored(senderClient)
             }
@@ -76,17 +80,28 @@ extension EventDecoder {
                 using: decryptFunction
             ) else {
                 fail()
+                WireLogger.updateEvent.error("decrypting proteus event... failed: could not decrypt, dropping...")
                 return nil
             }
 
             (createdNewSession, decryptedEvent) = result
 
         } catch let error as CBoxResult {
-            fail(error: error)
+            let proteusError = ProteusError(cboxResult: error)
+            fail(error: proteusError)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")")
+            return nil
+
+        } catch let error as ProteusService.DecryptionError {
+            let proteusError = error.proteusError
+            fail(error: proteusError)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)")
             return nil
 
         } catch {
-            fatalError("Unknown error in decrypting payload, \(error)")
+            fail(error: nil)
+            WireLogger.updateEvent.error("decrypting proteus event... failed with unkown error: \(error.localizedDescription)")
+            return nil
         }
 
         // New client discovered?
@@ -131,7 +146,7 @@ extension EventDecoder {
 
     // Appends a system message for a failed decryption
     private func appendFailedToDecryptMessage(
-        after error: CBoxResult?,
+        after error: ProteusError?,
         for event: ZMUpdateEvent,
         sender: UserClient,
         in context: NSManagedObjectContext
@@ -139,7 +154,7 @@ extension EventDecoder {
         zmLog.safePublic("Failed to decrypt message with error: \(error), client id <\(sender.safeRemoteIdentifier))>")
         zmLog.error("event debug: \(event.debugInformation)")
 
-        if error == CBOX_OUTDATED_MESSAGE || error == CBOX_DUPLICATE_MESSAGE {
+        if error == .outdatedMessage || error == .duplicateMessage {
             // Do not notify the user if the error is just "duplicated".
             return
         }
