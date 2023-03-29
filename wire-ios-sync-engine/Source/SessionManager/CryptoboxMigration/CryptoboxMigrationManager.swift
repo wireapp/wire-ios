@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 enum CryptoboxMigrationError: Error {
     case failedToMigrateData
@@ -30,8 +31,6 @@ protocol CryptoboxMigration {
 
 class CryptoboxMigrationManager: CryptoboxMigration {
 
-    private let logger = Logging.cryptoboxMigration
-
     func isNeeded(in accountDirectory: URL) -> Bool {
         guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
 
@@ -40,26 +39,29 @@ class CryptoboxMigrationManager: CryptoboxMigration {
         return cryptoboxDirectoryExists
     }
 
-    func perform(in accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
-        logger.info("Starting Cryptobox migration into the CoreCrypto keystore")
-
+    func perform(
+        in accountDirectory: URL,
+        syncContext: NSManagedObjectContext
+    ) throws {
             guard let proteusService = syncContext.proteusService else {
-                precondition(syncContext.proteusService != nil,
-                             "proteusService cannot be nil if the 'proteusViaCoreCrypto' developer flag is enabled")
+                WireLogger.proteus.warn("cannot perform cryptobox migration without proteus service")
+                precondition(syncContext.proteusService != nil, "proteusService is expected to be availble")
                 return
             }
 
             do {
-                logger.info("Starting migration")
+                WireLogger.proteus.info("migrating cryptobox data...")
                 let cryptoboxDirectory = getDirectory(in: accountDirectory)
                 try proteusService.migrateCryptoboxSessions(at: cryptoboxDirectory)
+                WireLogger.proteus.info("migrating cryptobox data... success")
             } catch {
                 throw CryptoboxMigrationError.failedToMigrateData
             }
 
             do {
-                logger.info("Removing Cryptobox directory")
+                WireLogger.proteus.info("removing legacy cryptobox data...")
                 try removeDirectory(in: accountDirectory)
+                WireLogger.proteus.info("removing legacy cryptobox data... success")
             } catch {
                 throw CryptoboxMigrationError.failedToDeleteLegacyData
             }
