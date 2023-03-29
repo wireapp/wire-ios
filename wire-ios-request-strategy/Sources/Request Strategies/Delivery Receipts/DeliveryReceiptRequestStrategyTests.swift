@@ -64,7 +64,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
 
             // when
-            self.sut.processEventsWhileInBackground([event])
+            self.sut.processEvents([event], liveEvents: Bool.random(), prefetchResult: nil)
 
             // then
             let request = try XCTUnwrap(self.sut.nextRequest(for: .v1))
@@ -78,7 +78,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
 
             // when
-            self.sut.processEventsWhileInBackground([event])
+            self.sut.processEvents([event], liveEvents: Bool.random(), prefetchResult: nil)
 
             // then
             let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
