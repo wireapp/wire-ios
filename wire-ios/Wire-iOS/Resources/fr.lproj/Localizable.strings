@@ -295,6 +295,8 @@
 "conversation.call.many_participants_confirmation.call" = "Appel";
 
 "conversation.connection_view.in_address_book" = "dans les contacts";
+"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "Envoyer un message";
 "conversation.input_bar.shortcut.newline" = "Nouvelle ligne";
@@ -847,8 +849,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Annuler votre demande ?";
-"profile.cancel_connection_request_dialog.message" = "Supprimer votre demande de connexion à %@ ?";
-"profile.cancel_connection_request_dialog.button_no" = "Non";
+"profile.cancel_connection_request_dialog.message" = "Remove connection request to %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Annuler";
 "profile.cancel_connection_request_dialog.button_yes" = "Oui";
 
 // Unblock button
@@ -882,6 +884,8 @@
 "profile.details.partner" = "externe";
 "profile.details.federated" = "Fédéré";
 "profile.details.blocking_reason" = "Cet utilisateur est bloqué en raison de la conservation à des fins juridiques. [PLUS D'INFOS](%@)";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
 
 // Device list
 "profile.devices.title" = "Appareils";
@@ -1957,3 +1961,4 @@
 "landing.alert.sso.not-supported.message" = "You can't log in via SSO on an on-premises backend with proxy support.";
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
+"add-email-password-step.cta-button.title" = "Confirmer";

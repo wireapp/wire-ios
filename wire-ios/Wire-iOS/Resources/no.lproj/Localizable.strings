@@ -295,6 +295,8 @@
 "conversation.call.many_participants_confirmation.call" = "Ring";
 
 "conversation.connection_view.in_address_book" = "i kontakter";
+"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "Send Message";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";
@@ -847,8 +849,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Avbryt forespørsel?";
-"profile.cancel_connection_request_dialog.message" = "Vil du avbryte tilkoblingsforespørselen din til %@?";
-"profile.cancel_connection_request_dialog.button_no" = "Nei";
+"profile.cancel_connection_request_dialog.message" = "Remove connection request to %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Avbryt";
 "profile.cancel_connection_request_dialog.button_yes" = "Ja";
 
 // Unblock button
@@ -882,6 +884,8 @@
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
 
 // Device list
 "profile.devices.title" = "Enheter";
@@ -1957,3 +1961,4 @@
 "landing.alert.sso.not-supported.message" = "You can't log in via SSO on an on-premises backend with proxy support.";
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
+"add-email-password-step.cta-button.title" = "Bekreft";
