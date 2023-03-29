@@ -785,63 +785,82 @@ public final class SessionManager: NSObject, SessionManagerType {
         processPendingURLActionRequiresAuthentication()
     }
 
-    // Loads user session for @c account given and executes the @c action block.
-    func withSession(for account: Account,
-                     notifyAboutMigration: Bool = false,
-                     perform completion: @escaping (ZMUserSession) -> Void) {
+    /// Loads user session for @c account given and executes the @c action block.
+
+    func withSession(
+        for account: Account,
+        notifyAboutMigration: Bool = false,
+        perform completion: @escaping (ZMUserSession) -> Void
+    ) {
         log.debug("Request to load session for \(account)")
         let group = self.dispatchGroup
-        group?.enter()
-        self.sessionLoadingQueue.serialAsync(do: { onWorkDone in
 
+        group?.enter()
+        self.sessionLoadingQueue.serialAsync { onWorkDone in
             if let session = self.backgroundUserSessions[account.userIdentifier] {
                 log.debug("Session for \(account) is already loaded")
                 completion(session)
                 onWorkDone()
                 group?.leave()
             } else {
-                let coreDataStack = CoreDataStack(account: account,
-                                                  applicationContainer: self.sharedContainerURL,
-                                                  dispatchGroup: self.dispatchGroup)
+                let coreDataStack = CoreDataStack(
+                    account: account,
+                    applicationContainer: self.sharedContainerURL,
+                    dispatchGroup: self.dispatchGroup
+                )
 
                 if coreDataStack.needsMigration {
                     self.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
                 }
 
-                coreDataStack.loadStores { (error) in
+                coreDataStack.loadStores { error in
                     if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
-                        let userSession = self.startBackgroundSession(for: account, with: coreDataStack)
+                        let userSession = self.startBackgroundSession(
+                            for: account,
+                            with: coreDataStack
+                        )
 
-                        self.migrateCryptoboxIfNeeded(in: coreDataStack.accountContainer, syncContext: userSession.syncContext) {
+                        self.migrateCryptoboxSessionsIfNeeded(
+                            in: coreDataStack.accountContainer,
+                            syncContext: userSession.syncContext
+                        ) {
                             completion(userSession)
                         }
 
                     }
+
                     onWorkDone()
                     group?.leave()
                 }
             }
-        })
+        }
     }
 
-    fileprivate func migrateCryptoboxIfNeeded(in accountDirectory: URL,
-                                              syncContext: NSManagedObjectContext,
-                                              completion: @escaping () -> Void) {
+    /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
+
+    private func migrateCryptoboxSessionsIfNeeded(
+        in accountDirectory: URL,
+        syncContext: NSManagedObjectContext,
+        completion: @escaping () -> Void
+    ) {
         guard self.cryptoboxMigrationManager.isNeeded(in: accountDirectory) else {
             completion()
             return
         }
 
-        /// We need to migrate the existing proteus sessions, prekeys, and identity key to CoreCrypto keystore.
-        self.delegate?.sessionManagerWillMigrateAccount {
+        delegate?.sessionManagerWillMigrateAccount {
             syncContext.performAndWait {
                 do {
-                    try self.cryptoboxMigrationManager.perform(in: accountDirectory, syncContext: syncContext)
+                    try self.cryptoboxMigrationManager.perform(
+                        in: accountDirectory,
+                        syncContext: syncContext
+                    )
                 } catch {
                     fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
                 }
+
                 completion()
             }
         }
