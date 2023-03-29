@@ -132,7 +132,6 @@ final class ProfileHeaderViewController: UIViewController {
         self.conversation = conversation
         self.options = options
         self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint])
-        
 
         super.init(nibName: nil, bundle: nil)
     }
