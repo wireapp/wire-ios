@@ -46,7 +46,7 @@ public extension FixedWidthInteger {
 
         repeat {
             // get enough random bytes to fill UInt
-            let data = Data.secureRandomData(length: UInt(MemoryLayout<Self>.size))
+            let data = try! Data.secureRandomData(length: UInt(MemoryLayout<Self>.size))
 
             // extract the UInt
             random = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> Self in

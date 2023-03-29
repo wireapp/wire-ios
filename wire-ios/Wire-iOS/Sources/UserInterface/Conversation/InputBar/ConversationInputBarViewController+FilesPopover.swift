@@ -146,7 +146,7 @@ extension ConversationInputBarViewController {
     private func uploadTestAlertAction(size: UInt, title: String, fileName: String) -> UIAlertAction {
         return UIAlertAction(title: title, style: .default, handler: {_ in
             ZMUserSession.shared()?.enqueue({
-                let randomData = Data.secureRandomData(length: UInt(size))
+                let randomData = try! Data.secureRandomData(length: UInt(size))
 
                 if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                     let fileURL = dir.appendingPathComponent(fileName)
