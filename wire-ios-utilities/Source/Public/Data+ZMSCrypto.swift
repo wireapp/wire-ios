@@ -29,6 +29,9 @@ public enum AESError: Error {
     /// Encryption failed
     case encryptionFailed
 
+    /// The counting of random bytes failed
+    case countRandomBytesFailed
+
 }
 
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
@@ -70,8 +73,8 @@ public extension Data {
         return String(utf16CodeUnits: characters, count: characters.count)
     }
 
-    static func zmRandomSHA256Key() -> Data {
-        return NSData.zmRandomSHA256Key()
+    static func zmRandomSHA256Key() throws -> Data {
+        return try secureRandomData(length: UInt(kCCKeySizeAES256))
     }
 
     func zmSHA256Digest() -> Data {
@@ -102,7 +105,7 @@ public extension Data {
         var copiedBytes: size_t = 0
 
         let ivSize = kCCBlockSizeAES128
-        let iv = Data.secureRandomData(length: UInt(ivSize))
+        let iv = try Data.secureRandomData(length: UInt(ivSize))
 
         let encryptedDataBytes = encryptedData.withUnsafeMutableBytes {
             return $0.baseAddress
@@ -135,12 +138,22 @@ public extension Data {
         return (self as NSData).zmDecryptPrefixedPlainTextIV(withKey: key)
     }
 
-    static func secureRandomData(length: UInt) -> Data {
-        return NSData.secureRandomData(ofLength: length)
+    static func secureRandomData(length: UInt) throws -> Data {
+        var randomData = Data(count: Int(length))
+        let result = randomData.withUnsafeMutableBytes {
+            SecRandomCopyBytes(kSecRandomDefault, Int(length), $0.baseAddress!)
+        }
+
+        guard result == kCCSuccess else {
+            throw AESError.countRandomBytesFailed
+        }
+
+        return randomData
     }
 
-    static func randomEncryptionKey() -> Data {
-        return NSData.randomEncryptionKey()
+    static func randomEncryptionKey() throws -> Data {
+        return try secureRandomData(length: UInt(kCCKeySizeAES128))
+
     }
 
 }
