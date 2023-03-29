@@ -157,7 +157,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func createTipLabel() {
-        let color = UIColor.from(scheme: .textDimmed, variant: .light)
+        let color = SemanticColors.Label.textDefault
         let text = "conversation.input_bar.audio_message.keyboard.record_tip".localized(uppercased: true)
         let attrText = NSMutableAttributedString(string: text)
         let atRange = (text as NSString).range(of: "%@")
