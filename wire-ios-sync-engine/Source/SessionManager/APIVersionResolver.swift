@@ -90,6 +90,9 @@ final class APIVersionResolver {
 
         let commonProductionVersions = backendProdVersions.intersection(clientProdVersions)
 
+        // TODO: REMOVE BEFORE FRIDA RELEASE
+        BackendInfo.preferredAPIVersion = .v3
+
         if commonProductionVersions.isEmpty {
             WireLogger.environment.warn("no common api versions, app will be blacklisted")
             reportBlacklist(payload: payload)
