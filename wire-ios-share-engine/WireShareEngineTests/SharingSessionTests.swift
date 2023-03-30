@@ -19,6 +19,7 @@
 import XCTest
 import WireDataModel
 import WireTesting
+@testable import WireShareEngine
 
 class SharingSessionTests: BaseSharingSessionTests {
 
@@ -64,4 +65,22 @@ class SharingSessionTests: BaseSharingSessionTests {
         let conversations = sharingSession.writebleArchivedConversations.map { $0 as! ZMConversation }
         XCTAssertEqual(conversations, [archivedConversation])
     }
+
+    // MARK: - Init
+
+    func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() throws {
+        do {
+            // Given
+            mockCryptoboxMigrationManager.isMigrationNeeded = true
+
+            // When
+            _ = try createSharingSession()
+        } catch SharingSession.InitializationError.pendingCryptoboxMigration {
+            // Then
+            return
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
 }

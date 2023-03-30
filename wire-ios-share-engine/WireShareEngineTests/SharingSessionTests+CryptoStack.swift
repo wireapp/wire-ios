@@ -392,8 +392,12 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return []
     }
 
-    func proteusNewPrekeyAuto() throws -> [UInt8] {
-        return []
+    func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
+
+    }
+
+    func proteusNewPrekeyAuto() throws -> ProteusAutoPrekeyBundle {
+        fatalError("not implemented")
     }
 
     func proteusLastResortPrekey() throws -> [UInt8] {
