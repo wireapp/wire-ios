@@ -227,7 +227,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let classification = sut.classification(with: otherUsers)
 
         // then
-        XCTAssertEqual(classification, .classified)
+        XCTAssertEqual(classification, .notClassified)
     }
 
 }

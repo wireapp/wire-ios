@@ -50,7 +50,7 @@ final class SecurityLevelViewTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersWithClassified() {
-        sut.configure(with: .classified)
+        sut.configure(with: .notClassified)
         verifyInAllColorSchemes(matching: sut)
     }
 

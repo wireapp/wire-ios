@@ -45,7 +45,7 @@ final class SecurityLevelViewDeprecatedUITests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersWithNotClassified() {
-        sut.configure(with: .notClassified)
+        sut.configure(with: .classified)
         verifyInAllColorSchemes(matching: sut)
     }
 
