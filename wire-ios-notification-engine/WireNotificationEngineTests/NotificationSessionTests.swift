@@ -22,8 +22,6 @@ import Foundation
 
 class NotificationSessionTests: BaseTest {
 
-    // MARK: - Life cycle
-
     // MARK: - Init errors
 
     func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() throws {
