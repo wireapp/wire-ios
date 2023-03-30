@@ -1,0 +1,11 @@
+name: Validate run-tests.yml file
+
+on: [pull_request]
+
+jobs:
+  validate-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Validate run-tests.yml file
+        run: yamllint .github/workflows/run-tests.yml
