@@ -1,5 +1,5 @@
 name: Run Tests
-on: [pull_request]
+on: pull_request
 
 jobs:
   # This job will tell us which frameworks have source code changes.
