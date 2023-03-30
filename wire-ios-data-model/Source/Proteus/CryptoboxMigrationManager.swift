@@ -115,6 +115,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
 }
 
+// sourcery: AutoMockable
 protocol FileManagerInterface {
 
     func fileExists(atPath path: String) -> Bool

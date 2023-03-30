@@ -24,21 +24,24 @@ import WireTransport
 class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     var sut: CryptoboxMigrationManager!
-    var fileManagerMock: FileManagerMock!
+    var mockFileManager: MockFileManagerInterface!
     var proteusViaCoreCryptoFlag = DeveloperFlag.proteusViaCoreCrypto
     var mockProteusService: MockProteusServiceInterface!
 
     override func setUp() {
         super.setUp()
-        fileManagerMock = FileManagerMock(cryptoboxDirectory: cryptoboxDirectory)
-        sut = CryptoboxMigrationManager(fileManager: fileManagerMock)
+        mockFileManager = MockFileManagerInterface()
+        sut = CryptoboxMigrationManager(fileManager: mockFileManager)
         mockProteusService = MockProteusServiceInterface()
         syncMOC.proteusService = mockProteusService
+
+        mockFileManager.cryptoboxDirectoryIn_MockValue = cryptoboxDirectory
+        mockFileManager.removeItemAt_MockMethod = { _ in }
     }
 
     override func tearDown() {
         sut = nil
-        fileManagerMock = nil
+        mockFileManager = nil
         mockProteusService = nil
         proteusViaCoreCryptoFlag.isOn = false
         syncMOC.proteusService = nil
@@ -57,7 +60,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     func test_IsMigrationNeeded_FilesExistAndFlagIsOn() {
         // Given
-        fileManagerMock.cryptoboxFilesExist = true
+        mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
         // When
@@ -69,7 +72,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     func test_IsMigrationNeeded_FilesExistAndFlagIsOff() {
         // Given
-        fileManagerMock.cryptoboxFilesExist = true
+        mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = false
 
         // When
@@ -81,7 +84,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     func test_IsMigrationNeeded_FilesDoNotExistAndFlagIsOn() {
         // Given
-        fileManagerMock.cryptoboxFilesExist = false
+        mockFileManager.fileExistsAtPath_MockValue = false
         proteusViaCoreCryptoFlag.isOn = true
 
         // When
@@ -95,7 +98,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     func test_itPerformsMigrations() throws {
         // Given
-        fileManagerMock.cryptoboxFilesExist = true
+        mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
         mockProteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
@@ -104,13 +107,13 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
 
         // Then
-        XCTAssertEqual(fileManagerMock.removeItemInvocations, [cryptoboxDirectory])
+        XCTAssertEqual(mockFileManager.removeItemAt_Invocations, [cryptoboxDirectory])
         XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 1)
     }
 
     func test_itDoesNotPerformMigration_CoreCryptoError() {
         // Given
-        fileManagerMock.cryptoboxFilesExist = true
+        mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
         mockProteusService.migrateCryptoboxSessionsAt_MockError = CryptoboxMigrationManager.Failure.failedToMigrateData
@@ -121,7 +124,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         }
 
         // Then
-        XCTAssertTrue(fileManagerMock.removeItemInvocations.isEmpty)
+        XCTAssertTrue(mockFileManager.removeItemAt_Invocations.isEmpty)
     }
 
     // MARK: - Complete migration
@@ -148,32 +151,6 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
         // Then
         XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 0)
-    }
-
-}
-
-class FileManagerMock: FileManagerInterface {
-
-    init(cryptoboxDirectory: URL) {
-        self.cryptoboxDirectory = cryptoboxDirectory
-    }
-
-    var cryptoboxFilesExist = false
-
-    func fileExists(atPath path: String) -> Bool {
-        return cryptoboxFilesExist
-    }
-
-    var removeItemInvocations = [URL]()
-
-    func removeItem(at url: URL) throws {
-        removeItemInvocations.append(url)
-    }
-
-    var cryptoboxDirectory: URL
-
-    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        return cryptoboxDirectory
     }
 
 }

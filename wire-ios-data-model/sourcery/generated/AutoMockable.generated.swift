@@ -33,6 +33,69 @@ import AppKit
 
 
 
+class MockFileManagerInterface: FileManagerInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - fileExists
+
+    var fileExistsAtPath_Invocations: [String] = []
+    var fileExistsAtPath_MockMethod: ((String) -> Bool)?
+    var fileExistsAtPath_MockValue: Bool?
+
+    func fileExists(atPath path: String) -> Bool {
+        fileExistsAtPath_Invocations.append(path)
+
+        if let mock = fileExistsAtPath_MockMethod {
+            return mock(path)
+        } else if let mock = fileExistsAtPath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fileExistsAtPath`")
+        }
+    }
+
+    // MARK: - removeItem
+
+    var removeItemAt_Invocations: [URL] = []
+    var removeItemAt_MockError: Error?
+    var removeItemAt_MockMethod: ((URL) throws -> Void)?
+
+    func removeItem(at url: URL) throws {
+        removeItemAt_Invocations.append(url)
+
+        if let error = removeItemAt_MockError {
+            throw error
+        }
+
+        guard let mock = removeItemAt_MockMethod else {
+            fatalError("no mock for `removeItemAt`")
+        }
+
+        try mock(url)            
+    }
+
+    // MARK: - cryptoboxDirectory
+
+    var cryptoboxDirectoryIn_Invocations: [URL] = []
+    var cryptoboxDirectoryIn_MockMethod: ((URL) -> URL)?
+    var cryptoboxDirectoryIn_MockValue: URL?
+
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+        cryptoboxDirectoryIn_Invocations.append(accountDirectory)
+
+        if let mock = cryptoboxDirectoryIn_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = cryptoboxDirectoryIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `cryptoboxDirectoryIn`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
