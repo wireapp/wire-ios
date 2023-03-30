@@ -243,7 +243,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
-    var cryptoboxMigrationManager: CryptoboxMigration = CryptoboxMigrationManager()
+    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
@@ -845,7 +845,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         syncContext: NSManagedObjectContext,
         completion: @escaping () -> Void
     ) {
-        guard self.cryptoboxMigrationManager.isNeeded(in: accountDirectory) else {
+        guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
             WireLogger.proteus.info("cryptobox migration is not needed")
 
             syncContext.performAndWait {
@@ -865,8 +865,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate?.sessionManagerWillMigrateAccount {
             syncContext.performAndWait {
                 do {
-                    try self.cryptoboxMigrationManager.perform(
-                        in: accountDirectory,
+                    try self.cryptoboxMigrationManager.performMigration(
+                        accountDirectory: accountDirectory,
                         syncContext: syncContext
                     )
                 } catch {
