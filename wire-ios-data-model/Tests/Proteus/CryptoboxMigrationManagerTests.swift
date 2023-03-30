@@ -23,115 +23,100 @@ import WireTransport
 
 class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
-    var sut: CryptoboxMigrationManager?
+    var sut: CryptoboxMigrationManager!
+    var fileManagerMock: FileManagerMock!
     var proteusViaCoreCryptoFlag = DeveloperFlag.proteusViaCoreCrypto
 
     override func setUp() {
-        sut = CryptoboxMigrationManager()
+        fileManagerMock = FileManagerMock(cryptoboxDirectory: cryptoboxDirectory)
+        sut = CryptoboxMigrationManager(fileManager: fileManagerMock)
         super.setUp()
     }
 
     override func tearDown() {
         sut = nil
+        fileManagerMock = nil
         proteusViaCoreCryptoFlag.isOn = false
         super.tearDown()
     }
 
-    var applicationContainer: URL {
+    var accountDirectory: URL {
         return FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .first!
+            .temporaryDirectory
             .appendingPathComponent("CryptoBoxMigrationManagerTests")
     }
 
-    func accountDirectoryURL(userID: UUID) -> URL {
-        return CoreDataStack.accountDataFolder(
-            accountIdentifier: userID,
-            applicationContainer: applicationContainer
-        )
-    }
+    lazy var cryptoboxDirectory = accountDirectory.appendingPathComponent("otr")
 
     // MARK: - Verifying if migration is needed
 
-    func test_itReturnsTrue_WhenMigrationIsNeeded() {
+    func test_IsMigrationNeeded_FilesExistAndFlagIsOn() {
         // Given
-        let accountDirectory = accountDirectoryURL(userID: .create())
-        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
-
-        // When
+        fileManagerMock.cryptoboxFilesExist = true
         proteusViaCoreCryptoFlag.isOn = true
 
+        // When
+        let result = sut.isMigrationNeeded(accountDirectory: accountDirectory)
+
         // Then
-        XCTAssertTrue(sut!.isMigrationNeeded(accountDirectory: accountDirectory))
+        XCTAssertTrue(result)
     }
 
-    func test_itReturnsFalse_WhenMigrationIsNotNeeded_ProteusViaCoreCryptoFlagIsDisabled() {
+    func test_IsMigrationNeeded_FilesExistAndFlagIsOff() {
         // Given
-        let accountDirectory = accountDirectoryURL(userID: .create())
-        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
-
-        // When
+        fileManagerMock.cryptoboxFilesExist = true
         proteusViaCoreCryptoFlag.isOn = false
 
+        // When
+        let result = sut.isMigrationNeeded(accountDirectory: accountDirectory)
+
         // Then
-        XCTAssertFalse(sut!.isMigrationNeeded(accountDirectory: accountDirectory))
+        XCTAssertFalse(result)
     }
 
-    func test_itReturnsFalse_WhenMigrationIsNotNeeded_AccountDirectoryDoesNotExist() throws {
+    func test_IsMigrationNeeded_FilesDoNotExistAndFlagIsOn() {
         // Given
-        let accountDirectory = accountDirectoryURL(userID: .create())
-        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
-        let fileManager = FileManager.default
-        if fileManager.fileExists(atPath: cryptoboxDirectory.path) {
-            try fileManager.removeItem(at: cryptoboxDirectory)
-        }
-        XCTAssertFalse(fileManager.fileExists(atPath: cryptoboxDirectory.path))
-
-        // When
+        fileManagerMock.cryptoboxFilesExist = false
         proteusViaCoreCryptoFlag.isOn = true
 
+        // When
+        let result = sut.isMigrationNeeded(accountDirectory: accountDirectory)
+
         // Then
-        XCTAssertFalse(sut!.isMigrationNeeded(accountDirectory: cryptoboxDirectory))
+        XCTAssertFalse(result)
     }
 
     // MARK: - Perform migration
 
     func test_itPerformsMigrations() throws {
         // Given
-        let accountDirectory = accountDirectoryURL(userID: .create())
-        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
+        fileManagerMock.cryptoboxFilesExist = true
+        proteusViaCoreCryptoFlag.isOn = true
+
         let mockProteusService = mockProteusService(with: nil)
+        syncMOC.proteusService = mockProteusService
 
         // When
-        proteusViaCoreCryptoFlag.isOn = true
-        syncMOC.proteusService = mockProteusService
-        XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 0)
-        try sut?.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
+        try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
 
         // Then
-        XCTAssertFalse(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
+        XCTAssertEqual(fileManagerMock.removeItemInvocations, [cryptoboxDirectory])
         XCTAssertEqual(mockProteusService.migrateCryptoboxSessionsAt_Invocations.count, 1)
     }
 
     func test_itDoesNotPerformMigration_CoreCryptoError() {
         // Given
-        let accountDirectory = accountDirectoryURL(userID: .create())
-        let cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: false)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
-
-        // When
+        fileManagerMock.cryptoboxFilesExist = true
         proteusViaCoreCryptoFlag.isOn = true
         syncMOC.proteusService = mockProteusService(with: CryptoboxMigrationManager.Failure.failedToMigrateData)
 
-        XCTAssertThrowsError(try sut?.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
+        // When
+        XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
             XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
         }
 
         // Then
-        XCTAssertTrue(FileManager.default.fileExists(atPath: cryptoboxDirectory.path))
+        XCTAssertTrue(fileManagerMock.removeItemInvocations.isEmpty)
     }
 
     // MARK: - Helpers
@@ -146,6 +131,32 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         proteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
 
         return proteusService
+    }
+
+}
+
+class FileManagerMock: FileManagerInterface {
+
+    init(cryptoboxDirectory: URL) {
+        self.cryptoboxDirectory = cryptoboxDirectory
+    }
+
+    var cryptoboxFilesExist = false
+
+    func fileExists(atPath path: String) -> Bool {
+        return cryptoboxFilesExist
+    }
+
+    var removeItemInvocations = [URL]()
+
+    func removeItem(at url: URL) throws {
+        removeItemInvocations.append(url)
+    }
+
+    var cryptoboxDirectory: URL
+
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+        return cryptoboxDirectory
     }
 
 }

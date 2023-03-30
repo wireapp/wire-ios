@@ -34,7 +34,17 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
     // MARK: - Properties
 
-    let fileManager = FileManager.default
+    let fileManager: FileManagerInterface
+
+    // MARK: - Life cycle
+
+    public convenience init() {
+        self.init(fileManager: FileManager.default)
+    }
+
+    init(fileManager: FileManagerInterface) {
+        self.fileManager = fileManager
+    }
 
     // MARK: - Failure
 
@@ -49,8 +59,8 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
         guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
-        let cryptoboxDirectory = cryptoboxDirectory(in: accountDirectory)
-        return FileManager.default.fileExists(atPath: cryptoboxDirectory.path)
+        let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
+        return fileManager.fileExists(atPath: cryptoboxDirectory.path)
     }
 
     public func performMigration(
@@ -65,7 +75,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
             do {
                 WireLogger.proteus.info("migrating cryptobox data...")
-                let cryptoboxDirectory = cryptoboxDirectory(in: accountDirectory)
+                let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
                 try proteusService.migrateCryptoboxSessions(at: cryptoboxDirectory)
                 WireLogger.proteus.info("migrating cryptobox data... success")
             } catch {
@@ -84,12 +94,24 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Helpers
 
     private func removeDirectory(in accountDirectory: URL) throws {
-        let cryptoboxDirectory = cryptoboxDirectory(in: accountDirectory)
+        let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
         guard fileManager.fileExists(atPath: cryptoboxDirectory.path) else { return }
         try fileManager.removeItem(at: cryptoboxDirectory)
     }
 
-    private func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+}
+
+protocol FileManagerInterface {
+
+    func fileExists(atPath path: String) -> Bool
+    func removeItem(at url: URL) throws
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL
+
+}
+
+extension FileManager: FileManagerInterface {
+
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
         return FileManager.keyStoreURL(
             accountDirectory: accountDirectory,
             createParentIfNeeded: false
