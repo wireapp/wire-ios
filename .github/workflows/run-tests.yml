@@ -1,5 +1,6 @@
 name: Run Tests
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
 
 jobs:
   # This job will tell us which frameworks have source code changes.
