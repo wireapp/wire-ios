@@ -74,8 +74,6 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
         let nonce = UUID.create()
         let message = try! conversation.appendImage(from: data, nonce: nonce) as! ZMAssetClientMessage
 
-
-
         do {
             let uploaded = WireProtos.Asset(withUploadedOTRKey: try .randomEncryptionKey(), sha256: try .zmRandomSHA256Key())
             try message.setUnderlyingMessage(GenericMessage(content: uploaded, nonce: nonce))
@@ -1197,7 +1195,6 @@ extension ZMAssetClientMessageTests {
         }
         return createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: GenericMessage(content: asset, nonce: nonce))
     }
-
 
     func previewGenericMessage(
             with nonce: UUID,
