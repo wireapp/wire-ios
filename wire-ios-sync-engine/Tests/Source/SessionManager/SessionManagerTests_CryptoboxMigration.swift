@@ -30,6 +30,8 @@ class SessionManagerTests_CryptoboxMigration: IntegrationTest {
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         createSelfUserAndConversation()
 
+        mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_MockMethod = { _, _ in }
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
         sessionManager?.cryptoboxMigrationManager = mockCryptoboxMigrationManager
     }
 
@@ -48,17 +50,19 @@ class SessionManagerTests_CryptoboxMigration: IntegrationTest {
 
         // Then
         XCTAssertEqual(mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.count, 1)
+        XCTAssertEqual(mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count, 1)
     }
 
     func testItDoesNotPerformMigration() {
         // Given
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         // When
         XCTAssert(login())
 
         // Then
         XCTAssertTrue(mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.isEmpty)
+        XCTAssertEqual(mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count, 1)
     }
-    
+
 }
