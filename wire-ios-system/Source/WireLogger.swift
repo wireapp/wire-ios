@@ -159,6 +159,10 @@ public extension WireLogger {
 
   static let messaging = WireLogger(tag: "messaging")
 
+  /// For logs related to the backend environment.
+
+  static let environment = WireLogger(tag: "environment")
+
   /// For logs related to update events
 
   static let updateEvent = WireLogger(tag: "update-event")
