@@ -19,6 +19,7 @@
 import Foundation
 import WireSystem
 
+// sourcery: AutoMockable
 public protocol CryptoboxMigrationManagerInterface {
 
     func isMigrationNeeded(accountDirectory: URL) -> Bool

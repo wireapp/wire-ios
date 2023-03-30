@@ -40,7 +40,7 @@ class BaseTest: ZMTBaseTest {
     var operationLoop: RequestGeneratingOperationLoop!
     var pushNotificationStatus: PushNotificationStatus!
     var pushNotificationStrategy: PushNotificationStrategy!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManager!
+    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
 
     override func setUp() {
         super.setUp()
@@ -107,7 +107,8 @@ class BaseTest: ZMTBaseTest {
 
         createSelfUserAndClient()
 
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManager()
+        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
     }
 
     func createSelfUserAndClient() {
@@ -156,21 +157,4 @@ class BaseTest: ZMTBaseTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager
         )
     }
-}
-
-class MockCryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
-
-    var isMigrationNeeded = false
-    func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        return isMigrationNeeded
-    }
-
-    func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
-
-    }
-
-    func completeMigration(syncContext: NSManagedObjectContext) throws {
-        
-    }
-
 }

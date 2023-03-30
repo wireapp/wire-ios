@@ -58,7 +58,7 @@ class BaseTest: ZMTBaseTest {
     var applicationStatusDirectory: ApplicationStatusDirectory!
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManager!
+    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
 
     override func setUp() {
         super.setUp()
@@ -129,7 +129,8 @@ class BaseTest: ZMTBaseTest {
         selfClient.remoteIdentifier = "selfClient"
         selfClient.user = selfUser
 
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManager()
+        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         context.saveOrRollback()
@@ -169,19 +170,3 @@ class BaseTest: ZMTBaseTest {
 
 }
 
-class MockCryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
-
-    var isMigrationNeeded = false
-    func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        return isMigrationNeeded
-    }
-
-    func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
-
-    }
-
-    func completeMigration(syncContext: NSManagedObjectContext) throws {
-
-    }
-
-}

@@ -33,6 +33,72 @@ import AppKit
 
 
 
+public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isMigrationNeeded
+
+    public var isMigrationNeededAccountDirectory_Invocations: [URL] = []
+    public var isMigrationNeededAccountDirectory_MockMethod: ((URL) -> Bool)?
+    public var isMigrationNeededAccountDirectory_MockValue: Bool?
+
+    public func isMigrationNeeded(accountDirectory: URL) -> Bool {
+        isMigrationNeededAccountDirectory_Invocations.append(accountDirectory)
+
+        if let mock = isMigrationNeededAccountDirectory_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = isMigrationNeededAccountDirectory_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMigrationNeededAccountDirectory`")
+        }
+    }
+
+    // MARK: - performMigration
+
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, syncContext: NSManagedObjectContext)] = []
+    public var performMigrationAccountDirectorySyncContext_MockError: Error?
+    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, NSManagedObjectContext) throws -> Void)?
+
+    public func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
+        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, syncContext: syncContext))
+
+        if let error = performMigrationAccountDirectorySyncContext_MockError {
+            throw error
+        }
+
+        guard let mock = performMigrationAccountDirectorySyncContext_MockMethod else {
+            fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
+        }
+
+        try mock(accountDirectory, syncContext)            
+    }
+
+    // MARK: - completeMigration
+
+    public var completeMigrationSyncContext_Invocations: [NSManagedObjectContext] = []
+    public var completeMigrationSyncContext_MockError: Error?
+    public var completeMigrationSyncContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
+
+    public func completeMigration(syncContext: NSManagedObjectContext) throws {
+        completeMigrationSyncContext_Invocations.append(syncContext)
+
+        if let error = completeMigrationSyncContext_MockError {
+            throw error
+        }
+
+        guard let mock = completeMigrationSyncContext_MockMethod else {
+            fatalError("no mock for `completeMigrationSyncContext`")
+        }
+
+        try mock(syncContext)            
+    }
+
+}
 class MockFileManagerInterface: FileManagerInterface {
 
     // MARK: - Life cycle

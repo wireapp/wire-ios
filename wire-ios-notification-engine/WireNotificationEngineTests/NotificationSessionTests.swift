@@ -27,7 +27,7 @@ class NotificationSessionTests: BaseTest {
     func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() throws {
         do {
             // Given
-            mockCryptoboxMigrationManager.isMigrationNeeded = true
+            mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
 
             // When
             _ = try createNotificationSession()
