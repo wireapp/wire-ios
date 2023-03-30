@@ -238,10 +238,3 @@ jobs:
         with:
           path: |
             build/reports/*.junit
-
-      - name: Prepare visual representation of test results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: always()
-        with:
-          files: |
-            build/reports/*.junit
