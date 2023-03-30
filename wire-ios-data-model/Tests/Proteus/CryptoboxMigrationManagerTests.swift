@@ -26,17 +26,22 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     var sut: CryptoboxMigrationManager!
     var fileManagerMock: FileManagerMock!
     var proteusViaCoreCryptoFlag = DeveloperFlag.proteusViaCoreCrypto
+    var mockProteusService: MockProteusServiceInterface!
 
     override func setUp() {
+        super.setUp()
         fileManagerMock = FileManagerMock(cryptoboxDirectory: cryptoboxDirectory)
         sut = CryptoboxMigrationManager(fileManager: fileManagerMock)
-        super.setUp()
+        mockProteusService = MockProteusServiceInterface()
+        syncMOC.proteusService = mockProteusService
     }
 
     override func tearDown() {
         sut = nil
         fileManagerMock = nil
+        mockProteusService = nil
         proteusViaCoreCryptoFlag.isOn = false
+        syncMOC.proteusService = nil
         super.tearDown()
     }
 
@@ -93,8 +98,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         fileManagerMock.cryptoboxFilesExist = true
         proteusViaCoreCryptoFlag.isOn = true
 
-        let mockProteusService = mockProteusService(with: nil)
-        syncMOC.proteusService = mockProteusService
+        mockProteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
 
         // When
         try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
@@ -108,7 +112,8 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         // Given
         fileManagerMock.cryptoboxFilesExist = true
         proteusViaCoreCryptoFlag.isOn = true
-        syncMOC.proteusService = mockProteusService(with: CryptoboxMigrationManager.Failure.failedToMigrateData)
+
+        mockProteusService.migrateCryptoboxSessionsAt_MockError = CryptoboxMigrationManager.Failure.failedToMigrateData
 
         // When
         XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
@@ -119,18 +124,17 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(fileManagerMock.removeItemInvocations.isEmpty)
     }
 
-    // MARK: - Helpers
+    // MARK: - Complete migration
 
-    private func mockProteusService(with error: Error?) -> MockProteusServiceInterface {
-        let proteusService = MockProteusServiceInterface()
+    func test_itCompletesMigration() throws {
+        // Given
+        mockProteusService.completeInitialization_MockMethod = {}
 
-        if let migrationError = error {
-            proteusService.migrateCryptoboxSessionsAt_MockError = migrationError
-        }
+        // When
+        try sut.completeMigration(syncContext: syncMOC)
 
-        proteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
-
-        return proteusService
+        // Then
+        XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 1)
     }
 
 }

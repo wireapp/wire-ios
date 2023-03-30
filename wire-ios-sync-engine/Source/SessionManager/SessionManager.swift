@@ -850,7 +850,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             syncContext.performAndWait {
                 do {
-                    try syncContext.proteusService?.completeInitialization()
+                    try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
                 } catch {
                     fatalError("failed to complete proteus initialization")
                 }
@@ -875,7 +875,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
 
                 do {
-                    try syncContext.proteusService?.completeInitialization()
+                    try self.cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
                 } catch {
                     fatalError("failed to complete proteus initialization")
                 }

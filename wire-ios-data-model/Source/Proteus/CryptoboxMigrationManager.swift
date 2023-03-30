@@ -28,6 +28,8 @@ public protocol CryptoboxMigrationManagerInterface {
         syncContext: NSManagedObjectContext
     ) throws
 
+    func completeMigration(syncContext: NSManagedObjectContext) throws
+
 }
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
@@ -52,6 +54,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
         case failedToMigrateData
         case failedToDeleteLegacyData
+        case proteusServiceUnavailable
 
     }
 
@@ -69,8 +72,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     ) throws {
             guard let proteusService = syncContext.proteusService else {
                 WireLogger.proteus.warn("cannot perform cryptobox migration without proteus service")
-                precondition(syncContext.proteusService != nil, "proteusService is expected to be availble")
-                return
+                throw Failure.proteusServiceUnavailable
             }
 
             do {
@@ -89,6 +91,14 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
             } catch {
                 throw Failure.failedToDeleteLegacyData
             }
+    }
+
+    public func completeMigration(syncContext: NSManagedObjectContext) throws {
+        guard let proteusService = syncContext.proteusService else {
+            throw Failure.proteusServiceUnavailable
+        }
+
+        try proteusService.completeInitialization()
     }
 
     // MARK: - Helpers
