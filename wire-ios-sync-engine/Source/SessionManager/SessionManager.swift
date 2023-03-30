@@ -852,6 +852,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 do {
                     try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
                 } catch {
+                    WireLogger.proteus.critical("failed to complete migration: \(error.localizedDescription)")
                     fatalError("failed to complete proteus initialization")
                 }
             }
