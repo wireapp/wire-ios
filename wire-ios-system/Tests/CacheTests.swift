@@ -29,7 +29,7 @@ class CacheTests: XCTestCase {
 
         // THEN
         XCTAssertFalse(didPurgeElements)
-        XCTAssertEqual(cache.value(for: "word"), "Hello")
+        XCTAssertEqual(cache.value(for: "word"), "Hello broken test")
     }
 
     func testThatItPurgesWhenTooManyElements() {
