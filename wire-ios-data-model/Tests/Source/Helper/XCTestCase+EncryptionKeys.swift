@@ -34,14 +34,14 @@ extension XCTestCase {
 
     var validEncryptionKeys: EncryptionKeys {
         let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
-        let databaseKey = Data.zmRandomSHA256Key()
+        let databaseKey = try! Data.zmRandomSHA256Key()
 
         return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey)
     }
 
     var malformedEncryptionKeys: EncryptionKeys {
         let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
-        let databaseKey = Data.zmRandomSHA256Key()
+        let databaseKey = try! Data.zmRandomSHA256Key()
 
         return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey.dropFirst())
     }

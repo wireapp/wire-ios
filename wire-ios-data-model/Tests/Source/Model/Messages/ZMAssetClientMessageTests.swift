@@ -409,6 +409,7 @@ extension ZMAssetClientMessageTests {
         }
     }
 
+    @available(iOS 15.0, *)
     func testThatItReturnsTheEncryptedUploadedDataWhenItHasAUploadedGenericMessageInTheDataSet() throws {
         try self.syncMOC.performAndWait {
             // given
@@ -582,6 +583,7 @@ extension ZMAssetClientMessageTests {
 
     // MARK: Updating AssetId
 
+    @available(iOS 15.0, *)
     func testThatItReturnsAssetIdWhenSettingItDirectly() throws {
         try self.syncMOC.performAndWait {
 
@@ -623,6 +625,7 @@ extension ZMAssetClientMessageTests {
         }
     }
 
+    @available(iOS 15.0, *)
     func testThatItDoesNotSetAssetIdWhenUpdatingFromAnUploadedMessage() throws {
         try self.syncMOC.performAndWait {
             // given

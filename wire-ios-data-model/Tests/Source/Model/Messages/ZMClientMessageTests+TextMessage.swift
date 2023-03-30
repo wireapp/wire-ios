@@ -155,7 +155,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         XCTAssertFalse(willHaveAnImage)
     }
 
-    func testThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalledAndItHasAAssetID() {
+    func testThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalledAndItHasAAssetID() throws {
         // given
         let preview = TwitterStatusMetadata(
             originalURLString: "example.com/article/original",
@@ -168,7 +168,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         preview.message = name
 
         // then
-        assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
+        try assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
     }
 
     func testThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalledAndItHasAAssetID_Article() throws {

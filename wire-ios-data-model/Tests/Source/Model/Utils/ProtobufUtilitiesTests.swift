@@ -47,14 +47,14 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(sut.normalizedLoudnessLevels, [])
     }
 
-    func testThatItUpdatesTheLinkPreviewWithOTRKeyAndSha() {
+    func testThatItUpdatesTheLinkPreviewWithOTRKeyAndSha() throws {
         // given
         var preview = createLinkPreview()
         XCTAssertFalse(preview.article.image.hasUploaded)
         XCTAssertFalse(preview.image.hasUploaded)
 
         // when
-        let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otrKey, sha256) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let metadata = WireProtos.Asset.ImageMetaData(width: 42, height: 12)
         let original = WireProtos.Asset.Original(withSize: 256, mimeType: "image/jpeg", name: nil, imageMetaData: metadata)
         preview.update(withOtrKey: otrKey, sha256: sha256, original: original)
@@ -70,10 +70,10 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertFalse(preview.image.original.hasName)
     }
 
-    func testThatItUpdatesTheLinkPreviewWithAssetIDAndTokenAndDomain() {
+    func testThatItUpdatesTheLinkPreviewWithAssetIDAndTokenAndDomain() throws {
         // given
         var preview = createLinkPreview()
-        preview.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
+        preview.update(withOtrKey: try .randomEncryptionKey(), sha256: try .zmRandomSHA256Key(), original: nil)
         XCTAssertTrue(preview.image.hasUploaded)
         XCTAssertFalse(preview.image.uploaded.hasAssetID)
 
@@ -88,9 +88,9 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(preview.image.uploaded.assetDomain, domain)
     }
 
-    func testThatItUpdatesRemoteAssetDataWIthAssetIdAndAssetTokenAndDomain() {
+    func testThatItUpdatesRemoteAssetDataWIthAssetIdAndAssetTokenAndDomain() throws {
         // given
-        let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otrKey, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         var sut = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha)
 
@@ -105,9 +105,9 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(sut.sha256, sha)
     }
 
-    func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain() {
+    func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain() throws {
         // given
-        let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otrKey, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         let asset = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
         var sut = GenericMessage(content: asset, nonce: UUID.create())
@@ -127,9 +127,9 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(sut.asset.uploaded.sha256, sha)
     }
 
-    func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain_Ephemeral() {
+    func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain_Ephemeral() throws {
         // given
-        let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otrKey, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         let asset = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
         var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
@@ -149,9 +149,9 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(sut.ephemeral.asset.uploaded.sha256, sha)
     }
 
-    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndTokenAndDomain() {
+    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndTokenAndDomain() throws {
         // given
-        let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otr, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         let previewAsset = WireProtos.Asset.Preview(
             size: 128,
@@ -179,9 +179,9 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         XCTAssertEqual(sut.asset.preview.remote.sha256, sha)
     }
 
-    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndTokenAndDomain_Ephemeral() {
+    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndTokenAndDomain_Ephemeral() throws {
         // given
-        let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otr, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         let previewAsset = WireProtos.Asset.Preview(
         size: 128,
@@ -261,9 +261,9 @@ extension ProtobufUtilitiesTests {
         XCTAssertEqual(sut.ephemeral.asset.uploaded.assetDomain, domain)
     }
 
-    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndTokenAndDomain_SwiftProtobufAP() {
+    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndTokenAndDomain_SwiftProtobufAP() throws {
         // given
-        let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otr, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let remoteData = WireProtos.Asset.RemoteData.with {
             $0.otrKey = otr
             $0.sha256 = sha
@@ -294,9 +294,9 @@ extension ProtobufUtilitiesTests {
         XCTAssertEqual(sut.asset.preview.remote.sha256, sha)
     }
 
-    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_Ephemeral_SwiftProtobufAP() {
+    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_Ephemeral_SwiftProtobufAP() throws {
         // given
-        let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let (otr, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let remoteData = WireProtos.Asset.RemoteData.with {
             $0.otrKey = otr
             $0.sha256 = sha

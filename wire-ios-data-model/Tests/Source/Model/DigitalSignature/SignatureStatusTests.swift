@@ -25,7 +25,7 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
-        asset = createAsset()
+        asset = try! createAsset()
         status = SignatureStatus(asset: asset,
                                  data: Data(),
                                  managedObjectContext: syncMOC)
@@ -67,8 +67,8 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(status.fileName, asset?.original.name)
     }
 
-    private func createAsset() -> WireProtos.Asset {
-        let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+    private func createAsset() throws -> WireProtos.Asset {
+        let (otrKey, sha) = try (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
         let original = WireProtos.Asset.Original(withSize: 200, mimeType: "application/pdf", name: "PDF test")
 
