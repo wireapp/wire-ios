@@ -316,4 +316,45 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         verify(matching: sut)
     }
 
+    func testForIncomingRequestFromNotTeamMember() {
+        // GIVEN
+        mockUser.isConnected = false
+        mockUser.canBeConnected = true
+        mockUser.isPendingApprovalBySelfUser = true
+        mockUser.emailAddress = nil
+        mockUser.teamIdentifier = nil
+        mockUser.isTeamMember = false
+
+        mockClassificationProvider.returnClassification = .classified
+
+        let conversation = MockConversation.groupConversation()
+        conversation.activeParticipants = [selfUser, mockUser]
+
+        // WHEN
+        sut = ProfileViewController(user: mockUser,
+                                    viewer: selfUser,
+                                    conversation: conversation.convertToRegularConversation(),
+                                    context: .groupConversation,
+                                    classificationProvider: mockClassificationProvider)
+
+        // THEN
+        verify(matching: sut)
+    }
+
+    func testForNotConnectedNonTeamMember() {
+        // GIVEN
+        selfUser.teamRole = .none
+        mockUser.emailAddress = nil
+        mockUser.isTeamMember = false
+        mockUser.isConnected = false
+
+        // WHEN
+        sut = ProfileViewController(user: mockUser,
+                                    viewer: selfUser,
+                                    context: .profileViewer)
+        sut.viewDidAppear(false)
+
+        // THEN
+        verify(matching: sut)
+    }
 }

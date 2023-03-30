@@ -81,7 +81,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
 
 extension FileTransferTests_Swift {
 
-    func testThatItSendsTheRequestToDownloadAFile_WhenItHasTheAssetID() {
+    func testThatItSendsTheRequestToDownloadAFile_WhenItHasTheAssetID() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -91,7 +91,7 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remoteData = WireProtos.Asset.RemoteData(withOTRKey: otrKey,
@@ -130,7 +130,7 @@ extension FileTransferTests_Swift {
         XCTAssertEqual(message!.downloadState, AssetDownloadState.downloaded)
     }
 
-    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption() {
+    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -139,7 +139,7 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
@@ -188,7 +188,7 @@ extension FileTransferTests_Swift {
         XCTAssertEqual(message!.downloadState, AssetDownloadState.remote)
     }
 
-    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_Ephemeral() {
+    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_Ephemeral() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -197,7 +197,7 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce, expiresAfterTimeInterval: 30)
@@ -325,7 +325,7 @@ extension FileTransferTests_Swift {
         XCTAssertTrue(message!.isEphemeral)
     }
 
-    func testThatItReceivesAVideoFileMessageThumbnailSentRemotely_V3() {
+    func testThatItReceivesAVideoFileMessageThumbnailSentRemotely_V3() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -333,7 +333,7 @@ extension FileTransferTests_Swift {
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256, assetId: thumbnailIDString, assetToken: nil)
@@ -394,7 +394,7 @@ extension FileTransferTests_Swift {
         XCTAssertEqual(message!.transferState, AssetTransferState.uploading)
     }
 
-    func testThatItReceivesAVideoFileMessageThumbnailSentRemotely_Ephemeral_V3() {
+    func testThatItReceivesAVideoFileMessageThumbnailSentRemotely_Ephemeral_V3() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -402,7 +402,7 @@ extension FileTransferTests_Swift {
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        let encryptedAsset = self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256, assetId: thumbnailIDString, assetToken: nil)
@@ -495,7 +495,7 @@ extension FileTransferTests_Swift {
 
 extension FileTransferTests_Swift {
 
-    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_Downloaded_AfterSuccesfullDecryption_V3() {
+    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_Downloaded_AfterSuccesfullDecryption_V3() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -504,7 +504,7 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
@@ -550,7 +550,7 @@ extension FileTransferTests_Swift {
 
     }
 
-    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_V3() {
+    func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_V3() throws {
         // given
         XCTAssertTrue(self.login())
 
@@ -559,7 +559,7 @@ extension FileTransferTests_Swift {
         let otrKey = Data.randomEncryptionKey()
 
         let assetData = Data.secureRandomData(length: 256)
-        let encryptedAsset = assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try assetData.zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
