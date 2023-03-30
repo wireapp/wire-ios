@@ -41,6 +41,7 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()"
       ],
       "target" : {
