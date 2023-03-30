@@ -126,8 +126,9 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     // MARK: - Complete migration
 
-    func test_itCompletesMigration() throws {
+    func test_itCompletesMigration_FlagIsOn() throws {
         // Given
+        proteusViaCoreCryptoFlag.isOn = true
         mockProteusService.completeInitialization_MockMethod = {}
 
         // When
@@ -135,6 +136,18 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
         // Then
         XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 1)
+    }
+
+    func test_itCompletesMigration_FlagIsOff() throws {
+        // Given
+        proteusViaCoreCryptoFlag.isOn = false
+        mockProteusService.completeInitialization_MockMethod = {}
+
+        // When
+        try sut.completeMigration(syncContext: syncMOC)
+
+        // Then
+        XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 0)
     }
 
 }
