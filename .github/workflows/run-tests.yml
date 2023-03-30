@@ -234,9 +234,10 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         if: always()
         with:
+          name: test-reports
           path: |
             build/reports/*.junit
 
