@@ -37,6 +37,8 @@ class NotificationSessionTests: BaseTest {
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
+
+        XCTFail("unexpected success")
     }
 
 }

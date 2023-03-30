@@ -81,6 +81,8 @@ class SharingSessionTests: BaseSharingSessionTests {
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
+
+        XCTFail("unexpected success")
     }
 
 }
