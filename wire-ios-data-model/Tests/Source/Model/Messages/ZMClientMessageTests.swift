@@ -251,13 +251,13 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() {
-        self.syncMOC.performGroupedAndWait {_ in
+    func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() throws {
+        try self.syncMOC.performGroupedAndWait {_ in
             // given
             let nonce = UUID.create()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
-            let otrKey = Data.randomEncryptionKey()
-            let sha256 = Data.zmRandomSHA256Key()
+            let otrKey = try Data.randomEncryptionKey()
+            let sha256 = try Data.zmRandomSHA256Key()
 
             // when
             let remoteData = WireProtos.Asset.RemoteData.with {

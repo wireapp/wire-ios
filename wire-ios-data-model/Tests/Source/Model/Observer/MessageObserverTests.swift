@@ -104,7 +104,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         )
     }
 
-    func testThatItNotifiesObserverWhenTheMediumImageDataChanges() {
+    func testThatItNotifiesObserverWhenTheMediumImageDataChanges() throws {
         // given
         let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         uiMOC.saveOrRollback()
@@ -112,7 +112,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         let imageData = verySmallJPEGData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
-        let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(),
+        let keys = try ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(),
                                               macKey: Data.zmRandomSHA256Key(),
                                               mac: Data.zmRandomSHA256Key())
 

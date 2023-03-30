@@ -151,8 +151,8 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
 
-    func testThatItStartsATimerWhenTheMessageIsMarkedAsSent_IncomingFromOtherDevice() {
-        self.syncMOC.performGroupedBlockAndWait {
+    func testThatItStartsATimerWhenTheMessageIsMarkedAsSent_IncomingFromOtherDevice() throws {
+        try self.syncMOC.performGroupedBlockAndWait {
             // given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             self.syncConversation.lastReadServerTimeStamp = Date()
@@ -172,7 +172,7 @@ extension ZMClientMessageTests_Ephemeral {
                 XCTFail()
             }
 
-            let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: self.syncConversation.activeMessageDestructionTimeoutValue)
+            let uploaded = try GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: self.syncConversation.activeMessageDestructionTimeoutValue)
 
             do {
                 try message.setUnderlyingMessage(uploaded)

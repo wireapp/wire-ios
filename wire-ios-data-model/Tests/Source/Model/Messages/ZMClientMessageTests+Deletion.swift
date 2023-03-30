@@ -60,7 +60,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertEqual(sut.cachedCategory, .undefined)
     }
 
-    func testThatItDeletesAnAssetMessage_Image() {
+    func testThatItDeletesAnAssetMessage_Image() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let sut = try! conversation.appendImage(from: mediumJPEGData(), nonce: .create()) as! ZMAssetClientMessage
@@ -74,7 +74,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
         // expect
         let assetId = "asset-id"
-        let asset = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        let asset = WireProtos.Asset(withUploadedOTRKey: try .zmRandomSHA256Key(), sha256: try .zmRandomSHA256Key())
         var message = GenericMessage(content: asset, nonce: sut.nonce!)
         message.updateUploaded(assetId: assetId, token: nil, domain: nil)
         let updateEvent = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)
@@ -97,7 +97,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         wipeCaches()
     }
 
-    func testThatItDeletesAnAssetMessage_File() {
+    func testThatItDeletesAnAssetMessage_File() throws {
         // given
         let data = "Hello World".data(using: String.Encoding.utf8)!
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
@@ -119,14 +119,14 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
         // expect
         let assetId = UUID.create().transportString()
-        let asset1 = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        let asset1 = try WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
         var message = GenericMessage(content: asset1, nonce: sut.nonce!)
         message.updateUploaded(assetId: assetId, token: nil, domain: nil)
         let updateEvent1 = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)
         sut.update(with: updateEvent1, initialUpdate: true)
 
         let previewAssetId = UUID.create().transportString()
-        let remote = WireProtos.Asset.RemoteData(withOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key(), assetId: previewAssetId, assetToken: nil)
+        let remote = try WireProtos.Asset.RemoteData(withOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key(), assetId: previewAssetId, assetToken: nil)
         let image = WireProtos.Asset.ImageMetaData(width: 1024, height: 1024)
         let preview = WireProtos.Asset.Preview(size: 256, mimeType: "image/png", remoteData: remote, imageMetadata: image)
         let asset2 = WireProtos.Asset(original: nil, preview: preview)

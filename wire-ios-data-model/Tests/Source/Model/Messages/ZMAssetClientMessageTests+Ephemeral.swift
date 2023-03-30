@@ -236,7 +236,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let assetMessage = GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)), nonce: nonce, expiresAfter: .tenSeconds)
         try message.setUnderlyingMessage(assetMessage)
 
-        let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: conversation.activeMessageDestructionTimeoutValue)
+        let uploaded = try GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: conversation.activeMessageDestructionTimeoutValue)
         try message.setUnderlyingMessage(uploaded)
 
         // when
@@ -247,16 +247,16 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), true)
     }
 
-    func appendPreviewImageMessage() -> ZMAssetClientMessage {
+    func appendPreviewImageMessage() throws -> ZMAssetClientMessage {
         let imageData = verySmallJPEGData()
         let message = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         conversation.append(message)
 
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
-        let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(),
-                                              macKey: Data.zmRandomSHA256Key(),
-                                              mac: Data.zmRandomSHA256Key())
+        let keys = ZMImageAssetEncryptionKeys(otrKey: try Data.randomEncryptionKey(),
+                                              macKey: try Data.zmRandomSHA256Key(),
+                                              mac: try Data.zmRandomSHA256Key())
 
         let imageMessage = GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview))
 
@@ -269,14 +269,14 @@ extension ZMAssetClientMessageTests_Ephemeral {
         return message
     }
 
-    func testThatItDoesNotStartsATimerIfTheMessageIsAMessageOfTheOtherUser_NoMediumImage() {
+    func testThatItDoesNotStartsATimerIfTheMessageIsAMessageOfTheOtherUser_NoMediumImage() throws {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
 
-        let message = appendPreviewImageMessage()
+        let message = try appendPreviewImageMessage()
         message.sender = sender
 
         // when

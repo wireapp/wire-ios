@@ -281,11 +281,11 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         }
     }
 
-    func testThatWeCanInsertAFileMessage() {
+    func testThatWeCanInsertAFileMessage() throws {
         // given
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent("secret_file.txt")
-        let data = Data.randomEncryptionKey()
+        let data = try Data.randomEncryptionKey()
         let size = data.count
         try! data.write(to: fileURL)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -313,11 +313,11 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertFalse(fileMessage.fileMessageData!.isAudio)
     }
 
-    func testThatWeCanNotInsertAFileMessage_WhenFileSharingIsDisabled() {
+    func testThatWeCanNotInsertAFileMessage_WhenFileSharingIsDisabled() throws {
         // given
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent("secret_file.txt")
-        let data = Data.randomEncryptionKey()
+        let data = try Data.randomEncryptionKey()
         try! data.write(to: fileURL)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID()
@@ -350,12 +350,12 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
 
     }
 
-    func testThatWeCanInsertAPassFileMessage() {
+    func testThatWeCanInsertAPassFileMessage() throws {
         // given
         let filename = "ticket.pkpass"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(filename)
-        let data = Data.randomEncryptionKey()
+        let data = try Data.randomEncryptionKey()
         let size = data.count
         try! data.write(to: fileURL)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -444,13 +444,13 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(message.expirationDate)
     }
 
-    func testThatWeCanInsertAVideoMessage() {
+    func testThatWeCanInsertAVideoMessage() throws {
         // given
         let fileName = "video.mp4"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(fileName)
-        let videoData = Data.secureRandomData(length: 500)
-        let thumbnailData = Data.secureRandomData(length: 250)
+        let videoData = try Data.secureRandomData(length: 500)
+        let thumbnailData = try Data.secureRandomData(length: 250)
         let duration = 12333
         let dimensions = CGSize(width: 1900, height: 800)
         try! videoData.write(to: fileURL)
@@ -494,14 +494,14 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(fileMessageData.videoDimensions.width, dimensions.width)
     }
 
-    func testThatWeCanInsertAnAudioMessage() {
+    func testThatWeCanInsertAnAudioMessage() throws {
 
         // given
         let fileName = "audio.m4a"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(fileName)
-        let videoData = Data.secureRandomData(length: 500)
-        let thumbnailData = Data.secureRandomData(length: 250)
+        let videoData = try Data.secureRandomData(length: 500)
+        let thumbnailData = try Data.secureRandomData(length: 250)
         let duration = 12333
         try! videoData.write(to: fileURL)
 

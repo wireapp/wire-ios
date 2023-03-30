@@ -219,14 +219,14 @@ extension ConversationTests {
         }
     }
 
-    func testThatItRemovesImageAssetsWhenItReceivesADeletionMessage() {
+    func testThatItRemovesImageAssetsWhenItReceivesADeletionMessage() throws {
         // given
-        self.syncMOC.performGroupedAndWait {_ in
+        try self.syncMOC.performGroupedAndWait {_ in
 
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
-            let imageData = Data.secureRandomData(length: 100)
+            let imageData = try Data.secureRandomData(length: 100)
             XCTAssertNotNil(selfUserID)
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -268,14 +268,14 @@ extension ConversationTests {
         }
     }
 
-    func testThatItRemovesFileAssetsWhenItReceivesADeletionMessage() {
+    func testThatItRemovesFileAssetsWhenItReceivesADeletionMessage() throws {
         // given
-        self.syncMOC.performGroupedAndWait {_ in
+        try self.syncMOC.performGroupedAndWait {_ in
 
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
-            let fileData = Data.secureRandomData(length: 100)
+            let fileData = try Data.secureRandomData(length: 100)
             let fileName = "foo.bar"
 
             let documentsURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]

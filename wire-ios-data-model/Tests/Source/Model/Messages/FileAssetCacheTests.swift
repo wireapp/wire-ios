@@ -230,21 +230,21 @@ extension FileAssetCacheTests {
 
 extension FileAssetCacheTests {
 
-    func testThatItDoesNotDecryptAFileThatDoesNotExistSHA256() {
+    func testThatItDoesNotDecryptAFileThatDoesNotExistSHA256() throws {
 
         // given
         let sut = FileAssetCache()
         let message = createMessageForCaching()
 
         // when
-        let result = sut.decryptFileIfItMatchesDigest(message, encryptionKey: Data.randomEncryptionKey(), sha256Digest: Data.secureRandomData(ofLength: 128))
+        let result = try sut.decryptFileIfItMatchesDigest(message, encryptionKey: Data.randomEncryptionKey(), sha256Digest: Data.secureRandomData(ofLength: 128))
 
         // then
         XCTAssertFalse(result)
     }
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
-    func testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256() {
+    func testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256() throws {
 
         // given
         let message = createMessageForCaching()
@@ -252,7 +252,7 @@ extension FileAssetCacheTests {
         sut.storeAssetData(message, encrypted: true, data: testData())
 
         // when
-        let result = sut.decryptFileIfItMatchesDigest(message, encryptionKey: Data.randomEncryptionKey(), sha256Digest: Data.secureRandomData(ofLength: 128))
+        let result = try sut.decryptFileIfItMatchesDigest(message, encryptionKey: Data.randomEncryptionKey(), sha256Digest: Data.secureRandomData(ofLength: 128))
         XCTAssertFalse(result)
 
         // then
@@ -267,7 +267,7 @@ extension FileAssetCacheTests {
         let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainTextData = Data.secureRandomData(ofLength: 500)
-        let key = Data.randomEncryptionKey()
+        let key = try Data.randomEncryptionKey()
         let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         sut.storeAssetData(message, encrypted: true, data: encryptedData)
         let sha = encryptedData.zmSHA256Digest()

@@ -91,7 +91,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         XCTAssertFalse(willHaveAnImage)
     }
 
-    func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage_TwitterStatus() {
+    func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage_TwitterStatus() throws {
         // given
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
@@ -107,7 +107,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         preview.message = name
 
         var updated = LinkPreview(twitterMetadata: preview)
-        updated.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
+        updated.update(withOtrKey: try .randomEncryptionKey(), sha256: try .zmRandomSHA256Key(), original: nil)
         let text = Text.with {
             $0.content = "Text"
             $0.linkPreview = [updated]
@@ -171,7 +171,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
     }
 
-    func testThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalledAndItHasAAssetID_Article() {
+    func testThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalledAndItHasAAssetID_Article() throws {
         // given
         let preview = ArticleMetadata(
             originalURLString: "example.com/article/original",
@@ -184,17 +184,17 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         preview.summary = "summary"
 
         // then
-        assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
+        try assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
     }
 
-    func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkMetadata, line: UInt = #line) {
+    func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkMetadata, line: UInt = #line) throws {
 
         // given
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
 
         var updated = LinkPreview(preview)
-        updated.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
+        updated.update(withOtrKey: try .randomEncryptionKey(), sha256: try .zmRandomSHA256Key(), original: nil)
         updated.update(withAssetKey: "id", assetToken: nil, assetDomain: nil)
         let text = Text.with {
             $0.content = "Text"
