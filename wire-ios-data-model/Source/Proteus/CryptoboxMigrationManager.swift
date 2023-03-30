@@ -94,6 +94,10 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     }
 
     public func completeMigration(syncContext: NSManagedObjectContext) throws {
+        guard DeveloperFlag.proteusViaCoreCrypto.isOn else {
+            return
+        }
+
         guard let proteusService = syncContext.proteusService else {
             throw Failure.proteusServiceUnavailable
         }
