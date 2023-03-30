@@ -58,7 +58,10 @@ public class NotificationSession {
     /// - noAccount: Account doesn't exist
 
     public enum InitializationError: Error {
+
         case noAccount
+        case pendingCryptoboxMigration
+
     }
 
     // MARK: - Properties
@@ -201,7 +204,8 @@ public class NotificationSession {
         applicationStatusDirectory: ApplicationStatusDirectory,
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
-        pushNotificationStrategy: PushNotificationStrategy
+        pushNotificationStrategy: PushNotificationStrategy,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -210,6 +214,11 @@ public class NotificationSession {
         self.operationLoop = operationLoop
         self.accountIdentifier = accountIdentifier
         pushNotificationStrategy.delegate = self
+
+        let accountDirectory = coreDataStack.accountContainer
+        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
+            throw InitializationError.pendingCryptoboxMigration
+        }
 
         setUpCoreCryptoStack(
             sharedContainerURL: coreDataStack.applicationContainer,
