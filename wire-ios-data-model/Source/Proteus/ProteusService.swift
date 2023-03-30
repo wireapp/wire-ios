@@ -29,8 +29,6 @@ public final class ProteusService: ProteusServiceInterface {
     private let coreCrypto: SafeCoreCryptoProtocol
     private let logger = WireLogger.proteus
 
-    private(set) var isReady = false
-
     // MARK: - Life cycle
 
     public init(coreCrypto: SafeCoreCryptoProtocol) {
@@ -41,7 +39,6 @@ public final class ProteusService: ProteusServiceInterface {
         do {
             logger.info("completing intialization of ProteusService...")
             try coreCrypto.perform { try $0.proteusInit() }
-            isReady = true
             logger.info("completing intialization of ProteusService... success")
         } catch {
             logger.error("completing intialization of ProteusService... failed: \(error.localizedDescription)")
