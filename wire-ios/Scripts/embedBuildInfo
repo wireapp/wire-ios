@@ -47,7 +47,9 @@ def parse_dependency_version_numbers(source_root):
         dependency = line.split()
         full_name = stripQuotes(dependency[1])
         version = stripQuotes(dependency[2])
-        name = full_name.split("/")[1]    
+        name = full_name.split("/")[1]
+        if name == "avs-ios-binaries":
+            version = os.environ["APPSTORE_AVS_VERSION"]
         dependencies[name] = version
     return dependencies
 
