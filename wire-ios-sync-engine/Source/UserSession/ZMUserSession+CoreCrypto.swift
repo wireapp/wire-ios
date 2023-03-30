@@ -35,10 +35,12 @@ extension ZMUserSession {
         }
 
         switch stage {
-        case .proteus(let userID):
+        case .proteus(let userID) where shouldSetupProteus:
             setupProteus(userID: userID)
-        case .mls:
+        case .mls where shouldSetupMLS:
             setupMLS()
+        default:
+            break
         }
     }
 
@@ -73,12 +75,18 @@ extension ZMUserSession {
             let provider = CoreCryptoConfigProvider()
 
             do {
+                let clientID = try provider.clientID(of: .selfUser(in: syncContext))
+
+                if let coreCrypto = syncContext.coreCrypto {
+                    try coreCrypto.mlsInit(clientID: clientID)
+                } else {
+                    try createCoreCryptoForMLS(with: provider)
+                }
+
                 guard let coreCrypto = syncContext.coreCrypto else {
                     throw CryptoStackSetupError.missingCoreCrypto
                 }
 
-                let clientID = try provider.clientID(of: .selfUser(in: syncContext))
-                try coreCrypto.mlsInit(clientID: clientID)
                 try createMLSControllerIfNeeded(coreCrypto: coreCrypto, clientID: clientID)
 
                 WireLogger.coreCrypto.info("success: setup crypto stack (mls)")
@@ -90,19 +98,29 @@ extension ZMUserSession {
         }
     }
 
+    private func createCoreCryptoForMLS(with provider: CoreCryptoConfigProvider) throws {
+        let config = try provider.createFullConfiguration(
+            sharedContainerURL: sharedContainerURL,
+            selfUser: .selfUser(in: syncContext),
+            createKeyIfNeeded: true
+        )
+
+        syncContext.coreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: config)
+    }
+
     private enum CryptoStackSetupError: Error {
         case missingCoreCrypto
     }
 
     private var shouldSetupCryptoStack: Bool {
-        return shouldSetupProteusService || shouldSetupMLSController
+        return shouldSetupProteus || shouldSetupMLS
     }
 
     // MARK: - Proteus
 
     private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) throws {
         guard
-            shouldSetupProteusService,
+            shouldSetupProteus,
             syncContext.proteusService == nil
         else {
             return
@@ -111,7 +129,7 @@ extension ZMUserSession {
         syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
     }
 
-    private var shouldSetupProteusService: Bool {
+    private var shouldSetupProteus: Bool {
         return DeveloperFlag.proteusViaCoreCrypto.isOn
     }
 
@@ -122,7 +140,7 @@ extension ZMUserSession {
         clientID: String
     ) throws {
         guard
-            shouldSetupMLSController,
+            shouldSetupMLS,
             syncContext.mlsController == nil
         else {
             return
@@ -145,7 +163,7 @@ extension ZMUserSession {
         )
     }
 
-    private var shouldSetupMLSController: Bool {
+    private var shouldSetupMLS: Bool {
         return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
