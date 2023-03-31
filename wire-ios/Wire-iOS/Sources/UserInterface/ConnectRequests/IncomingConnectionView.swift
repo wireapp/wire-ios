@@ -81,7 +81,7 @@ final class IncomingConnectionView: UIView {
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
-        ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle.capitalized, for: .normal)
+        ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle, for: .normal)
         ignoreButton.addTarget(self, action: #selector(onIgnoreButton), for: .touchUpInside)
 
         userImageView.accessibilityLabel = "user image"
