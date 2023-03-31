@@ -77,11 +77,11 @@ final class IncomingConnectionView: UIView {
 
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
-        acceptButton.setTitle(ConnectionRequest.connectButtonTitle.capitalized, for: .normal)
+        acceptButton.setTitle(ConnectionRequest.connectButtonTitle, for: .normal)
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
-        ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle.capitalized, for: .normal)
+        ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle, for: .normal)
         ignoreButton.addTarget(self, action: #selector(onIgnoreButton), for: .touchUpInside)
 
         userImageView.accessibilityLabel = "user image"
