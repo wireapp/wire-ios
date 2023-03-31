@@ -117,6 +117,10 @@ final class ConversationRootViewController: UIViewController {
         navHeight = navBarContainer.view.heightAnchor.constraint(equalToConstant: 44)
         setupNavigationBarHeight()
 
+        guard let navigationBarHeight = navHeight else {
+            return
+        }
+
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         self.addToSelf(navBarContainer)
@@ -136,7 +140,7 @@ final class ConversationRootViewController: UIViewController {
             navBarContainer.view.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             navBarContainer.view.leftAnchor.constraint(equalTo: view.leftAnchor),
             navBarContainer.view.rightAnchor.constraint(equalTo: view.rightAnchor),
-            navHeight!,
+            navigationBarHeight,
 
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
