@@ -26,6 +26,7 @@ final class IncomingConnectionView: UIView {
     private let userDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
     private let userImageView = UserImageView()
+    private let federatedIndicator = LabelIndicator(context: .federated)
     private let incomingConnectionFooter = UIView()
     private let acceptButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
     private let ignoreButton = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
@@ -74,10 +75,12 @@ final class IncomingConnectionView: UIView {
         userImageView.size = .big
         userImageView.user = user
 
+        updateFederatedIndicator()
+
         incomingConnectionFooter.addSubview(acceptButton)
         incomingConnectionFooter.addSubview(ignoreButton)
 
-        [usernameLabel, userDetailView, securityLevelView, userImageView, incomingConnectionFooter].forEach(addSubview)
+        [usernameLabel, userDetailView, securityLevelView, userImageView, federatedIndicator, incomingConnectionFooter].forEach(addSubview)
         setupLabelText()
     }
 
@@ -101,6 +104,7 @@ final class IncomingConnectionView: UIView {
          usernameLabel,
          userDetailView,
          securityLevelView,
+         federatedIndicator,
          userImageView].prepareForLayout()
 
         NSLayoutConstraint.activate([
@@ -135,11 +139,18 @@ final class IncomingConnectionView: UIView {
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
             userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 264),
 
+            federatedIndicator.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 20),
+            federatedIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+
             incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: userImageView.bottomAnchor),
             incomingConnectionFooter.leftAnchor.constraint(equalTo: leftAnchor),
             incomingConnectionFooter.bottomAnchor.constraint(equalTo: bottomAnchor),
             incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor)
         ])
+    }
+
+    private func updateFederatedIndicator() {
+        federatedIndicator.isHidden = !user.isFederated
     }
 
     // MARK: - Actions
