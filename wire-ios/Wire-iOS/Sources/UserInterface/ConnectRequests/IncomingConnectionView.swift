@@ -77,7 +77,7 @@ final class IncomingConnectionView: UIView {
 
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
-        acceptButton.setTitle(ConnectionRequest.connectButtonTitle.capitalized, for: .normal)
+        acceptButton.setTitle(ConnectionRequest.connectButtonTitle, for: .normal)
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
