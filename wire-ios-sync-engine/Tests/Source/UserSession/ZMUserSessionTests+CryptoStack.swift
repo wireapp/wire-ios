@@ -43,6 +43,19 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         super.tearDown()
     }
 
+    @discardableResult
+    override func createSelfClient() -> UserClient {
+        var client: UserClient!
+
+        // Log errors when creating the self client aren't important
+        // in these tests.
+        performIgnoringZMLogError {
+            client = super.createSelfClient()
+        }
+
+        return client
+    }
+
     func test_CryptoStackSetup_OnInit() {
         // GIVEN
         createSelfClient()
