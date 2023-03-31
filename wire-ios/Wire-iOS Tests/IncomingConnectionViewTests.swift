@@ -21,7 +21,7 @@ import XCTest
 
 // MARK: - IncomingConnectionViewTests
 
-final class IncomingConnectionViewTests: XCTestCase {
+final class IncomingConnectionViewTests: ZMSnapshotTestCase {
 
     // MARK: - setUp
 

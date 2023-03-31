@@ -35,10 +35,10 @@ final class IncomingConnectionView: UIView {
     private let incomingConnectionFooter = UIView()
     private let acceptButton = Button(style: .accentColorTextButtonStyle,
                                       cornerRadius: 16,
-                                      fontSpec: .smallSemiboldFont)
+                                      fontSpec: .normalSemiboldFont)
     private let ignoreButton = Button(style: .secondaryTextButtonStyle,
                                       cornerRadius: 16,
-                                      fontSpec: .smallSemiboldFont)
+                                      fontSpec: .normalSemiboldFont)
     private let classificationProvider: ClassificationProviding?
 
     var user: UserType {
