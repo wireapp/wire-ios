@@ -25,6 +25,8 @@ final class ConversationRootViewController: UIViewController {
     let navBarContainer: UINavigationBarContainer
     fileprivate var contentView = UIView()
     var navHeight: NSLayoutConstraint?
+    private var navBarHeightForFederatedUsers: CGFloat = 50
+    private var defaultNavBarHeight: CGFloat = 40
     var networkStatusBarHeight: NSLayoutConstraint?
 
     /// for NetworkStatusViewDelegate
@@ -147,16 +149,14 @@ final class ConversationRootViewController: UIViewController {
     }
 
     func setupNavigationBarHeight() {
-        let orientation = UIWindow.interfaceOrientation ?? .unknown
-        let deviceType = UIDevice.current.userInterfaceIdiom
 
         if let conversationVC = conversationViewController?.conversation,
            conversationVC.conversationType == .oneOnOne,
            let user = conversationVC.connectedUserType,
            user.isFederated {
-            navHeight?.constant = 50
+            navHeight?.constant = navBarHeightForFederatedUsers
         } else {
-            navHeight?.constant = 44
+            navHeight?.constant = defaultNavBarHeight
         }
 
     }
