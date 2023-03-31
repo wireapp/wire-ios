@@ -316,6 +316,9 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsInvalid
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
+    if (self.isWaitingForLogin) {
+        self.isWaitingForLogin = NO;
+    }
     NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmailVerificationCode userInfo:nil];
     [self.delegate authenticationDidFail: error];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
