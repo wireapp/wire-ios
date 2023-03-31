@@ -75,6 +75,33 @@ final class ConversationRootViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        shouldAnimateNetworkStatusView = true
+        navBarContainer.navigationBar.accessibilityElementsHidden = false
+        conversationViewController?.view.accessibilityElementsHidden = false
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        navBarContainer.navigationBar.accessibilityElementsHidden = true
+        conversationViewController?.view.accessibilityElementsHidden = true
+    }
+
+    private var child: UIViewController? {
+        return conversationViewController?.contentViewController
+    }
+
+    override var childForStatusBarStyle: UIViewController? {
+        return child
+    }
+
+    override var childForStatusBarHidden: UIViewController? {
+        return child
+    }
+
     func configure() {
         guard let conversationViewController = self.conversationViewController else {
             return
@@ -117,32 +144,6 @@ final class ConversationRootViewController: UIViewController {
         navBarContainer.navigationBar.pushItem(conversationViewController.navigationItem, animated: false)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        shouldAnimateNetworkStatusView = true
-        navBarContainer.navigationBar.accessibilityElementsHidden = false
-        conversationViewController?.view.accessibilityElementsHidden = false
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        navBarContainer.navigationBar.accessibilityElementsHidden = true
-        conversationViewController?.view.accessibilityElementsHidden = true
-    }
-
-    private var child: UIViewController? {
-        return conversationViewController?.contentViewController
-    }
-
-    override var childForStatusBarStyle: UIViewController? {
-        return child
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        return child
-    }
 
     func scroll(to message: ZMConversationMessage) {
         conversationViewController?.scroll(to: message)
