@@ -23,6 +23,9 @@ import XCTest
 
 final class IncomingConnectionViewTests: ZMSnapshotTestCase {
 
+    // MARK: - Properties
+    let sutBackgroundColor = SemanticColors.View.backgroundDefault
+
     // MARK: - setUp
 
     override func setUp() {
@@ -36,7 +39,7 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
         let user = SwiftMockLoader.mockUsers().first!
         let sut = IncomingConnectionView(user: user)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
@@ -44,7 +47,7 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
         let user = SwiftMockLoader.mockUsers().last! // The last user does not have a username
         let sut = IncomingConnectionView(user: user)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
@@ -55,7 +58,7 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
@@ -66,7 +69,7 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
@@ -78,7 +81,7 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
