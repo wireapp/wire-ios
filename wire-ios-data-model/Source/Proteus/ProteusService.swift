@@ -31,9 +31,19 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(coreCrypto: SafeCoreCryptoProtocol) throws {
+    public init(coreCrypto: SafeCoreCryptoProtocol) {
         self.coreCrypto = coreCrypto
-        try coreCrypto.perform { try $0.proteusInit() }
+    }
+
+    public func completeInitialization() throws {
+        do {
+            logger.info("completing intialization of ProteusService...")
+            try coreCrypto.perform { try $0.proteusInit() }
+            logger.info("completing intialization of ProteusService... success")
+        } catch {
+            logger.error("completing intialization of ProteusService... failed: \(error.localizedDescription)")
+            throw error
+        }
     }
 
     // MARK: - proteusSessionFromPrekey

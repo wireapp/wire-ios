@@ -33,6 +33,135 @@ import AppKit
 
 
 
+public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isMigrationNeeded
+
+    public var isMigrationNeededAccountDirectory_Invocations: [URL] = []
+    public var isMigrationNeededAccountDirectory_MockMethod: ((URL) -> Bool)?
+    public var isMigrationNeededAccountDirectory_MockValue: Bool?
+
+    public func isMigrationNeeded(accountDirectory: URL) -> Bool {
+        isMigrationNeededAccountDirectory_Invocations.append(accountDirectory)
+
+        if let mock = isMigrationNeededAccountDirectory_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = isMigrationNeededAccountDirectory_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMigrationNeededAccountDirectory`")
+        }
+    }
+
+    // MARK: - performMigration
+
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, syncContext: NSManagedObjectContext)] = []
+    public var performMigrationAccountDirectorySyncContext_MockError: Error?
+    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, NSManagedObjectContext) throws -> Void)?
+
+    public func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
+        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, syncContext: syncContext))
+
+        if let error = performMigrationAccountDirectorySyncContext_MockError {
+            throw error
+        }
+
+        guard let mock = performMigrationAccountDirectorySyncContext_MockMethod else {
+            fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
+        }
+
+        try mock(accountDirectory, syncContext)            
+    }
+
+    // MARK: - completeMigration
+
+    public var completeMigrationSyncContext_Invocations: [NSManagedObjectContext] = []
+    public var completeMigrationSyncContext_MockError: Error?
+    public var completeMigrationSyncContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
+
+    public func completeMigration(syncContext: NSManagedObjectContext) throws {
+        completeMigrationSyncContext_Invocations.append(syncContext)
+
+        if let error = completeMigrationSyncContext_MockError {
+            throw error
+        }
+
+        guard let mock = completeMigrationSyncContext_MockMethod else {
+            fatalError("no mock for `completeMigrationSyncContext`")
+        }
+
+        try mock(syncContext)            
+    }
+
+}
+class MockFileManagerInterface: FileManagerInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - fileExists
+
+    var fileExistsAtPath_Invocations: [String] = []
+    var fileExistsAtPath_MockMethod: ((String) -> Bool)?
+    var fileExistsAtPath_MockValue: Bool?
+
+    func fileExists(atPath path: String) -> Bool {
+        fileExistsAtPath_Invocations.append(path)
+
+        if let mock = fileExistsAtPath_MockMethod {
+            return mock(path)
+        } else if let mock = fileExistsAtPath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fileExistsAtPath`")
+        }
+    }
+
+    // MARK: - removeItem
+
+    var removeItemAt_Invocations: [URL] = []
+    var removeItemAt_MockError: Error?
+    var removeItemAt_MockMethod: ((URL) throws -> Void)?
+
+    func removeItem(at url: URL) throws {
+        removeItemAt_Invocations.append(url)
+
+        if let error = removeItemAt_MockError {
+            throw error
+        }
+
+        guard let mock = removeItemAt_MockMethod else {
+            fatalError("no mock for `removeItemAt`")
+        }
+
+        try mock(url)            
+    }
+
+    // MARK: - cryptoboxDirectory
+
+    var cryptoboxDirectoryIn_Invocations: [URL] = []
+    var cryptoboxDirectoryIn_MockMethod: ((URL) -> URL)?
+    var cryptoboxDirectoryIn_MockValue: URL?
+
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+        cryptoboxDirectoryIn_Invocations.append(accountDirectory)
+
+        if let mock = cryptoboxDirectoryIn_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = cryptoboxDirectoryIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `cryptoboxDirectoryIn`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -48,6 +177,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var underlyingLastPrekeyID: UInt16!
 
+
+    // MARK: - completeInitialization
+
+    public var completeInitialization_Invocations: [Void] = []
+    public var completeInitialization_MockError: Error?
+    public var completeInitialization_MockMethod: (() throws -> Void)?
+
+    public func completeInitialization() throws {
+        completeInitialization_Invocations.append(())
+
+        if let error = completeInitialization_MockError {
+            throw error
+        }
+
+        guard let mock = completeInitialization_MockMethod else {
+            fatalError("no mock for `completeInitialization`")
+        }
+
+        try mock()            
+    }
 
     // MARK: - establishSession
 
