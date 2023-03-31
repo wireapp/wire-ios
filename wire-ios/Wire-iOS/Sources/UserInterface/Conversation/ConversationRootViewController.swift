@@ -65,7 +65,6 @@ final class ConversationRootViewController: UIViewController {
         conversationController.didMove(toParent: self)
 
         conversation.refreshDataIfNeeded()
-
         configure()
     }
 
@@ -78,6 +77,8 @@ final class ConversationRootViewController: UIViewController {
         guard let conversationViewController = self.conversationViewController else {
             return
         }
+        navHeight = navBarContainer.view.heightAnchor.constraint(equalToConstant: 44)
+        setupNavigationBarHeight()
 
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -98,6 +99,7 @@ final class ConversationRootViewController: UIViewController {
             navBarContainer.view.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             navBarContainer.view.leftAnchor.constraint(equalTo: view.leftAnchor),
             navBarContainer.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+            navHeight!,
 
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -142,6 +144,21 @@ final class ConversationRootViewController: UIViewController {
 
     func scroll(to message: ZMConversationMessage) {
         conversationViewController?.scroll(to: message)
+    }
+
+    func setupNavigationBarHeight() {
+        let orientation = UIWindow.interfaceOrientation ?? .unknown
+        let deviceType = UIDevice.current.userInterfaceIdiom
+
+        if let conversationVC = conversationViewController?.conversation,
+           conversationVC.conversationType == .oneOnOne,
+           let user = conversationVC.connectedUserType,
+           user.isFederated {
+            navHeight?.constant = 50
+        } else {
+            navHeight?.constant = 44
+        }
+
     }
 }
 

@@ -48,20 +48,7 @@ class TitleView: UIView, DynamicTypeCapable {
     private func createConstraints() {
         [titleButton, stackView, subtitleLabel].prepareForLayout()
 
-//        if subtitleLabel.isHidden {
-//            stackView.fitIn(view: self)
-//        } else {
-//            stackView.fitIn(view: self, insets: UIEdgeInsets(top: 0, left: 0, bottom: -10, right: 0))
-//        }
-        NSLayoutConstraint.activate([
-
-            subtitleLabel.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: -5)
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-
+        stackView.fitIn(view: self)
     }
 
     private func createViews() {
