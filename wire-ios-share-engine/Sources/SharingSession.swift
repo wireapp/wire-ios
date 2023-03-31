@@ -145,7 +145,7 @@ public class SharingSession {
     /// - LoggedOut: No user is logged in
     /// - missingSharedContainer: The shared container is missing
     public enum InitializationError: Error {
-        case needsMigration, loggedOut, missingSharedContainer
+        case needsMigration, loggedOut, missingSharedContainer, pendingCryptoboxMigration
     }
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
@@ -276,7 +276,8 @@ public class SharingSession {
         applicationStatusDirectory: ApplicationStatusDirectory,
         operationLoop: RequestGeneratingOperationLoop,
         strategyFactory: StrategyFactory,
-        appLockConfig: AppLockController.LegacyConfig?
+        appLockConfig: AppLockController.LegacyConfig?,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
     ) throws {
 
         self.coreDataStack = coreDataStack
@@ -291,6 +292,11 @@ public class SharingSession {
         self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+
+        let accountDirectory = coreDataStack.accountContainer
+        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
+            throw InitializationError.pendingCryptoboxMigration
+        }
 
         setUpCoreCryptoStack(
             sharedContainerURL: coreDataStack.applicationContainer,

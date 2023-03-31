@@ -20,60 +20,49 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class CryptoboxMigrationMock: CryptoboxMigration {
-
-    var needsMigration: Bool = true
-    var performCallCount: UInt = 0
-
-    func isNeeded(in accountDirectory: URL) -> Bool {
-        return needsMigration
-    }
-
-    func perform(in accountDirectory: URL, syncContext: NSManagedObjectContext) {
-        performCallCount += 1
-    }
-
-}
-
 class SessionManagerTests_CryptoboxMigration: IntegrationTest {
 
     var proteusViaCoreCryptoFlag = DeveloperFlag.proteusViaCoreCrypto
-    var cryptoboxMigrationMock: CryptoboxMigrationMock?
+    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
 
     override func setUp() {
         super.setUp()
-        cryptoboxMigrationMock = CryptoboxMigrationMock()
+        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         createSelfUserAndConversation()
+
+        mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_MockMethod = { _, _ in }
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+        sessionManager?.cryptoboxMigrationManager = mockCryptoboxMigrationManager
     }
 
     override func tearDown() {
-        cryptoboxMigrationMock = nil
+        mockCryptoboxMigrationManager = nil
         proteusViaCoreCryptoFlag.isOn = false
         super.tearDown()
     }
 
     func testItPerformsMigrationIfNeeded() {
         // Given
-        sessionManager?.cryptoboxMigrationManager = cryptoboxMigrationMock!
-        cryptoboxMigrationMock?.needsMigration = true
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
 
         // When
         XCTAssert(login())
 
         // Then
-        XCTAssertEqual(cryptoboxMigrationMock?.performCallCount, 1)
+        XCTAssertEqual(mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.count, 1)
+        XCTAssertEqual(mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count, 1)
     }
 
     func testItDoesNotPerformMigration() {
         // Given
-        sessionManager?.cryptoboxMigrationManager = cryptoboxMigrationMock!
-        cryptoboxMigrationMock?.needsMigration = false
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         // When
         XCTAssert(login())
 
         // Then
-        XCTAssertEqual(cryptoboxMigrationMock?.performCallCount, 0)
+        XCTAssertTrue(mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.isEmpty)
+        XCTAssertEqual(mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count, 1)
     }
-    
+
 }

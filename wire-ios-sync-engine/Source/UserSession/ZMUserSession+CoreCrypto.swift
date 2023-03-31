@@ -61,7 +61,7 @@ extension ZMUserSession {
                 )
 
                 syncContext.coreCrypto = coreCrypto
-                try createProteusServiceIfNeeded(coreCrypto: coreCrypto)
+                createProteusServiceIfNeeded(coreCrypto: coreCrypto)
 
                 WireLogger.coreCrypto.info("success: setup crypto stack (proteus)")
             } catch {
@@ -118,7 +118,7 @@ extension ZMUserSession {
 
     // MARK: - Proteus
 
-    private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) throws {
+    private func createProteusServiceIfNeeded(coreCrypto: SafeCoreCryptoProtocol) {
         guard
             shouldSetupProteus,
             syncContext.proteusService == nil
@@ -126,7 +126,7 @@ extension ZMUserSession {
             return
         }
 
-        syncContext.proteusService = try ProteusService(coreCrypto: coreCrypto)
+        syncContext.proteusService = ProteusService(coreCrypto: coreCrypto)
     }
 
     private var shouldSetupProteus: Bool {

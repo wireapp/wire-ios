@@ -49,6 +49,11 @@ class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
         try mock(clientID)
     }
+
+    var tearDownCount = 0
+    func tearDown() throws {
+        tearDownCount += 1
+    }
 }
 
 class MockCoreCrypto: CoreCryptoProtocol {
