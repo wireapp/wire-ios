@@ -19,12 +19,18 @@
 import XCTest
 @testable import Wire
 
+// MARK: - IncomingConnectionViewTests
+
 final class IncomingConnectionViewTests: XCTestCase {
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersWithUserName() {
         let user = SwiftMockLoader.mockUsers().first!
@@ -64,7 +70,21 @@ final class IncomingConnectionViewTests: XCTestCase {
         verify(matching: sut.layoutForTest())
     }
 
+    func testThatItRendersWithFederatedUser() {
+        let user = SwiftMockLoader.mockUsers().first!
+        let mockClassificationProvider = MockClassificationProvider()
+        mockClassificationProvider.returnClassification = .notClassified
+        user.isFederated = true
+
+        let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
+
+        sut.backgroundColor = .white
+        verify(matching: sut.layoutForTest())
+    }
+
 }
+
+// MARK: - UIView extension
 
 fileprivate extension UIView {
 
