@@ -24,6 +24,7 @@ import XCTest
 final class IncomingConnectionViewTests: ZMSnapshotTestCase {
 
     // MARK: - Properties
+    
     let sutBackgroundColor = SemanticColors.View.backgroundDefault
 
     // MARK: - setUp
