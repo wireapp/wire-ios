@@ -23,7 +23,10 @@ import WireCommonComponents
 final class IncomingConnectionView: UIView {
 
     // MARK: - Properties
+
+    typealias UserAction = (UserType) -> Void
     typealias ConnectionRequest = L10n.Localizable.Inbox.ConnectionRequest
+
     private let usernameLabel = UILabel()
     private let userDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
@@ -45,9 +48,10 @@ final class IncomingConnectionView: UIView {
         }
     }
 
-    typealias UserAction = (UserType) -> Void
     var onAccept: UserAction?
     var onIgnore: UserAction?
+
+    // MARK: - Init
 
     init(
         user: UserType,
@@ -68,6 +72,8 @@ final class IncomingConnectionView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Setup views and layout
 
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
@@ -156,6 +162,8 @@ final class IncomingConnectionView: UIView {
             incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor)
         ])
     }
+
+    // MARK: - Methods
 
     private func updateFederatedIndicator() {
         federatedIndicator.isHidden = !user.isFederated
