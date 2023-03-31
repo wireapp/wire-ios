@@ -22,15 +22,20 @@ import WireCommonComponents
 
 final class IncomingConnectionView: UIView {
 
+    // MARK: - Properties
+    typealias ConnectionRequest = L10n.Localizable.Inbox.ConnectionRequest
     private let usernameLabel = UILabel()
     private let userDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
     private let userImageView = UserImageView()
     private let federatedIndicator = LabelIndicator(context: .federated)
     private let incomingConnectionFooter = UIView()
-    private let acceptButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-    private let ignoreButton = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-
+    private let acceptButton = Button(style: .accentColorTextButtonStyle,
+                                      cornerRadius: 16,
+                                      fontSpec: .smallSemiboldFont)
+    private let ignoreButton = Button(style: .secondaryTextButtonStyle,
+                                      cornerRadius: 16,
+                                      fontSpec: .smallSemiboldFont)
     private let classificationProvider: ClassificationProviding?
 
     var user: UserType {
@@ -44,7 +49,10 @@ final class IncomingConnectionView: UIView {
     var onAccept: UserAction?
     var onIgnore: UserAction?
 
-    init(user: UserType, classificationProvider: ClassificationProviding? = ZMUserSession.shared()) {
+    init(
+        user: UserType,
+        classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+    ) {
         self.user = user
         self.classificationProvider = classificationProvider
 
@@ -63,11 +71,11 @@ final class IncomingConnectionView: UIView {
 
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
-        acceptButton.setTitle("inbox.connection_request.connect_button_title".localized(uppercased: true), for: .normal)
+        acceptButton.setTitle(ConnectionRequest.connectButtonTitle.capitalized, for: .normal)
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
-        ignoreButton.setTitle("inbox.connection_request.ignore_button_title".localized(uppercased: true), for: .normal)
+        ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle.capitalized, for: .normal)
         ignoreButton.addTarget(self, action: #selector(onIgnoreButton), for: .touchUpInside)
 
         userImageView.accessibilityLabel = "user image"
