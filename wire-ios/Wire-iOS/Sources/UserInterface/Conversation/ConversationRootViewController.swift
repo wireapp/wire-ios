@@ -19,14 +19,18 @@
 import UIKit
 import WireSyncEngine
 
+// MARK: - ConversationRootViewController
+
 // This class wraps the conversation content view controller in order to display the navigation bar on the top
 final class ConversationRootViewController: UIViewController {
 
+    // MARK: - Properties
+
     let navBarContainer: UINavigationBarContainer
     fileprivate var contentView = UIView()
-    var navHeight: NSLayoutConstraint?
     private var navBarHeightForFederatedUsers: CGFloat = 50
     private var defaultNavBarHeight: CGFloat = 40
+    var navHeight: NSLayoutConstraint?
     var networkStatusBarHeight: NSLayoutConstraint?
 
     /// for NetworkStatusViewDelegate
@@ -35,6 +39,8 @@ final class ConversationRootViewController: UIViewController {
     fileprivate let networkStatusViewController: NetworkStatusViewController = NetworkStatusViewController()
 
     fileprivate(set) weak var conversationViewController: ConversationViewController?
+
+    // MARK: - Init
 
     init(conversation: ZMConversation,
          message: ZMConversationMessage?,
@@ -74,6 +80,8 @@ final class ConversationRootViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Override methods
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -144,13 +152,13 @@ final class ConversationRootViewController: UIViewController {
         navBarContainer.navigationBar.pushItem(conversationViewController.navigationItem, animated: false)
     }
 
+    // MARK: - Methods
 
     func scroll(to message: ZMConversationMessage) {
         conversationViewController?.scroll(to: message)
     }
 
     func setupNavigationBarHeight() {
-
         if let conversationVC = conversationViewController?.conversation,
            conversationVC.conversationType == .oneOnOne,
            let user = conversationVC.connectedUserType,
@@ -163,20 +171,27 @@ final class ConversationRootViewController: UIViewController {
     }
 }
 
+// MARK: - NetworkStatusBarDelegate
+
 extension ConversationRootViewController: NetworkStatusBarDelegate {
     var bottomMargin: CGFloat {
         return 0
     }
 
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
+    func showInIPad(
+        networkStatusViewController: NetworkStatusViewController,
+        with orientation: UIInterfaceOrientation
+    ) -> Bool {
         // always show on iPad for any orientation in regular mode
         return true
     }
 }
 
+// MARK: - ZMConversation extension
+
 extension ZMConversation {
 
-    /// Check if the conversation data is out of date, and in case update it. 
+    /// Check if the conversation data is out of date, and in case update it.
     /// This in an opportunistic update of the data, with an on-demand strategy.
     /// Whenever the conversation is opened by the user, we check if anything is missing.
     fileprivate func refreshDataIfNeeded() {
