@@ -86,21 +86,29 @@ extension Payload.Conversation {
         }
     }
 
-    func updateOrCreateOneToOneConversation(in context: NSManagedObjectContext,
-                                            serverTimestamp: Date,
-                                            source: Source) {
+    func updateOrCreateOneToOneConversation(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) {
 
-        guard let conversationID = id ?? qualifiedID?.uuid,
-              let rawConversationType = type else {
-                  Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
-                  return
-              }
+        guard
+            let conversationID = id ?? qualifiedID?.uuid,
+            let rawConversationType = type
+        else {
+            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            return
+        }
 
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
 
-        guard let otherMember = members?.others.first, let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid else {
+        guard
+            let otherMember = members?.others.first,
+            let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
+        else {
             let conversation = ZMConversation.fetch(with: conversationID, domain: qualifiedID?.domain, in: context)
-            conversation?.conversationType = conversationType
+            // TODO: use conversation type from the backend once it returns the correct value
+            conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
             conversation?.needsToBeUpdatedFromBackend = false
             return
         }
@@ -118,7 +126,9 @@ extension Payload.Conversation {
 
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
-        conversation.conversationType = conversationType
+
+        // TODO: use conversation type from the backend once it returns the correct value
+        conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -187,6 +197,22 @@ extension Payload.Conversation {
                 // Slow synced conversations should be considered read from the start
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
+        }
+    }
+
+    // There is a bug in the backend where the conversation type is not correct for
+    // connection requests across federated backends. Instead of returning `.connection` type,
+    // it returns `oneOnOne.
+    // We fix this temporarily on our side by checking the connection status of the conversation.
+    private func conversationType(for conversation: ZMConversation?, from type: ZMConversationType) -> ZMConversationType {
+        guard let conversation = conversation else {
+            return type
+        }
+
+        if conversation.connection?.status == .sent {
+            return .connection
+        } else {
+            return type
         }
     }
 
