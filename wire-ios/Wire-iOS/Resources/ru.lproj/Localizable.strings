@@ -847,7 +847,7 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Отменить запрос?";
-"profile.cancel_connection_request_dialog.message" = "Отменить запрос на добавление %@?";
+"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
 "profile.cancel_connection_request_dialog.button_no" = "Нет";
 "profile.cancel_connection_request_dialog.button_yes" = "Да";
 
@@ -1139,7 +1139,7 @@
 "self.settings.mute_other_call.description" = "Уведомление будет отключено, если вы в этот момент с кем-то разговариваете";
 
 "self.settings.vbr.title" = "Кодирование с переменным битрейтом";
-"self.settings.vbr.description" = "Благодаря этой опции аудиозвонки расходуют меньше данных и лучше работают при использовании низкоскоростных сетей. Выключите, чтобы использовать кодирование с постоянным битрейтом (CBR). Эта настройка влияет только на звонки 1:1; конференц-звонки всегда используют кодирование CBR.";
+"self.settings.vbr.description" = "Благодаря этой опции аудиозвонки расходуют меньше данных и лучше работают при использовании низкоскоростных сетей. Выключите, чтобы использовать кодирование с постоянным битрейтом (CBR). Эта настройка влияет только на звонки 1:1; групповые звонки всегда используют кодирование CBR.";
 
 "self.settings.sound_menu.sounds.wire_call" = "Звонок Wire";
 "self.settings.sound_menu.sounds.wire_message" = "Сообщение Wire";
@@ -1654,19 +1654,19 @@
 
 //Feature flag - Conference calling
 "feature_config.update.conference_calling.alert.title" = "План Enterprise";
-"feature_config.update.conference_calling.alert.message" = "Ваша команда была переведена на план Enterprise. Теперь у вас есть доступ к таким возможностям, как использование конференц-звонков.";
+"feature_config.update.conference_calling.alert.message" = "Ваша команда была переведена на план Enterprise. Теперь у вас есть доступ к групповым звонкам и другим возможностям.";
 "feature_config.update.conference_calling.alert.message.learn_more" = "Узнайте больше о плане Enterprise";
 
 "feature_config.conference_calling_restrictions.admins.alert.title" = "Перейти на Enterprise";
-"feature_config.conference_calling_restrictions.admins.alert.message" = "В настоящее время ваша команда работает на бесплатном плане Basic. Перейдите на план Enterprise, чтобы получить доступ к таким возможностям, как использование конференц-звонков.";
+"feature_config.conference_calling_restrictions.admins.alert.message" = "В настоящее время ваша команда использует план Basic. Перейдите на Enterprise, чтобы получить доступ к групповым вызовам и другим возможностям.";
 "feature_config.conference_calling_restrictions.admins.alert.message.learn_more" = "Узнайте больше о тарифах Wire";
 "feature_config.conference_calling_restrictions.admins.alert.action.upgrade" = "Перейти сейчас";
 
 "feature_config.conference_calling_restrictions.members.alert.title" = "Возможность недоступна";
-"feature_config.conference_calling_restrictions.members.alert.message" = "Чтобы использовать конференц-связь, вашей команде необходимо перейти на план Enterprise.";
+"feature_config.conference_calling_restrictions.members.alert.message" = "Чтобы выполнить групповой вызов вашей команде необходимо перейти на план Enterprise.";
 
 "feature_config.conference_calling_restrictions.personal.alert.title" = "Возможность недоступна";
-"feature_config.conference_calling_restrictions.personal.alert.message" = "Возможность инициировать конференц-связь доступна только в платной версии Wire.";
+"feature_config.conference_calling_restrictions.personal.alert.message" = "Возможность инициировать групповой вызов доступна только в платной версии Wire.";
 
 // Feature configs: self-deleting messages
 "feature_config.alert.self_deleting_messages.message.disabled" = "Самоудаляющиеся сообщения отключены.";
@@ -1957,3 +1957,4 @@
 "landing.alert.sso.not-supported.message" = "Нельзя авторизоваться через SSO во внутреннем бэкэнде с поддержкой прокси.";
 "credentials.general-error.alert.title" = "Неверная информация";
 "credentials.general-error.alert.message" = "Эти учетные данные неверны.  Проверьте их и повторите попытку.";
+"add-email-password-step.cta-button.title" = "Подтвердить";
