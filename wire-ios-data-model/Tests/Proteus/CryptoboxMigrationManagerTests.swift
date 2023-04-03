@@ -33,7 +33,10 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager = MockFileManagerInterface()
         sut = CryptoboxMigrationManager(fileManager: mockFileManager)
         mockProteusService = MockProteusServiceInterface()
-        syncMOC.proteusService = mockProteusService
+
+        syncMOC.performAndWait({
+            syncMOC.proteusService = mockProteusService
+        })
 
         mockFileManager.cryptoboxDirectoryIn_MockValue = cryptoboxDirectory
         mockFileManager.removeItemAt_MockMethod = { _ in }
@@ -44,7 +47,11 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager = nil
         mockProteusService = nil
         proteusViaCoreCryptoFlag.isOn = false
-        syncMOC.proteusService = nil
+
+        syncMOC.performAndWait({
+            syncMOC.proteusService = nil
+        })
+
         super.tearDown()
     }
 
@@ -104,7 +111,14 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockProteusService.migrateCryptoboxSessionsAt_MockMethod = { _ in }
 
         // When
-        try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
+        syncMOC.performAndWait {
+            do {
+                try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)
+            } catch {
+                XCTFail("failed to perform migration: \(error.localizedDescription)")
+            }
+        }
+
 
         // Then
         XCTAssertEqual(mockFileManager.removeItemAt_Invocations, [cryptoboxDirectory])
@@ -119,8 +133,14 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockProteusService.migrateCryptoboxSessionsAt_MockError = CryptoboxMigrationManager.Failure.failedToMigrateData
 
         // When
-        XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
-            XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
+        syncMOC.performAndWait {
+            do {
+                XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, syncContext: syncMOC)) { error in
+                    XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
+                }
+            } catch {
+                XCTFail("unexpected error: \(error.localizedDescription)")
+            }
         }
 
         // Then
@@ -135,7 +155,13 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockProteusService.completeInitialization_MockMethod = {}
 
         // When
-        try sut.completeMigration(syncContext: syncMOC)
+        syncMOC.performAndWait {
+            do {
+                try sut.completeMigration(syncContext: syncMOC)
+            } catch {
+                XCTFail("failed to complete migration: \(error.localizedDescription)")
+            }
+        }
 
         // Then
         XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 1)
@@ -147,7 +173,13 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockProteusService.completeInitialization_MockMethod = {}
 
         // When
-        try sut.completeMigration(syncContext: syncMOC)
+        syncMOC.performAndWait {
+            do {
+                try sut.completeMigration(syncContext: syncMOC)
+            } catch {
+                XCTFail("failed to complete migration: \(error.localizedDescription)")
+            }
+        }
 
         // Then
         XCTAssertEqual(mockProteusService.completeInitialization_Invocations.count, 0)
