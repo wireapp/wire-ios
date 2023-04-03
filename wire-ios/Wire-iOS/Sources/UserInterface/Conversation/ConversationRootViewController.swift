@@ -29,6 +29,8 @@ final class ConversationRootViewController: UIViewController {
     let navBarContainer: UINavigationBarContainer
     fileprivate var contentView = UIView()
     private var navBarHeightForFederatedUsers: CGFloat = 50
+    // This value is coming from UINavigationBarContainer. swift file
+    // where the value for the navigation bar height is set to 44.
     private var defaultNavBarHeight: CGFloat = 44
     var navHeight: NSLayoutConstraint?
     var networkStatusBarHeight: NSLayoutConstraint?
