@@ -14,8 +14,6 @@
   "testTargets" : [
     {
       "selectedTests" : [
-        "SessionManagerTests_CryptoboxMigration\/testItDoesNotPerformMigration()",
-        "SessionManagerTests_CryptoboxMigration\/testItPerformsMigrationIfNeeded()",
         "SessionManagerTests_EncryptionAtRestIsEnabledByDefault_Option\/testThatEncryptionAtRestIsEnabled_OnActiveUserSession()",
         "SessionManagerTests_EncryptionAtRestMigration\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled()",
         "SessionManagerTests_EncryptionAtRestMigration\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled()"
@@ -28,14 +26,6 @@
     },
     {
       "selectedTests" : [
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_AfterRegisteringSelfClient()",
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable()",
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_OnInit()",
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_OnInit_AllFlagsOff()",
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_OnInit_MLSOnly()",
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_OnInit_ProteusOnly()",
-        "ZMUserSessionTests_CryptoStack\/test_CryptoStackSetup_WhenThereIsNoSelfClient()",
-        "ZMUserSessionTests_CryptoStack\/test_ItCommitsPendingProposals_AfterQuickSyncCompletes()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_AfterEnteringBackground()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_WhenTheCustomTimeoutHasExpiredInTheBackground()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseLockedHandlerIsCalled_AfterDatabaseIsLocked()",

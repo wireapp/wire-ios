@@ -130,13 +130,7 @@
         "AppLockModuleViewTests\/test_ItSendsEvent_WhenApplicationWillEnterForeground()",
         "AppLockModuleViewTests\/test_ItSendsEvent_WhenLockViewRequestReauthentication()",
         "PasswordRuleSetTests\/testPasswordNotMatchingRuleSet()",
-        "PasswordRuleSetTests\/testThatItDetectsDisallowedCharacter()",
-        "SecurityLevelViewDeprecatedUITests\/testThatItDoesNotRenderWithNone()",
-        "SecurityLevelViewDeprecatedUITests\/testThatItRendersWithClassified()",
-        "SecurityLevelViewDeprecatedUITests\/testThatItRendersWithNotClassified()",
-        "SecurityLevelViewTests\/testThatItDoesNotRenderWithNone()",
-        "SecurityLevelViewTests\/testThatItRendersWithClassified()",
-        "SecurityLevelViewTests\/testThatItRendersWithNotClassified()"
+        "PasswordRuleSetTests\/testThatItDetectsDisallowedCharacter()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
