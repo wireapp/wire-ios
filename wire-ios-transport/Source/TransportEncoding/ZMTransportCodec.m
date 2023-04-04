@@ -24,7 +24,6 @@
 
 + (id<ZMTransportData>)interpretResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError *)error;
 {
-    /// We will try to serialize the data and get the payload despite the error and response.statusCode.
     if (data == nil) {
         return nil;
     }
