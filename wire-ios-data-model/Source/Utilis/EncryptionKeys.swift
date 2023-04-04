@@ -80,7 +80,8 @@ public struct EncryptionKeys {
                 query = [
                     kSecClass: kSecClassGenericPassword,
                     kSecAttrAccount: uniqueIdentifier,
-                    kSecReturnData: true
+                    kSecReturnData: true,
+                    kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
                 ]
 
             case .privateKey(_, var context, let prompt):
@@ -114,7 +115,8 @@ public struct EncryptionKeys {
                 query = [
                     kSecClass: kSecClassKey,
                     kSecAttrApplicationTag: tag,
-                    kSecValueRef: value
+                    kSecValueRef: value,
+                    kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
                 ]
 
             case .databaseKey:
