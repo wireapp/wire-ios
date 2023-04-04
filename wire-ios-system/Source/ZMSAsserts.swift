@@ -34,33 +34,47 @@ public func require(_ condition: Bool, _ message: String = "", file: StaticStrin
     }
 }
 
-@objc public enum Environment: UInt8 {
+@objc public enum AppBuild: UInt8 {
     case appStore, `internal`, debug, develop, unknown
 
-    static var current: Environment {
+    static var current: AppBuild {
         guard let identifier = Bundle.main.bundleIdentifier else { return .unknown }
         switch identifier {
         case "com.wearezeta.zclient.ios": return .appStore
-        case "com.wearezeta.zclient-alpha": return .debug
-        case "com.wearezeta.zclient.ios-internal": return .internal
-        case "com.wearezeta.zclient.ios-development": return .develop
+        case "com.wearezeta.zclient.alpha": return .debug
+        case "com.wearezeta.zclient.internal": return .internal
+        case "com.wearezeta.zclient.development": return .develop
         default: return .unknown
         }
     }
 
-    var isAppStore: Bool {
-        return self == .appStore
+    var canFatalError: Bool {
+        switch self {
+        case .debug, .internal, .develop:
+            return true
+        case .appStore, .unknown:
+            return false
+        }
     }
 }
 
-/// Termiantes the application if the condition is `false` and the current build is not an AppsStore build
+/// Terminates the application if the condition is `false` and the current build is not an AppStore build
 public func requireInternal(_ condition: Bool, _ message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
-    guard !Environment.current.isAppStore, !condition else { return }
-    fatal(message(), file: file, line: line)
+    guard !condition else { return }
+    let errorMessage = message()
+    if AppBuild.current.canFatalError {
+        fatal(errorMessage, file: file, line: line)
+    } else {
+        WireLogger(tag: "system").error("requireInternal: \(errorMessage)")
+    }
 }
 
-/// Termiantes the application if the current build is not an AppsStore build
+/// Terminates the application if the current build is not an AppStore build
 public func requireInternalFailure(_ message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
-    guard !Environment.current.isAppStore else { return }
-    fatal(message(), file: file, line: line)
+    let errorMessage = message()
+    if AppBuild.current.canFatalError {
+        fatal(errorMessage, file: file, line: line)
+    } else {
+        WireLogger(tag: "system").error("requireInternalFailure: \(errorMessage)")
+    }
 }
