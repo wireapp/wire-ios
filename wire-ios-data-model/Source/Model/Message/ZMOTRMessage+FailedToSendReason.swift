@@ -20,12 +20,14 @@ import Foundation
 public extension ZMOTRMessage {
 
     override var failedToSendReason: FailedToSendReason {
-        guard isExpired,
-              let reasonCode = expirationReasonCode,
-              let expirationReason = FailedToSendReason(rawValue: reasonCode.intValue)
+        guard 
+            isExpired,
+            let reasonCode = expirationReasonCode,
+            let expirationReason = FailedToSendReason(rawValue: reasonCode.intValue)
         else {
             return .unknown
         }
+
         return expirationReason
     }
 
