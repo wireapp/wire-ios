@@ -118,6 +118,10 @@ extension AvailabilityRequestStrategy: OTREntity {
         // BE notified us about a new client. A session will be established and then we'll try again
     }
 
+    public func failedRecipients(_ recipients: Set<UserClient>!) {
+        // no-op
+    }
+
     public func detectedRedundantUsers(_ users: [ZMUser]) {
         // We were sending a message to clients which should not receive it. To recover
         // from this we must restart the slow sync.

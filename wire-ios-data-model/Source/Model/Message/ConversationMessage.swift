@@ -78,6 +78,11 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Reason why the message has not been sent
     var failedToSendReason: FailedToSendReason { get }
 
+    var failedToSendParticipants: [UserType] { get } //failedParticipants
+    
+    var failedToEncryptParticipants: [UserType] { get }
+    //var failedParticipants: [UserType] { get } //failedParticipants
+
     /// True if the message has been successfully sent to the server
     var isSent: Bool { get }
 

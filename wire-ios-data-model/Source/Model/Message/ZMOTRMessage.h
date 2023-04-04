@@ -36,6 +36,7 @@ extern NSString * const DeliveredKey;
 
 - (void)missesRecipient:(UserClient *)recipient;
 - (void)missesRecipients:(NSSet<UserClient *> *)recipients;
+- (void)failedRecipients:(NSSet<UserClient *> *)recipients;
 - (void)doesNotMissRecipient:(UserClient *)recipient;
 - (void)doesNotMissRecipients:(NSSet<UserClient *> *)recipients;
 

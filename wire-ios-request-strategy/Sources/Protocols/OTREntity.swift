@@ -42,6 +42,8 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 
     func delivered(with response: ZMTransportResponse)
 
+    func failedRecipients(_ recipients: Set<WireDataModel.UserClient>!)
+
 }
 
 /// HTTP status of a request that has

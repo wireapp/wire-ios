@@ -56,6 +56,11 @@ NSString * const DeliveredKey = @"delivered";
     [[self mutableSetValueForKey:ZMMessageMissingRecipientsKey] addObjectsFromArray:recipients.allObjects];
 }
 
+- (void)failedRecipients:(NSSet<UserClient *> *)recipients
+{
+    [[self mutableSetValueForKey:ZMMessageMissingRecipientsKey] addObjectsFromArray:recipients.allObjects];
+}
+
 - (void)doesNotMissRecipient:(UserClient *)recipient
 {
     [self doesNotMissRecipients:[NSSet setWithObject:recipient]];

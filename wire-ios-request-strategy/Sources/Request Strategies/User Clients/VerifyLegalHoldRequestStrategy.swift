@@ -109,6 +109,10 @@ private class VerifyClientsParser: OTREntity {
         // no-op
     }
 
+    func failedRecipients(_ recipients: Set<UserClient>!) {
+        // no-op
+    }
+
     func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }
