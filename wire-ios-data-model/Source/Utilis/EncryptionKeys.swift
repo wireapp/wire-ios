@@ -295,7 +295,7 @@ public struct EncryptionKeys {
             privateKey,
             databaseKeyAlgorithm,
             wrappedDatabaseKey as CFData,
-            error
+            &error
         ) else {
             let error = error!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToDecryptDatabaseKey(underlyingError: error)
