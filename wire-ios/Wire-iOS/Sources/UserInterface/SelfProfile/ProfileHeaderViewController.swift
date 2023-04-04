@@ -70,6 +70,7 @@ final class ProfileHeaderViewController: UIViewController {
     var isAdminRole: Bool {
         didSet {
             groupRoleIndicator.isHidden = !self.isAdminRole
+            groupRoleIndicator.isHidden ? groupRoleIndicator.fadeOut() : groupRoleIndicator.fadeIn()
         }
     }
 
@@ -132,8 +133,6 @@ final class ProfileHeaderViewController: UIViewController {
         self.conversation = conversation
         self.options = options
         self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint])
-        
-
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -144,6 +143,7 @@ final class ProfileHeaderViewController: UIViewController {
 
     override func viewDidLoad() {
         let session = SessionManager.shared?.activeUserSession
+        isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
 
         imageView.isAccessibilityElement = true
         imageView.accessibilityElementsHidden = false
@@ -244,7 +244,7 @@ final class ProfileHeaderViewController: UIViewController {
         let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
-        let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
+        let widthImageConstraint = imageView.widthAnchor.constraint(equalToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
@@ -272,11 +272,12 @@ final class ProfileHeaderViewController: UIViewController {
         switch conversation?.conversationType {
         case .group?:
             groupRoleIndicatorHidden = !(conversation.map(user.isGroupAdmin) ?? false)
+
         default:
             groupRoleIndicatorHidden = true
         }
-        groupRoleIndicator.isHidden = groupRoleIndicatorHidden
 
+        groupRoleIndicator.isHidden = groupRoleIndicatorHidden
     }
 
     private func applyOptions() {
@@ -351,4 +352,20 @@ extension ProfileHeaderViewController: TeamObserver {
             updateTeamLabel()
         }
     }
+}
+
+extension UIView {
+
+    func fadeIn(duration: TimeInterval = 0.5, delay: TimeInterval = 0.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
+        UIView.animate(withDuration: duration, delay: delay, options: UIView.AnimationOptions.curveEaseIn, animations: {
+        self.alpha = 1.0
+        }, completion: completion)  }
+
+    func fadeOut(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+        UIView.animate(withDuration: duration, delay: delay, options: UIView.AnimationOptions.curveEaseIn, animations: {
+        self.alpha = 0.0
+        }, completion: completion)
+}
+    
+
 }
