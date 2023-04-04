@@ -71,6 +71,7 @@ final class ProfileHeaderViewController: UIViewController {
         didSet {
             groupRoleIndicator.isHidden = !self.isAdminRole
             groupRoleIndicator.isHidden ? groupRoleIndicator.fadeOut() : groupRoleIndicator.fadeIn()
+            animateUserImageView()
         }
     }
 
@@ -115,6 +116,7 @@ final class ProfileHeaderViewController: UIViewController {
     let externalIndicator = LabelIndicator(context: .external)
     let federatedIndicator = LabelIndicator(context: .federated)
     let warningView = WarningLabelView()
+    lazy var topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
 
     private var tokens: [Any?] = []
     private var teamObserver: NSObjectProtocol?
@@ -240,7 +242,6 @@ final class ProfileHeaderViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40)
-        let topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
         let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
@@ -249,6 +250,24 @@ final class ProfileHeaderViewController: UIViewController {
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
         ])
+    }
+
+    func animateUserImageView() {
+        guard stackView != nil, stackView.superview != nil else {
+            return
+        }
+
+        if groupRoleIndicator.isHidden {
+            topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 10)
+            UIView.animate(withDuration: 0.4) {
+                self.view.layoutIfNeeded()
+            }
+        } else {
+            topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
+            UIView.animate(withDuration: 0.4) {
+                self.view.layoutIfNeeded()
+            }
+        }
     }
 
     private func updateGuestIndicator() {
@@ -352,20 +371,4 @@ extension ProfileHeaderViewController: TeamObserver {
             updateTeamLabel()
         }
     }
-}
-
-extension UIView {
-
-    func fadeIn(duration: TimeInterval = 0.5, delay: TimeInterval = 0.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
-        UIView.animate(withDuration: duration, delay: delay, options: UIView.AnimationOptions.curveEaseIn, animations: {
-        self.alpha = 1.0
-        }, completion: completion)  }
-
-    func fadeOut(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
-        UIView.animate(withDuration: duration, delay: delay, options: UIView.AnimationOptions.curveEaseIn, animations: {
-        self.alpha = 0.0
-        }, completion: completion)
-}
-    
-
 }
