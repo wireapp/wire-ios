@@ -730,6 +730,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             if deleteAccount {
                 self?.deleteAccountData(for: account)
             }
+
+            // Clear cache and preference directory when the user logout from the session.
+            ZMSLog.clearCacheDirectory()
+            ZMSLog.clearPreferenceDirectory()
+
         })
     }
 
