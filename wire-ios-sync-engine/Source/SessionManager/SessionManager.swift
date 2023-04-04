@@ -730,6 +730,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             if deleteAccount {
                 self?.deleteAccountData(for: account)
             }
+
+            // Clear tmp directory when the user logout from the session.
+            ZMSLog.clearTmpDirectory()
+
         })
     }
 

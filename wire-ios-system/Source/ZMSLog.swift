@@ -278,6 +278,21 @@ extension ZMSLog {
         }
     }
 
+
+    //clears tmp directory
+    @objc public static func clearTmpDirectory() {
+        guard let tmpDirectoryPath = tmpDirectory else { return }
+        logQueue.async {
+            closeHandle()
+            let manager = FileManager.default
+            try? manager
+                .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+                .forEach { file in
+                    try? manager.removeItem(atPath: file.path)
+                }
+        }
+    }
+
     @objc public static func switchCurrentLogToPrevious() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
         logQueue.async {
@@ -291,6 +306,12 @@ extension ZMSLog {
     static var cachesDirectory: URL? {
         let manager = FileManager.default
         return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
+    }
+
+
+    static var tmpDirectory: URL? {
+        let tempurl = URL(string: NSTemporaryDirectory())
+        return tempurl
     }
 
     static public var pathsForExistingLogs: [URL] {
