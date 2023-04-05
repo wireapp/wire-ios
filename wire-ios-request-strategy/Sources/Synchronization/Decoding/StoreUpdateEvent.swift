@@ -177,6 +177,9 @@ public final class StoredUpdateEvent: NSManagedObject {
         eventPayload: NSDictionary,
         publicKey: SecKey?
     ) -> NSDictionary? {
+
+        // TODO: use different keys whether its a call event
+
         guard let key = publicKey else {
             return eventPayload
         }
@@ -210,6 +213,8 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent: StoredUpdateEvent,
         encryptionKeys: EncryptionKeys?
     ) -> NSDictionary? {
+        // TODO: use different keys whether its a call event
+
         if !storedEvent.isEncrypted {
             return storedEvent.payload
         }
