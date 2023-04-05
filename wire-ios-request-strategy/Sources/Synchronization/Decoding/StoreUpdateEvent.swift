@@ -47,6 +47,9 @@ public final class StoredUpdateEvent: NSManagedObject {
     var isEncrypted: Bool
 
     @NSManaged
+    var isCallEvent: Bool
+
+    @NSManaged
     var source: Int16
 
     @NSManaged

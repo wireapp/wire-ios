@@ -1218,6 +1218,7 @@
 		E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMappingTests.swift; sourceTree = "<group>"; };
 		EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserTests+AnalyticsIdentifier.swift"; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
+		EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel4.0.xcdatamodel; sourceTree = "<group>"; };
 		EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConferenceCalling.swift; sourceTree = "<group>"; };
 		EE2B874524D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContextProvider+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemoval.swift; sourceTree = "<group>"; };
@@ -3996,11 +3997,12 @@
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */,
 				167BCC192609E92300E9D7E3 /* ZMEventModel2.0.xcdatamodel */,
 				167BCC1A2609E92300E9D7E3 /* ZMEventModel.xcdatamodel */,
 				167BCC1B2609E92300E9D7E3 /* ZMEventModel3.0.xcdatamodel */,
 			);
-			currentVersion = 167BCC1B2609E92300E9D7E3 /* ZMEventModel3.0.xcdatamodel */;
+			currentVersion = EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */;
 			path = ZMEventModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
