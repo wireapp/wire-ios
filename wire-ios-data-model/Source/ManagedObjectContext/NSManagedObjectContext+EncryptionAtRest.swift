@@ -252,6 +252,15 @@ extension NSManagedObjectContext {
         return encryptionKeys
     }
 
+    private static let databseKeyUserIntoKey = "databaseKey"
+
+    /// The database key used to protect contents of the database.
+
+    public var databaseKey: VolatileData? {
+        get { userInfo[Self.databseKeyUserIntoKey] as? VolatileData }
+        set { userInfo[Self.databseKeyUserIntoKey] = newValue }
+    }
+
 }
 
 // MARK: - Migratable
