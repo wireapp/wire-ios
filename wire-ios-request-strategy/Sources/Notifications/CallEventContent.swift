@@ -142,3 +142,11 @@ extension CallEventContent {
     }
 
 }
+
+extension ZMUpdateEvent {
+
+    var isCallEvent: Bool {
+        return CallEventContent(from: self) != nil
+    }
+
+}

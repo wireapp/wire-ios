@@ -87,6 +87,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             publicKey: publicKey
         )
         storedEvent.isEncrypted = publicKey != nil
+        storedEvent.isCallEvent = event.isCallEvent
 
         return storedEvent
     }
