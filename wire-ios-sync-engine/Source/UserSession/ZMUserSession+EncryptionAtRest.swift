@@ -68,7 +68,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     }
 
     public var isDatabaseLocked: Bool {
-        managedObjectContext.encryptMessagesAtRest && managedObjectContext.encryptionKeys == nil
+        managedObjectContext.encryptMessagesAtRest && managedObjectContext.databaseKey == nil
     }
 
     public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
@@ -85,7 +85,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         guard managedObjectContext.encryptMessagesAtRest else { return }
 
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
-            self?.coreDataStack.clearEncryptionKeysInAllContexts()
+            self?.coreDataStack.lockDatabase()
 
             if let notificationContext = self?.managedObjectContext.notificationContext {
                 DatabaseEncryptionLockNotification(databaseIsEncrypted: true).post(in: notificationContext)
@@ -94,9 +94,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     }
 
     public func unlockDatabase(with context: LAContext) throws {
-        let keys = try EncryptionKeys.init(account: coreDataStack.account, context: context)
-
-        coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
+        try coreDataStack.unlockDatabase(context: context)
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 
