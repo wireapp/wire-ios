@@ -28,6 +28,16 @@ public struct EncryptionAtRestKeyProvider {
 
     let accountID: UUID
 
+    // MARK: - Life cycle
+
+    public init(account: Account) {
+        self.init(accountID: account.userIdentifier)
+    }
+
+    public init(accountID: UUID) {
+        self.accountID = accountID
+    }
+
     // MARK: - Primary
 
     /// Attempt to fetch the primary public key.

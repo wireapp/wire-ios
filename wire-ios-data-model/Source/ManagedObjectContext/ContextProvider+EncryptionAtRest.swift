@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import LocalAuthentication
 
 public extension ContextProvider {
 
@@ -53,6 +54,72 @@ public extension ContextProvider {
         for context in [viewContext, syncContext, searchContext] {
             context.performAndWait { context.encryptionKeys = nil }
         }
+    }
+
+    /// Lock the database.
+
+    func lockDatabase() {
+        for context in [viewContext, syncContext, searchContext] {
+            context.performAndWait { context.databaseKey = nil }
+        }
+    }
+
+    /// Unlock the database using the given authentication context.
+
+    func unlockDatabase(context: LAContext) throws {
+        let keyProvider = EncryptionAtRestKeyProvider(account: account)
+        let privateKey = try keyProvider.fetchPrimaryPrivateKey(context: context)
+
+        let encryptedDatabaseKey = try keyProvider.fetchDatabaseKey()
+        let decryptedDatabaseKey = try decryptDatabaseKey(
+            encryptedDatabaseKey,
+            privateKey: privateKey
+        )
+
+        let databaseKey = VolatileData(from: decryptedDatabaseKey)
+
+        for context in [viewContext, syncContext, searchContext] {
+            context.performAndWait { context.databaseKey = databaseKey }
+        }
+    }
+
+    private func encryptDatabaseKey(
+        _ databaseKey: Data,
+        publicKey: SecKey
+    ) throws -> Data {
+        var error: Unmanaged<CFError>?
+        guard let encryptedDatabaseKey = SecKeyCreateEncryptedData(
+            publicKey,
+            databaseKeyAlgorithm,
+            databaseKey as CFData, &error
+        ) else {
+            let error = error!.takeRetainedValue() as Error
+            throw error
+        }
+
+        return encryptedDatabaseKey as Data
+    }
+
+    private func decryptDatabaseKey(
+        _ encryptedDatabaseKey: Data,
+        privateKey: SecKey
+    ) throws -> Data {
+        var error: Unmanaged<CFError>?
+        guard let databaseKey = SecKeyCreateDecryptedData(
+            privateKey,
+            databaseKeyAlgorithm,
+            encryptedDatabaseKey as CFData,
+            &error
+        ) else {
+            let error = error!.takeRetainedValue() as Error
+            throw error
+        }
+
+        return databaseKey as Data
+    }
+
+    private var databaseKeyAlgorithm: SecKeyAlgorithm {
+        return .eciesEncryptionCofactorX963SHA256AESGCM
     }
 
 }
