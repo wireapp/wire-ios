@@ -462,7 +462,7 @@ public extension UserClient {
             if client.remoteIdentifier == selfClient.remoteIdentifier {
                 client.fingerprint = client.localFingerprint()
                 if client.fingerprint == nil {
-                    zmLog.error("Cannot fetch local fingerprint for \(client)")
+                    zmLog.warn("Cannot fetch local fingerprint for \(client)")
                 }
             }
         }
