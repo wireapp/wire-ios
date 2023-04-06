@@ -819,7 +819,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10")
     }
 
     func testThatItDoesNotSendASearchRequestIfSeachingLocally() {
@@ -846,7 +846,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=foo%2Bbar&domain=example.com&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=foo%2Bbar&domain=example.com&size=10")
     }
 
     func testThatItEncodesUnsafeCharactersInRequest() {
@@ -865,7 +865,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=$%26%2B,/:;%3D?&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=$%26%2B,/:;%3D?&size=10")
     }
 
     func testThatItCallsCompletionHandlerForDirectorySearch() {
@@ -912,8 +912,8 @@ class SearchTaskTests: DatabaseTest {
 
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 2)
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=user&size=10")
-        XCTAssertEqual(mockTransportSession.receivedRequests().last?.path, "/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=user&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().last?.path, "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post")
     }
 
     func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
@@ -1057,7 +1057,7 @@ class SearchTaskTests: DatabaseTest {
         // then
         let request = try XCTUnwrap(mockTransportSession.receivedRequests().first)
         XCTAssertEqual(request.method, .methodGET)
-        XCTAssertEqual(request.path, "/search/contacts?q=john&domain=example.com&size=10")
+        XCTAssertEqual(request.path, "/v3/search/contacts?q=john&domain=example.com&size=10")
     }
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() {
@@ -1117,6 +1117,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatRemoteResultsIncludePreviousLocalResults() {
         // given
+        setCurrentAPIVersion(.v2)
         let localResultArrived = expectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
 
