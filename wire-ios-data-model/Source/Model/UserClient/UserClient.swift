@@ -462,7 +462,7 @@ public extension UserClient {
             if client.remoteIdentifier == selfClient.remoteIdentifier {
                 client.fingerprint = client.localFingerprint()
                 if client.fingerprint == nil {
-                    zmLog.error("Cannot fetch local fingerprint for \(client)")
+                    zmLog.warn("Cannot fetch local fingerprint for \(client)")
                 }
             }
         }
@@ -577,8 +577,11 @@ extension UserClient {
         return fingerprintData
     }
 
-    private func localFingerprint() -> Data? {
-        guard let proteusProvider = managedObjectContext?.proteusProvider else {
+    func localFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
+        guard
+            let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
+            proteusProvider.canPerform
+        else {
             return nil
         }
 
