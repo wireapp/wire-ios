@@ -234,8 +234,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     [self setPrimitiveValue:@(isExpired) forKey:ZMMessageIsExpiredKey];
     [self didChangeValueForKey:ZMMessageIsExpiredKey];
 
-    // When isExpired is false, then expirationReasonCode should not contain any value.
-    if (isExpired == NO && self.expirationReasonCode != nil) {
+    if (isExpired == NO) {
         self.expirationReasonCode = nil;
     }
 }

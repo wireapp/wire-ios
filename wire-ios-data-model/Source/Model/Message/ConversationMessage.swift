@@ -32,7 +32,7 @@ public enum ZMDeliveryState: UInt {
 }
 
 @objc
-public enum FailedToSendReason: Int {
+public enum MessageSendFailure: Int {
     case unknown
     case federationRemoteError
 }
@@ -76,7 +76,7 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var deliveryState: ZMDeliveryState { get }
 
     /// Reason why the message has not been sent
-    var failedToSendReason: FailedToSendReason { get }
+    var failedToSendReason: MessageSendFailure { get }
 
     /// The list of users who didn't receive the message (e.g their backend is offline)
     var failedToSendUsers: [UserType]? { get }
@@ -335,7 +335,7 @@ extension ZMMessage {
         return true
     }
 
-    @objc public var failedToSendReason: FailedToSendReason {
+    @objc public var failedToSendReason: MessageSendFailure {
         return .unknown
     }
 

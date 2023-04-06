@@ -82,7 +82,7 @@ final class MessageToolboxView: UIView {
 
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
-    private let failedToSendMessageView = FailedToSendMessageView()
+    private let messageFailureView = MessageSendFailureView()
 
     private let statusLabel: UILabel = {
         let label = UILabel()
@@ -142,7 +142,7 @@ final class MessageToolboxView: UIView {
         likeButton.setIconColor(LikeButton.selectedColor, for: .selected)
         likeButton.hitAreaPadding = CGSize(width: 20, height: 20)
 
-        failedToSendMessageView.tapHandler = { [weak self] _ in
+        messageFailureView.tapHandler = { [weak self] _ in
             self?.resendMessage()
         }
 
@@ -151,7 +151,7 @@ final class MessageToolboxView: UIView {
          statusLabel,
          statusSeparatorLabel,
          countdownLabel].forEach(contentStack.addArrangedSubview)
-        [likeButtonContainer, likeButton, contentStack, failedToSendMessageView].forEach(addSubview)
+        [likeButtonContainer, likeButton, contentStack, messageFailureView].forEach(addSubview)
     }
 
     private func createConstraints() {
@@ -159,7 +159,7 @@ final class MessageToolboxView: UIView {
         likeButtonContainer.translatesAutoresizingMaskIntoConstraints = false
         likeButton.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
-        failedToSendMessageView.translatesAutoresizingMaskIntoConstraints = false
+        messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
         heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 28)
         heightConstraint.priority = UILayoutPriority(999)
@@ -183,10 +183,10 @@ final class MessageToolboxView: UIView {
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            failedToSendMessageView.leadingAnchor.constraint(equalTo: likeButtonContainer.trailingAnchor),
-            failedToSendMessageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            failedToSendMessageView.topAnchor.constraint(equalTo: topAnchor),
-            failedToSendMessageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            messageFailureView.leadingAnchor.constraint(equalTo: likeButtonContainer.trailingAnchor),
+            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageFailureView.topAnchor.constraint(equalTo: topAnchor),
+            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 
@@ -256,7 +256,7 @@ final class MessageToolboxView: UIView {
                 self.timestampSeparatorLabel.isHidden = true
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
-                self.failedToSendMessageView.isHidden = true
+                self.messageFailureView.isHidden = true
             }
         case .reactions(let reactionsString):
             updateContentStack(to: newPosition, animated: animated) {
@@ -267,7 +267,7 @@ final class MessageToolboxView: UIView {
                 self.timestampSeparatorLabel.isHidden = true
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
-                self.failedToSendMessageView.isHidden = true
+                self.messageFailureView.isHidden = true
             }
 
         case .sendFailure(let detailsString):
@@ -277,8 +277,8 @@ final class MessageToolboxView: UIView {
                 self.countdownLabel.isHidden = true
                 self.detailsLabel.isHidden = true
                 self.timestampSeparatorLabel.isHidden = true
-                self.failedToSendMessageView.isHidden = false
-                self.failedToSendMessageView.setTitle(detailsString.string)
+                self.messageFailureView.isHidden = false
+                self.messageFailureView.setTitle(detailsString.string)
             }
 
         case .details(let timestamp, let status, let countdown):
@@ -296,7 +296,7 @@ final class MessageToolboxView: UIView {
                 self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
                 self.countdownLabel.attributedText = countdown
                 self.countdownLabel.isHidden = countdown == nil
-                self.failedToSendMessageView.isHidden = true
+                self.messageFailureView.isHidden = true
             }
         }
 

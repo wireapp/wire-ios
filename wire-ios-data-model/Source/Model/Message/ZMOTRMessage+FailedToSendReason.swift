@@ -15,17 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
 
 public extension ZMOTRMessage {
 
-    override var failedToSendReason: FailedToSendReason {
-        guard isExpired,
-              let reasonCode = expirationReasonCode,
-              let expirationReason = FailedToSendReason(rawValue: reasonCode.intValue)
+    override var failedToSendReason: MessageSendFailure {
+        guard 
+            isExpired,
+            let reasonCode = expirationReasonCode,
+            let expirationReason = MessageSendFailure(rawValue: reasonCode.intValue)
         else {
             return .unknown
         }
+
         return expirationReason
     }
 

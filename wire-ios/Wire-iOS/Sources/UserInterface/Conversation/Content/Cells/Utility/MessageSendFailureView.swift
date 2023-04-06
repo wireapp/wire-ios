@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import Down
 
-final class FailedToSendMessageView: UIView {
+final class MessageSendFailureView: UIView {
 
     // MARK: Properties
     var tapHandler: ((UIButton) -> Void)?
