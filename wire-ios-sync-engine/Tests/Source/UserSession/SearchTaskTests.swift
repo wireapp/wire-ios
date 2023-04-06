@@ -38,7 +38,7 @@ class SearchTaskTests: DatabaseTest {
             _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.uiMOC)
             uiMOC.saveOrRollback()
         }
-
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         setCurrentAPIVersion(.v0)
     }
 
@@ -46,6 +46,7 @@ class SearchTaskTests: DatabaseTest {
         self.teamIdentifier = nil
         self.mockTransportSession = nil
         resetCurrentAPIVersion()
+        BackendInfo.storage = UserDefaults.standard
         super.tearDown()
     }
 
@@ -809,6 +810,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsASearchRequest() {
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -817,7 +819,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10")
     }
 
     func testThatItDoesNotSendASearchRequestIfSeachingLocally() {
@@ -835,6 +837,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItEncodesAPlusCharacterInTheSearchURL() {
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -843,7 +846,7 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=foo%2Bbar&domain=example.com&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=foo%2Bbar&domain=example.com&size=10")
     }
 
     func testThatItEncodesUnsafeCharactersInRequest() {
@@ -853,6 +856,7 @@ class SearchTaskTests: DatabaseTest {
         // "The characters slash ("/") and question mark ("?") may represent data within the query component."
 
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "$&+,/:;=?@", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -861,11 +865,12 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=$%26%2B,/:;%3D?&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=$%26%2B,/:;%3D?&size=10")
     }
 
     func testThatItCallsCompletionHandlerForDirectorySearch() {
         // given
+        setCurrentAPIVersion(.v2)
         let resultArrived = expectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -889,6 +894,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItMakesRequestToFetchTeamMembershipMetadata() {
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -906,12 +912,13 @@ class SearchTaskTests: DatabaseTest {
 
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 2)
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/search/contacts?q=user&size=10")
-        XCTAssertEqual(mockTransportSession.receivedRequests().last?.path, "/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post")
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=user&size=10")
+        XCTAssertEqual(mockTransportSession.receivedRequests().last?.path, "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post")
     }
 
     func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
         // given
+        setCurrentAPIVersion(.v2)
         let resultArrived = expectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -1039,6 +1046,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAFederatedUserSearchRequest() throws {
         // given
+        setCurrentAPIVersion(.v3)
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = SearchTask(request: searchRequest, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -1049,11 +1057,12 @@ class SearchTaskTests: DatabaseTest {
         // then
         let request = try XCTUnwrap(mockTransportSession.receivedRequests().first)
         XCTAssertEqual(request.method, .methodGET)
-        XCTAssertEqual(request.path, "/search/contacts?q=john&domain=example.com&size=10")
+        XCTAssertEqual(request.path, "/v3/search/contacts?q=john&domain=example.com&size=10")
     }
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() {
         // given
+        setCurrentAPIVersion(.v3)
         let federatedDomain = "example.com"
         let resultArrived = expectation(description: "received result")
 
@@ -1083,6 +1092,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() {
         // given
+        setCurrentAPIVersion(.v3)
         let resultArrived = expectation(description: "received result")
         mockTransportSession.federatedDomains = ["example.com"]
 
@@ -1107,6 +1117,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatRemoteResultsIncludePreviousLocalResults() {
         // given
+        setCurrentAPIVersion(.v2)
         let localResultArrived = expectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
 
@@ -1143,6 +1154,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatLocalResultsIncludePreviousRemoteResults() {
         // given
+        setCurrentAPIVersion(.v2)
         let remoteResultArrived = expectation(description: "received remote result")
         _ = createConnectedUser(withName: "userA")
 
@@ -1198,6 +1210,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedAfterRemoteResults() {
         // given
+        setCurrentAPIVersion(.v2)
         let remoteResultArrived = expectation(description: "received remote result")
         mockTransportSession.performRemoteChanges { (remoteChanges) in
             remoteChanges.insertUser(withName: "UserB")
