@@ -38,6 +38,22 @@ public struct EncryptionAtRestKeyProvider {
         self.accountID = accountID
     }
 
+    // MARK: - Public keys
+
+    public func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
+        do {
+            return try (fetchPrimaryPublicKey(), fetchSecondaryPublicKey())
+        } catch {
+            return nil
+        }
+    }
+
+    // MARK: - Private keys
+
+    public func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
+        return (try? fetchPrimaryPrivateKey(), try? fetchSecondaryPrivateKey())
+    }
+
     // MARK: - Primary
 
     /// Attempt to fetch the primary public key.

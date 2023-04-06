@@ -59,7 +59,7 @@ class EventProcessor: UpdateEventProcessor {
 
     /// Process previously received events if we are ready to process events.
     ///
-    /// /// - Returns: **True** if there are still more events to process
+    // - Returns: **True** if there are still more events to process
     @objc
     public func processEventsIfReady() -> Bool { // TODO jacob shouldn't be public
         Self.logger.trace("process events if ready")
@@ -72,14 +72,12 @@ class EventProcessor: UpdateEventProcessor {
 
         if syncContext.encryptMessagesAtRest {
             Self.logger.info("trying to get EAR keys")
-            guard let encryptionKeys = syncContext.encryptionKeys else {
-                Self.logger.warning("failed to get EAR keys")
-                return true
-            }
-
-            processStoredUpdateEvents(with: encryptionKeys)
+            let accountID = ZMUser.selfUser(in: syncContext).remoteIdentifier!
+            let keyProvider = EncryptionAtRestKeyProvider(accountID: accountID)
+            let privateKeys = keyProvider.fetchPrivateKeys()
+            processStoredUpdateEvents(with: privateKeys)
         } else {
-            processStoredUpdateEvents()
+            processStoredUpdateEvents(with: (primary: nil, secondary: nil))
         }
 
         return false
@@ -108,10 +106,10 @@ class EventProcessor: UpdateEventProcessor {
         _ = processEventsIfReady()
     }
 
-    private func processStoredUpdateEvents(with encryptionKeys: EncryptionKeys? = nil) {
+    private func processStoredUpdateEvents(with privateKeys: (primary: SecKey?, secondary: SecKey?)) {
         Self.logger.trace("process stored update events")
 
-        eventDecoder.processStoredEvents(with: encryptionKeys) { [weak self] (decryptedUpdateEvents) in
+        eventDecoder.processStoredEvents(with: privateKeys) { [weak self] (decryptedUpdateEvents) in
             Self.logger.info("decrypted update events: \(decryptedUpdateEvents.count)")
 
             guard let `self` = self else { return }

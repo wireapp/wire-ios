@@ -69,11 +69,11 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     public static func encryptAndCreate(
         _ event: ZMUpdateEvent,
-        managedObjectContext: NSManagedObjectContext,
+        context: NSManagedObjectContext,
         index: Int64,
-        publicKey: SecKey? = nil
+        publicKeys: (primary: SecKey, secondary: SecKey)? = nil
     ) -> StoredUpdateEvent? {
-        guard let storedEvent = StoredUpdateEvent.insertNewObject(managedObjectContext) else {
+        guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
             return nil
         }
 
@@ -82,12 +82,28 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.source = Int16(event.source.rawValue)
         storedEvent.sortIndex = index
         storedEvent.uuidString = event.uuid?.transportString()
-        storedEvent.payload = encryptIfNeeded(
-            eventPayload: event.payload as NSDictionary,
-            publicKey: publicKey
-        )
-        storedEvent.isEncrypted = publicKey != nil
         storedEvent.isCallEvent = event.isCallEvent
+
+        let unencryptedPayload = event.payload as NSDictionary
+
+        if let publicKeys = publicKeys {
+            if storedEvent.isCallEvent {
+                storedEvent.payload = encrypt(
+                    eventPayload: unencryptedPayload,
+                    publicKey: publicKeys.secondary
+                )
+            } else {
+                storedEvent.payload = encrypt(
+                    eventPayload: unencryptedPayload,
+                    publicKey: publicKeys.primary
+                )
+            }
+
+            storedEvent.isEncrypted = true
+        } else {
+            storedEvent.payload = unencryptedPayload
+            storedEvent.isEncrypted = false
+        }
 
         return storedEvent
     }
@@ -130,7 +146,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     public static func eventsFromStoredEvents(
         _ storedEvents: [StoredUpdateEvent],
-        encryptionKeys: EncryptionKeys? = nil
+        privateKeys: (primary: SecKey?, secondary: SecKey?)
     ) -> [ZMUpdateEvent] {
         let events: [ZMUpdateEvent] = storedEvents.compactMap {
             var eventUUID: UUID?
@@ -141,7 +157,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
             guard let payload = decryptPayloadIfNeeded(
                 storedEvent: $0,
-                encryptionKeys: encryptionKeys
+                privateKeys: privateKeys
             ) else {
                 return nil
             }
@@ -165,36 +181,30 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     // MARK: - Encryption at Rest
 
-    /// Encrypts the passed payload if publicKey exists. Otherwise, returns the passed event payload
+    /// Encrypts the passed payload if publicKey.
     ///
     /// - Parameters:
     ///   - eventPayload: the envent payload
     ///   - publicKey: publicKey which will be used to encrypt eventPayload
     ///
-    /// - Returns: a dictionary which contains encrypted or unencrypted payload
+    /// - Returns: a dictionary which contains encrypted payload.
 
-    private static func encryptIfNeeded(
+    private static func encrypt(
         eventPayload: NSDictionary,
-        publicKey: SecKey?
+        publicKey: SecKey
     ) -> NSDictionary? {
-
-        // TODO: use different keys whether its a call event
-
-        guard let key = publicKey else {
-            return eventPayload
-        }
-
         guard
             let data = try? JSONSerialization.data(
                 withJSONObject: eventPayload,
                 options: []
             ),
             let encryptedData = SecKeyCreateEncryptedData(
-                key,
+                publicKey,
                 .eciesEncryptionCofactorX963SHA256AESGCM,
                 data as CFData,
                 nil
-            ) else {
+            )
+        else {
             return nil
         }
 
@@ -207,23 +217,43 @@ public final class StoredUpdateEvent: NSManagedObject {
     ///   - storedEvent: the stored event
     ///   - encryptionKeys: keys to be used to decrypt the stored event payload
     ///
-    /// - Returns: a dictionary which contains decrypted payload
+    /// - Returns: a dictionary which contains decrypted payload.
 
     private static func decryptPayloadIfNeeded(
         storedEvent: StoredUpdateEvent,
-        encryptionKeys: EncryptionKeys?
+        privateKeys: (primary: SecKey?, secondary: SecKey?)
     ) -> NSDictionary? {
-        // TODO: use different keys whether its a call event
-
-        if !storedEvent.isEncrypted {
+        guard storedEvent.isEncrypted else {
             return storedEvent.payload
         }
 
+        guard let encryptedPayload = storedEvent.payload else {
+            return nil
+        }
+
+        switch (storedEvent.isCallEvent, privateKeys.primary, privateKeys.secondary) {
+        case (true, _, let privateKey?):
+            return decrypt(
+                payload: encryptedPayload,
+                privateKey: privateKey
+            )
+
+        case (false, let privateKey?, _):
+            return decrypt(
+                payload: encryptedPayload,
+                privateKey: privateKey
+            )
+
+        default:
+            return nil
+        }
+    }
+
+    private static func decrypt(payload: NSDictionary, privateKey: SecKey) -> NSDictionary? {
         guard
-            let keys = encryptionKeys,
-            let encryptedPayload = storedEvent.payload?[encryptedPayloadKey] as? Data,
+            let encryptedPayload = payload[encryptedPayloadKey] as? Data,
             let decryptedData = SecKeyCreateDecryptedData(
-                keys.privateKey,
+                privateKey,
                 .eciesEncryptionCofactorX963SHA256AESGCM,
                 encryptedPayload as CFData,
                 nil
@@ -232,10 +262,10 @@ public final class StoredUpdateEvent: NSManagedObject {
             return nil
         }
 
-      return try? JSONSerialization.jsonObject(
-        with: decryptedData as Data,
-        options: []
-      ) as? NSDictionary
+        return try? JSONSerialization.jsonObject(
+          with: decryptedData as Data,
+          options: []
+        ) as? NSDictionary
     }
 
 }
