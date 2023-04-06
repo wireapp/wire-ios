@@ -25,6 +25,7 @@ extension IntegrationTest {
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
+        self.overrideAPIVersion(.v2)
 
         let searchCompleted = expectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
@@ -39,6 +40,7 @@ extension IntegrationTest {
         }
 
         task?.start()
+        self.resetCurrentAPIVersion()
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)

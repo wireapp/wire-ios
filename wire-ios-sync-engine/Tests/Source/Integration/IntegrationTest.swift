@@ -764,6 +764,9 @@ extension IntegrationTest {
         setCurrentAPIVersion(.v0)
     }
 
+    func overrideAPIVersion(_ version: APIVersion) {
+        setCurrentAPIVersion(version)
+    }
 }
 
 // MARK: - Account Helper
