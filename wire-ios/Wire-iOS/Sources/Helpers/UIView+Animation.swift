@@ -34,7 +34,7 @@ extension UIView {
         }, completion: completion)  }
 
     func fadeOut(
-        duration: TimeInterval = 1.0,
+        duration: TimeInterval = 0.5,
         delay: TimeInterval = 0.0,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
