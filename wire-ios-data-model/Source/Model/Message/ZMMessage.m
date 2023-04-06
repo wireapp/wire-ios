@@ -44,6 +44,7 @@ NSString * const ZMMessageEventIDDataKey = @"eventID_data";
 NSString * const ZMMessageIsExpiredKey = @"isExpired";
 NSString * const ZMMessageExpirationReasonCodeKey = @"expirationReasonCode";
 NSString * const ZMMessageMissingRecipientsKey = @"missingRecipients";
+NSString * const ZMMessageFailedToSendRecipientsKey = @"failedToSendRecipients";
 NSString * const ZMMessageServerTimestampKey = @"serverTimestamp";
 NSString * const ZMMessageImageTypeKey = @"imageType";
 NSString * const ZMMessageIsAnimatedGifKey = @"isAnimatedGIF";
@@ -588,6 +589,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                              ZMMessageClientsKey,
                              ZMMessageHiddenInConversationKey,
                              ZMMessageMissingRecipientsKey,
+                             ZMMessageFailedToSendRecipientsKey,
                              ZMMessageMediumDataLoadedKey,
                              ZMMessageAddedUsersKey,
                              ZMMessageRemovedUsersKey,

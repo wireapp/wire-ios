@@ -118,7 +118,7 @@ extension AvailabilityRequestStrategy: OTREntity {
         // BE notified us about a new client. A session will be established and then we'll try again
     }
 
-    public func failedRecipients(_ recipients: Set<UserClient>!) {
+    public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
         // no-op
     }
 

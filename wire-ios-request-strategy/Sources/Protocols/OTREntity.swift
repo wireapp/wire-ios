@@ -42,7 +42,8 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 
     func delivered(with response: ZMTransportResponse)
 
-    func failedRecipients(_ recipients: Set<WireDataModel.UserClient>!)
+    /// Add users who didn't receive the message to failedToSendRecipients
+    func addFailedToSendRecipients(_ recipients: [ZMUser])
 
 }
 

@@ -78,10 +78,8 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Reason why the message has not been sent
     var failedToSendReason: FailedToSendReason { get }
 
-    var failedToSendParticipants: [UserType] { get } //failedParticipants
-    
-    var failedToEncryptParticipants: [UserType] { get }
-    //var failedParticipants: [UserType] { get } //failedParticipants
+    /// The list of users who didn't receive the message (e.g their backend is offline)
+    var failedToSendUsers: [UserType]? { get }
 
     /// True if the message has been successfully sent to the server
     var isSent: Bool { get }
@@ -298,6 +296,10 @@ extension ZMMessage: ZMConversationMessage {
 
         return fileSharingFeature.status == .disabled
     }
+
+    public var failedToSendUsers: [UserType]? {
+        return failedToSendRecipients
+    }
 }
 
 extension ZMMessage {
@@ -375,4 +377,11 @@ extension ZMMessage {
     @objc public var deletionTimeout: TimeInterval {
         return -1
     }
+}
+
+// MARK: - Message send failure properties
+extension ZMMessage {
+
+    @NSManaged public var failedToSendRecipients: [ZMUser]?
+
 }

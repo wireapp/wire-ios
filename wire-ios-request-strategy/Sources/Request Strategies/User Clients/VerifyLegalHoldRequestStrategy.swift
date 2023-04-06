@@ -109,7 +109,7 @@ private class VerifyClientsParser: OTREntity {
         // no-op
     }
 
-    func failedRecipients(_ recipients: Set<UserClient>!) {
+    func addFailedToSendRecipients(_ recipients: [ZMUser]) {
         // no-op
     }
 

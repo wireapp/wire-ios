@@ -56,7 +56,7 @@ import Foundation
         // no-op
     }
 
-    public func failedRecipients(_ recipients: Set<UserClient>!) {
+    public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
         // no-op
     }
 

@@ -242,7 +242,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
-        if isFailedParticipantsVisible(in: context) {
+        if isFailedRecipientsVisible(in: context) {
             //add(description: ConversationMessageParticipantsErrorCellDescription(message: message, selected: selected))
         }
 
@@ -287,8 +287,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
     }
 
-    func isFailedParticipantsVisible(in context: ConversationMessageContext) -> Bool {
-        return message.failedToReceiveParticipants.isEmpty || message.failedToEncryptParticipants.isEmpty
+    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+        guard let failedToSendUsers = message.failedToSendUsers else {
+            return false
+        }
+        return failedToSendUsers.isEmpty
     }
 
     // MARK: - Highlight

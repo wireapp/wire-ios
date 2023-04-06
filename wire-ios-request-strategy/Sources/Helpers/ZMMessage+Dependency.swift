@@ -40,6 +40,10 @@ extension ZMOTRMessage: OTREntity {
         // no-op
     }
 
+    public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+        self.mutableSetValue(forKey: ZMMessageFailedToSendRecipientsKey).addObjects(from: recipients)
+    }
+
     public func delivered(with response: ZMTransportResponse) {
         update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: nil)
     }

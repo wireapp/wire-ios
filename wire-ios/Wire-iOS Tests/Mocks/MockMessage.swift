@@ -339,6 +339,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var deliveryState: ZMDeliveryState = .delivered
     var failedToSendReason: FailedToSendReason = .unknown
+    var failedToSendUsers: [UserType]? = nil
 
     var imageMessageData: ZMImageMessageData? = .none
     var knockMessageData: ZMKnockMessageData? = .none

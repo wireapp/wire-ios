@@ -61,10 +61,9 @@ extension Payload.MessageSendingStatus {
             message.conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
         }
 
-        let failedToSendClients = failedToSend.fetchOrCreateClients(in: message.context)
-        for (user, userClients) in failedToSendClients {
-            message.failedRecipients(Set(userClients))
-            //message.failedRecipients(Set(user))
+        let failedToSendUsers = failedToSend.fetchUsers(in: message.context)
+        if !failedToSendUsers.isEmpty {
+            message.addFailedToSendRecipients(failedToSendUsers)
         }
 
         return !missingClients.isEmpty
