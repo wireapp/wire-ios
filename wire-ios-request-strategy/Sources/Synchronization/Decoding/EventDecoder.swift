@@ -187,6 +187,8 @@ extension EventDecoder {
             Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
         }
 
+        // TODO: if we can't decrypt the events, don't delete them.
+
         block(filterInvalidEvents(from: events))
 
         eventMOC.performGroupedBlockAndWait {
