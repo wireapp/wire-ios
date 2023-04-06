@@ -38,7 +38,7 @@ class SearchTaskTests: DatabaseTest {
             _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.uiMOC)
             uiMOC.saveOrRollback()
         }
-
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         setCurrentAPIVersion(.v0)
     }
 
@@ -46,6 +46,7 @@ class SearchTaskTests: DatabaseTest {
         self.teamIdentifier = nil
         self.mockTransportSession = nil
         resetCurrentAPIVersion()
+        BackendInfo.storage = UserDefaults.standard
         super.tearDown()
     }
 
@@ -809,6 +810,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsASearchRequest() {
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -835,6 +837,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItEncodesAPlusCharacterInTheSearchURL() {
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -853,6 +856,7 @@ class SearchTaskTests: DatabaseTest {
         // "The characters slash ("/") and question mark ("?") may represent data within the query component."
 
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "$&+,/:;=?@", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -866,6 +870,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForDirectorySearch() {
         // given
+        setCurrentAPIVersion(.v2)
         let resultArrived = expectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -889,6 +894,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItMakesRequestToFetchTeamMembershipMetadata() {
         // given
+        setCurrentAPIVersion(.v2)
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -912,6 +918,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
         // given
+        setCurrentAPIVersion(.v2)
         let resultArrived = expectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -1039,6 +1046,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAFederatedUserSearchRequest() throws {
         // given
+        setCurrentAPIVersion(.v3)
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = SearchTask(request: searchRequest, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
@@ -1054,6 +1062,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() {
         // given
+        setCurrentAPIVersion(.v3)
         let federatedDomain = "example.com"
         let resultArrived = expectation(description: "received result")
 
@@ -1083,6 +1092,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() {
         // given
+        setCurrentAPIVersion(.v3)
         let resultArrived = expectation(description: "received result")
         mockTransportSession.federatedDomains = ["example.com"]
 
@@ -1143,6 +1153,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatLocalResultsIncludePreviousRemoteResults() {
         // given
+        setCurrentAPIVersion(.v2)
         let remoteResultArrived = expectation(description: "received remote result")
         _ = createConnectedUser(withName: "userA")
 
@@ -1198,6 +1209,7 @@ class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedAfterRemoteResults() {
         // given
+        setCurrentAPIVersion(.v2)
         let remoteResultArrived = expectation(description: "received remote result")
         mockTransportSession.performRemoteChanges { (remoteChanges) in
             remoteChanges.insertUser(withName: "UserB")
