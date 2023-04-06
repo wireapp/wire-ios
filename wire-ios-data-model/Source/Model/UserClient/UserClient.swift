@@ -577,8 +577,11 @@ extension UserClient {
         return fingerprintData
     }
 
-    private func localFingerprint() -> Data? {
-        guard let proteusProvider = managedObjectContext?.proteusProvider else {
+    func localFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
+        guard
+            let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
+            proteusProvider.canPerform
+        else {
             return nil
         }
 

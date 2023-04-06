@@ -25,8 +25,14 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
     override class func setUp() {
         super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
     }
 
     func clientWithTrustedClientCount(_ trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient {
@@ -1397,6 +1403,37 @@ extension UserClientTests {
         proteusViaCoreCrypto.isOn = false
     }
 
+    func test_itDoesntLoadLocalFingerprint_IfProteusProviderCantPerform_ProteusViaCoreCryptoEnabled() {
+        // GIVEN
+        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
+        proteusViaCoreCrypto.isOn = true
+
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.localFingerprint_MockMethod = { return  "" }
+
+        let mockProvider = MockProteusProvider(
+            mockProteusService: mockProteusService,
+            mockKeyStore: spyForTests(),
+            useProteusService: true
+        )
+        mockProvider.mockCanPerform = false
+
+        syncMOC.performAndWait {
+            let user = createUser(in: syncMOC)
+            let sut = createClient(for: user, createSessionWithSelfUser: false, onMOC: syncMOC)
+            sut.fingerprint = .none
+
+            // WHEN
+            _ = sut.localFingerprint(mockProvider)
+
+            // THEN
+            XCTAssertTrue(mockProteusService.localFingerprint_Invocations.isEmpty)
+        }
+
+        // Cleanup
+        proteusViaCoreCrypto.isOn = false
+    }
+
     func test_itLoadsRemoteFingerprintForOtherClient_ProteusViaCoreCryptoFlagEnabled() {
         // GIVEN
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
@@ -1425,7 +1462,7 @@ extension UserClientTests {
             clientB.fingerprint = .none
 
             // WHEN
-            let _ = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
+            _ = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
 
             // THEN
             XCTAssertEqual(clientB.fingerprint!, remoteFingerprint.utf8Data)
