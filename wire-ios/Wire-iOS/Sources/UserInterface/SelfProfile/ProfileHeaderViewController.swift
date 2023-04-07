@@ -116,7 +116,7 @@ final class ProfileHeaderViewController: UIViewController {
     let externalIndicator = LabelIndicator(context: .external)
     let federatedIndicator = LabelIndicator(context: .federated)
     let warningView = WarningLabelView()
-    lazy var topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
+    lazy var topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 24)
 
     private var tokens: [Any?] = []
     private var teamObserver: NSObjectProtocol?
@@ -258,12 +258,12 @@ final class ProfileHeaderViewController: UIViewController {
         }
 
         if groupRoleIndicator.isHidden {
-            topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 10)
+            topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 14)
             UIView.animate(withDuration: 0.4) {
                 self.view.layoutIfNeeded()
             }
         } else {
-            topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
+            topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 24)
             UIView.animate(withDuration: 0.4) {
                 self.view.layoutIfNeeded()
             }
