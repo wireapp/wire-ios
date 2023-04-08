@@ -298,7 +298,10 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var failedToSendUsers: [UserType]? {
-        return failedToSendRecipients
+        guard let recipients = failedToSendRecipients else {
+            return nil
+        }
+        return Array(recipients)
     }
 }
 
@@ -382,6 +385,6 @@ extension ZMMessage {
 // MARK: - Message send failure properties
 extension ZMMessage {
 
-    @NSManaged public var failedToSendRecipients: [ZMUser]?
+    @NSManaged public var failedToSendRecipients: Set<ZMUser>?
 
 }
