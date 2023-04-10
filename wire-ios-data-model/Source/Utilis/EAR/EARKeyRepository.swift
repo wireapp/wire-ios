@@ -19,28 +19,26 @@
 import Foundation
 import LocalAuthentication
 
-/// An object that provides access to encryption at rest
-/// keys.
+public protocol EARKeyRepositoryInterface {
 
-public struct EncryptionAtRestKeyProvider {
+    func fetchPrimaryPublicKey() throws -> SecKey
 
-    // MARK: - Properties
+    func fetchPrimaryPrivateKey(
+        context: LAContext?,
+        authenticationPrompt: String?
+    ) throws -> SecKey
 
-    let accountID: UUID
+    func fetchSecondaryPublicKey() throws -> SecKey
 
-    // MARK: - Life cycle
+    func fetchSecondaryPrivateKey() throws -> SecKey
 
-    public init(account: Account) {
-        self.init(accountID: account.userIdentifier)
-    }
+    func fetchDatabaseKey() throws -> Data
 
-    public init(accountID: UUID) {
-        self.accountID = accountID
-    }
+}
 
-    // MARK: - Public keys
+public extension EARKeyRepositoryInterface {
 
-    public func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
+    func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
         do {
             return try (fetchPrimaryPublicKey(), fetchSecondaryPublicKey())
         } catch {
@@ -48,10 +46,35 @@ public struct EncryptionAtRestKeyProvider {
         }
     }
 
-    // MARK: - Private keys
+    func fetchPrivateKeys(
+        context: LAContext? = nil,
+        authenticationPrompt: String? = nil
+    ) -> (primary: SecKey?, secondary: SecKey?) {
+        let primary = try? fetchPrimaryPrivateKey(
+            context: context,
+            authenticationPrompt: authenticationPrompt
+        )
 
-    public func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
-        return (try? fetchPrimaryPrivateKey(), try? fetchSecondaryPrivateKey())
+        let secondary = try? fetchSecondaryPrivateKey()
+        return (primary, secondary)
+    }
+
+}
+
+public class EARKeyRepository: EARKeyRepositoryInterface {
+
+    // MARK: - Properties
+
+    let accountID: UUID
+
+    // MARK: - Life cycle
+
+    public convenience init(account: Account) {
+        self.init(accountID: account.userIdentifier)
+    }
+
+    public init(accountID: UUID) {
+        self.accountID = accountID
     }
 
     // MARK: - Primary

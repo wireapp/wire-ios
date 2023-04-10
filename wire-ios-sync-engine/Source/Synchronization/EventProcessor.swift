@@ -73,7 +73,7 @@ class EventProcessor: UpdateEventProcessor {
         if syncContext.encryptMessagesAtRest {
             Self.logger.info("trying to get EAR keys")
             let accountID = ZMUser.selfUser(in: syncContext).remoteIdentifier!
-            let keyProvider = EncryptionAtRestKeyProvider(accountID: accountID)
+            let keyProvider = EARKeyRepository(accountID: accountID)
             let privateKeys = keyProvider.fetchPrivateKeys()
             processStoredUpdateEvents(with: privateKeys)
         } else {

@@ -122,7 +122,7 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64
     ) -> [ZMUpdateEvent] {
         let accountID = ZMUser.selfUser(in: syncMOC).remoteIdentifier!
-        let keyProvider = EncryptionAtRestKeyProvider(accountID: accountID)
+        let keyProvider = EARKeyRepository(accountID: accountID)
         let publicKeys = keyProvider.fetchPublicKeys()
 
         var decryptedEvents: [ZMUpdateEvent] = []

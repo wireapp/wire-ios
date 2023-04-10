@@ -436,7 +436,7 @@
 		EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */; };
 		EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */; };
 		EE22F80F29DD82110053E1C6 /* DatabaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */; };
-		EE22F81229DD84ED0053E1C6 /* EARKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F81129DD84ED0053E1C6 /* EARKeyProvider.swift */; };
+		EE22F81229DD84ED0053E1C6 /* EARKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */; };
 		EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */; };
 		EE2B874624D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2B874524D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift */; };
 		EE2BA00625CB3AA8001EB606 /* InvalidFeatureRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */; };
@@ -1229,7 +1229,7 @@
 		EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEARKeyDescription.swift; sourceTree = "<group>"; };
-		EE22F81129DD84ED0053E1C6 /* EARKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyProvider.swift; sourceTree = "<group>"; };
+		EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyRepository.swift; sourceTree = "<group>"; };
 		EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConferenceCalling.swift; sourceTree = "<group>"; };
 		EE2B874524D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContextProvider+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemoval.swift; sourceTree = "<group>"; };
@@ -1929,7 +1929,7 @@
 				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
 				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
 				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
-				EE22F81129DD84ED0053E1C6 /* EARKeyProvider.swift */,
+				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
 				EEC57C4929E407CC0068DFDA /* EARKeyService.swift */,
 			);
 			path = EAR;
@@ -3326,7 +3326,7 @@
 				CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */,
 				0634C3A924643A400006081D /* ZMUpdateEvent.swift in Sources */,
 				160B3BB124EFD64E0026D355 /* ExtendedSecureUnarchiveFromData.swift in Sources */,
-				EE22F81229DD84ED0053E1C6 /* EARKeyProvider.swift in Sources */,
+				EE22F81229DD84ED0053E1C6 /* EARKeyRepository.swift in Sources */,
 				BF85CF5F1D227A78006EDB97 /* LocationData.swift in Sources */,
 				F9DBA5221E28EB4000BE23C0 /* SideEffectSources.swift in Sources */,
 				1672A614234499B500380537 /* LabelChangeInfo.swift in Sources */,
