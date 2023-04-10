@@ -181,22 +181,6 @@ extension EventDecoder {
         process(with: privateKeys, consumeBlock, firstCall: false)
     }
 
-    /// Calls the `ComsumeBlock` and deletes the respective stored events subsequently.
-    private func processBatch(_ events: [ZMUpdateEvent], storedEvents: [NSManagedObject], block: ConsumeBlock) {
-        if !events.isEmpty {
-            Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
-        }
-
-        // TODO: if we can't decrypt the events, don't delete them.
-
-        block(filterInvalidEvents(from: events))
-
-        eventMOC.performGroupedBlockAndWait {
-            storedEvents.forEach(self.eventMOC.delete(_:))
-            self.eventMOC.saveOrRollback()
-        }
-    }
-
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
@@ -204,11 +188,36 @@ extension EventDecoder {
         var (storedEvents, updateEvents)  = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         eventMOC.performGroupedBlockAndWait {
-            storedEvents = StoredUpdateEvent.nextEvents(self.eventMOC, batchSize: EventDecoder.BatchSize)
-            updateEvents = StoredUpdateEvent.eventsFromStoredEvents(storedEvents, privateKeys: privateKeys)
+            let eventBatch = StoredUpdateEvent.nextEventBatch(
+                size: EventDecoder.BatchSize,
+                privateKeys: privateKeys,
+                context: self.eventMOC
+            )
+
+            storedEvents = eventBatch.eventsToDelete
+            updateEvents = eventBatch.eventsToProcess
         }
 
         return (storedEvents: storedEvents, updateEvents: updateEvents)
+    }
+
+    /// Calls the `ComsumeBlock` and deletes the respective stored events subsequently.
+
+    private func processBatch(
+        _ events: [ZMUpdateEvent],
+        storedEvents: [NSManagedObject],
+        block: ConsumeBlock
+    ) {
+        if !events.isEmpty {
+            Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
+        }
+
+        block(filterInvalidEvents(from: events))
+
+        eventMOC.performGroupedBlockAndWait {
+            storedEvents.forEach(self.eventMOC.delete(_:))
+            self.eventMOC.saveOrRollback()
+        }
     }
 
 }

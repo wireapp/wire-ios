@@ -120,7 +120,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// Returns stored events sorted by and up until (including) the defined `stopIndex`
     /// Returns a maximum of `batchSize` events at a time
 
-    public static func nextEvents(
+    static func nextEvents(
         _ context: NSManagedObjectContext,
         batchSize: Int
     ) -> [StoredUpdateEvent] {
@@ -142,41 +142,90 @@ public final class StoredUpdateEvent: NSManagedObject {
         return result.first?.sortIndex ?? 0
     }
 
-    /// Maps passed in objects of type `StoredUpdateEvent` to `ZMUpdateEvent`
+    static func nextEventBatch(
+        size: Int,
+        privateKeys: (primary: SecKey?, secondary: SecKey?),
+        context: NSManagedObjectContext
+    ) -> EventBatch {
+        let storedEvents = nextEvents(context, batchSize: size)
+        return eventsFromStoredEvents(
+            storedEvents,
+            privateKeys: privateKeys
+        )
+    }
 
-    public static func eventsFromStoredEvents(
+    static func eventsFromStoredEvents(
         _ storedEvents: [StoredUpdateEvent],
         privateKeys: (primary: SecKey?, secondary: SecKey?)
-    ) -> [ZMUpdateEvent] {
-        let events: [ZMUpdateEvent] = storedEvents.compactMap {
-            var eventUUID: UUID?
+    ) -> EventBatch {
+        var result = EventBatch()
 
-            if let uuid = $0.uuidString {
-                eventUUID = UUID(uuidString: uuid)
-            }
-
-            guard let payload = decryptPayloadIfNeeded(
-                storedEvent: $0,
+        for storedEvent in storedEvents {
+            switch extractUpdateEvent(
+                from: storedEvent,
                 privateKeys: privateKeys
-            ) else {
-                return nil
+            ) {
+            case .success(let updateEvent):
+                result.eventsToProcess.append(updateEvent)
+                result.eventsToDelete.append(storedEvent)
+
+            case .failure(.permanent):
+                result.eventsToDelete.append(storedEvent)
+
+            case .failure(.temporary):
+                continue
             }
-
-            let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
-                fromEventStreamPayload: payload,
-                uuid: eventUUID,
-                transient: $0.isTransient,
-                source: ZMUpdateEventSource(rawValue: Int($0.source))!
-            )
-
-            if let debugInfo = $0.debugInformation {
-                decryptedEvent?.appendDebugInformation(debugInfo)
-            }
-
-            return decryptedEvent
         }
 
-        return events
+        return result
+    }
+
+    struct EventBatch {
+
+        var eventsToProcess = [ZMUpdateEvent]()
+        var eventsToDelete = [StoredUpdateEvent]()
+
+    }
+
+    private static func extractUpdateEvent(
+        from storedEvent: StoredUpdateEvent,
+        privateKeys: (primary: SecKey?, secondary: SecKey?)
+    ) -> Swift.Result<ZMUpdateEvent, ExtractionFailure> {
+        do {
+            guard
+                let payload = try decryptPayloadIfNeeded(
+                    storedEvent: storedEvent,
+                    privateKeys: privateKeys
+                ),
+                let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
+                    fromEventStreamPayload: payload,
+                    uuid: storedEvent.uuidString.flatMap(UUID.init),
+                    transient: storedEvent.isTransient,
+                    source: ZMUpdateEventSource(rawValue: Int(storedEvent.source))!
+                )
+            else {
+                return .failure(.permanent)
+            }
+
+            if let debugInfo = storedEvent.debugInformation {
+                decryptedEvent.appendDebugInformation(debugInfo)
+            }
+
+            return .success(decryptedEvent)
+
+        } catch DecryptionFailure.privateKeyUnavailable {
+            // The required key isn't available now, but it may be later.
+            return .failure(.temporary)
+        } catch {
+            return .failure(.permanent)
+        }
+    }
+
+    enum ExtractionFailure: Error {
+
+        case temporary
+        case permanent
+
     }
 
     // MARK: - Encryption at Rest
@@ -184,7 +233,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// Encrypts the passed payload if publicKey.
     ///
     /// - Parameters:
-    ///   - eventPayload: the envent payload
+    ///   - eventPayload: the event payload
     ///   - publicKey: publicKey which will be used to encrypt eventPayload
     ///
     /// - Returns: a dictionary which contains encrypted payload.
@@ -222,50 +271,60 @@ public final class StoredUpdateEvent: NSManagedObject {
     private static func decryptPayloadIfNeeded(
         storedEvent: StoredUpdateEvent,
         privateKeys: (primary: SecKey?, secondary: SecKey?)
-    ) -> NSDictionary? {
+    ) throws -> NSDictionary? {
         guard storedEvent.isEncrypted else {
             return storedEvent.payload
         }
 
-        guard let encryptedPayload = storedEvent.payload else {
-            return nil
+        guard let encryptedPayload = storedEvent.payload?[encryptedPayloadKey] as? Data else {
+            throw DecryptionFailure.payloadMissing
         }
 
         switch (storedEvent.isCallEvent, privateKeys.primary, privateKeys.secondary) {
         case (true, _, let privateKey?):
-            return decrypt(
+            return try decrypt(
                 payload: encryptedPayload,
                 privateKey: privateKey
             )
 
         case (false, let privateKey?, _):
-            return decrypt(
+            return try decrypt(
                 payload: encryptedPayload,
                 privateKey: privateKey
             )
 
         default:
-            return nil
+            throw DecryptionFailure.privateKeyUnavailable
         }
     }
 
-    private static func decrypt(payload: NSDictionary, privateKey: SecKey) -> NSDictionary? {
-        guard
-            let encryptedPayload = payload[encryptedPayloadKey] as? Data,
-            let decryptedData = SecKeyCreateDecryptedData(
-                privateKey,
-                .eciesEncryptionCofactorX963SHA256AESGCM,
-                encryptedPayload as CFData,
-                nil
-            )
-        else {
-            return nil
+    private static func decrypt(payload: Data, privateKey: SecKey) throws -> NSDictionary {
+        guard let decryptedData = SecKeyCreateDecryptedData(
+            privateKey,
+            .eciesEncryptionCofactorX963SHA256AESGCM,
+            payload as CFData,
+            nil
+        ) else {
+            throw DecryptionFailure.decryptionError
         }
 
-        return try? JSONSerialization.jsonObject(
+        guard let decryptedPayload = try? JSONSerialization.jsonObject(
           with: decryptedData as Data,
           options: []
-        ) as? NSDictionary
+        ) as? NSDictionary else {
+            throw DecryptionFailure.serializationError
+        }
+
+        return decryptedPayload
+    }
+
+    enum DecryptionFailure: Error {
+
+        case payloadMissing
+        case privateKeyUnavailable
+        case decryptionError
+        case serializationError
+
     }
 
 }
