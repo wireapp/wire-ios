@@ -19,137 +19,43 @@
 import Foundation
 import LocalAuthentication
 
-public protocol EARKeyRepositoryInterface {
+// TODO: make automockable
 
-    func fetchPrimaryPublicKey() throws -> SecKey
+protocol EARKeyRepositoryInterface {
 
-    func fetchPrimaryPrivateKey(
-        context: LAContext?,
-        authenticationPrompt: String?
-    ) throws -> SecKey
-
-    func fetchSecondaryPublicKey() throws -> SecKey
-
-    func fetchSecondaryPrivateKey() throws -> SecKey
-
-    func fetchDatabaseKey() throws -> Data
+    func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
+    func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey
+    func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey
+    func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws
+    func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data
 
 }
 
-public extension EARKeyRepositoryInterface {
+class EARKeyRepository: EARKeyRepositoryInterface {
 
-    func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
-        do {
-            return try (fetchPrimaryPublicKey(), fetchSecondaryPublicKey())
-        } catch {
-            return nil
-        }
+    // MARK: - Public keys
+
+    func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
+        try KeychainManager.storeItem(description, value: key)
     }
 
-    func fetchPrivateKeys(
-        context: LAContext? = nil,
-        authenticationPrompt: String? = nil
-    ) -> (primary: SecKey?, secondary: SecKey?) {
-        let primary = try? fetchPrimaryPrivateKey(
-            context: context,
-            authenticationPrompt: authenticationPrompt
-        )
-
-        let secondary = try? fetchSecondaryPrivateKey()
-        return (primary, secondary)
-    }
-
-}
-
-public class EARKeyRepository: EARKeyRepositoryInterface {
-
-    // MARK: - Properties
-
-    let accountID: UUID
-
-    // MARK: - Life cycle
-
-    public convenience init(account: Account) {
-        self.init(accountID: account.userIdentifier)
-    }
-
-    public init(accountID: UUID) {
-        self.accountID = accountID
-    }
-
-    // MARK: - Primary
-
-    /// Attempt to fetch the primary public key.
-    ///
-    /// This key should be used to encrypt the databse key as well
-    /// as stored update events (excepting call events).
-    ///
-    /// Returns: The key.
-
-    public func fetchPrimaryPublicKey() throws -> SecKey {
-        let description = PublicEARKeyDescription.primaryKeyDescription(accountID: accountID)
+    func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
         return try KeychainManager.fetchItem(description)
     }
 
-    /// Attempt to fetch the primary private key.
-    ///
-    /// This key should be used to decrypt the databse key as well
-    /// as stored update events (excepting call events).
-    ///
-    /// - Parameters:
-    ///   - context: A valid authentication context.
-    ///   - authenticationPrompt: A message to show when authentication is requested.
-    ///
-    /// Returns: The key.
+    // MARK: - Private keys
 
-    public func fetchPrimaryPrivateKey(
-        context: LAContext? = nil,
-        authenticationPrompt: String? = nil
-    ) throws -> SecKey {
-        let description = PrivateEARKeyDescription.primaryKeyDescription(
-            accountID: accountID,
-            context: context,
-            authenticationPrompt: authenticationPrompt
-        )
-
+    func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         return try KeychainManager.fetchItem(description)
     }
 
-    // MARK: - Secondary
+    // MARK: - Datatbase keys
 
-    /// Attempt to fetch the secondary public key.
-    ///
-    /// This key should be used to encrypt stored call events.
-    ///
-    /// Returns: The key.
-
-    public func fetchSecondaryPublicKey() throws -> SecKey {
-        let description = PublicEARKeyDescription.secondaryKeyDescription(accountID: accountID)
-        return try KeychainManager.fetchItem(description)
+    func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
+        try KeychainManager.storeItem(description, value: key)
     }
 
-    /// Attempt to fetch the secondary private key.
-    ///
-    /// This key should be used to decrypt stored call events.
-    ///
-    /// Returns: The key.
-
-    public func fetchSecondaryPrivateKey() throws -> SecKey {
-        let description = PrivateEARKeyDescription.secondaryKeyDescription(accountID: accountID)
-        return try KeychainManager.fetchItem(description)
-    }
-
-    // MARK: - Database
-
-    /// Attempt to fetch the databse key.
-    ///
-    /// This key should be used to encrypt and decrypt content in the database.
-    ///
-    /// Returns: The key.
-
-    public func fetchDatabaseKey() throws -> Data {
-        // TODO: decrypt
-        let description = DatabaseEARKeyDescription.keyDescription(accountID: accountID)
+    func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
         return try KeychainManager.fetchItem(description)
     }
 

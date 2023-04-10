@@ -491,7 +491,7 @@
 		EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */; };
 		EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */; };
 		EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */; };
-		EEC57C4A29E407CC0068DFDA /* EARKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC57C4929E407CC0068DFDA /* EARKeyService.swift */; };
+		EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC57C4929E407CC0068DFDA /* EARService.swift */; };
 		EECFAA3826D52EB700D9E100 /* Feature.SelfDeletingMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECFAA3726D52EB700D9E100 /* Feature.SelfDeletingMessages.swift */; };
 		EEDA9C0E2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */; };
 		EEDA9C1225121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C1125121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift */; };
@@ -1288,7 +1288,7 @@
 		EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.Config.swift; sourceTree = "<group>"; };
 		EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockAuthenticationResult.swift; sourceTree = "<group>"; };
 		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
-		EEC57C4929E407CC0068DFDA /* EARKeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyService.swift; sourceTree = "<group>"; };
+		EEC57C4929E407CC0068DFDA /* EARService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARService.swift; sourceTree = "<group>"; };
 		EECFAA3726D52EB700D9E100 /* Feature.SelfDeletingMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.SelfDeletingMessages.swift; sourceTree = "<group>"; };
 		EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EEDA9C1125121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContextTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
@@ -1925,12 +1925,12 @@
 		EE22F81029DD82290053E1C6 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
+				EEC57C4929E407CC0068DFDA /* EARService.swift */,
+				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
 				EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */,
 				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
 				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
 				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
-				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
-				EEC57C4929E407CC0068DFDA /* EARKeyService.swift */,
 			);
 			path = EAR;
 			sourceTree = "<group>";
@@ -3514,7 +3514,7 @@
 				EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */,
 				1670D01C231823DC003A143B /* ZMUser+Permissions.swift in Sources */,
 				54FB03AA1E41F204000E13DC /* LegacyPersistedDataPatches+Directory.swift in Sources */,
-				EEC57C4A29E407CC0068DFDA /* EARKeyService.swift in Sources */,
+				EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */,
 				F9B71F2D1CB264EF001DB03F /* ZMConversation+UnreadCount.m in Sources */,
 				54D7B83F1E12774600C1B347 /* NSPersistentStore+Metadata.swift in Sources */,
 				BFCD8A2D1DCB4E8A00C6FCCF /* V2Asset.swift in Sources */,

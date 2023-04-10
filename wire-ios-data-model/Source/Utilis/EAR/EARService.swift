@@ -19,15 +19,21 @@
 import Foundation
 import LocalAuthentication
 
-protocol EARKeyServiceInterface {
+protocol EARServiceInterface {
 
     func generateKeys() throws -> Data
+    func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)?
+    func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?)
+    func fetchDatabaseKey() -> VolatileData?
 
 }
 
-public class EARKeyService: EARKeyServiceInterface {
+public class EARService: EARServiceInterface {
+
+    // MARK: - Properties
 
     private let accountID: UUID
+    private let keyRepository: EARKeyRepositoryInterface
 
     private let primaryPublicKeyDescription: PublicEARKeyDescription
     private let primaryPrivateKeyDescription: PrivateEARKeyDescription
@@ -35,14 +41,23 @@ public class EARKeyService: EARKeyServiceInterface {
     private let secondaryPrivateKeyDescription: PrivateEARKeyDescription
     private let databaseKeyDescription: DatabaseEARKeyDescription
 
-    init(accountID: UUID) {
+    // MARK: - Life cycle
+
+    init(
+        accountID: UUID,
+        keyRepository: EARKeyRepositoryInterface = EARKeyRepository()
+    ) {
         self.accountID = accountID
+        self.keyRepository = keyRepository
+
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
         primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
         secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         databaseKeyDescription = .keyDescription(accountID: accountID)
     }
+
+    // MARK: - Keys
 
     func generateKeys() throws -> Data {
         let primaryPublicKey: SecKey
@@ -75,20 +90,20 @@ public class EARKeyService: EARKeyServiceInterface {
         }
 
         do {
-            try KeychainManager.storeItem(
-                primaryPublicKeyDescription,
-                value: primaryPublicKey
+            try keyRepository.storePublicKey(
+                description: primaryPublicKeyDescription,
+                key: primaryPublicKey
             )
 
-            try KeychainManager.storeItem(
-                secondaryPublicKeyDescription,
-                value: secondaryPublicKey
+            try keyRepository.storePublicKey(
+                description: secondaryPublicKeyDescription,
+                key: secondaryPublicKey
             )
 
             // TODO: encrypt database key
-            try KeychainManager.storeItem(
-                databaseKeyDescription,
-                value: databaseKey
+            try keyRepository.storeDatabaseKey(
+                description: databaseKeyDescription,
+                key: databaseKey
             )
         } catch {
             // TODO: log error, maybe try to delete any keys that were stored
@@ -96,6 +111,30 @@ public class EARKeyService: EARKeyServiceInterface {
         }
 
         return databaseKey
+    }
+
+    func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
+        do {
+            let primary = try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
+            let secondary = try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
+            return (primary, secondary)
+        } catch {
+            // TODO: log
+            return nil
+        }
+    }
+
+    // TODO: allow adding a context
+    func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
+        let primary = try? keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+        let secondary = try? keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
+        return (primary, secondary)
+    }
+
+    // TODO: decrypt
+    func fetchDatabaseKey() -> VolatileData? {
+        let data = try? keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
+        return data.map(VolatileData.init)
     }
 
 }

@@ -67,7 +67,7 @@ public extension ContextProvider {
     /// Unlock the database using the given authentication context.
 
     func unlockDatabase(context: LAContext) throws {
-        let keyProvider = EARKeyRepository(account: account)
+        let service = EARService(accountID: account.userIdentifier)
         let privateKey = try keyProvider.fetchPrimaryPrivateKey(context: context)
 
         let encryptedDatabaseKey = try keyProvider.fetchDatabaseKey()
