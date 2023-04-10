@@ -322,6 +322,7 @@ extension SearchTask {
             let apiVersion = BackendInfo.apiVersion,
             apiVersion >= .v2,
             case .search(let searchRequest) = task,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
         else {
             return
@@ -445,6 +446,7 @@ extension SearchTask {
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1,
             case .search(let searchRequest) = task,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.directory)
         else { return }
 
@@ -533,6 +535,7 @@ extension SearchTask {
         guard
             let apiVersion = BackendInfo.apiVersion,
             case .search(let searchRequest) = task,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
         else { return }
 
