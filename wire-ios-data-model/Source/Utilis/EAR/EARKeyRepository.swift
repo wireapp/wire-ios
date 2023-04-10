@@ -21,7 +21,7 @@ import LocalAuthentication
 
 // TODO: make automockable
 
-protocol EARKeyRepositoryInterface {
+public protocol EARKeyRepositoryInterface {
 
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey
@@ -31,31 +31,35 @@ protocol EARKeyRepositoryInterface {
 
 }
 
-class EARKeyRepository: EARKeyRepositoryInterface {
+public class EARKeyRepository: EARKeyRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
 
     // MARK: - Public keys
 
-    func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
+    public func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
         try KeychainManager.storeItem(description, value: key)
     }
 
-    func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
+    public func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
         return try KeychainManager.fetchItem(description)
     }
 
     // MARK: - Private keys
 
-    func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
+    public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         return try KeychainManager.fetchItem(description)
     }
 
     // MARK: - Datatbase keys
 
-    func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
+    public func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
         try KeychainManager.storeItem(description, value: key)
     }
 
-    func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
+    public func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
         return try KeychainManager.fetchItem(description)
     }
 

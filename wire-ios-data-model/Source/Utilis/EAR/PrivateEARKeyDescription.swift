@@ -23,7 +23,7 @@ import Foundation
 /// Private EAR keys are used to decrypt material that was encrypted
 /// with the corresponding public EAR key.
 
-class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
 
     // MARK: - Life cycle
 

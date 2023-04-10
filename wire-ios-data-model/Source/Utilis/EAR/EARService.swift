@@ -19,12 +19,14 @@
 import Foundation
 import LocalAuthentication
 
-protocol EARServiceInterface {
+public protocol EARServiceInterface {
 
     func generateKeys() throws -> Data
+    func lockDatabase()
+    func unlockDatabase(context: LAContext) throws
+
     func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)?
     func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?)
-    func fetchDatabaseKey() -> VolatileData?
 
 }
 
@@ -34,6 +36,7 @@ public class EARService: EARServiceInterface {
 
     private let accountID: UUID
     private let keyRepository: EARKeyRepositoryInterface
+    private let databaseContexts: [NSManagedObjectContext]
 
     private let primaryPublicKeyDescription: PublicEARKeyDescription
     private let primaryPrivateKeyDescription: PrivateEARKeyDescription
@@ -43,13 +46,14 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Life cycle
 
-    init(
+    public init(
         accountID: UUID,
-        keyRepository: EARKeyRepositoryInterface = EARKeyRepository()
+        keyRepository: EARKeyRepositoryInterface = EARKeyRepository(),
+        databaseContexts: [NSManagedObjectContext]
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
-
+        self.databaseContexts = databaseContexts
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
         primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
@@ -59,7 +63,7 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Keys
 
-    func generateKeys() throws -> Data {
+    public func generateKeys() throws -> Data {
         let primaryPublicKey: SecKey
         let secondaryPublicKey: SecKey
         let databaseKey: Data
@@ -113,7 +117,7 @@ public class EARService: EARServiceInterface {
         return databaseKey
     }
 
-    func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
+    public func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
         do {
             let primary = try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
             let secondary = try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
@@ -125,16 +129,90 @@ public class EARService: EARServiceInterface {
     }
 
     // TODO: allow adding a context
-    func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
+    public func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
         let primary = try? keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
         let secondary = try? keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
         return (primary, secondary)
     }
 
-    // TODO: decrypt
-    func fetchDatabaseKey() -> VolatileData? {
-        let data = try? keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
-        return data.map(VolatileData.init)
+    // MARK: - Lock / unlock database
+
+    public func lockDatabase() {
+        performInAllContexts {
+            $0.databaseKey = nil
+        }
+    }
+
+    public func unlockDatabase(context: LAContext) throws {
+        let databaseKey = try fetchDecyptedDatabaseKey(context: context)
+
+        performInAllContexts {
+            $0.databaseKey = databaseKey
+        }
+    }
+
+    private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
+        let privateKey = try fetchPrimaryPrivateKey()
+        let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
+        let databaseKeyData = try decryptDatabaseKey(encryptedDatabaseKeyData, privateKey: privateKey)
+        return VolatileData(from: databaseKeyData)
+    }
+
+    private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {
+        for context in databaseContexts {
+            context.performAndWait {
+                block(context)
+            }
+        }
+    }
+
+    private func encryptDatabaseKey(
+        _ databaseKey: Data,
+        publicKey: SecKey
+    ) throws -> Data {
+        var error: Unmanaged<CFError>?
+        guard let encryptedDatabaseKey = SecKeyCreateEncryptedData(
+            publicKey,
+            databaseKeyAlgorithm,
+            databaseKey as CFData, &error
+        ) else {
+            let error = error!.takeRetainedValue() as Error
+            throw error
+        }
+
+        return encryptedDatabaseKey as Data
+    }
+
+    private func decryptDatabaseKey(
+        _ encryptedDatabaseKey: Data,
+        privateKey: SecKey
+    ) throws -> Data {
+        var error: Unmanaged<CFError>?
+        guard let databaseKey = SecKeyCreateDecryptedData(
+            privateKey,
+            databaseKeyAlgorithm,
+            encryptedDatabaseKey as CFData,
+            &error
+        ) else {
+            let error = error!.takeRetainedValue() as Error
+            throw error
+        }
+
+        return databaseKey as Data
+    }
+
+    private var databaseKeyAlgorithm: SecKeyAlgorithm {
+        return .eciesEncryptionCofactorX963SHA256AESGCM
+    }
+
+
+    private func fetchPrimaryPrivateKey() throws -> SecKey {
+        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+    }
+
+    private func fetchEncryptedDatabaseKey() throws -> Data {
+        return try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
+
     }
 
 }

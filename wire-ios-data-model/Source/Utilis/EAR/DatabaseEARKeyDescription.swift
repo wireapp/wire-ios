@@ -23,7 +23,7 @@ import Foundation
 /// The database key is used to symmetrically encrypt and decrypt
 /// content in the database.
 
-class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
 
     // MARK: - Life cycle
 

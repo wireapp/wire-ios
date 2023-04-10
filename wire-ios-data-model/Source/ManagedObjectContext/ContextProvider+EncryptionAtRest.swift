@@ -59,28 +59,23 @@ public extension ContextProvider {
     /// Lock the database.
 
     func lockDatabase() {
-        for context in [viewContext, syncContext, searchContext] {
-            context.performAndWait { context.databaseKey = nil }
-        }
+        let service = EARService(
+            accountID: account.userIdentifier,
+            databaseContexts: [viewContext, syncContext, searchContext]
+        )
+
+        service.lockDatabase()
     }
 
     /// Unlock the database using the given authentication context.
 
     func unlockDatabase(context: LAContext) throws {
-        let service = EARService(accountID: account.userIdentifier)
-        let privateKey = try keyProvider.fetchPrimaryPrivateKey(context: context)
-
-        let encryptedDatabaseKey = try keyProvider.fetchDatabaseKey()
-        let decryptedDatabaseKey = try decryptDatabaseKey(
-            encryptedDatabaseKey,
-            privateKey: privateKey
+        let service = EARService(
+            accountID: account.userIdentifier,
+            databaseContexts: [viewContext, syncContext, searchContext]
         )
 
-        let databaseKey = VolatileData(from: decryptedDatabaseKey)
-
-        for context in [viewContext, syncContext, searchContext] {
-            context.performAndWait { context.databaseKey = databaseKey }
-        }
+        try service.unlockDatabase(context: context)
     }
 
     private func encryptDatabaseKey(
