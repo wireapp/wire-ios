@@ -64,10 +64,8 @@ public struct EncryptionAtRestKeyProvider {
     /// Returns: The key.
 
     public func fetchPrimaryPublicKey() throws -> SecKey {
-        return try KeychainManager.fetchItem(PublicEARKeyDescription(
-            accountID: accountID,
-            label: "primary-public"
-        ))
+        let description = PublicEARKeyDescription.primaryKeyDescription(accountID: accountID)
+        return try KeychainManager.fetchItem(description)
     }
 
     /// Attempt to fetch the primary private key.
@@ -85,12 +83,13 @@ public struct EncryptionAtRestKeyProvider {
         context: LAContext? = nil,
         authenticationPrompt: String? = nil
     ) throws -> SecKey {
-        return try KeychainManager.fetchItem(PrivateEARKeyDescription(
+        let description = PrivateEARKeyDescription.primaryKeyDescription(
             accountID: accountID,
-            label: "primary-private",
             context: context,
-            prompt: authenticationPrompt
-        ))
+            authenticationPrompt: authenticationPrompt
+        )
+
+        return try KeychainManager.fetchItem(description)
     }
 
     // MARK: - Secondary
@@ -102,10 +101,8 @@ public struct EncryptionAtRestKeyProvider {
     /// Returns: The key.
 
     public func fetchSecondaryPublicKey() throws -> SecKey {
-        return try KeychainManager.fetchItem(PublicEARKeyDescription(
-            accountID: accountID,
-            label: "secondary-public"
-        ))
+        let description = PublicEARKeyDescription.secondaryKeyDescription(accountID: accountID)
+        return try KeychainManager.fetchItem(description)
     }
 
     /// Attempt to fetch the secondary private key.
@@ -115,10 +112,8 @@ public struct EncryptionAtRestKeyProvider {
     /// Returns: The key.
 
     public func fetchSecondaryPrivateKey() throws -> SecKey {
-        return try KeychainManager.fetchItem(PrivateEARKeyDescription(
-            accountID: accountID,
-            label: "secondary-private"
-        ))
+        let description = PrivateEARKeyDescription.secondaryKeyDescription(accountID: accountID)
+        return try KeychainManager.fetchItem(description)
     }
 
     // MARK: - Database
@@ -130,10 +125,9 @@ public struct EncryptionAtRestKeyProvider {
     /// Returns: The key.
 
     public func fetchDatabaseKey() throws -> Data {
-        return try KeychainManager.fetchItem(DatabaseEARKeyDescription(
-            accountID: accountID,
-            label: "database"
-        ))
+        // TODO: decrypt
+        let description = DatabaseEARKeyDescription.keyDescription(accountID: accountID)
+        return try KeychainManager.fetchItem(description)
     }
 
 }
