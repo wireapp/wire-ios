@@ -835,6 +835,19 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 0)
     }
 
+    func testThatItDoesNotSendASearchRequestIfLocalResultsOnly() {
+        // given
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory, .localResultsOnly])
+        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
+
+        // when
+        task.performRemoteSearch()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(mockTransportSession.receivedRequests().count, 0)
+    }
+
     func testThatItEncodesAPlusCharacterInTheSearchURL() {
         // given
         setCurrentAPIVersion(.v2)
@@ -916,6 +929,28 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().last?.path, "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post")
     }
 
+    func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() {
+        // given
+        setCurrentAPIVersion(.v2)
+        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers, .localResultsOnly])
+        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
+
+        mockTransportSession.performRemoteChanges { (remoteChanges) in
+            let userA = remoteChanges.insertUser(withName: "User A")
+            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
+            team.identifier = self.teamIdentifier.transportString()
+            team.creator = userA
+            remoteChanges.insertMember(with: userA, in: team)
+        }
+
+        // when
+        task.performRemoteSearch()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
+    }
+
     func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
         // given
         setCurrentAPIVersion(.v2)
@@ -959,6 +994,19 @@ class SearchTaskTests: DatabaseTest {
 
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/teams/\(teamIdentifier.transportString())/services/whitelisted?prefix=steve%20o'hara%20%26%20s%C3%B6hne")
+    }
+
+    func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() {
+        // given
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services, .localResultsOnly])
+        let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
+
+        // when
+        task.performRemoteSearchForServices()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
     }
 
     func testThatItCallsCompletionHandlerForServicesSearch() {
@@ -1043,6 +1091,20 @@ class SearchTaskTests: DatabaseTest {
     }
 
     // MARK: Federated search
+
+    func testThatItDoesNotSendAFederatedUserSearchRequest__WhenLocalSearchOnly() throws {
+        // given
+        setCurrentAPIVersion(.v3)
+        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: [.federated, .localResultsOnly])
+        let task = SearchTask(request: searchRequest, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
+
+        // when
+        task.performRemoteSearch()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
+    }
 
     func testThatItSendsAFederatedUserSearchRequest() throws {
         // given
