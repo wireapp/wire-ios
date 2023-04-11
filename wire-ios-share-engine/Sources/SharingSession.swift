@@ -303,6 +303,10 @@ public class SharingSession {
             syncContext: coreDataStack.syncContext
         )
 
+        coreDataStack.syncContext.performAndWait {
+            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+        }
+
         setupCaches(at: cachesDirectory)
         setupObservers()
     }

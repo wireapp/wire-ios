@@ -49,7 +49,7 @@ extension SharingSession {
                 syncContext.coreCrypto = safeCoreCrypto
 
                 if DeveloperFlag.proteusViaCoreCrypto.isOn, syncContext.proteusService == nil {
-                    syncContext.proteusService = try ProteusService(coreCrypto: safeCoreCrypto)
+                    syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
                 if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {

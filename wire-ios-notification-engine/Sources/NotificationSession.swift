@@ -224,6 +224,11 @@ public class NotificationSession {
             sharedContainerURL: coreDataStack.applicationContainer,
             syncContext: coreDataStack.syncContext
         )
+
+        coreDataStack.syncContext.performAndWait {
+            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+        }
+
     }
 
     deinit {

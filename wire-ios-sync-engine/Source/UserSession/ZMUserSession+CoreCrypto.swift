@@ -60,6 +60,7 @@ extension ZMUserSession {
                     key: configuration.key
                 )
 
+                updateKeychainItemAccess()
                 syncContext.coreCrypto = coreCrypto
                 createProteusServiceIfNeeded(coreCrypto: coreCrypto)
 
@@ -67,6 +68,59 @@ extension ZMUserSession {
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack (proteus): \(String(describing: error))")
             }
+        }
+    }
+
+    // WORKAROUND:
+    // Problem: Core Crypto stores an item in the keychain, but it doesn't provide an
+    // access level. The default level is kSecAttrAccessibleWhenUnlocked. This means
+    // that if Core Crypto is initialized while the phone is locked (e.g via the
+    // notification extension or periodic background refresh) then it will fail due
+    // to a keychain error thrown in Core Crypto.
+    //
+    // Ideal solution: Core Crypto stores the item with the appropriate access level.
+    // Unfortunately it cannot do this at the moment due to Rust issues.
+    //
+    // Workaround: set the access level for the keychain item on our side.
+
+    private func updateKeychainItemAccess() {
+        WireLogger.coreCrypto.info("updating keychain item access")
+
+        for account in accountsForAllItemsNeedingUpdates() {
+            let query = [
+                kSecClass: kSecClassGenericPassword,
+                kSecAttrService: "wire.com",
+                kSecAttrAccount: account
+            ] as CFDictionary
+
+            let update = [
+                kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+            ] as CFDictionary
+
+            SecItemUpdate(query, update)
+        }
+    }
+
+    private func accountsForAllItemsNeedingUpdates() -> [String] {
+        let query = [
+            kSecClass: kSecClassGenericPassword,
+            kSecReturnAttributes: kCFBooleanTrue!,
+            kSecMatchLimit: kSecMatchLimitAll
+        ] as CFDictionary
+
+        var result: AnyObject?
+
+        guard SecItemCopyMatching(query, &result) == noErr else {
+            return []
+        }
+
+        let items = result as? [[String: Any]] ?? []
+
+        return items.compactMap { item in
+            item[kSecAttrAccount as String] as? String
+        }.filter { account in
+            // Core Crypto says that the items are all prefixed with this.
+            account.hasPrefix("keystore_salt")
         }
     }
 
