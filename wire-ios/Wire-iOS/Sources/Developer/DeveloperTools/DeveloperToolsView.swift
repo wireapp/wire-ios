@@ -58,7 +58,7 @@ struct DeveloperToolsView: View {
                 Text(buttonItem.title)
             }
 
-        case let .itemCopyRequested(textItem):
+        case let .text(textItem):
             TextItemCell(title: textItem.title, value: textItem.value)
                 .contextMenu {
                     SwiftUI.Button {
