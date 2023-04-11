@@ -60,8 +60,12 @@ struct DeveloperToolsView: View {
 
         case let .text(textItem):
             TextItemCell(title: textItem.title, value: textItem.value)
-                .onTapGesture {
-                    viewModel.handleEvent(.itemTapped(item))
+                .contextMenu {
+                    SwiftUI.Button {
+                        viewModel.handleEvent(.itemTapped(item))
+                    } label: {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
                 }
 
         case let .destination(destinationItem):
@@ -97,12 +101,6 @@ private struct TextItemCell: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
                 .foregroundColor(.secondary)
-                .contextMenu {
-                    SwiftUI.Button(
-                        action: { UIPasteboard.general.string = value },
-                        label: { Text("Copy") }
-                    )
-                }
         }
     }
 }
