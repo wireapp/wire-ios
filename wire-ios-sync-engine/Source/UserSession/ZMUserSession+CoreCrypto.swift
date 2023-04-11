@@ -86,13 +86,10 @@ extension ZMUserSession {
     private func updateKeychainItemAccess() {
         WireLogger.coreCrypto.info("updating keychain item access")
 
-        let serviceName = "wire.com"
-        let accountPrefix = "keystore_salt"
-
         for account in accountsForAllItemsNeedingUpdates() {
             let query = [
                 kSecClass: kSecClassGenericPassword,
-                kSecAttrService: serviceName,
+                kSecAttrService: "wire.com",
                 kSecAttrAccount: account
             ] as CFDictionary
 
@@ -123,7 +120,7 @@ extension ZMUserSession {
             item[kSecAttrAccount as String] as? String
         }.filter { account in
             // Core Crypto says that the items are all prefixed with this.
-            account.hasPrefix(accountPrefix)
+            account.hasPrefix("keystore_salt")
         }
     }
 
