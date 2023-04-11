@@ -40,8 +40,6 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         proteusFlag.isOn = false
         mlsFlag.isOn = false
         BackendInfo.apiVersion = .v2
-
-        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
     }
 
     override func tearDown() {
