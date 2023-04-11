@@ -672,11 +672,27 @@ extension WireCallCenterV3 {
         }
     }
 
-    fileprivate func handleCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
+    private func handleCallEvent(
+        _ callEvent: CallEvent,
+        completionHandler: @escaping () -> Void
+    ) {
         Self.logger.trace("handle call event")
-        let result = avsWrapper.received(callEvent: callEvent)
 
-        if let context = uiMOC, let error = result {
+        guard
+            let context = uiMOC,
+            let conversationType = self.conversationType(from: callEvent)
+        else {
+            Self.logger.warning("can't handle call event: unable to determine conversation type")
+            completionHandler()
+            return
+        }
+
+        let result = avsWrapper.received(
+            callEvent: callEvent,
+            conversationType: conversationType
+        )
+
+        if let error = result {
             WireCallCenterCallErrorNotification(
                 context: context,
                 error: error,
@@ -685,6 +701,24 @@ extension WireCallCenterV3 {
         }
 
         completionHandler()
+    }
+
+    private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
+        guard let context = uiMOC else { return nil }
+
+        var conversationType: AVSConversationType?
+
+        context.performAndWait {
+            let conversation = ZMConversation.fetch(
+                with: callEvent.conversationId.identifier,
+                domain: callEvent.conversationId.domain,
+                in: context
+            )
+
+            conversationType = conversation?.avsConversationType
+        }
+
+        return conversationType
     }
 
     /// Handles a change in calling state.
@@ -724,6 +758,26 @@ extension WireCallCenterV3 {
                                                                    messageTime: messageTime,
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
+        }
+    }
+
+}
+
+extension ZMConversation {
+
+    var avsConversationType: AVSConversationType? {
+        switch (conversationType, messageProtocol) {
+        case (.oneOnOne, _):
+            return .oneToOne
+
+        case (.group, .proteus):
+            return .conference
+
+        case (.group, .mls):
+            return .mlsConference
+
+        default:
+            return nil
         }
     }
 

@@ -51,6 +51,12 @@ class MessagingTestBase: ZMTBaseTest {
         return self.coreDataStack.eventContext
     }
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     override func setUp() {
         super.setUp()
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
@@ -213,7 +219,7 @@ extension MessagingTestBase {
                 return (didCreateNewSession: result.didCreateSession, decryptedData: result.decryptedData)
             }
         } else {
-            selfClient.keysStore.encryptionContext.perform { session in
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
                 decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(
                     event,
                     in: self.syncMOC

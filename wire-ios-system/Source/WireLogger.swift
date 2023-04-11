@@ -148,4 +148,25 @@ public extension WireLogger {
 
   static let proteus = WireLogger(tag: "proteus")
 
+  /// For logs related to any mls related flow.
+
+  static let mls = WireLogger(tag: "mls")
+
+  /// For logs related to any mls related flow.
+  static let shareExtension = WireLogger(tag: "share-extension")
+
+  /// For logs related to messaging flow.
+
+  static let messaging = WireLogger(tag: "messaging")
+
+  /// For logs related to the backend environment.
+
+  static let environment = WireLogger(tag: "environment")
+
+  /// For logs related to update events
+
+  static let updateEvent = WireLogger(tag: "update-event")
+
+  /// For logs related to performance
+  static let performance = WireLogger(tag: "performance")
 }

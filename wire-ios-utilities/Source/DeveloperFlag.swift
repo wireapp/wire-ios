@@ -22,6 +22,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
+    case enableMLSSupport
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case breakMyNotifications
@@ -33,6 +34,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public var description: String {
         switch self {
+        case .enableMLSSupport:
+          return "Turn on to enable MLS support. This will cause the app to register an MLS client."
+
         case .showCreateMLSGroupToggle:
             return "Turn on to show the MLS toggle when creating a new group."
 
@@ -56,13 +60,48 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .deprecatedCallingUI:
             return "Turn on to use deprecated calling UI"
-
         }
     }
 
     public var isOn: Bool {
-        get { return Self.storage.bool(forKey: rawValue) }
-        set { Self.storage.set(newValue, forKey: rawValue) }
+        get {
+            return Self.storage.object(forKey: rawValue) as? Bool ?? defaultValue
+        }
+
+        set {
+            Self.storage.set(newValue, forKey: rawValue)
+        }
+    }
+
+    private var defaultValue: Bool {
+        switch self {
+        case .enableMLSSupport:
+            return false
+
+        case .showCreateMLSGroupToggle:
+            return false
+
+        case .proteusViaCoreCrypto:
+            return true
+
+        case .breakMyNotifications:
+            return false
+
+        case .nseV2:
+            return false
+
+        case .nseDebugging:
+            return false
+
+        case .nseDebugEntryPoint:
+            return false
+
+        case .useDevelopmentBackendAPI:
+            return false
+
+        case .deprecatedCallingUI:
+            return false
+        }
     }
 
     static public func clearAllFlags() {

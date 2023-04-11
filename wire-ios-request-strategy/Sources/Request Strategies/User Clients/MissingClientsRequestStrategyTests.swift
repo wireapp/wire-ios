@@ -29,7 +29,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
     var validPrekey: String {
         // TODO: [John] use flag here
-        return try! self.selfClient.keysStore.lastPreKey()
+        return try! self.syncMOC.zm_cryptKeyStore.lastPreKey()
     }
 
     override func setUp() {

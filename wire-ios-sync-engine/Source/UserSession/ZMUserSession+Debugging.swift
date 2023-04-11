@@ -204,13 +204,12 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
 
         userSession.syncManagedObjectContext.perform {
             // TODO: [John] use flag here
-            guard let context = ZMUser
-                .selfUser(in: userSession.syncManagedObjectContext)
-                .selfClient()?.keysStore.encryptionContext else {
-                return onComplete(.failure(error: "No self user"))
+            guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
+                return onComplete(.failure(error: "No encryption context"))
             }
+
             if !isAdding && subject == "all" {
-                context.disableExtendedLoggingOnAllSessions()
+                keyStore.encryptionContext.disableExtendedLoggingOnAllSessions()
                 self.currentlyEnabledLogs = Set()
                 return onComplete(.success(info: "all removed"))
             }
@@ -224,7 +223,8 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
             } else {
                 self.currentlyEnabledLogs.remove(identifier)
             }
-            context.setExtendedLogging(identifier: identifier, enabled: isAdding)
+
+            keyStore.encryptionContext.setExtendedLogging(identifier: identifier, enabled: isAdding)
             return onComplete(.success(info: "Added logging for identifier \(identifier)"))
         }
     }
@@ -247,13 +247,12 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
             EncryptionSessionIdentifier(string: $0)
         })
         userSession.syncManagedObjectContext.performAsync {
-            // TODO: [John] use flag here
-            guard let context = ZMUser.selfUser(in: userSession.syncManagedObjectContext).selfClient()?.keysStore.encryptionContext
-                else {
-                    return
+            guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
+                return
             }
+
             self.currentlyEnabledLogs.forEach {
-                context.setExtendedLogging(identifier: $0, enabled: true)
+                keyStore.encryptionContext.setExtendedLogging(identifier: $0, enabled: true)
             }
         }
     }

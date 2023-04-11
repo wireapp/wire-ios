@@ -26,6 +26,13 @@ import Foundation
 // sourcery: AutoMockable
 public protocol ProteusServiceInterface {
 
+    /// Completes the initialization, enabling the serivce to be used.
+    ///
+    /// This should be called after performing a possible cryptobox migration
+    /// via `migrateCryptoboxSessions` and before any other method is called.
+
+    func completeInitialization() throws
+
     func establishSession(id: ProteusSessionID, fromPrekey: String) throws
     func deleteSession(id: ProteusSessionID) throws
     func sessionExists(id: ProteusSessionID) -> Bool
@@ -53,10 +60,17 @@ public protocol ProteusServiceInterface {
     func lastPrekey() throws -> String
     var lastPrekeyID: UInt16 { get }
     func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple]
-    func fingerprint() throws -> String
-    func localFingerprint(forSession id: ProteusSessionID) throws -> String
+    func localFingerprint() throws -> String
     func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
     func fingerprint(fromPrekey prekey: String) throws -> String
+    func migrateCryptoboxSessions(at url: URL) throws
+
+    /// Acquire safe Core Crypto access during across the lifetime of the given block.
+    ///
+    /// - Parameters:
+    ///   - block: A closure to perform some work needing safe Core Crypto access.
+
+    func performBatchedOperations(_ block: @escaping () throws -> Void) rethrows
 
 }
 

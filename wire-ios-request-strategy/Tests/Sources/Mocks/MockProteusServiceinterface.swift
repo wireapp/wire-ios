@@ -35,6 +35,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var underlyingLastPrekeyID: UInt16!
 
 
+    // MARK: - completeInitialization
+
+    public var completeInitialization_Invocations: [Void] = []
+    public var completeInitialization_MockError: Error?
+    public var completeInitialization_MockMethod: (() throws -> Void)?
+
+    public func completeInitialization() throws {
+        completeInitialization_Invocations.append(())
+
+        if let error = completeInitialization_MockError {
+            throw error
+        }
+
+        guard let mock = completeInitialization_MockMethod else {
+            fatalError("no mock for `completeInitialization`")
+        }
+
+        try mock()
+    }
+
     // MARK: - establishSession
 
     public var establishSessionIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []
@@ -231,49 +251,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
-    // MARK: - fingerprint
-
-    public var fingerprint_Invocations: [Void] = []
-    public var fingerprint_MockError: Error?
-    public var fingerprint_MockMethod: (() throws -> String)?
-    public var fingerprint_MockValue: String?
-
-    public func fingerprint() throws -> String {
-        fingerprint_Invocations.append(())
-
-        if let error = fingerprint_MockError {
-            throw error
-        }
-
-        if let mock = fingerprint_MockMethod {
-            return try mock()
-        } else if let mock = fingerprint_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fingerprint`")
-        }
-    }
-
     // MARK: - localFingerprint
 
-    public var localFingerprintForSession_Invocations: [ProteusSessionID] = []
-    public var localFingerprintForSession_MockError: Error?
-    public var localFingerprintForSession_MockMethod: ((ProteusSessionID) throws -> String)?
-    public var localFingerprintForSession_MockValue: String?
+    public var localFingerprint_Invocations: [Void] = []
+    public var localFingerprint_MockError: Error?
+    public var localFingerprint_MockMethod: (() throws -> String)?
+    public var localFingerprint_MockValue: String?
 
-    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
-        localFingerprintForSession_Invocations.append(id)
+    public func localFingerprint() throws -> String {
+        localFingerprint_Invocations.append(())
 
-        if let error = localFingerprintForSession_MockError {
+        if let error = localFingerprint_MockError {
             throw error
         }
 
-        if let mock = localFingerprintForSession_MockMethod {
-            return try mock(id)
-        } else if let mock = localFingerprintForSession_MockValue {
+        if let mock = localFingerprint_MockMethod {
+            return try mock()
+        } else if let mock = localFingerprint_MockValue {
             return mock
         } else {
-            fatalError("no mock for `localFingerprintForSession`")
+            fatalError("no mock for `localFingerprint`")
         }
     }
 
@@ -321,6 +318,41 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
+    }
+
+    // MARK: - migrateCryptoboxSessions
+
+    public var migrateCryptoboxSessionsAt_Invocations: [URL] = []
+    public var migrateCryptoboxSessionsAt_MockError: Error?
+    public var migrateCryptoboxSessionsAt_MockMethod: ((URL) throws -> Void)?
+
+    public func migrateCryptoboxSessions(at url: URL) throws {
+        migrateCryptoboxSessionsAt_Invocations.append(url)
+
+        if let error = migrateCryptoboxSessionsAt_MockError {
+            throw error
+        }
+
+        guard let mock = migrateCryptoboxSessionsAt_MockMethod else {
+            fatalError("no mock for `migrateCryptoboxSessionsAt`")
+        }
+
+        try mock(url)
+    }
+
+    // MARK: - performBatchedOperations
+
+    public var performBatchedOperations_Invocations: [() throws -> Void] = []
+    public var performBatchedOperations_MockMethod: ((@escaping () throws -> Void) -> Void)?
+
+    public func performBatchedOperations(_ block: @escaping () throws -> Void) {
+        performBatchedOperations_Invocations.append(block)
+
+        guard let mock = performBatchedOperations_MockMethod else {
+            fatalError("no mock for `performBatchedOperations`")
+        }
+
+        mock(block)
     }
 
 }

@@ -31,9 +31,19 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(coreCrypto: SafeCoreCryptoProtocol) throws {
+    public init(coreCrypto: SafeCoreCryptoProtocol) {
         self.coreCrypto = coreCrypto
-        try coreCrypto.perform { try $0.proteusInit() }
+    }
+
+    public func completeInitialization() throws {
+        do {
+            logger.info("completing intialization of ProteusService...")
+            try coreCrypto.perform { try $0.proteusInit() }
+            logger.info("completing intialization of ProteusService... success")
+        } catch {
+            logger.error("completing intialization of ProteusService... failed: \(error.localizedDescription)")
+            throw error
+        }
     }
 
     // MARK: - proteusSessionFromPrekey
@@ -57,7 +67,7 @@ public final class ProteusService: ProteusServiceInterface {
             try coreCrypto.perform { try $0.proteusSessionFromPrekey(
                 sessionId: id.rawValue,
                 prekey: prekeyBytes
-            ) }
+            )}
         } catch {
             logger.error("failed to establish session from prekey: \(String(describing: error))")
             throw ProteusSessionError.failedToEstablishSession
@@ -129,7 +139,7 @@ public final class ProteusService: ProteusServiceInterface {
             let encryptedBytes = try coreCrypto.perform { try $0.proteusEncrypt(
                 sessionId: id.rawValue,
                 plaintext: data.bytes
-            ) }
+            )}
             return encryptedBytes.data
         } catch {
             logger.error("failed to encrypt data: \(String(describing: error))")
@@ -149,7 +159,7 @@ public final class ProteusService: ProteusServiceInterface {
             let encryptedBatch = try coreCrypto.perform { try $0.proteusEncryptBatched(
                 sessionId: sessions.map(\.rawValue),
                 plaintext: data.bytes
-            ) }
+            )}
             return encryptedBatch.mapValues(\Bytes.data)
         } catch {
             logger.error("failed to encrypt data batch: \(String(describing: error))")
@@ -159,9 +169,21 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusDecrypt
 
-    enum DecryptionError: Error {
-        case failedToDecryptData
-        case failedToEstablishSessionFromMessage
+    public enum DecryptionError: Error, Equatable {
+
+        case failedToDecryptData(ProteusError)
+        case failedToEstablishSessionFromMessage(ProteusError)
+
+        public var proteusError: ProteusError {
+            switch self {
+            case .failedToDecryptData(let proteusError):
+                return proteusError
+
+            case .failedToEstablishSessionFromMessage(let proteusError):
+                return proteusError
+            }
+        }
+
     }
 
     public func decrypt(
@@ -173,31 +195,36 @@ public final class ProteusService: ProteusServiceInterface {
         if sessionExists(id: id) {
             logger.info("session exists, decrypting...")
 
-            do {
-                let decryptedBytes = try coreCrypto.perform { try $0.proteusDecrypt(
-                    sessionId: id.rawValue,
-                    ciphertext: data.bytes
-                )}
-
-                return (didCreateSession: false, decryptedData: decryptedBytes.data)
-            } catch {
-                logger.error("failed to decrypt data: \(String(describing: error))")
-                throw DecryptionError.failedToDecryptData
+            let decryptedBytes: Bytes = try coreCrypto.perform {
+                do {
+                    return try $0.proteusDecrypt(
+                        sessionId: id.rawValue,
+                        ciphertext: data.bytes
+                    )
+                } catch {
+                    logger.error("failed to decrypt data: \(error.localizedDescription)")
+                    throw DecryptionError.failedToDecryptData($0.lastProteusError)
+                }
             }
+
+            return (didCreateSession: false, decryptedData: decryptedBytes.data)
+
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
 
-            do {
-                let decryptedBytes = try coreCrypto.perform { try $0.proteusSessionFromMessage(
-                    sessionId: id.rawValue,
-                    envelope: data.bytes
-                )}
-
-                return (didCreateSession: true, decryptedData: decryptedBytes.data)
-            } catch {
-                logger.error("failed to establish session from message: \(String(describing: error))")
-                throw DecryptionError.failedToEstablishSessionFromMessage
+            let decryptedBytes: Bytes = try coreCrypto.perform {
+                do {
+                    return try $0.proteusSessionFromMessage(
+                        sessionId: id.rawValue,
+                        envelope: data.bytes
+                    )
+                } catch {
+                    logger.error("failed to establish session from message: \(String(describing: error))")
+                    throw DecryptionError.failedToEstablishSessionFromMessage($0.lastProteusError)
+                }
             }
+
+            return (didCreateSession: true, decryptedData: decryptedBytes.data)
         }
     }
 
@@ -267,29 +294,17 @@ public final class ProteusService: ProteusServiceInterface {
     // MARK: - proteusFingerprint
 
     enum FingerprintError: Error {
-        case failedToGetFingerprint
         case failedToGetLocalFingerprint
         case failedToGetRemoteFingerprint
         case failedToGetFingerprintFromPrekey
         case prekeyNotBase64Encoded
     }
 
-    public func fingerprint() throws -> String {
-        logger.info("fetching fingerprint")
-
-        do {
-            return try coreCrypto.perform { try $0.proteusFingerprint() }
-        } catch {
-            logger.error("failed to fetch fingerprint: \(String(describing: error))")
-            throw FingerprintError.failedToGetFingerprint
-        }
-    }
-
-    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
+    public func localFingerprint() throws -> String {
         logger.info("fetching local fingerprint")
 
         do {
-            return try coreCrypto.perform { try $0.proteusFingerprintLocal(sessionId: id.rawValue) }
+            return try coreCrypto.perform { try $0.proteusFingerprint() }
         } catch {
             logger.error("failed to fetch local fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetLocalFingerprint
@@ -321,4 +336,38 @@ public final class ProteusService: ProteusServiceInterface {
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
+
+    // MARK: - cryptoboxMigration
+
+        enum MigrationError: Error {
+            case failedToMigrateData
+        }
+
+        public func migrateCryptoboxSessions(at url: URL) throws {
+            logger.info("migrating data from Cryptobox into the CoreCrypto keystore")
+
+            do {
+                try coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: url.path) }
+            } catch {
+                logger.error("failed to migrate data from Cryptobox: \(String(describing: error))")
+                throw MigrationError.failedToMigrateData
+            }
+        }
+
+    // MARK: - Batched operations
+
+    public func performBatchedOperations(_ block: () throws -> Void) rethrows {
+        try coreCrypto.perform { _ in
+            try block()
+        }
+    }
+
+}
+
+private extension CoreCryptoProtocol {
+
+    var lastProteusError: ProteusError {
+        return ProteusError(proteusCode:  proteusLastErrorCode())
+    }
+
 }

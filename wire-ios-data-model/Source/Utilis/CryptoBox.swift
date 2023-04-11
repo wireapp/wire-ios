@@ -21,7 +21,35 @@ import WireCryptobox
 
 extension NSManagedObjectContext {
 
-    fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
+    private static let AccountDirectoryURLKey = "AccountDirectoryURLKey"
+
+    public var accountDirectoryURL: URL? {
+        get {
+            precondition(zm_isSyncContext, "accountDirectoryURL should only be accessed on the sync context")
+            return userInfo[Self.AccountDirectoryURLKey] as? URL
+        }
+
+        set {
+            precondition(zm_isSyncContext, "accountDirectoryURL should only be accessed on the sync context")
+            userInfo[Self.AccountDirectoryURLKey] = newValue
+        }
+    }
+
+    private static let ApplicationContainerURLKey = "ApplicationContainerURLKey"
+
+    public var applicationContainerURL: URL? {
+        get {
+            precondition(zm_isSyncContext, "applicationContainerURL should only be accessed on the sync context")
+            return userInfo[Self.ApplicationContainerURLKey] as? URL
+        }
+
+        set {
+            precondition(zm_isSyncContext, "applicationContainerURL should only be accessed on the sync context")
+            userInfo[Self.ApplicationContainerURLKey] = newValue
+        }
+    }
+
+    private static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
 
     @objc(setupUserKeyStoreInAccountDirectory:applicationContainer:)
     public func setupUserKeyStore(accountDirectory: URL, applicationContainer: URL) {
@@ -35,15 +63,12 @@ extension NSManagedObjectContext {
 
     /// Returns the cryptobox instance associated with this managed object context
     @objc public var zm_cryptKeyStore: UserClientKeysStore! {
-        if !self.zm_isSyncContext {
+        guard zm_isSyncContext else {
             fatal("Can't access key store: Currently not on sync context")
         }
-        let keyStore = self.userInfo.object(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
-        if let keyStore = keyStore as? UserClientKeysStore {
-            return keyStore
-        } else {
-            fatal("Can't access key store: not keystore found.")
-        }
+
+        let keyStore = userInfo.object(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
+        return keyStore as? UserClientKeysStore
     }
 
     @objc public func zm_tearDownCryptKeyStore() {
@@ -79,7 +104,7 @@ open class UserClientKeysStore: NSObject {
     /// Maximum possible ID for prekey
     public static let MaxPreKeyID: UInt16 = UInt16.max-1
 
-    public var encryptionContext: EncryptionContext
+    open var encryptionContext: EncryptionContext
 
     /// Fallback prekeys (when no other prekey is available, this will always work)
     fileprivate var internalLastPreKey: String?

@@ -33,6 +33,135 @@ import AppKit
 
 
 
+public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isMigrationNeeded
+
+    public var isMigrationNeededAccountDirectory_Invocations: [URL] = []
+    public var isMigrationNeededAccountDirectory_MockMethod: ((URL) -> Bool)?
+    public var isMigrationNeededAccountDirectory_MockValue: Bool?
+
+    public func isMigrationNeeded(accountDirectory: URL) -> Bool {
+        isMigrationNeededAccountDirectory_Invocations.append(accountDirectory)
+
+        if let mock = isMigrationNeededAccountDirectory_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = isMigrationNeededAccountDirectory_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMigrationNeededAccountDirectory`")
+        }
+    }
+
+    // MARK: - performMigration
+
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, syncContext: NSManagedObjectContext)] = []
+    public var performMigrationAccountDirectorySyncContext_MockError: Error?
+    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, NSManagedObjectContext) throws -> Void)?
+
+    public func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
+        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, syncContext: syncContext))
+
+        if let error = performMigrationAccountDirectorySyncContext_MockError {
+            throw error
+        }
+
+        guard let mock = performMigrationAccountDirectorySyncContext_MockMethod else {
+            fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
+        }
+
+        try mock(accountDirectory, syncContext)            
+    }
+
+    // MARK: - completeMigration
+
+    public var completeMigrationSyncContext_Invocations: [NSManagedObjectContext] = []
+    public var completeMigrationSyncContext_MockError: Error?
+    public var completeMigrationSyncContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
+
+    public func completeMigration(syncContext: NSManagedObjectContext) throws {
+        completeMigrationSyncContext_Invocations.append(syncContext)
+
+        if let error = completeMigrationSyncContext_MockError {
+            throw error
+        }
+
+        guard let mock = completeMigrationSyncContext_MockMethod else {
+            fatalError("no mock for `completeMigrationSyncContext`")
+        }
+
+        try mock(syncContext)            
+    }
+
+}
+class MockFileManagerInterface: FileManagerInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - fileExists
+
+    var fileExistsAtPath_Invocations: [String] = []
+    var fileExistsAtPath_MockMethod: ((String) -> Bool)?
+    var fileExistsAtPath_MockValue: Bool?
+
+    func fileExists(atPath path: String) -> Bool {
+        fileExistsAtPath_Invocations.append(path)
+
+        if let mock = fileExistsAtPath_MockMethod {
+            return mock(path)
+        } else if let mock = fileExistsAtPath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fileExistsAtPath`")
+        }
+    }
+
+    // MARK: - removeItem
+
+    var removeItemAt_Invocations: [URL] = []
+    var removeItemAt_MockError: Error?
+    var removeItemAt_MockMethod: ((URL) throws -> Void)?
+
+    func removeItem(at url: URL) throws {
+        removeItemAt_Invocations.append(url)
+
+        if let error = removeItemAt_MockError {
+            throw error
+        }
+
+        guard let mock = removeItemAt_MockMethod else {
+            fatalError("no mock for `removeItemAt`")
+        }
+
+        try mock(url)            
+    }
+
+    // MARK: - cryptoboxDirectory
+
+    var cryptoboxDirectoryIn_Invocations: [URL] = []
+    var cryptoboxDirectoryIn_MockMethod: ((URL) -> URL)?
+    var cryptoboxDirectoryIn_MockValue: URL?
+
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+        cryptoboxDirectoryIn_Invocations.append(accountDirectory)
+
+        if let mock = cryptoboxDirectoryIn_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = cryptoboxDirectoryIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `cryptoboxDirectoryIn`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -48,6 +177,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var underlyingLastPrekeyID: UInt16!
 
+
+    // MARK: - completeInitialization
+
+    public var completeInitialization_Invocations: [Void] = []
+    public var completeInitialization_MockError: Error?
+    public var completeInitialization_MockMethod: (() throws -> Void)?
+
+    public func completeInitialization() throws {
+        completeInitialization_Invocations.append(())
+
+        if let error = completeInitialization_MockError {
+            throw error
+        }
+
+        guard let mock = completeInitialization_MockMethod else {
+            fatalError("no mock for `completeInitialization`")
+        }
+
+        try mock()            
+    }
 
     // MARK: - establishSession
 
@@ -245,49 +394,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
-    // MARK: - fingerprint
-
-    public var fingerprint_Invocations: [Void] = []
-    public var fingerprint_MockError: Error?
-    public var fingerprint_MockMethod: (() throws -> String)?
-    public var fingerprint_MockValue: String?
-
-    public func fingerprint() throws -> String {
-        fingerprint_Invocations.append(())
-
-        if let error = fingerprint_MockError {
-            throw error
-        }
-
-        if let mock = fingerprint_MockMethod {
-            return try mock()
-        } else if let mock = fingerprint_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fingerprint`")
-        }
-    }
-
     // MARK: - localFingerprint
 
-    public var localFingerprintForSession_Invocations: [ProteusSessionID] = []
-    public var localFingerprintForSession_MockError: Error?
-    public var localFingerprintForSession_MockMethod: ((ProteusSessionID) throws -> String)?
-    public var localFingerprintForSession_MockValue: String?
+    public var localFingerprint_Invocations: [Void] = []
+    public var localFingerprint_MockError: Error?
+    public var localFingerprint_MockMethod: (() throws -> String)?
+    public var localFingerprint_MockValue: String?
 
-    public func localFingerprint(forSession id: ProteusSessionID) throws -> String {
-        localFingerprintForSession_Invocations.append(id)
+    public func localFingerprint() throws -> String {
+        localFingerprint_Invocations.append(())
 
-        if let error = localFingerprintForSession_MockError {
+        if let error = localFingerprint_MockError {
             throw error
         }
 
-        if let mock = localFingerprintForSession_MockMethod {
-            return try mock(id)
-        } else if let mock = localFingerprintForSession_MockValue {
+        if let mock = localFingerprint_MockMethod {
+            return try mock()
+        } else if let mock = localFingerprint_MockValue {
             return mock
         } else {
-            fatalError("no mock for `localFingerprintForSession`")
+            fatalError("no mock for `localFingerprint`")
         }
     }
 
@@ -335,6 +461,41 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
+    }
+
+    // MARK: - migrateCryptoboxSessions
+
+    public var migrateCryptoboxSessionsAt_Invocations: [URL] = []
+    public var migrateCryptoboxSessionsAt_MockError: Error?
+    public var migrateCryptoboxSessionsAt_MockMethod: ((URL) throws -> Void)?
+
+    public func migrateCryptoboxSessions(at url: URL) throws {
+        migrateCryptoboxSessionsAt_Invocations.append(url)
+
+        if let error = migrateCryptoboxSessionsAt_MockError {
+            throw error
+        }
+
+        guard let mock = migrateCryptoboxSessionsAt_MockMethod else {
+            fatalError("no mock for `migrateCryptoboxSessionsAt`")
+        }
+
+        try mock(url)            
+    }
+
+    // MARK: - performBatchedOperations
+
+    public var performBatchedOperations_Invocations: [() throws -> Void] = []
+    public var performBatchedOperations_MockMethod: ((@escaping () throws -> Void) -> Void)?
+
+    public func performBatchedOperations(_ block: @escaping () throws -> Void) {
+        performBatchedOperations_Invocations.append(block)
+
+        guard let mock = performBatchedOperations_MockMethod else {
+            fatalError("no mock for `performBatchedOperations`")
+        }
+
+        mock(block)            
     }
 
 }

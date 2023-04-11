@@ -22,6 +22,12 @@ import WireTesting
 
 class InvalidClientsRemovalTests: DiskDatabaseTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItDoesNotRemoveValidClients() throws {
         // Given
         let user = ZMUser.insertNewObject(in: self.moc)
@@ -73,9 +79,9 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
         syncMOC.performGroupedBlockAndWait {
             // given
             let selfClient = self.createSelfClient(in: syncMOC)
-            var preKeys : [(id: UInt16, prekey: String)] = []
+            var preKeys: [(id: UInt16, prekey: String)] = []
             // TODO: [John] use flag here
-            selfClient.keysStore.encryptionContext.perform {
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 preKeys = try! $0.generatePrekeys(0 ..< 2)
             }
 
@@ -100,7 +106,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             WireDataModel.InvalidClientsRemoval.removeInvalid(in: syncMOC)
 
             // then
-            selfClient.keysStore.encryptionContext.perform {
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 XCTAssertTrue($0.hasSession(for: clientId))
             }
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)

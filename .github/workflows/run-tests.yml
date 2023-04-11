@@ -1,9 +1,11 @@
 name: Run Tests
 on: [pull_request]
+
 jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:
@@ -66,6 +68,9 @@ jobs:
     runs-on: macOS-latest
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      GITHUB_AVS_ACCESS_TOKEN: ${{ secrets.ZENKINS_WORKFLOW_PAT }}
+      AVS_REPO: ${{ secrets.AVS_REPO }}
       
     steps:
       - uses: actions/checkout@v3

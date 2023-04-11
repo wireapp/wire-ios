@@ -107,7 +107,23 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
 
     func processMemberJoin(payload: MemberJoinPayload, originalEvent: ZMUpdateEvent) {
-        syncConversationIfNeeded(qualifiedID: payload.qualifiedID, in: context) {
+        payload.process(in: context, originalEvent: originalEvent)
+
+        // MLS specific sync
+        syncConversationForMLSStatus(payload: payload)
+    }
+
+    func fetchOrCreateConversation(id: UUID?, qualifiedID: QualifiedID?, in context: NSManagedObjectContext) -> ZMConversation? {
+        guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
+        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
+    }
+
+    private func syncConversationForMLSStatus(payload: MemberJoinPayload) {
+        // If this is an MLS conversation, we need to fetch some metadata in order to process
+        // the welcome message. We expect that all MLS conversations have qualified IDs.
+        guard let qualifiedID = payload.qualifiedID else { return }
+
+        syncConversation(qualifiedID: qualifiedID, in: context) {
             guard
                 let conversation = self.fetchOrCreateConversation(id: payload.id, qualifiedID: payload.qualifiedID, in: self.context)
             else {
@@ -118,52 +134,20 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: self.context, conversation: conversation)! }) {
                 let selfUser = ZMUser.selfUser(in: self.context)
                 let users = Set(usersAndRoles.map { $0.0 })
-                let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
-
-                if users.contains(selfUser) || newUsers {
-                    // TODO jacob refactor to append method on conversation
-                    _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: self.context)
-                }
 
                 if users.contains(selfUser) {
                     self.updateMLSStatus(for: conversation, context: self.context)
                 }
-
-                conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-            } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: self.context)}) {
-                // NOTE: legacy code path for backwards compatibility with servers without role support
-                let users = Set(users)
-                let selfUser = ZMUser.selfUser(in: self.context)
-
-                if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
-                    // TODO jacob refactor to append method on conversation
-                    _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: self.context)
-                }
-                conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
             }
         }
     }
 
-    func fetchOrCreateConversation(id: UUID?, qualifiedID: QualifiedID?, in context: NSManagedObjectContext) -> ZMConversation? {
-        guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
-        return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
-    }
-
-    private func syncConversationIfNeeded(
-        qualifiedID: QualifiedID?,
+    private func syncConversation(
+        qualifiedID: QualifiedID,
         in context: NSManagedObjectContext,
         then block: @escaping () -> Void
     ) {
-        // If this is an MLS conversation, we need to fetch some metadata in order to process
-        // the welcome message. We expect that all MLS conversations have qualified IDs.
-        if let qualifiedID = qualifiedID {
-            conversationService.syncConversation(qualifiedID: qualifiedID) {
-                context.performAndWait {
-                    block()
-                }
-            }
-
-        } else {
+        conversationService.syncConversation(qualifiedID: qualifiedID) {
             context.performAndWait {
                 block()
             }

@@ -118,6 +118,12 @@ class FrameworkVersionTests: XCTestCase {
 // MARK: - Test patches
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
+    override class func setUp() {
+        super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
     func testThatItApplyPatchesWhenNoVersion() {
 
         // GIVEN
@@ -180,7 +186,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
     }
 
-    func testThatItMigratesClientsSessionIdentifiers() {
+    func testThatItMigratesClientsSessionIdentifiers() throws {
 
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -193,7 +199,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             newClient.remoteIdentifier = "aabb2d32ab"
 
             // TODO: [John] use flag here
-            let otrURL = selfClient.keysStore.cryptoboxDirectory
+            let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
             XCTAssertTrue(selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey))
             self.syncMOC.saveOrRollback()
 
@@ -213,7 +219,8 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
 
             // THEN
-            let readData = try! Data(contentsOf: newSession)
+            let readData = try? Data(contentsOf: newSession)
+            XCTAssertNotNil(readData)
             XCTAssertEqual(readData, previousData)
             XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
             XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
@@ -321,6 +328,86 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             // Then
             XCTAssertNil(selfUser.domain)
             XCTAssertTrue(selfUser.needsToBeUpdatedFromBackend)
+        }
+    }
+
+    // MARK: - Proteus session id migration
+
+    func test_MigrateProteusSessionIDFromV2ToV3() throws {
+        assertSuccessfulSessionMigration(simulateCryptoboxMigration: false)
+    }
+
+    func test_MigrateProteusSessionIDFromV2ToV3_WithTemporaryKeystore() throws {
+        assertSuccessfulSessionMigration(simulateCryptoboxMigration: true)
+    }
+
+    private func assertSuccessfulSessionMigration(simulateCryptoboxMigration: Bool = false) {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            otherUser.domain = nil
+
+            let otherUserClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherUserClient.user = otherUser
+            otherUserClient.remoteIdentifier = "aabb2d32ab"
+
+            let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+            let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
+            XCTAssertTrue(selfClient.establishSessionWithClient(
+                otherUserClient,
+                usingPreKey: hardcodedPrekey
+            ))
+
+            self.syncMOC.saveOrRollback()
+
+            let sessionIDV2 = EncryptionSessionIdentifier(
+                domain: nil,
+                userId: otherUser.remoteIdentifier.uuidString,
+                clientId: otherUserClient.remoteIdentifier!
+            )
+
+            let sessionIDV3 = EncryptionSessionIdentifier(
+                domain: "foo.com",
+                userId: otherUser.remoteIdentifier.uuidString,
+                clientId: otherUserClient.remoteIdentifier!
+            )
+
+            let sessionsURL = otrURL.appendingPathComponent("sessions")
+            let oldSession = sessionsURL.appendingPathComponent(sessionIDV2.rawValue)
+            let newSession = sessionsURL.appendingPathComponent(sessionIDV3.rawValue)
+
+            XCTAssertTrue(FileManager.default.fileExists(atPath: oldSession.path))
+            XCTAssertFalse(FileManager.default.fileExists(atPath: newSession.path))
+
+            let oldSessionData = try! Data(contentsOf: oldSession)
+
+            otherUser.domain = "foo.com"
+            XCTAssertTrue(otherUserClient.needsSessionMigration)
+
+            if simulateCryptoboxMigration {
+                // Delete the keystore, since we wouldn't set it up in the cryptobox
+                // migration in favor of the `ProteusService` backed by Core Crypto.
+                self.syncMOC.zm_tearDownCryptKeyStore()
+                XCTAssertNil(self.syncMOC.zm_cryptKeyStore)
+            }
+
+            // When
+            LegacyPersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "297.0.1")
+            XCTAssert(self.syncMOC.saveOrRollback())
+
+            // Then
+            let newSessionData = try! Data(contentsOf: newSession)
+            XCTAssertEqual(newSessionData, oldSessionData)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: oldSession.path))
+            XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
+            XCTAssertFalse(otherUserClient.needsSessionMigration)
+
+            if simulateCryptoboxMigration {
+                XCTAssertNil(self.syncMOC.zm_cryptKeyStore)
+            }
         }
     }
 

@@ -399,6 +399,15 @@ extension EventDecoderTest {
 
             // Mock
             self.syncMOC.proteusService = mockProteusService
+
+            mockProteusService.performBatchedOperations_MockMethod = { block in
+                do {
+                    try block()
+                } catch {
+                    XCTFail("an error was thrown: \(error)")
+                }
+            }
+
             mockProteusService.decryptDataForSession_MockMethod = { data, _ in
                 return (didCreateSession: false, decryptedData: data)
             }
@@ -410,6 +419,7 @@ extension EventDecoderTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
+        XCTAssertEqual(mockProteusService.performBatchedOperations_Invocations.count, 1)
         XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
 
         // Cleanup
@@ -418,7 +428,6 @@ extension EventDecoderTest {
 
     func test_ProteusEventDecryption_Legacy() throws {
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        let mockProteusService = MockProteusServiceInterface()
 
         syncMOC.performGroupedBlock {
             // Given
@@ -427,20 +436,21 @@ extension EventDecoderTest {
 
             proteusViaCoreCrypto.isOn = false
 
-            // Mock
-            self.syncMOC.proteusService = mockProteusService
-            mockProteusService.decryptDataForSession_MockMethod = { data, _ in
-                return (didCreateSession: false, decryptedData: data)
+            // When
+            let didDecrypt = self.expectation(description: "didDecrypt")
+            self.sut.decryptAndStoreEvents([event]) { decryptedEvents in
+                XCTAssertEqual(decryptedEvents.count, 1)
+                didDecrypt.fulfill()
             }
 
-            // When
-            self.sut.decryptAndStoreEvents([event])
+            XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+
+            // Then
+            // We could decrypt, and the proteus service doesn't exist, so it used the keystore.
+            XCTAssertNil(self.syncMOC.proteusService)
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 0)
     }
 
 }

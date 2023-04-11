@@ -89,17 +89,22 @@ extension EventDecoder {
 
             guard let index = lastIndex else { return }
 
-            if DeveloperFlag.proteusViaCoreCrypto.isOn {
-                decryptedEvents = self.decryptAndStoreEvents(
-                    filteredEvents,
-                    startingAtIndex: index
-                )
-            } else {
-                decryptedEvents = self.legacyDecryptAndStoreEvents(
-                    filteredEvents,
-                    startingAtIndex: index
-                )
-            }
+            decryptedEvents = self.syncMOC.proteusProvider.perform(
+                withProteusService: { proteusService in
+                    return self.decryptAndStoreEvents(
+                        filteredEvents,
+                        startingAtIndex: index,
+                        proteusService: proteusService
+                    )
+                },
+                withKeyStore: { keyStore in
+                    return self.legacyDecryptAndStoreEvents(
+                        filteredEvents,
+                        startingAtIndex: index,
+                        keyStore: keyStore
+                    )
+                }
+            )
         }
 
         if !events.isEmpty {
@@ -133,45 +138,46 @@ extension EventDecoder {
 
     private func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        startingAtIndex startIndex: Int64
+        startingAtIndex startIndex: Int64,
+        proteusService: ProteusServiceInterface
     ) -> [ZMUpdateEvent] {
-        var decryptedEvents: [ZMUpdateEvent] = []
+        var decryptedEvents = [ZMUpdateEvent]()
 
-        // TODO: get core crypto lock
-        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-            switch event.type {
-            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                let proteusService = syncMOC.proteusService!
+        proteusService.performBatchedOperations {
+            decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+                switch event.type {
+                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try proteusService.decrypt(
+                            data: encryptedData,
+                            forSession: sessionID
+                        )
+                    }
 
-                return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    try proteusService.decrypt(
-                        data: encryptedData,
-                        forSession: sessionID
-                    )
+                case .conversationMLSMessageAdd:
+                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+                default:
+                    return event
                 }
-
-            case .conversationMLSMessageAdd:
-                return self.decryptMlsMessage(from: event, context: self.syncMOC)
-
-            default:
-                return event
             }
-        }
 
-        // This call has to be synchronous to ensure that we close the
-        // encryption context only if we stored all events in the database.
-        storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+            // This call has to be synchronous to ensure that we close the
+            // encryption context only if we stored all events in the database.
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+        }
 
         return decryptedEvents
     }
 
     private func legacyDecryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        startingAtIndex startIndex: Int64
+        startingAtIndex startIndex: Int64,
+        keyStore: UserClientKeysStore
     ) -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
+        keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
             guard let `self` = self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in

@@ -1,0 +1,68 @@
+{
+  "configurations" : [
+    {
+      "id" : "69FFC730-CA1E-406E-8595-75E51FC4F13B",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      },
+      {
+        "argument" : "-com.apple.CoreData.SQLDebug 1",
+        "enabled" : false
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "OS_ACTIVITY_MODE",
+        "value" : "disable"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:WireDataModel.xcodeproj",
+      "identifier" : "F9C9A4FB1CAD5DF10039E10C",
+      "name" : "WireDataModel"
+    }
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "AppLockControllerTests\/test_AppIsLocked_WhenTimeoutIsExceeded()",
+        "AppLockControllerTests\/test_AppLockControllerEvaluatesAuthentication_WithInCorrectCustomPasscode()",
+        "ConversationTests_DraftMessage\/testThatEncryptedDraftMessageCantBeAccessed_WhenDatabaseKeyIsMissing()",
+        "ConversationTests_DraftMessage\/testThatItDiscardsDraftMessage_WhenEncryptionAtRestIsEnabled_And_DatabaseKeyIsMissing()",
+        "ConversationTests_DraftMessage\/testThatItEncryptsDraftMessage_WhenEncryptionAtRestIsEnabled()",
+        "ConversationTests_Team\/test_ConversationIsATeamConversation_WhenTeamIdIsTheSameAsSelfUser_AndItIsNotFederated()",
+        "ConversationTests_Team\/test_ConversationIsNotATeamConversation_WhenItIsFederated()",
+        "CoreDataStackTests_EncryptionAtRest\/testThatItStoresAndClearsDatabaseKeyOnAllContexts()",
+        "EncryptionKeysTests\/testThatAsymmetricKeysWorksWithExpectedAlgorithm()",
+        "EncryptionKeysTests\/testThatEncryptionKeysAreSuccessfullyCreated()",
+        "EncryptionKeysTests\/testThatEncryptionKeysAreSuccessfullyDeleted()",
+        "FileAssetCacheTests\/testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256()",
+        "FileAssetCacheTests\/testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256()",
+        "NSManagedObjectContextTests_EncryptionAtRest\/testDraftMessageContentIsEncrypted_WhenEarIsEnabled()",
+        "NSManagedObjectContextTests_EncryptionAtRest\/testExistingMessageContentIsEncrypted_WhenEarIsEnabled()",
+        "NSManagedObjectContextTests_EncryptionAtRest\/testItThrowsAnError_WhenDatabaseKeyIsMissing_WhenEarIsEnabled()",
+        "NSManagedObjectContextTests_EncryptionAtRest\/testNormalizedMessageContentIsCleared_WhenEarIsEnabled()",
+        "ZMGenericMessageDataTests\/test_ItDoesNotReturnData_IfDatabaseKeyIsMissing_WhenDecrypting()",
+        "ZMGenericMessageDataTests\/test_ItDoesNotReturnData_IfDecryptionFails_WhenDecrypting()",
+        "ZMGenericMessageDataTests\/test_ItDoesNotStoreData_IfDatabaseKeyIsMissing_WhenEncrypting()",
+        "ZMGenericMessageDataTests\/test_ItDoesNotStoreData_IfEncryptionFails_WhenEncrypting()",
+        "ZMGenericMessageDataTests\/test_ItEncryptsAndDecryptsProtobufData_IfEncryptionAtRest_IsEnabled()",
+        "ZMUserTests_Permissions\/testThatUserCannotSeeCompanyInformationOfAnotherUser_WhenTeamIsTheSame_AndDomainIsDifferent()"
+      ],
+      "target" : {
+        "containerPath" : "container:WireDataModel.xcodeproj",
+        "identifier" : "F9C9A5051CAD5DF10039E10C",
+        "name" : "WireDataModelTests"
+      }
+    }
+  ],
+  "version" : 1
+}

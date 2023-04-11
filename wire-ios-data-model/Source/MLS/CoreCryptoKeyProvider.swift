@@ -17,21 +17,57 @@
 //
 
 import Foundation
+import WireSystem
 
 public class CoreCryptoKeyProvider {
 
     public init() {
 
     }
-    
-    public func coreCryptoKey() throws -> Data  {
+
+    public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
+        removeLegacyKeyIfNeeded()
+
+        do {
+            return try fetchCoreCryptoKey()
+        } catch {
+            if createIfNeeded {
+                return try createCoreCryptoKey()
+            } else {
+                throw error
+            }
+        }
+    }
+
+    private func fetchCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
-        if let key: Data = try? KeychainManager.fetchItem(item) {
-            return key
-        } else {
-            let key = try KeychainManager.generateKey(numberOfBytes: 32)
-            try KeychainManager.storeItem(item, value: key)
-            return key
+        let key: Data = try KeychainManager.fetchItem(item)
+        WireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
+        return key
+    }
+
+    private func createCoreCryptoKey() throws -> Data {
+        let item = CoreCryptoKeychainItem()
+        WireLogger.coreCrypto.info("Core crypto key doesn't exist. Creating...")
+        let key = try KeychainManager.generateKey(numberOfBytes: 32)
+        WireLogger.coreCrypto.info("Created core crypto key: \(key.base64String()). Storing...")
+        try KeychainManager.storeItem(item, value: key)
+        WireLogger.coreCrypto.info("Stored core crypto key. Returning...")
+        return key
+    }
+
+    private func removeLegacyKeyIfNeeded() {
+        let legacyItem = LegacyCoreCryptoKeychainItem()
+
+        do {
+            _ = try KeychainManager.fetchItem(legacyItem) as Data
+            WireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
+            try KeychainManager.deleteItem(legacyItem)
+            WireLogger.coreCrypto.info("Deleted legacy core crypto key")
+        } catch KeychainManager.Error.failedToDeleteItemFromKeychain(let error) {
+            WireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
+        } catch {
+            // key was not found. no action needed
         }
     }
 }
@@ -40,19 +76,45 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
     static let tag = "com.wire.mls.key".data(using: .utf8)!
 
-    var getQuery: [CFString : Any] {
+    var getQuery: [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: Self.tag,
-            kSecReturnData: true
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
         ]
     }
 
-    func setQuery<T>(value: T) -> [CFString : Any] {
+    func setQuery<T>(value: T) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: Self.tag,
-            kSecValueData: value
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
+}
+
+struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
+
+    static let tag = "com.wire.mls.key".data(using: .utf8)!
+
+    var getQuery: [CFString: Any] {
+        return [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: Self.tag,
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
+        ]
+    }
+
+    func setQuery<T>(value: T) -> [CFString: Any] {
+        return [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: Self.tag,
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
         ]
     }
 }

@@ -29,32 +29,51 @@ extension SharingSession {
         sharedContainerURL: URL,
         syncContext: NSManagedObjectContext
     ) {
+        guard shouldSetupCryptoStack else {
+            WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
+            return
+        }
+
         syncContext.performAndWait {
-            let factory = CoreCryptoFactory()
+            let provider = CoreCryptoConfigProvider()
 
             do {
-                let configuration = try factory.createConfiguration(
+                let configuration = try provider.createFullConfiguration(
                     sharedContainerURL: sharedContainerURL,
-                    selfUser: .selfUser(in: syncContext)
+                    selfUser: .selfUser(in: syncContext),
+                    createKeyIfNeeded: false
                 )
 
                 let safeCoreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: configuration)
 
                 syncContext.coreCrypto = safeCoreCrypto
 
-                if syncContext.proteusService == nil {
+                if DeveloperFlag.proteusViaCoreCrypto.isOn, syncContext.proteusService == nil {
                     syncContext.proteusService = try ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                if syncContext.mlsController == nil {
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {
                     syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
                 }
+
+                WireLogger.coreCrypto.info("success: setup crypto stack")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
             }
 
-            WireLogger.coreCrypto.info("success: setup crypto stack")
         }
+    }
+
+    private var shouldSetupCryptoStack: Bool {
+        return shouldSetupProteusService || shouldSetupMLSController
+    }
+
+    private var shouldSetupProteusService: Bool {
+        return DeveloperFlag.proteusViaCoreCrypto.isOn
+    }
+
+    private var shouldSetupMLSController: Bool {
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
 }

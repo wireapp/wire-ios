@@ -30,11 +30,13 @@ final class AppStateCalculatorTests: XCTestCase {
         delegate = MockAppStateCalculatorDelegate()
         delegate.wasNotified = false
         sut.delegate = delegate
+        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
         delegate = nil
+        BackendInfo.apiVersion = nil
         super.tearDown()
     }
 
@@ -182,7 +184,7 @@ final class AppStateCalculatorTests: XCTestCase {
 
     // Quarantined
     func testApplicationTransit_WhenAppStateChanges() {
-        // WHEN
+        // GIVEN
         let userSession = MockZMUserSession()
         userSession.lock = .database
         sut.applicationDidBecomeActive()

@@ -317,9 +317,6 @@ final class CallViewController: UIViewController {
         establishingCallStatusView.setProfileImage(hidden: configuration.mediaState.isSendingVideo)
         establishingCallStatusView.updateState(state: state)
         establishingCallStatusView.setTitle(title: configuration.title)
-        if let participants = voiceChannel.conversation?.participants as? [ZMUser] {
-            establishingCallStatusView.configureSecurityLevelView(with: participants)
-        }
         guard establishingCallStatusView.superview == nil else { return }
         establishingCallStatusView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(establishingCallStatusView)
@@ -330,10 +327,11 @@ final class CallViewController: UIViewController {
         ])
         guard let user = voiceChannel.getSecondParticipant(), let session = ZMUserSession.shared() else { return }
         user.fetchProfileImage(session: session,
-                                     imageCache: UIImage.defaultUserImageCache,
-                                     sizeLimit: UserImageView.Size.big.rawValue,
-                                     isDesaturated: false,
-                                     completion: { [weak self] (image, _) in
+                               imageCache: UIImage.defaultUserImageCache,
+                               sizeLimit: UserImageView.Size.normal.rawValue,
+                               isDesaturated: false,
+                               completion: { [weak self] (image, _) in
+            guard let image = image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })
     }

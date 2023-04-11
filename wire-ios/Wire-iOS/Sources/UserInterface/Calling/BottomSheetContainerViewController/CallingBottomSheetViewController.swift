@@ -41,17 +41,7 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
     private let callDegradationController = CallDegradationController()
 
     var bottomSheetMinimalOffset: CGFloat {
-        var offset = 0.0
-        switch voiceChannel.state {
-        case .incoming:
-            offset = UIDevice.current.orientation.isLandscape ? 128.0 : 250.0
-        default:
-            offset = 128.0
-        }
-        if case .established = callInfoConfiguration?.state, let configuration = callInfoConfiguration, configuration.classification != .none {
-            offset += SecurityLevelView.SecurityLevelViewHeight
-        }
-        return offset
+        return callingActionsInfoViewController.actionsViewHeightConstraint.constant
     }
 
     let callingActionsInfoViewController: CallingActionsInfoViewController
@@ -133,7 +123,7 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
     // after rotating device recalculate bottom sheet max height
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        let isLandscape = UIDevice.current.orientation.isLandscape
+        let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
         // if landscape then bottom sheet should take whole screen (without headerBar)
         let bottomSheetMaxHeight = isLandscape ? (size.height - headerBar.bounds.height) : bottomSheetMaxHeight
         let newConfiguration = BottomSheetConfiguration(height: bottomSheetMaxHeight, initialOffset: bottomSheetMinimalOffset)
@@ -205,9 +195,9 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
 
     private func startCallDurationTimer() {
         stopCallDurationTimer()
-        callDurationTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { [callInfoConfiguration, headerBar] _ in
-            guard let configuration = callInfoConfiguration, case .established = configuration.state else { return }
-            headerBar.updateConfiguration(configuration: configuration)
+        callDurationTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let configuration = self?.callInfoConfiguration, case .established = configuration.state else { return }
+            self?.headerBar.updateConfiguration(configuration: configuration)
         }
     }
 
@@ -275,12 +265,18 @@ extension CallingBottomSheetViewController: CallViewControllerDelegate {
 
 extension VoiceChannel {
     fileprivate func getParticipantsList() -> CallParticipantsList {
-        let sortedParticipants = participants(ofKind: .all, activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers).filter(\.state.isConnected)
+        let sortedParticipants = participants(
+            ofKind: .all,
+            activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers
+        )
+
         return sortedParticipants.map {
-            CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: $0.user),
-                             videoState: $0.state.videoState,
-                             microphoneState: $0.state.microphoneState,
-                             activeSpeakerState: $0.activeSpeakerState)
+            CallParticipantsListCellConfiguration.callParticipant(
+                user: HashBox(value: $0.user),
+                videoState: $0.state.videoState,
+                microphoneState: $0.state.microphoneState,
+                activeSpeakerState: $0.activeSpeakerState
+            )
         }
     }
 }

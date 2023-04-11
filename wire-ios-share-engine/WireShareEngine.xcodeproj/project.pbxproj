@@ -12,10 +12,11 @@
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */; };
 		63172F96290AB47500DBECC9 /* MLSEncryptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */; };
-		637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */; };
+		637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
 		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
+		EE0BA28E29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
 		EE668BC22954B82900D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */; };
 		EE67F6F5296F093E001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F4296F093E001D7C88 /* WireTesting.framework */; };
 		EE67F6F6296F093E001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F4296F093E001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -97,10 +98,11 @@
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+CoreCrypto.swift"; sourceTree = "<group>"; };
 		63172F95290AB47500DBECC9 /* MLSEncryptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionController.swift; sourceTree = "<group>"; };
-		637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+MLS.swift"; sourceTree = "<group>"; };
+		637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+CryptoStack.swift"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
 		CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoopTests.swift; sourceTree = "<group>"; };
+		EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCryptoboxMigrationManagerInterface.swift; sourceTree = "<group>"; };
 		EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F4296F093E001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,9 +186,10 @@
 				BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */,
 				F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */,
 				166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */,
-				637ED12D29119689001157F4 /* SharingSessionTests+MLS.swift */,
+				637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */,
 				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
 				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
+				EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
 			);
 			path = WireShareEngineTests;
 			sourceTree = "<group>";
@@ -464,9 +467,10 @@
 			files = (
 				CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */,
 				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
+				EE0BA28E29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
 				CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */,
 				166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */,
-				637ED12E29119689001157F4 /* SharingSessionTests+MLS.swift in Sources */,
+				637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */,
 				F125E9B51E28DB06006583A2 /* SharingSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +525,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5470D4081D76E2A400FDE440 /* wire-ios-share-engine.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = x86_64;
 				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = Resources/Info.plist;
 				ONLY_ACTIVE_ARCH = YES;

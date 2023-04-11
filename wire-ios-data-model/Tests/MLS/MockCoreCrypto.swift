@@ -20,15 +20,44 @@ import Foundation
 import WireDataModel
 import CoreCryptoSwift
 
-class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
+class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
+    var coreCrypto: MockCoreCrypto
+
+    init(coreCrypto: MockCoreCrypto = .init()) {
+        self.coreCrypto = coreCrypto
+    }
+
+    var performCount = 0
     func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(self)
+        performCount += 1
+        return try block(coreCrypto)
     }
 
+    var unsafePerformCount = 0
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        try block(self)
+        unsafePerformCount += 1
+        return try block(coreCrypto)
     }
+
+    var mockMlsInit: ((String) throws -> Void)?
+
+    func mlsInit(clientID: String) throws {
+        guard let mock = mockMlsInit else {
+            fatalError("no mock for `mlsInit`")
+        }
+
+        try mock(clientID)
+    }
+
+    var tearDownCount = 0
+    func tearDown() throws {
+        tearDownCount += 1
+    }
+
+}
+
+class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - mlsInit
 
@@ -581,9 +610,9 @@ class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
 
     // MARK: - proteusNewPrekeyAuto
 
-    var mockProteusNewPrekeyAuto: (() throws -> [UInt8])?
+    var mockProteusNewPrekeyAuto: (() throws -> ProteusAutoPrekeyBundle)?
 
-    func proteusNewPrekeyAuto() throws -> [UInt8] {
+    func proteusNewPrekeyAuto() throws -> ProteusAutoPrekeyBundle {
         guard let mock = mockProteusNewPrekeyAuto else {
             fatalError("no mock for `proteusNewPrekeyAuto`")
         }
@@ -685,5 +714,17 @@ class MockCoreCrypto: CoreCryptoProtocol, SafeCoreCryptoProtocol {
         }
 
         try mock()
+    }
+
+    // MARK: - markConversationAsChildOf
+
+    var mockMarkConversationAsChildOf: ((ConversationId, ConversationId) throws -> ())?
+
+    func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
+        guard let mock = mockMarkConversationAsChildOf else {
+            fatalError("no mock for `markConversationAsChildOf")
+        }
+
+        try mock(childId, parentId)
     }
 }
