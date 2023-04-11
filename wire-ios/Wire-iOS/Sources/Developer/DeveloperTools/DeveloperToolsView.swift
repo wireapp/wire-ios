@@ -62,7 +62,7 @@ struct DeveloperToolsView: View {
             TextItemCell(title: textItem.title, value: textItem.value)
                 .contextMenu {
                     SwiftUI.Button {
-                        viewModel.handleEvent(.itemTapped(item))
+                        viewModel.handleEvent(.itemCopyRequested(item))
                     } label: {
                         Label("Copy", systemImage: "doc.on.doc")
                     }
