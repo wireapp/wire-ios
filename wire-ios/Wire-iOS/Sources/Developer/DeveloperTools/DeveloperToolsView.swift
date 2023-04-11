@@ -97,9 +97,14 @@ private struct TextItemCell: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
                 .foregroundColor(.secondary)
+                .contextMenu {
+                    SwiftUI.Button(
+                        action: { UIPasteboard.general.string = value },
+                        label: { Text("Copy") }
+                    )
+                }
         }
     }
-
 }
 
 // MARK: - Previews
