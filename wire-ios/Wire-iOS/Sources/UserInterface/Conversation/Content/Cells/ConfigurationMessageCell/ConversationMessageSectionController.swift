@@ -243,7 +243,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if isFailedRecipientsVisible(in: context) {
-            //add(description: ConversationMessageParticipantsErrorCellDescription(message: message, selected: selected))
+            add(description: ConversationMessageFailedRecipientsCellDescription(message: message, context: context))
         }
 
         if let topCelldescription = cellDescriptions.first {
@@ -291,7 +291,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard let failedToSendUsers = message.failedToSendUsers else {
             return false
         }
-        return failedToSendUsers.isEmpty
+        return !failedToSendUsers.isEmpty
     }
 
     // MARK: - Highlight
