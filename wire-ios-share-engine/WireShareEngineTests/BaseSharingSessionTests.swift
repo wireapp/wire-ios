@@ -131,6 +131,7 @@ class BaseTest: ZMTBaseTest {
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         context.saveOrRollback()

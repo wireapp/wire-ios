@@ -109,6 +109,7 @@ class BaseTest: ZMTBaseTest {
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
     }
 
     func createSelfUserAndClient() {
