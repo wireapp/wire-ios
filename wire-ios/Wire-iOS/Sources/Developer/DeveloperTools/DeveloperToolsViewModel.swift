@@ -41,7 +41,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     enum Item: Identifiable {
 
         case button(ButtonItem)
-        case itemCopyRequested(TextItem)
+        case text(TextItem)
         case destination(DestinationItem)
 
         var id: UUID {
@@ -49,7 +49,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             case .button(let item):
                 return item.id
 
-            case .itemCopyRequested(let item):
+            case .text(let item):
                 return item.id
 
             case .destination(let item):
@@ -123,8 +123,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "App info",
             items: [
-                .itemCopyRequested(TextItem(title: "App version", value: appVersion)),
-                .itemCopyRequested(TextItem(title: "Build number", value: buildNumber))
+                .text(TextItem(title: "App version", value: appVersion)),
+                .text(TextItem(title: "Build number", value: buildNumber))
             ]
         ))
 
@@ -134,11 +134,11 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Self user",
                 items: [
-                    .itemCopyRequested(TextItem(title: "Handle", value: selfUser.handle ?? "None")),
-                    .itemCopyRequested(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
-                    .itemCopyRequested(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .itemCopyRequested(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
-                    .itemCopyRequested(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None"))
+                    .text(TextItem(title: "Handle", value: selfUser.handle ?? "None")),
+                    .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
+                    .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
+                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None"))
                 ]
             ))
         }
@@ -147,8 +147,8 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Push token",
                 items: [
-                    .itemCopyRequested(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
-                    .itemCopyRequested(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
+                    .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
+                    .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
                     .button(ButtonItem(title: "Check registered tokens", action: checkRegisteredTokens))
                 ]
             ))
@@ -158,7 +158,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Datadog",
                 items: [
-                    .itemCopyRequested(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
+                    .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
                     .button(.init(title: "Crash Report Test", action: { fatalError("crash app") }))
                 ]
             ))
@@ -169,7 +169,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         let header = "Backend info"
         var items = [Item]()
 
-        items.append(.itemCopyRequested(TextItem(title: "Name", value: backendName)))
+        items.append(.text(TextItem(title: "Name", value: backendName)))
 
         if canSwitchBackend {
             items.append(.destination(DestinationItem(title: "Switch backend", makeView: {
@@ -177,13 +177,13 @@ final class DeveloperToolsViewModel: ObservableObject {
             })))
         }
 
-        items.append(.itemCopyRequested(TextItem(title: "Domain", value: backendDomain)))
-        items.append(.itemCopyRequested(TextItem(title: "API version", value: apiVersion)))
+        items.append(.text(TextItem(title: "Domain", value: backendDomain)))
+        items.append(.text(TextItem(title: "API version", value: apiVersion)))
         items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
             AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
         })))
 
-        items.append(.itemCopyRequested(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+        items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
 
         return Section(
             header: header,
@@ -203,7 +203,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         case .dismissButtonTapped:
             onDismiss?()
 
-        case let .itemTapped(.itemCopyRequested(textItem)):
+        case let .itemTapped(.text(textItem)):
             UIPasteboard.general.string = textItem.value
 
         case let .itemTapped(.button(buttonItem)):
