@@ -68,7 +68,11 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
-    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], block: ConsumeBlock? = nil) {
+    public func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        publicKeys: (primary: SecKey, secondary: SecKey)?,
+        block: ConsumeBlock? = nil
+    ) {
         var lastIndex: Int64?
         var decryptedEvents: [ZMUpdateEvent] = []
 
@@ -81,7 +85,11 @@ extension EventDecoder {
             lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
             guard let index = lastIndex else { return }
-            decryptedEvents = self.decryptAndStoreEvents(filteredEvents, startingAtIndex: index)
+            decryptedEvents = self.decryptAndStoreEvents(
+                filteredEvents,
+                startingAtIndex: index,
+                publicKeys: publicKeys
+            )
         }
 
         if !events.isEmpty {
@@ -119,12 +127,9 @@ extension EventDecoder {
 
     private func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        startingAtIndex startIndex: Int64
+        startingAtIndex startIndex: Int64,
+        publicKeys: (primary: SecKey, secondary: SecKey)?
     ) -> [ZMUpdateEvent] {
-        let accountID = ZMUser.selfUser(in: syncMOC).remoteIdentifier!
-        let keyProvider = EARKeyRepository(accountID: accountID)
-        let publicKeys = keyProvider.fetchPublicKeys()
-
         var decryptedEvents: [ZMUpdateEvent] = []
 
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) -> Void in

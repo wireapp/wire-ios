@@ -34,6 +34,7 @@ class EventProcessor: UpdateEventProcessor {
     var eventBuffer: ZMUpdateEventsBuffer?
     let eventDecoder: EventDecoder
     let eventProcessingTracker: EventProcessingTrackerProtocol
+    let earService: EARServiceInterface
 
     public var eventConsumers: [ZMEventConsumer] = []
 
@@ -43,16 +44,19 @@ class EventProcessor: UpdateEventProcessor {
 
     // MARK: Life Cycle
 
-    init(storeProvider: CoreDataStack,
-         syncStatus: SyncStatus,
-         eventProcessingTracker: EventProcessingTrackerProtocol) {
+    init(
+        storeProvider: CoreDataStack,
+        syncStatus: SyncStatus,
+        eventProcessingTracker: EventProcessingTrackerProtocol,
+        earService: EARServiceInterface
+    ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
         self.syncStatus = syncStatus
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
         self.eventProcessingTracker = eventProcessingTracker
+        self.earService = earService
         self.eventBuffer = ZMUpdateEventsBuffer(updateEventProcessor: self)
-
     }
 
     // MARK: Methods
@@ -72,9 +76,7 @@ class EventProcessor: UpdateEventProcessor {
 
         if syncContext.encryptMessagesAtRest {
             Self.logger.info("trying to get EAR keys")
-            let accountID = ZMUser.selfUser(in: syncContext).remoteIdentifier!
-            let keyProvider = EARKeyRepository(accountID: accountID)
-            let privateKeys = keyProvider.fetchPrivateKeys()
+            let privateKeys = earService.fetchPrivateKeys()
             processStoredUpdateEvents(with: privateKeys)
         } else {
             processStoredUpdateEvents(with: (primary: nil, secondary: nil))
@@ -85,7 +87,12 @@ class EventProcessor: UpdateEventProcessor {
 
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         if ignoreBuffer || isReadyToProcessEvents {
-            eventDecoder.decryptAndStoreEvents(updateEvents) { [weak self] (decryptedEvents) in
+            let publicKeys = earService.fetchPublicKeys()
+
+            eventDecoder.decryptAndStoreEvents(
+                updateEvents,
+                publicKeys: publicKeys
+            ) { [weak self] (decryptedEvents) in
                 guard let `self` = self else { return }
 
                 Logging.eventProcessing.info("Consuming events while in background")
