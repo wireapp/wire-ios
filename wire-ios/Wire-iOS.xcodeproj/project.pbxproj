@@ -19,6 +19,7 @@
 		01E29C8C2996A2710024E1A7 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		06024ABC29E69A860032CC31 /* FailedRecipientsMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06024ABB29E69A850032CC31 /* FailedRecipientsMessageCell.swift */; };
 		060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */; };
 		061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */; };
 		061282632379C25500C1A53C /* UITextView+ReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */; };
@@ -1882,6 +1883,7 @@
 		01A5E04F297FDAB500624B65 /* convertLocalNotificationSounds */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = convertLocalNotificationSounds; sourceTree = "<group>"; };
 		01A5E050297FDAB500624B65 /* remove-bitcode.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "remove-bitcode.sh"; sourceTree = "<group>"; };
 		01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "datadog-conditional-framework.sh"; sourceTree = "<group>"; };
+		06024ABB29E69A850032CC31 /* FailedRecipientsMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailedRecipientsMessageCell.swift; sourceTree = "<group>"; };
 		060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPropertyFactory+AppLock.swift"; sourceTree = "<group>"; };
 		061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragInteractionRestrictionTextView.swift; sourceTree = "<group>"; };
 		061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+ReplaceTests.swift"; sourceTree = "<group>"; };
@@ -4365,6 +4367,7 @@
 				5E4BC1BF218A0A4300A8682E /* UnknownMessageCellDescription.swift */,
 				1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */,
 				7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */,
+				06024ABB29E69A850032CC31 /* FailedRecipientsMessageCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -8842,6 +8845,7 @@
 				EE5F54D2259B77DD00F11F3C /* Viper+Interfaces.swift in Sources */,
 				EFEE97C623229768007A4702 /* ConversationListContentDelegate.swift in Sources */,
 				871BC2501D34F8F800DF0793 /* MediaAsset.swift in Sources */,
+				06024ABC29E69A860032CC31 /* FailedRecipientsMessageCell.swift in Sources */,
 				871BC2581D34F8F800DF0793 /* SwizzleTransition.swift in Sources */,
 				D36E027829374EEA006C3E5A /* NSLayoutConstraint+Helper.swift in Sources */,
 				54D355E025559BFC0004DAC7 /* ActiveCallRouter.swift in Sources */,

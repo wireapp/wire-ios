@@ -243,7 +243,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if isFailedRecipientsVisible(in: context) {
-            add(description: ConversationMessageFailedRecipientsCellDescription(message: message, context: context))
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(message: message,
+                                                                         context: context,
+                                                                         buttonAction: { self.sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message) })
+            /*self.recreateCellDescriptions(in: context)*/
+            add(description: cellDescription)
         }
 
         if let topCelldescription = cellDescriptions.first {
