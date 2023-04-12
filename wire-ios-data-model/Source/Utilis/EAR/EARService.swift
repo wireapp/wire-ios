@@ -87,7 +87,8 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            databaseKey = try KeychainManager.generateKey(numberOfBytes: 32)
+            let databaseKeyData = try KeychainManager.generateKey(numberOfBytes: 32)
+            databaseKey = try encryptDatabaseKey(databaseKey, publicKey: primaryPublicKey)
         } catch {
             // TODO: log error
             throw error
@@ -104,7 +105,6 @@ public class EARService: EARServiceInterface {
                 key: secondaryPublicKey
             )
 
-            // TODO: encrypt database key
             try keyRepository.storeDatabaseKey(
                 description: databaseKeyDescription,
                 key: databaseKey
