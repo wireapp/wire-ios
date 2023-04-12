@@ -19,6 +19,9 @@
 import UIKit
 
 final class ColorKnobView: UIView {
+
+    // MARK: - Properties
+
     var isSelected = false {
         didSet {
             borderCircleLayer.borderColor = knobBorderColor?.cgColor
@@ -34,13 +37,14 @@ final class ColorKnobView: UIView {
         }
     }
 
-    var knobDiameter: CGFloat = 6
+    var knobDiameter: CGFloat = 12
 
     /// The actual circle knob, filled with the color
     private var innerCircleLayer: CALayer = CALayer()
     /// Just a layer, used for the thin border around the selected knob
     private var borderCircleLayer: CALayer = CALayer()
 
+    // MARK: - Init
     init() {
         super.init(frame: .zero)
 
@@ -52,6 +56,8 @@ final class ColorKnobView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Override method
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -65,17 +71,21 @@ final class ColorKnobView: UIView {
         innerCircleLayer.cornerRadius = knobDiameter / 2
         innerCircleLayer.borderWidth = 1
 
-        let knobBorderDiameter = knobDiameter + 6
-        borderCircleLayer.bounds = CGRect(origin: .zero, size: CGSize(width: knobBorderDiameter, height: knobBorderDiameter))
+        let knobBorderDiameter = knobDiameter + 12
+        borderCircleLayer.bounds = CGRect(
+            origin: .zero,
+            size: CGSize(width: knobBorderDiameter,
+            height: knobBorderDiameter)
+        )
         borderCircleLayer.position = centerPos
         borderCircleLayer.cornerRadius = knobBorderDiameter / 2
     }
 
     // MARK: - Helpers
     var knobBorderColor: UIColor? {
-        if (knobColor == .white && ColorScheme.default.variant == .light) ||
-            (knobColor == .black && ColorScheme.default.variant == .dark) {
-            return .lightGray
+        if knobColor == SemanticColors.SketchColors.blackColor ||
+           knobColor == SemanticColors.SketchColors.whiteColor {
+            return .black
         }
         return knobColor
     }
