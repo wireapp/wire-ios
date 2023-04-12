@@ -160,6 +160,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             iconButton.layer.cornerRadius = 12
             iconButton.clipsToBounds = true
             iconButton.applyStyle(.iconButtonStyle)
+            iconButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
+            iconButton.setIconColor(UIColor.accent(), for: [.highlighted, .selected])
         }
     }
 

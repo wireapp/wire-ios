@@ -43,7 +43,12 @@ final class SketchColorPickerController: UIViewController {
             resetColorToBrushWidthMapper()
 
             colorsCollectionView.reloadData()
-            colorsCollectionView.selectItem(at: IndexPath(row: selectedColorIndex, section: 0), animated: false, scrollPosition: [])
+            colorsCollectionView.selectItem(
+                at: IndexPath(row: selectedColorIndex,
+                section: 0),
+                animated: false,
+                scrollPosition: []
+            )
         }
     }
 
@@ -59,7 +64,12 @@ final class SketchColorPickerController: UIViewController {
 
     var selectedColorIndex: Int = 0 {
         didSet {
-            colorsCollectionView.selectItem(at: IndexPath(row: selectedColorIndex, section: 0), animated: false, scrollPosition: [])
+            colorsCollectionView.selectItem(
+                at: IndexPath(row: selectedColorIndex,
+                section: 0),
+                animated: false,
+                scrollPosition: []
+            )
 
             delegate?.sketchColorPickerController(self, changedSelectedColor: selectedColor)
         }
@@ -212,7 +222,11 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
         return contentWidth < frameWidth
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
 
         if allItemsAreIncluded {
             // All items are included, just use the default item box
@@ -227,7 +241,11 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
         return CGSize(width: colorsCollectionViewLayout.itemSize.width + (leftOver / numberOfItemsVisible), height: colorsCollectionViewLayout.itemSize.height)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
 
         if allItemsAreIncluded {
             // Align content in center of frame
