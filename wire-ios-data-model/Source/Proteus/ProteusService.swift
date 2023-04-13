@@ -353,15 +353,6 @@ public final class ProteusService: ProteusServiceInterface {
                 throw MigrationError.failedToMigrateData
             }
         }
-
-    // MARK: - Batched operations
-
-    public func performBatchedOperations(_ block: () throws -> Void) rethrows {
-        try coreCrypto.perform { _ in
-            try block()
-        }
-    }
-
 }
 
 private extension CoreCryptoProtocol {
