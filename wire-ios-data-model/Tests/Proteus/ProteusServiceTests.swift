@@ -250,20 +250,6 @@ class ProteusServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - Batched operations
-
-    func test_PerformBachedOperations() throws {
-        // Given
-        mockSafeCoreCrypto.performCount = 0
-
-        // When
-        sut.performBatchedOperations {}
-
-        // Then
-        XCTAssertEqual(mockSafeCoreCrypto.performCount, 1)
-        XCTAssertEqual(mockSafeCoreCrypto.unsafePerformCount, 0)
-    }
-
 }
 
 // MARK: - Helpers

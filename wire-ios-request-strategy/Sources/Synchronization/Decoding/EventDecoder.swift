@@ -142,30 +142,29 @@ extension EventDecoder {
         proteusService: ProteusServiceInterface
     ) -> [ZMUpdateEvent] {
         var decryptedEvents = [ZMUpdateEvent]()
-
-        proteusService.performBatchedOperations {
-            decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-                switch event.type {
-                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                        try proteusService.decrypt(
-                            data: encryptedData,
-                            forSession: sessionID
-                        )
-                    }
-
-                case .conversationMLSMessageAdd:
-                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
-
-                default:
-                    return event
+       
+        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+            switch event.type {
+            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    try proteusService.decrypt(
+                        data: encryptedData,
+                        forSession: sessionID
+                    )
                 }
+                
+            case .conversationMLSMessageAdd:
+                return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                
+            default:
+                return event
             }
-
-            // This call has to be synchronous to ensure that we close the
-            // encryption context only if we stored all events in the database.
-            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
         }
+        
+        // This call has to be synchronous to ensure that we close the
+        // encryption context only if we stored all events in the database.
+        self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex)
+        
 
         return decryptedEvents
     }
