@@ -74,12 +74,18 @@ public class CoreCryptoKeyProvider {
 
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
-    static let tag = "com.wire.mls.key".data(using: .utf8)!
+    let tag: Data
+
+    let id = "com.wire.mls.key"
+
+    init() {
+        tag = id.data(using: .utf8)!
+    }
 
     var getQuery: [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: Self.tag,
+            kSecAttrApplicationTag: tag,
             kSecReturnData: true,
             kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
         ]
@@ -88,7 +94,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
     func setQuery<T>(value: T) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: Self.tag,
+            kSecAttrApplicationTag: tag,
             kSecValueData: value,
             kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
         ]
@@ -98,12 +104,17 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
 struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
 
-    static let tag = "com.wire.mls.key".data(using: .utf8)!
+    let tag: Data
+    let id = "com.wire.mls.key"
+
+    init() {
+        tag = id.data(using: .utf8)!
+    }
 
     var getQuery: [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: Self.tag,
+            kSecAttrApplicationTag: tag,
             kSecReturnData: true,
             kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
         ]
@@ -112,7 +123,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
     func setQuery<T>(value: T) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: Self.tag,
+            kSecAttrApplicationTag: tag,
             kSecValueData: value,
             kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
         ]

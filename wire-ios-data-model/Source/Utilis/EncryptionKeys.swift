@@ -34,6 +34,10 @@ public struct EncryptionKeys {
             uniqueIdentifier.data(using: .utf8)!
         }
 
+        var id: String {
+            return uniqueIdentifier
+        }
+
         var uniqueIdentifier: String {
             "com.wire.ear.\(label).\(accountIdentifier)"
         }

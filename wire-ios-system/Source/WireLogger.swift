@@ -168,5 +168,11 @@ public extension WireLogger {
   static let updateEvent = WireLogger(tag: "update-event")
 
   /// For logs related to performance
+
   static let performance = WireLogger(tag: "performance")
+
+  /// For lgos related to the keychain.
+
+  static let keychain = WireLogger(tag: "keychain")
+
 }
