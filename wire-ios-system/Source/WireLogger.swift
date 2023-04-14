@@ -175,8 +175,12 @@ public extension WireLogger {
 
   static let ear = WireLogger(tag: "encryption-at-rest")
 
-  /// For lgos related to the keychain.
+  /// For logs related to the keychain.
 
   static let keychain = WireLogger(tag: "keychain")
+
+  /// For logs related to the app state.
+
+  static let appState = WireLogger(tag: "app-state")
 
 }

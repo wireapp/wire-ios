@@ -408,12 +408,14 @@ extension AppRootRouter {
 // TO DO: THIS PART MUST BE CLENED UP
 extension AppRootRouter {
     private func applicationWillTransition(to appState: AppState) {
+        WireLogger.appState.info("app will transition to state (\(appState))")
         appStateTransitionGroup.enter()
         configureSelfUserProviderIfNeeded(for: appState)
         configureColorScheme()
     }
 
     private func applicationDidTransition(to appState: AppState) {
+        WireLogger.appState.info("app did transition to state (\(appState))")
         switch appState {
         case .unauthenticated(error: let error):
             presentAlertForDeletedAccountIfNeeded(error)
