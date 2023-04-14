@@ -183,4 +183,8 @@ public extension WireLogger {
 
   static let appState = WireLogger(tag: "app-state")
 
+  /// For logs related to app lock.
+
+  static let appLock = WireLogger(tag: "app-lock")
+
 }

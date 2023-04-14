@@ -116,6 +116,8 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
                 return
             }
 
+            WireLogger.appLock.info("evaluate authentication with passcode preference (\(preference))")
+
             appLock.evaluateAuthentication(
                 passcodePreference: preference,
                 description: deviceAuthenticationDescription,
@@ -127,30 +129,47 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
         }
     }
 
-    private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult, context: LAContextProtocol?) {
+    private func handleAuthenticationResult(
+        _ result: AppLockModule.AuthenticationResult,
+        context: LAContextProtocol?
+    ) {
         DispatchQueue.main.async(group: dispatchGroup) { [weak self] in
             guard let `self` = self else { return }
 
             switch result {
             case .granted:
+                WireLogger.appLock.info("authentication granted")
                 self.unlockDatabase(with: context)
                 self.openAppLock()
 
             case .denied:
+                WireLogger.appLock.info("authentication denied")
                 self.presenter.handleResult(.authenticationDenied(self.authenticationType.current))
 
             case .needCustomPasscode:
+                WireLogger.appLock.info("authentication requires custom passcode")
                 self.presenter.handleResult(.customPasscodeNeeded)
 
             case .unavailable:
+                WireLogger.appLock.info("authentication unavailable")
                 self.presenter.handleResult(.authenticationUnavailable)
             }
         }
     }
 
     private func unlockDatabase(with context: LAContextProtocol?) {
-        guard let context = context as? LAContext else { return }
-        try? session.unlockDatabase(with: context)
+        WireLogger.appLock.info("unlock database")
+
+        guard let context = context as? LAContext else {
+            WireLogger.appLock.warn("unlock database aborting: no LAContext")
+            return
+        }
+
+        do {
+            try session.unlockDatabase(with: context)
+        } catch {
+            WireLogger.appLock.error("unlock database failed: \(String(describing: error))")
+        }
     }
 
     private func openAppLock() {
