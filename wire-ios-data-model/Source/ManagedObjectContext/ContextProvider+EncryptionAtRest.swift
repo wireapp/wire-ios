@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import LocalAuthentication
 
 public extension ContextProvider {
 
@@ -30,6 +31,8 @@ public extension ContextProvider {
         if enabled {
             try EncryptionKeys.deleteKeys(for: account)
             encryptionKeys = try EncryptionKeys.createKeys(for: account)
+            // force retrieve keys from keychain
+            encryptionKeys = try EncryptionKeys(account: account,  context: LAContext())
             storeEncryptionKeysInAllContexts(encryptionKeys: encryptionKeys)
         } else {
             encryptionKeys = try viewContext.getEncryptionKeys()
