@@ -27,63 +27,22 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     struct Configuration {
         let users: [UserType]
         let buttonAction: Completion
+        let isCollapsed: Bool
     }
 
-    private let failedToSendParticipantsView = FailedToSendParticipantsView()
+    // MARK: Properties
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    var isSelected: Bool = true
 
-    var isSelected: Bool = false
+    private var isCollapsed: Bool = true
+    private var buttonAction: Completion?
 
-    func configure(with object: Configuration, animated: Bool) {
-        let usersCount = 20
-        let countString = FailedtosendParticipants.count(usersCount)
-
-        let users = "Bernd Goodwin, Deborah Schoen, Alexandra Olaho, Augustus Quack, Samantha Fox"
-        let usersString = FailedtosendParticipants.willGetLater(users)
-        let details = FailedtosendParticipants.learnMore(usersString, URL.wr_backendOfflineLearnMore.absoluteString)
-
-        failedToSendParticipantsView.configure(with: usersCount, header: countString, details: details, buttonAction: object.buttonAction)
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    private func configureSubviews() {
-        addSubview(failedToSendParticipantsView)
-    }
-
-    private func configureConstraints() {
-        failedToSendParticipantsView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            failedToSendParticipantsView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            failedToSendParticipantsView.topAnchor.constraint(equalTo: topAnchor),
-            failedToSendParticipantsView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            failedToSendParticipantsView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-    }
-
-}
-
-final class FailedToSendParticipantsView: UIView {
-
-    typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
-
-    // MARK: Properties
-    var mainDetails: String = ""
-//    private let stackView = UIStackView(axis: .vertical)
-    private let countTextView = WebLinkTextView()
-    private let usersTextView = WebLinkTextView()
+    private let contentStackView = UIStackView(axis: .vertical)
+    private let stackView = UIStackView(axis: .vertical)
+    private let totalCountView = WebLinkTextView()
+    private let usersView = WebLinkTextView()
     private let button: IconButton = {
         let button = InviteButton()
         button.titleLabel?.font = FontSpec.buttonSmallSemibold.font!
@@ -93,129 +52,112 @@ final class FailedToSendParticipantsView: UIView {
         return button
     }()
 
-    var buttonAction: Completion?
-    private var usersCountBottomConstraint1: NSLayoutConstraint?
-    private var usersCountBottomConstraint2: NSLayoutConstraint?
-
-    private var isCollapsed: Bool = false {
+    private var config: Configuration? {
         didSet {
-            /// Button
-            let newTitle = isCollapsed ? FailedtosendParticipants.showDetails : FailedtosendParticipants.hideDetails
-            button.setTitle(newTitle, for: .normal)
-
-            /// Users label
-            usersTextView.isHidden = isCollapsed
-            usersTextView.text = isCollapsed ? "" : mainDetails
-
-            /// Constraints
-            if isCollapsed {
-                usersCountBottomConstraint1?.isActive = true
-                usersCountBottomConstraint2?.isActive = false
-            } else {
-                usersCountBottomConstraint1?.isActive = false
-                usersCountBottomConstraint2?.isActive = true
-            }
-
-            layoutIfNeeded()
+            buttonAction = config?.buttonAction
+            updateUI()
         }
     }
 
     // MARK: initialization
 
     override init(frame: CGRect) {
-        super.init(frame: CGRect.zero)
+        super.init(frame: frame)
+
         setupViews()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Configuration
-
-    func configure(with count: Int, header: String, details: String, buttonAction: @escaping Completion) {
-        countTextView.attributedText = .markdown(from: header, style: .errorLabelStyle)
-        usersTextView.attributedText = .markdown(from: details, style: .errorLabelStyle)
-        self.buttonAction = buttonAction
-
-        usersTextView.isHidden = isCollapsed
-        mainDetails = details
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
     // MARK: Setup UI
 
+    func configure(with object: Configuration, animated: Bool) {
+        self.config = object
+    }
+
+    private func updateUI() {
+        guard let config = config else {
+            return
+        }
+
+        isCollapsed = config.isCollapsed
+        buttonAction = config.buttonAction
+        let content = configureContent(for: config.users)
+
+        guard config.users.count > 1 else {
+            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+            [totalCountView, button].forEach { $0.isHidden = true }
+            return
+        }
+
+        button.isHidden = false
+        usersView.isHidden = isCollapsed
+        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
+        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+        setupButtonTitle()
+
+        layoutIfNeeded()
+    }
+
+    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
+        let totalCountText = FailedtosendParticipants.count(users.count)
+
+        let userNames = users.compactMap { $0.name }.joined(separator: ", ")
+        let detailsText = FailedtosendParticipants.willGetLater(userNames)
+        let detailsWithLinkText = FailedtosendParticipants.learnMore(detailsText, URL.wr_backendOfflineLearnMore.absoluteString)
+
+        return (totalCountText, detailsWithLinkText)
+    }
+
+    private func setupButtonTitle() {
+        let buttonTitle = isCollapsed ? FailedtosendParticipants.showDetails : FailedtosendParticipants.hideDetails
+        button.setTitle(buttonTitle, for: .normal)
+    }
+
     private func setupViews() {
-//        stackView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-//        addSubview(stackView)
-//
-//        stackView.alignment = .leading
-//        stackView.spacing = 2
-//        stackView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-//        stackView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-//        [usersCountLabel, usersTextView].forEach(stackView.addArrangedSubview)
-//        setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        addSubview(stackView)
 
+        contentStackView.alignment = .leading
+        contentStackView.spacing = 2
+        [totalCountView, usersView].forEach(contentStackView.addArrangedSubview)
 
+        stackView.alignment = .leading
+        stackView.spacing = 8
+        [contentStackView, button].forEach(stackView.addArrangedSubview)
 
-        [countTextView, usersTextView, button].forEach(addSubview)
-        button.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
 
         createConstraints()
         setupAccessibility()
     }
 
     private func createConstraints() {
-        //        stackView.translatesAutoresizingMaskIntoConstraints = false
-        //        detailsButton.translatesAutoresizingMaskIntoConstraints = false
-        //        NSLayoutConstraint.activate([
-        //            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 56),
-        //            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        //            stackView.topAnchor.constraint(equalTo: topAnchor),
-        //            //stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        //            stackView.bottomAnchor.constraint(equalTo: detailsButton.topAnchor, constant: -4),
-        //
-        //            detailsButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
-        //            detailsButton.heightAnchor.constraint(equalToConstant: 25),
-        //            detailsButton.bottomAnchor.constraint(equalTo: bottomAnchor)
-        //        ])
-
-        countTextView.translatesAutoresizingMaskIntoConstraints = false
-        usersTextView.translatesAutoresizingMaskIntoConstraints = false
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        totalCountView.translatesAutoresizingMaskIntoConstraints = false
+        usersView.translatesAutoresizingMaskIntoConstraints = false
         button.translatesAutoresizingMaskIntoConstraints = false
-
-        let usersCountBottomConstraint1 = countTextView.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -2)
-        let usersCountBottomConstraint2 = countTextView.bottomAnchor.constraint(equalTo: usersTextView.topAnchor, constant: -2)
-
         NSLayoutConstraint.activate([
-            countTextView.topAnchor.constraint(equalTo: topAnchor),
-            countTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 56),
-            countTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            usersCountBottomConstraint2,
-
-            usersTextView.leadingAnchor.constraint(equalTo: countTextView.leadingAnchor),
-            usersTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            usersTextView.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -4),
-
-            button.leadingAnchor.constraint(equalTo: countTextView.leadingAnchor),
-            button.heightAnchor.constraint(equalToConstant: 25),
-            button.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-        self.usersCountBottomConstraint1 = usersCountBottomConstraint1
-        self.usersCountBottomConstraint2 = usersCountBottomConstraint2
     }
 
     private func setupAccessibility() {
-        countTextView.accessibilityIdentifier = "users_count.label"
-        usersTextView.accessibilityIdentifier = "users_list.label"
+        totalCountView.accessibilityIdentifier = "total_count.label"
+        usersView.accessibilityIdentifier = "users_list.label"
         button.accessibilityIdentifier = "details.button"
     }
 
     // MARK: - Methods
 
     @objc
-    func detailsButtonTapped(_ sender: UIButton) {
-        isCollapsed = !isCollapsed
+    func buttonTapped(_ sender: UIButton) {
         buttonAction?()
     }
 
@@ -241,9 +183,10 @@ class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCel
     var accessibilityIdentifier: String? = nil
     var accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext, buttonAction: @escaping Completion) {
-        self.configuration = View.Configuration(users: message.failedToSendUsers ?? [], buttonAction: buttonAction)
-        actionController = nil
+    init(failedRecipients: [UserType], buttonAction: @escaping Completion, isCollapsed: Bool) {
+        configuration = View.Configuration(users: failedRecipients,
+                                           buttonAction: buttonAction,
+                                           isCollapsed: isCollapsed)
     }
 
     init(configuration: View.Configuration) {

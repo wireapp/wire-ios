@@ -96,6 +96,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// Whether this section is selected
     private var selected: Bool
 
+    /// Whether this section is collapsed
+    private var collapsed: Bool
+
     private var changeObservers: [Any] = []
 
     deinit {
@@ -106,6 +109,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.message = message
         self.context = context
         self.selected = selected
+        self.collapsed = true
 
         super.init()
 
@@ -243,10 +247,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if isFailedRecipientsVisible(in: context) {
-            let cellDescription = ConversationMessageFailedRecipientsCellDescription(message: message,
-                                                                         context: context,
-                                                                         buttonAction: { self.sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message) })
-            /*self.recreateCellDescriptions(in: context)*/
+            let buttonAction = {
+                self.collapsed = !self.collapsed
+                self.cellDelegate?.conversationMessageShouldUpdate()
+            }
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers ?? [],
+                                                                                     buttonAction: { buttonAction() },
+                                                                                     isCollapsed: collapsed)
             add(description: cellDescription)
         }
 
