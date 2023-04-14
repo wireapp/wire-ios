@@ -162,9 +162,15 @@ public struct EncryptionKeys {
     /// Supplying an authentication context is the preferred way to initialize the encryption keys
     /// and takes precedence over the authentication prompt.
     public init(account: Account, context: LAContext? = nil, authenticationMessage: String? = nil) throws {
-        self.publicKey = try Self.fetchItem(.publicKey(account))
-        self.privateKey = try Self.fetchItem(.privateKey(account, context, authenticationMessage))
-        self.databaseKey = try VolatileData(from: Self.decryptDatabaseKey(Self.fetchItem(.databaseKey(account)), privateKey: privateKey))
+        do {
+            WireLogger.ear.info("init encryption keys for account (\(account.userIdentifier))")
+            publicKey = try Self.fetchItem(.publicKey(account))
+            privateKey = try Self.fetchItem(.privateKey(account, context, authenticationMessage))
+            databaseKey = try VolatileData(from: Self.decryptDatabaseKey(Self.fetchItem(.databaseKey(account)), privateKey: privateKey))
+        } catch {
+            WireLogger.ear.error("init encryption keys for account (\(account.userIdentifier)) failed: \(String(describing: error))")
+            throw error
+        }
     }
 
     init(publicKey: SecKey, privateKey: SecKey, databaseKey: Data) {
@@ -180,13 +186,19 @@ public struct EncryptionKeys {
     /// - Parameters:
     ///   -  account Account for which the encryption keys should created
     public static func createKeys(for account: Account) throws -> EncryptionKeys {
-        let (privateKey, publicKey) = try generateAccountKey(identifier: .privateKey(account, nil, nil))
-        let databaseKey = try generateDatabaseKey()
+        do {
+            WireLogger.ear.info("create encryption keys for account (\(account.userIdentifier))")
+            let (privateKey, publicKey) = try generateAccountKey(identifier: .privateKey(account, nil, nil))
+            let databaseKey = try generateDatabaseKey()
 
-        try storeItem(.publicKey(account), value: publicKey)
-        try storeItem(.databaseKey(account), value: encryptDatabaseKey(databaseKey, publicKey: publicKey))
+            try storeItem(.publicKey(account), value: publicKey)
+            try storeItem(.databaseKey(account), value: encryptDatabaseKey(databaseKey, publicKey: publicKey))
 
-        return EncryptionKeys(publicKey: publicKey, privateKey: privateKey, databaseKey: databaseKey)
+            return EncryptionKeys(publicKey: publicKey, privateKey: privateKey, databaseKey: databaseKey)
+        } catch {
+            WireLogger.ear.error("create encryption keys for account (\(account.userIdentifier)) failed: \(String(describing: error))")
+            throw error
+        }
     }
 
     /// Delete all encryption keys and from the keychain.
@@ -194,16 +206,28 @@ public struct EncryptionKeys {
     /// - Parameters:
     ///   -  account Account for which the encryption keys should deleted
     public static func deleteKeys(for account: Account) throws {
-        try deleteItem(.publicKey(account))
-        try deleteItem(.privateKey(account, nil, nil))
-        try deleteItem(.databaseKey(account))
+        do {
+            WireLogger.ear.info("delete encryption keys for account (\(account.userIdentifier))")
+            try deleteItem(.publicKey(account))
+            try deleteItem(.privateKey(account, nil, nil))
+            try deleteItem(.databaseKey(account))
+        } catch {
+            WireLogger.ear.error("delete encryption keys for account (\(account.userIdentifier)) failed: \(String(describing: error))")
+            throw error
+        }
     }
 
     // MARK: Account key
 
     /// Fetch the public key associated with an account
     public static func publicKey(for account: Account) throws -> SecKey {
-        try fetchItem(.publicKey(account))
+        do {
+            WireLogger.ear.info("fetch public key for account (\(account.userIdentifier))")
+            return try fetchItem(.publicKey(account))
+        } catch {
+            WireLogger.ear.info("fetch public key for account (\(account.userIdentifier)) failed: \(String(describing: error))")
+            throw error
+        }
     }
 
     private static func generateAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {

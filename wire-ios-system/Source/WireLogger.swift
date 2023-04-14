@@ -171,6 +171,10 @@ public extension WireLogger {
 
   static let performance = WireLogger(tag: "performance")
 
+  /// For logs related to encryption at rest.
+
+  static let ear = WireLogger(tag: "encryption-at-rest")
+
   /// For lgos related to the keychain.
 
   static let keychain = WireLogger(tag: "keychain")

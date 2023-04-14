@@ -25,23 +25,30 @@ public extension ContextProvider {
     /// This method should only be called on the main thread.
 
     func encryptionKeysForSettingEncryptionAtRest(enabled: Bool) throws -> EncryptionKeys {
-        var encryptionKeys: EncryptionKeys
+        do {
+            WireLogger.ear.info("fetching keys for setting EAR enabled (\(enabled))")
+            var encryptionKeys: EncryptionKeys
 
-        if enabled {
-            try EncryptionKeys.deleteKeys(for: account)
-            encryptionKeys = try EncryptionKeys.createKeys(for: account)
-            storeEncryptionKeysInAllContexts(encryptionKeys: encryptionKeys)
-        } else {
-            encryptionKeys = try viewContext.getEncryptionKeys()
-            clearEncryptionKeysInAllContexts()
+            if enabled {
+                try EncryptionKeys.deleteKeys(for: account)
+                encryptionKeys = try EncryptionKeys.createKeys(for: account)
+                storeEncryptionKeysInAllContexts(encryptionKeys: encryptionKeys)
+            } else {
+                encryptionKeys = try viewContext.getEncryptionKeys()
+                clearEncryptionKeysInAllContexts()
+            }
+
+            return encryptionKeys
+        } catch {
+            WireLogger.ear.error("fetching keys for setting EAR enabled (\(enabled)) failed: \(String(describing: error))")
+            throw error
         }
-
-        return encryptionKeys
     }
 
     /// Synchronously stores the given encryption keys in each managed object context.
 
     func storeEncryptionKeysInAllContexts(encryptionKeys: EncryptionKeys) {
+        WireLogger.ear.info("store keys in all contexts")
         for context in [viewContext, syncContext, searchContext] {
             context.performAndWait { context.encryptionKeys = encryptionKeys }
         }
@@ -50,6 +57,7 @@ public extension ContextProvider {
     /// Synchronously clears the encryption keys in each managed object context.
 
     func clearEncryptionKeysInAllContexts() {
+        WireLogger.ear.info("clear keys in all contexts")
         for context in [viewContext, syncContext, searchContext] {
             context.performAndWait { context.encryptionKeys = nil }
         }

@@ -52,15 +52,28 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     public func setEncryptionAtRest(enabled: Bool, skipMigration: Bool = false) throws {
         guard enabled != encryptMessagesAtRest else { return }
 
-        let encryptionKeys = try coreDataStack.encryptionKeysForSettingEncryptionAtRest(enabled: enabled)
+        do {
+            WireLogger.ear.info("set EAR enabled (\(enabled)), skip migration (\(skipMigration))")
+            let encryptionKeys = try coreDataStack.encryptionKeysForSettingEncryptionAtRest(enabled: enabled)
 
-        if skipMigration {
-            try managedObjectContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
-        } else {
-            delegate?.setEncryptionAtRest(enabled: enabled,
-                                          account: coreDataStack.account,
-                                          encryptionKeys: encryptionKeys)
+            if skipMigration {
+                try managedObjectContext.enableEncryptionAtRest(
+                    encryptionKeys: encryptionKeys,
+                    skipMigration: true
+                )
+            } else {
+                delegate?.setEncryptionAtRest(
+                    enabled: enabled,
+                    account: coreDataStack.account,
+                    encryptionKeys: encryptionKeys
+                )
+            }
+        } catch {
+            WireLogger.ear.error("set EAR enabled (\(enabled)), skip migration (\(skipMigration)) failed: \(String(describing: error))")
+            throw error
         }
+
+
     }
 
     public var encryptMessagesAtRest: Bool {
@@ -84,6 +97,8 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     func lockDatabase() {
         guard managedObjectContext.encryptMessagesAtRest else { return }
 
+        WireLogger.ear.info("lock database")
+
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
             self?.coreDataStack.clearEncryptionKeysInAllContexts()
 
@@ -94,14 +109,20 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     }
 
     public func unlockDatabase(with context: LAContext) throws {
-        let keys = try EncryptionKeys.init(account: coreDataStack.account, context: context)
+        do {
+            WireLogger.ear.info("unlock database")
+            let keys = try EncryptionKeys.init(account: coreDataStack.account, context: context)
 
-        coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
+            coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
 
-        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
+            DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 
-        syncManagedObjectContext.performGroupedBlock {
-            self.processEvents()
+            syncManagedObjectContext.performGroupedBlock {
+                self.processEvents()
+            }
+        } catch {
+            WireLogger.ear.error("unlock database failed: \(String(describing: error))")
+            throw error
         }
     }
 
