@@ -22,7 +22,7 @@ import Down
 
 final class MessageSendFailureView: UIView {
 
-    // MARK: Properties
+    // MARK: - Properties
     var tapHandler: ((UIButton) -> Void)?
 
     private let stackView = UIStackView(axis: .vertical)
