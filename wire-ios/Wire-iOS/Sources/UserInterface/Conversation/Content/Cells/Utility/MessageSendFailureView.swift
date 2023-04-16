@@ -48,7 +48,7 @@ final class MessageSendFailureView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: Setup UI
+    // MARK: - Setup UI
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .labelStyle)
     }
