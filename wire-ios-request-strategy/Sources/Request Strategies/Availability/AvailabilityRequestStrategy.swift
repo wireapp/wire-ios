@@ -40,6 +40,8 @@ public class AvailabilityRequestStrategy: AbstractRequestStrategy {
         return modifiedSync.nextRequest(for: apiVersion)
     }
 
+    public var expirationReasonCode: NSNumber?
+
 }
 
 extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
@@ -143,13 +145,6 @@ extension AvailabilityRequestStrategy: OTREntity {
 
     public var expirationDate: Date? {
         return nil
-    }
-
-    public var expirationReasonCode: NSNumber? {
-        get {
-            return nil
-        }
-        set {}
     }
 
     public func expire() {

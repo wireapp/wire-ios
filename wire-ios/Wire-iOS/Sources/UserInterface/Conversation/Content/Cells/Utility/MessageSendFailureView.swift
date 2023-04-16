@@ -22,21 +22,15 @@ import Down
 
 final class MessageSendFailureView: UIView {
 
-    // MARK: Properties
+    // MARK: - Properties
     var tapHandler: ((UIButton) -> Void)?
 
     private let stackView = UIStackView(axis: .vertical)
     private let titleLabel = WebLinkTextView()
-    private let retryButton: IconButton = {
-        let button = InviteButton()
-        button.titleLabel?.font = FontSpec.buttonSmallSemibold.font!
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        button.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
+    private let retryButton = InviteButton(fontSpec: FontSpec.buttonSmallSemibold,
+                                           insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
-        return button
-    }()
-
-    // MARK: initialization
+    // MARK: - initialization
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
 
@@ -48,7 +42,7 @@ final class MessageSendFailureView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: Setup UI
+    // MARK: - Setup UI
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
     }
@@ -59,6 +53,7 @@ final class MessageSendFailureView: UIView {
         stackView.alignment = .leading
         stackView.spacing = 4
         [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
+        retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
         retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
 
         setupConstraints()
@@ -88,7 +83,8 @@ final class MessageSendFailureView: UIView {
 
 }
 
-public extension DownStyle {
+// MARK: - DownStyle extension
+    public extension DownStyle {
 
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()

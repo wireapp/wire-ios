@@ -20,13 +20,27 @@ import XCTest
 @testable import WireDataModel
 
 class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
+    var message: ZMMessage?
+
+    override func setUp() {
+        super.setUp()
+
+        message = try? conversation.appendText(content: "Hallo") as? ZMMessage
+        message?.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+    }
+
+    override func tearDown() {
+        message = nil
+
+        super.tearDown()
+    }
 
     func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = try! conversation.appendText(content: "Hallo") as! ZMMessage
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        guard let message = message else {
+            XCTFail("Failed to add message")
+            return
+        }
 
         // when
         message.expire()
@@ -39,10 +53,10 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message: ZMClientMessage = try! conversation.appendText(content: "Hallo") as! ZMClientMessage
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -50)
+        guard let message = message else {
+            XCTFail("Failed to add message")
+            return
+        }
 
         // when
         message.expire()
@@ -60,33 +74,30 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testExpirationReasonsParsing() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = try! conversation.appendText(content: "Hallo") as! ZMMessage
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
-
-        // when
-        message.expirationReasonCode = nil
-
-        // then
-        XCTAssertFalse(message.isExpired)
-        XCTAssertEqual(message.failedToSendReason, .unknown)
-
+        guard let message = message else {
+            XCTFail("Failed to add message")
+            return
+        }
         // when
         message.expire()
-        message.expirationReasonCode = 0
 
         // then
-        XCTAssertTrue(message.isExpired)
-        XCTAssertEqual(message.failedToSendReason, .unknown)
+        assert(reasonCode: nil, expectedReason: .unknown)
+        assert(reasonCode: 0, expectedReason: .unknown)
+        assert(reasonCode: 1, expectedReason: .federationRemoteError)
+    }
 
-        // when
-        message.expire()
-        message.expirationReasonCode = 1
+    // MARK: - Helper
+    
+    private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure) {
+        guard let message = message else {
+            XCTFail("Failed to add message")
+            return
+        }
+        message.expirationReasonCode = reasonCode
 
-        // then
         XCTAssertTrue(message.isExpired)
-        XCTAssertEqual(message.failedToSendReason, .federationRemoteError)
+        XCTAssertEqual(message.failedToSendReason, expectedReason)
     }
 
 }

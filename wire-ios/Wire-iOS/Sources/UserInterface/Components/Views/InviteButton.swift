@@ -31,6 +31,13 @@ final class InviteButton: IconButton {
         contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
     }
 
+    convenience init(fontSpec: FontSpec, insets: UIEdgeInsets) {
+        self.init()
+
+        titleLabel?.font = fontSpec.font
+        self.contentEdgeInsets = insets
+    }
+
     override var isHighlighted: Bool {
         didSet {
             applyStyle(.secondaryTextButtonStyle)
