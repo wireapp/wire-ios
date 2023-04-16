@@ -30,7 +30,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         let isCollapsed: Bool
     }
 
-    // MARK: Properties
+    // MARK: - Properties
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
@@ -43,14 +43,8 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     private let stackView = UIStackView(axis: .vertical)
     private let totalCountView = WebLinkTextView()
     private let usersView = WebLinkTextView()
-    private let button: IconButton = {
-        let button = InviteButton()
-        button.titleLabel?.font = FontSpec.buttonSmallSemibold.font!
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        button.setTitle(FailedtosendParticipants.showDetails, for: .normal)
-
-        return button
-    }()
+    private let button = InviteButton(fontSpec: FontSpec.buttonSmallSemibold,
+                                      insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     private var config: Configuration? {
         didSet {
@@ -59,7 +53,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         }
     }
 
-    // MARK: initialization
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -72,7 +66,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    // MARK: Setup UI
+    // MARK: - Setup UI
 
     func configure(with object: Configuration, animated: Bool) {
         self.config = object
@@ -128,6 +122,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         stackView.spacing = 8
         [contentStackView, button].forEach(stackView.addArrangedSubview)
 
+        button.setTitle(FailedtosendParticipants.showDetails, for: .normal)
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
 
         createConstraints()

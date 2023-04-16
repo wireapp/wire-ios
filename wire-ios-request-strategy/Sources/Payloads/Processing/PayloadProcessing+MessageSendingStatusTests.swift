@@ -172,10 +172,13 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
         }
     }
 
-    func testThatItAddsFailedToSendRecipients() {
-        self.syncMOC.performGroupedAndWait { _ in
+    func testThatItAddsFailedToSendRecipients() throws {
+        try self.syncMOC.performGroupedAndWait { _ in
             // given
-            let message = try! self.groupConversation.appendText(content: "Test message") as! ZMClientMessage
+            guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
+                XCTFail("Failed to add message")
+                return
+            }
 
             let domain = "example.com"
             let clientID = UUID().transportString()
