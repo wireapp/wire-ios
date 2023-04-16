@@ -87,7 +87,7 @@ final class MessageSendFailureView: UIView {
     }
 
 }
-
+// MARK: - DownStyle extension
 private extension DownStyle {
 
     static var labelStyle: DownStyle {
