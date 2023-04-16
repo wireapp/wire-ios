@@ -36,7 +36,7 @@ final class MessageSendFailureView: UIView {
         return button
     }()
 
-    // MARK: initialization
+    // MARK: - initialization
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
 
