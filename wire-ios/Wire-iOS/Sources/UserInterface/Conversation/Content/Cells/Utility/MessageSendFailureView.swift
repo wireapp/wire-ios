@@ -27,14 +27,8 @@ final class MessageSendFailureView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
     private let titleLabel = WebLinkTextView()
-    private let retryButton: IconButton = {
-        let button = InviteButton()
-        button.titleLabel?.font = FontSpec.buttonSmallSemibold.font!
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        button.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
-
-        return button
-    }()
+    private let retryButton = InviteButton(fontSpec: FontSpec.buttonSmallSemibold,
+                                           insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     // MARK: - initialization
     override init(frame: CGRect) {
@@ -59,6 +53,7 @@ final class MessageSendFailureView: UIView {
         stackView.alignment = .leading
         stackView.spacing = 4
         [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
+        retryButton.setTitle(L10n.Localizable.Content.System.FailedtosendMessage.retry, for: .normal)
         retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
 
         setupConstraints()
