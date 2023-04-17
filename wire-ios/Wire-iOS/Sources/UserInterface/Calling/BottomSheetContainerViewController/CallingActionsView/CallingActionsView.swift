@@ -60,7 +60,7 @@ class CallingActionsView: UIView {
     private let largeHangUpButton = EndCallButton.bigEndCallButton()
 
     private var establishedCallButtons: [IconLabelButton] {
-        return [flipCameraButton, cameraButton, microphoneButton, speakerButton, endCallButton]
+        return [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton]
     }
     private var largeButtonsPortraitConstraints: [NSLayoutConstraint] = []
     private var largeButtonsLandscapeConstraints: [NSLayoutConstraint] = []

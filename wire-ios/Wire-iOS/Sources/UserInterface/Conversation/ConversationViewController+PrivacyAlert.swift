@@ -118,12 +118,12 @@ extension ConversationViewController {
             let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList)
             profileViewController.delegate = self
             profileViewController.viewControllerDismisser = self
-            let navigationController = profileViewController.wrapInNavigationController()
+            let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         } else if conversation.conversationType == .group {
             let participantsViewController = GroupParticipantsDetailViewController(selectedParticipants: [], conversation: conversation)
-            let navigationController = participantsViewController.wrapInNavigationController()
+            let navigationController = participantsViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         }

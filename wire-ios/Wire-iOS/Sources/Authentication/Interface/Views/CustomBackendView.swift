@@ -41,6 +41,7 @@ final class CustomBackendView: UIView {
     private func setupViews() {
         let imageSize: CGFloat = 16
         let imageView = UIImageView(image: UIImage(named: "Info"))
+        imageView.tintColor = SemanticColors.Icon.foregroundPlainDownArrow
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.heightAnchor.constraint(equalToConstant: imageSize).isActive = true

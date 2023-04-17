@@ -113,6 +113,7 @@ final class ProfileHeaderViewController: UIViewController {
     let guestIndicator = LabelIndicator(context: .guest)
     let externalIndicator = LabelIndicator(context: .external)
     let federatedIndicator = LabelIndicator(context: .federated)
+    let warningView = WarningLabelView()
 
     private var tokens: [Any?] = []
     private var teamObserver: NSObjectProtocol?
@@ -131,6 +132,7 @@ final class ProfileHeaderViewController: UIViewController {
         self.conversation = conversation
         self.options = options
         self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint])
+        
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -203,7 +205,9 @@ final class ProfileHeaderViewController: UIViewController {
                                                                           guestIndicatorStack,
                                                                           externalIndicator,
                                                                           federatedIndicator,
-                                                                          groupRoleIndicator])
+                                                                          groupRoleIndicator,
+                                                                          warningView
+                                                                         ])
 
         stackView.alignment = .center
         stackView.axis = .vertical
@@ -281,6 +285,7 @@ final class ProfileHeaderViewController: UIViewController {
         updateTeamLabel()
         updateImageButton()
         updateAvailabilityVisibility()
+        warningView.update(withUser: user)
     }
 
     private func updateHandleLabel() {

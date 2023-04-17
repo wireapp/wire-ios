@@ -65,7 +65,7 @@ public struct OrderedSetState<T: Hashable>: Equatable {
         return oldIndex
     }
 
-    static public func==<T>(lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
+    static public func == <T>(lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
         return lhs.array as [T] == rhs.array as [T]
     }
 
@@ -82,7 +82,7 @@ public struct MovedIndex: Equatable {
     public let from: Int
     public let to: Int
 
-    public static func==(lhs: MovedIndex, rhs: MovedIndex) -> Bool {
+    public static func == (lhs: MovedIndex, rhs: MovedIndex) -> Bool {
         return lhs.from == rhs.from && lhs.to == rhs.to
     }
 }

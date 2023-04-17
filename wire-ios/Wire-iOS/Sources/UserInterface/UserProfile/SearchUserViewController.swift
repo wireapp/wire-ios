@@ -14,14 +14,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-//  
+//
 
 import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class SearchUserViewConroller: UIViewController, SpinnerCapable {
+final class SearchUserViewController: UIViewController, SpinnerCapable {
+
+    // MARK: - Properties
+
     var dismissSpinner: SpinnerCompletion?
 
     private var searchDirectory: SearchDirectory!
@@ -31,6 +34,8 @@ final class SearchUserViewConroller: UIViewController, SpinnerCapable {
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
+
+    // MARK: - Init
 
     public init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?) {
         self.userId = userId
@@ -42,9 +47,9 @@ final class SearchUserViewConroller: UIViewController, SpinnerCapable {
             searchDirectory = SearchDirectory(userSession: session)
         }
 
-        view.backgroundColor = UIColor.from(scheme: .contentBackground)
+        view.backgroundColor = SemanticColors.View.backgroundDefault
     }
-
+    
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -53,6 +58,8 @@ final class SearchUserViewConroller: UIViewController, SpinnerCapable {
     deinit {
         searchDirectory?.tearDown()
     }
+
+    // MARK: - Override Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,10 +82,10 @@ final class SearchUserViewConroller: UIViewController, SpinnerCapable {
 
     }
 
+    // MARK: - Methods
+
     private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
-        guard !resultHandled,
-              isCompleted
-            else { return }
+        guard !resultHandled, isCompleted else { return }
 
         let profileUser: UserType?
         if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {

@@ -32,7 +32,7 @@ private extension UILabel {
     static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = UIColor.from(scheme: .textDimmed)
+        label.textColor = SemanticColors.View.backgroundSeparatorCell
         label.font = UIFont.smallSemiboldFont
         label.text = String.MessageToolbox.middleDot
         label.isAccessibilityElement = false

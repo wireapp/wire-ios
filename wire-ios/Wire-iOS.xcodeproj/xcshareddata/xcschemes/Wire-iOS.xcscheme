@@ -110,6 +110,9 @@
                   Identifier = "ProfileDetailsViewControllerTests/test_Group_BlockingConnectionRequest_MissingLegalHoldConsent1()">
                </Test>
                <Test
+                  Identifier = "SearchResultLabelTests">
+               </Test>
+               <Test
                   Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_FileMessage()">
                </Test>
                <Test

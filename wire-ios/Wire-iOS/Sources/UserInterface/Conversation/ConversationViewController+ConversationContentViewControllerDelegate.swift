@@ -38,36 +38,59 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController(setBackgroundColor: true))
     }
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, willDisplayActiveMediaPlayerFor message: ZMConversationMessage?) {
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        willDisplayActiveMediaPlayerFor message: ZMConversationMessage?
+    ) {
         conversationBarController.dismiss(bar: mediaBarViewController)
     }
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didEndDisplayingActiveMediaPlayerFor message: ZMConversationMessage) {
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didEndDisplayingActiveMediaPlayerFor message: ZMConversationMessage
+    ) {
         conversationBarController.present(bar: mediaBarViewController)
     }
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerResending message: ZMConversationMessage) {
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didTriggerResending message: ZMConversationMessage
+    ) {
         ZMUserSession.shared()?.enqueue({
             message.resend()
         })
     }
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerEditing message: ZMConversationMessage) {
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didTriggerEditing message: ZMConversationMessage
+    ) {
         guard message.textMessageData?.messageText != nil else { return }
 
         inputBarController.editMessage(message)
     }
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerReplyingTo message: ZMConversationMessage) {
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        didTriggerReplyingTo message: ZMConversationMessage
+    ) {
         let replyComposingView = contentViewController.createReplyComposingView(for: message)
         inputBarController.reply(to: message, composingView: replyComposingView)
     }
 
-    func conversationContentViewController(_ controller: ConversationContentViewController, shouldBecomeFirstResponderWhenShowMenuFromCell cell: UIView) -> Bool {
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        shouldBecomeFirstResponderWhenShowMenuFromCell cell: UIView
+    ) -> Bool {
         if inputBarController.inputBar.textView.isFirstResponder {
             inputBarController.inputBar.textView.overrideNextResponder = cell
 
-            NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide(_:)), name: UIMenuController.didHideMenuNotification, object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(menuDidHide(_:)),
+                name: UIMenuController.didHideMenuNotification,
+                object: nil
+            )
 
             return false
         }
@@ -75,7 +98,11 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         return true
     }
 
-    func conversationContentViewController(_ contentViewController: ConversationContentViewController, performImageSaveAnimation snapshotView: UIView?, sourceRect: CGRect) {
+    func conversationContentViewController(
+        _ contentViewController: ConversationContentViewController,
+        performImageSaveAnimation snapshotView: UIView?,
+        sourceRect: CGRect
+    ) {
         if let snapshotView = snapshotView {
             view.addSubview(snapshotView)
         }
@@ -98,7 +125,10 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         openConversationList()
     }
 
-    func conversationContentViewController(_ controller: ConversationContentViewController, presentGuestOptionsFrom sourceView: UIView) {
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        presentGuestOptionsFrom sourceView: UIView
+    ) {
         guard conversation.conversationType == .group else {
             zmLog.error("Illegal Operation: Trying to show guest options for non-group conversation")
             return
@@ -110,21 +140,32 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentParticipantsViewController(navigationController, from: sourceView)
     }
 
-    func conversationContentViewController(_ controller: ConversationContentViewController, presentServicesOptionFrom sourceView: UIView) {
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        presentServicesOptionFrom sourceView: UIView
+    ) {
         guard conversation.conversationType == .group else {
             zmLog.error("Illegal Operation: Trying to show services options for non-group conversation")
             return
         }
 
         let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
-        let navigationController = groupDetailsViewController.wrapInNavigationController()
+        let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }
 
-    func conversationContentViewController(_ controller: ConversationContentViewController, presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType], from sourceView: UIView) {
+    func conversationContentViewController(
+        _ controller: ConversationContentViewController,
+        presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
+        from sourceView: UIView
+    ) {
         if let groupDetailsViewController = (participantsController as? UINavigationController)?.topViewController as? GroupDetailsViewController {
-                groupDetailsViewController.presentParticipantsDetails(with: conversation.sortedOtherParticipants, selectedUsers: selectedUsers, animated: false)
+                groupDetailsViewController.presentParticipantsDetails(
+                    with: conversation.sortedOtherParticipants,
+                    selectedUsers: selectedUsers,
+                    animated: false
+                )
         }
 
         if let participantsController = participantsController {
@@ -135,7 +176,10 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
 extension ConversationViewController {
 
-    func presentParticipantsViewController(_ viewController: UIViewController, from sourceView: UIView) {
+    func presentParticipantsViewController(
+        _ viewController: UIViewController,
+        from sourceView: UIView
+    ) {
         ConversationInputBarViewController.endEditingMessage()
         inputBarController.inputBar.textView.resignFirstResponder()
 

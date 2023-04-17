@@ -35,6 +35,10 @@ final class SecurityLevelView: UIView {
     private let bottomBorder = UIView()
     typealias SecurityLocalization = L10n.Localizable.SecurityClassification
 
+    typealias ViewColors = SemanticColors.View
+    typealias LabelColors = SemanticColors.Label
+    typealias IconColors = SemanticColors.Icon
+
     init() {
         super.init(frame: .zero)
 
@@ -60,27 +64,14 @@ final class SecurityLevelView: UIView {
         }
         let isUpdatedCallingUI = DeveloperFlag.isUpdatedCallingUI
 
-        switch classification {
-
-        case .classified:
-            securityLevelLabel.textColor = isUpdatedCallingUI ? .accent() : SemanticColors.Label.textDefault
-            backgroundColor = isUpdatedCallingUI ? .accentDimmedFlat : SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.checkmark, size: .tiny, color: SemanticColors.Icon.backgroundCheckMarkSelected)
-            topBorder.backgroundColor = isUpdatedCallingUI ? .accent() : SemanticColors.View.backgroundSeparatorCell
-
-        case .notClassified:
-            securityLevelLabel.textColor = isUpdatedCallingUI ? SemanticColors.Label.textDefaultWhite : SemanticColors.Label.textDefault
-            backgroundColor = isUpdatedCallingUI ? .accent() : SemanticColors.View.backgroundSecurityLevel
-            iconImageView.setIcon(.exclamationMarkCircle, size: .tiny, color: SemanticColors.Icon.foregroundCheckMarkSelected)
-            topBorder.backgroundColor = isUpdatedCallingUI ? .clear : SemanticColors.View.backgroundSeparatorCell
-
-        default:
-            isHidden = true
-            assertionFailure("should not reach this point")
+        if isUpdatedCallingUI {
+            configureUpdatedCallingUI(with: classification)
+        } else {
+            configureLegacyCallingUI(with: classification)
         }
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
-        let securityLevelText = isUpdatedCallingUI ? SecurityLocalization.securityLevel.capitalizingFirstLetter() : SecurityLocalization.securityLevel.uppercased()
+        let securityLevelText = SecurityLocalization.securityLevel.uppercased()
         securityLevelLabel.text = [securityLevelText, levelText].joined(separator: " ")
 
         accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
@@ -122,8 +113,53 @@ final class SecurityLevelView: UIView {
           iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
           iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
           iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-          iconImageView.trailingAnchor.constraint(equalTo: securityLevelLabel.leadingAnchor, constant: -10.0)
+          iconImageView.trailingAnchor.constraint(equalTo: securityLevelLabel.leadingAnchor, constant: -4.0)
         ])
+    }
+
+    private func configureUpdatedCallingUI(with classification: SecurityClassification) {
+        switch classification {
+
+        case .classified:
+            securityLevelLabel.textColor = LabelColors.textSecurityEnabled
+            backgroundColor = ViewColors.backgroundSecurityEnabled
+            iconImageView.image = Asset.Images.check.image.withTintColor(IconColors.backgroundSecurityEnabledCheckMark)
+            topBorder.backgroundColor = ViewColors.borderSecurityEnabled
+
+        case .notClassified:
+            securityLevelLabel.textColor = LabelColors.textDefaultWhite
+            backgroundColor = ViewColors.backgroundSecurityDisabled
+            iconImageView.image = Asset.Images.attention.image.withTintColor(IconColors.foregroundCheckMarkSelected)
+            topBorder.backgroundColor = .clear
+
+        case .none:
+            isHidden = true
+            assertionFailure("should not reach this point")
+        }
+    }
+
+    private func configureLegacyCallingUI(with classification: SecurityClassification) {
+        switch classification {
+
+        case .classified:
+            securityLevelLabel.textColor = LabelColors.textDefault
+            backgroundColor = ViewColors.backgroundSecurityLevel
+            iconImageView.setTemplateIcon(.checkmark, size: .tiny)
+            iconImageView.tintColor = IconColors.backgroundCheckMarkSelected
+            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
+
+        case .notClassified:
+            securityLevelLabel.textColor = LabelColors.textDefault
+            backgroundColor = ViewColors.backgroundSecurityLevel
+            iconImageView.setTemplateIcon(.exclamationMarkCircle, size: .tiny)
+            iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
+            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
+
+        case .none:
+            isHidden = true
+            assertionFailure("should not reach this point")
+        }
+
     }
 }
 
