@@ -48,7 +48,10 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         })
     }
 
-    func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void) {
+    func prepareForMigration(
+        for account: Account,
+        onReady: @escaping (NSManagedObjectContext) throws -> Void
+    ) {
         let sharedContainerURL = self.sharedContainerURL
         let dispatchGroup = self.dispatchGroup
 

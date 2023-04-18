@@ -43,7 +43,7 @@ public protocol EARServiceInterface: AnyObject {
 
 public protocol EARServiceDelegate: AnyObject {
 
-    func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void)
+    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void)
 
 }
 

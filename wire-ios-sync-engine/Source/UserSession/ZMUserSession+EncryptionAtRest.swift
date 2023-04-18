@@ -32,7 +32,7 @@ public protocol UserSessionEncryptionAtRestInterface {
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
 
     func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys)
-    func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void)
+    func prepareForMigration(for account: Account, onReady: @escaping (NSManagedObjectContext) throws -> Void)
 
 }
 
@@ -125,8 +125,11 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
 
 extension ZMUserSession: EARServiceDelegate {
 
-    public func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void) {
-        delegate?.prepareForMigration(onReady: onReady)
+    public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {
+        delegate?.prepareForMigration(
+            for: coreDataStack.account,
+            onReady: onReady
+        )
     }
 
 }
