@@ -96,7 +96,11 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     }
 
     @objc public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
+        // TODO: fetch public keys.
+        eventDecoder.decryptAndStoreEvents(
+            updateEvents,
+            publicKeys: nil
+        ) { decryptedUpdateEvents in
             self.delegate?.pushNotificationStrategy(self, didFetchEvents: decryptedUpdateEvents)
         }
     }
