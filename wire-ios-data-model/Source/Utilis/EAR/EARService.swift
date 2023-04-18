@@ -154,7 +154,7 @@ public class EARService: EARServiceInterface {
         let databaseKey: Data
 
         do {
-            let identifier = primaryPublicKeyDescription.uniqueIdentifier
+            let identifier = primaryPrivateKeyDescription.id
             let keyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier)
             primaryPublicKey = keyPair.publicKey
         } catch {
@@ -163,7 +163,7 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            let identifier = primaryPrivateKeyDescription.uniqueIdentifier
+            let identifier = secondaryPrivateKeyDescription.id
             let keyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier)
             secondaryPublicKey = keyPair.publicKey
         } catch {
@@ -196,6 +196,7 @@ public class EARService: EARServiceInterface {
             )
         } catch {
             // TODO: log error, maybe try to delete any keys that were stored
+            try? deleteExistingKeys()
             throw error
         }
 

@@ -31,6 +31,10 @@ public struct EncryptionKeys {
         case publicKey(Account)
         case databaseKey(Account)
 
+        var id: String {
+            return uniqueIdentifier
+        }
+
         var tag: Data {
             uniqueIdentifier.data(using: .utf8)!
         }

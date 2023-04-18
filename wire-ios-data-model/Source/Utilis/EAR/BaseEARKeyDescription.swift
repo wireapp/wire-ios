@@ -24,7 +24,7 @@ open class BaseEARKeyDescription {
 
     // MARK: - Properties
 
-    let uniqueIdentifier: String
+    let id: String
     let tag: Data
 
     private let accountID: String
@@ -38,8 +38,8 @@ open class BaseEARKeyDescription {
     ) {
         self.accountID = accountID.transportString()
         self.label = label
-        uniqueIdentifier = "com.wire.ear.\(self.label).\(self.accountID)"
-        tag = uniqueIdentifier.data(using: .utf8)!
+        id = "com.wire.ear.\(self.label).\(self.accountID)"
+        tag = id.data(using: .utf8)!
     }
 
 }

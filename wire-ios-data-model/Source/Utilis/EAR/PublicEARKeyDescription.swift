@@ -25,6 +25,10 @@ import Foundation
 
 public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
 
+    // MARK: - Properties
+
+    private let baseQuery: [CFString: Any]
+
     // MARK: - Life cycle
 
     override init(
@@ -36,25 +40,25 @@ public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoco
             label: label
         )
 
-        getQuery = [
+        baseQuery = [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
-            kSecReturnRef: true,
             kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
         ]
     }
 
     // MARK: - Keychain item
 
-    private(set) var getQuery = [CFString: Any]()
+    var getQuery: [CFString: Any] {
+        var query = baseQuery
+        query[kSecReturnRef] = true
+        return query
+    }
 
     func setQuery<T>(value: T) -> [CFString: Any] {
-        return [
-            kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag,
-            kSecValueRef: value,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
-        ]
+        var query = baseQuery
+        query[kSecValueRef] = value
+        return query
     }
 
 }
