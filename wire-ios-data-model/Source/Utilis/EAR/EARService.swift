@@ -90,6 +90,8 @@ public class EARService: EARServiceInterface {
             return
         }
 
+        WireLogger.ear.info("turning on EAR")
+
         try deleteExistingKeys()
         let databaseKey = try generateKeys()
 
@@ -101,8 +103,10 @@ public class EARService: EARServiceInterface {
         }
 
         if skipMigration {
+            WireLogger.ear.info("skipping migration")
             try enableEAR(context)
         } else {
+            WireLogger.ear.info("preparing for migration")
             delegate?.prepareForMigration { context in
                 try enableEAR(context)
             }
@@ -141,6 +145,7 @@ public class EARService: EARServiceInterface {
     // MARK: - Keys
 
     private func deleteExistingKeys() throws {
+        WireLogger.ear.info("deleting existing keys")
         try keyRepository.deletePublicKey(description: primaryPublicKeyDescription)
         try keyRepository.deletePrivateKey(description: primaryPrivateKeyDescription)
         try keyRepository.deletePublicKey(description: secondaryPublicKeyDescription)
@@ -149,6 +154,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func generateKeys() throws -> VolatileData {
+        WireLogger.ear.info("generating new keys")
         let primaryPublicKey: SecKey
         let secondaryPublicKey: SecKey
         let databaseKey: Data
@@ -158,7 +164,7 @@ public class EARService: EARServiceInterface {
             let keyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier)
             primaryPublicKey = keyPair.publicKey
         } catch {
-            // TODO: log error
+            WireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
             throw error
         }
 
@@ -167,7 +173,7 @@ public class EARService: EARServiceInterface {
             let keyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier)
             secondaryPublicKey = keyPair.publicKey
         } catch {
-            // TODO: log error
+            WireLogger.ear.error("failed to generate secondary public private keypair: \(String(describing: error))")
             throw error
         }
 
@@ -175,7 +181,7 @@ public class EARService: EARServiceInterface {
             let databaseKeyData = try KeychainManager.generateKey(numberOfBytes: 32)
             databaseKey = try encryptDatabaseKey(databaseKeyData, publicKey: primaryPublicKey)
         } catch {
-            // TODO: log error
+            WireLogger.ear.error("failed to generate database key: \(String(describing: error))")
             throw error
         }
 
@@ -195,7 +201,7 @@ public class EARService: EARServiceInterface {
                 key: databaseKey
             )
         } catch {
-            // TODO: log error, maybe try to delete any keys that were stored
+            WireLogger.ear.error("failed to store keys: \(String(describing: error))")
             try? deleteExistingKeys()
             throw error
         }

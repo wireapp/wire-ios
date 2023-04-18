@@ -31,18 +31,22 @@ public enum KeychainManager {
     // MARK: - Keychain access
 
     static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
+        WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 
         guard status == errSecSuccess else {
+            WireLogger.keychain.error("storing item (\(item.id)) failed: osstatus \(status)")
             throw Error.failedToStoreItemInKeychain(status)
         }
     }
 
     static func fetchItem<T>(_ item: KeychainItemProtocol) throws -> T {
+        WireLogger.keychain.info("fetching item (\(item.id))")
         var value: CFTypeRef?
         let status = SecItemCopyMatching(item.getQuery as CFDictionary, &value)
 
         guard status == errSecSuccess else {
+            WireLogger.keychain.error("fetching item (\(item.id)) failed: osstatus \(status)")
             throw Error.failedToFetchItemFromKeychain(status)
         }
 
@@ -50,9 +54,11 @@ public enum KeychainManager {
     }
 
     static func deleteItem(_ item: KeychainItemProtocol) throws {
+        WireLogger.keychain.info("deleting item (\(item.id))")
         let status = SecItemDelete(item.getQuery as CFDictionary)
 
         guard status == errSecSuccess || status == errSecItemNotFound else {
+            WireLogger.keychain.error("deleting item (\(item.id)) failed: osstatus \(status)")
             throw Error.failedToDeleteItemFromKeychain(status)
         }
     }
