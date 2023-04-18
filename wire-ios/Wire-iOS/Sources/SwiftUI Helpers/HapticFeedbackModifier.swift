@@ -18,14 +18,33 @@
 
 import SwiftUI
 
-struct HapticFeedbackModifier: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+func withFeedback(
+    _ style: UINotificationFeedbackGenerator.FeedbackType,
+    _ action: @escaping () -> Void
+) -> () -> Void {
+    { () in
+        let feedback = UINotificationFeedbackGenerator()
+        feedback.prepare()
+        feedback.notificationOccurred(style)
+        action()
     }
 }
 
-struct HapticFeedbackModifier_Previews: PreviewProvider {
-    static var previews: some View {
-        HapticFeedbackModifier()
+struct HapticTapGestureViewModifier: ViewModifier {
+    var style: UINotificationFeedbackGenerator.FeedbackType
+    var action: () -> Void
+
+    func body(content: Content) -> some View {
+        content.onTapGesture(perform: withFeedback(self.style, self.action))
+    }
+}
+
+extension SwiftUI.Button {
+    init(
+        _ style: UINotificationFeedbackGenerator.FeedbackType,
+        action: @escaping () -> Void,
+        @ViewBuilder label: () -> Label
+    ) {
+        self.init(action: withFeedback(style, action), label: label)
     }
 }
