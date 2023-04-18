@@ -83,11 +83,12 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     }
 
     public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
-        return NotificationInContext.addObserver(name: DatabaseEncryptionLockNotification.notificationName,
-                                                 context: managedObjectContext.notificationContext,
-                                                 queue: .main) { note in
+        return NotificationInContext.addObserver(
+            name: DatabaseEncryptionLockNotification.notificationName,
+            context: managedObjectContext.notificationContext,
+            queue: .main
+        ) { note in
             guard let note = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification else { return }
-
             handler(note.databaseIsEncrypted)
         }
     }
