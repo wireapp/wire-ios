@@ -92,11 +92,16 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 
+    /// Lock the database.
+    ///
+    /// When locked, the encrypted content of the database can not be decrypted
+    /// until the database is unlocked.
+
     func lockDatabase() {
         guard managedObjectContext.encryptMessagesAtRest else { return }
 
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
-            self?.coreDataStack.lockDatabase()
+            self?.earService.lockDatabase()
 
             if let notificationContext = self?.managedObjectContext.notificationContext {
                 DatabaseEncryptionLockNotification(databaseIsEncrypted: true).post(in: notificationContext)
@@ -104,8 +109,10 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 
+    /// Unlock the database using the given authentication context.
+
     public func unlockDatabase(with context: LAContext) throws {
-        try coreDataStack.unlockDatabase(context: context)
+        try earService.unlockDatabase(context: context)
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 

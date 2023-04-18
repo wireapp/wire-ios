@@ -56,28 +56,6 @@ public extension ContextProvider {
         }
     }
 
-    /// Lock the database.
-
-    func lockDatabase() {
-        let service = EARService(
-            accountID: account.userIdentifier,
-            databaseContexts: [viewContext, syncContext, searchContext]
-        )
-
-        service.lockDatabase()
-    }
-
-    /// Unlock the database using the given authentication context.
-
-    func unlockDatabase(context: LAContext) throws {
-        let service = EARService(
-            accountID: account.userIdentifier,
-            databaseContexts: [viewContext, syncContext, searchContext]
-        )
-
-        try service.unlockDatabase(context: context)
-    }
-
     private func encryptDatabaseKey(
         _ databaseKey: Data,
         publicKey: SecKey
