@@ -136,7 +136,7 @@ class BackendTrustProviderTests: XCTestCase {
     /// in `certificates.json` has expired. The production certificate can be
     /// updated by running:
     ///
-    ///      openssl s_client -connect prod-nginz-https.wire.com:443 -showcerts
+    ///      openssl s_client -showcerts -servername prod-nginz-https.wire.com -connect prod-nginz-https.wire.com:443
     ///
     func testPinnedHostsWithValidCertificateIsTrustedAreTrusted() {
         // given
