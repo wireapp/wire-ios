@@ -64,7 +64,7 @@ class BackendTrustProviderTests: XCTestCase {
         super.setUp()
         // Do not run tests if setup fails
         continueAfterFailure = false
-        pinnedHosts = ["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com", "www.wire.com", "wire.com"]
+        pinnedHosts = ["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com"]
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
