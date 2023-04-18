@@ -2,8 +2,12 @@ macos_instance:
   image: ghcr.io/cirruslabs/macos-ventura-xcode:14.2
 
 task:
-  script: 
+  environment:
+    KEYCHAIN_PASSWORD: ENCRYPTED[!f759b51fea359a121eecc3a42f51f5708872a31d228060d9e87e5151ce8bb7d651994ddf87ed9a49a90ef9f2323c250a!]
+    APPSTORE_API_KEY_BASE64: ENCRYPTED[!6f25f56765b43025da8e5c5ddf2a4648fdc0bc15f31b759f8be2e8375a1bc37aaf51470739b66f7ca303d3adcad56e87!]
+    MATCH_PASSWORD: ENCRYPTED[!544571b5760cc1c39cba8d6badbae6b6e0fc9c4450b69b1cb401bb0efe5457ea949c908f31bf9f238417b573229bd0df!]
+
+  script:
   - brew install carthage
   - sh ./setup.sh
-  - echo "Building WireSystem..."
-  - xcodebuild clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
+  - bundle exec fastlane ios prepare_for_release build_type:"AppStore" build_number:1234

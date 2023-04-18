@@ -1,27 +1,78 @@
+require 'git'
+require 'base64'
+
 opt_out_usage
 default_platform(:ios)
 
 platform :ios do
+    def appstoreconnect_api_key_file_path 
+        './fastlane/appstoreconnect_api_key.json'
+    end
+
     before_all do |lane|
-        lanes_with_api_key = [:upload_app_store, :upload_testflight, :create_version, :submit_review]
-        if lanes_with_api_key.include?(lane)
-            create_api_key
+        Dir.chdir("..") do
+            encoded_key = ENV['APPSTORE_API_KEY_BASE64']
+            if !File.exists?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
+                File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64()) }
+            end
         end
     end
 
-    lane :create_api_key do
-        @api_key ||= app_store_connect_api_key(
-          key_id: ENV['KEY_ID'],
-          issuer_id: ENV['KEY_ID_ISSUER'],
-          key_filepath: ENV['KEY_FILE_PATH'],
-          duration: 1200, # optional(maximum 1200)
-          in_house: false # optional but may be required if using match / sigh
+    desc "Prepare for development"
+    lane :prepare_for_development do |options|
+        sh "cd .. && ./setup.sh"
+        sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
+    end
+
+    def fetch_latest_configuration_repo 
+        path = '../wire-ios-build-assets'
+        `rm -rf #{path}`
+        Git.clone(
+            'git@github.com:wireapp/wire-ios-build-assets.git', 
+            path
         )
     end
-    
 
-    desc "Fetch dependencies"
-    lane :prepare do |options|
+    def create_keychain_if_needed
+        create_keychain(
+            default_keychain: false,
+            unlock: true,
+            timeout: 3600,
+            lock_when_sleeps: true
+        )
+    end
+
+    def download_distribution_certificate_and_profiles
+        create_keychain_if_needed
+        match(
+            readonly: true,
+            type: "appstore",
+            skip_provisioning_profiles: true,
+            app_identifier: []
+        )
+        app_bundle_id = get_xcconfig_value(
+            path: '../wire-ios/Configuration/Release.xcconfig',
+            name: 'WIRE_BUNDLE_ID'
+        )
+        sigh(
+            readonly: true,
+            api_key_path: appstoreconnect_api_key_file_path,
+            app_identifier: app_bundle_id
+        )
+        sigh(
+            readonly: true,
+            api_key_path: appstoreconnect_api_key_file_path,
+            app_identifier: "#{app_bundle_id}.extension-share"
+        )
+        sigh(
+            readonly: true,
+            api_key_path: appstoreconnect_api_key_file_path,
+            app_identifier: "#{app_bundle_id}.extension-notification"
+        )
+    end
+
+    desc "Fetch dependencies and prepare for building a release"
+    lane :prepare_for_release do |options|
         xcode_version = options[:xcode_version]
         # Saving `Carthage bootstrap` running time by reusing the Cathage artifacts.
         # When the Cathage framworks is not pre-built(e.g. in feature branch), this option can save the time of building.
@@ -29,6 +80,8 @@ platform :ios do
         # copy Carthage folder form ~/tmp/cache/Carthage before running setup.sh and 
         # copy it back after at the end of this lane
         cache_carthage = options[:cache_carthage]
+
+        fetch_latest_configuration_repo
 
         if !xcode_version.nil? 
             xcversion(version: xcode_version)
@@ -63,7 +116,7 @@ platform :ios do
                 sh "cd .. && cp -R ~/tmp/cache/Carthage ./Carthage || echo ⚠️ Carthage cache not exist, skip copying"
             end
 
-            sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
@@ -71,6 +124,8 @@ platform :ios do
                 sh "rm -rf ~/tmp/cache/Carthage"
                 sh "cd .. && cp -R ./Carthage ~/tmp/cache/Carthage"
             end
+
+            download_distribution_certificate_and_profiles
         end
     end
 
