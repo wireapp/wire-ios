@@ -27,7 +27,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
 
     // MARK: - Properties
 
-    private let baseQuery: [CFString: Any]
+    private var baseQuery = [CFString: Any]()
 
     // MARK: - Life cycle
 
