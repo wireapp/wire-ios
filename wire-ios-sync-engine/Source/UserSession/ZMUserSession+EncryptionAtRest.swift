@@ -50,34 +50,27 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     ///
     /// - Throws: `MigrationError` if it's not possible to start the migration.
 
-    public func setEncryptionAtRest(enabled: Bool, skipMigration: Bool = false) throws {
-        earService.delegate = self
+    public func setEncryptionAtRest(
+        enabled: Bool,
+        skipMigration: Bool = false
+    ) throws {
+        do {
+            WireLogger.ear.info("setting ear enabled (\(enabled))")
 
-        if enabled {
-            try earService.enableEncryptionAtRest(
-                context: managedObjectContext,
-                skipMigration: skipMigration
-            )
-        } else {
-            try earService.disableEncryptionAtRest(
-                context: managedObjectContext,
-                skipMigration: skipMigration
-            )
-        }
-
-        return
-
-
-        guard enabled != encryptMessagesAtRest else { return }
-
-        let encryptionKeys = try coreDataStack.encryptionKeysForSettingEncryptionAtRest(enabled: enabled)
-
-        if skipMigration {
-            try managedObjectContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
-        } else {
-            delegate?.setEncryptionAtRest(enabled: enabled,
-                                          account: coreDataStack.account,
-                                          encryptionKeys: encryptionKeys)
+            if enabled {
+                try earService.enableEncryptionAtRest(
+                    context: managedObjectContext,
+                    skipMigration: skipMigration
+                )
+            } else {
+                try earService.disableEncryptionAtRest(
+                    context: managedObjectContext,
+                    skipMigration: skipMigration
+                )
+            }
+        } catch {
+            WireLogger.ear.error("failed to set ear enabled (\(enabled)): \(String(describing: error))")
+            throw error
         }
     }
 

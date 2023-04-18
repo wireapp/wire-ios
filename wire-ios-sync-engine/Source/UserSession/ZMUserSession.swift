@@ -276,6 +276,7 @@ public class ZMUserSession: NSObject {
 
         super.init()
 
+        earService?.delegate = self
         appLockController.delegate = self
 
         configureCaches()
