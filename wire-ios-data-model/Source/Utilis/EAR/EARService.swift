@@ -19,9 +19,20 @@
 import Foundation
 import LocalAuthentication
 
-public protocol EARServiceInterface {
+public protocol EARServiceInterface: AnyObject {
 
-    func generateKeys() throws -> Data
+    var delegate: EARServiceDelegate? { get set }
+
+    func enableEncryptionAtRest(
+        context: NSManagedObjectContext,
+        skipMigration: Bool
+    ) throws
+
+    func disableEncryptionAtRest(
+        context: NSManagedObjectContext,
+        skipMigration: Bool
+    ) throws
+
     func lockDatabase()
     func unlockDatabase(context: LAContext) throws
 
@@ -30,9 +41,17 @@ public protocol EARServiceInterface {
 
 }
 
+public protocol EARServiceDelegate: AnyObject {
+
+    func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void)
+
+}
+
 public class EARService: EARServiceInterface {
 
     // MARK: - Properties
+
+    public weak var delegate: EARServiceDelegate?
 
     private let accountID: UUID
     private let keyRepository: EARKeyRepositoryInterface
@@ -61,9 +80,75 @@ public class EARService: EARServiceInterface {
         databaseKeyDescription = .keyDescription(accountID: accountID)
     }
 
+    // MARK: - Enable / disable
+
+    public func enableEncryptionAtRest(
+        context: NSManagedObjectContext,
+        skipMigration: Bool = false
+    ) throws {
+        guard !context.encryptMessagesAtRest else {
+            return
+        }
+
+        try deleteExistingKeys()
+        let databaseKey = try generateKeys()
+
+        let enableEAR = { (context: NSManagedObjectContext) in
+            try context.enableEncryptionAtRest(
+                databaseKey: databaseKey,
+                skipMigration: skipMigration
+            )
+        }
+
+        if skipMigration {
+            try enableEAR(context)
+        } else {
+            delegate?.prepareForMigration { context in
+                try enableEAR(context)
+            }
+        }
+    }
+
+    public func disableEncryptionAtRest(
+        context: NSManagedObjectContext,
+        skipMigration: Bool = false
+    ) throws {
+        guard context.encryptMessagesAtRest else {
+            return
+        }
+
+        let databaseKey = context.databaseKey!
+        clearDatabaseKeyInAllContexts()
+
+        let disableEAR = { [weak self] (context: NSManagedObjectContext) in
+            guard let `self` = self else { return }
+            try context.disableEncryptionAtRest(
+                databaseKey: databaseKey,
+                skipMigration: skipMigration
+            )
+            try self.deleteExistingKeys()
+        }
+
+        if skipMigration {
+            try disableEAR(context)
+        } else {
+            delegate?.prepareForMigration { context in
+                try disableEAR(context)
+            }
+        }
+    }
+
     // MARK: - Keys
 
-    public func generateKeys() throws -> Data {
+    private func deleteExistingKeys() throws {
+        try keyRepository.deletePublicKey(description: primaryPublicKeyDescription)
+        try keyRepository.deletePrivateKey(description: primaryPrivateKeyDescription)
+        try keyRepository.deletePublicKey(description: secondaryPublicKeyDescription)
+        try keyRepository.deletePrivateKey(description: secondaryPrivateKeyDescription)
+        try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
+    }
+
+    private func generateKeys() throws -> VolatileData {
         let primaryPublicKey: SecKey
         let secondaryPublicKey: SecKey
         let databaseKey: Data
@@ -88,7 +173,7 @@ public class EARService: EARServiceInterface {
 
         do {
             let databaseKeyData = try KeychainManager.generateKey(numberOfBytes: 32)
-            databaseKey = try encryptDatabaseKey(databaseKey, publicKey: primaryPublicKey)
+            databaseKey = try encryptDatabaseKey(databaseKeyData, publicKey: primaryPublicKey)
         } catch {
             // TODO: log error
             throw error
@@ -114,7 +199,7 @@ public class EARService: EARServiceInterface {
             throw error
         }
 
-        return databaseKey
+        return VolatileData(from: databaseKey)
     }
 
     public func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
@@ -138,17 +223,12 @@ public class EARService: EARServiceInterface {
     // MARK: - Lock / unlock database
 
     public func lockDatabase() {
-        performInAllContexts {
-            $0.databaseKey = nil
-        }
+        clearDatabaseKeyInAllContexts()
     }
 
     public func unlockDatabase(context: LAContext) throws {
         let databaseKey = try fetchDecyptedDatabaseKey(context: context)
-
-        performInAllContexts {
-            $0.databaseKey = databaseKey
-        }
+        storeDatabaseKeyInAllContexts(databaseKey)
     }
 
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
@@ -156,6 +236,18 @@ public class EARService: EARServiceInterface {
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
         let databaseKeyData = try decryptDatabaseKey(encryptedDatabaseKeyData, privateKey: privateKey)
         return VolatileData(from: databaseKeyData)
+    }
+
+    private func storeDatabaseKeyInAllContexts(_ key: VolatileData) {
+        performInAllContexts {
+            $0.databaseKey = key
+        }
+    }
+
+    private func clearDatabaseKeyInAllContexts() {
+        performInAllContexts {
+            $0.databaseKey = nil
+        }
     }
 
     private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {
@@ -267,5 +359,19 @@ extension DatabaseEARKeyDescription {
             label: "database"
         )
     }
+
+}
+
+public struct EARPublicKeys {
+
+    public let primary: SecKey
+    public let secondary: SecKey
+
+}
+
+public struct EARPrivateKeys {
+
+    public let primary: SecKey?
+    public let secondary: SecKey
 
 }

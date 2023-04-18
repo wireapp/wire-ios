@@ -103,6 +103,22 @@ extension NSManagedObjectContext {
         }
     }
 
+    public func enableEncryptionAtRest(databaseKey: VolatileData, skipMigration: Bool = false) throws {
+        self.databaseKey = databaseKey
+        encryptMessagesAtRest = true
+
+        guard !skipMigration else { return }
+
+        do {
+            try migrateInstancesTowardEncryptionAtRest(type: ZMGenericMessageData.self)
+            try migrateInstancesTowardEncryptionAtRest(type: ZMClientMessage.self)
+            try migrateInstancesTowardEncryptionAtRest(type: ZMConversation.self)
+        } catch {
+            encryptMessagesAtRest = false
+            throw error
+        }
+    }
+
     /// Disables encryption at rest after successfully migrating the database.
     ///
     /// Depending on the size of the database, the migration may take a long time and will block the
@@ -132,6 +148,23 @@ extension NSManagedObjectContext {
             throw error
         }
     }
+
+    public func disableEncryptionAtRest(databaseKey: VolatileData, skipMigration: Bool = false) throws {
+        self.databaseKey = databaseKey
+        encryptMessagesAtRest = false
+
+        guard !skipMigration else { return }
+
+        do {
+            try migrateInstancesAwayFromEncryptionAtRest(type: ZMGenericMessageData.self)
+            try migrateInstancesAwayFromEncryptionAtRest(type: ZMClientMessage.self)
+            try migrateInstancesAwayFromEncryptionAtRest(type: ZMConversation.self)
+        } catch {
+            encryptMessagesAtRest = true
+            throw error
+        }
+    }
+
 
     private func migrateInstancesTowardEncryptionAtRest<T>(type: T.Type) throws
         where T: MigratableEntity {

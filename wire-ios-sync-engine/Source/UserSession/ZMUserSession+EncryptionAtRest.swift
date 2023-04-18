@@ -32,6 +32,7 @@ public protocol UserSessionEncryptionAtRestInterface {
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
 
     func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys)
+    func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void)
 
 }
 
@@ -50,6 +51,23 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// - Throws: `MigrationError` if it's not possible to start the migration.
 
     public func setEncryptionAtRest(enabled: Bool, skipMigration: Bool = false) throws {
+        earService.delegate = self
+
+        if enabled {
+            try earService.enableEncryptionAtRest(
+                context: managedObjectContext,
+                skipMigration: skipMigration
+            )
+        } else {
+            try earService.disableEncryptionAtRest(
+                context: managedObjectContext,
+                skipMigration: skipMigration
+            )
+        }
+
+        return
+
+
         guard enabled != encryptMessagesAtRest else { return }
 
         let encryptionKeys = try coreDataStack.encryptionKeysForSettingEncryptionAtRest(enabled: enabled)
@@ -101,6 +119,14 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         syncManagedObjectContext.performGroupedBlock {
             self.processEvents()
         }
+    }
+
+}
+
+extension ZMUserSession: EARServiceDelegate {
+
+    public func prepareForMigration(onReady: (NSManagedObjectContext) throws -> Void) {
+        delegate?.prepareForMigration(onReady: onReady)
     }
 
 }

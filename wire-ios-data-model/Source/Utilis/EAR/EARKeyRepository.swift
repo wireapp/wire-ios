@@ -25,9 +25,12 @@ public protocol EARKeyRepositoryInterface {
 
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey
+    func deletePublicKey(description: PublicEARKeyDescription) throws
     func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey
+    func deletePrivateKey(description: PrivateEARKeyDescription) throws
     func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws
     func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data
+    func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws
 
 }
 
@@ -47,10 +50,18 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
         return try KeychainManager.fetchItem(description)
     }
 
+    public func deletePublicKey(description: PublicEARKeyDescription) throws {
+        return try KeychainManager.deleteItem(description)
+    }
+
     // MARK: - Private keys
 
     public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         return try KeychainManager.fetchItem(description)
+    }
+
+    public func deletePrivateKey(description: PrivateEARKeyDescription) throws {
+        return try KeychainManager.deleteItem(description)
     }
 
     // MARK: - Datatbase keys
@@ -61,6 +72,10 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
 
     public func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
         return try KeychainManager.fetchItem(description)
+    }
+
+    public func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
+        return try KeychainManager.deleteItem(description)
     }
 
 }
