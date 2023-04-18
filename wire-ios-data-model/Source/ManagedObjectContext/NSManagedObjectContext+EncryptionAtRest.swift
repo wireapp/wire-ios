@@ -230,7 +230,7 @@ extension NSManagedObjectContext {
     }
 
     func encryptData(data: Data) throws -> (data: Data, nonce: Data) {
-        guard let key = encryptionKeys?.databaseKey else { throw EncryptionError.missingDatabaseKey }
+        guard let key = databaseKey else { throw EncryptionError.missingDatabaseKey }
         let context = contextData()
 
         do {
@@ -243,7 +243,7 @@ extension NSManagedObjectContext {
     }
 
     func decryptData(data: Data, nonce: Data) throws -> Data {
-        guard let key = encryptionKeys?.databaseKey else { throw EncryptionError.missingDatabaseKey }
+        guard let key = databaseKey else { throw EncryptionError.missingDatabaseKey }
         let context = contextData()
 
         do {
