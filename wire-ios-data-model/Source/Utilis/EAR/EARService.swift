@@ -47,6 +47,12 @@ public protocol EARServiceDelegate: AnyObject {
 
 }
 
+public enum EARServiceFailure: Error {
+
+    case cannotPerformMigration
+
+}
+
 public class EARService: EARServiceInterface {
 
     // MARK: - Properties
@@ -94,6 +100,7 @@ public class EARService: EARServiceInterface {
 
         try deleteExistingKeys()
         let databaseKey = try generateKeys()
+        storeDatabaseKeyInAllContexts(databaseKey)
 
         let enableEAR = { (context: NSManagedObjectContext) in
             try context.enableEncryptionAtRest(
@@ -105,11 +112,13 @@ public class EARService: EARServiceInterface {
         if skipMigration {
             WireLogger.ear.info("skipping migration")
             try enableEAR(context)
-        } else {
+        } else if let delegate = delegate {
             WireLogger.ear.info("preparing for migration")
-            delegate?.prepareForMigration { context in
+            delegate.prepareForMigration { context in
                 try enableEAR(context)
             }
+        } else {
+            throw EARServiceFailure.cannotPerformMigration
         }
     }
 
