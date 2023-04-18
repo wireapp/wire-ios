@@ -45,8 +45,8 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// the case that the migration fails, the sync context is reset to a clean state.
     ///
     /// - Parameters:
-    ///     - enabled: When **true**, messages will be encrypted at rest.
-    ///     - skipMigration: When **true**, existing messsages will not be migrated to be under encryption at rest. Defaults to **false**.
+    ///   - enabled: When **true**, messages will be encrypted at rest.
+    ///   - skipMigration: When **true**, existing messsages will not be migrated to be under encryption at rest. Defaults to **false**.
     ///
     /// - Throws: `MigrationError` if it's not possible to start the migration.
 
@@ -74,13 +74,27 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 
+    /// Whether encryption at rest is enabled.
+    ///
+    /// If `true` then sensitive data in the database should be encrypted with the
+    /// database key.
+
     public var encryptMessagesAtRest: Bool {
         return managedObjectContext.encryptMessagesAtRest
     }
 
+    /// Whether the database is currently locked.
+
     public var isDatabaseLocked: Bool {
         managedObjectContext.encryptMessagesAtRest && managedObjectContext.databaseKey == nil
     }
+
+    /// Register an observer for events when the database becomes locked or unlocked.
+    ///
+    /// - Parameters:
+    ///   - handler: the block that is invoked when the database lock changes.
+    ///
+    /// - Returns: an observer token to be retained.
 
     public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
         return NotificationInContext.addObserver(
