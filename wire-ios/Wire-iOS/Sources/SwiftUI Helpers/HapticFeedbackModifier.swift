@@ -18,24 +18,6 @@
 
 import SwiftUI
 
-struct HapticTapGestureViewModifier: ViewModifier {
-    var style: UINotificationFeedbackGenerator.FeedbackType
-
-    func body(content: Content) -> some View {
-        content.onTapGesture {
-            let feedback = UINotificationFeedbackGenerator()
-            feedback.prepare()
-            feedback.notificationOccurred(style)
-        }
-    }
-}
-
-extension View {
-    func hapticFeedback(_ feedbackType: UINotificationFeedbackGenerator.FeedbackType) -> some View {
-        self.modifier(HapticTapGestureViewModifier(style: feedbackType))
-    }
-}
-
 extension SwiftUI.Button {
 
     init(
