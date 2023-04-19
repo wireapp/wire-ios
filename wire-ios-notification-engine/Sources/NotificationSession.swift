@@ -312,7 +312,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     ) {
         eventDecoder.decryptAndStoreEvents(
             events,
-            publicKeys: earService.fetchPublicKeys(),
+            publicKeys: try? earService.fetchPublicKeys(),
             block: processDecodedEvents(_:)
         )
     }

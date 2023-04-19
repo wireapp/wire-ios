@@ -71,7 +71,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         _ event: ZMUpdateEvent,
         context: NSManagedObjectContext,
         index: Int64,
-        publicKeys: (primary: SecKey, secondary: SecKey)? = nil
+        publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
         guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
             return nil
@@ -144,7 +144,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     static func nextEventBatch(
         size: Int,
-        privateKeys: (primary: SecKey?, secondary: SecKey?),
+        privateKeys: EARPrivateKeys?,
         context: NSManagedObjectContext
     ) -> EventBatch {
         let storedEvents = nextEvents(context, batchSize: size)
@@ -156,7 +156,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     static func eventsFromStoredEvents(
         _ storedEvents: [StoredUpdateEvent],
-        privateKeys: (primary: SecKey?, secondary: SecKey?)
+        privateKeys: EARPrivateKeys?
     ) -> EventBatch {
         var result = EventBatch()
 
@@ -189,7 +189,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     private static func extractUpdateEvent(
         from storedEvent: StoredUpdateEvent,
-        privateKeys: (primary: SecKey?, secondary: SecKey?)
+        privateKeys: EARPrivateKeys?
     ) -> Swift.Result<ZMUpdateEvent, ExtractionFailure> {
         do {
             guard
@@ -270,7 +270,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     private static func decryptPayloadIfNeeded(
         storedEvent: StoredUpdateEvent,
-        privateKeys: (primary: SecKey?, secondary: SecKey?)
+        privateKeys: EARPrivateKeys?
     ) throws -> NSDictionary? {
         guard storedEvent.isEncrypted else {
             return storedEvent.payload
@@ -280,7 +280,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             throw DecryptionFailure.payloadMissing
         }
 
-        switch (storedEvent.isCallEvent, privateKeys.primary, privateKeys.secondary) {
+        switch (storedEvent.isCallEvent, privateKeys?.primary, privateKeys?.secondary) {
         case (true, _, let privateKey?):
             return try decrypt(
                 payload: encryptedPayload,

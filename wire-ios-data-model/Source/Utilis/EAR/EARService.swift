@@ -64,13 +64,13 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// Public keys are used to encrypt content.
 
-    func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)?
+    func fetchPublicKeys() throws -> EARPublicKeys
 
     /// Fetch all private keys.
     ///
     /// Private keys are used to decrypt context.
 
-    func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?)
+    func fetchPrivateKeys() throws -> EARPrivateKeys
 
 }
 
@@ -255,21 +255,34 @@ public class EARService: EARServiceInterface {
         return VolatileData(from: databaseKey)
     }
 
-    public func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)? {
+    public func fetchPublicKeys() throws -> EARPublicKeys {
         do {
             let primary = try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
             let secondary = try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
-            return (primary, secondary)
+
+            return EARPublicKeys(
+                primary: primary,
+                secondary: secondary
+            )
         } catch {
             WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
-            return nil
+            throw error
         }
     }
 
-    public func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
-        let primary = try? keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
-        let secondary = try? keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
-        return (primary, secondary)
+    public func fetchPrivateKeys() throws -> EARPrivateKeys {
+        do {
+            let primary = try? keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+            let secondary = try keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
+
+            return EARPrivateKeys(
+                primary: primary,
+                secondary: secondary
+            )
+        } catch {
+            WireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")
+            throw error
+        }
     }
 
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {

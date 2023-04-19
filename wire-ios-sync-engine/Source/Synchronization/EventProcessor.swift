@@ -82,11 +82,16 @@ class EventProcessor: UpdateEventProcessor {
         eventBuffer?.processAllEventsInBuffer()
 
         if syncContext.encryptMessagesAtRest {
-            Self.logger.info("trying to get EAR keys")
-            let privateKeys = earService.fetchPrivateKeys()
-            processStoredUpdateEvents(with: privateKeys)
+            do {
+                Self.logger.info("trying to get EAR keys")
+                let privateKeys = try earService.fetchPrivateKeys()
+                processStoredUpdateEvents(with: privateKeys)
+            } catch {
+                Self.logger.error("failed to fetch EAR keys: \(String(describing: error))")
+                return true
+            }
         } else {
-            processStoredUpdateEvents(with: (primary: nil, secondary: nil))
+            processStoredUpdateEvents()
         }
 
         return false
@@ -94,7 +99,7 @@ class EventProcessor: UpdateEventProcessor {
 
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         if ignoreBuffer || isReadyToProcessEvents {
-            let publicKeys = earService.fetchPublicKeys()
+            let publicKeys = try? earService.fetchPublicKeys()
 
             eventDecoder.decryptAndStoreEvents(
                 updateEvents,
@@ -120,7 +125,7 @@ class EventProcessor: UpdateEventProcessor {
         _ = processEventsIfReady()
     }
 
-    private func processStoredUpdateEvents(with privateKeys: (primary: SecKey?, secondary: SecKey?)) {
+    private func processStoredUpdateEvents(with privateKeys: EARPrivateKeys? = nil) {
         Self.logger.trace("process stored update events")
 
         eventDecoder.processStoredEvents(with: privateKeys) { [weak self] (decryptedUpdateEvents) in

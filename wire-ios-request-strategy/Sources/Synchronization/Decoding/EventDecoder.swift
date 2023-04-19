@@ -70,7 +70,7 @@ extension EventDecoder {
     ///   - events: Encrypted events
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        publicKeys: (primary: SecKey, secondary: SecKey)?,
+        publicKeys: EARPublicKeys?,
         block: ConsumeBlock? = nil
     ) {
         var lastIndex: Int64?
@@ -108,7 +108,7 @@ extension EventDecoder {
     ///   - block: Event consume block which is called once for every stored event.
 
     public func processStoredEvents(
-        with privateKeys: (primary: SecKey?, secondary: SecKey?),
+        with privateKeys: EARPrivateKeys?,
         _ block: ConsumeBlock
     ) {
         process(
@@ -128,7 +128,7 @@ extension EventDecoder {
     private func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         startingAtIndex startIndex: Int64,
-        publicKeys: (primary: SecKey, secondary: SecKey)?
+        publicKeys: EARPublicKeys?
     ) -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
@@ -169,7 +169,7 @@ extension EventDecoder {
     // This method terminates when no more events are in the database.
 
     private func process(
-        with privateKeys: (primary: SecKey?, secondary: SecKey?),
+        with privateKeys: EARPrivateKeys?,
         _ consumeBlock: ConsumeBlock,
         firstCall: Bool
     ) {
@@ -189,7 +189,7 @@ extension EventDecoder {
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
-    private func fetchNextEventsBatch(with privateKeys: (primary: SecKey?, secondary: SecKey?)) -> EventsWithStoredEvents {
+    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?) -> EventsWithStoredEvents {
         var (storedEvents, updateEvents)  = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         eventMOC.performGroupedBlockAndWait {
