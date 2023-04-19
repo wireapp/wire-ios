@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import LocalAuthentication
 
 public extension ContextProvider {
 
