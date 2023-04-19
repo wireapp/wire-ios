@@ -19,8 +19,7 @@
 import Foundation
 import LocalAuthentication
 
-// TODO: make automockable
-
+// sourcery: AutoMockable
 public protocol EARKeyRepositoryInterface {
 
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
