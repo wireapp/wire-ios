@@ -239,12 +239,20 @@ public class EARService: EARServiceInterface {
     // MARK: - Lock / unlock database
 
     public func lockDatabase() {
+        WireLogger.ear.info("locking database")
         clearDatabaseKeyInAllContexts()
     }
 
     public func unlockDatabase(context: LAContext) throws {
-        let databaseKey = try fetchDecyptedDatabaseKey(context: context)
-        storeDatabaseKeyInAllContexts(databaseKey)
+        do {
+            WireLogger.ear.info("unlocking database")
+            let databaseKey = try fetchDecyptedDatabaseKey(context: context)
+            storeDatabaseKeyInAllContexts(databaseKey)
+        } catch {
+            WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
+            throw error
+        }
+
     }
 
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
