@@ -261,35 +261,15 @@ public class EARService: EARServiceInterface {
             let secondary = try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
             return (primary, secondary)
         } catch {
-            // TODO: log
+            WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
             return nil
         }
     }
 
-    // TODO: allow adding a context
     public func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?) {
         let primary = try? keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
         let secondary = try? keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
         return (primary, secondary)
-    }
-
-    // MARK: - Lock / unlock database
-
-    public func lockDatabase() {
-        WireLogger.ear.info("locking database")
-        clearDatabaseKeyInAllContexts()
-    }
-
-    public func unlockDatabase(context: LAContext) throws {
-        do {
-            WireLogger.ear.info("unlocking database")
-            let databaseKey = try fetchDecyptedDatabaseKey(context: context)
-            storeDatabaseKeyInAllContexts(databaseKey)
-        } catch {
-            WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
-            throw error
-        }
-
     }
 
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
@@ -299,24 +279,13 @@ public class EARService: EARServiceInterface {
         return VolatileData(from: databaseKeyData)
     }
 
-    private func storeDatabaseKeyInAllContexts(_ key: VolatileData) {
-        performInAllContexts {
-            $0.databaseKey = key
-        }
+    private func fetchPrimaryPrivateKey() throws -> SecKey {
+        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
     }
 
-    private func clearDatabaseKeyInAllContexts() {
-        performInAllContexts {
-            $0.databaseKey = nil
-        }
-    }
+    private func fetchEncryptedDatabaseKey() throws -> Data {
+        return try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
 
-    private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {
-        for context in databaseContexts {
-            context.performAndWait {
-                block(context)
-            }
-        }
     }
 
     private func encryptDatabaseKey(
@@ -358,67 +327,42 @@ public class EARService: EARServiceInterface {
         return .eciesEncryptionCofactorX963SHA256AESGCM
     }
 
+    // MARK: - Lock / unlock database
 
-    private func fetchPrimaryPrivateKey() throws -> SecKey {
-        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+    public func lockDatabase() {
+        WireLogger.ear.info("locking database")
+        clearDatabaseKeyInAllContexts()
     }
 
-    private func fetchEncryptedDatabaseKey() throws -> Data {
-        return try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
-
+    public func unlockDatabase(context: LAContext) throws {
+        do {
+            WireLogger.ear.info("unlocking database")
+            let databaseKey = try fetchDecyptedDatabaseKey(context: context)
+            storeDatabaseKeyInAllContexts(databaseKey)
+        } catch {
+            WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
+            throw error
+        }
     }
 
-}
-
-extension PublicEARKeyDescription {
-
-    static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
-        return PublicEARKeyDescription(
-            accountID: accountID,
-            label: "primary-public"
-        )
+    private func storeDatabaseKeyInAllContexts(_ key: VolatileData) {
+        performInAllContexts {
+            $0.databaseKey = key
+        }
     }
 
-    static func secondaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
-        return PublicEARKeyDescription(
-            accountID: accountID,
-            label: "secondary-public"
-        )
+    private func clearDatabaseKeyInAllContexts() {
+        performInAllContexts {
+            $0.databaseKey = nil
+        }
     }
 
-}
-
-extension PrivateEARKeyDescription {
-
-    static func primaryKeyDescription(
-        accountID: UUID,
-        context: LAContext? = nil,
-        authenticationPrompt: String? = nil
-    ) -> PrivateEARKeyDescription {
-        return PrivateEARKeyDescription(
-            accountID: accountID,
-            label: "primary-private",
-            context: context,
-            prompt: authenticationPrompt
-        )
-    }
-
-    static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
-        return PrivateEARKeyDescription(
-            accountID: accountID,
-            label: "secondary-private"
-        )
-    }
-
-}
-
-extension DatabaseEARKeyDescription {
-
-    static func keyDescription(accountID: UUID) -> DatabaseEARKeyDescription {
-        return DatabaseEARKeyDescription(
-            accountID: accountID,
-            label: "database"
-        )
+    private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {
+        for context in databaseContexts {
+            context.performAndWait {
+                block(context)
+            }
+        }
     }
 
 }

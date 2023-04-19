@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import LocalAuthentication
 
 /// A description of a private encryption at rest key.
 ///
@@ -65,6 +66,30 @@ public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoc
     func setQuery<T>(value: T) -> [CFString: Any] {
         // Private keys are created stored in the Secure Enclave.
         return [:]
+    }
+
+}
+
+extension PrivateEARKeyDescription {
+
+    static func primaryKeyDescription(
+        accountID: UUID,
+        context: LAContext? = nil,
+        authenticationPrompt: String? = nil
+    ) -> PrivateEARKeyDescription {
+        return PrivateEARKeyDescription(
+            accountID: accountID,
+            label: "primary-private",
+            context: context,
+            prompt: authenticationPrompt
+        )
+    }
+
+    static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
+        return PrivateEARKeyDescription(
+            accountID: accountID,
+            label: "secondary-private"
+        )
     }
 
 }

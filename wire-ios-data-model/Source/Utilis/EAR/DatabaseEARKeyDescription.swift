@@ -62,3 +62,14 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
     }
 
 }
+
+extension DatabaseEARKeyDescription {
+
+    static func keyDescription(accountID: UUID) -> DatabaseEARKeyDescription {
+        return DatabaseEARKeyDescription(
+            accountID: accountID,
+            label: "database"
+        )
+    }
+
+}

@@ -62,3 +62,21 @@ public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoco
     }
 
 }
+
+extension PublicEARKeyDescription {
+
+    static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
+        return PublicEARKeyDescription(
+            accountID: accountID,
+            label: "primary-public"
+        )
+    }
+
+    static func secondaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
+        return PublicEARKeyDescription(
+            accountID: accountID,
+            label: "secondary-public"
+        )
+    }
+
+}
