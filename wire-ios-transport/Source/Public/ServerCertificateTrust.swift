@@ -85,7 +85,9 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     }
 
     private func verifyServerTrustWithPinnedKeys(_ serverTrust: SecTrust, _ pinnedKeys: [SecKey]) -> Bool {
-        guard SecTrustEvaluateWithError(serverTrust, nil) else {
+        var someError: CFError?
+        guard SecTrustEvaluateWithError(serverTrust, &someError) else {
+            WireLogger.backend.error(someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys unknown error")
             return false
         }
 

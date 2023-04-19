@@ -30,6 +30,7 @@ class BackendEnvironmentTests: XCTestCase {
         super.setUp()
         continueAfterFailure = false
         let mainBundle = Bundle(for: type(of: self))
+        // Note: this is a copy of public config: https://github.com/wireapp/wire-ios-build-configuration/blob/master/Backend.bundle/production.json
         guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle") else { XCTFail("Could not find Backend.bundle"); return }
         guard let backendBundle = Bundle(path: backendBundlePath) else { XCTFail("Could not load Backend.bundle"); return }
 
@@ -86,7 +87,7 @@ class BackendEnvironmentTests: XCTestCase {
         XCTAssertEqual(environment.blackListURL, URL(string: "https://clientblacklist.wire.com/prod")!)
         XCTAssertEqual(environment.websiteURL, URL(string: "https://wire.com")!)
         XCTAssertEqual(environment.teamsURL, URL(string: "https://teams.wire.com")!)
-        XCTAssertEqual(environment.accountsURL, URL(string: "https://accounts.wire.com")!)
+        XCTAssertEqual(environment.accountsURL, URL(string: "https://account.wire.com")!)
 
     }
 
@@ -139,8 +140,8 @@ class BackendEnvironmentTests: XCTestCase {
         guard let data = trust.trustData.first else { XCTFail( ); return }
 
         let hosts = Set(data.hosts.map(\.value))
-        XCTAssertEqual(hosts.count, 5)
-        XCTAssertEqual(hosts, Set(["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com", "www.wire.com", "wire.com"]))
+        XCTAssertEqual(hosts.count, 4)
+        XCTAssertEqual(hosts, Set(["clientblacklist.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com", "prod-nginz-https.wire.com"]))
     }
 
     func testThatWeCanWorkWithoutLoadingTrust() {
