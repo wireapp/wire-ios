@@ -35,7 +35,7 @@ platform :ios do
     after_all do |lane|
         begin
             delete_keychain if is_running_on_ci
-        rescue =>
+        rescue
             puts "No keychain found, skipping deletion..."
         end
     end
