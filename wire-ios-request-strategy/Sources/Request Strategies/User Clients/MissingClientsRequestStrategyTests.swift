@@ -403,7 +403,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     func testThatItRemovesOtherMissingClientsEvenIfOneOfThemHasANilValue() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
-            let payload : [ String: [String: Any]] = [
+            let payload: [ String: [String: Any]] = [
                 self.otherClient.user!.remoteIdentifier!.transportString(): [
                         self.otherClient.remoteIdentifier!: [
                             "id": 3, "key": self.validPrekey
@@ -428,7 +428,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let otherClient2 = self.createClient(user: self.otherUser)
-            let payload : [ String: [String: AnyObject]] = [
+            let payload: [ String: [String: AnyObject]] = [
                 self.otherUser.remoteIdentifier!.transportString(): [
                     self.otherClient.remoteIdentifier!: NSNull(),
                     otherClient2.remoteIdentifier!: NSNull()]

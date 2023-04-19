@@ -19,19 +19,19 @@
 import Foundation
 import WireUtilities
 
-@objc public enum ZMUpdateEventsPolicy : Int {
+@objc public enum ZMUpdateEventsPolicy: Int {
     case buffer /// store live events in a buffer, to be processed later
     case ignore /// process events received through /notifications or /conversation/.../events
     case process /// process events received through the push channel
 }
 
-@objc public enum ZMUpdateEventSource : Int {
+@objc public enum ZMUpdateEventSource: Int {
     case webSocket
     case pushNotification
     case download
 }
 
-@objc public enum ZMUpdateEventType : UInt, CaseIterable {
+@objc public enum ZMUpdateEventType: UInt, CaseIterable {
     case unknown = 0
     case conversationAssetAdd = 1
     case conversationConnectRequest = 2
@@ -205,7 +205,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
 
 @objcMembers open class ZMUpdateEvent: NSObject {
 
-    open var payload: [AnyHashable : Any]
+    open var payload: [AnyHashable: Any]
     open var type: ZMUpdateEventType
     open var source: ZMUpdateEventSource
     open var uuid: UUID?
@@ -254,8 +254,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
         return debugInformationArray.joined(separator: "\n")
     }
 
-
-    public init?(uuid: UUID?, payload: [AnyHashable : Any]?, transient: Bool, decrypted: Bool, source: ZMUpdateEventSource) {
+    public init?(uuid: UUID?, payload: [AnyHashable: Any]?, transient: Bool, decrypted: Bool, source: ZMUpdateEventSource) {
         guard let payload = payload else { return nil }
         guard let payloadType = payload["type"] as? String else { return nil }
 
@@ -274,7 +273,6 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
     open class func eventsArray(fromPushChannelData transportData: ZMTransportData) -> [ZMUpdateEvent]? {
         return self.eventsArray(from: transportData, source: .webSocket)
     }
-
 
     /// Returns an array of @c ZMUpdateEvent from the given push channel data, the source will be set to @c
     /// ZMUpdateEventSourceWebSocket, if a non-nil @c NSUUID is given for the @c pushStartingAt parameter, all
@@ -300,7 +298,6 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
         return events
     }
 
-
     @objc(eventFromEventStreamPayload:uuid:)
     public static func eventFromEventStreamPayload(_ payload: ZMTransportData, uuid: UUID?) -> ZMUpdateEvent? {
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
@@ -311,11 +308,10 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
         let dictionary = payload.asDictionary()
         // Some payloads are wrapped inside "event" key (e.g. removing bot from conversation)
         // Check for this before
-        let innerPayload = (dictionary?["event"] as? [AnyHashable : Any]) ?? dictionary
+        let innerPayload = (dictionary?["event"] as? [AnyHashable: Any]) ?? dictionary
 
         self.init(uuid: uuid, payload: innerPayload, transient: false, decrypted: false, source: .download)
     }
-
 
     /// Creates an update event that was encrypted and it's now decrypted
     open class func decryptedUpdateEvent(fromEventStreamPayload payload: ZMTransportData, uuid: UUID?, transient: Bool, source: ZMUpdateEventSource) -> ZMUpdateEvent? {
@@ -346,7 +342,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
 extension ZMUpdateEvent {
     open override var description: String {
         let uuidDescription = uuid?.transportString() ?? "<no uuid>"
-        return "<\(Swift.type(of:self))> \(uuidDescription) \(payload) \n \(debugInformation)"
+        return "<\(Swift.type(of: self))> \(uuidDescription) \(payload) \n \(debugInformation)"
     }
 }
 

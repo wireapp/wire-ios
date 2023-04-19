@@ -29,7 +29,7 @@ protocol PushNotificationStrategyDelegate: AnyObject {
 final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, UpdateEventProcessor {
 
     // MARK: - Properties
-    
+
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var moc: NSManagedObjectContext!
@@ -52,7 +52,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
-       
+
         sync = NotificationStreamSync(
             moc: managedObjectContext,
             notificationsTracker: notificationsTracker,
@@ -65,20 +65,20 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     }
 
     // MARK: - Methods
-    
+
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return nextRequest(for: apiVersion)
     }
-    
+
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard isFetchingStreamForAPNS else { return nil }
         return requestGenerators.nextRequest(for: apiVersion)
     }
-    
+
     public var requestGenerators: [ZMRequestGenerator] {
            return [sync]
        }
-    
+
     public var isFetchingStreamForAPNS: Bool {
         return self.pushNotificationStatus.hasEventsToFetch
     }
@@ -112,9 +112,11 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
+        WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
+
         var eventIds: [UUID] = []
         var parsedEvents: [ZMUpdateEvent] = []
-        var latestEventId: UUID? = nil
+        var latestEventId: UUID?
 
         for event in events {
             event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
@@ -136,10 +138,8 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
         }
     }
-    
+
     public func failedFetchingEvents() {
         pushNotificationStatus.didFailToFetchEvents()
     }
 }
-
-

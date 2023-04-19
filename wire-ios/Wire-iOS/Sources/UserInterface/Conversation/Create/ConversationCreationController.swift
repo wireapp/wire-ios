@@ -98,7 +98,6 @@ final class ConversationCreationController: UIViewController {
 
     private let selfUser: UserType
     static let mainViewHeight: CGFloat = 56
-    fileprivate let colorSchemeVariant = ColorScheme.default.variant
 
     private let collectionViewController = SectionCollectionViewController()
 

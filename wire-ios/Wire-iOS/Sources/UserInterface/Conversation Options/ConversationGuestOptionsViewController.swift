@@ -20,11 +20,14 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class ConversationGuestOptionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SpinnerCapable, ConversationGuestOptionsViewModelDelegate {
+final class ConversationGuestOptionsViewController: UIViewController,
+                                                    UITableViewDelegate,
+                                                    UITableViewDataSource,
+                                                    SpinnerCapable,
+                                                    ConversationGuestOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
-    private let variant: ColorSchemeVariant
 
     var dismissSpinner: SpinnerCompletion?
 
@@ -38,14 +41,12 @@ final class ConversationGuestOptionsViewController: UIViewController, UITableVie
             userSession: userSession
         )
         self.init(
-            viewModel: .init(configuration: configuration),
-            variant: ColorScheme.default.variant
+            viewModel: .init(configuration: configuration)
         )
     }
 
-    init(viewModel: ConversationGuestOptionsViewModel, variant: ColorSchemeVariant) {
+    init(viewModel: ConversationGuestOptionsViewModel) {
         self.viewModel = viewModel
-        self.variant = variant
         super.init(nibName: nil, bundle: nil)
         setupViews()
         createConstraints()
@@ -162,7 +163,7 @@ final class ConversationGuestOptionsViewController: UIViewController, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: row.cellType.reuseIdentifier, for: indexPath) as! CellConfigurationConfigurable
-        cell.configure(with: row, variant: variant)
+        cell.configure(with: row)
         return cell as! UITableViewCell
     }
 

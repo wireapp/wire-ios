@@ -164,9 +164,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func recreateSharingSession(account: Account?) throws {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-            let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
-            let accountIdentifier = account?.userIdentifier
-            else { return }
+              let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
+              let accountIdentifier = account?.userIdentifier
+        else { return }
 
         let legacyConfig = AppLockController.LegacyConfig.fromBundle()
 
@@ -316,8 +316,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .error(let error):
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
-                if let errorDescription = (error as? UnsentSendableError )?.errorDescription {
-                    let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription)
+                
+                if let errorDescription = (error as? UnsentSendableError)?.errorDescription {
+                    let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription) { _ in
+                        self.extensionContext?.completeRequest(returningItems: [])
+                    }
 
                     self.present(alert, animated: true) {
                         self.popConfigurationViewController()
@@ -460,7 +463,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
             guard let `self` = self,
-                self.localAuthenticationStatus == .granted else { return }
+                  self.localAuthenticationStatus == .granted else { return }
 
             self.showChooseConversation()
         }
@@ -560,7 +563,7 @@ extension ShareExtensionViewController {
 
             DispatchQueue.main.async {
                 if case .granted = result, let context = context as? LAContext {
-                  try? self.sharingSession?.unlockDatabase(with: context)
+                    try? self.sharingSession?.unlockDatabase(with: context)
                 }
 
                 self.authenticationEvaluated(with: result, completion: completion)

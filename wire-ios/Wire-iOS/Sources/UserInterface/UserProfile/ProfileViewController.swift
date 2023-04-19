@@ -55,6 +55,7 @@ final class ProfileViewController: UIViewController {
     private let incomingRequestFooter: IncomingRequestFooterView = IncomingRequestFooterView()
     private let usernameDetailsView: UserNameDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
+    private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
 
     private let profileTitleView: ProfileTitleView = ProfileTitleView()
 
@@ -157,10 +158,6 @@ final class ProfileViewController: UIViewController {
         presentAlert(controller, targetView: targetView)
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ColorScheme.default.statusBarStyle
-    }
-
     override func loadView() {
         super.loadView()
 
@@ -250,6 +247,7 @@ final class ProfileViewController: UIViewController {
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
         [usernameDetailsView, securityLevelView, tabsView, profileFooterView, incomingRequestFooter].prepareForLayout()
+        let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 
         NSLayoutConstraint.activate([
             usernameDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -273,7 +271,10 @@ final class ProfileViewController: UIViewController {
 
             incomingRequestFooter.bottomAnchor.constraint(equalTo: profileFooterView.topAnchor),
             incomingRequestFooter.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            incomingRequestFooter.trailingAnchor.constraint(equalTo: view.trailingAnchor) ])
+            incomingRequestFooter.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            incomingRequestFooterBottomConstraint
+        ])
+        self.incomingRequestFooterBottomConstraint = incomingRequestFooterBottomConstraint
     }
 }
 
@@ -527,6 +528,7 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
 
         profileFooterView.delegate = self
         profileFooterView.isHidden = actions.isEmpty
+        incomingRequestFooterBottomConstraint?.priority = actions.isEmpty ? .required : .defaultLow
         profileFooterView.configure(with: actions)
         view.bringSubviewToFront(profileFooterView)
 
