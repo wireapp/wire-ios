@@ -70,7 +70,11 @@ final class ProfileHeaderViewController: UIViewController {
     var isAdminRole: Bool {
         didSet {
             groupRoleIndicator.isHidden = !self.isAdminRole
-            groupRoleIndicator.isHidden ? groupRoleIndicator.fadeOut() : groupRoleIndicator.fadeIn()
+            if groupRoleIndicator.isHidden {
+                stackView.subviews.
+            } else {
+                groupRoleIndicator.fadeOut() : groupRoleIndicator.fadeIn()
+            }
             animateUserImageView()
         }
     }
@@ -260,12 +264,12 @@ final class ProfileHeaderViewController: UIViewController {
         if groupRoleIndicator.isHidden {
             topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 14)
             UIView.animate(withDuration: 0.4) {
-                self.view.layoutIfNeeded()
+                self.view.superview?.layoutIfNeeded()
             }
         } else {
             topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 24)
             UIView.animate(withDuration: 0.4) {
-                self.view.layoutIfNeeded()
+                self.view.superview?.layoutIfNeeded()
             }
         }
     }
