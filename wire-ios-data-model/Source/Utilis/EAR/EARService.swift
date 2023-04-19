@@ -19,29 +19,66 @@
 import Foundation
 import LocalAuthentication
 
+/// An object that provides encryption at rest services.
+
 public protocol EARServiceInterface: AnyObject {
 
     var delegate: EARServiceDelegate? { get set }
+
+    /// Enable encryption at rest.
+    ///
+    /// - Parameters:
+    ///   - context: a database context in which to perform migrations.
+    ///   - skipMigration: whethr migration of existing database should be performed.
 
     func enableEncryptionAtRest(
         context: NSManagedObjectContext,
         skipMigration: Bool
     ) throws
 
+    /// Disable encryption at rest.
+    ///
+    /// - Parameters:
+    ///   - context: a database context in which to perform migrations.
+    ///   - skipMigration: whethr migration of existing database should be performed.
+
     func disableEncryptionAtRest(
         context: NSManagedObjectContext,
         skipMigration: Bool
     ) throws
 
+    /// Lock the database.
+    ///
+    /// Database content can not be decrypted until the database is unlocked.
+
     func lockDatabase()
+
+    /// Unlock the database.
+    ///
+    /// - Parameters:
+    ///   - context: a user authenticated context.
+
     func unlockDatabase(context: LAContext) throws
 
+    /// Fetch all public keys.
+    ///
+    /// Public keys are used to encrypt content.
+
     func fetchPublicKeys() -> (primary: SecKey, secondary: SecKey)?
+
+    /// Fetch all private keys.
+    ///
+    /// Private keys are used to decrypt context.
+
     func fetchPrivateKeys() -> (primary: SecKey?, secondary: SecKey?)
 
 }
 
 public protocol EARServiceDelegate: AnyObject {
+
+    /// Prepare for the migration of existing database content.
+    ///
+    /// When the migration can be started, invoke the `onReady` closure.
 
     func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void)
 
