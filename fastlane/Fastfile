@@ -64,12 +64,24 @@ platform :ios do
     end
 
     def download_distribution_certificate_and_profiles
-        match(
-            readonly: true,
-            type: "appstore",
-            skip_provisioning_profiles: true,
-            app_identifier: []
-        )
+        if is_running_on_ci 
+            match(
+                git_url: "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-certificates.git",
+                readonly: true,
+                type: "appstore",
+                skip_provisioning_profiles: true,
+                app_identifier: []
+            )
+        else
+            match(
+                readonly: true,
+                type: "appstore",
+                skip_provisioning_profiles: true,
+                app_identifier: []
+            )
+        end
+
+
         app_bundle_id = get_xcconfig_value(
             path: '../wire-ios/Configuration/Release.xcconfig',
             name: 'WIRE_BUNDLE_ID'
