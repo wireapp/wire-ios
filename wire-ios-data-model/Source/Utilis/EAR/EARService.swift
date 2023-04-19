@@ -74,7 +74,7 @@ public class EARService: EARServiceInterface {
     public init(
         accountID: UUID,
         keyRepository: EARKeyRepositoryInterface = EARKeyRepository(),
-        databaseContexts: [NSManagedObjectContext]
+        databaseContexts: NSManagedObjectContext...
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
