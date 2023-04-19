@@ -18,33 +18,39 @@
 
 import SwiftUI
 
-func withFeedback(
-    _ style: UINotificationFeedbackGenerator.FeedbackType,
-    _ action: @escaping () -> Void
-) -> () -> Void {
-    { () in
-        let feedback = UINotificationFeedbackGenerator()
-        feedback.prepare()
-        feedback.notificationOccurred(style)
-        action()
+struct HapticTapGestureViewModifier: ViewModifier {
+    var style: UINotificationFeedbackGenerator.FeedbackType
+
+    func body(content: Content) -> some View {
+        content.onTapGesture {
+            let feedback = UINotificationFeedbackGenerator()
+            feedback.prepare()
+            feedback.notificationOccurred(style)
+        }
     }
 }
 
-struct HapticTapGestureViewModifier: ViewModifier {
-    var style: UINotificationFeedbackGenerator.FeedbackType
-    var action: () -> Void
-
-    func body(content: Content) -> some View {
-        content.onTapGesture(perform: withFeedback(self.style, self.action))
+extension View {
+    func hapticFeedback(_ feedbackType: UINotificationFeedbackGenerator.FeedbackType) -> some View {
+        self.modifier(HapticTapGestureViewModifier(style: feedbackType))
     }
 }
 
 extension SwiftUI.Button {
+
     init(
-        _ style: UINotificationFeedbackGenerator.FeedbackType,
+        hapticFeedbackStyle: UINotificationFeedbackGenerator.FeedbackType,
         action: @escaping () -> Void,
         @ViewBuilder label: () -> Label
     ) {
-        self.init(action: withFeedback(style, action), label: label)
+        self.init(
+            action: {
+                let feedback = UINotificationFeedbackGenerator()
+                feedback.prepare()
+                feedback.notificationOccurred(hapticFeedbackStyle)
+                action()
+            },
+            label: label
+        )
     }
 }
