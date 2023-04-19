@@ -154,43 +154,41 @@ extension String: LogConvertible {
 
 public extension WireLogger {
 
+    /// For logs related to any core crypto related flow.
+  
+    static let coreCrypto = WireLogger(tag: "core-crypto")
+
+    /// For logs related to any proteus related flow.
+
     static let proteus = WireLogger(tag: "proteus")
+
+    /// For logs related to any mls related flow.
+
+    static let mls = WireLogger(tag: "mls")
+
+    /// For logs related to the share extension.
+
     static let shareExtension = WireLogger(tag: "share-extension")
-    static let notifications = WireLogger(tag: "notifications")
-    static let calling = WireLogger(tag: "calling")
+
+    /// For logs related to messaging flow.
+
     static let messaging = WireLogger(tag: "messaging")
 
-}
+    /// For logs related to the backend environment.
 
-public extension WireLogger {
+    static let environment = WireLogger(tag: "environment")
 
-  /// For logs related to any core crypto related flow.
-  
-  static let coreCrypto = WireLogger(tag: "core-crypto")
+    /// For logs related to update events
 
-  /// For logs related to any proteus related flow.
+    static let updateEvent = WireLogger(tag: "update-event")
 
-  static let proteus = WireLogger(tag: "proteus")
+    /// For logs related to performance
+    static let performance = WireLogger(tag: "performance")
 
-  /// For logs related to any mls related flow.
+    /// For logs related to notifications
+    static let notifications = WireLogger(tag: "notifications")
 
-  static let mls = WireLogger(tag: "mls")
+    /// For logs related to calling
+    static let calling = WireLogger(tag: "calling")
 
-  /// For logs related to any mls related flow.
-  static let shareExtension = WireLogger(tag: "share-extension")
-
-  /// For logs related to messaging flow.
-
-  static let messaging = WireLogger(tag: "messaging")
-
-  /// For logs related to the backend environment.
-
-  static let environment = WireLogger(tag: "environment")
-
-  /// For logs related to update events
-
-  static let updateEvent = WireLogger(tag: "update-event")
-
-  /// For logs related to performance
-  static let performance = WireLogger(tag: "performance")
 }
