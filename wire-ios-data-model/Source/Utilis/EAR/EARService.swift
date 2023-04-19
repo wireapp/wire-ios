@@ -255,14 +255,13 @@ public class EARService: EARServiceInterface {
         return VolatileData(from: databaseKey)
     }
 
+    // MARK: - Public keys
+
     public func fetchPublicKeys() throws -> EARPublicKeys {
         do {
-            let primary = try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
-            let secondary = try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
-
             return EARPublicKeys(
-                primary: primary,
-                secondary: secondary
+                primary: try fetchPrimaryPublicKey(),
+                secondary: try fetchSecondaryPublicKey()
             )
         } catch {
             WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
@@ -270,20 +269,37 @@ public class EARService: EARServiceInterface {
         }
     }
 
+    private func fetchPrimaryPublicKey() throws -> SecKey {
+        return try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
+    }
+
+    private func fetchSecondaryPublicKey() throws -> SecKey {
+        return try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
+    }
+
+    // MARK: - Private keys
+
     public func fetchPrivateKeys() throws -> EARPrivateKeys {
         do {
-            let primary = try? keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
-            let secondary = try keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
-
             return EARPrivateKeys(
-                primary: primary,
-                secondary: secondary
+                primary: try? fetchPrimaryPrivateKey(),
+                secondary: try fetchSecondaryPrivateKey()
             )
         } catch {
             WireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")
             throw error
         }
     }
+
+    private func fetchPrimaryPrivateKey() throws -> SecKey {
+        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+    }
+
+    private func fetchSecondaryPrivateKey() throws -> SecKey {
+        return try keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
+    }
+
+    // MARK: - Database key
 
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
         let privateKey = try fetchPrimaryPrivateKey()
@@ -292,14 +308,12 @@ public class EARService: EARServiceInterface {
         return VolatileData(from: databaseKeyData)
     }
 
-    private func fetchPrimaryPrivateKey() throws -> SecKey {
-        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
-    }
-
     private func fetchEncryptedDatabaseKey() throws -> Data {
         return try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
 
     }
+
+    // MARK: - Encrypt / decrypt
 
     private func encryptDatabaseKey(
         _ databaseKey: Data,
