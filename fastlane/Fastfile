@@ -27,7 +27,7 @@ platform :ios do
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
-                File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64()) }
+                File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64(encoded_key)) }
             end
         end
     end
