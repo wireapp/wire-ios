@@ -86,7 +86,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// Whether the database is currently locked.
 
     public var isDatabaseLocked: Bool {
-        managedObjectContext.encryptMessagesAtRest && managedObjectContext.databaseKey == nil
+        return managedObjectContext.isLocked
     }
 
     /// Register an observer for events when the database becomes locked or unlocked.

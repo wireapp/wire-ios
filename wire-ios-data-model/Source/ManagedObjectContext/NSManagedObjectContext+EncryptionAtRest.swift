@@ -55,6 +55,11 @@ extension Sequence where Element: NSManagedObject {
 
 extension NSManagedObjectContext {
 
+    public var isLocked: Bool {
+        guard encryptMessagesAtRest else { return false }
+        return databaseKey == nil
+    }
+
     // MARK: - Migration
 
     enum MigrationError: LocalizedError {
@@ -164,7 +169,6 @@ extension NSManagedObjectContext {
             throw error
         }
     }
-
 
     private func migrateInstancesTowardEncryptionAtRest<T>(type: T.Type) throws
         where T: MigratableEntity {
