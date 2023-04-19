@@ -81,8 +81,8 @@ platform :ios do
             )
         end
 
-        puts `ls -la ./..`
-        puts `ls -la .`
+        puts `ls -la ./../wire-ios`
+        puts `ls -la ./../wire-ios/Configuration`
         
         app_bundle_id = get_xcconfig_value(
             path: '../wire-ios/Configuration/Release.xcconfig',
