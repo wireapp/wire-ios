@@ -39,7 +39,14 @@ class EventProcessor: UpdateEventProcessor {
     public var eventConsumers: [ZMEventConsumer] = []
 
     var isReadyToProcessEvents: Bool {
-        return !syncStatus.isSyncing
+        // Only process events once we've finished fetching events.
+        guard !syncStatus.isSyncing else { return false }
+
+        // If the database is locked, then we won't be able to process events
+        // that require writes to the database.
+        guard !syncContext.isLocked else { return false }
+
+        return true
     }
 
     // MARK: Life Cycle
