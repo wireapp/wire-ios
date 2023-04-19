@@ -93,6 +93,8 @@ public class NotificationSession {
     private let transportSession: ZMTransportSession
     private let coreDataStack: CoreDataStack
     private let operationLoop: RequestGeneratingOperationLoop
+    private let eventDecoder: EventDecoder
+    private let earService: EARServiceInterface
 
     public let accountIdentifier: UUID
 
@@ -178,8 +180,7 @@ public class NotificationSession {
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
 
         let pushNotificationStrategy = PushNotificationStrategy(
-            withManagedObjectContext: coreDataStack.syncContext,
-            eventContext: coreDataStack.eventContext,
+            syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             notificationsTracker: notificationsTracker
@@ -217,7 +218,8 @@ public class NotificationSession {
         applicationStatusDirectory: ApplicationStatusDirectory,
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
-        pushNotificationStrategy: PushNotificationStrategy
+        pushNotificationStrategy: PushNotificationStrategy,
+        earService: EARServiceInterface? = nil
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -225,6 +227,13 @@ public class NotificationSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.accountIdentifier = accountIdentifier
+        self.earService = earService ?? EARService(accountID: accountIdentifier)
+
+        eventDecoder = EventDecoder(
+            eventMOC: coreDataStack.eventContext,
+            syncMOC: coreDataStack.syncContext
+        )
+
         pushNotificationStrategy.delegate = self
     }
 
@@ -297,7 +306,18 @@ public class NotificationSession {
 
 extension NotificationSession: PushNotificationStrategyDelegate {
 
-    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) {
+    func pushNotificationStrategy(
+        _ strategy: PushNotificationStrategy,
+        didFetchEvents events: [ZMUpdateEvent]
+    ) {
+        eventDecoder.decryptAndStoreEvents(
+            events,
+            publicKeys: earService.fetchPublicKeys(),
+            block: processDecodedEvents(_:)
+        )
+    }
+
+    private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
         WireLogger.notifications.info("processing \(events.count) decoded events...")
 
         for event in events {
