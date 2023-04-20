@@ -847,7 +847,7 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Annuler votre demande ?";
-"profile.cancel_connection_request_dialog.message" = "Supprimer votre demande de connexion à %@ ?";
+"profile.cancel_connection_request_dialog.message" = "Annuler votre demande de connexion à %@?";
 "profile.cancel_connection_request_dialog.button_no" = "Non";
 "profile.cancel_connection_request_dialog.button_yes" = "Oui";
 
@@ -1309,7 +1309,7 @@
 "landing.custom_backend.title" = "Connecté à %@";
 "landing.custom_backend.more_info.button.title" = "Montrer plus";
 "landing.custom_backend.more_info.alert.title" = " Vous êtes connecté au serveur tiers : %@";
-"landing.custom_backend.alert.title" = "On-premises Backend";
+"landing.custom_backend.alert.title" = "Serveur dédié";
 "landing.custom_backend.alert.message.backend-name" = "Backend name:";
 "landing.custom_backend.alert.message.backend-url" = "Backend URL:";
 
@@ -1947,13 +1947,14 @@
 // url of proxy server as backend
 "proxy-credentials.caption" = "This backend is configured to use the following proxy server: %@.";
 "proxy-credentials.username.label" = "Proxy Email or Username";
-"proxy-credentials.username.placeholder" = "Email or Username";
+"proxy-credentials.username.placeholder" = "E-mail ou nom d'utilisateur";
 "proxy-credentials.password.label" = "Proxy Password";
 "proxy-credentials.password.placeholder" = "Mot de passe";
 
-"landing.alert.create-new-account.not-supported.title" = "Not supported";
-"landing.alert.create-new-account.not-supported.message" = "You can't create a personal account on an on-premises backend with proxy support.";
-"landing.alert.sso.not-supported.title" = "Not supported";
-"landing.alert.sso.not-supported.message" = "You can't log in via SSO on an on-premises backend with proxy support.";
-"credentials.general-error.alert.title" = "Invalid Information";
-"credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
+"landing.alert.create-new-account.not-supported.title" = "Non supporté";
+"landing.alert.create-new-account.not-supported.message" = "Vous ne pouvez pas créer de compte personnel sur un serveur dédié tant que le mode proxy est activé.";
+"landing.alert.sso.not-supported.title" = "Non supporté";
+"landing.alert.sso.not-supported.message" = "Vous ne pouvez pas vous connecter via SSO sur le serveur dédié tant que le mode proxy est activé.";
+"credentials.general-error.alert.title" = "Informations non valides";
+"credentials.general-error.alert.message" = "Ces identifiants de compte sont incorrects. Veuillez vérifier vos informations et réessayer.";
+"add-email-password-step.cta-button.title" = "Confirmer";
