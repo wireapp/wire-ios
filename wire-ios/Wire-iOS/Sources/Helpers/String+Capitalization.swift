@@ -21,6 +21,13 @@ import Foundation
 extension String {
     /// The first character in each sentence changed to its corresponding uppercase value.
     /// All remaining characters set to their corresponding lowercase values.
+    ///
+    /// Caveat:
+
+    ///  1. The implementation only works with a string that contains one sentence.
+    ///  The second sentence won't get capitalized.
+    ///
+    ///  2. It doesn't work if the first string is a whitespace character and delimiter.
     var capitalizedSentence: String {
         // First, we use the prefix(1) method to get the first letter of the string.
         // Then, we capitalized it
