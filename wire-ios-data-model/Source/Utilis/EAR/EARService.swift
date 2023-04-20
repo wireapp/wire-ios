@@ -97,6 +97,7 @@ public class EARService: EARServiceInterface {
     public weak var delegate: EARServiceDelegate?
 
     private let accountID: UUID
+    private let keyGenerator = EARKeyGenerator()
     private let keyRepository: EARKeyRepositoryInterface
     private let databaseContexts: [NSManagedObjectContext]
 
@@ -206,8 +207,8 @@ public class EARService: EARServiceInterface {
         let databaseKey: Data
 
         do {
-            let identifier = primaryPrivateKeyDescription.id
-            let keyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier)
+            let id = primaryPrivateKeyDescription.id
+            let keyPair = try keyGenerator.generatePublicPrivateKeyPair(id: id)
             primaryPublicKey = keyPair.publicKey
         } catch {
             WireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
@@ -215,8 +216,8 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            let identifier = secondaryPrivateKeyDescription.id
-            let keyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier)
+            let id = secondaryPrivateKeyDescription.id
+            let keyPair = try keyGenerator.generatePublicPrivateKeyPair(id: id)
             secondaryPublicKey = keyPair.publicKey
         } catch {
             WireLogger.ear.error("failed to generate secondary public private keypair: \(String(describing: error))")
@@ -224,7 +225,7 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            let databaseKeyData = try KeychainManager.generateKey(numberOfBytes: 32)
+            let databaseKeyData = try keyGenerator.generateKey(numberOfBytes: 32)
             databaseKey = try encryptDatabaseKey(databaseKeyData, publicKey: primaryPublicKey)
         } catch {
             WireLogger.ear.error("failed to generate database key: \(String(describing: error))")

@@ -40,6 +40,52 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
     public init() {}
 
 
+    // MARK: - generatePublicPrivateKeyPair
+
+    public var generatePublicPrivateKeyPairId_Invocations: [String] = []
+    public var generatePublicPrivateKeyPairId_MockError: Error?
+    public var generatePublicPrivateKeyPairId_MockMethod: ((String) throws -> (publicKey: SecKey, privateKey: SecKey))?
+    public var generatePublicPrivateKeyPairId_MockValue: (publicKey: SecKey, privateKey: SecKey)?
+
+    public func generatePublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
+        generatePublicPrivateKeyPairId_Invocations.append(id)
+
+        if let error = generatePublicPrivateKeyPairId_MockError {
+            throw error
+        }
+
+        if let mock = generatePublicPrivateKeyPairId_MockMethod {
+            return try mock(id)
+        } else if let mock = generatePublicPrivateKeyPairId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generatePublicPrivateKeyPairId`")
+        }
+    }
+
+    // MARK: - generateKey
+
+    public var generateKeyNumberOfBytes_Invocations: [UInt] = []
+    public var generateKeyNumberOfBytes_MockError: Error?
+    public var generateKeyNumberOfBytes_MockMethod: ((UInt) throws -> Data)?
+    public var generateKeyNumberOfBytes_MockValue: Data?
+
+    public func generateKey(numberOfBytes: UInt) throws -> Data {
+        generateKeyNumberOfBytes_Invocations.append(numberOfBytes)
+
+        if let error = generateKeyNumberOfBytes_MockError {
+            throw error
+        }
+
+        if let mock = generateKeyNumberOfBytes_MockMethod {
+            return try mock(numberOfBytes)
+        } else if let mock = generateKeyNumberOfBytes_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generateKeyNumberOfBytes`")
+        }
+    }
+
     // MARK: - storePublicKey
 
     public var storePublicKeyDescriptionKey_Invocations: [(description: PublicEARKeyDescription, key: SecKey)] = []
