@@ -29,8 +29,8 @@ extension SwiftUI.Button {
             action: {
                 let feedback = UINotificationFeedbackGenerator()
                 feedback.prepare()
-                feedback.notificationOccurred(hapticFeedbackStyle)
                 action()
+                feedback.notificationOccurred(hapticFeedbackStyle)
             },
             label: label
         )
