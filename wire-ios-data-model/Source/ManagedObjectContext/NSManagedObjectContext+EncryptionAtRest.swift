@@ -109,6 +109,7 @@ extension NSManagedObjectContext {
     }
 
     public func enableEncryptionAtRest(databaseKey: VolatileData, skipMigration: Bool = false) throws {
+        // TODO: dont store, just pass on.
         self.databaseKey = databaseKey
         encryptMessagesAtRest = true
 
@@ -119,7 +120,9 @@ extension NSManagedObjectContext {
             try migrateInstancesTowardEncryptionAtRest(type: ZMClientMessage.self)
             try migrateInstancesTowardEncryptionAtRest(type: ZMConversation.self)
         } catch {
+            // TODO: do we need to discard changes in case or error?
             encryptMessagesAtRest = false
+            self.databaseKey = nil
             throw error
         }
     }
@@ -155,16 +158,19 @@ extension NSManagedObjectContext {
     }
 
     public func disableEncryptionAtRest(databaseKey: VolatileData, skipMigration: Bool = false) throws {
-        self.databaseKey = databaseKey
         encryptMessagesAtRest = false
 
         guard !skipMigration else { return }
 
         do {
+            // TODO: dont store, just pass on.
+            self.databaseKey = databaseKey
             try migrateInstancesAwayFromEncryptionAtRest(type: ZMGenericMessageData.self)
             try migrateInstancesAwayFromEncryptionAtRest(type: ZMClientMessage.self)
             try migrateInstancesAwayFromEncryptionAtRest(type: ZMConversation.self)
+            self.databaseKey = nil
         } catch {
+            // TODO: do we need to discard changes in case or error?
             encryptMessagesAtRest = true
             throw error
         }

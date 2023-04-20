@@ -33,6 +33,12 @@ public protocol EARKeyRepositoryInterface {
 
 }
 
+public enum EarKeyRepositoryFailure: Error {
+
+    case keyNotFound
+
+}
+
 public class EARKeyRepository: EARKeyRepositoryInterface {
 
     // MARK: - Life cycle
@@ -46,7 +52,13 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     public func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
-        return try KeychainManager.fetchItem(description)
+        do {
+            return try KeychainManager.fetchItem(description)
+        } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
+            throw EarKeyRepositoryFailure.keyNotFound
+        } catch {
+            throw error
+        }
     }
 
     public func deletePublicKey(description: PublicEARKeyDescription) throws {
@@ -56,7 +68,13 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
     // MARK: - Private keys
 
     public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
-        return try KeychainManager.fetchItem(description)
+        do {
+            return try KeychainManager.fetchItem(description)
+        } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
+            throw EarKeyRepositoryFailure.keyNotFound
+        } catch {
+            throw error
+        }
     }
 
     public func deletePrivateKey(description: PrivateEARKeyDescription) throws {
@@ -70,7 +88,13 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     public func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
-        return try KeychainManager.fetchItem(description)
+        do {
+            return try KeychainManager.fetchItem(description)
+        } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
+            throw EarKeyRepositoryFailure.keyNotFound
+        } catch {
+            throw error
+        }
     }
 
     public func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {

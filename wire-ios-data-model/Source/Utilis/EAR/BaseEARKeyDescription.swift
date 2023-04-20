@@ -26,9 +26,8 @@ open class BaseEARKeyDescription {
 
     let id: String
     let tag: Data
-
-    private let accountID: String
-    private let label: String
+    let accountID: String
+    let label: String
 
     // MARK: - Life cycle
 

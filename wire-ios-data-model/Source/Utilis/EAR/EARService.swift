@@ -87,6 +87,7 @@ public protocol EARServiceDelegate: AnyObject {
 public enum EARServiceFailure: Error {
 
     case cannotPerformMigration
+    case databaseKeyMissing
 
 }
 
@@ -98,6 +99,7 @@ public class EARService: EARServiceInterface {
 
     private let accountID: UUID
     private let keyGenerator = EARKeyGenerator()
+    private let keyEncryptor: EARKeyEncryptorInterface
     private let keyRepository: EARKeyRepositoryInterface
     private let databaseContexts: [NSManagedObjectContext]
 
@@ -109,13 +111,27 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(
+    public convenience init(
+        accountID: UUID,
+        databaseContexts: [NSManagedObjectContext]
+    ) {
+        self.init(
+            accountID: accountID,
+            keyRepository: EARKeyRepository(),
+            keyEncryptor: EARKeyEncryptor(),
+            databaseContexts: databaseContexts
+        )
+    }
+
+    init(
         accountID: UUID,
         keyRepository: EARKeyRepositoryInterface = EARKeyRepository(),
-        databaseContexts: NSManagedObjectContext...
+        keyEncryptor: EARKeyEncryptorInterface = EARKeyEncryptor(),
+        databaseContexts: [NSManagedObjectContext]
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
+        self.keyEncryptor = keyEncryptor
         self.databaseContexts = databaseContexts
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
         primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
@@ -138,13 +154,23 @@ public class EARService: EARServiceInterface {
 
         try deleteExistingKeys()
         let databaseKey = try generateKeys()
-        storeDatabaseKeyInAllContexts(databaseKey)
 
-        let enableEAR = { (context: NSManagedObjectContext) in
-            try context.enableEncryptionAtRest(
-                databaseKey: databaseKey,
-                skipMigration: skipMigration
-            )
+        let enableEAR = { [weak self] (context: NSManagedObjectContext) in
+            guard let `self` = self else { return }
+
+            do {
+                try context.enableEncryptionAtRest(
+                    databaseKey: databaseKey,
+                    skipMigration: skipMigration
+                )
+
+                self.setDatabaseKeyInAllContexts(databaseKey)
+                self.setEARInAllContexts(enabled: true)
+            } catch {
+                self.setDatabaseKeyInAllContexts(nil)
+                self.setEARInAllContexts(enabled: false)
+                throw error
+            }
         }
 
         if skipMigration {
@@ -168,16 +194,28 @@ public class EARService: EARServiceInterface {
             return
         }
 
-        let databaseKey = context.databaseKey!
-        clearDatabaseKeyInAllContexts()
+        guard let databaseKey = context.databaseKey else {
+            throw EARServiceFailure.databaseKeyMissing
+        }
 
         let disableEAR = { [weak self] (context: NSManagedObjectContext) in
             guard let `self` = self else { return }
-            try context.disableEncryptionAtRest(
-                databaseKey: databaseKey,
-                skipMigration: skipMigration
-            )
-            try self.deleteExistingKeys()
+
+            do {
+                try context.disableEncryptionAtRest(
+                    databaseKey: databaseKey,
+                    skipMigration: skipMigration
+                )
+
+                self.setDatabaseKeyInAllContexts(nil)
+                self.setEARInAllContexts(enabled: false)
+            } catch {
+                self.setDatabaseKeyInAllContexts(databaseKey)
+                self.setEARInAllContexts(enabled: true)
+                throw error
+            }
+
+            try? self.deleteExistingKeys()
         }
 
         if skipMigration {
@@ -226,7 +264,10 @@ public class EARService: EARServiceInterface {
 
         do {
             let databaseKeyData = try keyGenerator.generateKey(numberOfBytes: 32)
-            databaseKey = try encryptDatabaseKey(databaseKeyData, publicKey: primaryPublicKey)
+            databaseKey = try keyEncryptor.encryptDatabaseKey(
+                databaseKeyData,
+                publicKey: primaryPublicKey
+            )
         } catch {
             WireLogger.ear.error("failed to generate database key: \(String(describing: error))")
             throw error
@@ -305,7 +346,10 @@ public class EARService: EARServiceInterface {
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
         let privateKey = try fetchPrimaryPrivateKey()
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
-        let databaseKeyData = try decryptDatabaseKey(encryptedDatabaseKeyData, privateKey: privateKey)
+        let databaseKeyData = try keyEncryptor.decryptDatabaseKey(
+            encryptedDatabaseKeyData,
+            privateKey: privateKey
+        )
         return VolatileData(from: databaseKeyData)
     }
 
@@ -314,74 +358,33 @@ public class EARService: EARServiceInterface {
 
     }
 
-    // MARK: - Encrypt / decrypt
-
-    private func encryptDatabaseKey(
-        _ databaseKey: Data,
-        publicKey: SecKey
-    ) throws -> Data {
-        var error: Unmanaged<CFError>?
-        guard let encryptedDatabaseKey = SecKeyCreateEncryptedData(
-            publicKey,
-            databaseKeyAlgorithm,
-            databaseKey as CFData, &error
-        ) else {
-            let error = error!.takeRetainedValue() as Error
-            throw error
-        }
-
-        return encryptedDatabaseKey as Data
-    }
-
-    private func decryptDatabaseKey(
-        _ encryptedDatabaseKey: Data,
-        privateKey: SecKey
-    ) throws -> Data {
-        var error: Unmanaged<CFError>?
-        guard let databaseKey = SecKeyCreateDecryptedData(
-            privateKey,
-            databaseKeyAlgorithm,
-            encryptedDatabaseKey as CFData,
-            &error
-        ) else {
-            let error = error!.takeRetainedValue() as Error
-            throw error
-        }
-
-        return databaseKey as Data
-    }
-
-    private var databaseKeyAlgorithm: SecKeyAlgorithm {
-        return .eciesEncryptionCofactorX963SHA256AESGCM
-    }
-
     // MARK: - Lock / unlock database
 
     public func lockDatabase() {
         WireLogger.ear.info("locking database")
-        clearDatabaseKeyInAllContexts()
+        setDatabaseKeyInAllContexts(nil)
     }
 
     public func unlockDatabase(context: LAContext) throws {
         do {
             WireLogger.ear.info("unlocking database")
             let databaseKey = try fetchDecyptedDatabaseKey(context: context)
-            storeDatabaseKeyInAllContexts(databaseKey)
+            setDatabaseKeyInAllContexts(databaseKey)
         } catch {
             WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
             throw error
         }
     }
 
-    private func storeDatabaseKeyInAllContexts(_ key: VolatileData) {
+    private func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
         performInAllContexts {
             $0.databaseKey = key
         }
     }
 
-    private func clearDatabaseKeyInAllContexts() {
+    private func setEARInAllContexts(enabled: Bool) {
         performInAllContexts {
-            $0.databaseKey = nil
+            $0.encryptMessagesAtRest = enabled
         }
     }
 
