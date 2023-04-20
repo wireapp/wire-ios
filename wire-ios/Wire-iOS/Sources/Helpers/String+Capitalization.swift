@@ -28,14 +28,11 @@ extension String {
     ///  The second sentence won't get capitalized.
     ///
     ///  2. It doesn't work if the first string is a whitespace character and delimiter.
-    var capitalizedSentence: String {
-        // First, we use the prefix(1) method to get the first letter of the string.
-        // Then, we capitalized it
+    var capitalizedCharacter: String {
         let firstLetter = self.prefix(1).capitalized
-        // We remove the first letter using dropFirst() to get the remaining letters.
-        // Then, we lowercase them
+
         let remainingLetters = self.dropFirst().lowercased()
-        // Then, we combine the capitalized letter and the remaining lettters back together.
+
         return firstLetter + remainingLetters
     }
 }
