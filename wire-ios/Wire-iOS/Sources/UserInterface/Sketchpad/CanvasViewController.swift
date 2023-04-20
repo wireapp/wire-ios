@@ -32,6 +32,8 @@ enum CanvasViewControllerEditMode: UInt {
 
 final class CanvasViewController: UIViewController, UINavigationControllerDelegate {
 
+    typealias SketchColors = SemanticColors.SketchColors
+
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()
     private lazy var toolbar: SketchToolbar = SketchToolbar(buttons: [photoButton, drawButton, emojiButton, sendButton])
@@ -166,24 +168,24 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     }
 
     func configureColorPicker() {
-        colorPickerController.sketchColors = [SemanticColors.SketchColors.blackColor,
-                                              SemanticColors.SketchColors.whiteColor,
-                                              SemanticColors.SketchColors.blueColor,
-                                              SemanticColors.SketchColors.greenColor,
-                                              SemanticColors.SketchColors.yellowColor,
-                                              SemanticColors.SketchColors.redColor,
-                                              SemanticColors.SketchColors.orangeColor,
-                                              SemanticColors.SketchColors.purpleColor,
-                                              SemanticColors.SketchColors.brownColor,
-                                              SemanticColors.SketchColors.turquoiseColor,
-                                              SemanticColors.SketchColors.skyColor,
-                                              SemanticColors.SketchColors.limeColor,
-                                              SemanticColors.SketchColors.cyanColor,
-                                              SemanticColors.SketchColors.lilacColor,
-                                              SemanticColors.SketchColors.coralColor,
-                                              SemanticColors.SketchColors.pinkColor,
-                                              SemanticColors.SketchColors.chocolateColor,
-                                              SemanticColors.SketchColors.grayColor]
+        colorPickerController.sketchColors = [SketchColors.blackColor,
+                                              SketchColors.whiteColor,
+                                              SketchColors.blueColor,
+                                              SketchColors.greenColor,
+                                              SketchColors.yellowColor,
+                                              SketchColors.redColor,
+                                              SketchColors.orangeColor,
+                                              SketchColors.purpleColor,
+                                              SketchColors.brownColor,
+                                              SketchColors.turquoiseColor,
+                                              SketchColors.skyColor,
+                                              SketchColors.limeColor,
+                                              SketchColors.cyanColor,
+                                              SketchColors.lilacColor,
+                                              SketchColors.coralColor,
+                                              SketchColors.pinkColor,
+                                              SketchColors.chocolateColor,
+                                              SketchColors.grayColor]
 
         colorPickerController.view.addSubview(separatorLine)
         colorPickerController.delegate = self

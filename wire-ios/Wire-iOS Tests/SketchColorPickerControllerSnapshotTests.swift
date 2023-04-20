@@ -17,43 +17,51 @@
 //
 
 import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
 
 final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
+    // MARK: - Properties
+    typealias SketchColors = SemanticColors.SketchColors
     var sut: SketchColorPickerController!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         sut = SketchColorPickerController()
 
-        sut.sketchColors = [SemanticColors.SketchColors.blackColor,
-                            SemanticColors.SketchColors.whiteColor,
-                            SemanticColors.SketchColors.blueColor,
-                            SemanticColors.SketchColors.greenColor,
-                            SemanticColors.SketchColors.yellowColor,
-                            SemanticColors.SketchColors.redColor,
-                            SemanticColors.SketchColors.orangeColor,
-                            SemanticColors.SketchColors.purpleColor,
-                            SemanticColors.SketchColors.brownColor,
-                            SemanticColors.SketchColors.turquoiseColor,
-                            SemanticColors.SketchColors.skyColor,
-                            SemanticColors.SketchColors.limeColor,
-                            SemanticColors.SketchColors.cyanColor,
-                            SemanticColors.SketchColors.lilacColor,
-                            SemanticColors.SketchColors.coralColor,
-                            SemanticColors.SketchColors.pinkColor,
-                            SemanticColors.SketchColors.chocolateColor,
-                            SemanticColors.SketchColors.grayColor]
+        sut.sketchColors = [SketchColors.blackColor,
+                            SketchColors.whiteColor,
+                            SketchColors.blueColor,
+                            SketchColors.greenColor,
+                            SketchColors.yellowColor,
+                            SketchColors.redColor,
+                            SketchColors.orangeColor,
+                            SketchColors.purpleColor,
+                            SketchColors.brownColor,
+                            SketchColors.turquoiseColor,
+                            SketchColors.skyColor,
+                            SketchColors.limeColor,
+                            SketchColors.cyanColor,
+                            SketchColors.lilacColor,
+                            SketchColors.coralColor,
+                            SketchColors.pinkColor,
+                            SketchColors.chocolateColor,
+                            SketchColors.grayColor]
 
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Tests
 
     func testForInitState() {
         verify(matching: sut)
