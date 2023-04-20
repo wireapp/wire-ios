@@ -403,8 +403,12 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
                                             message: "⚠️ will cause decryption errors ⚠️",
                                             preferredStyle: .actionSheet)
 
-        actionSheet.addAction(UIAlertAction(title: "Delete Session", style: .default, handler: { [weak self] (_) in
+        actionSheet.addAction(UIAlertAction(title: "Delete Client and Session", style: .default, handler: { [weak self] (_) in
             self?.onDeleteDeviceTapped()
+        }))
+
+        actionSheet.addAction(UIAlertAction(title: "Delete Session", style: .default, handler: { [weak self] (_) in
+            self?.onDeleteSessionTapped()
         }))
 
         actionSheet.addAction(UIAlertAction(title: "Corrupt Session", style: .default, handler: { [weak self] (_) in
@@ -424,6 +428,20 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
             let client = try! sync.existingObject(with: weakSelf.userClient.objectID) as! UserClient
             client.deleteClientAndEndSession()
+            sync.saveOrRollback()
+        }
+        presentingViewController?.dismiss(animated: true, completion: .none)
+    }
+
+    @objc
+    private func onDeleteSessionTapped() {
+        let sync = userClient.managedObjectContext!.zm_sync!
+        sync.performGroupedBlockAndWait { [weak self] in
+            guard let weakSelf = self else { return }
+
+            let client = try! sync.existingObject(with: weakSelf.userClient.objectID) as! UserClient
+            
+            client.deleteSession()
             sync.saveOrRollback()
         }
         presentingViewController?.dismiss(animated: true, completion: .none)
