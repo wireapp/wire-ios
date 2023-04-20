@@ -86,6 +86,7 @@ platform :ios do
         sh "test -s ./../wire-ios/Configuration/Release.xcconfig"
         puts `cat ./../wire-ios/Configuration/Release.xcconfig`
         puts `test -s ./../wire-ios/Configuration/Release.xcconfig`
+        puts `#{__DIR__}/../wire-ios/Configuration/Release.xcconfig`
 
         app_bundle_id = get_xcconfig_value(
             path: './../wire-ios/Configuration/Release.xcconfig',
