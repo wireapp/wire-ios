@@ -173,6 +173,7 @@ public extension WireLogger {
     /// For logs related to messaging flow.
 
     static let messaging = WireLogger(tag: "messaging")
+    static let backend = WireLogger(tag: "backend")
 
     /// For logs related to the backend environment.
 
