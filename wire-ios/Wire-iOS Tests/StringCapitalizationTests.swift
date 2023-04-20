@@ -23,31 +23,13 @@ final class StringCapitalizationTests: XCTestCase {
 
     func testThatTheFirstLetterOfTheSentenceIsCapitalized() {
         // GIVEN
-        let string = "hello world!"
-
-        // sanity check
-        XCTAssertEqual(string, "hello world!")
+        let givenString = "hello WORLD!"
 
         // WHEN
-        let capitalizedString = string.capitalizedSentence
+        let result = givenString.capitalizedCharacter
 
         // THEN
-        XCTAssertEqual(capitalizedString, "Hello world!")
-    }
-
-    func testThatTheFirstLetterOfTheSentenceIsNotCapitalizedWithWhitespaceCharacter() {
-        // GIVEN
-        let string = " hello world!"
-
-        // sanity check
-        XCTAssertEqual(string, " hello world!")
-
-        // WHEN
-        let capitalizedString = string.capitalizedSentence
-
-        // THEN
-        XCTAssertNotEqual(capitalizedString, "Hello world!")
-        XCTAssertEqual(capitalizedString, " hello world!")
+        XCTAssertEqual(result, "Hello world!")
     }
 
 }
