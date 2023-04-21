@@ -135,6 +135,8 @@ extension Payload.PrekeyByQualifiedUserIDWithFailedUsers {
             _ = prekeyByUserID.establishSessions(with: selfClient, context: context, domain: domain)
         }
 
+        /// If the failedUserIDs is not empty, we cannot retrieve prekeys for them.
+        /// All failed user clients should be marked as invalid.
         if let qualifiedIDs = self.failedUserIDs {
             qualifiedIDs.markAsInvalid(selfClient: selfClient, context: context)
         }
@@ -147,7 +149,6 @@ extension Payload.PrekeyByQualifiedUserIDWithFailedUsers {
 
 extension Array where Array.Element == QualifiedID {
 
-    /// 
     func markAsInvalid(selfClient: UserClient, context: NSManagedObjectContext) {
         for qualifiedUserId in self {
             guard let user = ZMUser.fetch(with: qualifiedUserId.uuid, domain: qualifiedUserId.domain, in: context) else {
@@ -155,14 +156,14 @@ extension Array where Array.Element == QualifiedID {
             }
             for client in user.clients {
                 guard let clientID = client.remoteIdentifier,
-                      let missingClient = UserClient.fetchUserClient(withRemoteId: clientID,
+                      let client = UserClient.fetchUserClient(withRemoteId: clientID,
                                                                      forUser: user,
                                                                      createIfNeeded: true)
                 else {
                     continue
                 }
 
-                missingClient.markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: selfClient)
+                client.markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: selfClient)
             }
         }
     }
