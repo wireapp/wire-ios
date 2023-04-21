@@ -141,14 +141,12 @@ final class EARServiceTests: DatabaseBaseTest, EARServiceDelegate {
         // Then migration was not run
         XCTAssertEqual(prepareForMigrationCalls, 0)
 
-        // Then all contexts have ear enabled and the database key.
+        // Then EAR is enabled on the context
         XCTAssertTrue(viewContext.encryptMessagesAtRest)
-        XCTAssertNotNil(viewContext.databaseKey)
 
-        syncContext.performAndWait {
-            XCTAssertTrue(syncContext.encryptMessagesAtRest)
-            XCTAssertNotNil(syncContext.databaseKey)
-        }
+        // Then all contexts have the database key.
+        XCTAssertNotNil(viewContext.databaseKey)
+        syncContext.performAndWait { XCTAssertNotNil(syncContext.databaseKey) }
     }
 
     func test_EnableEncryptionAtRest_FailedToMigrate() throws {
@@ -221,14 +219,12 @@ final class EARServiceTests: DatabaseBaseTest, EARServiceDelegate {
         // Then migration was not run
         XCTAssertEqual(prepareForMigrationCalls, 0)
 
-        // Then all contexts have ear disabled and no database key.
+        // Then EAR is disabled on the context
         XCTAssertFalse(viewContext.encryptMessagesAtRest)
-        XCTAssertNil(viewContext.databaseKey)
 
-        syncContext.performAndWait {
-            XCTAssertFalse(syncContext.encryptMessagesAtRest)
-            XCTAssertNil(syncContext.databaseKey)
-        }
+        // Then all contexts no longer have the database key
+        XCTAssertNil(viewContext.databaseKey)
+        syncContext.performAndWait { XCTAssertNil(syncContext.databaseKey) }
     }
 
     // MARK: - Lock database
