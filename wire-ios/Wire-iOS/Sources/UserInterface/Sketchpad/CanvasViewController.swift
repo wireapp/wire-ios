@@ -209,7 +209,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             colorPicker.topAnchor.constraint(equalTo: view.topAnchor),
             colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor),
             colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor),
-            colorPicker.heightAnchor.constraint(equalToConstant: 48),
+            colorPicker.heightAnchor.constraint(equalToConstant: 60),
 
             separatorLine.topAnchor.constraint(equalTo: colorPicker.bottomAnchor),
             separatorLine.leftAnchor.constraint(equalTo: colorPicker.leftAnchor),

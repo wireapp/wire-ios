@@ -18,6 +18,12 @@
 import UIKit
 
 final class SketchColorCollectionViewCell: UICollectionViewCell {
+
+    let titleLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont,
+                                      color: SemanticColors.Label.textDefault)
+
+    var contentStackView = UIStackView()
+
     var sketchColor: UIColor? {
         didSet {
             guard sketchColor != oldValue else {
@@ -26,6 +32,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
             if let sketchColor = sketchColor {
                 knobView.knobColor = sketchColor
+                titleLabel.text = "Color"
             }
         }
     }
@@ -54,7 +61,15 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         knobView = ColorKnobView()
-        addSubview(knobView)
+
+        contentStackView.axis = .vertical
+        contentStackView.alignment = .fill
+        contentStackView.distribution = .fill
+        contentStackView.spacing = 9
+        contentStackView.addArrangedSubview(knobView)
+        contentStackView.addArrangedSubview(titleLabel)
+
+        addSubview(contentStackView)
 
         setNeedsUpdateConstraints()
     }
@@ -71,9 +86,12 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
             return
         }
 
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
         knobView.translatesAutoresizingMaskIntoConstraints = false
-        knobView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        knobView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        contentStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        contentStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         knobView.widthAnchor.constraint(equalToConstant: 25).isActive = true
         knobView.heightAnchor.constraint(equalToConstant: 25).isActive = true
         initialContraintsCreated = true
