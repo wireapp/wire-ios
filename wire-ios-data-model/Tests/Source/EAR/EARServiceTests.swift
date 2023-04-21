@@ -72,6 +72,12 @@ final class EARServiceTests: DatabaseBaseTest, EARServiceDelegate {
 
     // MARK: - Mock helpers
 
+    enum MockError: Error {
+
+        case cannotStoreKey
+
+    }
+
     func generateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
         let keyGenerator = EARKeyGenerator()
         return try keyGenerator.generatePublicPrivateKeyPair(id: id)
@@ -147,6 +153,33 @@ final class EARServiceTests: DatabaseBaseTest, EARServiceDelegate {
         // Then all contexts have the database key.
         XCTAssertNotNil(viewContext.databaseKey)
         syncContext.performAndWait { XCTAssertNotNil(syncContext.databaseKey) }
+    }
+
+    func test_EnableEncryptionAtRest_RollbackOnFailure() throws {
+        // Given
+        viewContext.encryptMessagesAtRest = false
+
+        // Mock
+        mockKeyGeneration()
+        keyRepository.storeDatabaseKeyDescriptionKey_MockError = MockError.cannotStoreKey
+
+        // When
+        XCTAssertThrowsError(try sut.enableEncryptionAtRest(context: viewContext, skipMigration: true)) { error in
+            guard case MockError.cannotStoreKey = error else {
+                return XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        // Then
+        XCTAssertFalse(viewContext.encryptMessagesAtRest)
+        XCTAssertNil(viewContext.databaseKey)
+
+        // In total, the 5 keys (2 public, 2 private, 1 database) were
+        // deleted 2 times. Once before generating new keys, and once
+        // after cleaning up the the error.
+        XCTAssertEqual(keyRepository.deletePublicKeyDescription_Invocations.count, 4)
+        XCTAssertEqual(keyRepository.deletePrivateKeyDescription_Invocations.count, 4)
+        XCTAssertEqual(keyRepository.deleteDatabaseKeyDescription_Invocations.count, 2)
     }
 
     func test_EnableEncryptionAtRest_FailedToMigrate() throws {

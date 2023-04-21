@@ -294,7 +294,6 @@ public class EARService: EARServiceInterface {
             )
         } catch {
             WireLogger.ear.error("failed to store keys: \(String(describing: error))")
-            try? deleteExistingKeys()
             throw error
         }
 
