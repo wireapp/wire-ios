@@ -47,9 +47,33 @@ enum Payload {
         var qualifiedIDs: [QualifiedID]
     }
 
+    struct UserProfilesList: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case found = "found"
+            case failed = "failed"
+        }
+
+        let found: [Payload.UserProfile]
+        let failed: [QualifiedID]?
+
+    }
+
     struct Prekey: Codable {
         let key: String
         let id: Int?
+    }
+
+    struct PrekeyByQualifiedUserIDWithFailedUsers: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case prekeyByQualifiedUserID = "qualified_user_client_prekeys"
+            case failed = "failed_to_list"
+        }
+
+        let prekeyByQualifiedUserID: Payload.PrekeyByQualifiedUserID
+        let failed: [QualifiedID]?
+
     }
 
     struct Location: Codable {

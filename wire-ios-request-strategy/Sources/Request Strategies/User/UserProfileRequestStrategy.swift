@@ -307,18 +307,36 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        guard
-            let rawData = response.rawData,
-            let payload = Payload.UserProfiles(rawData, decoder: decoder)
-        else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        switch apiVersion {
+        case .v0, .v1, .v2, .v3:
+            guard
+                let rawData = response.rawData,
+                let payload = Payload.UserProfiles(rawData, decoder: decoder)
+            else {
+                Logging.network.warn("Can't process response, aborting.")
+                return
+            }
+
+            payload.updateUserProfiles(in: context)
+
+            let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
+            markUserProfilesAsFetched(missingIdentifiers)
+
+        case .v4:
+            guard
+                let rawData = response.rawData,
+                let payload = Payload.UserProfilesList(rawData, decoder: decoder)
+            else {
+                Logging.network.warn("Can't process response, aborting.")
+                return
+            }
+            let foundUsers = payload.found
+            foundUsers.updateUserProfiles(in: context)
+
+            let missingIdentifiers = identifiers.subtracting(foundUsers.compactMap(\.qualifiedID))
+            markUserProfilesAsFetched(missingIdentifiers)
         }
-
-        payload.updateUserProfiles(in: context)
-
-        let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
-        markUserProfilesAsFetched(missingIdentifiers)
     }
 
     private func markUserProfilesAsFetched(_ missingUsers: Set<QualifiedID>) {
