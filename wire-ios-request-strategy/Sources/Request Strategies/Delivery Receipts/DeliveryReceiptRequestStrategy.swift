@@ -92,10 +92,6 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     }
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-
-    }
-
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
         deliveryReceipts(for: events).forEach(sendDeliveryReceipt)
     }
 

@@ -238,37 +238,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
     return [result subdataWithRange:NSMakeRange(kCCBlockSizeAES128, result.length - kCCBlockSizeAES128)];
 }
 
-- (NSData *)zmEncryptPrefixingPlainTextIVWithKey:(NSData *)key
-{
-    Require(key.length == kCCKeySizeAES256);
-    size_t copiedBytes = 0;
-    NSMutableData *encryptedData = [NSMutableData dataWithLength:self.length+kCCBlockSizeAES128];
-    NSData *IV = [NSData secureRandomDataOfLength:kCCBlockSizeAES128];
-
-    ZMLogDebug(@"Encrypt: IV is %@, data is %lu", [IV base64EncodedStringWithOptions:0], (unsigned long)self.length);
-    CCCryptorStatus status = CCCrypt(kCCEncrypt,
-                                     kCCAlgorithmAES,
-                                     kCCOptionPKCS7Padding,
-                                     key.bytes,
-                                     kCCKeySizeAES256,
-                                     IV.bytes,
-                                     self.bytes,
-                                     self.length,
-                                     encryptedData.mutableBytes,
-                                     encryptedData.length,
-                                     &copiedBytes);
-    if(status != kCCSuccess) {
-        ZMLogError(@"Error in encryption: %d", status);
-        return nil;
-    }
-    
-    encryptedData.length = copiedBytes;
-    NSMutableData *finalData = [NSMutableData dataWithData:IV];
-    [finalData appendData:encryptedData];
-    ZMLogDebug(@"Encrypted: final data is %lu, copied: %lu", (unsigned long)finalData.length, (unsigned long)copiedBytes);
-    return finalData;
-}
-
 - (NSData *)zmDecryptPrefixedPlainTextIVWithKey:(NSData *)key
 {
     VerifyReturnNil(key.length == kCCKeySizeAES256);
