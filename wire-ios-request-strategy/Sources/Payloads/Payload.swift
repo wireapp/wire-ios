@@ -52,6 +52,18 @@ enum Payload {
         let id: Int?
     }
 
+    struct PrekeyByQualifiedUserIDWithFailedUsers: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case prekeyByQualifiedUserID = "qualified_user_client_prekeys"
+            case failedUserIDs = "failed_to_list"
+        }
+
+        let prekeyByQualifiedUserID: Payload.PrekeyByQualifiedUserID
+        let failedUserIDs: [QualifiedID]?
+
+    }
+
     struct Location: Codable {
 
         enum CodingKeys: String, CodingKey {
