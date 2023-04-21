@@ -267,10 +267,11 @@ public class ZMUserSession: NSObject {
 
         self.earService = earService ?? EARService(
             accountID: coreDataStack.account.userIdentifier,
-            databaseContexts:
+            databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext,
                 coreDataStack.searchContext
+            ]
         )
 
         super.init()

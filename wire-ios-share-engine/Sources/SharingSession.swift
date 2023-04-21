@@ -288,9 +288,10 @@ public class SharingSession {
 
         self.earService = earService ?? EARService(
             accountID: accountIdentifier,
-            databaseContexts:
+            databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
+            ]
         )
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
