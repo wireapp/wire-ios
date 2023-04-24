@@ -169,29 +169,10 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     func configureColorPicker() {
         colorPickerController.sketchColors = SketchColor.getAllColors()
-//                                              [SketchColor.blackColor,
-//                                              SketchColors.whiteColor,
-//                                              SketchColors.blueColor,
-//                                              SketchColors.greenColor,
-//                                              SketchColors.yellowColor,
-//                                              SketchColors.redColor,
-//                                              SketchColors.orangeColor,
-//                                              SketchColors.purpleColor,
-//                                              SketchColors.brownColor,
-//                                              SketchColors.turquoiseColor,
-//                                              SketchColors.skyColor,
-//                                              SketchColors.limeColor,
-//                                              SketchColors.cyanColor,
-//                                              SketchColors.lilacColor,
-//                                              SketchColors.coralColor,
-//                                              SketchColors.pinkColor,
-//                                              SketchColors.chocolateColor,
-//                                              SketchColors.grayColor]
 
         colorPickerController.view.addSubview(separatorLine)
         colorPickerController.delegate = self
         colorPickerController.willMove(toParent: self)
-        colorPickerController.selectedColorIndex = colorPickerController.sketchColors.firstIndex(of: SketchColor(name: "black", color: .black)) ?? 0
         view.addSubview(colorPickerController.view)
         addChild(colorPickerController)
     }

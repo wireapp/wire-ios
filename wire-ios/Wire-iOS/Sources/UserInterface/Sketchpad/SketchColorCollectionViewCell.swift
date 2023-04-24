@@ -162,7 +162,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
             if let sketchColor = sketchColor {
                 knobView.knobColor = sketchColor.color
-                titleLabel.text = sketchColor.name.capitalized
+                titleLabel.text = sketchColor.name.localizedCapitalized
             }
         }
     }
