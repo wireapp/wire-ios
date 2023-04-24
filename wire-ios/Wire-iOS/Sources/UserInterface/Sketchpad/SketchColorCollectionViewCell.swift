@@ -17,8 +17,12 @@
 // 
 import UIKit
 
-enum ColorNew: CaseIterable {
+// MARK: - SketchColors Enum
+
+enum SketchColors: CaseIterable {
+
     typealias SketchColorValues = SemanticColors.SketchColors
+    typealias SketchColorName = L10n.Localizable.Drawing.Colors
 
     case black
     case white
@@ -42,41 +46,41 @@ enum ColorNew: CaseIterable {
     var name: String {
         switch self {
         case .black:
-            return "Black"
+            return SketchColorName.black
         case .white:
-            return "White"
+            return SketchColorName.white
         case .blue:
-            return "Blue"
+            return SketchColorName.blue
         case .green:
-            return "Green"
+            return SketchColorName.green
         case .yellow:
-            return "Yellow"
+            return SketchColorName.yellow
         case .red:
-            return "Red"
+            return SketchColorName.red
         case .orange:
-            return "Orange"
+            return SketchColorName.orange
         case .purple:
-            return "Purple"
+            return SketchColorName.purple
         case .brown:
-            return "Brown"
+            return SketchColorName.brown
         case .turquoise:
-            return "Turquoise"
+            return SketchColorName.turquoise
         case .sky:
-            return "Sky"
+            return SketchColorName.sky
         case .lime:
-            return "Lime"
+            return SketchColorName.lime
         case .cyan:
-            return "Cyan"
+            return SketchColorName.cyan
         case .lilac:
-            return "Lilac"
+            return SketchColorName.lilac
         case .coral:
-            return "Coral"
+            return SketchColorName.coral
         case .pink:
-            return "Pink"
+            return SketchColorName.pink
         case .chocolate:
-            return "Chocolate"
+            return SketchColorName.chocolate
         case .gray:
-            return "Gray"
+            return SketchColorName.gray
         }
     }
 
@@ -122,6 +126,8 @@ enum ColorNew: CaseIterable {
     }
 }
 
+// MARK: - SketchColor
+
 struct SketchColor: Equatable {
     var name: String
     var color: UIColor
@@ -132,9 +138,11 @@ struct SketchColor: Equatable {
     }
 
     static func getAllColors() -> [SketchColor] {
-        return ColorNew.allCases.map { SketchColor(name: $0.name, color: $0.color) }
+        return SketchColors.allCases.map { SketchColor(name: $0.name, color: $0.color) }
     }
 }
+
+// MARK: - SketchColorCollectionViewCell
 
 final class SketchColorCollectionViewCell: UICollectionViewCell {
 
@@ -151,8 +159,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
             if let sketchColor = sketchColor {
                 knobView.knobColor = sketchColor.color
-                titleLabel.text = sketchColor.name
-
+                titleLabel.text = sketchColor.name.capitalized
             }
         }
     }
