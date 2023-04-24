@@ -32,26 +32,8 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
         super.setUp()
         sut = SketchColorPickerController()
 
-        sut.sketchColors = [SketchColors.blackColor,
-                            SketchColors.whiteColor,
-                            SketchColors.blueColor,
-                            SketchColors.greenColor,
-                            SketchColors.yellowColor,
-                            SketchColors.redColor,
-                            SketchColors.orangeColor,
-                            SketchColors.purpleColor,
-                            SketchColors.brownColor,
-                            SketchColors.turquoiseColor,
-                            SketchColors.skyColor,
-                            SketchColors.limeColor,
-                            SketchColors.cyanColor,
-                            SketchColors.lilacColor,
-                            SketchColors.coralColor,
-                            SketchColors.pinkColor,
-                            SketchColors.chocolateColor,
-                            SketchColors.grayColor]
-
-        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
+        sut.sketchColors = SketchColor.getAllColors()
+        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 69)
     }
 
     // MARK: - tearDown
