@@ -1,5 +1,6 @@
-
-// Copyright (C) 2022 Wire Swiss GmbH
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,39 +18,38 @@
 
 import Foundation
 
-public class FetchBackendMLSPublicKeysAction: EntityAction {
+public enum SubgroupType: String {
+    case conference
+}
 
-    // MARK: - Types
+public class FetchSubgroupAction: EntityAction {
+    public typealias Result = MLSSubgroup
 
-    public typealias Result = BackendMLSPublicKeys
-
-    public enum Failure: LocalizedError, Equatable {
-
+    public enum Failure: Error, Equatable {
         case endpointUnavailable
+        case emptyParameters
         case malformedResponse
+        case invalidParameters
+        case noConversation
+        case conversationIdOrDomainNotFound
+        case unsupportedConversationType
+        case accessDenied
         case unknown(status: Int, label: String, message: String)
-
-        public var errorDescription: String? {
-            switch self {
-            case .endpointUnavailable:
-                return "Endpoint unavailable"
-
-            case .malformedResponse:
-                return "Malformed response"
-
-            case let .unknown(status, label, message):
-                return "Unknown error response status: \(status), label: \(label), message: \(message)"
-            }
-        }
     }
 
     // MARK: - Properties
 
+    public let domain: String
+    public let conversationId: UUID
+    public let type: SubgroupType
     public var resultHandler: ResultHandler?
 
-    // MARK: - Life cycle
+    // MARK: - Init
 
-    public init(resultHandler: ResultHandler? = nil) {
+    public init(domain: String, conversationId: UUID, type: SubgroupType, resultHandler: ResultHandler? = nil) {
+        self.domain = domain
+        self.conversationId = conversationId
+        self.type = type
         self.resultHandler = resultHandler
     }
 

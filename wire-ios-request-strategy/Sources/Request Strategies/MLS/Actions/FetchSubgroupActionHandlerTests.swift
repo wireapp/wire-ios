@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,32 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
 
-class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublicGroupStateAction, FetchPublicGroupStateActionHandler> {
+class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction, FetchSubgroupActionHandler> {
 
     let domain = "example.com"
     let conversationId = UUID()
+    let type = SubgroupType.conference
 
     override func setUp() {
         super.setUp()
-        action = FetchPublicGroupStateAction(conversationId: conversationId, domain: domain)
+        action = FetchSubgroupAction(domain: domain, conversationId: conversationId, type: type)
     }
 
     override func tearDown() {
         action = nil
         super.tearDown()
     }
+
     // MARK: - Request generation
 
     func test_itGeneratesARequest_APIV3() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v3/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
-            expectedMethod: .methodGET,
-            apiVersion: .v3
+               expectedPath: "/v3/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(type)",
+               expectedMethod: .methodGET,
+               apiVersion: .v3
         )
     }
 
@@ -71,28 +73,40 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
 
     // MARK: - Response handling
 
-    private typealias ResponsePayload = FetchPublicGroupStateActionHandler.ResponsePayload
+    private typealias ResponsePayload = FetchSubgroupActionHandler.Subgroup
 
     func test_itHandlesSuccess() {
         // Given
-        let groupState = Data([1, 2, 3])
-        let payload = ResponsePayload(groupState: groupState)
+        let payload = ResponsePayload(
+            cipherSuite: 123,
+            epoch: 1,
+            epochTimestamp: Date(),
+            groupID: UUID().transportString(),
+            members: [.init(
+                userID: UUID(),
+                clientID: UUID().transportString(),
+                domain: "domain.com"
+            )],
+            parentQualifiedID: .init(id: UUID(), domain: "domain.com"),
+            subconvID: UUID().transportString()
+        )
 
         // When
-        let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
+        let mlsSubgroup = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
 
         // Then
-        XCTAssertEqual(receivedKeyPackagesCount, payload.groupState)
+        XCTAssertEqual(mlsSubgroup, payload.mlsSubgroup)
     }
 
     func test_itHandlesFailures() {
         test_itHandlesFailures([
             .failure(status: 200, error: .malformedResponse),
+            .failure(status: 400, error: .invalidParameters),
+            .failure(status: 403, error: .accessDenied, label: "access-denied"),
+            .failure(status: 403, error: .unsupportedConversationType, label: "mls-subconv-unsupported-convtype"),
             .failure(status: 404, error: .conversationIdOrDomainNotFound),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
-            .failure(status: 404, error: .missingGroupInfo, label: "mls-missing-group-info"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
-
         ])
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,28 @@
 
 import Foundation
 
-public final class SendCommitBundleAction: EntityAction {
-    public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageAction.Failure
-
-    public var resultHandler: ResultHandler?
-    public var commitBundle: Data
+public struct MLSSubgroup: Equatable {
+    public let cipherSuite: Int
+    public let epoch: Int
+    public let epochTimestamp: Date
+    public let groupID: String
+    public let members: [MLSClientID]
+    public let parentQualifiedID: QualifiedID
 
     public init(
-        commitBundle: Data,
-        resultHandler: ResultHandler? = nil
+        cipherSuite: Int,
+        epoch: Int,
+        epochTimestamp: Date,
+        groupID: String,
+        members: [MLSClientID],
+        parentQualifiedID: QualifiedID
     ) {
-        self.commitBundle = commitBundle
-        self.resultHandler = resultHandler
+        self.cipherSuite = cipherSuite
+        self.epoch = epoch
+        self.epochTimestamp = epochTimestamp
+        self.groupID = groupID
+        self.members = members
+        self.parentQualifiedID = parentQualifiedID
     }
+
 }
