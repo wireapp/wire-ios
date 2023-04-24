@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 import UIKit
+import WireCommonComponents
 
 // MARK: - SketchColors Enum
 
@@ -179,6 +180,11 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
         didSet {
             knobView.knobColor = sketchColor?.color
             knobView.isSelected = isSelected
+            if isSelected {
+                titleLabel.font = FontSpec.smallSemiboldFont.font!
+            } else {
+                titleLabel.font = FontSpec.smallRegularFont.font!
+            }
         }
     }
 
@@ -218,10 +224,10 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentStackView.topAnchor.constraint(equalTo: topAnchor),
+            contentStackView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
             contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 5),
-            knobView.widthAnchor.constraint(equalToConstant: 25),
-            knobView.heightAnchor.constraint(equalToConstant: 25)
+            knobView.widthAnchor.constraint(equalToConstant: 10),
+            knobView.heightAnchor.constraint(equalToConstant: 10)
         ])
 
         initialContraintsCreated = true

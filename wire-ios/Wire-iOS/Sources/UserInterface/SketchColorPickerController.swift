@@ -89,7 +89,7 @@ final class SketchColorPickerController: UIViewController {
 
     private var colorsCollectionViewLayout: UICollectionViewFlowLayout {
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = CGSize(width: 44, height: 40)
+        flowLayout.itemSize = CGSize(width: 54, height: 42)
         flowLayout.scrollDirection = .horizontal
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.minimumLineSpacing = 0
