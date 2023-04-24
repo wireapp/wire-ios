@@ -21,16 +21,24 @@ import WireCanvas
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - CanvasViewControllerDelegate - didExportImage
+
 protocol CanvasViewControllerDelegate: AnyObject {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage)
 }
+
+// MARK: - CanvasViewControllerEditMode
 
 enum CanvasViewControllerEditMode: UInt {
     case draw
     case emoji
 }
 
+// MARK: - CanvasViewController
+
 final class CanvasViewController: UIViewController, UINavigationControllerDelegate {
+
+    // MARK: - Properties
 
     typealias SketchColors = SemanticColors.SketchColors
 
@@ -56,6 +64,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     let emojiKeyboardViewController = EmojiKeyboardViewController()
     let colorPickerController = SketchColorPickerController()
+
+    // MARK: - Override methods
 
     override var shouldAutorotate: Bool {
         switch UIDevice.current.userInterfaceIdiom {
@@ -104,6 +114,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         updateButtonSelection()
         createConstraints()
     }
+
+    // MARK: - Configure Navigation Items and Elements
 
     func configureNavigationItems() {
         let undoImage = StyleKitIcon.undo.makeImage(size: .tiny, color: .black)
@@ -176,6 +188,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         view.addSubview(colorPickerController.view)
         addChild(colorPickerController)
     }
+
+    // MARK: - Configure Constraints
 
     private func createConstraints() {
         guard let colorPicker = colorPickerController.view else { return }
@@ -272,6 +286,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     }
 }
 
+// MARK: - CanvasDelegate
+
 extension CanvasViewController: CanvasDelegate {
 
     func canvasDidChange(_ canvas: Canvas) {
@@ -281,6 +297,8 @@ extension CanvasViewController: CanvasDelegate {
     }
 
 }
+
+// MARK: - EmojiKeyboardViewControllerDelegate
 
 extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
 
@@ -366,6 +384,8 @@ extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
+
 extension CanvasViewController: UIImagePickerControllerDelegate {
 
     @objc func pickImage() {
@@ -395,6 +415,8 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
     }
 
 }
+
+// MARK: - SketchColorPickerControllerDelegate
 
 extension CanvasViewController: SketchColorPickerControllerDelegate {
 
