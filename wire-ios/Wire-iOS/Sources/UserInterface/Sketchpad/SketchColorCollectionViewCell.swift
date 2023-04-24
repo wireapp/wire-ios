@@ -147,6 +147,8 @@ struct SketchColor: Equatable {
 
 final class SketchColorCollectionViewCell: UICollectionViewCell {
 
+    // MARK: - Properties
+
     var titleLabel = DynamicFontLabel(fontSpec: .smallRegularFont,
                                       color: SemanticColors.Label.textDefault)
 
@@ -191,6 +193,8 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
     private var knobView: ColorKnobView!
     private var initialContraintsCreated = false
 
+    // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         knobView = ColorKnobView()
@@ -211,6 +215,8 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Setting up constraints
 
     override func updateConstraints() {
         super.updateConstraints()
