@@ -34,7 +34,7 @@ final class SketchColorPickerController: UIViewController {
     private let SketchColorPickerDefaultBrushWidth: CGFloat = 6
 
     weak var delegate: SketchColorPickerControllerDelegate?
-    var sketchColors: [UIColor] = [] {
+    var sketchColors: [SketchColor] = [] {
         didSet {
             if sketchColors == oldValue {
                 return
@@ -71,12 +71,12 @@ final class SketchColorPickerController: UIViewController {
                 scrollPosition: []
             )
 
-            delegate?.sketchColorPickerController(self, changedSelectedColor: selectedColor)
+            delegate?.sketchColorPickerController(self, changedSelectedColor: selectedColor.color)
         }
     }
 
     /// Read only: Use the selectedColorIndex to change the selected color
-    private var selectedColor: UIColor {
+    private var selectedColor: SketchColor {
         assert(sketchColors.indices.contains(selectedColorIndex), "Colors out of bounds")
 
         return sketchColors[selectedColorIndex]
@@ -121,7 +121,7 @@ final class SketchColorPickerController: UIViewController {
 
         var colorToBrushWidthMapper: [UIColor: CGFloat] = [:]
         for color in sketchColors {
-            colorToBrushWidthMapper[color] = brushWidth
+            colorToBrushWidthMapper[color.color] = brushWidth
         }
 
         self.colorToBrushWidthMapper = colorToBrushWidthMapper
@@ -184,7 +184,7 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let color = sketchColors[indexPath.row]
-        let brushWidth: CGFloat = colorToBrushWidthMapper?[color] ?? SketchColorPickerDefaultBrushWidth
+        let brushWidth: CGFloat = colorToBrushWidthMapper?[color.color] ?? SketchColorPickerDefaultBrushWidth
 
         let cell = collectionView.dequeueReusableCell(ofType: SketchColorCollectionViewCell.self, for: indexPath)
         cell.sketchColor = color
@@ -198,7 +198,7 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
         let color = sketchColors[indexPath.row]
         if selectedColor == color {
             // The color is already selected -> Change the brush size for this color
-            let brushWidth = bumpBrushWidth(for: color)
+            let brushWidth = bumpBrushWidth(for: color.color)
             let cell = collectionView.cellForItem(at: indexPath) as? SketchColorCollectionViewCell
             cell?.brushWidth = brushWidth
         }
