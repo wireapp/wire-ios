@@ -317,7 +317,7 @@ internal struct WirelessRequestFactory {
         let path: String
 
         switch apiVersion {
-        case .v3:
+        case .v3, .v4:
             guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else {
                 fatal("no domain associated with conversation, can't make the request")
             }

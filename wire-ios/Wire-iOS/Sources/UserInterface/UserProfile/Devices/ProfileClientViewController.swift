@@ -35,7 +35,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     private let separatorLineView = UIView()
     private let typeLabel = UILabel()
     private let IDLabel = UILabel()
-    let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    private let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
     private let fullIDLabel = CopyableLabel()
     private let verifiedToggle = Switch(style: .default)
     private let verifiedToggleLabel = UILabel()
@@ -475,13 +475,14 @@ extension ProfileClientViewController: UserClientObserver {
             updateFingerprintLabel()
         }
 
-        if changeInfo.sessionHasBeenReset {
+        if changeInfo.sessionHasBeenReset && changeInfo.userClient.fingerprint != nil {
             let alert = UIAlertController(title: "", message: NSLocalizedString("self.settings.device_details.reset_session.success", comment: ""), preferredStyle: .alert)
             let okAction = UIAlertAction(title: NSLocalizedString("general.ok", comment: ""), style: .destructive, handler: nil)
             alert.addAction(okAction)
             present(alert, animated: true, completion: .none)
-            isLoadingViewVisible = false
         }
+        isLoadingViewVisible = false
+        spinner.stopAnimating()
     }
 
 }

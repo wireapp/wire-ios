@@ -25,7 +25,8 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {
-        let users: [UserType]
+        let failedToReceiveUsers: [UserType]
+        let withoutSessionUsers: [UserType]?
         let buttonAction: Completion
         let isCollapsed: Bool
     }
@@ -79,9 +80,9 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
         isCollapsed = config.isCollapsed
         buttonAction = config.buttonAction
-        let content = configureContent(for: config.users)
+        let content = configureContent(for: (config.failedToReceiveUsers, config.withoutSessionUsers))
 
-        guard config.users.count > 1 else {
+        guard config.failedToReceiveUsers.count > 1 else {
             usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
             [totalCountView, button].forEach { $0.isHidden = true }
             return
@@ -96,12 +97,26 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         layoutIfNeeded()
     }
 
-    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
-        let totalCountText = FailedtosendParticipants.count(users.count)
+    /// 1. Found users without session
+//    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
+    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
+        let failedToReceiveUsers = users.failedToReceive
+        let withoutSessionUsers = users.withoutSession
+        let totalCountText = FailedtosendParticipants.count(failedToReceiveUsers.count)
 
-        let userNames = users.compactMap { $0.name }.joined(separator: ", ")
+        let userNames = failedToReceiveUsers.compactMap { $0.name }.joined(separator: ", ")
         let detailsText = FailedtosendParticipants.willGetLater(userNames)
-        let detailsWithLinkText = FailedtosendParticipants.learnMore(detailsText, URL.wr_backendOfflineLearnMore.absoluteString)
+
+        let domains = withoutSessionUsers!.compactMap { $0.domain }
+        var domainsFrequency: [String] = []
+        for (key, value) in domains.frequency {
+            domainsFrequency.append(FailedtosendParticipants.from(value, key))
+        }
+        let userWithoutSessionNames = domainsFrequency.compactMap { $0 }.joined(separator: ", ")
+        let detailsText2 = FailedtosendParticipants.willNeverGet(userWithoutSessionNames)
+
+        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
+        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
 
         return (totalCountText, detailsWithLinkText)
     }
@@ -158,6 +173,10 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
 }
 
+extension Sequence where Element: Hashable {
+    var frequency: [Element: Int] { reduce(into: [:]) { $0[$1, default: 0] += 1 } }
+}
+
 class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
 
     typealias View = FailedRecipientsMessageCell
@@ -178,8 +197,9 @@ class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCel
     var accessibilityIdentifier: String? = nil
     var accessibilityLabel: String? = nil
 
-    init(failedRecipients: [UserType], buttonAction: @escaping Completion, isCollapsed: Bool) {
-        configuration = View.Configuration(users: failedRecipients,
+    init(failedRecipients: [UserType], withoutSessionUsers: [UserType]?, buttonAction: @escaping Completion, isCollapsed: Bool) {
+        configuration = View.Configuration(failedToReceiveUsers: failedRecipients,
+                                           withoutSessionUsers: withoutSessionUsers,
                                            buttonAction: buttonAction,
                                            isCollapsed: isCollapsed)
     }

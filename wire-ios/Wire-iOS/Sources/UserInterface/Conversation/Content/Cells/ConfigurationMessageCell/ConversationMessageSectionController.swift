@@ -251,7 +251,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 self.collapsed = !self.collapsed
                 self.cellDelegate?.conversationMessageShouldUpdate()
             }
+           // let www = message.conversationLike?.sortedActiveParticipantsUserTypes.map { $0.allClients as? [UserClient] }
+           // let ggg = www?.joined() as? [UserClient]
+
+
             let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers ?? [],
+                                                                                     withoutSessionUsers: [],
                                                                                      buttonAction: { buttonAction() },
                                                                                      isCollapsed: collapsed)
             add(description: cellDescription)
