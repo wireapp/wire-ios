@@ -87,6 +87,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         case dismissButtonTapped
         case itemTapped(Item)
+        case itemCopyRequested(Item)
 
     }
 
@@ -205,7 +206,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         case .dismissButtonTapped:
             onDismiss?()
 
-        case let .itemTapped(.text(textItem)):
+        case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value
 
         case let .itemTapped(.button(buttonItem)):
