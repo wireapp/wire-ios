@@ -89,9 +89,8 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     /// Update view visibility when this view controller is covered or not
-    var isCovered: Bool = !DeveloperFlag.isUpdatedCallingUI {
+    var isCovered: Bool = false {
         didSet {
-            if DeveloperFlag.isUpdatedCallingUI { isCovered = false }
             guard isCovered != oldValue else { return }
             notifyVisibilityChanged()
             displayIndicatorViewsIfNeeded()
@@ -238,8 +237,7 @@ final class CallGridViewController: SpinnerCapableViewController {
     func updateHint(for event: CallGridEvent) {
         switch event {
         case .viewDidLoad:
-            guard !DeveloperFlag.isUpdatedCallingUI else { return }
-            hintView.show(hint: .fullscreen)
+            break
         case .connectionEstablished:
             hintView.show(hint: .fullscreen)
         case .configurationChanged where configuration.callHasTwoParticipants:
