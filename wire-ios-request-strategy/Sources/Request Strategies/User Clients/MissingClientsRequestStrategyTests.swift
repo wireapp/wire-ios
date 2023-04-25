@@ -855,7 +855,7 @@ extension MissingClientsRequestStrategyTests {
         }
     }
 
-    var prekeyByQualifiedUser: Payload.PrekeyByQualifiedUserID {
+    private var prekeyByQualifiedUser: Payload.PrekeyByQualifiedUserID {
         let domain = otherClient.user?.domain ?? "wire.com"
         let prekey: Payload.Prekey = Payload.Prekey(key: validPrekey, id: 3)
         let prekeyByUser: Payload.PrekeyByUserID = [
