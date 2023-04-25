@@ -55,10 +55,10 @@ echo ""
 
 echo "ℹ️  Downloading additional assets..."
 scripts/download-assets.sh "$@"
-echo ""
+echo "" 
 
 echo "ℹ️  Doing additional postprocessing..."
-Scripts/postprocess.sh
+scripts/postprocess.sh
 echo ""
 
 cd wire-ios
