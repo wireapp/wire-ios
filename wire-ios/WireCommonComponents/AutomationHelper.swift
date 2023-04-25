@@ -86,9 +86,6 @@ public final class AutomationHelper: NSObject {
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
 
-    /// Whether to use the old calling overlay.
-    public let deprecatedCallingUI: Bool
-
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
         let arguments: ArgumentsType = url.flatMap(FileArguments.init) ?? CommandLineArguments()
@@ -127,7 +124,6 @@ public final class AutomationHelper: NSObject {
         {
             BackendInfo.preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
-        deprecatedCallingUI = arguments.hasFlag(AutomationKey.deprecatedCallingUI)
 
         super.init()
     }
