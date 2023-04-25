@@ -1,5 +1,5 @@
 github "wireapp/appcenter-sdk-apple" "4.3.0"
-github "wireapp/countly-sdk-ios" "22.09.0"
+github "wireapp/countly-sdk-ios" "23.02.2"
 github "wireapp/DifferenceKit" "1.1.5_xcframework"
 github "wireapp/Down" "2.3.3"
 github "wireapp/FLAnimatedImage" "1.0.12_xcframework"
@@ -12,6 +12,6 @@ github "wireapp/swift-protobuf" "1.15.0_xcframework"
 github "wireapp/avs-ios-binaries" "7.2.259_xcframework"
 github "wireapp/ZipArchive" "v2.2.3_xcframework"
 github "wireapp/libPhoneNumber-iOS" "0.9.3_xcframework"
-github "wireapp/ocmock" "v3.4.3_xcframework"
-github "wireapp/Starscream" "4.0.4_proxy_mode"
-github "wireapp/dd-sdk-ios" ~> 1.14.0
+github "wireapp/ocmock" "v3.9.1"
+github "wireapp/Starscream" "4.0.4_proxy_mode_14.2"
+github "wireapp/dd-sdk-ios" ~> 1.18.0
