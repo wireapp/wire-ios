@@ -396,6 +396,22 @@ final class SessionManagerTests: IntegrationTest {
         }
     }
 
+    func testThatItDestroyedCacheDirectoryAfterLoggedOut() {
+
+        // GIVEN
+        XCTAssertTrue(login())
+        let account = sessionManager!.accountManager.selectedAccount!
+        let observer = SessionManagerObserverMock()
+        let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
+
+        // WHEN
+        withExtendedLifetime(token) {
+            sessionManager?.logoutCurrentSession()
+        }
+        
+        // THEN
+        XCTAssertFalse(FileManager.default.fileExists(atPath: ZMSLog.cacheDirectoryPath!.path))
+    }
 }
 
 extension IntegrationTest {
