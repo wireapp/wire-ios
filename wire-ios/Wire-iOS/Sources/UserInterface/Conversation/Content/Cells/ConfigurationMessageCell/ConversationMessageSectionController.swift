@@ -246,19 +246,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
-        if isFailedRecipientsVisible(in: context) {
+        if let failedToSendUsers = message.failedToSendUsers, !failedToSendUsers.isEmpty {
             let buttonAction = {
                 self.collapsed = !self.collapsed
                 self.cellDelegate?.conversationMessageShouldUpdate()
             }
-           // let www = message.conversationLike?.sortedActiveParticipantsUserTypes.map { $0.allClients as? [UserClient] }
-           // let ggg = www?.joined() as? [UserClient]
 
-
-            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers ?? [],
-                                                                                     withoutSessionUsers: [],
-                                                                                     buttonAction: { buttonAction() },
-                                                                                     isCollapsed: collapsed)
+            print("ClientsWithoutSession count: \(message.clientsWithoutSession?.count)")
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: failedToSendUsers,
+                                                                                     clientsWithoutSession: message.clientsWithoutSession,
+                                                                                     isCollapsed: collapsed,
+                                                                                     buttonAction: { buttonAction() })
             add(description: cellDescription)
         }
 
@@ -303,12 +301,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
     }
 
-    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
-        guard let failedToSendUsers = message.failedToSendUsers else {
-            return false
-        }
-        return !failedToSendUsers.isEmpty
-    }
+//    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+//        guard let failedToSendUsers = message.failedToSendUsers else {
+//            return false
+//        }
+//        return !failedToSendUsers.isEmpty
+//    }
 
     // MARK: - Highlight
 
@@ -377,4 +375,20 @@ extension ConversationMessageSectionController: ZMUserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
     }
+}
+
+private extension ZMConversationMessage {
+
+    var clientsWithoutSession: [UserClient]? {
+        guard let conversation = self.conversationLike else {
+            return nil
+        }
+
+        let participants: [UserType] = conversation.sortedActiveParticipantsUserTypes
+        let allClientns = participants.map({ user in
+            return user.allClients as? [UserClient]
+        }).compactMap { $0 }.joined()
+        return allClientns.filter { !$0.hasSessionWithSelfClient }
+    }
+
 }

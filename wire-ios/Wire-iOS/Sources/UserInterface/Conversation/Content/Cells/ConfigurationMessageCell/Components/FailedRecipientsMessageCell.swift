@@ -26,7 +26,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let failedToReceiveUsers: [UserType]
-        let withoutSessionUsers: [UserType]?
+        let clientsWithoutSession: [UserClient]?
         let buttonAction: Completion
         let isCollapsed: Bool
     }
@@ -80,7 +80,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
         isCollapsed = config.isCollapsed
         buttonAction = config.buttonAction
-        let content = configureContent(for: (config.failedToReceiveUsers, config.withoutSessionUsers))
+        let content = configureContent(for: (config.failedToReceiveUsers, config.clientsWithoutSession))
 
         guard config.failedToReceiveUsers.count > 1 else {
             usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
@@ -99,26 +99,26 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
     /// 1. Found users without session
 //    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
-    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
-        let failedToReceiveUsers = users.failedToReceive
-        let withoutSessionUsers = users.withoutSession
-        let totalCountText = FailedtosendParticipants.count(failedToReceiveUsers.count)
+    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserClient]?)) -> (count: String, details: String) {
+//        let failedToReceiveUsers = users.failedToReceive
+//        let withoutSessionUsers = users.withoutSession
+//        let totalCountText = FailedtosendParticipants.count(failedToReceiveUsers.count)
+//
+//        let userNames = failedToReceiveUsers.compactMap { $0.name }.joined(separator: ", ")
+//        let detailsText = FailedtosendParticipants.willGetLater(userNames)
+//
+//        let domains = withoutSessionUsers!.compactMap { $0.domain }
+//        var domainsFrequency: [String] = []
+//        for (key, value) in domains.frequency {
+//            domainsFrequency.append(FailedtosendParticipants.from(value, key))
+//        }
+//        let userWithoutSessionNames = domainsFrequency.compactMap { $0 }.joined(separator: ", ")
+//        let detailsText2 = FailedtosendParticipants.willNeverGet(userWithoutSessionNames)
+//
+//        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
+//        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
 
-        let userNames = failedToReceiveUsers.compactMap { $0.name }.joined(separator: ", ")
-        let detailsText = FailedtosendParticipants.willGetLater(userNames)
-
-        let domains = withoutSessionUsers!.compactMap { $0.domain }
-        var domainsFrequency: [String] = []
-        for (key, value) in domains.frequency {
-            domainsFrequency.append(FailedtosendParticipants.from(value, key))
-        }
-        let userWithoutSessionNames = domainsFrequency.compactMap { $0 }.joined(separator: ", ")
-        let detailsText2 = FailedtosendParticipants.willNeverGet(userWithoutSessionNames)
-
-        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
-        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
-
-        return (totalCountText, detailsWithLinkText)
+        return ("totalCountText", "detailsWithLinkText")
     }
 
     private func setupButtonTitle() {
@@ -197,9 +197,9 @@ class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCel
     var accessibilityIdentifier: String? = nil
     var accessibilityLabel: String? = nil
 
-    init(failedRecipients: [UserType], withoutSessionUsers: [UserType]?, buttonAction: @escaping Completion, isCollapsed: Bool) {
+    init(failedRecipients: [UserType], clientsWithoutSession: [UserClient]?, isCollapsed: Bool, buttonAction: @escaping Completion) {
         configuration = View.Configuration(failedToReceiveUsers: failedRecipients,
-                                           withoutSessionUsers: withoutSessionUsers,
+                                           clientsWithoutSession: clientsWithoutSession,
                                            buttonAction: buttonAction,
                                            isCollapsed: isCollapsed)
     }
