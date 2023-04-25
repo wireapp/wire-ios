@@ -62,7 +62,6 @@
     },
     {
       "skippedTests" : [
-        "APNSTests_Swift\/testThatItSendsAConfirmationMessage_WhenReceivingATextMessage()",
         "AvailabilityTests",
         "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()"
       ],
