@@ -47,10 +47,10 @@ class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         var previousApiVersion = BackendInfo.apiVersion
         defer {
             BackendInfo.apiVersion = previousApiVersion
+            transportSession.renewAccessTokenCalls = []
         }
         BackendInfo.apiVersion = apiVersion
 
-        transportSession.renewAccessTokenCalls = []
         let userClient = UserClient.insertNewObject(in: uiMOC)
         userClient.remoteIdentifier = "1234abcd"
 
