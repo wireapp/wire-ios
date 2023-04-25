@@ -215,20 +215,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
 
-    private func sizeForOldUIItem(withIndexPath indexPath: IndexPath, collectionView: UICollectionView) -> CGSize {
-
-        let maxWidth = collectionView.bounds.size.width
-        let maxHeight = collectionView.bounds.size.height
-
-        let itemsInRow = numberOfItemsIn(.row, for: indexPath)
-        let itemsInColumn = numberOfItemsIn(.column, for: indexPath)
-
-        let width = maxWidth / CGFloat(itemsInRow)
-        let height = maxHeight / CGFloat(itemsInColumn)
-
-        return CGSize(width: width, height: height)
-    }
-
     func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         guard
             let indexPath = firstIndexPath(forPage: currentPage),

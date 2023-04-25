@@ -63,7 +63,7 @@ final class SecurityLevelView: UIView {
             return
         }
 
-        configureUpdatedCallingUI(with: classification)
+        configureCallingUI(with: classification)
 
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
@@ -112,7 +112,7 @@ final class SecurityLevelView: UIView {
         ])
     }
 
-    private func configureUpdatedCallingUI(with classification: SecurityClassification) {
+    private func configureCallingUI(with classification: SecurityClassification) {
         switch classification {
 
         case .classified:

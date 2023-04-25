@@ -112,7 +112,7 @@ final class CallViewController: UIViewController {
         disableVideoIfNeeded()
 
         setupViews()
-        createConstraintsForUpdatedUI()
+        createConstraints()
 
         updateConfiguration()
 
@@ -229,14 +229,6 @@ final class CallViewController: UIViewController {
     }
 
     private func createConstraints() {
-        if isOverlayEnabled {
-            [callGridViewController, callInfoRootViewController].forEach { $0.view.fitIn(view: view) }
-        } else {
-            callGridViewController.view.fitIn(view: view)
-        }
-    }
-
-    private func createConstraintsForUpdatedUI() {
         NSLayoutConstraint.activate([
             callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
             callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
