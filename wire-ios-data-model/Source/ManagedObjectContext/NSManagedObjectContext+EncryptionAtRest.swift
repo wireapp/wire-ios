@@ -108,25 +108,6 @@ extension NSManagedObjectContext {
         }
     }
 
-    public func enableEncryptionAtRest(databaseKey: VolatileData, skipMigration: Bool = false) throws {
-        // TODO: dont store, just pass on.
-        self.databaseKey = databaseKey
-        encryptMessagesAtRest = true
-
-        guard !skipMigration else { return }
-
-        do {
-            try migrateInstancesTowardEncryptionAtRest(type: ZMGenericMessageData.self, key: databaseKey)
-            try migrateInstancesTowardEncryptionAtRest(type: ZMClientMessage.self, key: databaseKey)
-            try migrateInstancesTowardEncryptionAtRest(type: ZMConversation.self, key: databaseKey)
-        } catch {
-            // TODO: do we need to discard changes in case or error?
-            encryptMessagesAtRest = false
-            self.databaseKey = nil
-            throw error
-        }
-    }
-
     public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
             WireLogger.ear.info("migrating existing data toward EAR")
@@ -200,25 +181,6 @@ extension NSManagedObjectContext {
             try migrateInstancesAwayFromEncryptionAtRest(type: ZMClientMessage.self, key: encryptionKeys.databaseKey)
             try migrateInstancesAwayFromEncryptionAtRest(type: ZMConversation.self, key: encryptionKeys.databaseKey)
         } catch {
-            encryptMessagesAtRest = true
-            throw error
-        }
-    }
-
-    public func disableEncryptionAtRest(databaseKey: VolatileData, skipMigration: Bool = false) throws {
-        encryptMessagesAtRest = false
-
-        guard !skipMigration else { return }
-
-        do {
-            // TODO: dont store, just pass on.
-            self.databaseKey = databaseKey
-            try migrateInstancesAwayFromEncryptionAtRest(type: ZMGenericMessageData.self, key: databaseKey)
-            try migrateInstancesAwayFromEncryptionAtRest(type: ZMClientMessage.self, key: databaseKey)
-            try migrateInstancesAwayFromEncryptionAtRest(type: ZMConversation.self, key: databaseKey)
-            self.databaseKey = nil
-        } catch {
-            // TODO: do we need to discard changes in case or error?
             encryptMessagesAtRest = true
             throw error
         }
