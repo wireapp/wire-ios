@@ -842,7 +842,7 @@ extension MissingClientsRequestStrategyTests {
                                        apiVersion: apiVersion.rawValue)
 
         case .v4:
-            let prekeyByQualifiedUser_V4 = Payload.PrekeyByQualifiedUserIDWithFailedUsers(prekeyByQualifiedUserID: prekeyByQualifiedUser, failed: nil)
+            let prekeyByQualifiedUser_V4 = Payload.PrekeyByQualifiedUserIDV4(prekeyByQualifiedUserID: prekeyByQualifiedUser, failed: nil)
             guard let payloadData = prekeyByQualifiedUser_V4.payloadData() else {
                 return nil
             }

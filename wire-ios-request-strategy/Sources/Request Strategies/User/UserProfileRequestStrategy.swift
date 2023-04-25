@@ -326,7 +326,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         case .v4:
             guard
                 let rawData = response.rawData,
-                let payload = Payload.UserProfilesList(rawData, decoder: decoder)
+                let payload = Payload.UserProfilesV4(rawData, decoder: decoder)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 return

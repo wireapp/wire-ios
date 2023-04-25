@@ -475,8 +475,8 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         case .v0, .v1, .v2, .v3:
             payloadData = userProfiles.payloadData()
         case .v4:
-            let userProfilesList = Payload.UserProfilesList(found: userProfiles, failed: nil)
-            payloadData = userProfilesList.payloadData()
+            let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: nil)
+            payloadData = userProfiles.payloadData()
         }
 
         guard let payloadData = payloadData,
