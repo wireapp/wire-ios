@@ -268,6 +268,8 @@ extension ZMSLog {
 
     @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
+    @objc static public let cacheDirectoryPath: URL? = cachesDirectory
+
     @objc static public let preferenceDirectoryPath: URL? = libraryDirectory?.appendingPathComponent("Preferences")
 
     @objc public static func clearLogs() {
