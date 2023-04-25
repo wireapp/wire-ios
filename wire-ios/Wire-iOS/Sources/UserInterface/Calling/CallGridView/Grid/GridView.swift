@@ -77,9 +77,8 @@ final class GridView: UICollectionView {
         isPagingEnabled = true
 
         contentInsetAdjustmentBehavior = .never
-        if DeveloperFlag.isUpdatedCallingUI {
-            backgroundColor = .clear
-        }
+        backgroundColor = .clear
+
     }
 
     // MARK: - Public Interface
@@ -197,10 +196,8 @@ private extension GridView {
 extension GridView: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if DeveloperFlag.isUpdatedCallingUI {
-            return sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
-        }
-        return sizeForOldUIItem(withIndexPath: indexPath, collectionView: collectionView)
+
+        return sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
     }
 
     private func sizeForNewUIItem(withIndexPath indexPath: IndexPath, collectionView: UICollectionView) -> CGSize {
@@ -246,15 +243,15 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int) -> UIEdgeInsets {
 
-        return .zero
-    }
+            return .zero
+        }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
 
-            return DeveloperFlag.isUpdatedCallingUI ? 1.0 : .zero
+            return 1.0
         }
 
     func collectionView(
@@ -262,16 +259,16 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
 
-            return DeveloperFlag.isUpdatedCallingUI ? 1.0 : .zero
-    }
+            return 1.0
+        }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
 
-        return .zero
-    }
+            return .zero
+        }
 }
 
 // MARK: - UIScrollViewDelegate

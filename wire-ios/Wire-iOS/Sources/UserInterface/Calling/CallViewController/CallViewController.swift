@@ -112,11 +112,8 @@ final class CallViewController: UIViewController {
         disableVideoIfNeeded()
 
         setupViews()
-        if DeveloperFlag.isUpdatedCallingUI {
-            createConstraintsForUpdatedUI()
-        } else {
-            createConstraints()
-        }
+        createConstraintsForUpdatedUI()
+
         updateConfiguration()
 
         singleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap(_:)))
@@ -227,9 +224,8 @@ final class CallViewController: UIViewController {
         } else {
             addToSelf(callGridViewController)
         }
-        if DeveloperFlag.isUpdatedCallingUI {
+
             view.backgroundColor = .clear
-        }
     }
 
     private func createConstraints() {
@@ -304,7 +300,6 @@ final class CallViewController: UIViewController {
         updateAppearance()
         updateIdleTimer()
         configurationObserver?.didUpdateConfiguration(configuration: callInfoConfiguration)
-        guard DeveloperFlag.isUpdatedCallingUI else { return }
         showIncomingCallStatusViewIfNeeded(forConfiguration: callInfoConfiguration)
     }
 
@@ -344,8 +339,6 @@ final class CallViewController: UIViewController {
     }
 
     private func updateAppearance() {
-        guard !DeveloperFlag.isUpdatedCallingUI else { return }
-        view.backgroundColor = UIColor.from(scheme: .background, variant: callInfoConfiguration.variant)
     }
 
     fileprivate func alertVideoUnavailable() {
