@@ -20,17 +20,10 @@ import Foundation
 import WireTransport
 import WireDataModel
 
-class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAction> {
+class FetchMLSConversationGroupInfoActionHandler: FetchMLSGroupInfoActionHandler<FetchMLSConversationGroupInfoAction> {
 
-    // MARK: - Methods
-
-    override func request(for action: FetchPublicGroupStateAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func request(for action: FetchMLSConversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
-
-        guard apiVersion > .v2 else {
-            action.fail(with: .endpointUnavailable)
-            return nil
-        }
 
         guard
             !action.domain.isEmpty,
@@ -40,15 +33,56 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
             return nil
         }
 
-        return ZMTransportRequest(
+        return self.request(
+            for: action,
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
+            apiVersion: apiVersion,
+            minRequiredAPIVersion: .v3
+        )
+    }
+}
+
+class FetchMLSSubconversationGroupInfoActionHandler: FetchMLSGroupInfoActionHandler<FetchMLSSubconversationGroupInfoAction> {
+
+    override func request(for action: FetchMLSSubconversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+        var action = action
+
+        guard
+            !action.domain.isEmpty,
+            !action.conversationId.uuidString.isEmpty
+        else {
+            action.fail(with: .emptyParameters)
+            return nil
+        }
+
+        return request(
+            for: action,
+            path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/subconversations/\(action.subgroupType)/groupinfo",
+            apiVersion: apiVersion,
+            minRequiredAPIVersion: .v3 // TODO: use .v4
+        )
+    }
+}
+
+class FetchMLSGroupInfoActionHandler<T: FetchMLSGroupInfoAction>: ActionHandler<T> {
+
+    func request(for action: T, path: String, apiVersion: APIVersion, minRequiredAPIVersion: APIVersion) -> ZMTransportRequest? {
+        var action = action
+
+        guard apiVersion >= minRequiredAPIVersion else {
+            action.fail(with: .endpointUnavailable)
+            return nil
+        }
+
+        return ZMTransportRequest(
+            path: path,
             method: .methodGET,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )
     }
 
-    override func handleResponse(_ response: ZMTransportResponse, action: FetchPublicGroupStateAction) {
+    override func handleResponse(_ response: ZMTransportResponse, action: T) {
         var action = action
 
         switch (response.httpStatus, response.payloadLabel()) {
@@ -61,6 +95,10 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
                 return
             }
             action.succeed(with: payload.groupState)
+        case (400, "mls-not-enabled"):
+            action.fail(with: .mlsNotEnabled)
+        case (400, _):
+            action.fail(with: .invalidParameters)
         case (404, "mls-missing-group-info"):
             action.fail(with: .missingGroupInfo)
         case (404, "no-conversation"):
@@ -78,7 +116,7 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
     }
 }
 
-extension FetchPublicGroupStateActionHandler {
+extension FetchMLSGroupInfoActionHandler {
 
     // MARK: - Payload
 

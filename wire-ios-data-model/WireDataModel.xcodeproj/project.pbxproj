@@ -317,7 +317,7 @@
 		63B1336629A503D100009D84 /* SendCommitBundleAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334B29A503D000009D84 /* SendCommitBundleAction.swift */; };
 		63B1336729A503D100009D84 /* FetchBackendMLSPublicKeysAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334C29A503D000009D84 /* FetchBackendMLSPublicKeysAction.swift */; };
 		63B1336829A503D100009D84 /* CountSelfMLSKeyPackagesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334D29A503D000009D84 /* CountSelfMLSKeyPackagesAction.swift */; };
-		63B1336929A503D100009D84 /* FetchPublicGroupStateAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334E29A503D000009D84 /* FetchPublicGroupStateAction.swift */; };
+		63B1336929A503D100009D84 /* FetchMLSGroupInfoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334E29A503D000009D84 /* FetchMLSGroupInfoAction.swift */; };
 		63B1336A29A503D100009D84 /* ClaimMLSKeyPackageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334F29A503D000009D84 /* ClaimMLSKeyPackageAction.swift */; };
 		63B1336B29A503D100009D84 /* MLSGroupStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1335029A503D000009D84 /* MLSGroupStatus.swift */; };
 		63B1336C29A503D100009D84 /* CoreCryptoCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */; };
@@ -1173,7 +1173,7 @@
 		63B1334B29A503D000009D84 /* SendCommitBundleAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendCommitBundleAction.swift; sourceTree = "<group>"; };
 		63B1334C29A503D000009D84 /* FetchBackendMLSPublicKeysAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysAction.swift; sourceTree = "<group>"; };
 		63B1334D29A503D000009D84 /* CountSelfMLSKeyPackagesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountSelfMLSKeyPackagesAction.swift; sourceTree = "<group>"; };
-		63B1334E29A503D000009D84 /* FetchPublicGroupStateAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchPublicGroupStateAction.swift; sourceTree = "<group>"; };
+		63B1334E29A503D000009D84 /* FetchMLSGroupInfoAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchMLSGroupInfoAction.swift; sourceTree = "<group>"; };
 		63B1334F29A503D000009D84 /* ClaimMLSKeyPackageAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageAction.swift; sourceTree = "<group>"; };
 		63B1335029A503D000009D84 /* MLSGroupStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSGroupStatus.swift; sourceTree = "<group>"; };
 		63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreCryptoCallbacks.swift; sourceTree = "<group>"; };
@@ -2060,7 +2060,7 @@
 				63B1334B29A503D000009D84 /* SendCommitBundleAction.swift */,
 				63B1334C29A503D000009D84 /* FetchBackendMLSPublicKeysAction.swift */,
 				63B1334D29A503D000009D84 /* CountSelfMLSKeyPackagesAction.swift */,
-				63B1334E29A503D000009D84 /* FetchPublicGroupStateAction.swift */,
+				63B1334E29A503D000009D84 /* FetchMLSGroupInfoAction.swift */,
 				63B1334F29A503D000009D84 /* ClaimMLSKeyPackageAction.swift */,
 				63F0780C29F292770031E19D /* FetchSubgroupAction.swift */,
 			);
@@ -3622,7 +3622,7 @@
 				A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */,
 				165124D82189AE90006A3C75 /* ZMAssetClientMessage+Quotes.swift in Sources */,
 				BF5DF5CD20F4EB3E002BCB67 /* ZMSystemMessage+NewConversation.swift in Sources */,
-				63B1336929A503D100009D84 /* FetchPublicGroupStateAction.swift in Sources */,
+				63B1336929A503D100009D84 /* FetchMLSGroupInfoAction.swift in Sources */,
 				0651D00423FC46A500411A22 /* ZMClientMessage+Confirmations.swift in Sources */,
 				F163784F1E5C454C00898F84 /* ZMConversation+Patches.swift in Sources */,
 				1639A8132260916E00868AB9 /* AlertAvailabilityBehaviourChange.swift in Sources */,
