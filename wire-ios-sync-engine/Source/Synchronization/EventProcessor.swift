@@ -30,6 +30,7 @@ class EventProcessor: UpdateEventProcessor {
 
     let syncContext: NSManagedObjectContext
     let eventContext: NSManagedObjectContext
+    let operationStatus: OperationStatus
     let syncStatus: SyncStatus
     var eventBuffer: ZMUpdateEventsBuffer?
     let eventDecoder: EventDecoder
@@ -39,14 +40,13 @@ class EventProcessor: UpdateEventProcessor {
     public var eventConsumers: [ZMEventConsumer] = []
 
     var isReadyToProcessEvents: Bool {
-        // Only process events once we've finished fetching events.
-        guard !syncStatus.isSyncing else { return false }
+        switch operationStatus.operationState {
+        case .backgroundPendingCall:
+            return !syncStatus.isSyncingInBackground
 
-        // If the database is locked, then we won't be able to process events
-        // that require writes to the database.
-        guard !syncContext.isLocked else { return false }
-
-        return true
+        default:
+            return !syncStatus.isSyncing && !syncContext.isLocked
+        }
     }
 
     // MARK: Life Cycle
@@ -54,12 +54,14 @@ class EventProcessor: UpdateEventProcessor {
     init(
         storeProvider: CoreDataStack,
         syncStatus: SyncStatus,
+        operationStatus: OperationStatus,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
         self.syncStatus = syncStatus
+        self.operationStatus = operationStatus
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService

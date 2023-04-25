@@ -351,6 +351,7 @@ public class ZMUserSession: NSObject {
         return EventProcessor(
             storeProvider: self.coreDataStack,
             syncStatus: applicationStatusDirectory!.syncStatus,
+            operationStatus: applicationStatusDirectory!.operationStatus,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService
         )
@@ -452,12 +453,13 @@ public class ZMUserSession: NSObject {
 
     private var onProcessedEvents: ((Bool) -> Void)?
 
-    public func requestQuickSync(completion: ((Bool) -> Void)? = nil) {
+    public func requestQuickSyncForPendingCall(completion: ((Bool) -> Void)? = nil) {
         guard let applicationStatusDirectory = applicationStatusDirectory else {
             completion?(false)
             return
         }
 
+        applicationStatusDirectory.operationStatus.hasPendingCall = true
         applicationStatusDirectory.requestQuickSync()
         onProcessedEvents = completion
     }

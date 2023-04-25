@@ -22,6 +22,7 @@ import CallKit
 enum ConversationLookupError: Error {
     case accountDoesNotExist
     case conversationDoesNotExist
+    case didNotProcessEvents
 }
 
 extension SessionManager: CallKitManagerDelegate {
@@ -48,18 +49,18 @@ extension SessionManager: CallKitManagerDelegate {
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
-        Self.logger.info("lookup conversation and sync for: \(handle)")
+        WireLogger.calling.info("lookup conversation and sync for: \(handle)")
         guard let account  = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
         withSession(for: account) { userSession in
-            Self.logger.info("requesting quick sync")
+            WireLogger.calling.info("requesting quick sync")
 
-            userSession.requestQuickSync { didProcessEvents in
+            userSession.requestQuickSyncForPendingCall { didProcessEvents in
                 userSession.managedObjectContext.perform {
                     if didProcessEvents {
-                        Self.logger.info("did process events, fetching conversation now...")
+                        WireLogger.calling.info("did process events, fetching conversation now...")
 
                         guard let conversation = ZMConversation.fetch(
                             with: handle.conversationID,
@@ -71,8 +72,8 @@ extension SessionManager: CallKitManagerDelegate {
                         completionHandler(.success(conversation))
 
                     } else {
-                        Self.logger.info("did not process events")
-                        completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+                        WireLogger.calling.info("did not process events")
+                        completionHandler(.failure(ConversationLookupError.didNotProcessEvents))
                     }
                 }
             }
