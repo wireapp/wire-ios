@@ -76,7 +76,6 @@ final class CallGridViewControllerSnapshotTests: ZMSnapshotTestCase {
         )
 
         CallingConfiguration.config = .largeConferenceCalls
-        UserDefaults.applicationGroup.set(true, forKey: DeveloperFlag.deprecatedCallingUI.rawValue)
     }
 
     override func tearDown() {
