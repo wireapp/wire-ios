@@ -179,7 +179,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            showMenu()
+//            showMenu()
+            guard let controller = messageActionsMenuController() else { return }
+            cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: controller)
         }
     }
 
@@ -215,6 +217,13 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
 
         menu.showMenu(from: selectionView, rect: selectionRect)
+    }
+
+    func messageActionsMenuController() -> MessageActionsViewController? {
+        guard let actionController = cellDescription?.actionController else { return nil }
+        let actionsMenuController = MessageActionsViewController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionsMenuController.addMessageActions(MessageAction.allCases, withActionController: actionController)
+        return actionsMenuController
     }
 
     // MARK: - Single Tap Action
