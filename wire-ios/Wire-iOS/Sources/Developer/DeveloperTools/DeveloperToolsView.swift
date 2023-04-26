@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import Inject
 
 @available(iOS 14, *)
 struct DeveloperToolsView: View {
