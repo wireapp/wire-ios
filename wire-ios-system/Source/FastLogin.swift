@@ -19,23 +19,23 @@
 import UIKit
 
 class FastLogin {
-    private let name: String
+    private let pListName: String
 
     private var sourcePath: String? {
-        guard let path = Bundle.main.path(forResource: name, ofType: "plist") else { return nil }
+        guard let path = Bundle.main.path(forResource: pListName, ofType: "plist") else { return nil }
         return path
     }
 
     private var destPath: String? {
         guard sourcePath != nil else { return nil }
         let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        return (dir as NSString).appendingPathComponent("\(name).plist")
+        return (dir as NSString).appendingPathComponent("\(pListName).plist")
     }
 
     // MARK: - Lifecycle
 
-    required init?(name: String) {
-        self.name = name
+    required init?(pListName: String) {
+        self.pListName = pListName
 
         let fileManager = FileManager.default
 
@@ -76,7 +76,7 @@ class FastLogin {
             }
         }
         else {
-            print("Not able to write")
+            print("Not able to find the path.")
         }
     }
 }
