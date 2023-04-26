@@ -52,6 +52,7 @@ final class SwitchBackendViewModel: ObservableObject {
 
         let id = UUID()
         let message: String
+        let action: (() -> Void)?
 
     }
 
@@ -90,9 +91,11 @@ final class SwitchBackendViewModel: ObservableObject {
 
             if let environment = BackendEnvironment(type: item.value) {
                 BackendEnvironment.shared = environment
-                alertItem = AlertItem(message: "Backend switched! Please restart the app")
+                alertItem = AlertItem(message: "Backend switched! App will terminate. Start again to log in") {
+                    exit(1)
+                }
             } else {
-                alertItem = AlertItem(message: "Failed to switch backend")
+                alertItem = AlertItem(message: "Failed to switch backend") {}
             }
         }
     }
