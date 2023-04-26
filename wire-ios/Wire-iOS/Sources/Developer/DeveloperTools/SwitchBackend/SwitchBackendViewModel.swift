@@ -58,7 +58,7 @@ final class SwitchBackendViewModel: ObservableObject {
     // MARK: - Life cycle
 
     init() {
-        items = [
+        var items = [
             Item(title: "Production", value: .production),
             Item(title: "Staging", value: .staging),
             Item(title: "Anta", value: .anta),
@@ -69,11 +69,16 @@ final class SwitchBackendViewModel: ObservableObject {
         let selectedType = BackendEnvironment.shared.environmentType.value
 
         // Initial selection
-        let selectedItem = items.first { item in
+        var selectedItem = items.first { item in
             item.value == selectedType
-        }!
-
-        selectedItemID = selectedItem.id
+        }
+        
+        if selectedItem == nil {
+            selectedItem = Item(title: "custom", value: selectedType)
+            items.append(selectedItem!)
+        }
+        self.items = items
+        selectedItemID = selectedItem!.id
     }
 
     // MARK: - Events
