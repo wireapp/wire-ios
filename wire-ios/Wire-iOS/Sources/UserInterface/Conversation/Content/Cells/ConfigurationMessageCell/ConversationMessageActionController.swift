@@ -182,7 +182,7 @@ final class ConversationMessageActionController {
 
     // MARK: - Handler
 
-    private func perform(action: MessageAction) {
+    func perform(action: MessageAction) {
         responder?.perform(action: action,
                            for: message,
                            view: view)

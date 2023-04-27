@@ -39,7 +39,7 @@ extension ZMConversationMessage {
 
         set {
             if newValue {
-                ZMMessage.addReaction(.like, toMessage: self)
+                ZMMessage.addReaction(.thumbUp, toMessage: self)
             } else {
                 ZMMessage.removeReaction(onMessage: self)
             }

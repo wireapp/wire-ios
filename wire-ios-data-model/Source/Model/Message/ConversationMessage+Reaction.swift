@@ -20,10 +20,12 @@ import Foundation
 
 @objc public enum MessageReaction: UInt16 {
     case like
+    case thumbUp
 
     public var unicodeValue: String {
         switch self {
         case .like: return "❤️"
+        case .thumbUp: return "👍"
         }
     }
 }
