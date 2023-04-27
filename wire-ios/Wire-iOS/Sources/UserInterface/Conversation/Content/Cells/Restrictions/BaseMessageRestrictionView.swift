@@ -67,15 +67,15 @@ class BaseMessageRestrictionView: UIView {
     func setupLabels() {
         topLabel.numberOfLines = 1
         topLabel.lineBreakMode = .byTruncatingMiddle
-        topLabel.accessibilityIdentifier = "\(messageType.rawValue.capitalizingFirstLetter()) + MessageRestrictionTopLabel"
+        topLabel.accessibilityIdentifier = "\(messageType.rawValue.capitalizedCharacter) + MessageRestrictionTopLabel"
 
         bottomLabel.numberOfLines = 1
-        bottomLabel.accessibilityIdentifier = "\(messageType.rawValue.capitalizingFirstLetter()) + MessageRestrictionBottomLabel"
+        bottomLabel.accessibilityIdentifier = "\(messageType.rawValue.capitalizedCharacter) + MessageRestrictionBottomLabel"
     }
 
     func setupIconView() {
         iconView.contentMode = .center
-        iconView.accessibilityIdentifier = "\(messageType.rawValue.capitalizingFirstLetter()) + MessageRestrictionIcon"
+        iconView.accessibilityIdentifier = "\(messageType.rawValue.capitalizedCharacter) + MessageRestrictionIcon"
     }
 
     /// Override this method to provide a different view.
