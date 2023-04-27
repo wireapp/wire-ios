@@ -40,7 +40,7 @@ public struct CallEventContent: Decodable {
 
     let properties: Properties?
 
-    let callerUserID: String
+    let callerUserID: String?
 
     public let callerClientID: String
 
@@ -73,7 +73,7 @@ public struct CallEventContent: Decodable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return UUID(uuidString: callerUserID)
+        return callerUserID.flatMap(UUID.init)
     }
 
     public var callState: LocalNotificationType.CallState? {
