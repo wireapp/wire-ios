@@ -39,7 +39,7 @@ extension ZMConversationMessage {
 
         set {
             if newValue {
-                ZMMessage.addReaction(.like, toMessage: self)
+                ZMMessage.addReaction(.thumbUp, toMessage: self)
             } else {
                 ZMMessage.removeReaction(onMessage: self)
             }
@@ -68,6 +68,9 @@ extension ZMConversationMessage {
         return readReceipts.sorted { $0.userType.name < $1.userType.name }
     }
 
+    func addReaction(_ reaction: MessageReaction) {
+        ZMMessage.addReaction(reaction, toMessage: self)
+    }
 }
 
 extension Message {

@@ -20,6 +20,42 @@ import UIKit
 
 class BasicReactionPicker: UIView {
     private let horizontalStackView = UIStackView(axis: .horizontal)
-//    private let
+    private var buttons: [UIButton] = []
 
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    init() {
+        super.init(frame: .zero)
+        setupViews()
+    }
+
+}
+
+private extension BasicReactionPicker {
+
+    func setupViews() {
+        horizontalStackView.alignment = .center
+        horizontalStackView.distribution = .equalSpacing
+        horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(horizontalStackView)
+        NSLayoutConstraint.activate(horizontalStackView.fitInConstraints(view: self, insets: UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)))
+        addButtons()
+    }
+
+    func addButtons() {
+        ["👍", "🙂", "❤️", "☹️", "👎", "🫥"].forEach { emoji in
+            let button = UIButton()
+            button.setTitle(emoji, for: .normal)
+            button.addTarget(self, action: #selector(didTapEmoji(sender:)), for: .touchUpInside)
+            horizontalStackView.addArrangedSubview(button)
+
+        }
+
+    }
+
+    @objc func didTapEmoji(sender: UIButton) {
+
+    }
 }

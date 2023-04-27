@@ -20,22 +20,15 @@ import UIKit
 
 class MessageActionsViewController: UIAlertController {
 
-//    private var actionController: ConversationMessageActionController
-//
-//    init(actionController: ConversationMessageActionController) {
-//        self.actionController = actionController
-//        super.init(title: nil, message: nil, preferredStyle: .actionSheet)
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
+    var actionController: ConversationMessageActionController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     func addMessageActions(_ actions: [MessageAction], withActionController actionController: ConversationMessageActionController) {
+        self.actionController = actionController
+        addReactionsView()
         actions.forEach { action in
             addAction(action, withActionController: actionController)
         }
@@ -47,7 +40,18 @@ class MessageActionsViewController: UIAlertController {
         addAction(cancelAction)
     }
 
-//    private 
+    private func addReactionsView() {
+        let reactionPicker = BasicReactionPicker()
+        reactionPicker.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(reactionPicker)
+        NSLayoutConstraint.activate([
+            reactionPicker.heightAnchor.constraint(equalToConstant: 64.0),
+            reactionPicker.widthAnchor.constraint(equalTo: view.widthAnchor)
+        ])
+
+        let placeholder = UIAlertAction(title: "\n\n\n", style: .default, handler: nil)
+        addAction(placeholder)
+    }
 
     private func addAction(_ action: MessageAction, withActionController actionController: ConversationMessageActionController) {
         guard let title = action.title,
@@ -55,16 +59,15 @@ class MessageActionsViewController: UIAlertController {
             actionController.canPerformAction(selector)
         else { return }
         let style: UIAlertAction.Style = (action == .delete) ? .destructive : .default
-        let newAction = UIAlertAction(title: title, style: style) { [actionController] in
-            action.selector(
-        }
+        let newAction = UIAlertAction(title: title, style: style) { [action, weak actionController] _ in
+
+            actionController?.perform(action: action)
+         }
         if let image = action.icon?.makeImage(size: .small, color: SemanticColors.Icon.foregroundDefaultBlack) {
             newAction.setValue(image, forKey: "image")
         }
         newAction.setValue(CATextLayerAlignmentMode.right, forKey: "titleTextAlignment")
         addAction(newAction)
     }
-    
-
 
 }
