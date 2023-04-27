@@ -102,10 +102,12 @@ platform :ios do
     lane :test do |options|
         xcode_version = options[:xcode_version]
 
-        ios_version = "15.2"
+        ios_version = "16.2"
         if !xcode_version.nil? 
             xcversion(version: xcode_version)
 
+			if xcode_version == "14.2"
+                ios_version = "16.2"
             if xcode_version == "13.2.1"
                 ios_version = "15.2"
             elsif xcode_version == "13.1"
@@ -361,10 +363,12 @@ platform :ios do
 
         xcode_version = options[:xcode_version]
 
-        ios_version = "15.2"
+        ios_version = "16.2"
         if !xcode_version.nil? 
             xcversion(version: xcode_version)
 
+			if xcode_version == "14.2"
+                ios_version = "16.2"
             if xcode_version == "13.2.1"
                 ios_version = "15.2"
             elsif xcode_version == "13.1"
