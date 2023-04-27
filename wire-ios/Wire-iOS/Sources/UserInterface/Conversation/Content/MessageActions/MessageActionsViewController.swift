@@ -47,6 +47,8 @@ class MessageActionsViewController: UIAlertController {
         addAction(cancelAction)
     }
 
+//    private 
+
     private func addAction(_ action: MessageAction, withActionController actionController: ConversationMessageActionController) {
         guard let title = action.title,
               let selector = action.selector,

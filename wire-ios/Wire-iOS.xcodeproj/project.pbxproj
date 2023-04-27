@@ -1088,6 +1088,7 @@
 		D3095763283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D311F87E29EEA1BE00D9CF7E /* MessageActionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */; };
+		D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */; };
 		D337012828996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */; };
 		D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
 		D35EEDBC28C2004000949F02 /* AccessAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */; };
@@ -3095,6 +3096,7 @@
 		D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaShareRestrictionManager.swift; sourceTree = "<group>"; };
 		D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFileRestrictionsProtocol.swift; sourceTree = "<group>"; };
 		D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewController.swift; sourceTree = "<group>"; };
+		D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPicker.swift; sourceTree = "<group>"; };
 		D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DropInteractionTests.swift"; sourceTree = "<group>"; };
 		D35EEDC428C2374300949F02 /* NetworkSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSessionTests.swift; sourceTree = "<group>"; };
 		D35EEDC728C7E68100949F02 /* URLRequestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestable.swift; sourceTree = "<group>"; };
@@ -7041,6 +7043,7 @@
 			isa = PBXGroup;
 			children = (
 				D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */,
+				D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */,
 			);
 			path = MessageActions;
 			sourceTree = "<group>";
@@ -9009,6 +9012,7 @@
 				5E3A6C22206A3AD500907484 /* ConversationActionController.swift in Sources */,
 				8710673E1C0DC5570035603B /* SettingsCellDescriptorFactory.swift in Sources */,
 				060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */,
+				D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */,
 				D5189477205045A100C095C1 /* LinkHeaderCell.swift in Sources */,
 				A9681D8623884FF1004FE917 /* Message+DateFormatter.swift in Sources */,
 				0637968F2964E2FE00674AAA /* Assets+Generated.swift in Sources */,
