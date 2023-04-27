@@ -150,6 +150,18 @@ public class ZMConversationAccessModeTests: MessagingTest {
         XCTAssertNil(request.payload)
     }
 
+    func testThatItGeneratesCorrectCreateLinkRequest_V4() {
+        // given
+        selfUser(options: SelfUserOptions(team: .teamA))
+        let conversation = self.conversation(options: ConversationOptions(hasRemoteId: true, team: .teamA, isGroup: true))
+        // when
+        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v4)
+        // then
+        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.path, "/v4/conversations/\(conversation.remoteIdentifier!.transportString())/code")
+        XCTAssertNotNil(request.payload)
+    }
+
     func testThatItGeneratesCorrectDeleteLinkRequest() {
         // given
         selfUser(options: SelfUserOptions(team: .teamA))

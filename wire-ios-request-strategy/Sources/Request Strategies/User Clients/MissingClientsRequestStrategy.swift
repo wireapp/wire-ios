@@ -133,7 +133,7 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
 
                 return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
 
-            case .v1, .v2, .v3, .v4:
+            case .v1, .v2, .v3:
                 guard let rawData = response.rawData,
                       let prekeys = Payload.PrekeyByQualifiedUserID(rawData),
                       let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
@@ -141,6 +141,16 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
                     return false
                 }
 
+                return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
+
+            case .v4:
+                guard let rawData = response.rawData,
+                      let payload = Payload.PrekeyByQualifiedUserIDV4(rawData),
+                      let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+                else {
+                    return false
+                }
+                let prekeys = payload.prekeyByQualifiedUserID
                 return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
             }
         } else {
