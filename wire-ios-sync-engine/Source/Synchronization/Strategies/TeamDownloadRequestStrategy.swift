@@ -216,21 +216,45 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
+        switch apiVersion {
+        case .v0, .v1, .v2, .v3:
+            return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
+        case .v4:
+            guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
+                return nil
+            }
+            return TeamDownloadRequestFactory.getRequest(for: [teamID], apiVersion: apiVersion)
+        }
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard
-            let rawData = response.rawData,
-            let teamListPayload = TeamListPayload(rawData)
-        else {
-            syncStatus.failCurrentSyncPhase(phase: expectedSyncPhase)
-            return
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        switch apiVersion {
+        case .v0, .v1, .v2, .v3:
+            guard
+                let rawData = response.rawData,
+                let teamListPayload = TeamListPayload(rawData)
+            else {
+                syncStatus.failCurrentSyncPhase(phase: expectedSyncPhase)
+                return
+            }
+
+            _ = teamListPayload.teams.first?.createOrUpdateTeam(in: managedObjectContext)
+
+            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
+        case .v4:
+            guard
+                let rawData = response.rawData,
+                let teamPayload = TeamPayload(rawData)
+            else {
+                syncStatus.failCurrentSyncPhase(phase: expectedSyncPhase)
+                return
+            }
+
+            _ = teamPayload.createOrUpdateTeam(in: managedObjectContext)
+
+            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
         }
-
-        _ = teamListPayload.teams.first?.createOrUpdateTeam(in: managedObjectContext)
-
-        syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
     }
 
     // MARK: - ZMDownstreamTranscoder
