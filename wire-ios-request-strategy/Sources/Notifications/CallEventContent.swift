@@ -44,7 +44,7 @@ public struct CallEventContent: Decodable {
 
     /// Caller Id.
 
-    let callerIdString: String
+    let callerIdString: String?
 
     public let resp: Bool
 
@@ -75,7 +75,7 @@ public struct CallEventContent: Decodable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return UUID(uuidString: callerIdString)
+        return callerIdString.flatMap(UUID.init)
     }
 
     public var callState: LocalNotificationType.CallState? {

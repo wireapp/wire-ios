@@ -29,16 +29,19 @@ class CallEventContentTests: XCTestCase {
 
     private func eventData(
         type: String,
-        callerID: UUID = .create(),
+        callerID: UUID? = .create(),
         isVideo: Bool = false,
         resp: Bool = false
     ) -> Data {
-        let json: [String: Any] = [
+        var json: [String: Any] = [
             "type": type,
-            "src_userid": callerID.uuidString,
             "resp": resp,
             "props": ["videosend": "\(isVideo)"]
         ]
+
+        if let callerID = callerID?.uuidString {
+            json["src_userid"] = callerID
+        }
 
         return try! JSONSerialization.data(withJSONObject: json, options: [])
     }
@@ -60,6 +63,21 @@ class CallEventContentTests: XCTestCase {
     }
 
     // MARK: - Tests
+
+    func test_initWithoutCallerID() throws {
+        let data = eventData(
+            type: "FOO",
+            callerID: nil,
+            isVideo: false,
+            resp: false
+        )
+
+        // When
+        let sut = CallEventContent(from: data, with: decoder)
+
+        // Then
+        XCTAssertNotNil(sut)
+    }
 
     func test_isRemoteMute() throws {
         try given(type: "REMOTEMUTE") { sut in
