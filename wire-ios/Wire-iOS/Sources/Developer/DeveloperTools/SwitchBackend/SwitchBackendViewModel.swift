@@ -52,13 +52,14 @@ final class SwitchBackendViewModel: ObservableObject {
 
         let id = UUID()
         let message: String
+        let action: (() -> Void)?
 
     }
 
     // MARK: - Life cycle
 
     init() {
-        items = [
+        var items = [
             Item(title: "Production", value: .production),
             Item(title: "Staging", value: .staging),
             Item(title: "Anta", value: .anta),
@@ -69,11 +70,16 @@ final class SwitchBackendViewModel: ObservableObject {
         let selectedType = BackendEnvironment.shared.environmentType.value
 
         // Initial selection
-        let selectedItem = items.first { item in
+        var selectedItem = items.first { item in
             item.value == selectedType
-        }!
-
-        selectedItemID = selectedItem.id
+        }
+        
+        if selectedItem == nil {
+            selectedItem = Item(title: "custom", value: selectedType)
+            items.append(selectedItem!)
+        }
+        self.items = items
+        selectedItemID = selectedItem!.id
     }
 
     // MARK: - Events
@@ -85,9 +91,11 @@ final class SwitchBackendViewModel: ObservableObject {
 
             if let environment = BackendEnvironment(type: item.value) {
                 BackendEnvironment.shared = environment
-                alertItem = AlertItem(message: "Backend switched! Please restart the app")
+                alertItem = AlertItem(message: "Backend switched! App will terminate. Start again to log in") {
+                    exit(1)
+                }
             } else {
-                alertItem = AlertItem(message: "Failed to switch backend")
+                alertItem = AlertItem(message: "Failed to switch backend") {}
             }
         }
     }

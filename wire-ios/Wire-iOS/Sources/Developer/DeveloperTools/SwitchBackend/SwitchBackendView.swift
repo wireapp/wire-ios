@@ -44,11 +44,14 @@ struct SwitchBackendView: View {
                 Image(systemName: "checkmark")
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
         .onTapGesture {
             viewModel.handleEvent(.itemTapped(item))
         }.alert(item: $viewModel.alertItem) { alertItem in
-            Alert(title: Text(""), message: Text(alertItem.message))
+            Alert(title: Text(""),
+                  message: Text(alertItem.message),
+                  dismissButton: .default(Text("OK")) { alertItem.action?() }
+            )
         }
 
     }
