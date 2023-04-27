@@ -75,12 +75,6 @@ class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
         try! EncryptionKeys.deleteKeys(for: account)
         sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
 
-        #if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-        #endif
-
         let encryptionKeys = try EncryptionKeys.createKeys(for: account)
         try sharingSession.userInterfaceContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
 
