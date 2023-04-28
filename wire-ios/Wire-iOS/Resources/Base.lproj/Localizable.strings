@@ -290,8 +290,7 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "Tap to record\nYou can  %@  it after that";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Choose a filter above";
 
-"conversation.call.many_participants_confirmation.title" = "Start a call";
-"conversation.call.many_participants_confirmation.message" = "This will call %d people";
+"conversation.call.many_participants_confirmation.title" = "Are you sure you want to call %d people?";
 "conversation.call.many_participants_confirmation.call" = "Call";
 
 "conversation.connection_view.in_address_book" = "in Contacts";
