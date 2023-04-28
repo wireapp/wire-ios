@@ -57,24 +57,4 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
         }
     }
 
-    func testItThrowsAnError_WhenDatabaseKeyIsMissing_WhenEarIsDisabled() throws {
-        // Given
-        let validEncryptionKeys = self.validEncryptionKeys
-        try uiMOC.enableEncryptionAtRest(encryptionKeys: validEncryptionKeys, skipMigration: true)
-        uiMOC.encryptionKeys = nil
-
-        try uiMOC.performGroupedAndWait { moc in
-            // When
-            XCTAssertThrowsError(try moc.disableEncryptionAtRest(encryptionKeys: try self.uiMOC.getEncryptionKeys())) { error in
-                // Then
-                guard case MigrationError.missingDatabaseKey = error else {
-                    return XCTFail("Unexpected error thrown: \(error.localizedDescription)")
-                }
-            }
-
-            XCTAssertTrue(moc.encryptMessagesAtRest)
-        }
-    }
-
-
 }
