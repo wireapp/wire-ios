@@ -441,6 +441,39 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
     }
 
+    func test_MigrationIsCanceled_WhenASingleInstanceFailsToMigrate() throws {
+        // Given
+        let databaseKey1 = VolatileData(from: .randomEncryptionKey())
+        let databaseKey2 = VolatileData(from: .randomEncryptionKey())
+        uiMOC.encryptMessagesAtRest = true
+
+        let conversation = createConversation(in: uiMOC)
+
+        uiMOC.databaseKey = databaseKey1
+        try conversation.appendText(content: "Beep bloop")
+
+        uiMOC.databaseKey = databaseKey2
+        try conversation.appendText(content: "buzz buzzz")
+
+        let results: [ZMGenericMessageData] = try uiMOC.fetchObjects()
+        XCTAssertEqual(results.count, 2)
+
+        // When
+        XCTAssertThrowsError(try sut.disableEncryptionAtRest(context: uiMOC)) { error in
+            // Then
+            switch error {
+            case let NSManagedObjectContext.MigrationError.failedToMigrateInstances(type, _):
+                XCTAssertEqual(type.entityName(), ZMGenericMessageData.entityName())
+
+            default:
+                XCTFail("Unexpected error thrown: \(error.localizedDescription)")
+            }
+        }
+
+        // Then
+        XCTAssertTrue(uiMOC.encryptMessagesAtRest)
+    }
+
     // MARK: - Lock database
 
     func test_LockDatabase() throws {
