@@ -25,6 +25,8 @@ extension IntegrationTest {
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
+        // TODO: do test assertion on apiVersion and move currentApiVersion on caller
+        self.overrideAPIVersion(.v2)
 
         let searchCompleted = expectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
@@ -39,6 +41,7 @@ extension IntegrationTest {
         }
 
         task?.start()
+        self.resetCurrentAPIVersion()
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
@@ -53,7 +56,9 @@ extension IntegrationTest {
     @objc
     public func searchForDirectoryUser(withName name: String, searchQuery: String) -> ZMSearchUser? {
         createSharedSearchDirectory()
-
+        // this only work for v2 and above
+        // TODO: do test assertion on apiVersion and move currentApiVersion on caller
+        setCurrentAPIVersion(.v2)
         let searchCompleted = expectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
@@ -70,7 +75,7 @@ extension IntegrationTest {
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
-
+        resetCurrentAPIVersion()
         return searchResult?.directory.first
     }
 

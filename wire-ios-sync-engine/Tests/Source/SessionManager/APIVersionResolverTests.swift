@@ -26,9 +26,11 @@ class APIVersionResolverTests: ZMTBaseTest {
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
     override func setUp() {
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         mockDelegate = .init()
         transportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         setCurrentAPIVersion(nil)
+
         super.setUp()
     }
 
@@ -36,6 +38,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         mockDelegate = nil
         transportSession = nil
         resetCurrentAPIVersion()
+        BackendInfo.storage = UserDefaults.standard
         super.tearDown()
     }
 
@@ -346,6 +349,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given federation is not enabled.
         BackendInfo.isFederationEnabled = false
+        BackendInfo.domain = "foo.com"
 
         // Backend now has federation enabled.
         mockBackendInfo(
@@ -365,6 +369,35 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertTrue(mockDelegate.didReportFederationHasBeenEnabled)
     }
 
+    func testThatItReportsToDelegate_WhenNotFederatedBackendSwitchedToFederatedBackend() throws {
+        // Given client has prod versions.
+        let sut = createSUT(
+            clientProdVersions: Set(APIVersion.allCases),
+            clientDevVersions: []
+        )
+
+        // Given federation is not enabled.
+        BackendInfo.domain = "simple.example.org"
+        BackendInfo.isFederationEnabled = false
+
+        // Backend now has federation enabled.
+        mockBackendInfo(
+            productionVersions: 0...2,
+            developmentVersions: nil,
+            domain: "federated.example.com",
+            isFederationEnabled: true
+        )
+
+        // When version is resolved.
+        let done = expectation(description: "done")
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then federation is enabled but do not forward to delegate.
+        XCTAssertEqual(BackendInfo.domain, "federated.example.com")
+        XCTAssertTrue(BackendInfo.isFederationEnabled)
+        XCTAssertFalse(mockDelegate.didReportFederationHasBeenEnabled)
+    }
 }
 
 // MARK: - Mocks

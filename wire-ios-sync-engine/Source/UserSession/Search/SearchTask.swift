@@ -101,20 +101,24 @@ public class SearchTask {
     /// Start the search task. Results will be sent to the result handlers
     /// added via the `onResult()` method.
     public func start() {
-        performLocalSearch()
-
-        performRemoteSearch()
-        performRemoteSearchForTeamUser()
+        // search services
         performRemoteSearchForServices()
 
-        performUserLookup()
+        // search People or groups
         performLocalLookup()
+        performLocalSearch()
+
+        // v1
+        performUserLookup()
+        performRemoteSearchForTeamUser()
+        // v2+
+        performRemoteSearch()
     }
 }
 
 extension SearchTask {
 
-    /// look up a user ID from contacts and teamMmebers locally. 
+    /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
          guard case .lookup(let userId) = task else { return }
 
@@ -269,7 +273,8 @@ extension SearchTask {
     func performUserLookup() {
         guard
             case .lookup(let userId) = task,
-            let apiVersion = BackendInfo.apiVersion
+            let apiVersion = BackendInfo.apiVersion,
+            apiVersion <= .v1
         else { return }
 
         tasksRemaining += 1
@@ -315,6 +320,7 @@ extension SearchTask {
     func performRemoteSearch() {
         guard
             let apiVersion = BackendInfo.apiVersion,
+            apiVersion >= .v2,
             case .search(let searchRequest) = task,
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
         else {
@@ -437,6 +443,7 @@ extension SearchTask {
     func performRemoteSearchForTeamUser() {
         guard
             let apiVersion = BackendInfo.apiVersion,
+            apiVersion <= .v1,
             case .search(let searchRequest) = task,
             searchRequest.searchOptions.contains(.directory)
         else { return }

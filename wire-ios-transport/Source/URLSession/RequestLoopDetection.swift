@@ -34,9 +34,9 @@ import Foundation
     fileprivate var recordedRequests: [IdentifierDate] = []
 
     /// After this time, requests are purged from the list
-    static let decayTimer: TimeInterval = 60 // 1 minute
-
-    /// Repeatition warning trigger threshold
+    static let decayTimer : TimeInterval = 60 // 1 minute
+    
+    /// Repetition warning trigger threshold
     /// If a request is repeated more than this number of times,
     /// it will trigger a warning
     static let repetitionTriggerThreshold = 20
