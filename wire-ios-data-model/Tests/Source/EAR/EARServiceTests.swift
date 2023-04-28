@@ -287,7 +287,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertTrue(uiMOC.encryptMessagesAtRest)
     }
 
-
     // MARK: - Disable EAR
 
     func test_DisableEncryptionAtRest_DontDisableIfNotNeeded() throws {
