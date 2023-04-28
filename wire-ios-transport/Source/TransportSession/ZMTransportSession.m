@@ -290,7 +290,11 @@ static NSInteger const DefaultMaximumRequests = 6;
         }];
 
         self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(renewReachabilityObserverToken) name:ZMTransportSessionReachabilityIsEnabled object:self.reachability];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(renewReachabilityObserverToken)
+                                                     name:ZMTransportSessionReachabilityIsEnabled
+                                                   object:self.reachability];
     }
     return self;
 }
@@ -445,8 +449,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     URLRequest.HTTPBody = nil;
     [self.remoteMonitoring logWithRequest:URLRequest];
     ZMLogPublic(@"Request: %@", request.safeForLoggingDescription);
-    ZMLogInfo(@"----> Request: %@\n%@", URLRequest.allHTTPHeaderFields, request);
-
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
