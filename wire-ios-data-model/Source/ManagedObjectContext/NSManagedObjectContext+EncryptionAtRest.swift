@@ -191,7 +191,7 @@ extension NSManagedObjectContext {
         key: VolatileData
     ) throws {
         do {
-            try fetchRequest(forType: type, batchSize: 100).execute().modifyAndSaveInBatches { instance in
+            try fetchObjects(type: type).modifyAndSaveInBatches { instance in
                 try instance.migrateTowardEncryptionAtRest(
                     in: self,
                     key: key
@@ -207,7 +207,7 @@ extension NSManagedObjectContext {
         key: VolatileData
     ) throws {
         do {
-            try fetchRequest(forType: type, batchSize: 100).execute().modifyAndSaveInBatches { instance in
+            try fetchObjects(type: type).modifyAndSaveInBatches { instance in
                 try instance.migrateAwayFromEncryptionAtRest(
                     in: self,
                     key: key
@@ -216,6 +216,11 @@ extension NSManagedObjectContext {
         } catch {
             throw MigrationError.failedToMigrateInstances(type: type, reason: error.localizedDescription)
         }
+    }
+
+    private func fetchObjects<T: MigratableEntity>(type: T.Type) throws -> [T] {
+        let request = fetchRequest(forType: type, batchSize: 100)
+        return try fetch(request)
     }
 
     private func fetchRequest<T>(forType type: T.Type, batchSize: Int) -> NSFetchRequest<T>

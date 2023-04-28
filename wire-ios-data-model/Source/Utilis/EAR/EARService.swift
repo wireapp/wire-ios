@@ -80,7 +80,7 @@ public protocol EARServiceDelegate: AnyObject {
     ///
     /// When the migration can be started, invoke the `onReady` closure.
 
-    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void)
+    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows
 
 }
 
@@ -179,7 +179,7 @@ public class EARService: EARServiceInterface {
             try enableEAR(context)
         } else if let delegate = delegate {
             WireLogger.ear.info("preparing for migration")
-            delegate.prepareForMigration { context in
+            try delegate.prepareForMigration { context in
                 try enableEAR(context)
             }
         } else {
@@ -204,13 +204,13 @@ public class EARService: EARServiceInterface {
         let disableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
             guard let `self` = self else { return }
 
+            context.encryptMessagesAtRest = false
+            self.setDatabaseKeyInAllContexts(nil)
+
             do {
                 if !skipMigration {
                     try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 }
-
-                self.setDatabaseKeyInAllContexts(nil)
-                context.encryptMessagesAtRest = false
             } catch {
                 WireLogger.ear.error("failed to turn off EAR: \(error)")
                 self.setDatabaseKeyInAllContexts(databaseKey)
@@ -224,7 +224,7 @@ public class EARService: EARServiceInterface {
         if skipMigration {
             try disableEAR(context)
         } else {
-            delegate?.prepareForMigration { context in
+            try delegate?.prepareForMigration { context in
                 try disableEAR(context)
             }
         }
