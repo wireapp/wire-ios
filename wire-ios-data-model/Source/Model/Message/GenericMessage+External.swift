@@ -34,12 +34,19 @@ extension GenericMessage {
         guard
             let aesKey = NSData.randomEncryptionKey(),
             let messageData = try? message.serializedData()
-            else {
-                return nil
+        else {
+            return nil
         }
-        let encryptedData = messageData.zmEncryptPrefixingPlainTextIV(key: aesKey)
-        let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
-        return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
+
+        do {
+            let encryptedData = try messageData.zmEncryptPrefixingPlainTextIV(key: aesKey)
+            let keys = ZMEncryptionKeyWithChecksum.key(withAES: aesKey, digest: encryptedData.zmSHA256Digest())
+            return ZMExternalEncryptedDataWithKeys(data: encryptedData, keys: keys)
+        } catch {
+            WireLogger.messaging.error("failed to encrypt generic message: \(error.localizedDescription)")
+            return nil
+        }
+
     }
 
     /// Creates a genericMessage from a ZMUpdateEvent and  External

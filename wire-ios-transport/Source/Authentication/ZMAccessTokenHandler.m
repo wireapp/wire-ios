@@ -207,8 +207,6 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     [self.cookieStorage setRequestHeaderFieldsOnRequest:request];
     [self setRequestHeaderFieldsWithLastKnownAccessToken:request];
     self.currentAccessTokenTask = [URLSession taskWithRequest:request bodyData:nil transportRequest:nil];
-    ZMLogInfo(@"----> Access token request: %@ %@ \n %@ \n %@", request.HTTPMethod, request.URL, request.allHTTPHeaderFields, request.HTTPBody);
-
     [self.backoff performBlock:^{
         [self.currentAccessTokenTask resume];
     }];
@@ -289,8 +287,6 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 - (BOOL)processAccessTokenResponse:(ZMTransportResponse *)response
 {
-    ZMLogInfo(@"<---- Access token response: %@", response);
-    
     BOOL needsToReRun = YES;
     BOOL didFail = NO;
     
