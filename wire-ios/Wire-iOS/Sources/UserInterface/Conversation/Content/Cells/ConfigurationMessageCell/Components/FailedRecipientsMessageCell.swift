@@ -80,7 +80,8 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
         isCollapsed = config.isCollapsed
         buttonAction = config.buttonAction
-        let content = configureContent(for: (config.failedToReceiveUsers, config.clientsWithoutSession))
+        let test: [ZMUser]? = config.clientsWithoutSession?.compactMap { $0.user }
+        let content = configureContent(for: (config.failedToReceiveUsers, test))
 
         guard config.failedToReceiveUsers.count > 1 else {
             usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
@@ -97,13 +98,12 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         layoutIfNeeded()
     }
 
-    /// 1. Found users without session
 //    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
-    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserClient]?)) -> (count: String, details: String) {
-//        let failedToReceiveUsers = users.failedToReceive
-//        let withoutSessionUsers = users.withoutSession
-//        let totalCountText = FailedtosendParticipants.count(failedToReceiveUsers.count)
-//
+    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
+        let failedToReceiveUsers = users.failedToReceive
+        let withoutSessionUsers = users.withoutSession
+        let totalCountText = FailedtosendParticipants.count(failedToReceiveUsers.count)
+
 //        let userNames = failedToReceiveUsers.compactMap { $0.name }.joined(separator: ", ")
 //        let detailsText = FailedtosendParticipants.willGetLater(userNames)
 //
@@ -118,7 +118,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 //        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
 //        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
 
-        return ("totalCountText", "detailsWithLinkText")
+        return (totalCountText, "detailsWithLinkText")
     }
 
     private func setupButtonTitle() {

@@ -252,31 +252,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 self.cellDelegate?.conversationMessageShouldUpdate()
             }
 
-            let session = ZMUserSession.shared()
-            let sync = session!.managedObjectContext.zm_sync!
-            var ddd: [UserClient] = []
-            //print("ConversationLike: \(message.conversationLike)")
-            let convo: ZMConversation? = message.conversationLike as? ZMConversation
-//            let allClientns = convo?.localParticipants.map { $0.clients }.joined()
-            //print("allClientns: \(allClientns?.count)")
-
-//            let sync = convo?.managedObjectContext!.zm_sync!
-
-            sync.performGroupedBlockAndWait { [weak self] in
-                guard let weakSelf = self else { return }
-                let allClientns = convo?.localParticipants.map { $0.clients }.joined()
-                allClientns?.forEach({ cl in
-                    let client = try! sync.existingObject(with: cl.objectID) as! UserClient
-                    if !client.hasSessionWithSelfClient {
-                       // weakSelf.ddd.append(contentsOf: client)
-                    }
-                })
-
-
-            }
-            print("ClientsWithoutSession count: \(ddd.count)")
             let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: failedToSendUsers,
-                                                                                     clientsWithoutSession: [],
+                                                                                     clientsWithoutSession: message.clientsWithoutSession,
                                                                                      isCollapsed: collapsed,
                                                                                      buttonAction: { buttonAction() })
             add(description: cellDescription)
@@ -322,13 +299,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
     }
-
-//    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
-//        guard let failedToSendUsers = message.failedToSendUsers else {
-//            return false
-//        }
-//        return !failedToSendUsers.isEmpty
-//    }
 
     // MARK: - Highlight
 
@@ -402,10 +372,25 @@ extension ConversationMessageSectionController: ZMUserObserver {
 private extension ZMConversationMessage {
 
     var clientsWithoutSession: [UserClient]? {
-            guard let conversation = self.conversationLike else {
-                return nil
-            }
-            return conversation.clientsWithoutSession
+        guard let conversation = conversationLike as? ZMConversation,
+              let syncMoc = conversation.managedObjectContext?.zm_sync else {
+                  return nil
+              }
+
+        var clients: [UserClient] = []
+        syncMoc.performGroupedBlockAndWait {
+            conversation.localParticipantsExcludingSelf
+                .map { $0.clients }
+                .joined()
+                .forEach { client in
+                    if let existingClient = try? syncMoc.existingObject(with: client.objectID) as? UserClient,
+                       !existingClient.hasSessionWithSelfClient {
+                        clients.append(existingClient)
+                    }
+                }
         }
+
+        return clients
+    }
 
 }

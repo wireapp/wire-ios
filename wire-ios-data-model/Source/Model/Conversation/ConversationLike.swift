@@ -40,7 +40,6 @@ public protocol ConversationLike: NSObjectProtocol {
     func verifyLegalHoldSubjects()
 
     var sortedActiveParticipantsUserTypes: [UserType] { get }
-    var clientsWithoutSession: [UserClient] { get }
 
     var relatedConnectionState: ZMConnectionStatus { get }
     var lastMessage: ZMConversationMessage? { get }
@@ -88,8 +87,4 @@ extension ZMConversation: ConversationLike {
 		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
     }
 
-    public var clientsWithoutSession: [UserClient] {
-        let allClientns = localParticipants.map { $0.clients }.joined()
-        return allClientns.filter { !$0.hasSessionWithSelfClient }
-    }
 }
