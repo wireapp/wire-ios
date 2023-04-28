@@ -52,6 +52,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         sut = nil
         keyRepository = nil
         keyEncryptor = nil
+        uiMOC.encryptMessagesAtRest = false
+        uiMOC.databaseKey = nil
         super.tearDown()
     }
 
