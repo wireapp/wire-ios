@@ -685,11 +685,32 @@ extension WireCallCenterV3 {
         }
     }
 
-    fileprivate func handleCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
+    private func handleCallEvent(
+        _ callEvent: CallEvent,
+        completionHandler: @escaping () -> Void
+    ) {
         Self.logger.trace("handle call event")
-        let result = avsWrapper.received(callEvent: callEvent)
 
-        if let context = uiMOC, let error = result {
+        guard
+            let context = uiMOC,
+            let conversation = ZMConversation.fetch(
+                with: callEvent.conversationId.identifier,
+                domain: callEvent.conversationId.domain,
+                in: context
+            ),
+            let conversationType = conversation.avsConversationType
+        else {
+            Self.logger.warning("can't handle call event: unable to determine conversation type")
+            completionHandler()
+            return
+        }
+
+        let result = avsWrapper.received(
+            callEvent: callEvent,
+            conversationType: conversationType
+        )
+
+        if let error = result {
             WireCallCenterCallErrorNotification(
                 context: context,
                 error: error,
@@ -737,6 +758,26 @@ extension WireCallCenterV3 {
                                                                    messageTime: messageTime,
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
+        }
+    }
+
+}
+
+extension ZMConversation {
+
+    var avsConversationType: AVSConversationType? {
+        switch (conversationType, messageProtocol) {
+        case (.oneOnOne, _):
+            return .oneToOne
+
+        case (.group, .proteus):
+            return .conference
+
+        case (.group, .mls):
+            return .mlsConference
+
+        default:
+            return nil
         }
     }
 
