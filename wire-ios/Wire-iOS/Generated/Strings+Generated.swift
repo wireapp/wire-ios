@@ -2079,12 +2079,10 @@ internal enum L10n {
         internal enum ManyParticipantsConfirmation {
           /// Call
           internal static let call = L10n.tr("Localizable", "conversation.call.many_participants_confirmation.call", fallback: "Call")
-          /// This will call %d people
-          internal static func message(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "conversation.call.many_participants_confirmation.message", p1, fallback: "This will call %d people")
+          /// Are you sure you want to call %d people?
+          internal static func title(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "conversation.call.many_participants_confirmation.title", p1, fallback: "Are you sure you want to call %d people?")
           }
-          /// Start a call
-          internal static let title = L10n.tr("Localizable", "conversation.call.many_participants_confirmation.title", fallback: "Start a call")
         }
       }
       internal enum ConnectionView {

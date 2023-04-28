@@ -24,7 +24,7 @@ class TintColorOverrider: NSObject {
 
     func override() {
         windowTintColor = UIApplication.shared.delegate?.window??.tintColor
-        UIApplication.shared.delegate?.window??.tintColor = UIColor.from(scheme: .textForeground, variant: .light)
+        UIApplication.shared.delegate?.window??.tintColor = SemanticColors.Label.textDefault
     }
 
     func restore() {
