@@ -400,11 +400,27 @@ public struct EARPublicKeys {
     public let primary: SecKey
     public let secondary: SecKey
 
+    public init(
+        primary: SecKey,
+        secondary: SecKey
+    ) {
+        self.primary = primary
+        self.secondary = secondary
+    }
+
 }
 
 public struct EARPrivateKeys {
 
     public let primary: SecKey?
     public let secondary: SecKey
+
+    public init(
+        primary: SecKey?,
+        secondary: SecKey
+    ) {
+        self.primary = primary
+        self.secondary = secondary
+    }
 
 }

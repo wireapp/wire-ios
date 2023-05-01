@@ -19,14 +19,16 @@
 import Foundation
 import LocalAuthentication
 
-final class EARKeyGenerator {
+public final class EARKeyGenerator {
 
-    func generatePublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
+    public init() {}
+
+    public func generatePublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
         let keys = try KeychainManager.generatePublicPrivateKeyPair(identifier: id)
         return (keys.publicKey, keys.privateKey)
     }
 
-    func generateKey(numberOfBytes: UInt) throws -> Data {
+    public func generateKey(numberOfBytes: UInt) throws -> Data {
         return try KeychainManager.generateKey(numberOfBytes: numberOfBytes)
     }
 
