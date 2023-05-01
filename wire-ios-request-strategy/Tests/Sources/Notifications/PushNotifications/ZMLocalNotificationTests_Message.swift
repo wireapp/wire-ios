@@ -808,11 +808,11 @@ extension ZMLocalNotificationTests_Message {
     func testThatItGeneratesCorrectCategoryIfEncryptionAtRestIsEnabledForTeamUser() throws {
         // GIVEN
         try syncMOC.performGroupedAndWait { _ in
-       #if targetEnvironment(simulator) && swift(>=5.4)
-            if #available(iOS 15, *) {
+            #if targetEnvironment(simulator) && swift(>=5.4)
+            if self.isRunningiOS15 {
                 XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
             }
-        #endif
+            #endif
 
             guard let encryptionKeys = try? EncryptionKeys.createKeys(for: Account(userName: "", userIdentifier: UUID())) else {
                 XCTFail("couldn't create encryption keys")
@@ -825,8 +825,8 @@ extension ZMLocalNotificationTests_Message {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!
 
             // THEN
-           #if targetEnvironment(simulator) && swift(>=5.4)
-            if #available(iOS 15, *) {
+            #if targetEnvironment(simulator) && swift(>=5.4)
+            if self.isRunningiOS15 {
                 XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
             }
             #endif
@@ -837,11 +837,11 @@ extension ZMLocalNotificationTests_Message {
     func testThatItGeneratesCorrectCategoryIfEncryptionAtRestIsEnabledForNormalUser() throws {
         // GIVEN
         try syncMOC.performGroupedAndWait { _ in
-        #if targetEnvironment(simulator) && swift(>=5.4)
-            if #available(iOS 15, *) {
+            #if targetEnvironment(simulator) && swift(>=5.4)
+            if self.isRunningiOS15 {
                 XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
             }
-         #endif
+            #endif
             guard let encryptionKeys = try? EncryptionKeys.createKeys(for: Account(userName: "", userIdentifier: UUID())) else {
                 XCTFail("couldn't create encryption keys")
                 return
