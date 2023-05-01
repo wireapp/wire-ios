@@ -268,6 +268,8 @@ extension ZMSLog {
 
     @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
+    @objc static public let tmpLogPath: URL? = tmpDirectory
+
     @objc public static func clearLogs() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
         logQueue.async {
@@ -282,16 +284,15 @@ extension ZMSLog {
     //clears tmp directory
     @objc public static func clearTmpDirectory() {
         guard let tmpDirectoryPath = tmpDirectory else { return }
-        logQueue.async {
-            closeHandle()
-            let manager = FileManager.default
-            try? manager
-                .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
-                .forEach { file in
-                    try? manager.removeItem(atPath: file.path)
-                }
-        }
+        closeHandle()
+        let manager = FileManager.default
+        try? manager
+            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .forEach { file in
+                try? manager.removeItem(atPath: file.path)
+            }
     }
+
 
     @objc public static func switchCurrentLogToPrevious() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
@@ -310,8 +311,8 @@ extension ZMSLog {
 
 
     static var tmpDirectory: URL? {
-        let tempurl = URL(string: NSTemporaryDirectory())
-        return tempurl
+        let tempUrl = URL(string: NSTemporaryDirectory())
+        return tempUrl
     }
 
     static public var pathsForExistingLogs: [URL] {

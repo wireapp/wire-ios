@@ -396,6 +396,23 @@ final class SessionManagerTests: IntegrationTest {
         }
     }
 
+    func testThatItDestroyedTmpDirectoryAfterLoggedOut() {
+
+        // GIVEN
+        XCTAssertTrue(login())
+        let observer = SessionManagerObserverMock()
+        let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
+
+        // WHEN
+        withExtendedLifetime(token) {
+            sessionManager?.logoutCurrentSession()
+        }
+
+        let fileCount = try! FileManager.default.contentsOfDirectory(atPath: ZMSLog.tmpLogPath!.path).count
+
+        // THEN
+        XCTAssertEqual(fileCount, 0)
+    }
 }
 
 extension IntegrationTest {
