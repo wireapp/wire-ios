@@ -432,7 +432,6 @@
 		E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */; };
 		EE09EEB1255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */; };
 		EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */; };
-		EE1DDCEF29FA91F700AFAAB6 /* XCTestCase+iOSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DDCEE29FA91F700AFAAB6 /* XCTestCase+iOSVersion.swift */; };
 		EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */; };
 		EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */; };
 		EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */; };
@@ -1228,7 +1227,6 @@
 		E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMappingTests.swift; sourceTree = "<group>"; };
 		EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserTests+AnalyticsIdentifier.swift"; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
-		EE1DDCEE29FA91F700AFAAB6 /* XCTestCase+iOSVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+iOSVersion.swift"; sourceTree = "<group>"; };
 		EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel4.0.xcdatamodel; sourceTree = "<group>"; };
 		EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicEARKeyDescription.swift; sourceTree = "<group>"; };
@@ -2528,7 +2526,6 @@
 				16E70F97270F1F5700718E5D /* ZMConnection+Helper.h */,
 				16E70FA6270F212000718E5D /* ZMConnection+Helper.m */,
 				169FF3A427157B3800330C2E /* MockActionHandler.swift */,
-				EE1DDCEE29FA91F700AFAAB6 /* XCTestCase+iOSVersion.swift */,
 			);
 			name = Helper;
 			path = Tests/Source/Helper;
@@ -3871,7 +3868,6 @@
 				6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */,
 				F11F3E8B1FA32AA0007B6D3D /* InvalidClientsRemovalTests.swift in Sources */,
 				060D194F2462A9EC00623376 /* ZMMessageTests+GenericMessage.swift in Sources */,
-				EE1DDCEF29FA91F700AFAAB6 /* XCTestCase+iOSVersion.swift in Sources */,
 				A94166FC2680CCB5001F4E37 /* ZMConversationTests.swift in Sources */,
 				EE09EEB1255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift in Sources */,
 				BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */,

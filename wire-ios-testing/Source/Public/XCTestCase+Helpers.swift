@@ -40,4 +40,10 @@ extension XCTestCase {
         return groupCounter == 0
     }
 
+    public var isRunningiOS15: Bool {
+        guard #available(iOS 15, *) else { return false }
+        guard #unavailable(iOS 16) else { return false }
+        return true
+    }
+
 }
