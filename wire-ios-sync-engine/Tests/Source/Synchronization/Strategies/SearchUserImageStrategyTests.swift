@@ -269,7 +269,7 @@ extension SearchUserImageStrategyTests {
             expectedPath = "/assets/v3/\(assetID)"
         case .v1:
             expectedPath = "/v1/assets/v4/\(domain)/\(assetID)"
-        case .v2, .v3:
+        case .v2, .v3, .v4:
             expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
         }
 

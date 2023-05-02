@@ -583,11 +583,6 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         try userSession?.setEncryptionAtRest(enabled: true)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -606,11 +601,7 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
         // given
         XCTAssertTrue(login())
         let expectedText = "Hello World"
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
+
         try userSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
         userSession?.perform({
             let groupConversation = self.conversation(for: self.groupConversation)
@@ -619,11 +610,6 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         try userSession?.setEncryptionAtRest(enabled: false)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -658,11 +644,6 @@ class SessionManagerTests_EncryptionAtRestIsEnabledByDefault_Option: Integration
         XCTAssertTrue(login())
 
         // then
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         XCTAssertTrue(sessionManager?.activeUserSession?.encryptMessagesAtRest == true)
     }
 
