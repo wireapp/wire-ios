@@ -30,7 +30,7 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// - Parameters:
     ///   - context: a database context in which to perform migrations.
-    ///   - skipMigration: whethr migration of existing database should be performed.
+    ///   - skipMigration: whether migration of existing database should be performed.
 
     func enableEncryptionAtRest(
         context: NSManagedObjectContext,
@@ -41,7 +41,7 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// - Parameters:
     ///   - context: a database context in which to perform migrations.
-    ///   - skipMigration: whethr migration of existing database should be performed.
+    ///   - skipMigration: whether migration of existing database should be performed.
 
     func disableEncryptionAtRest(
         context: NSManagedObjectContext,
