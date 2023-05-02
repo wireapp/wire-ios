@@ -73,66 +73,6 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         self.config = object
     }
 
-    private func updateUI() {
-        guard let config = config else {
-            return
-        }
-
-        isCollapsed = config.isCollapsed
-        buttonAction = config.buttonAction
-        let test: [ZMUser]? = config.clientsWithoutSession?.compactMap { $0.user }
-        let content = configureContent(for: (config.failedToReceiveUsers, test))
-
-        guard config.failedToReceiveUsers.count > 1 else {
-            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
-            [totalCountView, button].forEach { $0.isHidden = true }
-            return
-        }
-
-        button.isHidden = false
-        usersView.isHidden = isCollapsed
-        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
-        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
-        setupButtonTitle()
-
-        layoutIfNeeded()
-    }
-
-    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
-        var failedToReceiveUsers = users.failedToReceive
-        var withoutSessionUsers: [UserType]? = users.withoutSession
-        let totalCountText = FailedtosendParticipants.didNotGet(failedToReceiveUsers.count)
-
-        let userNames = failedToReceiveUsers
-                        .compactMap { $0.name }
-                        .filter { !$0.isEmpty }
-                        .joined(separator: ", ")
-        let detailsText = !userNames.isEmpty ? FailedtosendParticipants.willGetLater(userNames) : ""
-
-        failedToReceiveUsers.filter { ($0.name?.isEmpty ?? true) }.forEach { user in
-            withoutSessionUsers?.append(user)
-        }
-        let domains = withoutSessionUsers!.compactMap { $0.domain }
-        var domainsFrequency: [String] = []
-        for (key, value) in domains.frequency {
-            let count = FailedtosendParticipants.count(value)
-            domainsFrequency.append(FailedtosendParticipants.from(count, key))
-        }
-
-        let userWithoutSessionNames = domainsFrequency.compactMap { $0 }.joined(separator: ", ")
-        let detailsText2 = FailedtosendParticipants.willNeverGet(userWithoutSessionNames)
-
-        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
-        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
-
-        return (totalCountText, detailsWithLinkText)
-    }
-
-    private func setupButtonTitle() {
-        let buttonTitle = isCollapsed ? FailedtosendParticipants.showDetails : FailedtosendParticipants.hideDetails
-        button.setTitle(buttonTitle, for: .normal)
-    }
-
     private func setupViews() {
         addSubview(stackView)
 
@@ -169,6 +109,83 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         totalCountView.accessibilityIdentifier = "total_count.label"
         usersView.accessibilityIdentifier = "users_list.label"
         button.accessibilityIdentifier = "details.button"
+    }
+
+    private func updateUI() {
+        guard let config = config else {
+            return
+        }
+
+        isCollapsed = config.isCollapsed
+        buttonAction = config.buttonAction
+        let usersWithoutSession = config.clientsWithoutSession?.compactMap { $0.user }
+        let content = configureContent(for: (config.failedToReceiveUsers, usersWithoutSession))
+
+        guard config.failedToReceiveUsers.count > 1 else {
+            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+            [totalCountView, button].forEach { $0.isHidden = true }
+            return
+        }
+
+        button.isHidden = false
+        usersView.isHidden = isCollapsed
+        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
+        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+        setupButtonTitle()
+
+        layoutIfNeeded()
+    }
+
+    private func setupButtonTitle() {
+        let buttonTitle = isCollapsed ? FailedtosendParticipants.showDetails : FailedtosendParticipants.hideDetails
+        button.setTitle(buttonTitle, for: .normal)
+    }
+
+    private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
+        let failedToReceiveUsers = users.failedToReceive
+        var withoutSessionUsers = users.withoutSession
+
+        let totalParticipantsCount = FailedtosendParticipants.didNotGet(failedToReceiveUsers.count)
+
+        /// The list of participants who will receive the message later.
+        let detailsText1 = willGetMessage(participants: failedToReceiveUsers)
+
+        /// The list of participants who will never receive the message.
+        failedToReceiveUsers.filter { ($0.name?.isEmpty ?? true) }.forEach { user in
+            withoutSessionUsers?.append(user)
+        }
+        var detailsText2: String = ""
+        if let withoutSessionUsers = withoutSessionUsers {
+            detailsText2 = willNeverGetMessage(participants: withoutSessionUsers)
+        }
+
+        /// Combine details
+        let details = [detailsText1, detailsText2].joined(separator: "\n")
+        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
+
+        return (totalParticipantsCount, detailsWithLinkText)
+    }
+
+    private func willGetMessage(participants: [UserType]) -> String {
+        let userNames = participants
+                        .compactMap { $0.name }
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ")
+        return !userNames.isEmpty ? FailedtosendParticipants.willGetLater(userNames) : ""
+    }
+
+    private func willNeverGetMessage(participants: [UserType]) -> String {
+        let domains = participants.compactMap { $0.domain }
+        var domainsFrequency: [String] = []
+        for (key, value) in domains.frequency {
+            let count = FailedtosendParticipants.count(value)
+            domainsFrequency.append(FailedtosendParticipants.from(count, key))
+        }
+
+        let userWithoutSessionNames = domainsFrequency
+                                      .compactMap { $0 }
+                                      .joined(separator: ", ")
+        return !userWithoutSessionNames.isEmpty ? FailedtosendParticipants.willNeverGet(userWithoutSessionNames) : ""
     }
 
     // MARK: - Methods

@@ -86,5 +86,4 @@ extension ZMConversation: ConversationLike {
 	public var sortedServiceUsers: [UserType] {
 		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
     }
-
 }
