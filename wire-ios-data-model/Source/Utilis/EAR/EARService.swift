@@ -19,8 +19,9 @@
 import Foundation
 import LocalAuthentication
 
-/// An object that provides encryption at rest services.
-
+/// An object that provides encryption at rest.
+///
+/// sourcery: AutoMockable
 public protocol EARServiceInterface: AnyObject {
 
     var delegate: EARServiceDelegate? { get set }
