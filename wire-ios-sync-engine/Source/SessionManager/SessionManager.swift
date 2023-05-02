@@ -732,8 +732,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
 
             // Clear tmp directory when the user logout from the session.
-            ZMSLog.clearTmpDirectory()
-
+            guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
+            let manager = FileManager.default
+            try? manager
+                .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+                .forEach { file in
+                    try? manager.removeItem(atPath: file.path)
+                }
         })
     }
 

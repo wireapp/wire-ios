@@ -396,6 +396,10 @@ final class SessionManagerTests: IntegrationTest {
         }
     }
 
+    func tmpDirectoryPath() -> URL {
+        return URL(fileURLWithPath: NSTemporaryDirectory())
+    }
+
     func testThatItDestroyedTmpDirectoryAfterLoggedOut() {
 
         // GIVEN
@@ -408,7 +412,7 @@ final class SessionManagerTests: IntegrationTest {
             sessionManager?.logoutCurrentSession()
         }
 
-        let fileCount = try! FileManager.default.contentsOfDirectory(atPath: ZMSLog.tmpLogPath!.path).count
+        let fileCount = try! FileManager.default.contentsOfDirectory(atPath: self.tmpDirectoryPath().path).count
 
         // THEN
         XCTAssertEqual(fileCount, 0)
