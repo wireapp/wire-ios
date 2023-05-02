@@ -27,6 +27,13 @@ class MockUserSessionDelegate: NSObject, UserSessionDelegate {
         calledSetEncryptionAtRest = (enabled, account, encryptionKeys)
     }
 
+    func prepareForMigration(
+        for account: WireDataModel.Account,
+        onReady: @escaping (NSManagedObjectContext) throws -> Void
+    ) {
+        
+    }
+
     func userSessionDidUnlock(_ session: ZMUserSession) {
 
     }
