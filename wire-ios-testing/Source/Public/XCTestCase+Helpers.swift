@@ -41,8 +41,16 @@ extension XCTestCase {
     }
 
     public var isRunningiOS15: Bool {
+        return isiOS15Available && !isiOS16Available
+    }
+
+    private var isiOS15Available: Bool {
         guard #available(iOS 15, *) else { return false }
-        guard #unavailable(iOS 16) else { return false }
+        return true
+    }
+
+    private var isiOS16Available: Bool {
+        guard #available(iOS 16, *) else { return false }
         return true
     }
 
