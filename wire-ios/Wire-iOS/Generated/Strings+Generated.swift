@@ -1951,13 +1951,17 @@ internal enum L10n {
           internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
         }
         internal enum FailedtosendParticipants {
-          /// **%d participants** didn’t get your message.
+          /// Plural format key: "%#@lu_number_of_participants@"
           internal static func count(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.count", p1, fallback: "**%d participants** didn’t get your message.")
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.count", p1, fallback: "Plural format key: \"%#@lu_number_of_participants@\"")
           }
-          /// **%d participants from %@**
-          internal static func from(_ p1: Int, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.from", p1, String(describing: p2), fallback: "**%d participants from %@**")
+          /// **%d participants** didn’t get your message.
+          internal static func didNotGet(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.did_not_get", p1, fallback: "**%d participants** didn’t get your message.")
+          }
+          /// **%@ from %@**
+          internal static func from(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.from", String(describing: p1), String(describing: p2), fallback: "**%@ from %@**")
           }
           /// Hide Details
           internal static let hideDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.hide_details", fallback: "Hide Details")

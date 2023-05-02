@@ -385,7 +385,7 @@ private extension ZMConversationMessage {
                 .forEach { client in
                     if let existingClient = try? syncMoc.existingObject(with: client.objectID) as? UserClient,
                        !existingClient.hasSessionWithSelfClient {
-                        clients.append(existingClient)
+                        clients.append(client)
                     }
                 }
         }

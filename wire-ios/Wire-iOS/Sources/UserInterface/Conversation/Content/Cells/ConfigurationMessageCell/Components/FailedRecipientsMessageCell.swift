@@ -98,27 +98,34 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         layoutIfNeeded()
     }
 
-//    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
     private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
-        let failedToReceiveUsers = users.failedToReceive
-        let withoutSessionUsers = users.withoutSession
-        let totalCountText = FailedtosendParticipants.count(failedToReceiveUsers.count)
+        var failedToReceiveUsers = users.failedToReceive
+        var withoutSessionUsers: [UserType]? = users.withoutSession
+        let totalCountText = FailedtosendParticipants.didNotGet(failedToReceiveUsers.count)
 
-//        let userNames = failedToReceiveUsers.compactMap { $0.name }.joined(separator: ", ")
-//        let detailsText = FailedtosendParticipants.willGetLater(userNames)
-//
-//        let domains = withoutSessionUsers!.compactMap { $0.domain }
-//        var domainsFrequency: [String] = []
-//        for (key, value) in domains.frequency {
-//            domainsFrequency.append(FailedtosendParticipants.from(value, key))
-//        }
-//        let userWithoutSessionNames = domainsFrequency.compactMap { $0 }.joined(separator: ", ")
-//        let detailsText2 = FailedtosendParticipants.willNeverGet(userWithoutSessionNames)
-//
-//        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
-//        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
+        let userNames = failedToReceiveUsers
+                        .compactMap { $0.name }
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ")
+        let detailsText = !userNames.isEmpty ? FailedtosendParticipants.willGetLater(userNames) : ""
 
-        return (totalCountText, "detailsWithLinkText")
+        failedToReceiveUsers.filter { ($0.name?.isEmpty ?? true) }.forEach { user in
+            withoutSessionUsers?.append(user)
+        }
+        let domains = withoutSessionUsers!.compactMap { $0.domain }
+        var domainsFrequency: [String] = []
+        for (key, value) in domains.frequency {
+            let count = FailedtosendParticipants.count(value)
+            domainsFrequency.append(FailedtosendParticipants.from(count, key))
+        }
+
+        let userWithoutSessionNames = domainsFrequency.compactMap { $0 }.joined(separator: ", ")
+        let detailsText2 = FailedtosendParticipants.willNeverGet(userWithoutSessionNames)
+
+        let details = userWithoutSessionNames.isEmpty ? detailsText : detailsText + "\n" + detailsText2
+        let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
+
+        return (totalCountText, detailsWithLinkText)
     }
 
     private func setupButtonTitle() {
@@ -173,10 +180,6 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
 }
 
-extension Sequence where Element: Hashable {
-    var frequency: [Element: Int] { reduce(into: [:]) { $0[$1, default: 0] += 1 } }
-}
-
 class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
 
     typealias View = FailedRecipientsMessageCell
@@ -208,4 +211,8 @@ class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCel
         self.configuration = configuration
     }
 
+}
+
+private extension Sequence where Element: Hashable {
+    var frequency: [Element: Int] { reduce(into: [:]) { $0[$1, default: 0] += 1 } }
 }
