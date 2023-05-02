@@ -60,8 +60,16 @@ struct DeveloperToolsView: View {
 
         case let .text(textItem):
             TextItemCell(title: textItem.title, value: textItem.value)
-                .onTapGesture {
-                    viewModel.handleEvent(.itemTapped(item))
+                .contextMenu {
+                    SwiftUI.Button(
+                        hapticFeedbackStyle: .success,
+                        action: {
+                            viewModel.handleEvent(.itemCopyRequested(item))
+                        },
+                        label: {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                    )
                 }
 
         case let .destination(destinationItem):
@@ -99,7 +107,6 @@ private struct TextItemCell: View {
                 .foregroundColor(.secondary)
         }
     }
-
 }
 
 // MARK: - Previews

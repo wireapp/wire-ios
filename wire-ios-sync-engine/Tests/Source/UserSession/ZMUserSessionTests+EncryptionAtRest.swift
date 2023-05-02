@@ -84,11 +84,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         sut.delegate = userSessionDelegate
 
         // when
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         try sut.setEncryptionAtRest(enabled: true)
 
         // then
@@ -109,11 +104,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         try sut.setEncryptionAtRest(enabled: false)
 
         // then
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         XCTAssertNotNil(userSessionDelegate.calledSetEncryptionAtRest)
         XCTAssertEqual(userSessionDelegate.calledSetEncryptionAtRest?.0, false)
     }
@@ -167,11 +157,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
         // when
         let context = LAContext()
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         try sut.unlockDatabase(with: context)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -191,11 +176,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         XCTAssertTrue(sut.isDatabaseLocked)
     }
 
@@ -212,11 +192,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
+
         XCTAssertTrue(sut.isDatabaseLocked)
     }
 
@@ -248,11 +224,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // when
         _ = factory.startBackgroundActivity(withName: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
+
         XCTAssertNotNil(sut.managedObjectContext.encryptionKeys)
 
         _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler is called.")], timeout: 4.0)
@@ -282,11 +254,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
         // when
         sut.applicationDidEnterBackground(nil)
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -313,11 +280,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
         // when
         let context = LAContext()
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
+        
         try sut.unlockDatabase(with: context)
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -334,11 +297,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         simulateLoggedInUser()
         syncMOC.saveOrRollback()
 
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         let oldKeys = try EncryptionKeys.createKeys(for: account)
 
         // when
@@ -361,11 +319,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         sut.applicationDidEnterBackground(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-#if targetEnvironment(simulator) && swift(>=5.4)
-        if #available(iOS 15, *) {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-#endif
         XCTAssertTrue(sut.isDatabaseLocked)
 
         // then

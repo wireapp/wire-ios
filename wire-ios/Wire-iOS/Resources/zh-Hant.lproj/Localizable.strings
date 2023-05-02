@@ -847,8 +847,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "取消請求？";
-"profile.cancel_connection_request_dialog.message" = "取消與%@的連結請求？";
-"profile.cancel_connection_request_dialog.button_no" = "不好";
+"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
+"profile.cancel_connection_request_dialog.button_no" = "不同意";
 "profile.cancel_connection_request_dialog.button_yes" = "好";
 
 // Unblock button
@@ -1957,3 +1957,4 @@
 "landing.alert.sso.not-supported.message" = "You can't log in via SSO on an on-premises backend with proxy support.";
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
+"add-email-password-step.cta-button.title" = "確認";

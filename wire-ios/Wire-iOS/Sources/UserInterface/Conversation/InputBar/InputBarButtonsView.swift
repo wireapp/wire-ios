@@ -292,16 +292,16 @@ final class InputBarButtonsView: UIView {
         let firstButton = buttons.first!
         let firstButtonLabelSize = firstButton.titleLabel!.intrinsicContentSize
         let firstTitleMargin = (conversationHorizontalMargins.left / 2) - constants.iconSize - (firstButtonLabelSize.width / 2)
-        firstButton.contentHorizontalAlignment = .left
-        firstButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: buttonMargin, bottom: 0, right: 0)
+        firstButton.contentHorizontalAlignment = .center
+        firstButton.imageView?.contentMode = .center
         firstButton.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + firstButtonLabelSize.height + constants.titleTopMargin, left: firstTitleMargin, bottom: 0, right: 0)
 
         if rowIsFull {
             let lastButton = buttons.last!
             let lastButtonLabelSize = lastButton.titleLabel!.intrinsicContentSize
             let lastTitleMargin = conversationHorizontalMargins.left / 2.0 - lastButtonLabelSize.width / 2.0
-            lastButton.contentHorizontalAlignment = .right
-            lastButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: buttonMargin - lastButtonLabelSize.width)
+            lastButton.contentHorizontalAlignment = .center
+            lastButton.imageView?.contentMode = .center
             lastButton.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + lastButtonLabelSize.height + constants.titleTopMargin, left: 0, bottom: 0, right: lastTitleMargin - 1)
             lastButton.titleLabel?.lineBreakMode = .byClipping
         }

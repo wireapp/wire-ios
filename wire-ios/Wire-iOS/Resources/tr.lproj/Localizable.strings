@@ -847,7 +847,7 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "İstek iptal edilsin mi?";
-"profile.cancel_connection_request_dialog.message" = "%@ kişisinin bağlantı isteğinizi iptal etmek istiyor musun?";
+"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
 "profile.cancel_connection_request_dialog.button_no" = "Hayır";
 "profile.cancel_connection_request_dialog.button_yes" = "Evet";
 
@@ -1957,3 +1957,4 @@
 "landing.alert.sso.not-supported.message" = "You can't log in via SSO on an on-premises backend with proxy support.";
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
+"add-email-password-step.cta-button.title" = "Onay";

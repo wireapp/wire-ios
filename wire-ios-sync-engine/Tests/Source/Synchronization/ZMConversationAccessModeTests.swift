@@ -98,7 +98,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/access")
-        case .v1, .v2, .v3:
+        case .v1, .v2, .v3, .v4:
             XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/conversations/\(conversation.remoteIdentifier!.transportString())/access")
         }
 
@@ -148,6 +148,18 @@ public class ZMConversationAccessModeTests: MessagingTest {
         XCTAssertEqual(request.method, .methodPOST)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
         XCTAssertNil(request.payload)
+    }
+
+    func testThatItGeneratesCorrectCreateLinkRequest_V4() {
+        // given
+        selfUser(options: SelfUserOptions(team: .teamA))
+        let conversation = self.conversation(options: ConversationOptions(hasRemoteId: true, team: .teamA, isGroup: true))
+        // when
+        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v4)
+        // then
+        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.path, "/v4/conversations/\(conversation.remoteIdentifier!.transportString())/code")
+        XCTAssertNotNil(request.payload)
     }
 
     func testThatItGeneratesCorrectDeleteLinkRequest() {

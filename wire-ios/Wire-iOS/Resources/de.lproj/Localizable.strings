@@ -157,7 +157,7 @@
 "conversation_list.voiceover.status.missed_call" = "verpasster Anruf";
 "conversation_list.voiceover.status.pause_media" = "pausiere Medien";
 "conversation_list.voiceover.status.play_media" = "Medien abspielen";
-"conversation_list.voiceover.status.typing" = "tippt";
+"conversation_list.voiceover.status.typing" = "schreibt";
 "conversation_list.voiceover.status.ping" = "Ping";
 "conversation_list.voiceover.bottom_bar.compose_button.label" = "erstellen";
 "conversation_list.voiceover.bottom_bar.compose_button.hint" = "Nachrichten verfassen und für später speichern";
@@ -241,7 +241,7 @@
 "conversation.status.message.missedcall.groups" = "Verpasster Anruf von %@";
 "conversation.status.message.mention" = "%@";
 "conversation.status.message.reply" = "%@";
-"conversation.status.message.ephemeral" = "Temporäre Nachricht";
+"conversation.status.message.ephemeral" = "Selbstlöschende Nachricht";
 "conversation.status.message.ephemeral.group" = "Jemand hat eine Nachricht gesendet";
 "conversation.status.message.ephemeral.mention" = "Hat Sie erwähnt";
 "conversation.status.message.ephemeral.mention.group" = "Jemand hat Sie erwähnt";
@@ -495,11 +495,11 @@
 
 "content.system.conversation.with_name.participants" = "mit";
 
-"content.system.message_timer_changes" = "%@ hat temporäre Nachrichten auf %@ gestellt";
-"content.system.message_timer_changes-you" = "%@ haben temporäre Nachrichten auf %@ gestellt";
+"content.system.message_timer_changes" = "%@ hat selbstlöschende Nachrichten auf %@ gestellt";
+"content.system.message_timer_changes-you" = "%@ haben selbstlöschende Nachrichten auf %@ gestellt";
 
-"content.system.message_timer_off" = "%@ hat temporäre Nachrichten ausgeschaltet";
-"content.system.message_timer_off-you" = "%@ haben temporäre Nachrichten ausgeschaltet";
+"content.system.message_timer_off" = "%@ hat selbstlöschende Nachrichten ausgeschaltet";
+"content.system.message_timer_off-you" = "%@ haben selbstlöschende Nachrichten ausgeschaltet";
 
 // read receipt
 
@@ -847,7 +847,7 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Kontaktanfrage abbrechen?";
-"profile.cancel_connection_request_dialog.message" = "Die Kontaktanfrage an %@ abbrechen?";
+"profile.cancel_connection_request_dialog.message" = "Kontaktanfrage an %@ abbrechen?";
 "profile.cancel_connection_request_dialog.button_no" = "Nein";
 "profile.cancel_connection_request_dialog.button_yes" = "Ja";
 
@@ -1957,3 +1957,4 @@
 "landing.alert.sso.not-supported.message" = "Sie können sich nicht über SSO auf einem lokalen Backend mit Proxy-Unterstützung anmelden.";
 "credentials.general-error.alert.title" = "Ungültige Informationen";
 "credentials.general-error.alert.message" = "Diese Zugangsdaten sind nicht korrekt. Bitte überprüfen Sie Ihre Angaben und versuchen Sie es erneut.";
+"add-email-password-step.cta-button.title" = "Bestätigen";

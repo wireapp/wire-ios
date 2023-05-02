@@ -64,7 +64,7 @@ class BackendTrustProviderTests: XCTestCase {
         super.setUp()
         // Do not run tests if setup fails
         continueAfterFailure = false
-        pinnedHosts = ["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com", "www.wire.com", "wire.com"]
+        pinnedHosts = ["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com"]
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
@@ -136,7 +136,7 @@ class BackendTrustProviderTests: XCTestCase {
     /// in `certificates.json` has expired. The production certificate can be
     /// updated by running:
     ///
-    ///      openssl s_client -connect prod-nginz-https.wire.com:443 -showcerts
+    ///      openssl s_client -showcerts -servername prod-nginz-https.wire.com -connect prod-nginz-https.wire.com:443
     ///
     func testPinnedHostsWithValidCertificateIsTrustedAreTrusted() {
         // given

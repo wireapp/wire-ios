@@ -104,7 +104,7 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         switch apiVersion {
         case .v0:
             request = requestsFactory.fetchPrekeys(for: missing, apiVersion: apiVersion)
-        case .v1, .v2, .v3:
+        case .v1, .v2, .v3, .v4:
             request = requestsFactory.fetchPrekeysFederated(for: missing, apiVersion: apiVersion)
         }
 
@@ -141,6 +141,16 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
                     return false
                 }
 
+                return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
+
+            case .v4:
+                guard let rawData = response.rawData,
+                      let payload = Payload.PrekeyByQualifiedUserIDV4(rawData),
+                      let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+                else {
+                    return false
+                }
+                let prekeys = payload.prekeyByQualifiedUserID
                 return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
             }
         } else {

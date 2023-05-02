@@ -2,6 +2,63 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:avs-versions">
+   </FileRef>
+   <FileRef
+      location = "group:Cartfile">
+   </FileRef>
+   <FileRef
+      location = "group:Cartfile.private">
+   </FileRef>
+   <FileRef
+      location = "group:Cartfile.resolved">
+   </FileRef>
+   <Group
+      location = "group:fastlane"
+      name = "fastlane">
+      <FileRef
+         location = "group:Pluginfile">
+      </FileRef>
+      <FileRef
+         location = "group:Fastfile">
+      </FileRef>
+   </Group>
+   <FileRef
+      location = "group:LICENSE">
+   </FileRef>
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+   <Group
+      location = "group:scripts"
+      name = "scripts">
+      <FileRef
+         location = "group:download-assets.sh">
+      </FileRef>
+      <FileRef
+         location = "group:download-avs.sh">
+      </FileRef>
+      <FileRef
+         location = "group:postprocess.sh">
+      </FileRef>
+   </Group>
+   <FileRef
+      location = "group:setup.sh">
+   </FileRef>
+   <Group
+      location = "group:xcconfigs"
+      name = "xcconfigs">
+      <FileRef
+         location = "group:ios-common.xcconfig">
+      </FileRef>
+      <FileRef
+         location = "group:ios.xcconfig">
+      </FileRef>
+      <FileRef
+         location = "group:ios-arm64Simulator.xcconfig">
+      </FileRef>
+   </Group>
+   <FileRef
       location = "group:wire-ios/Wire-iOS.xcodeproj">
    </FileRef>
    <FileRef

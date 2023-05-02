@@ -35,7 +35,7 @@ static NSMutableDictionary *NonPersistedPassword;
 static NSHTTPCookieAcceptPolicy cookiesPolicy = NSHTTPCookieAcceptPolicyAlways;
 
 
-static dispatch_queue_t isolationQueue()
+static dispatch_queue_t isolationQueue(void)
 {
     static dispatch_queue_t queue;
     static dispatch_once_t onceToken;
