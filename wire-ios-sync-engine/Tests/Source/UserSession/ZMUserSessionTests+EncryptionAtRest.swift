@@ -27,11 +27,12 @@ class MockUserSessionDelegate: NSObject, UserSessionDelegate {
         calledSetEncryptionAtRest = (enabled, account, encryptionKeys)
     }
 
+    var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(
         for account: WireDataModel.Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void
     ) {
-        
+        prepareForMigration_Invocations.append(account)
     }
 
     func userSessionDidUnlock(_ session: ZMUserSession) {
@@ -56,7 +57,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     private var factory: BackgroundActivityFactory!
 
     private var account: Account {
-        Account(userName: "", userIdentifier: ZMUser.selfUser(in: syncMOC).remoteIdentifier)
+        return coreDataStack.account
     }
 
     override func setUp() {
@@ -70,7 +71,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     override func tearDown() {
         factory = nil
         activityManager = nil
-        try! EncryptionKeys.deleteKeys(for: account)
+        try? EncryptionKeys.deleteKeys(for: account)
 
         super.tearDown()
     }
@@ -99,8 +100,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         try sut.setEncryptionAtRest(enabled: true)
 
         // then
-        XCTAssertNotNil(userSessionDelegate.calledSetEncryptionAtRest)
-        XCTAssertEqual(userSessionDelegate.calledSetEncryptionAtRest?.0, true)
+        XCTAssertEqual(userSessionDelegate.prepareForMigration_Invocations, [account])
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
@@ -121,8 +121,8 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
         }
         #endif
-        XCTAssertNotNil(userSessionDelegate.calledSetEncryptionAtRest)
-        XCTAssertEqual(userSessionDelegate.calledSetEncryptionAtRest?.0, false)
+
+        XCTAssertEqual(userSessionDelegate.prepareForMigration_Invocations, [account])
     }
 
     // MARK: - Database locking/unlocking
@@ -260,13 +260,13 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
         }
         #endif
-        XCTAssertNotNil(sut.managedObjectContext.encryptionKeys)
+        XCTAssertNotNil(sut.managedObjectContext.databaseKey)
 
         _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler is called.")], timeout: 4.0)
 
         // then
         XCTAssertTrue(sut.isDatabaseLocked)
-        XCTAssertNil(sut.managedObjectContext.encryptionKeys)
+        XCTAssertNil(sut.managedObjectContext.databaseKey)
     }
 
     // MARK: - Database lock handler/observer
