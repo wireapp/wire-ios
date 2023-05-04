@@ -241,7 +241,6 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: self)
 
-
         contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] (tv, _) in
             guard let self = self else { return }
             self.collectionViewHeightConstraint.constant = tv.contentSize.height
@@ -249,28 +248,22 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
         })
     }
 
-
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 5
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath)
 
         cell.backgroundColor = UIColor.green
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
-    {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 51, height: 24)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
-    {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
     }
 
