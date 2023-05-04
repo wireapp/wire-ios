@@ -279,7 +279,8 @@ public struct EncryptionKeys {
         guard let wrappedDatabaseKey = SecKeyCreateEncryptedData(
             publicKey,
             databaseKeyAlgorithm,
-            databaseKey as CFData, &error
+            databaseKey as CFData,
+            &error
         ) else {
             let error = error!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToEncryptDatabaseKey(underlyingError: error)
