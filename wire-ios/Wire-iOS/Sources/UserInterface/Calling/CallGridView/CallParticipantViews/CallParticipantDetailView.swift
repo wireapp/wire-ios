@@ -106,7 +106,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
     private func makeMicrophone(hidden: Bool) {
             self.microphoneWidth?.constant = hidden ? 0 : 22
             self.microphoneImageView.isHidden = hidden ? true : false
-            self.setNeedsDisplay()
+            self.layoutIfNeeded()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
