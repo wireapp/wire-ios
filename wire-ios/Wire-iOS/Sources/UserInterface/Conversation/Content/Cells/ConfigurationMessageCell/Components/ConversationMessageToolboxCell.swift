@@ -119,3 +119,187 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     }
 
 }
+
+final class ReactionMessageCellDescription: ConversationMessageCellDescription {
+
+    typealias View = ReactionsCellView
+
+    let configuration: View.Configuration
+
+    init(message: ZMConversationMessage, color: UIColor) {
+        self.message = message
+        self.configuration = .init(color: color)
+    }
+
+    var topMargin: Float = 0
+
+    var isFullWidth: Bool = true
+
+    var supportsActions: Bool = false
+
+    var showEphemeralTimer: Bool = false
+
+    var containsHighlightableContent: Bool = false
+
+    var message: WireDataModel.ZMConversationMessage?
+
+    weak var delegate: ConversationMessageCellDelegate?
+
+    weak var actionController: ConversationMessageActionController?
+
+    var accessibilityIdentifier: String? = "color cell"
+
+    var accessibilityLabel: String? = "color cell"
+}
+
+final class ReactionsCellView: UIView, ConversationMessageCell {
+    let reactionView = ReactionView()
+
+    struct Configuration: Equatable {
+          let color: UIColor
+         // let reactions: [Reaction]
+
+    }
+
+    struct Reaction: Equatable {
+        let reaction: UnicodeScalar
+        let count: UInt
+    }
+
+    var isSelected: Bool  = false
+
+    var message: WireDataModel.ZMConversationMessage?
+
+    weak var delegate: ConversationMessageCellDelegate?
+
+    func configure(with object: Configuration, animated: Bool) {
+        backgroundColor = object.color
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+
+    private func configureSubviews() {
+        addSubview(reactionView)
+    }
+
+    private func configureConstraints() {
+        reactionView.translatesAutoresizingMaskIntoConstraints = false
+        self.translatesAutoresizingMaskIntoConstraints = false
+        reactionView.fitIn(view: self)
+
+        NSLayoutConstraint.activate([
+            heightAnchor.constraint(equalToConstant: reactionView.contentHeight)
+        ])
+    }
+
+}
+
+
+final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+
+    var collectionViewHeightConstraint: NSLayoutConstraint?
+    let flowLayout = UICollectionViewFlowLayout()
+
+    private lazy var collectionView: UICollectionView = {
+        return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
+    }()
+
+    var contentHeight: CGFloat {
+        return collectionView.contentSize.height
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        createCollectionView()
+//        collectionView.addObserver(
+//            self,
+//            forKeyPath: "contentSize",
+//            options: .new,
+//            context: nil
+//        )
+    }
+
+//    deinit {
+//        collectionView.removeObserver(
+//            self,
+//            forKeyPath: "contentSize",
+//            context: nil
+//        )
+//    }
+
+//    override func observeValue(
+//        forKeyPath keyPath: String?,
+//        of object: Any?,
+//        change: [NSKeyValueChangeKey : Any]?,
+//        context: UnsafeMutableRawPointer?
+//    ) {
+//        super.observeValue(
+//            forKeyPath: keyPath,
+//            of: object,
+//            change: change,
+//            context: context
+//        )
+//
+//        guard
+//            let observedObject = object as? UICollectionView,
+//            observedObject === collectionView,
+//            keyPath == "contentSize"
+//        else {
+//            return
+//        }
+//
+//        print("Content size did change: \(collectionView.contentSize.height)")
+//    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func createCollectionView() {
+
+         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
+         collectionView.delegate = self
+         collectionView.dataSource = self
+         collectionView.backgroundColor = UIColor.cyan
+
+         self.addSubview(collectionView)
+
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.fitIn(view: self)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+     {
+         return 10
+     }
+
+     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+     {
+         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath)
+
+         cell.backgroundColor = UIColor.green
+         return cell
+     }
+
+     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+     {
+         return CGSize(width: 51, height: 24)
+     }
+
+     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
+     {
+         return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+     }
+
+}

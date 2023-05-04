@@ -242,6 +242,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
+        if !message.isSystem {
+            add(description: ReactionMessageCellDescription(message: message, color: UIColor.red))
+        }
+
         if let topCelldescription = cellDescriptions.first {
             topCelldescription.topMargin = context.spacing
         }
