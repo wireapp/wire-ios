@@ -182,6 +182,8 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         configureConstraints()
     }
 
+
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
@@ -200,6 +202,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: reactionView.contentHeight)
         ])
+        self.layoutIfNeeded()
     }
 
 }
@@ -221,45 +224,45 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
     override init(frame: CGRect) {
         super.init(frame: frame)
         createCollectionView()
-//        collectionView.addObserver(
-//            self,
-//            forKeyPath: "contentSize",
-//            options: .new,
-//            context: nil
-//        )
+        collectionView.addObserver(
+            self,
+            forKeyPath: "contentSize.height",
+            options: .new,
+            context: nil
+        )
     }
 
-//    deinit {
-//        collectionView.removeObserver(
-//            self,
-//            forKeyPath: "contentSize",
-//            context: nil
-//        )
-//    }
+    deinit {
+        collectionView.removeObserver(
+            self,
+            forKeyPath: "contentSize.height",
+            context: nil
+        )
+    }
 
-//    override func observeValue(
-//        forKeyPath keyPath: String?,
-//        of object: Any?,
-//        change: [NSKeyValueChangeKey : Any]?,
-//        context: UnsafeMutableRawPointer?
-//    ) {
-//        super.observeValue(
-//            forKeyPath: keyPath,
-//            of: object,
-//            change: change,
-//            context: context
-//        )
-//
-//        guard
-//            let observedObject = object as? UICollectionView,
-//            observedObject === collectionView,
-//            keyPath == "contentSize"
-//        else {
-//            return
-//        }
-//
-//        print("Content size did change: \(collectionView.contentSize.height)")
-//    }
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        guard
+            let observedObject = object as? UICollectionView,
+            observedObject == collectionView,
+            keyPath == "contentSize.height"
+        else {
+            super.observeValue(
+                forKeyPath: keyPath,
+                of: object,
+                change: change,
+                context: context
+            )
+
+            return
+        }
+
+        print("Content size did change: \(collectionView.contentSize.height)")
+    }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
