@@ -83,29 +83,45 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.sortIndex = index
         storedEvent.uuidString = event.uuid?.transportString()
         storedEvent.isCallEvent = event.isCallEvent
+        storedEvent.payload = event.payload as NSDictionary
+        storedEvent.isEncrypted = false
 
-        let unencryptedPayload = event.payload as NSDictionary
-
-        if let publicKeys = publicKeys {
-            if storedEvent.isCallEvent {
-                storedEvent.payload = encrypt(
-                    eventPayload: unencryptedPayload,
-                    publicKey: publicKeys.secondary
-                )
-            } else {
-                storedEvent.payload = encrypt(
-                    eventPayload: unencryptedPayload,
-                    publicKey: publicKeys.primary
-                )
-            }
-
-            storedEvent.isEncrypted = true
-        } else {
-            storedEvent.payload = unencryptedPayload
-            storedEvent.isEncrypted = false
-        }
+        encryptIfNeeded(
+            storedEvent,
+            publicKeys: publicKeys
+        )
 
         return storedEvent
+    }
+
+    private static func encryptIfNeeded(
+        _ storedEvent: StoredUpdateEvent,
+        publicKeys: EARPublicKeys?
+    ) {
+        guard
+            let publicKeys = publicKeys,
+            let unencryptedPayload = storedEvent.payload
+        else {
+            return
+        }
+
+        if storedEvent.isCallEvent {
+            // Call events may need to be processed in the background, therefore
+            // we use the secondary key which allows decryption in the backgound.
+            storedEvent.payload = encrypt(
+                eventPayload: unencryptedPayload,
+                publicKey: publicKeys.secondary
+            )
+        } else {
+            // All other events should be protected with the more restrictive
+            // primary key, meaning they can't be decrypted in the background.
+            storedEvent.payload = encrypt(
+                eventPayload: unencryptedPayload,
+                publicKey: publicKeys.primary
+            )
+        }
+
+        storedEvent.isEncrypted = true
     }
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
