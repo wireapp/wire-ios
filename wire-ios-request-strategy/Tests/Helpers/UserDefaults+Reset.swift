@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-extension XCTestCase {
+extension UserDefaults {
 
-    var isRunningiOS15: Bool {
-        guard #available(iOS 15, *) else { return false }
-        guard #unavailable(iOS 16) else { return false }
-        return true
+    func reset() {
+        for key in dictionaryRepresentation().keys {
+            removeObject(forKey: key)
+        }
+
+        synchronize()
     }
 
 }

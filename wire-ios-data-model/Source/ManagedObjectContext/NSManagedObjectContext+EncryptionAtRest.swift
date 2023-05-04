@@ -301,7 +301,6 @@ extension NSManagedObjectContext {
     ) throws -> Data {
         guard let key = databaseKey else {
             throw EncryptionError.missingDatabaseKey
-
         }
 
         return try decryptData(
@@ -357,17 +356,17 @@ extension NSManagedObjectContext {
         return encryptionKeys
     }
 
-    private static let databseKeyUserIntoKey = "databaseKey"
+    private static let databaseKeyUserInfoKey = "databaseKey"
 
     /// The database key used to protect contents of the database.
 
     public var databaseKey: VolatileData? {
         get {
-            userInfo[Self.databseKeyUserIntoKey] as? VolatileData
+            userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
         }
 
         set {
-            userInfo[Self.databseKeyUserIntoKey] = newValue
+            userInfo[Self.databaseKeyUserInfoKey] = newValue
         }
     }
 

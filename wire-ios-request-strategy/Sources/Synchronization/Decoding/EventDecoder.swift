@@ -70,7 +70,7 @@ extension EventDecoder {
     ///   - events: Encrypted events
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        publicKeys: EARPublicKeys?,
+        publicKeys: EARPublicKeys? = nil,
         block: ConsumeBlock? = nil
     ) {
         var lastIndex: Int64?
@@ -108,7 +108,7 @@ extension EventDecoder {
     ///   - block: Event consume block which is called once for every stored event.
 
     public func processStoredEvents(
-        with privateKeys: EARPrivateKeys?,
+        with privateKeys: EARPrivateKeys? = nil,
         _ block: ConsumeBlock
     ) {
         process(

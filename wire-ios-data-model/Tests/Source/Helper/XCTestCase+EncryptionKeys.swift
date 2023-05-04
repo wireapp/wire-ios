@@ -43,11 +43,8 @@ extension XCTestCase {
         return VolatileData(from: .zmRandomSHA256Key())
     }
 
-    var malformedEncryptionKeys: EncryptionKeys {
-        let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
-        let databaseKey = Data.zmRandomSHA256Key()
-
-        return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey.dropFirst())
+    var malformedDatabaseKey: VolatileData {
+        return VolatileData(from: .zmRandomSHA256Key().dropFirst())
     }
 
 }

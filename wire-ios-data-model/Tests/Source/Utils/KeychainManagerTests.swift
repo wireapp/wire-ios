@@ -50,19 +50,20 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testPublicPrivateKeyPairIsGeneratedSuccessfully() throws {
+        assertPublicPrivateKeyPairGeneration(accessLevel: .moreRestrictive)
+        assertPublicPrivateKeyPairGeneration(accessLevel: .lessRestrictive)
+    }
 
-        #if targetEnvironment(simulator) && swift(>=5.4)
-        if isRunningiOS15 {
-            XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-        }
-        #endif
-
+    func assertPublicPrivateKeyPairGeneration(accessLevel: KeychainManager.AccessLevel) {
         // Given
         let item = EncryptionKeys.KeychainItem.databaseKey(account)
 
         do {
             // When I have generated Public Private KeyPair
-            let KeyPair = try KeychainManager.generatePublicPrivateKeyPair(identifier: item.uniqueIdentifier)
+            let KeyPair = try KeychainManager.generatePublicPrivateKeyPair(
+                identifier: item.uniqueIdentifier,
+                accessLevel: accessLevel
+            )
 
             // Then KeyPair should not be nil
             XCTAssertNotNil(KeyPair, "Public Private KeyPair should be created successfully.")

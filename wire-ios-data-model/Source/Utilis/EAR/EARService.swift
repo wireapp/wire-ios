@@ -19,8 +19,9 @@
 import Foundation
 import LocalAuthentication
 
-/// An object that provides encryption at rest services.
-
+/// An object that provides encryption at rest.
+///
+/// sourcery: AutoMockable
 public protocol EARServiceInterface: AnyObject {
 
     var delegate: EARServiceDelegate? { get set }
@@ -29,7 +30,7 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// - Parameters:
     ///   - context: a database context in which to perform migrations.
-    ///   - skipMigration: whethr migration of existing database should be performed.
+    ///   - skipMigration: whether migration of existing database should be performed.
 
     func enableEncryptionAtRest(
         context: NSManagedObjectContext,
@@ -40,7 +41,7 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// - Parameters:
     ///   - context: a database context in which to perform migrations.
-    ///   - skipMigration: whethr migration of existing database should be performed.
+    ///   - skipMigration: whether migration of existing database should be performed.
 
     func disableEncryptionAtRest(
         context: NSManagedObjectContext,
@@ -250,7 +251,7 @@ public class EARService: EARServiceInterface {
 
         do {
             let id = primaryPrivateKeyDescription.id
-            let keyPair = try keyGenerator.generatePublicPrivateKeyPair(id: id)
+            let keyPair = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: id)
             primaryPublicKey = keyPair.publicKey
         } catch {
             WireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
@@ -259,7 +260,7 @@ public class EARService: EARServiceInterface {
 
         do {
             let id = secondaryPrivateKeyDescription.id
-            let keyPair = try keyGenerator.generatePublicPrivateKeyPair(id: id)
+            let keyPair = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: id)
             secondaryPublicKey = keyPair.publicKey
         } catch {
             WireLogger.ear.error("failed to generate secondary public private keypair: \(String(describing: error))")
@@ -400,11 +401,27 @@ public struct EARPublicKeys {
     public let primary: SecKey
     public let secondary: SecKey
 
+    public init(
+        primary: SecKey,
+        secondary: SecKey
+    ) {
+        self.primary = primary
+        self.secondary = secondary
+    }
+
 }
 
 public struct EARPrivateKeys {
 
     public let primary: SecKey?
     public let secondary: SecKey
+
+    public init(
+        primary: SecKey?,
+        secondary: SecKey
+    ) {
+        self.primary = primary
+        self.secondary = secondary
+    }
 
 }

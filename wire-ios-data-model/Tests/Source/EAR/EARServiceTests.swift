@@ -52,6 +52,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         sut = nil
         keyRepository = nil
         keyEncryptor = nil
+        uiMOC.encryptMessagesAtRest = false
+        uiMOC.databaseKey = nil
         super.tearDown()
     }
 
@@ -72,9 +74,14 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     }
 
-    func generateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
+    func generatePrimaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
         let keyGenerator = EARKeyGenerator()
-        return try keyGenerator.generatePublicPrivateKeyPair(id: id)
+        return try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "primary")
+    }
+
+    func generateSecondaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keyGenerator = EARKeyGenerator()
+        return try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "secondary")
     }
 
     func mockKeyGeneration() {
@@ -287,7 +294,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertTrue(uiMOC.encryptMessagesAtRest)
     }
 
-
     // MARK: - Disable EAR
 
     func test_DisableEncryptionAtRest_DontDisableIfNotNeeded() throws {
@@ -441,6 +447,39 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
     }
 
+    func test_MigrationIsCanceled_WhenASingleInstanceFailsToMigrate() throws {
+        // Given
+        let databaseKey1 = VolatileData(from: .randomEncryptionKey())
+        let databaseKey2 = VolatileData(from: .randomEncryptionKey())
+        uiMOC.encryptMessagesAtRest = true
+
+        let conversation = createConversation(in: uiMOC)
+
+        uiMOC.databaseKey = databaseKey1
+        try conversation.appendText(content: "Beep bloop")
+
+        uiMOC.databaseKey = databaseKey2
+        try conversation.appendText(content: "buzz buzzz")
+
+        let results: [ZMGenericMessageData] = try uiMOC.fetchObjects()
+        XCTAssertEqual(results.count, 2)
+
+        // When
+        XCTAssertThrowsError(try sut.disableEncryptionAtRest(context: uiMOC)) { error in
+            // Then
+            switch error {
+            case let NSManagedObjectContext.MigrationError.failedToMigrateInstances(type, _):
+                XCTAssertEqual(type.entityName(), ZMGenericMessageData.entityName())
+
+            default:
+                XCTFail("Unexpected error thrown: \(error.localizedDescription)")
+            }
+        }
+
+        // Then
+        XCTAssertTrue(uiMOC.encryptMessagesAtRest)
+    }
+
     // MARK: - Lock database
 
     func test_LockDatabase() throws {
@@ -468,7 +507,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_UnlockDatabase() throws {
         // Given
-        let keys = try generateKeyPair(id: "test")
+        let keys = try generatePrimaryKeyPair()
         let encryptedDatabaseKey = Data.randomEncryptionKey()
         let decryptedDatabaseKey = Data.randomEncryptionKey()
         let context = LAContext()
@@ -493,8 +532,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPublicKeys() throws {
         // Given
-        let primaryKeys = try generateKeyPair(id: "primary")
-        let secondaryKeys = try generateKeyPair(id: "secondary")
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
         mockFetchingPublicKeys(
@@ -512,7 +551,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPublicKeys_KeyNotFound() throws {
         // Given
-        let primaryKeys = try generateKeyPair(id: "primary")
+        let primaryKeys = try generatePrimaryKeyPair()
 
         // Mock
         mockFetchingPublicKeys(
@@ -547,8 +586,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys() throws {
         // Given
-        let primaryKeys = try generateKeyPair(id: "primary")
-        let secondaryKeys = try generateKeyPair(id: "secondary")
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
         mockFetchingPrivateKeys(
@@ -566,7 +605,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys_PrimaryKeyNotFound() throws {
         // Given
-        let secondaryKeys = try generateKeyPair(id: "secondary")
+        let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
         mockFetchingPrivateKeys(

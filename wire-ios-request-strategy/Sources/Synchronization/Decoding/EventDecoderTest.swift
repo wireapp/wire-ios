@@ -76,19 +76,33 @@ extension EventDecoderTest {
         XCTAssertTrue(didCallBlock)
     }
 
-    func testThatItProcessesEventsWithEncryptionKeys() {
-
+    func testThatItProcessesEventsWithPrivateKeys() throws {
         var didCallBlock = false
-        let account = Account(userName: "John Doe", userIdentifier: UUID())
-        let encryptionKeys = try? EncryptionKeys.createKeys(for: account)
+        let accountID = UUID.create()
+        let keyGenerator = EARKeyGenerator()
+        let primaryKeys = try keyGenerator.generatePublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
+        let secondaryKeys = try keyGenerator.generatePublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
+
+        let publicKeys = EARPublicKeys(
+            primary: primaryKeys.publicKey,
+            secondary: primaryKeys.privateKey
+        )
+
+        let privateKeys = EARPrivateKeys(
+            primary: primaryKeys.privateKey,
+            secondary: secondaryKeys.privateKey
+        )
 
         syncMOC.performGroupedBlock {
             // given
             let event = self.eventStreamEvent()
-            self.sut.decryptAndStoreEvents([event])
+            self.sut.decryptAndStoreEvents(
+                [event],
+                publicKeys: publicKeys
+            )
 
             // when
-            self.sut.processStoredEvents(with: encryptionKeys) { (events) in
+            self.sut.processStoredEvents(with: privateKeys) { events in
                 XCTAssertTrue(events.contains(event))
                 didCallBlock = true
             }
@@ -417,7 +431,7 @@ extension EventDecoderTest {
     func insert(_ events: [ZMUpdateEvent], startIndex: Int64 = 0) {
         eventMOC.performGroupedBlockAndWait {
             events.enumerated().forEach { index, event  in
-                _ = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: Int64(startIndex) + Int64(index))
+                _ = StoredUpdateEvent.encryptAndCreate(event, context: self.eventMOC, index: Int64(startIndex) + Int64(index))
             }
 
             XCTAssert(self.eventMOC.saveOrRollback())

@@ -10,6 +10,7 @@ import UIKit
 import AppKit
 #endif
 
+import LocalAuthentication
 
 @testable import WireDataModel
 
@@ -260,6 +261,139 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
         }
 
         try mock(description)            
+    }
+
+}
+public class MockEARServiceInterface: EARServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - delegate
+
+    public var delegate: EARServiceDelegate?
+
+
+    // MARK: - enableEncryptionAtRest
+
+    public var enableEncryptionAtRestContextSkipMigration_Invocations: [(context: NSManagedObjectContext, skipMigration: Bool)] = []
+    public var enableEncryptionAtRestContextSkipMigration_MockError: Error?
+    public var enableEncryptionAtRestContextSkipMigration_MockMethod: ((NSManagedObjectContext, Bool) throws -> Void)?
+
+    public func enableEncryptionAtRest(context: NSManagedObjectContext, skipMigration: Bool) throws {
+        enableEncryptionAtRestContextSkipMigration_Invocations.append((context: context, skipMigration: skipMigration))
+
+        if let error = enableEncryptionAtRestContextSkipMigration_MockError {
+            throw error
+        }
+
+        guard let mock = enableEncryptionAtRestContextSkipMigration_MockMethod else {
+            fatalError("no mock for `enableEncryptionAtRestContextSkipMigration`")
+        }
+
+        try mock(context, skipMigration)            
+    }
+
+    // MARK: - disableEncryptionAtRest
+
+    public var disableEncryptionAtRestContextSkipMigration_Invocations: [(context: NSManagedObjectContext, skipMigration: Bool)] = []
+    public var disableEncryptionAtRestContextSkipMigration_MockError: Error?
+    public var disableEncryptionAtRestContextSkipMigration_MockMethod: ((NSManagedObjectContext, Bool) throws -> Void)?
+
+    public func disableEncryptionAtRest(context: NSManagedObjectContext, skipMigration: Bool) throws {
+        disableEncryptionAtRestContextSkipMigration_Invocations.append((context: context, skipMigration: skipMigration))
+
+        if let error = disableEncryptionAtRestContextSkipMigration_MockError {
+            throw error
+        }
+
+        guard let mock = disableEncryptionAtRestContextSkipMigration_MockMethod else {
+            fatalError("no mock for `disableEncryptionAtRestContextSkipMigration`")
+        }
+
+        try mock(context, skipMigration)            
+    }
+
+    // MARK: - lockDatabase
+
+    public var lockDatabase_Invocations: [Void] = []
+    public var lockDatabase_MockMethod: (() -> Void)?
+
+    public func lockDatabase() {
+        lockDatabase_Invocations.append(())
+
+        guard let mock = lockDatabase_MockMethod else {
+            fatalError("no mock for `lockDatabase`")
+        }
+
+        mock()            
+    }
+
+    // MARK: - unlockDatabase
+
+    public var unlockDatabaseContext_Invocations: [LAContext] = []
+    public var unlockDatabaseContext_MockError: Error?
+    public var unlockDatabaseContext_MockMethod: ((LAContext) throws -> Void)?
+
+    public func unlockDatabase(context: LAContext) throws {
+        unlockDatabaseContext_Invocations.append(context)
+
+        if let error = unlockDatabaseContext_MockError {
+            throw error
+        }
+
+        guard let mock = unlockDatabaseContext_MockMethod else {
+            fatalError("no mock for `unlockDatabaseContext`")
+        }
+
+        try mock(context)            
+    }
+
+    // MARK: - fetchPublicKeys
+
+    public var fetchPublicKeys_Invocations: [Void] = []
+    public var fetchPublicKeys_MockError: Error?
+    public var fetchPublicKeys_MockMethod: (() throws -> EARPublicKeys)?
+    public var fetchPublicKeys_MockValue: EARPublicKeys?
+
+    public func fetchPublicKeys() throws -> EARPublicKeys {
+        fetchPublicKeys_Invocations.append(())
+
+        if let error = fetchPublicKeys_MockError {
+            throw error
+        }
+
+        if let mock = fetchPublicKeys_MockMethod {
+            return try mock()
+        } else if let mock = fetchPublicKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchPublicKeys`")
+        }
+    }
+
+    // MARK: - fetchPrivateKeys
+
+    public var fetchPrivateKeys_Invocations: [Void] = []
+    public var fetchPrivateKeys_MockError: Error?
+    public var fetchPrivateKeys_MockMethod: (() throws -> EARPrivateKeys)?
+    public var fetchPrivateKeys_MockValue: EARPrivateKeys?
+
+    public func fetchPrivateKeys() throws -> EARPrivateKeys {
+        fetchPrivateKeys_Invocations.append(())
+
+        if let error = fetchPrivateKeys_MockError {
+            throw error
+        }
+
+        if let mock = fetchPrivateKeys_MockMethod {
+            return try mock()
+        } else if let mock = fetchPrivateKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchPrivateKeys`")
+        }
     }
 
 }

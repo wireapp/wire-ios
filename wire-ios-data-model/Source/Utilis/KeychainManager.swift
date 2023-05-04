@@ -76,41 +76,63 @@ public enum KeychainManager {
         return Data(key)
     }
 
-    static func generatePublicPrivateKeyPair(identifier: String) throws -> (privateKey: SecKey, publicKey: SecKey) {
-        #if targetEnvironment(simulator)
-        return try generateSimulatorPublicPrivateKeyPair(identifier: identifier)
-        #else
-        return try generateSecureEnclavePublicPrivateKeyPair(identifier: identifier)
-        #endif
+    enum AccessLevel {
+
+        case moreRestrictive
+        case lessRestrictive
+
     }
 
-    private static func generateSecureEnclavePublicPrivateKeyPair(identifier: String) throws -> (privateKey: SecKey, publicKey: SecKey) {
-        var accessError: Unmanaged<CFError>?
+    static func generatePublicPrivateKeyPair(
+        identifier: String,
+        accessLevel: AccessLevel
+    ) throws -> (privateKey: SecKey, publicKey: SecKey) {
+        let protection: CFTypeRef
+        let flags: SecAccessControlCreateFlags
 
+        if isRunningOnSimulator {
+            protection = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            flags = []
+        } else {
+            switch accessLevel {
+            case .moreRestrictive:
+                protection = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+                flags = [.privateKeyUsage, .userPresence]
+
+            case .lessRestrictive:
+                protection = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+                flags = [.privateKeyUsage]
+            }
+        }
+
+        var accessError: Unmanaged<CFError>?
         guard let access = SecAccessControlCreateWithFlags(
             kCFAllocatorDefault,
-            kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-            [.privateKeyUsage],
+            protection,
+            flags,
             &accessError
         ) else {
             let error = accessError!.takeRetainedValue() as Swift.Error
-            throw Error.failedToGeneratePublicPrivateKey(underlyingError: error)
+            throw error
         }
 
         guard let identifierData = identifier.data(using: .utf8) else {
             fatalError()
         }
 
-        let attributes: [CFString: Any] = [
+        var attributes: [CFString: Any] = [
             kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits: 256,
-            kSecAttrTokenID: kSecAttrTokenIDSecureEnclave,
             kSecPrivateKeyAttrs: [
                 kSecAttrIsPermanent: true,
                 kSecAttrAccessControl: access,
                 kSecAttrLabel: identifierData
             ]
         ]
+
+        if !isRunningOnSimulator {
+            attributes[kSecAttrTokenID] = kSecAttrTokenIDSecureEnclave
+        }
 
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
@@ -125,45 +147,12 @@ public enum KeychainManager {
         return (privateKey, publicKey)
     }
 
-    private static func generateSimulatorPublicPrivateKeyPair(identifier: String) throws -> (privateKey: SecKey, publicKey: SecKey) {
-        var accessError: Unmanaged<CFError>?
-        guard let access = SecAccessControlCreateWithFlags(
-            kCFAllocatorDefault,
-            kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-            [],
-            &accessError
-        )
-        else {
-            let error = accessError!.takeRetainedValue() as Swift.Error
-            throw Error.failedToGeneratePublicPrivateKey(underlyingError: error)
-        }
-
-        guard let identifierData = identifier.data(using: .utf8) else {
-            fatalError()
-        }
-
-        let attributes: [CFString: Any] = [
-            kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecAttrKeySizeInBits: 256,
-            kSecPrivateKeyAttrs: [
-                kSecAttrIsPermanent: true,
-                kSecAttrAccessControl: access,
-                kSecAttrLabel: identifierData
-            ]
-        ]
-
-        var error: Unmanaged<CFError>?
-        guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            // Notice: accessError is nil when test with iOS 15 simulator. ref:https://wearezeta.atlassian.net/browse/SQCORE-1188
-            let error = accessError?.takeRetainedValue()
-            throw Error.failedToGeneratePublicPrivateKey(underlyingError: error)
-        }
-
-        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
-            throw Error.failedToCopyPublicKey
-        }
-
-        return (privateKey, publicKey)
+    private static var isRunningOnSimulator: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
     }
 
 }

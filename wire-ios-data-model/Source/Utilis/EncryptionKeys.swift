@@ -253,7 +253,7 @@ public struct EncryptionKeys {
 
     private static func generateAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
         do {
-            return try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier.uniqueIdentifier)
+            return try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier.uniqueIdentifier, accessLevel: .moreRestrictive)
         } catch KeychainManager.Error.failedToGeneratePublicPrivateKey(let error) {
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         } catch KeychainManager.Error.failedToCopyPublicKey {
@@ -279,7 +279,8 @@ public struct EncryptionKeys {
         guard let wrappedDatabaseKey = SecKeyCreateEncryptedData(
             publicKey,
             databaseKeyAlgorithm,
-            databaseKey as CFData, &error
+            databaseKey as CFData,
+            &error
         ) else {
             let error = error!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToEncryptDatabaseKey(underlyingError: error)
