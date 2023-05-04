@@ -80,8 +80,8 @@ extension EventDecoderTest {
         var didCallBlock = false
         let accountID = UUID.create()
         let keyGenerator = EARKeyGenerator()
-        let primaryKeys = try keyGenerator.generatePublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
-        let secondaryKeys = try keyGenerator.generatePublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
+        let primaryKeys = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
+        let secondaryKeys = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
 
         let publicKeys = EARPublicKeys(
             primary: primaryKeys.publicKey,
