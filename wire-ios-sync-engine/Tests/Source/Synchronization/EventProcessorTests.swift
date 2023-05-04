@@ -25,6 +25,7 @@ class EventProcessorTests: MessagingTest {
 
     var sut: EventProcessor!
     var syncStatus: SyncStatus!
+    var operationStatus: OperationStatus!
     var syncStateDelegate: ZMSyncStateDelegate!
     var eventProcessingTracker: EventProcessingTracker!
     var mockEventsConsumers: [MockEventConsumer]!
@@ -48,9 +49,12 @@ class EventProcessorTests: MessagingTest {
         earService.fetchPublicKeys_MockError = MockError()
         earService.fetchPrivateKeys_MockError = MockError()
 
+        operationStatus = OperationStatus()
+
         sut = EventProcessor(
             storeProvider: coreDataStack,
             syncStatus: syncStatus,
+            operationStatus: operationStatus,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService
         )
