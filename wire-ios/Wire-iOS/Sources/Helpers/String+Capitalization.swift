@@ -31,7 +31,7 @@ extension String {
     var capitalizedCharacter: String {
         let firstLetter = self.prefix(1).capitalized
 
-        let remainingLetters = self.dropFirst().lowercased()
+        let remainingLetters = self.dropFirst()
 
         return firstLetter + remainingLetters
     }

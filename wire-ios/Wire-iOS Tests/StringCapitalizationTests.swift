@@ -23,7 +23,7 @@ final class StringCapitalizationTests: XCTestCase {
 
     func testThatTheFirstLetterOfTheSentenceIsCapitalized() {
         // GIVEN
-        let givenString = "hello WORLD!"
+        let givenString = "hello world!"
 
         // WHEN
         let result = givenString.capitalizedCharacter
