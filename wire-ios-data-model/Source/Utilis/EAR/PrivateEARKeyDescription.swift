@@ -64,7 +64,7 @@ public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoc
     private(set) var getQuery = [CFString: Any]()
 
     func setQuery<T>(value: T) -> [CFString: Any] {
-        // Private keys are created stored in the Secure Enclave.
+        // Private keys are stored in the Secure Enclave.
         return [:]
     }
 
