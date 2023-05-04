@@ -208,11 +208,12 @@ public final class StoredUpdateEvent: NSManagedObject {
                     storedEvent: storedEvent,
                     privateKeys: privateKeys
                 ),
+                let eventSource = ZMUpdateEventSource(rawValue: Int(storedEvent.source)),
                 let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
                     fromEventStreamPayload: payload,
                     uuid: storedEvent.uuidString.flatMap(UUID.init),
                     transient: storedEvent.isTransient,
-                    source: ZMUpdateEventSource(rawValue: Int(storedEvent.source))!
+                    source: eventSource
                 )
             else {
                 return .failure(.permanent)
