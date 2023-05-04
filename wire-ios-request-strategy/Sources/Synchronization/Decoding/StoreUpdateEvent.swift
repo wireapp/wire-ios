@@ -291,22 +291,20 @@ public final class StoredUpdateEvent: NSManagedObject {
             throw DecryptionFailure.payloadMissing
         }
 
-        switch (storedEvent.isCallEvent, privateKeys?.primary, privateKeys?.secondary) {
-        case (true, _, let privateKey?):
-            return try decrypt(
-                payload: encryptedPayload,
-                privateKey: privateKey
-            )
+        // Call events are encrypted by the secondary public key, all other events are
+        // encrypted with the primary public key. The secondary key is available while
+        // the app is in the background, allowing call events to be processed in the
+        // background.
+        let key = storedEvent.isCallEvent ? privateKeys?.secondary : privateKeys?.primary
 
-        case (false, let privateKey?, _):
-            return try decrypt(
-                payload: encryptedPayload,
-                privateKey: privateKey
-            )
-
-        default:
+        guard let key = key else {
             throw DecryptionFailure.privateKeyUnavailable
         }
+
+        return try decrypt(
+            payload: encryptedPayload,
+            privateKey: key
+        )
     }
 
     private static func decrypt(payload: Data, privateKey: SecKey) throws -> NSDictionary {
