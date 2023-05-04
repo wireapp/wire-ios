@@ -28,8 +28,8 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
         static func == (lhs: ConversationMessageToolboxCell.Configuration, rhs: ConversationMessageToolboxCell.Configuration) -> Bool {
             return lhs.deliveryState == rhs.deliveryState &&
-                   lhs.message == rhs.message &&
-                   lhs.selected == rhs.selected
+            lhs.message == rhs.message &&
+            lhs.selected == rhs.selected
         }
     }
 
@@ -156,8 +156,8 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     let reactionView = ReactionView()
 
     struct Configuration: Equatable {
-          let color: UIColor
-         // let reactions: [Reaction]
+        let color: UIColor
+        // let reactions: [Reaction]
 
     }
 
@@ -198,11 +198,6 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         reactionView.translatesAutoresizingMaskIntoConstraints = false
         self.translatesAutoresizingMaskIntoConstraints = false
         reactionView.fitIn(view: self)
-
-        NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: reactionView.contentHeight)
-        ])
-        self.layoutIfNeeded()
     }
 
 }
@@ -210,9 +205,9 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
 
 final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 
-    var collectionViewHeightConstraint: NSLayoutConstraint?
+    lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 40)
     let flowLayout = UICollectionViewFlowLayout()
-
+    private var contentSizeObservation: NSKeyValueObservation?
     private lazy var collectionView: UICollectionView = {
         return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
     }()
@@ -224,44 +219,10 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
     override init(frame: CGRect) {
         super.init(frame: frame)
         createCollectionView()
-        collectionView.addObserver(
-            self,
-            forKeyPath: "contentSize.height",
-            options: .new,
-            context: nil
-        )
     }
 
     deinit {
-        collectionView.removeObserver(
-            self,
-            forKeyPath: "contentSize.height",
-            context: nil
-        )
-    }
-
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey: Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        guard
-            let observedObject = object as? UICollectionView,
-            observedObject == collectionView,
-            keyPath == "contentSize.height"
-        else {
-            super.observeValue(
-                forKeyPath: keyPath,
-                of: object,
-                change: change,
-                context: context
-            )
-
-            return
-        }
-
-        print("Content size did change: \(collectionView.contentSize.height)")
+        contentSizeObservation?.invalidate()
     }
 
     @available(*, unavailable)
@@ -271,38 +232,46 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
 
     func createCollectionView() {
 
-         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
-         collectionView.delegate = self
-         collectionView.dataSource = self
-         collectionView.backgroundColor = UIColor.cyan
-
-         self.addSubview(collectionView)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = UIColor.cyan
+        self.addSubview(collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: self)
+
+
+        contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] (tv, _) in
+            guard let self = self else { return }
+            self.collectionViewHeightConstraint.constant = tv.contentSize.height
+            self.collectionViewHeightConstraint.isActive = true
+        })
     }
 
+
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-     {
-         return 10
-     }
+    {
+        return 5
+    }
 
-     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-     {
-         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath)
 
-         cell.backgroundColor = UIColor.green
-         return cell
-     }
+        cell.backgroundColor = UIColor.green
+        return cell
+    }
 
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
-     {
-         return CGSize(width: 51, height: 24)
-     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+    {
+        return CGSize(width: 51, height: 24)
+    }
 
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
-     {
-         return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
+    {
+        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+    }
 
 }
