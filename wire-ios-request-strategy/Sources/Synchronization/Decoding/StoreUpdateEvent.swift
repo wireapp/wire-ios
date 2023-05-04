@@ -105,21 +105,16 @@ public final class StoredUpdateEvent: NSManagedObject {
             return
         }
 
-        if storedEvent.isCallEvent {
-            // Call events may need to be processed in the background, therefore
-            // we use the secondary key which allows decryption in the backgound.
-            storedEvent.payload = encrypt(
-                eventPayload: unencryptedPayload,
-                publicKey: publicKeys.secondary
-            )
-        } else {
-            // All other events should be protected with the more restrictive
-            // primary key, meaning they can't be decrypted in the background.
-            storedEvent.payload = encrypt(
-                eventPayload: unencryptedPayload,
-                publicKey: publicKeys.primary
-            )
-        }
+        // Call events may need to be processed in the background, therefore
+        // we use the secondary key which allows decryption in the backgound.
+        // All other events should be protected with the more restrictive
+        // primary key, meaning they can't be decrypted in the background.
+        let key = storedEvent.isCallEvent ? publicKeys.secondary : publicKeys.primary
+
+        storedEvent.payload = encrypt(
+            eventPayload: unencryptedPayload,
+            publicKey: key
+        )
 
         storedEvent.isEncrypted = true
     }
