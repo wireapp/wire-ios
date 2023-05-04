@@ -74,9 +74,14 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     }
 
-    func generateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
+    func generatePrimaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
         let keyGenerator = EARKeyGenerator()
-        return try keyGenerator.generatePublicPrivateKeyPair(id: id)
+        return try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "primary")
+    }
+
+    func generateSecondaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keyGenerator = EARKeyGenerator()
+        return try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "secondary")
     }
 
     func mockKeyGeneration() {
@@ -502,7 +507,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_UnlockDatabase() throws {
         // Given
-        let keys = try generateKeyPair(id: "test")
+        let keys = try generatePrimaryKeyPair()
         let encryptedDatabaseKey = Data.randomEncryptionKey()
         let decryptedDatabaseKey = Data.randomEncryptionKey()
         let context = LAContext()
@@ -527,8 +532,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPublicKeys() throws {
         // Given
-        let primaryKeys = try generateKeyPair(id: "primary")
-        let secondaryKeys = try generateKeyPair(id: "secondary")
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
         mockFetchingPublicKeys(
@@ -546,7 +551,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPublicKeys_KeyNotFound() throws {
         // Given
-        let primaryKeys = try generateKeyPair(id: "primary")
+        let primaryKeys = try generatePrimaryKeyPair()
 
         // Mock
         mockFetchingPublicKeys(
@@ -581,8 +586,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys() throws {
         // Given
-        let primaryKeys = try generateKeyPair(id: "primary")
-        let secondaryKeys = try generateKeyPair(id: "secondary")
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
         mockFetchingPrivateKeys(
@@ -600,7 +605,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys_PrimaryKeyNotFound() throws {
         // Given
-        let secondaryKeys = try generateKeyPair(id: "secondary")
+        let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
         mockFetchingPrivateKeys(

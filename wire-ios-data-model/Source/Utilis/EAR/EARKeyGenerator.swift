@@ -23,8 +23,21 @@ public final class EARKeyGenerator {
 
     public init() {}
 
-    public func generatePublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
-        let keys = try KeychainManager.generatePublicPrivateKeyPair(identifier: id)
+    public func generatePrimaryPublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keys = try KeychainManager.generatePublicPrivateKeyPair(
+            identifier: id,
+            accessLevel: .moreRestrictive
+        )
+
+        return (keys.publicKey, keys.privateKey)
+    }
+
+    public func generateSecondaryPublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keys = try KeychainManager.generatePublicPrivateKeyPair(
+            identifier: id,
+            accessLevel: .lessRestrictive
+        )
+
         return (keys.publicKey, keys.privateKey)
     }
 

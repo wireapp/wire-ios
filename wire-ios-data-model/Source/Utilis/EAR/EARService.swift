@@ -251,7 +251,7 @@ public class EARService: EARServiceInterface {
 
         do {
             let id = primaryPrivateKeyDescription.id
-            let keyPair = try keyGenerator.generatePublicPrivateKeyPair(id: id)
+            let keyPair = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: id)
             primaryPublicKey = keyPair.publicKey
         } catch {
             WireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
@@ -260,7 +260,7 @@ public class EARService: EARServiceInterface {
 
         do {
             let id = secondaryPrivateKeyDescription.id
-            let keyPair = try keyGenerator.generatePublicPrivateKeyPair(id: id)
+            let keyPair = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: id)
             secondaryPublicKey = keyPair.publicKey
         } catch {
             WireLogger.ear.error("failed to generate secondary public private keypair: \(String(describing: error))")
