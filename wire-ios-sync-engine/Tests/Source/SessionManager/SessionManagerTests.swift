@@ -574,7 +574,6 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        print("FOO: asserting EAR enabled")
         session = try XCTUnwrap(userSession)
         XCTAssertTrue(session.encryptMessagesAtRest)
 
