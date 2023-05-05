@@ -183,8 +183,6 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
-    static let logger = Logger(subsystem: "VoIP Push", category: "SessionManager")
-
     public enum AccountError: Error {
         case accountLimitReached
     }

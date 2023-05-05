@@ -18,11 +18,14 @@
 
 import Foundation
 import CallKit
+import WireSystem
 
 enum ConversationLookupError: Error {
     case accountDoesNotExist
     case conversationDoesNotExist
 }
+
+private let logger = WireLogger.callKit
 
 extension SessionManager: CallKitManagerDelegate {
 
@@ -30,13 +33,16 @@ extension SessionManager: CallKitManagerDelegate {
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
-        Self.logger.info("lookup conversation for: \(handle)")
-        guard let account  = accountManager.account(with: handle.accountID) else {
+        logger.info("lookup conversation for call handle: \(handle)")
+        guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
         withSession(for: account) { (userSession) in
-            guard let conversation = ZMConversation.fetch(with: handle.conversationID, in: userSession.managedObjectContext) else {
+            guard let conversation = ZMConversation.fetch(
+                with: handle.conversationID,
+                in: userSession.managedObjectContext
+            ) else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
@@ -48,32 +54,26 @@ extension SessionManager: CallKitManagerDelegate {
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
-        Self.logger.info("lookup conversation and sync for: \(handle)")
+        logger.info("lookup conversation and sync for call handle: \(handle)")
         guard let account  = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
         withSession(for: account) { userSession in
-            Self.logger.info("requesting quick sync")
+            logger.info("requesting quick sync")
 
             userSession.requestQuickSync { didProcessEvents in
                 userSession.managedObjectContext.perform {
-                    if didProcessEvents {
-                        Self.logger.info("did process events, fetching conversation now...")
+                    logger.info("did finish quick sync (processed events: \(didProcessEvents)), fetching conversation now...")
 
-                        guard let conversation = ZMConversation.fetch(
-                            with: handle.conversationID,
-                            in: userSession.managedObjectContext
-                        ) else {
-                            return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
-                        }
-
-                        completionHandler(.success(conversation))
-
-                    } else {
-                        Self.logger.info("did not process events")
-                        completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+                    guard let conversation = ZMConversation.fetch(
+                        with: handle.conversationID,
+                        in: userSession.managedObjectContext
+                    ) else {
+                        return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
                     }
+
+                    completionHandler(.success(conversation))
                 }
             }
         }

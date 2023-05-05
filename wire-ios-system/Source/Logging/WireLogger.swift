@@ -160,5 +160,6 @@ public extension WireLogger {
     static let calling = WireLogger(tag: "calling")
     static let messaging = WireLogger(tag: "messaging")
     static let backend = WireLogger(tag: "backend")
+    static let callKit = WireLogger(tag: "call-kit")
 
 }
