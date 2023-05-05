@@ -334,8 +334,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let foundUsers = payload.found
             foundUsers.updateUserProfiles(in: context)
 
-            let missingIdentifiers = identifiers.subtracting(foundUsers.compactMap(\.qualifiedID))
-            markUserProfilesAsFetched(missingIdentifiers)
+            if let failedIdentifiers = payload.failed {
+                markUserProfilesAsFetched(Set(failedIdentifiers))
+            }
         }
     }
 

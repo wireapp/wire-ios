@@ -94,7 +94,7 @@ public extension ZMConversation {
         if let name = other?.name, !name.isEmpty {
             return name
         } else {
-            return nil
+            return NSLocalizedString("profile.details.title.unavailable", comment: "")
         }
     }
 
