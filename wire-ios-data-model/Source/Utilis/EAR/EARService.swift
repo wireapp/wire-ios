@@ -371,6 +371,7 @@ public class EARService: EARServiceInterface {
     public func lockDatabase() {
         WireLogger.ear.info("locking database")
         setDatabaseKeyInAllContexts(nil)
+        keyRepository.clearCache()
     }
 
     public func unlockDatabase(context: LAContext) throws {
