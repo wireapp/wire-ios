@@ -270,8 +270,6 @@ extension ZMSLog {
 
     @objc static public let cacheDirectoryPath: URL? = cachesDirectory
 
-    @objc static public let preferenceDirectoryPath: URL? = libraryDirectory?.appendingPathComponent("Preferences")
-
     @objc public static func clearLogs() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
         logQueue.async {
@@ -292,16 +290,6 @@ extension ZMSLog {
         }
     }
 
-    //clears preferences directory
-    @objc public static func clearPreferenceDirectory() {
-        guard let preferenceDirectoryPath = preferenceDirectoryPath else { return }
-        logQueue.async {
-            closeHandle()
-            let manager = FileManager.default
-            try? manager.removeItem(at: preferenceDirectoryPath)
-        }
-    }
-
     @objc public static func switchCurrentLogToPrevious() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
         logQueue.async {
@@ -315,11 +303,6 @@ extension ZMSLog {
     static var cachesDirectory: URL? {
         let manager = FileManager.default
         return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
-    }
-
-    static var libraryDirectory: URL? {
-        let manager = FileManager.default
-        return manager.urls(for: .libraryDirectory, in: .userDomainMask).first
     }
 
     static public var pathsForExistingLogs: [URL] {

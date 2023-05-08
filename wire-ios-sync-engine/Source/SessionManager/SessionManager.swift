@@ -733,7 +733,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             // Clear cache and preference directory when the user logout from the session.
             ZMSLog.clearCacheDirectory()
-            ZMSLog.clearPreferenceDirectory()
 
         })
     }
