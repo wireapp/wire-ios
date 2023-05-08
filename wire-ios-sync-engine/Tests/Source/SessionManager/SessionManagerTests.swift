@@ -407,6 +407,10 @@ final class SessionManagerTests: IntegrationTest {
         let observer = SessionManagerObserverMock()
         let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
 
+        var tempUrl = self.tmpDirectoryPath().appendingPathComponent("testFile.txt")
+        let testData = "Test Message"
+        try? testData.write(to: tempUrl, atomically: true, encoding: .utf8)
+
         // WHEN
         withExtendedLifetime(token) {
             sessionManager?.logoutCurrentSession()
