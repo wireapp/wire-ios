@@ -283,11 +283,9 @@ extension ZMSLog {
     //clears cache directory
     @objc public static func clearCacheDirectory() {
         guard let cachesDirectoryPath = cachesDirectory else { return }
-        logQueue.async {
             closeHandle()
             let manager = FileManager.default
             try? manager.removeItem(at: cachesDirectoryPath)
-        }
     }
 
     @objc public static func switchCurrentLogToPrevious() {
