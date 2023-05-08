@@ -81,7 +81,7 @@ class OperationStatusTests: MessagingTest {
 
         // then
         XCTAssertFalse(sut.hasPendingCall)
-        XCTAssertEqual(sut.operationState, .backgroundPendingCall)
+        XCTAssertEqual(sut.operationState, .backgroundCall)
     }
 
     func testThatBackgroundTaskIsUpdatingOperationState() {
