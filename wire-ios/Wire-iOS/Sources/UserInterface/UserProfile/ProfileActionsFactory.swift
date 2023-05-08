@@ -67,7 +67,7 @@ enum ProfileAction: Equatable {
         case .deleteContents: return nil
         case .block: return nil
         case .openOneToOne: return .conversation
-        case .removeFromGroup: return nil
+        case .removeFromGroup: return .minus
         case .connect: return .plus
         case .cancelConnectionRequest: return .undo
         case .openSelfProfile: return .personalProfile
@@ -188,7 +188,7 @@ final class ProfileActionsFactory {
             // Show connection request actions for unconnected users from different teams.
             if user.isPendingApprovalByOtherUser {
                 actions.append(.cancelConnectionRequest)
-            } else if (user.isConnected || isOnSameTeam) && isValidUserName {
+            } else if (user.isConnected || isOnSameTeam) && user.isValidName {
                 actions.append(.openOneToOne)
             } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)
@@ -200,7 +200,7 @@ final class ProfileActionsFactory {
             }
 
             // If the user is not from the same team as the other user, allow blocking
-            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && isValidUserName {
+            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && user.isValidName {
                 actions.append(.block(isBlocked: false))
             }
 
@@ -224,7 +224,7 @@ extension UserType {
         }
     }
 
-    var isValidUserName: Bool {
+    var isValidName: Bool {
         return name != nil
     }
 
