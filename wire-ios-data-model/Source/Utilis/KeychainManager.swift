@@ -88,21 +88,20 @@ public enum KeychainManager {
         accessLevel: AccessLevel
     ) throws -> (privateKey: SecKey, publicKey: SecKey) {
         let protection: CFTypeRef
-        let flags: SecAccessControlCreateFlags
+        var flags: SecAccessControlCreateFlags
 
-        if isRunningOnSimulator {
+        switch accessLevel {
+        case .moreRestrictive:
+            protection = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            flags = [.userPresence]
+
+        case .lessRestrictive:
             protection = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
             flags = []
-        } else {
-            switch accessLevel {
-            case .moreRestrictive:
-                protection = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-                flags = [.privateKeyUsage, .userPresence]
+        }
 
-            case .lessRestrictive:
-                protection = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-                flags = [.privateKeyUsage]
-            }
+        if !isRunningOnSimulator {
+            flags.insert(.privateKeyUsage)
         }
 
         var accessError: Unmanaged<CFError>?

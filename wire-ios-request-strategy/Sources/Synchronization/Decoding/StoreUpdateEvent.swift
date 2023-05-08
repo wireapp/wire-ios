@@ -83,29 +83,40 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.sortIndex = index
         storedEvent.uuidString = event.uuid?.transportString()
         storedEvent.isCallEvent = event.isCallEvent
+        storedEvent.payload = event.payload as NSDictionary
+        storedEvent.isEncrypted = false
 
-        let unencryptedPayload = event.payload as NSDictionary
-
-        if let publicKeys = publicKeys {
-            if storedEvent.isCallEvent {
-                storedEvent.payload = encrypt(
-                    eventPayload: unencryptedPayload,
-                    publicKey: publicKeys.secondary
-                )
-            } else {
-                storedEvent.payload = encrypt(
-                    eventPayload: unencryptedPayload,
-                    publicKey: publicKeys.primary
-                )
-            }
-
-            storedEvent.isEncrypted = true
-        } else {
-            storedEvent.payload = unencryptedPayload
-            storedEvent.isEncrypted = false
-        }
+        encryptIfNeeded(
+            storedEvent,
+            publicKeys: publicKeys
+        )
 
         return storedEvent
+    }
+
+    private static func encryptIfNeeded(
+        _ storedEvent: StoredUpdateEvent,
+        publicKeys: EARPublicKeys?
+    ) {
+        guard
+            let publicKeys = publicKeys,
+            let unencryptedPayload = storedEvent.payload
+        else {
+            return
+        }
+
+        // Call events may need to be processed in the background, therefore
+        // we use the secondary key which allows decryption in the backgound.
+        // All other events should be protected with the more restrictive
+        // primary key, meaning they can't be decrypted in the background.
+        let key = storedEvent.isCallEvent ? publicKeys.secondary : publicKeys.primary
+
+        storedEvent.payload = encrypt(
+            eventPayload: unencryptedPayload,
+            publicKey: key
+        )
+
+        storedEvent.isEncrypted = true
     }
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
@@ -197,11 +208,12 @@ public final class StoredUpdateEvent: NSManagedObject {
                     storedEvent: storedEvent,
                     privateKeys: privateKeys
                 ),
+                let eventSource = ZMUpdateEventSource(rawValue: Int(storedEvent.source)),
                 let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
                     fromEventStreamPayload: payload,
                     uuid: storedEvent.uuidString.flatMap(UUID.init),
                     transient: storedEvent.isTransient,
-                    source: ZMUpdateEventSource(rawValue: Int(storedEvent.source))!
+                    source: eventSource
                 )
             else {
                 return .failure(.permanent)
@@ -280,22 +292,20 @@ public final class StoredUpdateEvent: NSManagedObject {
             throw DecryptionFailure.payloadMissing
         }
 
-        switch (storedEvent.isCallEvent, privateKeys?.primary, privateKeys?.secondary) {
-        case (true, _, let privateKey?):
-            return try decrypt(
-                payload: encryptedPayload,
-                privateKey: privateKey
-            )
+        // Call events are encrypted by the secondary public key, all other events are
+        // encrypted with the primary public key. The secondary key is available while
+        // the app is in the background, allowing call events to be processed in the
+        // background.
+        let key = storedEvent.isCallEvent ? privateKeys?.secondary : privateKeys?.primary
 
-        case (false, let privateKey?, _):
-            return try decrypt(
-                payload: encryptedPayload,
-                privateKey: privateKey
-            )
-
-        default:
+        guard let key = key else {
             throw DecryptionFailure.privateKeyUnavailable
         }
+
+        return try decrypt(
+            payload: encryptedPayload,
+            privateKey: key
+        )
     }
 
     private static func decrypt(payload: Data, privateKey: SecKey) throws -> NSDictionary {

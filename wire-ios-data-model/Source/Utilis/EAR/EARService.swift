@@ -223,11 +223,15 @@ public class EARService: EARServiceInterface {
         }
 
         if skipMigration {
+            WireLogger.ear.info("skipping migration")
             try disableEAR(context)
-        } else {
-            try delegate?.prepareForMigration { context in
+        } else if let delegate = delegate {
+            WireLogger.ear.info("preparing for migration")
+            try delegate.prepareForMigration { context in
                 try disableEAR(context)
             }
+        }  else {
+            throw EARServiceFailure.cannotPerformMigration
         }
     }
 

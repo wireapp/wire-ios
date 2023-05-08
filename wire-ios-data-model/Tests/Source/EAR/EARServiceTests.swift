@@ -27,6 +27,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     var keyRepository: MockEARKeyRepositoryInterface!
     var keyEncryptor: MockEARKeyEncryptorInterface!
 
+    var prepareForMigrationCalls = 0
+
     // MARK: - Life cycle
 
     override func setUp() {
@@ -58,8 +60,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     }
 
     // MARK: - Delegate
-
-    var prepareForMigrationCalls = 0
 
     func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
         prepareForMigrationCalls += 1

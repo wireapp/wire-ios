@@ -46,9 +46,9 @@ class StoreUpdateEventTests: MessagingTestBase {
             account = Account(userName: "John Doe", userIdentifier: UUID())
             let keyGenerator = EARKeyGenerator()
             let primaryID = "stored-update-event-tests.primary.\(account.userIdentifier)"
-            let primaryKeys = try keyGenerator.generatePublicPrivateKeyPair(id: primaryID)
+            let primaryKeys = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: primaryID)
             let secondaryID = "stored-update-event-tests.secondary.\(account.userIdentifier)"
-            let secondaryKeys = try keyGenerator.generatePublicPrivateKeyPair(id: secondaryID)
+            let secondaryKeys = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: secondaryID)
 
             publicKeys = EARPublicKeys(
                 primary: primaryKeys.publicKey,
