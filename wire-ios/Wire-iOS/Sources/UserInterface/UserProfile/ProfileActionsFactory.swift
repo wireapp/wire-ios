@@ -188,7 +188,7 @@ final class ProfileActionsFactory {
             // Show connection request actions for unconnected users from different teams.
             if user.isPendingApprovalByOtherUser {
                 actions.append(.cancelConnectionRequest)
-            } else if (user.isConnected || isOnSameTeam) && user.name != nil {
+            } else if (user.isConnected || isOnSameTeam) && isValidUserName {
                 actions.append(.openOneToOne)
             } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)
@@ -200,7 +200,7 @@ final class ProfileActionsFactory {
             }
 
             // If the user is not from the same team as the other user, allow blocking
-            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && user.name != nil {
+            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && isValidUserName {
                 actions.append(.block(isBlocked: false))
             }
 
@@ -215,13 +215,17 @@ final class ProfileActionsFactory {
 
 extension UserType {
 
-  var canBeUnblocked: Bool {
-    switch blockState {
-    case .blockedMissingLegalholdConsent:
-        return false
-    default:
-        return true
+    var canBeUnblocked: Bool {
+        switch blockState {
+        case .blockedMissingLegalholdConsent:
+            return false
+        default:
+            return true
+        }
     }
-  }
+
+    var isValidUserName: Bool {
+        return name != nil
+    }
 
 }
