@@ -263,6 +263,21 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
         try mock(description)            
     }
 
+    // MARK: - clearCache
+
+    public var clearCache_Invocations: [Void] = []
+    public var clearCache_MockMethod: (() -> Void)?
+
+    public func clearCache() {
+        clearCache_Invocations.append(())
+
+        guard let mock = clearCache_MockMethod else {
+            fatalError("no mock for `clearCache`")
+        }
+
+        mock()            
+    }
+
 }
 public class MockEARServiceInterface: EARServiceInterface {
 
