@@ -30,7 +30,7 @@ class EventProcessor: UpdateEventProcessor {
 
     let syncContext: NSManagedObjectContext
     let eventContext: NSManagedObjectContext
-    let operationStatus: OperationStatus
+    let operationStateProvider: OperationStateProvider
     let syncStatus: SyncStatus
     var eventBuffer: ZMUpdateEventsBuffer?
     let eventDecoder: EventDecoder
@@ -40,7 +40,7 @@ class EventProcessor: UpdateEventProcessor {
     public var eventConsumers: [ZMEventConsumer] = []
 
     var isReadyToProcessEvents: Bool {
-        switch operationStatus.operationState {
+        switch operationStateProvider.operationState {
         case .backgroundPendingCall:
             return !syncStatus.isSyncingInBackground
 
@@ -54,14 +54,14 @@ class EventProcessor: UpdateEventProcessor {
     init(
         storeProvider: CoreDataStack,
         syncStatus: SyncStatus,
-        operationStatus: OperationStatus,
+        operationStateProvider: OperationStateProvider,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
         self.syncStatus = syncStatus
-        self.operationStatus = operationStatus
+        self.operationStateProvider = operationStateProvider
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService

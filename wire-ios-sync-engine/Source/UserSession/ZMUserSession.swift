@@ -351,7 +351,7 @@ public class ZMUserSession: NSObject {
         return EventProcessor(
             storeProvider: self.coreDataStack,
             syncStatus: applicationStatusDirectory!.syncStatus,
-            operationStatus: applicationStatusDirectory!.operationStatus,
+            operationStateProvider: applicationStatusDirectory!.operationStatus,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService
         )
