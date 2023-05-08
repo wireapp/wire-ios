@@ -83,6 +83,31 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         verifyInAllColorSchemes(createSut: createSut)
     }
 
+    func testThatItRendersALotOfUsers_WithoutNames() {
+        // given
+        let users: [MockUserType] = (0..<20).map {
+            let user = MockUserType.createUser(name: "\($0)")
+            user.name = nil
+            user.handle = nil
+            user.domain = "foma.wire.link"
+            user.initials = ""
+
+            return user
+        }
+
+        let selected = Array(users.dropLast(15))
+        let conversation = MockConversation()
+        conversation.sortedOtherParticipants = users
+
+        // when & then
+        let createSut: () -> UIViewController = {
+            let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
+            return sut.wrapInNavigationController()
+        }
+
+        verify(matching: createSut())
+    }
+
     func testEmptyState() {
         // given
         let conversation = MockConversation()

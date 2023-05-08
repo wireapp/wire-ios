@@ -67,7 +67,7 @@ enum ProfileAction: Equatable {
         case .deleteContents: return nil
         case .block: return nil
         case .openOneToOne: return .conversation
-        case .removeFromGroup: return .minus
+        case .removeFromGroup: return nil
         case .connect: return .plus
         case .cancelConnectionRequest: return .undo
         case .openSelfProfile: return .personalProfile

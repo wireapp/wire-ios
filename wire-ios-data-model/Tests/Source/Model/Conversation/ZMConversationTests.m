@@ -1464,7 +1464,7 @@
     [self.uiMOC saveOrRollback];
     
     // then
-    XCTAssertEqualObjects(conversation.displayName, @"…");
+    XCTAssertEqualObjects(conversation.displayName, @"profile.details.title.unavailable");
 }
 
 - (void)testThatTheDisplayNameForGroupConversationWithoutParticipantsIsTheEmptyGroupConversationName;
