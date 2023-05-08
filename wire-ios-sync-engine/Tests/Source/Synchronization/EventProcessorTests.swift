@@ -21,11 +21,14 @@ import XCTest
 
 class EventProcessorTests: MessagingTest {
 
+    struct MockError: Error { }
+
     var sut: EventProcessor!
     var syncStatus: SyncStatus!
     var syncStateDelegate: ZMSyncStateDelegate!
     var eventProcessingTracker: EventProcessingTracker!
     var mockEventsConsumers: [MockEventConsumer]!
+    var earService: MockEARServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -41,9 +44,17 @@ class EventProcessorTests: MessagingTest {
         syncStatus = SyncStatus(managedObjectContext: coreDataStack.syncContext,
                                 syncStateDelegate: syncStateDelegate)
 
-        sut = EventProcessor(storeProvider: coreDataStack,
-                             syncStatus: syncStatus,
-                             eventProcessingTracker: eventProcessingTracker)
+        earService = MockEARServiceInterface()
+        earService.fetchPublicKeys_MockError = MockError()
+        earService.fetchPrivateKeys_MockError = MockError()
+
+        sut = EventProcessor(
+            storeProvider: coreDataStack,
+            syncStatus: syncStatus,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService
+        )
+
         sut.eventConsumers = mockEventsConsumers
     }
 
@@ -51,6 +62,7 @@ class EventProcessorTests: MessagingTest {
         eventProcessingTracker = nil
         syncStateDelegate = nil
         syncStatus = nil
+        earService = nil
         sut = nil
 
         super.tearDown()
