@@ -243,16 +243,33 @@ final class ProfileHeaderViewController: UIViewController {
 
     private func configureConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        groupRoleIndicator.translatesAutoresizingMaskIntoConstraints = false
+        guestIndicator.translatesAutoresizingMaskIntoConstraints = false
+        federatedIndicator.translatesAutoresizingMaskIntoConstraints = false
+        externalIndicator.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40)
         let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
+        let heightConstraint = groupRoleIndicator.heightAnchor.constraint(equalToConstant: 20)
+        let guestIndicatorHeightConstraint = guestIndicator.heightAnchor.constraint(equalToConstant: 20)
+        let federatedIndicatorHeightConstraint = federatedIndicator.heightAnchor.constraint(equalToConstant: 20)
+        let externalIndicatorHeightConstraint = externalIndicator.heightAnchor.constraint(equalToConstant: 20)
 
         let widthImageConstraint = imageView.widthAnchor.constraint(equalToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
-            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
+            widthImageConstraint,
+            leadingSpaceConstraint,
+            topSpaceConstraint,
+            trailingSpaceConstraint,
+            bottomSpaceConstraint,
+            heightConstraint,
+            guestIndicatorHeightConstraint,
+            federatedIndicatorHeightConstraint,
+            externalIndicatorHeightConstraint,
+            heightImageConstraint
         ])
     }
 

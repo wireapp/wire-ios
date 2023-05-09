@@ -26,10 +26,13 @@ extension UIView {
         delay: TimeInterval = 0.0,
         completion: @escaping ((Bool) -> Void) = { _ in }
     ) {
+        isHidden = true
+        alpha = 0
         UIView.animate(withDuration: duration,
                        delay: delay,
                        options: UIView.AnimationOptions.curveEaseIn,
                        animations: {
+            self.isHidden = false
             self.alpha = 1.0
         }, completion: completion)  }
 
@@ -38,10 +41,13 @@ extension UIView {
         delay: TimeInterval = 0.0,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
+        isHidden = false
+        alpha = 1
         UIView.animate(withDuration: duration,
                        delay: delay,
                        options: UIView.AnimationOptions.curveEaseIn,
                        animations: {
+            self.isHidden = true
             self.alpha = 0.0
         }, completion: completion)
     }
