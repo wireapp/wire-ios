@@ -36,15 +36,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         keyRepository = MockEARKeyRepositoryInterface()
         keyEncryptor = MockEARKeyEncryptorInterface()
-
-        sut = EARService(
-            accountID: userIdentifier,
-            keyRepository: keyRepository,
-            keyEncryptor: keyEncryptor,
-            databaseContexts: [uiMOC, syncMOC]
-        )
-
-        sut.delegate = self
+        sut = createSUT()
         prepareForMigrationCalls = 0
 
         createSelfClient(onMOC: uiMOC)
@@ -57,6 +49,19 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         uiMOC.encryptMessagesAtRest = false
         uiMOC.databaseKey = nil
         super.tearDown()
+    }
+
+    func createSUT(canPerformMigration: Bool = false) -> EARService {
+        let sut = EARService(
+            accountID: userIdentifier,
+            keyRepository: keyRepository,
+            keyEncryptor: keyEncryptor,
+            databaseContexts: [uiMOC, syncMOC],
+            canPerformKeyMigration: canPerformMigration
+        )
+
+        sut.delegate = self
+        return sut
     }
 
     // MARK: - Delegate
@@ -99,6 +104,51 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func mockKeyStorage() {
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
         keyRepository.storeDatabaseKeyDescriptionKey_MockMethod = { _, _ in }
+    }
+
+    // MARK: - Migration
+
+    func test_ItDoesNotMigrateKeys_IfEARIsDisabled() throws {
+        // Given
+        uiMOC.encryptMessagesAtRest = false
+
+        // When
+        sut = createSUT(canPerformMigration: true)
+
+        // Then
+        XCTAssertTrue(keyRepository.storePublicKeyDescriptionKey_Invocations.isEmpty)
+    }
+
+    func test_ItDoesNotMigrateKeys_IfSecondaryKeysAlreadyExist() throws {
+        // Given
+        uiMOC.encryptMessagesAtRest = true
+        let existingSecondaryKeys = try generateSecondaryKeyPair()
+        keyRepository.fetchPublicKeyDescription_MockValue = existingSecondaryKeys.publicKey
+
+        // When
+        sut = createSUT(canPerformMigration: true)
+
+        // Then
+        XCTAssertTrue(keyRepository.storePublicKeyDescriptionKey_Invocations.isEmpty)
+    }
+
+    func test_ItDoesNotMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() throws {
+        // Given
+        uiMOC.encryptMessagesAtRest = true
+        keyRepository.fetchPublicKeyDescription_MockError = EarKeyRepositoryFailure.keyNotFound
+        keyRepository.deletePublicKeyDescription_MockMethod = { _ in }
+        keyRepository.deletePrivateKeyDescription_MockMethod = { _ in }
+        keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
+
+        // When
+        sut = createSUT(canPerformMigration: true)
+
+        // Then we deleted secondary keys (for good measure)
+        XCTAssertEqual(keyRepository.deletePublicKeyDescription_Invocations.count, 1)
+        XCTAssertEqual(keyRepository.deletePrivateKeyDescription_Invocations.count, 1)
+
+        // Then we stored a new public key
+        XCTAssertEqual(keyRepository.storePublicKeyDescriptionKey_Invocations.count, 1)
     }
 
     // MARK: - Enable EAR
@@ -575,7 +625,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     private func mockFetchingPublicKeys(primary: SecKey?, secondary: SecKey?) {
         keyRepository.fetchPublicKeyDescription_MockMethod = { description in
             switch (description.label, primary, secondary) {
-            case ("primary-public", let primary?, _):
+            case ("public", let primary?, _):
                 return primary
 
             case ("secondary-public", _, let secondary?):
@@ -644,7 +694,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     private func mockFetchingPrivateKeys(primary: SecKey?, secondary: SecKey?) {
         keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
             switch (description.label, primary, secondary) {
-            case ("primary-private", let primary?, _):
+            case ("private", let primary?, _):
                 return primary
 
             case ("secondary-private", _, let secondary?):
