@@ -31,8 +31,7 @@ public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoc
     init(
         accountID: UUID,
         label: String,
-        context: LAContextProtocol? = nil,
-        prompt: String? = nil
+        context: LAContextProtocol? = nil
     ) {
         super.init(
             accountID: accountID,
@@ -54,8 +53,6 @@ public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoc
         if let context = context, canUseContext {
             getQuery[kSecUseAuthenticationContext] = context
             getQuery[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
-        } else if let prompt = prompt {
-            getQuery[kSecUseOperationPrompt] = prompt
         }
     }
 
@@ -74,14 +71,12 @@ extension PrivateEARKeyDescription {
 
     static func primaryKeyDescription(
         accountID: UUID,
-        context: LAContext? = nil,
-        authenticationPrompt: String? = nil
+        context: LAContext? = nil
     ) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
             label: "primary-private",
-            context: context,
-            prompt: authenticationPrompt
+            context: context
         )
     }
 

@@ -492,6 +492,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             syncMOC.databaseKey = databaseKey
         }
 
+        // Mock
+        keyRepository.clearCache_MockMethod = { }
+
         // When
         sut.lockDatabase()
 
@@ -501,6 +504,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         syncMOC.performAndWait {
             XCTAssertNil(syncMOC.databaseKey)
         }
+
+        XCTAssertEqual(keyRepository.clearCache_Invocations.count, 1)
     }
 
     // MARK: - Unlock database

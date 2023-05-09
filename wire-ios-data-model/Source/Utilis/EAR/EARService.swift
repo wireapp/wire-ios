@@ -341,8 +341,17 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func fetchPrimaryPrivateKey() throws -> SecKey {
-        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+    private func fetchPrimaryPrivateKey(context: LAContext? = nil) throws -> SecKey {
+        if let context = context {
+            let authenticatedKeyDescription = PrivateEARKeyDescription.primaryKeyDescription(
+                accountID: accountID,
+                context: context
+            )
+
+            return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
+        } else {
+            return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+        }
     }
 
     private func fetchSecondaryPrivateKey() throws -> SecKey {
@@ -352,7 +361,7 @@ public class EARService: EARServiceInterface {
     // MARK: - Database key
 
     private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
-        let privateKey = try fetchPrimaryPrivateKey()
+        let privateKey = try fetchPrimaryPrivateKey(context: context)
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
         let databaseKeyData = try keyEncryptor.decryptDatabaseKey(
             encryptedDatabaseKeyData,
@@ -371,6 +380,7 @@ public class EARService: EARServiceInterface {
     public func lockDatabase() {
         WireLogger.ear.info("locking database")
         setDatabaseKeyInAllContexts(nil)
+        keyRepository.clearCache()
     }
 
     public func unlockDatabase(context: LAContext) throws {

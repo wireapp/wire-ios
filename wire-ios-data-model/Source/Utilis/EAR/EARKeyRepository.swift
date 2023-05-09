@@ -30,6 +30,7 @@ public protocol EARKeyRepositoryInterface {
     func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws
     func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data
     func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws
+    func clearCache()
 
 }
 
@@ -40,6 +41,8 @@ public enum EarKeyRepositoryFailure: Error {
 }
 
 public class EARKeyRepository: EARKeyRepositoryInterface {
+
+    private var keyCache = [String: SecKey]()
 
     // MARK: - Life cycle
 
@@ -52,8 +55,14 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     public func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
+        if let key = keyCache [description.id] {
+            return key
+        }
+
         do {
-            return try KeychainManager.fetchItem(description)
+            let key: SecKey = try KeychainManager.fetchItem(description)
+            keyCache[description.id] = key
+            return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
             throw EarKeyRepositoryFailure.keyNotFound
         } catch {
@@ -62,14 +71,21 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     public func deletePublicKey(description: PublicEARKeyDescription) throws {
-        return try KeychainManager.deleteItem(description)
+        try KeychainManager.deleteItem(description)
+        keyCache[description.id] = nil
     }
 
     // MARK: - Private keys
 
     public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
+        if let key = keyCache[description.id] {
+            return key
+        }
+
         do {
-            return try KeychainManager.fetchItem(description)
+            let key: SecKey = try KeychainManager.fetchItem(description)
+            keyCache[description.id] = key
+            return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
             throw EarKeyRepositoryFailure.keyNotFound
         } catch {
@@ -78,7 +94,8 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     public func deletePrivateKey(description: PrivateEARKeyDescription) throws {
-        return try KeychainManager.deleteItem(description)
+        try KeychainManager.deleteItem(description)
+        keyCache[description.id] = nil
     }
 
     // MARK: - Datatbase keys
@@ -99,6 +116,12 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
 
     public func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
         return try KeychainManager.deleteItem(description)
+    }
+
+    // MARK: - Cache
+
+    public func clearCache() {
+        keyCache.removeAll()
     }
 
 }
