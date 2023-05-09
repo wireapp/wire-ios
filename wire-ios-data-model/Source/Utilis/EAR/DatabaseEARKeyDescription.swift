@@ -42,8 +42,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
 
         baseQuery = [
             kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: id,
-            kSecReturnData: true
+            kSecAttrAccount: id
         ]
     }
 

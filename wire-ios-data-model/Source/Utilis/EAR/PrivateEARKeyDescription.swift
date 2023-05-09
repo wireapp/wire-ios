@@ -75,7 +75,7 @@ extension PrivateEARKeyDescription {
     ) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
-            label: "primary-private",
+            label: "private",
             context: context
         )
     }
