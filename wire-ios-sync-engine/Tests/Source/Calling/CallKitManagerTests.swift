@@ -131,6 +131,21 @@ class MockStartCallAction: CXStartCallAction {
 
 }
 
+class MockEndCallAction: CXEndCallAction {
+
+    var isFulfilled: Bool = false
+    var hasFailed: Bool = false
+
+    override func fulfill() {
+        isFulfilled = true
+    }
+
+    override func fail() {
+        hasFailed = true
+    }
+
+}
+
 class MockProvider: CXProvider {
 
     var connectingCalls: Set<UUID> = Set()
@@ -161,10 +176,12 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         }
     }
 
+    var lookupConversationAndSyncCalls: Int = 0
     func lookupConversationAndSync(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
+        lookupConversationAndSyncCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
     }
 
@@ -903,6 +920,77 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)
+    }
+
+    // MARK: - Call Rejection
+
+    func test_itSyncsBeforeRejectingCall() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockEndCallAction)
+
+        // then
+        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndSyncCalls, 1)
+    }
+
+    func test_itUnregistersCallAfterRejecting() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        mockCallKitManagerDelegate.mockConversations = [
+            callKitCall.handle: conversation
+        ]
+
+        let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockEndCallAction)
+
+        // then
+        XCTAssertFalse(sut.callRegister.callExists(for: callKitCall.id))
+    }
+
+    func test_itUnregistersCallAfterRejecting_ConversationLookupFailed() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        mockCallKitManagerDelegate.mockConversations = [:]
+
+        let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockEndCallAction)
+
+        // then
+        XCTAssertFalse(sut.callRegister.callExists(for: callKitCall.id))
     }
 
 }
