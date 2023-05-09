@@ -161,7 +161,6 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            try deleteSecondaryKeys()
             let secondaryKeys = try generateSecondaryKeys()
             try storeSecondaryPublicKey(secondaryKeys.publicKey)
         } catch {

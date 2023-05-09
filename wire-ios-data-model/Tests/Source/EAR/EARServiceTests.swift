@@ -136,16 +136,10 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Given
         uiMOC.encryptMessagesAtRest = true
         keyRepository.fetchPublicKeyDescription_MockError = EarKeyRepositoryFailure.keyNotFound
-        keyRepository.deletePublicKeyDescription_MockMethod = { _ in }
-        keyRepository.deletePrivateKeyDescription_MockMethod = { _ in }
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
 
         // When
         sut = createSUT(canPerformMigration: true)
-
-        // Then we deleted secondary keys (for good measure)
-        XCTAssertEqual(keyRepository.deletePublicKeyDescription_Invocations.count, 1)
-        XCTAssertEqual(keyRepository.deletePrivateKeyDescription_Invocations.count, 1)
 
         // Then we stored a new public key
         XCTAssertEqual(keyRepository.storePublicKeyDescriptionKey_Invocations.count, 1)
