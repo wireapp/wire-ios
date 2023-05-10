@@ -23,7 +23,8 @@ import WireCommonComponents
 class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
-    let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: SemanticColors.Label.textErrorDefault)
+    let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
+                                 color: SemanticColors.Label.textErrorDefault)
 
     // MARK: - Setup
 

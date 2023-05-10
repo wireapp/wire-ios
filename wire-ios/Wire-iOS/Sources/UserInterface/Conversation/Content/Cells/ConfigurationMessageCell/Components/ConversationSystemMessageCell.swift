@@ -94,8 +94,10 @@ extension ConversationStartedSystemMessageCell {
 class ConversationEncryptionInfoCell: ConversationIconBasedCell,ConversationMessageCell {
     struct Configuration {}
 
-    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
-    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
+    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+                                                   color: SemanticColors.Label.textDefault)
+    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+                                                      color: SemanticColors.Label.textDefault)
 
     func configure(with object: Configuration, animated: Bool) {}
 
