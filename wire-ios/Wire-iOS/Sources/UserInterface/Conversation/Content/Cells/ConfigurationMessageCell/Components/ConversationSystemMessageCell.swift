@@ -91,6 +91,41 @@ extension ConversationStartedSystemMessageCell {
 
 }
 
+class ConversationEncryptionInfoCell: ConversationIconBasedCell,ConversationMessageCell {
+    struct Configuration {}
+
+    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
+    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
+
+    func configure(with object: Configuration, animated: Bool) {}
+
+    override func configureSubviews() {
+        super.configureSubviews()
+
+        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
+        encryptionLabel.numberOfLines = 0
+        encryptionLabel.text = connectionView.encryptionInfo
+        encryptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        topContentView.addSubview(encryptionLabel)
+        sensitiveInfoLabel.numberOfLines = 0
+        sensitiveInfoLabel.text = connectionView.sensitiveInformationWarning
+        sensitiveInfoLabel.translatesAutoresizingMaskIntoConstraints = false
+        bottomContentView.addSubview(sensitiveInfoLabel)
+
+        lineView.isHidden = true
+        imageView.tintColor = SemanticColors.Icon.backgroundDefault
+        imageView.image =  UIImage(named: "Info")
+    }
+
+    override func configureConstraints() {
+        super.configureConstraints()
+        encryptionLabel.fitIn(view: topContentView)
+        sensitiveInfoLabel.fitIn(view: bottomContentView)
+        NSLayoutConstraint.activate([
+            imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)])
+    }
+}
+
 class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration: Equatable {
@@ -357,6 +392,10 @@ final class ConversationSystemMessageCellDescription {
                conversation.selfCanAddUsers,
                conversation.isOpenGroup {
                 cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
+            }
+            if conversation.isOpenGroup {
+                let encryptionInfoCell = ConversationEncryptionInfoDescription()
+                cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
             return cells
@@ -1004,4 +1043,31 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: .conversation(conversation))
     }
 
+}
+
+class ConversationEncryptionInfoDescription: ConversationMessageCellDescription {
+    typealias View = ConversationEncryptionInfoCell
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 26.0
+
+    let isFullWidth: Bool = true
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
+
+    init() {
+        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
+
+        configuration = View.Configuration()
+        accessibilityLabel = "\(connectionView.encryptionInfo) \(connectionView.sensitiveInformationWarning)"
+        actionController = nil
+    }
 }
