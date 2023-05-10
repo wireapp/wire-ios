@@ -323,7 +323,8 @@ class StoreUpdateEventTests: MessagingTestBase {
             // When we fetch a batch of events.
             let batch = StoredUpdateEvent.nextEvents(
                 self.eventMOC,
-                batchSize: 4
+                batchSize: 4,
+                callEventsOnly: false
             )
 
             // Then all the events are returned.
@@ -340,7 +341,8 @@ class StoreUpdateEventTests: MessagingTestBase {
             // When we fetch a batch of events.
             let batch = StoredUpdateEvent.nextEvents(
                 self.eventMOC,
-                batchSize: 3
+                batchSize: 3,
+                callEventsOnly: false
             )
 
             // Then they are returned in the correct order.
@@ -358,7 +360,8 @@ class StoreUpdateEventTests: MessagingTestBase {
             // When we fetch a small batch.
             let firstBatch = StoredUpdateEvent.nextEvents(
                 self.eventMOC,
-                batchSize: 2
+                batchSize: 2,
+                callEventsOnly: false
             )
 
             // Then the batch size is correct
@@ -368,11 +371,29 @@ class StoreUpdateEventTests: MessagingTestBase {
             firstBatch.forEach(self.eventMOC.delete)
             let secondBatch = StoredUpdateEvent.nextEvents(
                 self.eventMOC,
-                batchSize: 2
+                batchSize: 2,
+                callEventsOnly: false
             )
 
             // Then
             XCTAssertEqual(secondBatch, Array(storedEvents.dropFirst(2)))
+        }
+    }
+
+    func test_NextEvents_CallEventsOnly() throws {
+        try eventMOC.performAndWait {
+            // Given stored events (containing 1 call event)
+            let storedEvents = try self.createStoredEvents(encrypt: false).1
+
+            // When we fetch a batch
+            let batch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 2,
+                callEventsOnly: true
+            )
+
+            // Then we only get 1 event (call event)
+            XCTAssertEqual(batch, Array(storedEvents.dropFirst()))
         }
     }
 

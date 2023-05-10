@@ -44,11 +44,6 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
 
     case background
 
-    /// The app was woken to process a call event fetched from
-    /// the notification service extension.
-
-    case backgroundPendingCall
-
     /// The app is active in the background with an ongoing call.
 
     case backgroundCall
@@ -69,9 +64,6 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
         switch self {
         case .background:
             return "background"
-
-        case .backgroundPendingCall:
-            return "backgroundPendingCall"
 
         case .backgroundCall:
             return "backgroundCall"
@@ -114,15 +106,8 @@ public class OperationStatus: NSObject {
         }
     }
 
-    var hasPendingCall = false {
-        didSet {
-            updateOperationState()
-        }
-    }
-
     public var hasOngoingCall = false {
         didSet {
-            hasPendingCall = false
             updateOperationState()
         }
     }
@@ -198,9 +183,6 @@ public class OperationStatus: NSObject {
 
     fileprivate var calculatedOperationState: SyncEngineOperationState {
         if isInBackground {
-            if hasPendingCall {
-                return .backgroundPendingCall
-            }
 
             if hasOngoingCall {
                 return .backgroundCall

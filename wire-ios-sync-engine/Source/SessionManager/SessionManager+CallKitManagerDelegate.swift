@@ -18,11 +18,12 @@
 
 import Foundation
 import CallKit
+import WireSystem
 
 enum ConversationLookupError: Error {
     case accountDoesNotExist
     case conversationDoesNotExist
-    case didNotProcessEvents
+    case failedToProcessCallEvents
 }
 
 extension SessionManager: CallKitManagerDelegate {
@@ -31,7 +32,7 @@ extension SessionManager: CallKitManagerDelegate {
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
-        Self.logger.info("lookup conversation for: \(handle)")
+        WireLogger.calling.info("lookup conversation for: \(handle)")
         guard let account  = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
@@ -45,37 +46,31 @@ extension SessionManager: CallKitManagerDelegate {
         }
     }
 
-    func lookupConversationAndSync(
+    func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
-        WireLogger.calling.info("lookup conversation and sync for: \(handle)")
+        WireLogger.calling.info("lookup conversation and process pending call events for: \(handle)")
+
         guard let account  = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
         withSession(for: account) { userSession in
-            WireLogger.calling.info("requesting quick sync")
+            guard let conversation = ZMConversation.fetch(
+                with: handle.conversationID,
+                in: userSession.managedObjectContext
+            ) else {
+                return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+            }
 
-            userSession.requestQuickSyncForPendingCall { didProcessEvents in
-                userSession.managedObjectContext.perform {
-                    if didProcessEvents {
-                        WireLogger.calling.info("did process events, fetching conversation now...")
-
-                        guard let conversation = ZMConversation.fetch(
-                            with: handle.conversationID,
-                            in: userSession.managedObjectContext
-                        ) else {
-                            return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
-                        }
-
-                        completionHandler(.success(conversation))
-
-                    } else {
-                        WireLogger.calling.info("did not process events")
-                        completionHandler(.failure(ConversationLookupError.didNotProcessEvents))
-                    }
-                }
+            do {
+                try userSession.processPendingCallEvents()
+                WireLogger.calling.info("did process call events, returning conversation...")
+                completionHandler(.success(conversation))
+            } catch {
+                WireLogger.calling.error("failed to process call events: \(error)")
+                completionHandler(.failure(ConversationLookupError.failedToProcessCallEvents))
             }
         }
     }

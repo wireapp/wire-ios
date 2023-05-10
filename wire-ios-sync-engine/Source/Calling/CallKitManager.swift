@@ -31,7 +31,7 @@ protocol CallKitManagerDelegate: AnyObject {
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     )
 
-    func lookupConversationAndSync(
+    func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     )
@@ -632,7 +632,7 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        delegate.lookupConversationAndSync(by: call.handle) { [weak self] result in
+        delegate.lookupConversationAndProcessPendingCallEvents(by: call.handle) { [weak self] result in
             guard let `self` = self else {
                 action.fail()
                 return
@@ -702,7 +702,7 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        delegate.lookupConversationAndSync(by: call.handle) { [weak self] result in
+        delegate.lookupConversationAndProcessPendingCallEvents(by: call.handle) { [weak self] result in
             guard let `self` = self else {
                 action.fail()
                 return
