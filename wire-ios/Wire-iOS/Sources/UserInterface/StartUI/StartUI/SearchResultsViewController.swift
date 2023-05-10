@@ -171,6 +171,7 @@ final class SearchResultsViewController: UIViewController {
     let shouldIncludeGuests: Bool
 
     weak var delegate: SearchResultsViewControllerDelegate?
+    private var conversationListObserverToken: Any?
 
     var mode: SearchResultsViewControllerMode = .search {
         didSet {
@@ -241,6 +242,12 @@ final class SearchResultsViewController: UIViewController {
         updateVisibleSections()
 
         searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
+
+        if let session = ZMUserSession.shared() {
+            conversationListObserverToken = ConversationListChangeInfo.add(observer: self,
+                                                                           for: ZMConversationList.conversations(inUserSession: session),
+                                                                           userSession: session)
+        }
     }
 
     @objc
@@ -352,6 +359,11 @@ final class SearchResultsViewController: UIViewController {
         var contacts = searchResult.contacts
         var teamContacts = searchResult.teamMembers
 
+        /// Refetch users if needed
+        ZMUserSession.shared()?.perform {
+            contacts.filter { !$0.hasValidName }.forEach { $0.refreshData() }
+        }
+
         if let filteredParticpants = filterConversation?.localParticipants {
             contacts = contacts.filter({
                 guard let user = $0.user else {
@@ -453,4 +465,12 @@ extension SearchResultsViewController: SearchServicesSectionDelegate {
     func addServicesSectionDidRequestOpenServicesAdmin() {
         URL.manageTeam(source: .settings).openInApp(above: self)
     }
+}
+
+extension SearchResultsViewController: ZMConversationListObserver {
+
+    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+        sectionController.collectionView?.reloadData()
+    }
+
 }

@@ -225,7 +225,10 @@ extension UserType {
     }
 
     var hasValidName: Bool {
-        return name != nil
+        guard let name = name else {
+            return false
+        }
+        return !name.isEmpty
     }
 
 }
