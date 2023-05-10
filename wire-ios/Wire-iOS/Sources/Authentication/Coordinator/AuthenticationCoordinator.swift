@@ -674,7 +674,7 @@ extension AuthenticationCoordinator {
         activateNetworkSessions { [weak self] error in
             guard error == nil else {
                 self?.sessionManager.removeProxyCredentials()
-                self?.showAlertWithGeneralError()
+                self?.showAlertWithNoInternetConnectionError()
                 return
             }
             action()
@@ -828,12 +828,12 @@ extension AuthenticationCoordinator {
         stateController.unwindState()
     }
 
-    private func showAlertWithGeneralError() {
-        typealias Alert = L10n.Localizable.Credentials.GeneralError.Alert
+    private func showAlertWithNoInternetConnectionError() {
+        typealias Alert = L10n.Localizable.SystemStatusBar.NoInternet
 
         executeActions(
             [.presentAlert(.init(title: Alert.title,
-                                 message: Alert.message,
+                                 message: Alert.explanation,
                                  actions: [.ok]))]
         )
     }
