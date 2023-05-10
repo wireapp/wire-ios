@@ -109,12 +109,14 @@ extension EventDecoder {
 
     public func processStoredEvents(
         with privateKeys: EARPrivateKeys? = nil,
+        callEventsOnly: Bool = false,
         _ block: ConsumeBlock
     ) {
         process(
             with: privateKeys,
             block,
-            firstCall: true
+            firstCall: true,
+            callEventsOnly: callEventsOnly
         )
     }
 
@@ -171,9 +173,10 @@ extension EventDecoder {
     private func process(
         with privateKeys: EARPrivateKeys?,
         _ consumeBlock: ConsumeBlock,
-        firstCall: Bool
+        firstCall: Bool,
+        callEventsOnly: Bool
     ) {
-        let events = fetchNextEventsBatch(with: privateKeys)
+        let events = fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
         guard events.storedEvents.count > 0 else {
             if firstCall {
@@ -183,20 +186,21 @@ extension EventDecoder {
         }
 
         processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
-        process(with: privateKeys, consumeBlock, firstCall: false)
+        process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
-    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?) -> EventsWithStoredEvents {
+    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) -> EventsWithStoredEvents {
         var (storedEvents, updateEvents)  = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         eventMOC.performGroupedBlockAndWait {
             let eventBatch = StoredUpdateEvent.nextEventBatch(
                 size: EventDecoder.BatchSize,
                 privateKeys: privateKeys,
-                context: self.eventMOC
+                context: self.eventMOC,
+                callEventsOnly: callEventsOnly
             )
 
             storedEvents = eventBatch.eventsToDelete

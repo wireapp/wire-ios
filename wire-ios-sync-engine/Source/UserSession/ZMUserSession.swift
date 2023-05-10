@@ -351,7 +351,6 @@ public class ZMUserSession: NSObject {
         return EventProcessor(
             storeProvider: self.coreDataStack,
             syncStatus: applicationStatusDirectory!.syncStatus,
-            operationStateProvider: applicationStatusDirectory!.operationStatus,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService
         )
@@ -449,19 +448,6 @@ public class ZMUserSession: NSObject {
 
     public func requestSlowSync() {
         applicationStatusDirectory?.requestSlowSync()
-    }
-
-    private var onProcessedEvents: ((Bool) -> Void)?
-
-    public func requestQuickSyncForPendingCall(completion: ((Bool) -> Void)? = nil) {
-        guard let applicationStatusDirectory = applicationStatusDirectory else {
-            completion?(false)
-            return
-        }
-
-        applicationStatusDirectory.operationStatus.hasPendingCall = true
-        applicationStatusDirectory.requestQuickSync()
-        onProcessedEvents = completion
     }
 
     // MARK: - Access Token
@@ -628,9 +614,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        let block = onProcessedEvents
-        onProcessedEvents = nil
-        block?(!hasMoreEventsToProcess)
+    }
+
+    func processPendingCallEvents() throws {
+        try updateEventProcessor!.processPendingCallEvents()
     }
 
     private func fetchFeatureConfigs() {
