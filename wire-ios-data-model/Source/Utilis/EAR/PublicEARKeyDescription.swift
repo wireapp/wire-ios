@@ -42,8 +42,7 @@ public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoco
 
         baseQuery = [
             kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+            kSecAttrApplicationTag: tag
         ]
     }
 
@@ -58,6 +57,7 @@ public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoco
     func setQuery<T>(value: T) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueRef] = value
+        query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
         return query
     }
 
@@ -68,7 +68,7 @@ extension PublicEARKeyDescription {
     static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
         return PublicEARKeyDescription(
             accountID: accountID,
-            label: "primary-public"
+            label: "public"
         )
     }
 

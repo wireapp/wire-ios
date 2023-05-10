@@ -271,7 +271,8 @@ public class ZMUserSession: NSObject {
                 coreDataStack.viewContext,
                 coreDataStack.syncContext,
                 coreDataStack.searchContext
-            ]
+            ],
+            canPerformKeyMigration: true
         )
 
         super.init()
