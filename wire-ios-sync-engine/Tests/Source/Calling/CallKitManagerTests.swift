@@ -500,22 +500,22 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     /* Disabled for now, pending furter investigation
-    func testThatCallAnswerActionFailWhenCallCantBeJoined() {
-        // given
-        let otherUser = self.otherUser(moc: self.uiMOC)
-        let provider = MockProvider(foo: true)
-        let conversation = self.conversation(type: .oneOnOne)
+     func testThatCallAnswerActionFailWhenCallCantBeJoined() {
+     // given
+     let otherUser = self.otherUser(moc: self.uiMOC)
+     let provider = MockProvider(foo: true)
+     let conversation = self.conversation(type: .oneOnOne)
 
-        sut.reportIncomingCall(from: otherUser, in: conversation, video: false)
-        let action = MockCallAnswerAction(call: sut.callUUID(for: conversation)!)
-        self.sut.provider(provider, perform: action)
+     sut.reportIncomingCall(from: otherUser, in: conversation, video: false)
+     let action = MockCallAnswerAction(call: sut.callUUID(for: conversation)!)
+     self.sut.provider(provider, perform: action)
 
-        // when
-        mockWireCallCenterV3.update(callState: .terminating(reason: .lostMedia), conversationId: conversation.remoteIdentifier!, callerId: otherUser.remoteIdentifier, isVideo: false)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        // then
-        XCTAssertTrue(action.hasFailed)
-    }
+     // when
+     mockWireCallCenterV3.update(callState: .terminating(reason: .lostMedia), conversationId: conversation.remoteIdentifier!, callerId: otherUser.remoteIdentifier, isVideo: false)
+     XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+     // then
+     XCTAssertTrue(action.hasFailed)
+     }
      */
 
     func testThatStartCallActionIsFulfilledWhenCallIsJoined() {
@@ -962,7 +962,7 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .remoteEnded)
     }
 
-    // MARK: - Call Rejection
+    // MARK: - Rejecting Calls
 
     func test_itProcessesCallEventsBeforeRejectingCall() {
         // given
@@ -1031,6 +1031,33 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertFalse(sut.callRegister.callExists(for: callKitCall.id))
+    }
+
+    // MARK: - Answering calls
+
+    func test_itProcessesCallEventsBeforeAcceptingCall() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        mockCallKitManagerDelegate.mockConversations = [
+            callKitCall.handle: conversation
+        ]
+
+        let mockAnswerCallAction = MockCallAnswerAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockAnswerCallAction)
+
+        // then
+        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndProcessPendingCallEventsCalls, 1)
     }
 
 }
