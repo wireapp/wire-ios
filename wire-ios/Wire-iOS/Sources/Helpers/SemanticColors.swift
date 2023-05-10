@@ -192,7 +192,7 @@ public enum SemanticColors {
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
     }
 
-    public enum SketchColors {
+    public enum DrawingColors {
         static let blackColor = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
         static let whiteColor = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
         static let blueColor = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Light)

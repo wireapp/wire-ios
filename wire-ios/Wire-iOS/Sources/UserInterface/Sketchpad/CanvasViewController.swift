@@ -40,7 +40,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     // MARK: - Properties
 
-    typealias SketchColors = SemanticColors.SketchColors
+    typealias SketchColors = SemanticColors.DrawingColors
 
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()

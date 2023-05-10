@@ -22,7 +22,7 @@ import WireCommonComponents
 
 enum SketchColors: CaseIterable {
 
-    typealias SketchColorValues = SemanticColors.SketchColors
+    typealias SketchColorValues = SemanticColors.DrawingColors
     typealias SketchColorName = L10n.Localizable.Drawing.Colors
 
     case black
