@@ -25,7 +25,6 @@ class EventProcessorTests: MessagingTest {
 
     var sut: EventProcessor!
     var syncStatus: SyncStatus!
-    var operationStateProvider: MockOperationStateProvider!
     var syncStateDelegate: ZMSyncStateDelegate!
     var eventProcessingTracker: EventProcessingTracker!
     var mockEventsConsumers: [MockEventConsumer]!
@@ -49,12 +48,9 @@ class EventProcessorTests: MessagingTest {
         earService.fetchPublicKeys_MockError = MockError()
         earService.fetchPrivateKeys_MockError = MockError()
 
-        operationStateProvider = MockOperationStateProvider()
-
         sut = EventProcessor(
             storeProvider: coreDataStack,
             syncStatus: syncStatus,
-            operationStateProvider: operationStateProvider,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService
         )
@@ -195,40 +191,12 @@ class EventProcessorTests: MessagingTest {
         )
     }
 
-    func test_IsReadyToProcessEvents_BackgroundPendingCall_IfNotSyncing() throws {
-        try assertIsReadyToProccessEvents(
-            expectation: true,
-            operationState: .backgroundPendingCall,
-            isSyncing: false
-        )
-    }
-
-    func test_IsReadyToProcessEvents_BackgroundPendingCall_EvenIfDBIsLocked() throws {
-        try assertIsReadyToProccessEvents(
-            expectation: true,
-            operationState: .backgroundPendingCall,
-            isDatabaseLocked: true
-        )
-    }
-
-    func test_IsNotReadyToProcessEvents_ForBackgroundPendingCall_IfSyncing() throws {
-        try assertIsReadyToProccessEvents(
-            expectation: false,
-            operationState: .backgroundPendingCall,
-            isSyncing: true
-        )
-    }
-
     private func assertIsReadyToProccessEvents(
         expectation: Bool,
-        operationState: SyncEngineOperationState = .foreground,
         isSyncing: Bool = false,
         isDatabaseLocked: Bool = false
     ) throws {
         // Given
-        operationStateProvider.operationState = operationState
-        XCTAssertEqual(sut.operationStateProvider.operationState, operationState)
-
         if isSyncing {
             syncStatus.currentSyncPhase = .fetchingMissedEvents
             syncStatus.pushChannelEstablishedDate = nil

@@ -176,12 +176,12 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         }
     }
 
-    var lookupConversationAndSyncCalls: Int = 0
-    func lookupConversationAndSync(
-        by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
-    ) {
-        lookupConversationAndSyncCalls += 1
+    var lookupConversationAndProcessPendingCallEventsCalls = 0
+    func lookupConversationAndProcessPendingCallEvents(
+        by handle: WireSyncEngine.CallHandle,
+        completionHandler: @escaping (WireUtilities.Result<ZMConversation>
+    ) -> Void) {
+        lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
     }
 
@@ -964,7 +964,7 @@ class CallKitManagerTest: DatabaseTest {
 
     // MARK: - Call Rejection
 
-    func test_itSyncsBeforeRejectingCall() {
+    func test_itProcessesCallEventsBeforeRejectingCall() {
         // given
         let conversation = conversation()
         let otherUser = otherUser(moc: uiMOC)
@@ -982,7 +982,7 @@ class CallKitManagerTest: DatabaseTest {
         sut.provider(callKitProvider, perform: mockEndCallAction)
 
         // then
-        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndSyncCalls, 1)
+        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndProcessPendingCallEventsCalls, 1)
     }
 
     func test_itUnregistersCallAfterRejecting() {
