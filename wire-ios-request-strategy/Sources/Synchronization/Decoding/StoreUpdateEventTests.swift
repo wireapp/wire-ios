@@ -380,6 +380,23 @@ class StoreUpdateEventTests: MessagingTestBase {
         }
     }
 
+    func test_NextEvents_CallEventsOnly() throws {
+        try eventMOC.performAndWait {
+            // Given stored events (containing 1 call event)
+            let storedEvents = try self.createStoredEvents(encrypt: false).1
+
+            // When we fetch a batch
+            let batch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 2,
+                callEventsOnly: true
+            )
+
+            // Then we only get 1 event (call event)
+            XCTAssertEqual(batch, Array(storedEvents.dropFirst()))
+        }
+    }
+
     // MARK: - Highest index
 
     func test_HighestIndex() throws {
