@@ -48,6 +48,13 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     weak var textFieldValidationDelegate: TextFieldValidationDelegate?
     weak var validatedTextFieldDelegate: ValidatedTextFieldDelegate?
 
+    override var text: String? {
+        didSet {
+            validateInput()
+            boundTextField?.validateInput()
+        }
+    }
+
     // MARK: - UI constants
 
     static let enteredTextFont = FontSpec(.normal, .regular, .inputText)
@@ -310,8 +317,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     func updateText(_ text: String) {
         self.text = text
-        validateInput()
-        boundTextField?.validateInput()
     }
 
     private func updateConfirmButton() {
