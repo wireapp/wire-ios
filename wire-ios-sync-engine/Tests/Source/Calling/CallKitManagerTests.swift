@@ -131,6 +131,21 @@ class MockStartCallAction: CXStartCallAction {
 
 }
 
+class MockEndCallAction: CXEndCallAction {
+
+    var isFulfilled: Bool = false
+    var hasFailed: Bool = false
+
+    override func fulfill() {
+        isFulfilled = true
+    }
+
+    override func fail() {
+        hasFailed = true
+    }
+
+}
+
 class MockProvider: CXProvider {
 
     var connectingCalls: Set<UUID> = Set()
@@ -161,10 +176,12 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         }
     }
 
+    var lookupConversationAndSyncCalls: Int = 0
     func lookupConversationAndSync(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     ) {
+        lookupConversationAndSyncCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
     }
 
@@ -806,7 +823,7 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 0)
     }
 
-    func testThatItIgnoresNewIncomingCall_v3_Unfectched_conversation() {
+    func testThatItIgnoresNewIncomingCall_v3_Unfetched_conversation() {
         // given
         let conversation = self.conversation()
         conversation.needsToBeUpdatedFromBackend = true
@@ -817,6 +834,25 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertEqual(self.callKitProvider.timesReportNewIncomingCallCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 0)
+    }
+
+    func testThatItIgnoresIncomingCall_IfItWasAlreadyReported() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        // report the call a first time
+        sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // when
+        sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // then
+        // we verify it was only reported once
+        XCTAssertEqual(self.callKitProvider.timesReportNewIncomingCallCalled, 1)
         XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
         XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
         XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 0)
@@ -903,6 +939,98 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)
+    }
+
+    func test_itIgnoresCallEnded_IfItWasAlreadyReported() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+        sut.requestStartCall(in: conversation, video: false)
+
+        // report the call is terminating a first time
+        sut.callCenterDidChange(callState: .terminating(reason: .normal), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // when
+        sut.callCenterDidChange(callState: .terminating(reason: .normal), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // then
+        XCTAssertEqual(self.callKitProvider.timesReportNewIncomingCallCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
+        // we verify that it was only reported once
+        XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 1)
+        XCTAssertEqual(self.callKitProvider.lastEndedReason, .remoteEnded)
+    }
+
+    // MARK: - Call Rejection
+
+    func test_itSyncsBeforeRejectingCall() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockEndCallAction)
+
+        // then
+        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndSyncCalls, 1)
+    }
+
+    func test_itUnregistersCallAfterRejecting() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        mockCallKitManagerDelegate.mockConversations = [
+            callKitCall.handle: conversation
+        ]
+
+        let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockEndCallAction)
+
+        // then
+        XCTAssertFalse(sut.callRegister.callExists(for: callKitCall.id))
+    }
+
+    func test_itUnregistersCallAfterRejecting_ConversationLookupFailed() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        mockCallKitManagerDelegate.mockConversations = [:]
+
+        let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockEndCallAction)
+
+        // then
+        XCTAssertFalse(sut.callRegister.callExists(for: callKitCall.id))
     }
 
 }
