@@ -70,31 +70,47 @@ class EventProcessor: UpdateEventProcessor {
 
     /// Process previously received events if we are ready to process events.
     ///
-    // - Returns: **True** if there are still more events to process
+    /// - Returns: **True** if there are still more events to process
     @objc
     public func processEventsIfReady() -> Bool { // TODO jacob shouldn't be public
         Self.logger.trace("process events if ready")
+
         guard isReadyToProcessEvents else {
             Self.logger.info("not ready to process events")
-            return  true
+            return true
         }
 
         eventBuffer?.processAllEventsInBuffer()
 
+        var hasMoreEventsToProcess = false
+        do {
+            try processEvents(callEventsOnly: false)
+        } catch {
+            hasMoreEventsToProcess = true
+        }
+
+        return hasMoreEventsToProcess
+    }
+
+    func processPendingCallEvents() throws {
+        try syncContext.performGroupedAndWait { _ in
+            try self.processEvents(callEventsOnly: true)
+        }
+    }
+
+    private func processEvents(callEventsOnly: Bool) throws {
         if syncContext.encryptMessagesAtRest {
             do {
                 Self.logger.info("trying to get EAR keys")
                 let privateKeys = try earService.fetchPrivateKeys()
-                processStoredUpdateEvents(with: privateKeys)
+                processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
             } catch {
                 Self.logger.error("failed to fetch EAR keys: \(String(describing: error))")
-                return true
+                throw error
             }
         } else {
-            processStoredUpdateEvents()
+            processStoredUpdateEvents(callEventsOnly: callEventsOnly)
         }
-
-        return false
     }
 
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
@@ -125,10 +141,16 @@ class EventProcessor: UpdateEventProcessor {
         _ = processEventsIfReady()
     }
 
-    private func processStoredUpdateEvents(with privateKeys: EARPrivateKeys? = nil) {
+    private func processStoredUpdateEvents(
+        with privateKeys: EARPrivateKeys? = nil,
+        callEventsOnly: Bool = false
+    ) {
         Self.logger.trace("process stored update events")
 
-        eventDecoder.processStoredEvents(with: privateKeys) { [weak self] (decryptedUpdateEvents) in
+        eventDecoder.processStoredEvents(
+            with: privateKeys,
+            callEventsOnly: callEventsOnly
+        ) { [weak self] (decryptedUpdateEvents) in
             Self.logger.info("decrypted update events: \(decryptedUpdateEvents.count)")
 
             guard let `self` = self else { return }

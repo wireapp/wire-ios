@@ -133,12 +133,18 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     static func nextEvents(
         _ context: NSManagedObjectContext,
-        batchSize: Int
+        batchSize: Int,
+        callEventsOnly: Bool
     ) -> [StoredUpdateEvent] {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
         fetchRequest.fetchLimit = batchSize
         fetchRequest.returnsObjectsAsFaults = false
+
+        if callEventsOnly {
+            fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(StoredUpdateEvent.isCallEvent))
+        }
+
         let result = context.fetchOrAssert(request: fetchRequest)
         return result
     }
@@ -156,9 +162,10 @@ public final class StoredUpdateEvent: NSManagedObject {
     static func nextEventBatch(
         size: Int,
         privateKeys: EARPrivateKeys?,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        callEventsOnly: Bool
     ) -> EventBatch {
-        let storedEvents = nextEvents(context, batchSize: size)
+        let storedEvents = nextEvents(context, batchSize: size, callEventsOnly: callEventsOnly)
         return eventsFromStoredEvents(
             storedEvents,
             privateKeys: privateKeys

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,10 @@
 
 import Foundation
 
-@objc
-public protocol UpdateEventProcessor: AnyObject {
+protocol OperationStateProvider {
 
-    @objc(storeUpdateEvents:ignoreBuffer:)
-    func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool)
+    var operationState: SyncEngineOperationState { get }
 
-    @objc(storeAndProcessUpdateEvents:ignoreBuffer:)
-    func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool)
-
-    func processEventsIfReady() -> Bool
-
-    func processPendingCallEvents() throws
-
-    var eventConsumers: [ZMEventConsumer] { get set }
 }
+
+extension OperationStatus: OperationStateProvider {}

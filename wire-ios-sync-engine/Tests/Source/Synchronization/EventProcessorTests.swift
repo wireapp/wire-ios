@@ -175,4 +175,66 @@ class EventProcessorTests: MessagingTest {
         XCTAssertEqual(batchFetchRequest.noncesToFetch, messageNonceSet)
     }
 
+    // MARK: - Is ready to process events
+
+    func test_IsNotReadyToProcessEvents_IfSyncing() throws {
+        try assertIsReadyToProccessEvents(
+            expectation: false,
+            isSyncing: true
+        )
+    }
+
+    func test_IsNotReadyToProcessEvents_IfDatabaseLocked() throws {
+        try assertIsReadyToProccessEvents(
+            expectation: false,
+            isDatabaseLocked: true
+        )
+    }
+
+    private func assertIsReadyToProccessEvents(
+        expectation: Bool,
+        isSyncing: Bool = false,
+        isDatabaseLocked: Bool = false
+    ) throws {
+        // Given
+        if isSyncing {
+            syncStatus.currentSyncPhase = .fetchingMissedEvents
+            syncStatus.pushChannelEstablishedDate = nil
+            XCTAssertTrue(syncStatus.isSyncing)
+        } else {
+            syncStatus.currentSyncPhase = .done
+            syncStatus.pushChannelEstablishedDate = Date()
+            XCTAssertFalse(syncStatus.isSyncing)
+        }
+
+        if isDatabaseLocked {
+            let earService = EARService(
+                accountID: userIdentifier,
+                databaseContexts: [uiMOC, syncMOC]
+            )
+
+            try earService.enableEncryptionAtRest(
+                context: syncMOC,
+                skipMigration: true
+            )
+
+            earService.lockDatabase()
+
+            XCTAssertTrue(syncMOC.encryptMessagesAtRest)
+            XCTAssertTrue(syncMOC.isLocked)
+        } else {
+            XCTAssertFalse(syncMOC.encryptMessagesAtRest)
+            XCTAssertFalse(syncMOC.isLocked)
+        }
+
+        // Then
+        XCTAssertEqual(sut.isReadyToProcessEvents, expectation)
+    }
+
+}
+
+class MockOperationStateProvider: OperationStateProvider {
+
+    var operationState = SyncEngineOperationState.background
+
 }

@@ -451,18 +451,6 @@ public class ZMUserSession: NSObject {
         applicationStatusDirectory?.requestSlowSync()
     }
 
-    private var onProcessedEvents: ((Bool) -> Void)?
-
-    public func requestQuickSync(completion: ((Bool) -> Void)? = nil) {
-        guard let applicationStatusDirectory = applicationStatusDirectory else {
-            completion?(false)
-            return
-        }
-
-        applicationStatusDirectory.requestQuickSync()
-        onProcessedEvents = completion
-    }
-
     // MARK: - Access Token
 
     private func renewAccessTokenIfNeeded(for userClient: UserClient) {
@@ -627,9 +615,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        let block = onProcessedEvents
-        onProcessedEvents = nil
-        block?(!hasMoreEventsToProcess)
+    }
+
+    func processPendingCallEvents() throws {
+        try updateEventProcessor!.processPendingCallEvents()
     }
 
     private func fetchFeatureConfigs() {
