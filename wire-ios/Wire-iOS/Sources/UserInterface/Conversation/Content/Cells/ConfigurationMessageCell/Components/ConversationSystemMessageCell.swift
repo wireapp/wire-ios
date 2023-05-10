@@ -91,32 +91,33 @@ extension ConversationStartedSystemMessageCell {
 
 }
 
-class ConversationEncryptionInfoCell: ConversationIconBasedCell,ConversationMessageCell {
-    struct Configuration {}
+class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+    struct Configuration {
+        let topText: String
+        let bottomText: String
+    }
 
     private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                                    color: SemanticColors.Label.textDefault)
     private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                                       color: SemanticColors.Label.textDefault)
 
-    func configure(with object: Configuration, animated: Bool) {}
+    func configure(with object: Configuration, animated: Bool) {
+        encryptionLabel.text = object.topText
+        sensitiveInfoLabel.text = object.bottomText
+    }
 
     override func configureSubviews() {
         super.configureSubviews()
-
-        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
         encryptionLabel.numberOfLines = 0
-        encryptionLabel.text = connectionView.encryptionInfo
         encryptionLabel.translatesAutoresizingMaskIntoConstraints = false
         topContentView.addSubview(encryptionLabel)
         sensitiveInfoLabel.numberOfLines = 0
-        sensitiveInfoLabel.text = connectionView.sensitiveInformationWarning
         sensitiveInfoLabel.translatesAutoresizingMaskIntoConstraints = false
         bottomContentView.addSubview(sensitiveInfoLabel)
 
         lineView.isHidden = true
-        imageView.tintColor = SemanticColors.Icon.backgroundDefault
-        imageView.image =  UIImage(named: "Info")
+        imageView.image =  Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
     }
 
     override func configureConstraints() {
@@ -1048,7 +1049,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 }
 
 class ConversationEncryptionInfoDescription: ConversationMessageCellDescription {
-    typealias View = ConversationEncryptionInfoCell
+    typealias View = ConversationWarningSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -1068,8 +1069,9 @@ class ConversationEncryptionInfoDescription: ConversationMessageCellDescription 
     init() {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView
 
-        configuration = View.Configuration()
-        accessibilityLabel = "\(connectionView.encryptionInfo) \(connectionView.sensitiveInformationWarning)"
+        configuration = View.Configuration(topText: connectionView.encryptionInfo,
+                                           bottomText: connectionView.sensitiveInformationWarning)
+        accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
         actionController = nil
     }
 }
