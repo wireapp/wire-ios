@@ -35,7 +35,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     private let separatorLineView = UIView()
     private let typeLabel = UILabel()
     private let IDLabel = UILabel()
-    let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    private let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
     private let fullIDLabel = CopyableLabel()
     private let verifiedToggle = Switch(style: .default)
     private let verifiedToggleLabel = UILabel()
@@ -403,8 +403,12 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
                                             message: "⚠️ will cause decryption errors ⚠️",
                                             preferredStyle: .actionSheet)
 
-        actionSheet.addAction(UIAlertAction(title: "Delete Session", style: .default, handler: { [weak self] (_) in
+        actionSheet.addAction(UIAlertAction(title: "Delete Client and Session", style: .default, handler: { [weak self] (_) in
             self?.onDeleteDeviceTapped()
+        }))
+
+        actionSheet.addAction(UIAlertAction(title: "Delete Session", style: .default, handler: { [weak self] (_) in
+            self?.onDeleteSessionTapped()
         }))
 
         actionSheet.addAction(UIAlertAction(title: "Corrupt Session", style: .default, handler: { [weak self] (_) in
@@ -424,6 +428,20 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
             let client = try! sync.existingObject(with: weakSelf.userClient.objectID) as! UserClient
             client.deleteClientAndEndSession()
+            sync.saveOrRollback()
+        }
+        presentingViewController?.dismiss(animated: true, completion: .none)
+    }
+
+    @objc
+    private func onDeleteSessionTapped() {
+        let sync = userClient.managedObjectContext!.zm_sync!
+        sync.performGroupedBlockAndWait { [weak self] in
+            guard let weakSelf = self else { return }
+
+            let client = try! sync.existingObject(with: weakSelf.userClient.objectID) as! UserClient
+            
+            client.deleteSession()
             sync.saveOrRollback()
         }
         presentingViewController?.dismiss(animated: true, completion: .none)
@@ -457,13 +475,14 @@ extension ProfileClientViewController: UserClientObserver {
             updateFingerprintLabel()
         }
 
-        if changeInfo.sessionHasBeenReset {
+        if changeInfo.sessionHasBeenReset && changeInfo.userClient.fingerprint != nil {
             let alert = UIAlertController(title: "", message: NSLocalizedString("self.settings.device_details.reset_session.success", comment: ""), preferredStyle: .alert)
             let okAction = UIAlertAction(title: NSLocalizedString("general.ok", comment: ""), style: .destructive, handler: nil)
             alert.addAction(okAction)
             present(alert, animated: true, completion: .none)
-            isLoadingViewVisible = false
         }
+        isLoadingViewVisible = false
+        spinner.stopAnimating()
     }
 
 }

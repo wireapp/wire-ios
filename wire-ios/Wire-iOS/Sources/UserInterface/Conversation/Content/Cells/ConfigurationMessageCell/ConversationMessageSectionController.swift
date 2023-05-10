@@ -96,6 +96,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// Whether this section is selected
     private var selected: Bool
 
+    /// Whether this section is collapsed
+    private var collapsed: Bool
+
     private var changeObservers: [Any] = []
 
     deinit {
@@ -106,6 +109,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.message = message
         self.context = context
         self.selected = selected
+        self.collapsed = true
 
         super.init()
 
@@ -242,6 +246,19 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
+        if let failedToSendUsers = message.failedToSendUsers, !failedToSendUsers.isEmpty {
+            let buttonAction = {
+                self.collapsed = !self.collapsed
+                self.cellDelegate?.conversationMessageShouldUpdate()
+            }
+
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: failedToSendUsers,
+                                                                                     clientsWithoutSession: message.clientsWithoutSession,
+                                                                                     isCollapsed: collapsed,
+                                                                                     buttonAction: { buttonAction() })
+            add(description: cellDescription)
+        }
+
         if let topCelldescription = cellDescriptions.first {
             topCelldescription.topMargin = context.spacing
         }
@@ -350,4 +367,30 @@ extension ConversationMessageSectionController: ZMUserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
     }
+}
+
+private extension ZMConversationMessage {
+
+    var clientsWithoutSession: [UserClient]? {
+        guard let conversation = conversationLike as? ZMConversation,
+              let syncMoc = conversation.managedObjectContext?.zm_sync else {
+                  return nil
+              }
+
+        var clients: [UserClient] = []
+        syncMoc.performGroupedBlockAndWait {
+            conversation.localParticipantsExcludingSelf
+                .map { $0.clients }
+                .joined()
+                .forEach { client in
+                    if let existingClient = try? syncMoc.existingObject(with: client.objectID) as? UserClient,
+                       !existingClient.hasSessionWithSelfClient {
+                        clients.append(client)
+                    }
+                }
+        }
+
+        return clients
+    }
+
 }

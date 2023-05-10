@@ -32,6 +32,12 @@ public enum ZMDeliveryState: UInt {
 }
 
 @objc
+public enum MessageSendFailure: Int {
+    case unknown
+    case federationRemoteError
+}
+
+@objc
 public protocol ReadReceipt {
 
     @available(*, deprecated, message: "Use `userType` instead")
@@ -68,6 +74,12 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// messages sent from this device. In any other case, it will be
     /// ZMDeliveryStateDelivered
     var deliveryState: ZMDeliveryState { get }
+
+    /// Reason why the message has not been sent
+    var failedToSendReason: MessageSendFailure { get }
+
+    /// The list of users who didn't receive the message (e.g their backend is offline)
+    var failedToSendUsers: [UserType]? { get }
 
     /// True if the message has been successfully sent to the server
     var isSent: Bool { get }
@@ -284,6 +296,13 @@ extension ZMMessage: ZMConversationMessage {
 
         return fileSharingFeature.status == .disabled
     }
+
+    public var failedToSendUsers: [UserType]? {
+        guard let recipients = failedToSendRecipients else {
+            return nil
+        }
+        return Array(recipients)
+    }
 }
 
 extension ZMMessage {
@@ -317,6 +336,10 @@ extension ZMMessage {
 
     @objc public var isSent: Bool {
         return true
+    }
+
+    @objc public var failedToSendReason: MessageSendFailure {
+        return .unknown
     }
 
     @objc public var deliveryState: ZMDeliveryState {
@@ -357,4 +380,11 @@ extension ZMMessage {
     @objc public var deletionTimeout: TimeInterval {
         return -1
     }
+}
+
+// MARK: - Message send failure properties
+extension ZMMessage {
+
+    @NSManaged public var failedToSendRecipients: Set<ZMUser>?
+
 }
