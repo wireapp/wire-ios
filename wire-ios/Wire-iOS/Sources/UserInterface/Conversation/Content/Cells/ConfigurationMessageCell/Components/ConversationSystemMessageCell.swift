@@ -112,6 +112,7 @@ class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Conversat
         encryptionLabel.numberOfLines = 0
         encryptionLabel.translatesAutoresizingMaskIntoConstraints = false
         topContentView.addSubview(encryptionLabel)
+
         sensitiveInfoLabel.numberOfLines = 0
         sensitiveInfoLabel.translatesAutoresizingMaskIntoConstraints = false
         bottomContentView.addSubview(sensitiveInfoLabel)
