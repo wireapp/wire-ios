@@ -236,8 +236,6 @@ extension EventDecoder {
             userIdentifier: selfUser.remoteIdentifier
         )
 
-        let publicKey = try? EncryptionKeys.publicKey(for: account)
-
         for (idx, event) in decryptedEvents.enumerated() {
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
