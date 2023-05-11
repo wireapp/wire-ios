@@ -78,8 +78,8 @@ extension NSManagedObjectContext {
 
     }
 
-    public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
+    public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
             WireLogger.ear.info("migrating existing data toward EAR")
             saveOrRollback()
             try migrateInstancesTowardEncryptionAtRest(
@@ -96,12 +96,12 @@ extension NSManagedObjectContext {
             )
             saveOrRollback()
         } catch {
-            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
-            reset()
             throw error
         }
     }
 
+            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
+            reset()
     public func migrateAwayFromEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
             WireLogger.ear.info("migrating existing data away from EAR")
@@ -120,12 +120,12 @@ extension NSManagedObjectContext {
             )
             saveOrRollback()
         } catch {
-            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
-            reset()
             throw error
         }
     }
 
+            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
+            reset()
     private func migrateInstancesTowardEncryptionAtRest<T: MigratableEntity>(
         type: T.Type,
         key: VolatileData
@@ -288,6 +288,20 @@ extension NSManagedObjectContext {
     public var databaseKey: VolatileData? {
         get {
             userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
+        }
+
+    }
+
+    private static let databaseKeyUserInfoKey = "databaseKey"
+
+    /// The database key used to protect contents of the database.
+
+    public var databaseKey: VolatileData? {
+        get {
+            userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
+        }
+        set {
+            userInfo[Self.databaseKeyUserInfoKey] = newValue
         }
 
         set {
