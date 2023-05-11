@@ -225,6 +225,8 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing Wire-iOS..."
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          exit ${PIPESTATUS[0]}
           
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
       # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
@@ -237,7 +239,5 @@ jobs:
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireNotificationEngine..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
-          exit ${PIPESTATUS[0]}
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           exit ${PIPESTATUS[0]}
       
