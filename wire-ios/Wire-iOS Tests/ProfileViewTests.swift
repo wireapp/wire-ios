@@ -57,6 +57,23 @@ final class ProfileViewTests: ZMSnapshotTestCase {
         verifyProfile(options: [.hideAvailability])
     }
 
+    func test_notConnectedUser() {
+        self.recordMode = true
+        //given
+        let selfUser = MockUserType.createSelfUser(name: "selfUser", inTeam: UUID())
+        let testUser = MockUserType.createUser(name: "Test")
+        testUser.isConnected = false
+
+        //when
+        let sut = ProfileHeaderViewController(user: testUser, viewer: selfUser, options: [])
+        sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        sut.overrideUserInterfaceStyle = .dark
+
+        //then
+        verify(view: sut.view)
+    }
+
     // MARK: - Helpers
 
     func verifyProfile(options: ProfileHeaderViewController.Options, availability: AvailabilityKind = .available, file: StaticString = #file, line: UInt = #line) {

@@ -22,8 +22,9 @@ import WireCommonComponents
 
 class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)
-    private let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: SemanticColors.Label.textErrorDefault)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
+    private let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
+                                 color: SemanticColors.Label.textErrorDefault)
 
     // MARK: - Setup
 
@@ -60,7 +61,7 @@ class WarningLabelView: UIView {
             self.isHidden = false
             label.text = profileDetails.requestedIdentityWarning
         }
-        self.isHidden = user.isConnected || user.isTeamMember
+        self.isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
         guard let name = user.name else { return }
         label.text = profileDetails.identityWarning(name)
 
