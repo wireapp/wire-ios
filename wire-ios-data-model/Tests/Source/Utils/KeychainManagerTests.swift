@@ -28,7 +28,8 @@ class KeychainManagerTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        try EncryptionKeys.deleteKeys(for: account)
+        let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
+        try? KeychainManager.deleteItem(item)
         account = nil
     }
 
@@ -56,12 +57,12 @@ class KeychainManagerTests: XCTestCase {
 
     func assertPublicPrivateKeyPairGeneration(accessLevel: KeychainManager.AccessLevel) {
         // Given
-        let item = EncryptionKeys.KeychainItem.databaseKey(account)
+        let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
 
         do {
             // When I have generated Public Private KeyPair
             let KeyPair = try KeychainManager.generatePublicPrivateKeyPair(
-                identifier: item.uniqueIdentifier,
+                identifier: item.id,
                 accessLevel: accessLevel
             )
 
@@ -76,7 +77,7 @@ class KeychainManagerTests: XCTestCase {
     func testKeychainItemsStoreSuccessfully() throws {
         do {
             // Given I have generated a key
-            let item = EncryptionKeys.KeychainItem.databaseKey(account)
+            let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
             let key = try KeychainManager.generateKey()
             XCTAssertNotNil(key, "Failed to generate the key.")
 
@@ -95,7 +96,7 @@ class KeychainManagerTests: XCTestCase {
     func testKeychainItemsFetchedSuccessfully() throws {
         do {
             // Given I have generated a key and successfully stored it
-            let item = EncryptionKeys.KeychainItem.databaseKey(account)
+            let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
             let key = try KeychainManager.generateKey()
             try KeychainManager.storeItem(item, value: key)
 
@@ -113,7 +114,7 @@ class KeychainManagerTests: XCTestCase {
 
     func testKeychainItemsDeleteSuccessfully() throws {
         // Given I have generated a key and successfully stored it.
-        let item = EncryptionKeys.KeychainItem.databaseKey(account)
+        let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
 
         do {
             let key = try KeychainManager.generateKey()
