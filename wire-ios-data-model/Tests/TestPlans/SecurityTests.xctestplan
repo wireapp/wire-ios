@@ -48,6 +48,7 @@
         "EARServiceTests\/test_ExistingMessageContentIsEncrypted_WhenEarIsEnabled()",
         "EARServiceTests\/test_ItStoresAndClearsDatabaseKeyOnAllContexts()",
         "EARServiceTests\/test_NormalizedMessageContentIsCleared_WhenEarIsEnabled()",
+        "EARServiceTests\/test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest()",
         "EncryptionKeysTests\/testThatAsymmetricKeysWorksWithExpectedAlgorithm()",
         "EncryptionKeysTests\/testThatEncryptionKeysAreSuccessfullyCreated()",
         "EncryptionKeysTests\/testThatEncryptionKeysAreSuccessfullyDeleted()",

@@ -759,6 +759,40 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(keyRepository.deleteDatabaseKeyDescription_Invocations.count, 1)
     }
 
+    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
+    func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
+        // Given
+        let sut = EARService(accountID: userIdentifier, databaseContexts: [uiMOC])
+        let oldDatabaseKey = try sut.generateKeys()
+
+        let oldPublicKeys = try sut.fetchPublicKeys()
+        let oldPrivateKeys = try sut.fetchPrivateKeys()
+        let oldPrimaryPublicKey = oldPublicKeys.primary
+        let oldPrimaryPrivateKey = try XCTUnwrap(oldPrivateKeys.primary)
+        let oldSecondaryPublicKey = oldPublicKeys.secondary
+        let oldSecondaryPrivateKey = oldPrivateKeys.secondary
+
+        // When
+        try sut.enableEncryptionAtRest(context: uiMOC, skipMigration: true)
+
+        // Then
+        XCTAssertFalse(uiMOC.isLocked)
+
+        let newPublicKeys = try sut.fetchPublicKeys()
+        let newPrivateKeys = try sut.fetchPrivateKeys()
+        let newPrimaryPublicKey = newPublicKeys.primary
+        let newPrimaryPrivateKey = try XCTUnwrap(newPrivateKeys.primary)
+        let newSecondaryPublicKey = newPublicKeys.secondary
+        let newSecondaryPrivateKey = newPrivateKeys.secondary
+        let newDatabaseKey = try XCTUnwrap(uiMOC.databaseKey)
+
+        XCTAssertNotEqual(oldPrimaryPublicKey, newPrimaryPublicKey)
+        XCTAssertNotEqual(oldPrimaryPrivateKey, newPrimaryPrivateKey)
+        XCTAssertNotEqual(oldSecondaryPublicKey, newSecondaryPublicKey)
+        XCTAssertNotEqual(oldSecondaryPrivateKey, newSecondaryPrivateKey)
+        XCTAssertNotEqual(oldDatabaseKey, newDatabaseKey)
+    }
+
     // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
     func test_AsymmetricKeysWorksWithExpectedAlgorithm() throws {
         // Given
