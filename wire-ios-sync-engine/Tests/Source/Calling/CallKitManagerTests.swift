@@ -823,7 +823,7 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 0)
     }
 
-    func testThatItIgnoresNewIncomingCall_v3_Unfectched_conversation() {
+    func testThatItIgnoresNewIncomingCall_v3_Unfetched_conversation() {
         // given
         let conversation = self.conversation()
         conversation.needsToBeUpdatedFromBackend = true
@@ -834,6 +834,25 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertEqual(self.callKitProvider.timesReportNewIncomingCallCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 0)
+    }
+
+    func testThatItIgnoresIncomingCall_IfItWasAlreadyReported() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        // report the call a first time
+        sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // when
+        sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // then
+        // we verify it was only reported once
+        XCTAssertEqual(self.callKitProvider.timesReportNewIncomingCallCalled, 1)
         XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
         XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
         XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 0)
@@ -991,6 +1010,27 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertFalse(sut.callRegister.callExists(for: callKitCall.id))
+    }
+
+    func test_itIgnoresCallEnded_IfItWasAlreadyReported() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+        sut.requestStartCall(in: conversation, video: false)
+
+        // report the call is terminating a first time
+        sut.callCenterDidChange(callState: .terminating(reason: .normal), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // when
+        sut.callCenterDidChange(callState: .terminating(reason: .normal), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+
+        // then
+        XCTAssertEqual(self.callKitProvider.timesReportNewIncomingCallCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
+        XCTAssertEqual(self.callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
+        // we verify that it was only reported once
+        XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 1)
+        XCTAssertEqual(self.callKitProvider.lastEndedReason, .remoteEnded)
     }
 
 }
