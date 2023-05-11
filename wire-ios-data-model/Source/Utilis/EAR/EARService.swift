@@ -154,7 +154,7 @@ public class EARService: EARServiceInterface {
         WireLogger.ear.info("migrating ear keys if needed...")
 
         guard
-            isEAREnabled,
+            isEAREnabled(),
             !existSecondaryKeys
         else {
             return
@@ -168,7 +168,7 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private var isEAREnabled: Bool {
+    private func isEAREnabled() -> Bool {
         var isEnabled = false
 
         performInAllContexts {
