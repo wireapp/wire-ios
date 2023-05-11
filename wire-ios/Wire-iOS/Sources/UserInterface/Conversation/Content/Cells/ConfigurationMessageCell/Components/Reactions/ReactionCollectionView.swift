@@ -48,10 +48,10 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
 
     func createCollectionView() {
 
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
+        collectionView.register(ReactionCollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = UIColor.cyan
+        collectionView.backgroundColor = SemanticColors.View.backgroundConversationView
         self.addSubview(collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,9 +69,8 @@ final class ReactionView: UIView, UICollectionViewDataSource, UICollectionViewDe
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath) as! ReactionCollectionViewCell
 
-        cell.backgroundColor = UIColor.green
         return cell
     }
 

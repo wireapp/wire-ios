@@ -21,42 +21,72 @@ import WireCommonComponents
 
 class ReactionToggleButton: UIControl {
 
-  var isToggled: Bool {
-    didSet {
-      guard oldValue != isToggled else { return }
-      updateAppearance()
+    // MARK: - Properties
+
+    typealias ButtonColors = SemanticColors.Button
+
+    var isToggled: Bool {
+        didSet {
+            guard oldValue != isToggled else { return }
+            updateAppearance()
+        }
     }
-  }
 
-  init(isToggled: Bool = false) {
-    self.isToggled = isToggled
-    super.init(frame: .zero)
+    init(isToggled: Bool = false) {
+        self.isToggled = isToggled
+        super.init(frame: .zero)
 
-    let label = UILabel()
-    label.text = "Toggle me!"
-    addSubview(label)
+        layer.borderWidth = 1
+        layer.cornerRadius = 12
+        layer.masksToBounds = true
 
-    label.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      label.centerXAnchor.constraint(equalTo: centerXAnchor),
-      label.centerYAnchor.constraint(equalTo: centerYAnchor)
+        let emojiLabel = UILabel()
+        let counterLabel = UILabel()
+        emojiLabel.text = "❤️"
+        counterLabel.text = "1"
+
+        let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = UIEdgeInsets(top: 5, left: 8, bottom: 5, right: 8)
+
+        stackView.isUserInteractionEnabled = false
+
+        addSubview(stackView)
+
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+        stackView.topAnchor.constraint(equalTo: topAnchor),
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
     ])
 
-    updateAppearance()
-    addTarget(self, action: #selector(didToggle), for: .touchUpInside)
-  }
+        updateAppearance()
+        addTarget(self, action: #selector(didToggle), for: .touchUpInside)
+    }
 
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-  private func updateAppearance() {
-    backgroundColor = isToggled ? Sema : .gray
-  }
+    private func updateAppearance() {
+        backgroundColor = isToggled
+        ? ButtonColors.backgroundReactionSelected :
+        ButtonColors.backroundReactionNormal
 
-  @objc
-  private func didToggle() {
-    isToggled.toggle()
-  }
+        layer.borderColor = isToggled
+        ? ButtonColors.borderReactionSelected.cgColor :
+        ButtonColors.borderReactionNormal.cgColor
+    }
+
+    @objc
+    private func didToggle() {
+        isToggled.toggle()
+    }
 
 }
