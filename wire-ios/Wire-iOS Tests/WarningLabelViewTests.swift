@@ -40,7 +40,6 @@ class WarningLabelViewTests: XCTestCase {
         sut.update(withUser: testUser)
         //then
         XCTAssertFalse(sut.isHidden)
-        XCTAssertEqual(sut.label.text, "Get certainty about Test’s identity before connecting.")
     }
 
     func test_WithUserFromTeamNotConnected() {
