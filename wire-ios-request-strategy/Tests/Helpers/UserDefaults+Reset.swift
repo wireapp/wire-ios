@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,22 +18,14 @@
 
 import Foundation
 
-extension ZMClientMessage: EncryptionAtRestMigratable {
+extension UserDefaults {
 
-    static let predicateForObjectsNeedingMigration: NSPredicate? = nil
+    func reset() {
+        for key in dictionaryRepresentation().keys {
+            removeObject(forKey: key)
+        }
 
-    func migrateTowardEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
-    ) {
-        normalizedText = ""
-    }
-
-    func migrateAwayFromEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
-    ) {
-        updateNormalizedText()
+        synchronize()
     }
 
 }

@@ -131,6 +131,31 @@ extension Encodable {
         return payloadData(encoder: encoder)
     }
 
+    func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
+        let data = try encodeToJSON(encoder: encoder)
+
+        guard let string =  String(data: data, encoding: .utf8) else {
+            throw JSONEncodingFailure.failedToConvertToString
+        }
+
+        return string
+    }
+
+    func encodeToJSON(encoder: JSONEncoder = .defaultEncoder) throws -> Data {
+        do {
+            return try encoder.encode(self)
+        } catch {
+            throw JSONEncodingFailure.failedToEncode(error)
+        }
+    }
+
+}
+
+enum JSONEncodingFailure: Error {
+
+    case failedToEncode(Error)
+    case failedToConvertToString
+
 }
 
 // MARK: API version aware coding

@@ -156,7 +156,9 @@
 				5470D3E91D76E1B000FDE440 /* Products */,
 				5470D4331D77165E00FDE440 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		5470D3E91D76E1B000FDE440 /* Products */ = {
 			isa = PBXGroup;

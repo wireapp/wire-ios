@@ -198,6 +198,8 @@ public class SharingSession {
 
     public let appLockController: AppLockType
 
+    let earService: EARServiceInterface
+
     public var fileSharingFeature: Feature.FileSharing {
         let featureService = FeatureService(context: coreDataStack.viewContext)
         return featureService.fetchFileSharing()
@@ -263,18 +265,19 @@ public class SharingSession {
             appLockConfig: appLockConfig)
     }
 
-    internal init(accountIdentifier: UUID,
-                  coreDataStack: CoreDataStack,
-                  transportSession: ZMTransportSession,
-                  cachesDirectory: URL,
-                  saveNotificationPersistence: ContextDidSaveNotificationPersistence,
-                  analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
-                  applicationStatusDirectory: ApplicationStatusDirectory,
-                  operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory,
-                  appLockConfig: AppLockController.LegacyConfig?
-        ) throws {
-
+    init(
+        accountIdentifier: UUID,
+        coreDataStack: CoreDataStack,
+        transportSession: ZMTransportSession,
+        cachesDirectory: URL,
+        saveNotificationPersistence: ContextDidSaveNotificationPersistence,
+        analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        operationLoop: RequestGeneratingOperationLoop,
+        strategyFactory: StrategyFactory,
+        appLockConfig: AppLockController.LegacyConfig?,
+        earService: EARServiceInterface? = nil
+    ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
@@ -282,6 +285,14 @@ public class SharingSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
+
+        self.earService = earService ?? EARService(
+            accountID: accountIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ]
+        )
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
         self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)

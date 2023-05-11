@@ -32,6 +32,7 @@ public protocol UserSessionEncryptionAtRestInterface {
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
 
     func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys)
+    func prepareForMigration(for account: Account, onReady: @escaping (NSManagedObjectContext) throws -> Void)
 
 }
 
@@ -44,48 +45,78 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// the case that the migration fails, the sync context is reset to a clean state.
     ///
     /// - Parameters:
-    ///     - enabled: When **true**, messages will be encrypted at rest.
-    ///     - skipMigration: When **true**, existing messsages will not be migrated to be under encryption at rest. Defaults to **false**.
+    ///   - enabled: When **true**, messages will be encrypted at rest.
+    ///   - skipMigration: When **true**, existing messsages will not be migrated to be under encryption at rest. Defaults to **false**.
     ///
     /// - Throws: `MigrationError` if it's not possible to start the migration.
 
-    public func setEncryptionAtRest(enabled: Bool, skipMigration: Bool = false) throws {
-        guard enabled != encryptMessagesAtRest else { return }
+    public func setEncryptionAtRest(
+        enabled: Bool,
+        skipMigration: Bool = false
+    ) throws {
+        do {
+            WireLogger.ear.info("setting ear enabled (\(enabled))")
 
-        let encryptionKeys = try coreDataStack.encryptionKeysForSettingEncryptionAtRest(enabled: enabled)
-
-        if skipMigration {
-            try managedObjectContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
-        } else {
-            delegate?.setEncryptionAtRest(enabled: enabled,
-                                          account: coreDataStack.account,
-                                          encryptionKeys: encryptionKeys)
+            if enabled {
+                try earService.enableEncryptionAtRest(
+                    context: managedObjectContext,
+                    skipMigration: skipMigration
+                )
+            } else {
+                try earService.disableEncryptionAtRest(
+                    context: managedObjectContext,
+                    skipMigration: skipMigration
+                )
+            }
+        } catch {
+            WireLogger.ear.error("failed to set ear enabled (\(enabled)): \(String(describing: error))")
+            throw error
         }
     }
+
+    /// Whether encryption at rest is enabled.
+    ///
+    /// If `true` then sensitive data in the database should be encrypted with the
+    /// database key.
 
     public var encryptMessagesAtRest: Bool {
         return managedObjectContext.encryptMessagesAtRest
     }
 
+    /// Whether the database is currently locked.
+
     public var isDatabaseLocked: Bool {
-        managedObjectContext.encryptMessagesAtRest && managedObjectContext.encryptionKeys == nil
+        return managedObjectContext.isLocked
     }
 
-    public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
-        return NotificationInContext.addObserver(name: DatabaseEncryptionLockNotification.notificationName,
-                                                 context: managedObjectContext.notificationContext,
-                                                 queue: .main) { note in
-            guard let note = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification else { return }
+    /// Register an observer for events when the database becomes locked or unlocked.
+    ///
+    /// - Parameters:
+    ///   - handler: the block that is invoked when the database lock changes.
+    ///
+    /// - Returns: an observer token to be retained.
 
+    public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
+        return NotificationInContext.addObserver(
+            name: DatabaseEncryptionLockNotification.notificationName,
+            context: managedObjectContext.notificationContext,
+            queue: .main
+        ) { note in
+            guard let note = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification else { return }
             handler(note.databaseIsEncrypted)
         }
     }
+
+    /// Lock the database.
+    ///
+    /// When locked, the encrypted content of the database can not be decrypted
+    /// until the database is unlocked.
 
     func lockDatabase() {
         guard managedObjectContext.encryptMessagesAtRest else { return }
 
         BackgroundActivityFactory.shared.notifyWhenAllBackgroundActivitiesEnd { [weak self] in
-            self?.coreDataStack.clearEncryptionKeysInAllContexts()
+            self?.earService.lockDatabase()
 
             if let notificationContext = self?.managedObjectContext.notificationContext {
                 DatabaseEncryptionLockNotification(databaseIsEncrypted: true).post(in: notificationContext)
@@ -93,16 +124,27 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 
-    public func unlockDatabase(with context: LAContext) throws {
-        let keys = try EncryptionKeys.init(account: coreDataStack.account, context: context)
+    /// Unlock the database using the given authentication context.
 
-        coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
+    public func unlockDatabase(with context: LAContext) throws {
+        try earService.unlockDatabase(context: context)
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 
         syncManagedObjectContext.performGroupedBlock {
             self.processEvents()
         }
+    }
+
+}
+
+extension ZMUserSession: EARServiceDelegate {
+
+    public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {
+        delegate?.prepareForMigration(
+            for: coreDataStack.account,
+            onReady: onReady
+        )
     }
 
 }

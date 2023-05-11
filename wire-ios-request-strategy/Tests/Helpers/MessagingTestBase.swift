@@ -50,8 +50,9 @@ class MessagingTestBase: ZMTBaseTest {
         return self.coreDataStack.eventContext
     }
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
         BackgroundActivityFactory.shared.resume()
 

@@ -33,15 +33,11 @@ extension SharingSession: SharingSessionEncryptionAtRestInterface {
     }
 
     public var isDatabaseLocked: Bool {
-        userInterfaceContext.encryptMessagesAtRest && userInterfaceContext.encryptionKeys == nil
+        return userInterfaceContext.isLocked
     }
 
     public func unlockDatabase(with context: LAContext) throws {
-        let userIdentifier = ZMUser.selfUser(in: userInterfaceContext).remoteIdentifier!
-        let account = Account(userName: "", userIdentifier: userIdentifier)
-        let keys = try EncryptionKeys.init(account: account, context: context)
-
-        coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
+        try earService.unlockDatabase(context: context)
     }
 
 }
