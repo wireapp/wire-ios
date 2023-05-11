@@ -20,7 +20,7 @@ import Foundation
 import WireCryptobox
 
 extension Sequence where Element: NSManagedObject {
-
+    
     /// Perform changes on a sequence of NSManagedObjects and save at a regular interval and fault
     /// objects in order to keep memory consumption low.
     ///
@@ -29,16 +29,16 @@ extension Sequence where Element: NSManagedObject {
     ///   - block: Change which should be performed on the objects
     func modifyAndSaveInBatches(saveInterval: Int = 10000, _ block: (Element) throws -> Void) throws {
         var processed: [Element] = []
-
+        
         for element in self {
             try autoreleasepool {
                 try block(element)
-
+                
                 processed.append(element)
-
+                
                 if processed.count > saveInterval {
                     let context = element.managedObjectContext
-
+                    
                     try context?.save()
                     processed.forEach({
                         context?.refresh($0, mergeChanges: false)
@@ -47,26 +47,26 @@ extension Sequence where Element: NSManagedObject {
                 }
             }
         }
-
+        
         try processed.last?.managedObjectContext?.save()
     }
-
+    
 }
 
 extension NSManagedObjectContext {
-
+    
     public var isLocked: Bool {
         guard encryptMessagesAtRest else { return false }
         return databaseKey == nil
     }
-
+    
     // MARK: - Migration
-
+    
     enum MigrationError: LocalizedError {
-
+        
         case missingDatabaseKey
         case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
-
+        
         var errorDescription: String? {
             switch self {
             case .missingDatabaseKey:
@@ -75,11 +75,11 @@ extension NSManagedObjectContext {
                 return "Failed to migrate all instances of \(type). Reason: \(reason)"
             }
         }
-
+        
     }
-
-        do {
+    
     public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
+        do {
             WireLogger.ear.info("migrating existing data toward EAR")
             saveOrRollback()
             try migrateInstancesTowardEncryptionAtRest(
@@ -99,9 +99,7 @@ extension NSManagedObjectContext {
             throw error
         }
     }
-
-            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
-            reset()
+    
     public func migrateAwayFromEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
             WireLogger.ear.info("migrating existing data away from EAR")
@@ -123,9 +121,7 @@ extension NSManagedObjectContext {
             throw error
         }
     }
-
-            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
-            reset()
+    
     private func migrateInstancesTowardEncryptionAtRest<T: MigratableEntity>(
         type: T.Type,
         key: VolatileData
@@ -141,7 +137,7 @@ extension NSManagedObjectContext {
             throw MigrationError.failedToMigrateInstances(type: type, reason: error.localizedDescription)
         }
     }
-
+    
     private func migrateInstancesAwayFromEncryptionAtRest<T: MigratableEntity>(
         type: T.Type,
         key: VolatileData
@@ -157,48 +153,48 @@ extension NSManagedObjectContext {
             throw MigrationError.failedToMigrateInstances(type: type, reason: error.localizedDescription)
         }
     }
-
+    
     private func fetchObjects<T: MigratableEntity>(type: T.Type) throws -> [T] {
         let request = fetchRequest(forType: type, batchSize: 100)
         return try fetch(request)
     }
-
+    
     private func fetchRequest<T>(forType type: T.Type, batchSize: Int) -> NSFetchRequest<T>
-        where T: MigratableEntity {
+    where T: MigratableEntity {
         let fetchRequest = NSFetchRequest<T>(entityName: T.entityName())
         fetchRequest.predicate = type.predicateForObjectsNeedingMigration
         fetchRequest.returnsObjectsAsFaults = false
         fetchRequest.fetchBatchSize = batchSize
         return fetchRequest
     }
-
+    
     /// Whether the encryption at rest feature is enabled.
-
+    
     internal(set) public var encryptMessagesAtRest: Bool {
         get {
             guard let value = persistentStoreMetadata(forKey: PersistentMetadataKey.encryptMessagesAtRest.rawValue) as? NSNumber else {
                 return false
             }
-
+            
             return value.boolValue
         }
-
+        
         set {
             setPersistentStoreMetadata(
                 NSNumber(booleanLiteral: newValue),
                 key: PersistentMetadataKey.encryptMessagesAtRest.rawValue
             )
         }
-
+        
     }
-
+    
     // MARK: - Encryption / Decryption
-
+    
     enum EncryptionError: LocalizedError {
-
+        
         case missingDatabaseKey
         case cryptobox(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
-
+        
         var errorDescription: String? {
             switch self {
             case .missingDatabaseKey:
@@ -207,26 +203,26 @@ extension NSManagedObjectContext {
                 return error.errorDescription
             }
         }
-
+        
     }
-
+    
     func encryptData(data: Data) throws -> (data: Data, nonce: Data) {
         guard let key = databaseKey else {
             throw EncryptionError.missingDatabaseKey
         }
-
+        
         return try encryptData(
             data: data,
             key: key
         )
     }
-
+    
     func encryptData(
         data: Data,
         key: VolatileData
     ) throws -> (data: Data, nonce: Data) {
         let context = contextData()
-
+        
         do {
             let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(message: data, context: context, key: key._storage)
             return (ciphertext, nonce)
@@ -234,7 +230,7 @@ extension NSManagedObjectContext {
             throw EncryptionError.cryptobox(error: error)
         }
     }
-
+    
     func decryptData(
         data: Data,
         nonce: Data
@@ -242,31 +238,31 @@ extension NSManagedObjectContext {
         guard let key = databaseKey else {
             throw EncryptionError.missingDatabaseKey
         }
-
+        
         return try decryptData(
             data: data,
             nonce: nonce,
             key: key
         )
     }
-
+    
     func decryptData(
         data: Data,
         nonce: Data,
         key: VolatileData
     ) throws -> Data {
         let context = contextData()
-
+        
         do {
             return try ChaCha20Poly1305.AEADEncryption.decrypt(ciphertext: data, nonce: nonce, context: context, key: key._storage)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
             throw EncryptionError.cryptobox(error: error)
         }
     }
-
+    
     private func contextData() -> Data {
         let selfUser = ZMUser.selfUser(in: self)
-
+        
         guard
             let selfClient = selfUser.selfClient(),
             let selfUserId = selfUser.remoteIdentifier?.transportString(),
@@ -275,16 +271,16 @@ extension NSManagedObjectContext {
         else {
             fatalError("Could not obtain self user id and self client id")
         }
-
+        
         return context
     }
-
+    
     // MARK: - Database Key
-
+    
     private static let databaseKeyUserInfoKey = "databaseKey"
-
+    
     /// The database key used to protect contents of the database.
-
+    
     public var databaseKey: VolatileData? {
         get {
             userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
@@ -293,7 +289,7 @@ extension NSManagedObjectContext {
             userInfo[Self.databaseKeyUserInfoKey] = newValue
         }
     }
-
+    
 }
 
 // MARK: - Migratable
@@ -303,27 +299,27 @@ private typealias MigratableEntity = ZMManagedObject & EncryptionAtRestMigratabl
 /// A type that needs to be migrated when encryption at rest is enabled / disabled.
 
 protocol EncryptionAtRestMigratable {
-
+    
     /// The predicate to use to fetch specific instances for migration.
-
+    
     static var predicateForObjectsNeedingMigration: NSPredicate? { get }
-
+    
     /// Migrate necessary data to adhere to encryption at rest feature.
     ///
     /// For example, encrypt sensitve data and set a nonce.
-
+    
     func migrateTowardEncryptionAtRest(
         in context: NSManagedObjectContext,
         key: VolatileData
     ) throws
-
+    
     /// Migrate necessary data to make it available under normal circumstances.
     ///
     /// For example, decrypt sensitive data and clear the nonce.
-
+    
     func migrateAwayFromEncryptionAtRest(
         in context: NSManagedObjectContext,
         key: VolatileData
     ) throws
-
+    
 }
