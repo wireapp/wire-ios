@@ -77,10 +77,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         updateLayout(for: traitCollection)
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-
     // MARK: Interface
 
     func createViews() {
