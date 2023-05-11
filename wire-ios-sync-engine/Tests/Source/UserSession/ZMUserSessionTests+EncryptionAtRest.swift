@@ -30,14 +30,6 @@ class MockUserSessionDelegate: NSObject, UserSessionDelegate {
         prepareForMigration_Invocations.append(account)
     }
 
-    var prepareForMigration_Invocations = [Account]()
-    func prepareForMigration(
-        for account: WireDataModel.Account,
-        onReady: @escaping (NSManagedObjectContext) throws -> Void
-    ) {
-        prepareForMigration_Invocations.append(account)
-    }
-
     func userSessionDidUnlock(_ session: ZMUserSession) {
 
     }
