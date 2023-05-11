@@ -154,7 +154,7 @@ public class EARService: EARServiceInterface {
         WireLogger.ear.info("migrating ear keys if needed...")
 
         guard
-            databaseContexts.contains(where: \.encryptMessagesAtRest),
+            isEAREnabled,
             !existSecondaryKeys
         else {
             return
@@ -166,6 +166,16 @@ public class EARService: EARServiceInterface {
         } catch {
             WireLogger.ear.error("failed to migrate keys: \(error)")
         }
+    }
+
+    private var isEAREnabled: Bool {
+        var isEnabled = false
+
+        performInAllContexts {
+            isEnabled = $0.encryptMessagesAtRest
+        }
+
+        return isEnabled
     }
 
     // MARK: - Enable / disable
