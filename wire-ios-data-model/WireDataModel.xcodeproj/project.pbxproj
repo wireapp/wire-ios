@@ -432,6 +432,11 @@
 		E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */; };
 		EE09EEB1255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */; };
 		EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */; };
+		EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */; };
+		EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */; };
+		EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */; };
+		EE22F80F29DD82110053E1C6 /* DatabaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */; };
+		EE22F81229DD84ED0053E1C6 /* EARKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */; };
 		EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */; };
 		EE2B874624D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2B874524D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift */; };
 		EE2BA00625CB3AA8001EB606 /* InvalidFeatureRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */; };
@@ -441,6 +446,9 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
+		EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */; };
+		EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */; };
+		EE428C5229F1533000ECB715 /* EARKeyEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */; };
 		EE42938A252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */; };
 		EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */; };
 		EE42938E252C460000E70670 /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938D252C460000E70670 /* Changes.swift */; };
@@ -486,6 +494,7 @@
 		EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */; };
 		EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */; };
 		EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */; };
+		EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC57C4929E407CC0068DFDA /* EARService.swift */; };
 		EECFAA3826D52EB700D9E100 /* Feature.SelfDeletingMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECFAA3726D52EB700D9E100 /* Feature.SelfDeletingMessages.swift */; };
 		EEDA9C0E2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */; };
 		EEDA9C1225121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C1125121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift */; };
@@ -1218,6 +1227,12 @@
 		E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMappingTests.swift; sourceTree = "<group>"; };
 		EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserTests+AnalyticsIdentifier.swift"; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
+		EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel4.0.xcdatamodel; sourceTree = "<group>"; };
+		EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyRepository.swift; sourceTree = "<group>"; };
 		EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConferenceCalling.swift; sourceTree = "<group>"; };
 		EE2B874524D9A11A00936A4E /* ContextProvider+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContextProvider+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemoval.swift; sourceTree = "<group>"; };
@@ -1228,6 +1243,9 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
+		EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EARServiceTests.swift; path = Tests/Source/EAR/EARServiceTests.swift; sourceTree = SOURCE_ROOT; };
+		EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyGenerator.swift; sourceTree = "<group>"; };
+		EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyEncryptor.swift; sourceTree = "<group>"; };
 		EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+ManagedObjectObservation.swift"; sourceTree = "<group>"; };
 		EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectObserverToken.swift; sourceTree = "<group>"; };
 		EE42938D252C460000E70670 /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
@@ -1276,6 +1294,7 @@
 		EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.Config.swift; sourceTree = "<group>"; };
 		EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockAuthenticationResult.swift; sourceTree = "<group>"; };
 		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
+		EEC57C4929E407CC0068DFDA /* EARService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARService.swift; sourceTree = "<group>"; };
 		EECFAA3726D52EB700D9E100 /* Feature.SelfDeletingMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.SelfDeletingMessages.swift; sourceTree = "<group>"; };
 		EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EEDA9C1125121277003A5B27 /* NSManagedObjectContextTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContextTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
@@ -1909,6 +1928,21 @@
 			name = Reaction;
 			sourceTree = "<group>";
 		};
+		EE22F81029DD82290053E1C6 /* EAR */ = {
+			isa = PBXGroup;
+			children = (
+				EEC57C4929E407CC0068DFDA /* EARService.swift */,
+				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
+				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
+				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
+				EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */,
+				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
+				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
+				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
+			);
+			path = EAR;
+			sourceTree = "<group>";
+		};
 		EE28991C26B4420A00E7BAF0 /* ConferenceCalling */ = {
 			isa = PBXGroup;
 			children = (
@@ -1928,6 +1962,15 @@
 				EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */,
 			);
 			path = "Change detection";
+			sourceTree = "<group>";
+		};
+		EE91911829F0196600514A2D /* EAR */ = {
+			isa = PBXGroup;
+			children = (
+				EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */,
+			);
+			name = EAR;
+			path = Source/EAR;
 			sourceTree = "<group>";
 		};
 		EEB5DE08283784DF009B4741 /* DigitalSignature */ = {
@@ -2346,6 +2389,7 @@
 			isa = PBXGroup;
 			children = (
 				F963E9671D9ADD5A00098AD3 /* Protos */,
+				EE22F81029DD82290053E1C6 /* EAR */,
 				F9331C851CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.h */,
 				F9331C861CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.m */,
 				F9331C811CB4191B00139ECC /* NSPredicate+ZMSearch.h */,
@@ -2822,6 +2866,7 @@
 		F9C9A79A1CAEA8FC0039E10C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				EE91911829F0196600514A2D /* EAR */,
 				54FB03AB1E41F6C2000E13DC /* Utils */,
 				F9A7085D1CAEEF4700C2F5FE /* Helper */,
 				F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */,
@@ -3299,6 +3344,7 @@
 				CE58A3FF1CD3B3580037B626 /* ConversationMessage.swift in Sources */,
 				0634C3A924643A400006081D /* ZMUpdateEvent.swift in Sources */,
 				160B3BB124EFD64E0026D355 /* ExtendedSecureUnarchiveFromData.swift in Sources */,
+				EE22F81229DD84ED0053E1C6 /* EARKeyRepository.swift in Sources */,
 				BF85CF5F1D227A78006EDB97 /* LocationData.swift in Sources */,
 				F9DBA5221E28EB4000BE23C0 /* SideEffectSources.swift in Sources */,
 				1672A614234499B500380537 /* LabelChangeInfo.swift in Sources */,
@@ -3392,6 +3438,8 @@
 				F110503D2220439900F3EB62 /* ZMUser+RichProfile.swift in Sources */,
 				5EFE9C0F2126D3FA007932A6 /* NormalizationResult.swift in Sources */,
 				F9A706571CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m in Sources */,
+				EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */,
+				EE428C5229F1533000ECB715 /* EARKeyEncryptor.swift in Sources */,
 				BF491CE61F063EE50055EE44 /* AccountStore.swift in Sources */,
 				16BA4305233CDEA30018E883 /* ZMConversation+Labels.swift in Sources */,
 				5451DE371F604CD500C82E75 /* ZMMoveIndex.swift in Sources */,
@@ -3409,6 +3457,7 @@
 				F9B71F0D1CB264DF001DB03F /* ZMConversationListDirectory.m in Sources */,
 				A949418F23E1DB79001B0373 /* ZMConnection+Fetch.swift in Sources */,
 				EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */,
+				EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */,
 				F920AE2A1E3A5FDD001BC14F /* Dictionary+Mapping.swift in Sources */,
 				F93265211D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift in Sources */,
 				CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */,
@@ -3483,7 +3532,9 @@
 				F9A706A81CAEE01D00C2F5FE /* DependentObjectsKeysForObservedObjectKeysCache.swift in Sources */,
 				EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */,
 				1670D01C231823DC003A143B /* ZMUser+Permissions.swift in Sources */,
+				EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */,
 				54FB03AA1E41F204000E13DC /* LegacyPersistedDataPatches+Directory.swift in Sources */,
+				EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */,
 				F9B71F2D1CB264EF001DB03F /* ZMConversation+UnreadCount.m in Sources */,
 				54D7B83F1E12774600C1B347 /* NSPersistentStore+Metadata.swift in Sources */,
 				BFCD8A2D1DCB4E8A00C6FCCF /* V2Asset.swift in Sources */,
@@ -3538,6 +3589,7 @@
 				EE68EEC9252DC4450013B242 /* ChangeDetector.swift in Sources */,
 				F9AB00271F0CE5520037B437 /* FileManager+FileLocations.swift in Sources */,
 				F9A7067F1CAEE01D00C2F5FE /* ZMImageMessage.m in Sources */,
+				EE22F80F29DD82110053E1C6 /* DatabaseEARKeyDescription.swift in Sources */,
 				63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */,
 				5473CC731E14245C00814C03 /* NSManagedObjectContext+Debugging.swift in Sources */,
 				BF46662A1DCB71B0007463FF /* V3Asset.swift in Sources */,
@@ -3563,6 +3615,7 @@
 				063D292A24212AFD00FA6FEE /* ZMClientMessage.swift in Sources */,
 				BF1B98091EC31A4200DE033B /* Permissions.swift in Sources */,
 				06D33FCB2524E402004B9BC1 /* ZMConversation+UnreadCount.swift in Sources */,
+				EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */,
 				F9A706901CAEE01D00C2F5FE /* ZMUser.m in Sources */,
 				F14B7AFF2220302B00458624 /* ZMUser+Predicates.swift in Sources */,
 				066A96FF25A88E510083E317 /* BiometricsState.swift in Sources */,
@@ -3630,6 +3683,7 @@
 				BF3493EB1EC34C0B00B0C314 /* TeamTests.swift in Sources */,
 				F9A7085C1CAEED1B00C2F5FE /* ZMBaseManagedObjectTest.m in Sources */,
 				1670D01E231825BE003A143B /* ZMUserTests+Permissions.swift in Sources */,
+				EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */,
 				8767E8682163B9EE00390F75 /* ZMConversationTests+Mute.swift in Sources */,
 				163CE6AF25BEB9680013C12D /* ZMMessageTests+SystemMessages.swift in Sources */,
 				F9A708351CAEEB7500C2F5FE /* ManagedObjectContextTests.m in Sources */,
@@ -3996,11 +4050,12 @@
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */,
 				167BCC192609E92300E9D7E3 /* ZMEventModel2.0.xcdatamodel */,
 				167BCC1A2609E92300E9D7E3 /* ZMEventModel.xcdatamodel */,
 				167BCC1B2609E92300E9D7E3 /* ZMEventModel3.0.xcdatamodel */,
 			);
-			currentVersion = 167BCC1B2609E92300E9D7E3 /* ZMEventModel3.0.xcdatamodel */;
+			currentVersion = EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */;
 			path = ZMEventModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
