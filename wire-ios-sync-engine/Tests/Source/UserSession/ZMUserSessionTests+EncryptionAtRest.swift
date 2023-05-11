@@ -66,7 +66,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     override func tearDown() {
         factory = nil
         activityManager = nil
-        try? EncryptionKeys.deleteKeys(for: account)
+        try? sut.setEncryptionAtRest(enabled: false, skipMigration: true)
 
         super.tearDown()
     }
