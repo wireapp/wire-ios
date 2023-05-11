@@ -22,11 +22,6 @@ import LocalAuthentication
 
 class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
-    var calledSetEncryptionAtRest: (Bool, Account, EncryptionKeys)?
-    func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys) {
-        calledSetEncryptionAtRest = (enabled, account, encryptionKeys)
-    }
-
     var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(
         for account: WireDataModel.Account,
@@ -71,7 +66,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     override func tearDown() {
         factory = nil
         activityManager = nil
-        try? EncryptionKeys.deleteKeys(for: account)
+        try? sut.setEncryptionAtRest(enabled: false, skipMigration: true)
 
         super.tearDown()
     }
@@ -295,24 +290,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     }
 
     // MARK: - Misc
-
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func testThatOldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
-        // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
-
-        let oldKeys = try EncryptionKeys.createKeys(for: account)
-
-        // when
-        setEncryptionAtRest(enabled: true)
-
-        // then
-        let newKeys = syncMOC.encryptionKeys
-
-        XCTAssertFalse(sut.isDatabaseLocked)
-        XCTAssertNotEqual(oldKeys, newKeys)
-    }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatIfDatabaseIsLocked_ThenUserSessionLockIsSet() throws {

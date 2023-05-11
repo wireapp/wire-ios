@@ -808,12 +808,15 @@ extension ZMLocalNotificationTests_Message {
     func testThatItGeneratesCorrectCategoryIfEncryptionAtRestIsEnabledForTeamUser() throws {
         // GIVEN
         try syncMOC.performGroupedAndWait { _ in
-            guard let encryptionKeys = try? EncryptionKeys.createKeys(for: Account(userName: "", userIdentifier: UUID())) else {
-                XCTFail("couldn't create encryption keys")
-                return
-            }
+            let earService = EARService(
+                accountID: self.accountIdentifier,
+                databaseContexts: [self.syncMOC]
+            )
 
-            try self.syncMOC.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
+            try earService.enableEncryptionAtRest(
+                context: self.syncMOC,
+                skipMigration: true
+            )
 
             // WHEN
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!
@@ -826,12 +829,15 @@ extension ZMLocalNotificationTests_Message {
     func testThatItGeneratesCorrectCategoryIfEncryptionAtRestIsEnabledForNormalUser() throws {
         // GIVEN
         try syncMOC.performGroupedAndWait { _ in
-            guard let encryptionKeys = try? EncryptionKeys.createKeys(for: Account(userName: "", userIdentifier: UUID())) else {
-                XCTFail("couldn't create encryption keys")
-                return
-            }
+            let earService = EARService(
+                accountID: self.accountIdentifier,
+                databaseContexts: [self.syncMOC]
+            )
 
-            try self.syncMOC.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
+            try earService.enableEncryptionAtRest(
+                context: self.syncMOC,
+                skipMigration: true
+            )
 
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"

@@ -31,7 +31,6 @@ public protocol UserSessionEncryptionAtRestInterface {
 
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
 
-    func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys)
     func prepareForMigration(for account: Account, onReady: @escaping (NSManagedObjectContext) throws -> Void)
 
 }

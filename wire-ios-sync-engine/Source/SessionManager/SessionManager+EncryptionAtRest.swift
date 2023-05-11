@@ -20,34 +20,6 @@ import Foundation
 
 extension SessionManager: UserSessionEncryptionAtRestDelegate {
 
-    func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys) {
-        let sharedContainerURL = self.sharedContainerURL
-        let dispatchGroup = self.dispatchGroup
-
-        delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
-            self?.tearDownBackgroundSession(for: account.userIdentifier)
-            self?.activeUserSession = nil
-            CoreDataStack.migrateLocalStorage(accountIdentifier: account.userIdentifier,
-                                             applicationContainer: sharedContainerURL,
-                                             dispatchGroup: dispatchGroup,
-                                             migration: { context in
-                                                if enabled {
-                                                    try context.enableEncryptionAtRest(encryptionKeys: encryptionKeys)
-                                                } else {
-                                                    try context.disableEncryptionAtRest(encryptionKeys: encryptionKeys)
-                                                    try EncryptionKeys.deleteKeys(for: account)
-                                                }
-            }, completion: { result in
-                switch result {
-                case .success:
-                    self?.loadSession(for: account, completion: { _ in })
-                case .failure(let error):
-                    Logging.EAR.debug("Failed to migrate account: \(error)")
-                }
-            })
-        })
-    }
-
     func prepareForMigration(
         for account: Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void

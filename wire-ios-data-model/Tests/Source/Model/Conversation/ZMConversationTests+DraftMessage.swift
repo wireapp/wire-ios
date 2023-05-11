@@ -49,7 +49,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     func testThatItDiscardsDraftMessage_WhenEncryptionAtRestIsEnabled_And_DatabaseKeyIsMissing() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = nil
+        uiMOC.databaseKey = nil
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
