@@ -700,6 +700,95 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         }
     }
 
+    // MARK: - Security tests
+
+    // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
+    func test_ItStoresAndClearsDatabaseKeyOnAllContexts() throws {
+        // Given
+        let databaseKey = VolatileData(from: .randomEncryptionKey())
+
+        // When
+        sut.setDatabaseKeyInAllContexts(databaseKey)
+
+        // Then
+        XCTAssertEqual(uiMOC.databaseKey, databaseKey)
+
+        syncMOC.performAndWait {
+            XCTAssertEqual(syncMOC.databaseKey, databaseKey)
+        }
+
+        // When
+        sut.setDatabaseKeyInAllContexts(nil)
+
+        // Then
+        XCTAssertNil(uiMOC.databaseKey)
+
+        syncMOC.performAndWait {
+            XCTAssertNil(syncMOC.databaseKey)
+        }
+    }
+
+    // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
+    func test_EncryptionKeysAreSuccessfullyCreated() throws {
+        // Mock
+        mockKeyGeneration()
+
+        // When
+        let databaseKey = try sut.generateKeys()
+
+        // Then
+        XCTAssertEqual(databaseKey._storage.count, 32)
+    }
+
+    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
+    func test_EncryptionKeysAreSuccessfullyDeleted() throws {
+        // Mock
+        mockKeyGeneration()
+        _ = try sut.generateKeys()
+
+        keyRepository.deletePublicKeyDescription_Invocations.removeAll()
+        keyRepository.deletePrivateKeyDescription_Invocations.removeAll()
+        keyRepository.deleteDatabaseKeyDescription_Invocations.removeAll()
+
+        // When
+        try XCTAssertNoThrow(sut.deleteExistingKeys())
+
+        // Then
+        XCTAssertEqual(keyRepository.deletePublicKeyDescription_Invocations.count, 2)
+        XCTAssertEqual(keyRepository.deletePrivateKeyDescription_Invocations.count, 2)
+        XCTAssertEqual(keyRepository.deleteDatabaseKeyDescription_Invocations.count, 1)
+    }
+
+    // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
+    func test_AsymmetricKeysWorksWithExpectedAlgorithm() throws {
+        // Given
+        let keyGen = EARKeyGenerator()
+        let keys = try keyGen.generatePrimaryPublicPrivateKeyPair(id: "EARServiceTests")
+        let data = "Hello world".data(using: .utf8)!
+
+        // When
+        guard let encryptedData = SecKeyCreateEncryptedData(
+            keys.publicKey,
+            .eciesEncryptionCofactorX963SHA256AESGCM,
+            data as CFData,
+            nil
+        ) else {
+            return XCTFail("failed to encrypt data")
+        }
+
+        guard let decryptedData = SecKeyCreateDecryptedData(
+            keys.privateKey,
+            .eciesEncryptionCofactorX963SHA256AESGCM,
+            encryptedData,
+            nil
+        ) else {
+            return XCTFail("failed to decrypt data")
+        }
+
+        // Then
+        XCTAssertEqual(decryptedData as Data, data)
+    }
+
 }
 
 private extension ZMGenericMessageData {

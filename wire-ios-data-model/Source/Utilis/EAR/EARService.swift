@@ -278,7 +278,7 @@ public class EARService: EARServiceInterface {
         return (try? fetchSecondaryPublicKey()) != nil
     }
 
-    private func deleteExistingKeys() throws {
+    func deleteExistingKeys() throws {
         WireLogger.ear.info("deleting existing keys")
         try deletePrimaryKeys()
         try deleteSecondaryKeys()
@@ -299,7 +299,7 @@ public class EARService: EARServiceInterface {
         try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
     }
 
-    private func generateKeys() throws -> VolatileData {
+    func generateKeys() throws -> VolatileData {
         WireLogger.ear.info("generating new keys")
 
         let primaryPublicKey = try generatePrimaryKeys().publicKey
@@ -469,7 +469,7 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
+    func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
         performInAllContexts {
             $0.databaseKey = key
         }
