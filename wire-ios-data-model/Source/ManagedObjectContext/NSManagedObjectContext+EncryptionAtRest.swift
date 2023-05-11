@@ -289,21 +289,6 @@ extension NSManagedObjectContext {
         get {
             userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
         }
-
-    }
-
-    private static let databaseKeyUserInfoKey = "databaseKey"
-
-    /// The database key used to protect contents of the database.
-
-    public var databaseKey: VolatileData? {
-        get {
-            userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
-        }
-        set {
-            userInfo[Self.databaseKeyUserInfoKey] = newValue
-        }
-
         set {
             userInfo[Self.databaseKeyUserInfoKey] = newValue
         }
