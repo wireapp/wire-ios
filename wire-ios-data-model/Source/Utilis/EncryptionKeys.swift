@@ -26,9 +26,14 @@ import LocalAuthentication
 public struct EncryptionKeys {
 
     enum KeychainItem: KeychainItemProtocol, Equatable {
+
         case privateKey(_ account: Account, _ context: LAContext?, _ prompt: String?)
         case publicKey(Account)
         case databaseKey(Account)
+
+        var id: String {
+            return uniqueIdentifier
+        }
 
         var tag: Data {
             uniqueIdentifier.data(using: .utf8)!
@@ -42,8 +47,10 @@ public struct EncryptionKeys {
             switch self {
             case .privateKey(let account, _, _):
                 return account.userIdentifier.transportString()
+
             case .publicKey(let account):
                 return account.userIdentifier.transportString()
+
             case .databaseKey(let account):
                 return account.userIdentifier.transportString()
             }
@@ -53,8 +60,10 @@ public struct EncryptionKeys {
             switch self {
             case .privateKey:
                 return "private"
+
             case .publicKey:
                 return "public"
+
             case .databaseKey:
                 return "database"
             }
@@ -65,18 +74,25 @@ public struct EncryptionKeys {
 
             switch self {
             case .publicKey:
-                query = [kSecClass: kSecClassKey,
-                         kSecAttrApplicationTag: tag,
-                         kSecReturnRef: true]
+                query = [
+                    kSecClass: kSecClassKey,
+                    kSecAttrApplicationTag: tag,
+                    kSecReturnRef: true
+                ]
+
             case .databaseKey:
-                query = [kSecClass: kSecClassGenericPassword,
-                         kSecAttrAccount: uniqueIdentifier,
-                         kSecReturnData: true]
+                query = [
+                    kSecClass: kSecClassGenericPassword,
+                    kSecAttrAccount: uniqueIdentifier,
+                    kSecReturnData: true
+                ]
+
             case .privateKey(_, var context, let prompt):
-                query = [kSecClass: kSecClassKey,
-                         kSecAttrKeyClass: kSecAttrKeyClassPrivate,
-                         kSecAttrLabel: tag,
-                         kSecReturnRef: true
+                query = [
+                    kSecClass: kSecClassKey,
+                    kSecAttrKeyClass: kSecAttrKeyClassPrivate,
+                    kSecAttrLabel: tag,
+                    kSecReturnRef: true
                 ]
 
                 #if targetEnvironment(simulator)
@@ -99,13 +115,19 @@ public struct EncryptionKeys {
 
             switch self {
             case .publicKey:
-                query = [kSecClass: kSecClassKey,
-                         kSecAttrApplicationTag: tag,
-                         kSecValueRef: value]
+                query = [
+                    kSecClass: kSecClassKey,
+                    kSecAttrApplicationTag: tag,
+                    kSecValueRef: value
+                ]
+
             case .databaseKey:
-                query = [kSecClass: kSecClassGenericPassword,
-                         kSecAttrAccount: uniqueIdentifier,
-                         kSecValueData: value]
+                query = [
+                    kSecClass: kSecClassGenericPassword,
+                    kSecAttrAccount: uniqueIdentifier,
+                    kSecValueData: value
+                ]
+
             case .privateKey:
                 query = [:]
             }
@@ -115,17 +137,20 @@ public struct EncryptionKeys {
     }
 
     public enum EncryptionKeysError: Error {
+
         case failedToGenerateDatabaseKey(OSStatus)
         case failedToCopyPublicAccountKey
         case failedToGenerateAccountKey(underlyingError: Error?)
         case failedToEncryptDatabaseKey(underlyingError: Error)
         case failedToDecryptDatabaseKey(underlyingError: Error)
+
     }
 
     /// Public key associated with an account.
     ///
     /// This key is used when sensitive information
     /// needs to be stored while the application operates in the background.
+
     public let publicKey: SecKey
 
     /// Private key associated with an account.
@@ -133,12 +158,14 @@ public struct EncryptionKeys {
     /// This key is used by when the app runs in
     /// the foreground to decrypt data which was previously stored while the app running
     /// in the background.
+
     public let privateKey: SecKey
 
     /// Database key associated with an account.
     ///
     /// This key is used to encrypt/decrypt
     /// messages in the database.
+
     public let databaseKey: VolatileData
 
     private static let databaseKeyAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
@@ -157,13 +184,22 @@ public struct EncryptionKeys {
     ///
     /// Supplying an authentication context is the preferred way to initialize the encryption keys
     /// and takes precedence over the authentication prompt.
-    public init(account: Account, context: LAContext? = nil, authenticationMessage: String? = nil) throws {
+
+    public init(
+        account: Account,
+        context: LAContext? = nil,
+        authenticationMessage: String? = nil
+    ) throws {
         self.publicKey = try Self.fetchItem(.publicKey(account))
         self.privateKey = try Self.fetchItem(.privateKey(account, context, authenticationMessage))
         self.databaseKey = try VolatileData(from: Self.decryptDatabaseKey(Self.fetchItem(.databaseKey(account)), privateKey: privateKey))
     }
 
-    init(publicKey: SecKey, privateKey: SecKey, databaseKey: Data) {
+    init(
+        publicKey: SecKey,
+        privateKey: SecKey,
+        databaseKey: Data
+    ) {
         self.publicKey = publicKey
         self.privateKey = privateKey
         self.databaseKey = VolatileData(from: databaseKey)
@@ -175,14 +211,26 @@ public struct EncryptionKeys {
     ///
     /// - Parameters:
     ///   -  account Account for which the encryption keys should created
+
     public static func createKeys(for account: Account) throws -> EncryptionKeys {
         let (privateKey, publicKey) = try generateAccountKey(identifier: .privateKey(account, nil, nil))
         let databaseKey = try generateDatabaseKey()
 
-        try storeItem(.publicKey(account), value: publicKey)
-        try storeItem(.databaseKey(account), value: encryptDatabaseKey(databaseKey, publicKey: publicKey))
+        try storeItem(
+            .publicKey(account),
+            value: publicKey
+        )
 
-        return EncryptionKeys(publicKey: publicKey, privateKey: privateKey, databaseKey: databaseKey)
+        try storeItem(
+            .databaseKey(account),
+            value: encryptDatabaseKey(databaseKey, publicKey: publicKey)
+        )
+
+        return EncryptionKeys(
+            publicKey: publicKey,
+            privateKey: privateKey,
+            databaseKey: databaseKey
+        )
     }
 
     /// Delete all encryption keys and from the keychain.
@@ -198,13 +246,14 @@ public struct EncryptionKeys {
     // MARK: Account key
 
     /// Fetch the public key associated with an account
+
     public static func publicKey(for account: Account) throws -> SecKey {
         try fetchItem(.publicKey(account))
     }
 
     private static func generateAccountKey(identifier: KeychainItem) throws -> (SecKey, SecKey) {
         do {
-            return try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier.uniqueIdentifier)
+            return try KeychainManager.generatePublicPrivateKeyPair(identifier: identifier.uniqueIdentifier, accessLevel: .moreRestrictive)
         } catch KeychainManager.Error.failedToGeneratePublicPrivateKey(let error) {
             throw EncryptionKeysError.failedToGenerateAccountKey(underlyingError: error)
         } catch KeychainManager.Error.failedToCopyPublicKey {
@@ -222,11 +271,17 @@ public struct EncryptionKeys {
         }
     }
 
-    private static func encryptDatabaseKey(_ databaseKey: Data, publicKey: SecKey) throws -> Data {
+    private static func encryptDatabaseKey(
+        _ databaseKey: Data,
+        publicKey: SecKey
+    ) throws -> Data {
         var error: Unmanaged<CFError>?
-        guard let wrappedDatabaseKey = SecKeyCreateEncryptedData(publicKey,
-                                                                 databaseKeyAlgorithm,
-                                                                 databaseKey as CFData, &error) else {
+        guard let wrappedDatabaseKey = SecKeyCreateEncryptedData(
+            publicKey,
+            databaseKeyAlgorithm,
+            databaseKey as CFData,
+            &error
+        ) else {
             let error = error!.takeRetainedValue() as Error
             throw EncryptionKeysError.failedToEncryptDatabaseKey(underlyingError: error)
         }
@@ -234,15 +289,19 @@ public struct EncryptionKeys {
         return wrappedDatabaseKey as Data
     }
 
-    private static func decryptDatabaseKey(_ wrappedDatabaseKey: Data, privateKey: SecKey) throws -> Data {
+    private static func decryptDatabaseKey(
+        _ wrappedDatabaseKey: Data,
+        privateKey: SecKey
+    ) throws -> Data {
         var error: Unmanaged<CFError>?
-        guard let decryptedDatabaseKey = SecKeyCreateDecryptedData(privateKey,
-                                                                   databaseKeyAlgorithm,
-                                                                   wrappedDatabaseKey as CFData,
-                                                                   &error)
-            else {
-                let error = error!.takeRetainedValue() as Error
-                throw EncryptionKeysError.failedToDecryptDatabaseKey(underlyingError: error)
+        guard let decryptedDatabaseKey = SecKeyCreateDecryptedData(
+            privateKey,
+            databaseKeyAlgorithm,
+            wrappedDatabaseKey as CFData,
+            &error
+        ) else {
+            let error = error!.takeRetainedValue() as Error
+            throw EncryptionKeysError.failedToDecryptDatabaseKey(underlyingError: error)
         }
 
         return decryptedDatabaseKey as Data
@@ -274,4 +333,5 @@ extension EncryptionKeys: Equatable {
             lhs.privateKey == rhs.privateKey &&
             lhs.databaseKey._storage == rhs.databaseKey._storage
     }
+
 }
