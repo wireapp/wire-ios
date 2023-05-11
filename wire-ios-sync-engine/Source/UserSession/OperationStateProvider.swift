@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,28 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-final class DeveloperOptionsControllerSnapshotTests: XCTestCase {
+protocol OperationStateProvider {
 
-    var sut: DeveloperOptionsController!
-
-    override func setUp() {
-        super.setUp()
-
-        sut = DeveloperOptionsController()
-    }
-
-    override func tearDown() {
-        sut = nil
-
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        // GIVEN & WHEN & THEN
-        verify(matching: sut, customSize: CGSize.iPhoneSize.iPhone4_7)
-    }
+    var operationState: SyncEngineOperationState { get }
 
 }
+
+extension OperationStatus: OperationStateProvider {}

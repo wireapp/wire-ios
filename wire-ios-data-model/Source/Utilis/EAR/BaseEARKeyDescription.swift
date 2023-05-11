@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,22 +18,27 @@
 
 import Foundation
 
-extension ZMClientMessage: EncryptionAtRestMigratable {
+/// A base description of a key used for encryption at rest.
 
-    static let predicateForObjectsNeedingMigration: NSPredicate? = nil
+open class BaseEARKeyDescription {
 
-    func migrateTowardEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+    // MARK: - Properties
+
+    let id: String
+    let tag: Data
+    let accountID: String
+    let label: String
+
+    // MARK: - Life cycle
+
+    init(
+        accountID: UUID,
+        label: String
     ) {
-        normalizedText = ""
-    }
-
-    func migrateAwayFromEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
-    ) {
-        updateNormalizedText()
+        self.accountID = accountID.transportString()
+        self.label = label
+        id = "com.wire.ear.\(self.label).\(self.accountID)"
+        tag = id.data(using: .utf8)!
     }
 
 }
