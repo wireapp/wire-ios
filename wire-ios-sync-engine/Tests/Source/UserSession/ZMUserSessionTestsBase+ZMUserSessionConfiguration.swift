@@ -18,11 +18,11 @@
 
 extension ZMUserSessionTestsBase {
     @objc
-    func createSut(userId: UUID) {
+    func createSut() {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
         sut = ZMUserSession(
-            userId: userId,
+            userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
