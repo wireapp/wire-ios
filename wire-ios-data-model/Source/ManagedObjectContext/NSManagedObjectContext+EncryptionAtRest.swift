@@ -78,36 +78,6 @@ extension NSManagedObjectContext {
 
     }
 
-    /// Enables encryption at rest after successfully migrating the database.
-    ///
-    /// Depending on the size of the database, the migration may take a long time and will block the
-    /// thread. If the migration fails for any reason, the feature is not enabled, but the context may
-    /// be in a dirty, partially migrated state.
-    ///
-    /// - Parameters:
-    ///   - encryptionKeys: encryption keys that will be used to during migration
-    ///   - skipMigration: if `true` the existing content in the database will not be encrypted.
-    ///
-    ///     **Warning**: not migrating the database can cause data to be lost.
-    ///
-    /// - Throws: `MigrationError` if the migration failed.
-
-    public func enableEncryptionAtRest(encryptionKeys: EncryptionKeys, skipMigration: Bool = false) throws {
-        self.encryptionKeys = encryptionKeys
-        encryptMessagesAtRest = true
-
-        guard !skipMigration else { return }
-
-        do {
-            try migrateInstancesTowardEncryptionAtRest(type: ZMGenericMessageData.self, key: encryptionKeys.databaseKey)
-            try migrateInstancesTowardEncryptionAtRest(type: ZMClientMessage.self, key: encryptionKeys.databaseKey)
-            try migrateInstancesTowardEncryptionAtRest(type: ZMConversation.self, key: encryptionKeys.databaseKey)
-        } catch {
-            encryptMessagesAtRest = false
-            throw error
-        }
-    }
-
     public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
             WireLogger.ear.info("migrating existing data toward EAR")
@@ -156,36 +126,6 @@ extension NSManagedObjectContext {
         }
     }
 
-    /// Disables encryption at rest after successfully migrating the database.
-    ///
-    /// Depending on the size of the database, the migration may take a long time and will block the
-    /// thread. If the migration fails for any reason, the feature is not disabled, but the context may
-    /// be in a dirty, partially migrated state.
-    ///
-    /// - Parameters:
-    ///   - encryptionKeys: encryption keys that will be used to during migration
-    ///   - skipMigration: if `true` the existing content in the database will not be decrypted.
-    ///
-    ///     **Warning**: not migrating the database can cause data to be lost.
-    ///
-    /// - Throws: `MigrationError` if the migration failed.
-
-    public func disableEncryptionAtRest(encryptionKeys: EncryptionKeys, skipMigration: Bool = false) throws {
-        self.encryptionKeys = encryptionKeys
-        encryptMessagesAtRest = false
-
-        guard !skipMigration else { return }
-
-        do {
-            try migrateInstancesAwayFromEncryptionAtRest(type: ZMGenericMessageData.self, key: encryptionKeys.databaseKey)
-            try migrateInstancesAwayFromEncryptionAtRest(type: ZMClientMessage.self, key: encryptionKeys.databaseKey)
-            try migrateInstancesAwayFromEncryptionAtRest(type: ZMConversation.self, key: encryptionKeys.databaseKey)
-        } catch {
-            encryptMessagesAtRest = true
-            throw error
-        }
-    }
-
     private func migrateInstancesTowardEncryptionAtRest<T: MigratableEntity>(
         type: T.Type,
         key: VolatileData
@@ -224,7 +164,7 @@ extension NSManagedObjectContext {
     }
 
     private func fetchRequest<T>(forType type: T.Type, batchSize: Int) -> NSFetchRequest<T>
-        where T: MigratableEntity {
+    where T: MigratableEntity {
         let fetchRequest = NSFetchRequest<T>(entityName: T.entityName())
         fetchRequest.predicate = type.predicateForObjectsNeedingMigration
         fetchRequest.returnsObjectsAsFaults = false
@@ -341,21 +281,6 @@ extension NSManagedObjectContext {
 
     // MARK: - Database Key
 
-    private static let encryptionKeysUserInfoKey = "encryptionKeys"
-
-    public var encryptionKeys: EncryptionKeys? {
-        get { userInfo[Self.encryptionKeysUserInfoKey] as? EncryptionKeys }
-        set { userInfo[Self.encryptionKeysUserInfoKey] = newValue }
-    }
-
-    func getEncryptionKeys() throws -> EncryptionKeys {
-        guard let encryptionKeys = self.encryptionKeys else {
-            throw MigrationError.missingDatabaseKey
-        }
-
-        return encryptionKeys
-    }
-
     private static let databaseKeyUserInfoKey = "databaseKey"
 
     /// The database key used to protect contents of the database.
@@ -364,7 +289,6 @@ extension NSManagedObjectContext {
         get {
             userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
         }
-
         set {
             userInfo[Self.databaseKeyUserInfoKey] = newValue
         }
