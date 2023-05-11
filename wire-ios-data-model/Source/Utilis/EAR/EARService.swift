@@ -154,7 +154,7 @@ public class EARService: EARServiceInterface {
         WireLogger.ear.info("migrating ear keys if needed...")
 
         guard
-            databaseContexts.contains(where: \.encryptMessagesAtRest),
+            isEAREnabled(),
             !existSecondaryKeys
         else {
             return
@@ -166,6 +166,16 @@ public class EARService: EARServiceInterface {
         } catch {
             WireLogger.ear.error("failed to migrate keys: \(error)")
         }
+    }
+
+    private func isEAREnabled() -> Bool {
+        var isEnabled = false
+
+        performInAllContexts {
+            isEnabled = isEnabled || $0.encryptMessagesAtRest
+        }
+
+        return isEnabled
     }
 
     // MARK: - Enable / disable
@@ -268,7 +278,7 @@ public class EARService: EARServiceInterface {
         return (try? fetchSecondaryPublicKey()) != nil
     }
 
-    private func deleteExistingKeys() throws {
+    func deleteExistingKeys() throws {
         WireLogger.ear.info("deleting existing keys")
         try deletePrimaryKeys()
         try deleteSecondaryKeys()
@@ -289,7 +299,7 @@ public class EARService: EARServiceInterface {
         try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
     }
 
-    private func generateKeys() throws -> VolatileData {
+    func generateKeys() throws -> VolatileData {
         WireLogger.ear.info("generating new keys")
 
         let primaryPublicKey = try generatePrimaryKeys().publicKey
@@ -459,7 +469,7 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
+    func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
         performInAllContexts {
             $0.databaseKey = key
         }
