@@ -132,7 +132,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertTrue(keyRepository.storePublicKeyDescriptionKey_Invocations.isEmpty)
     }
 
-    func test_ItDoesNotMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() throws {
+    func test_ItDoesMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() throws {
         // Given
         uiMOC.encryptMessagesAtRest = true
         keyRepository.fetchPublicKeyDescription_MockError = EarKeyRepositoryFailure.keyNotFound

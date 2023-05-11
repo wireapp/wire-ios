@@ -172,7 +172,7 @@ public class EARService: EARServiceInterface {
         var isEnabled = false
 
         performInAllContexts {
-            isEnabled = $0.encryptMessagesAtRest
+            isEnabled = isEnabled || $0.encryptMessagesAtRest
         }
 
         return isEnabled
