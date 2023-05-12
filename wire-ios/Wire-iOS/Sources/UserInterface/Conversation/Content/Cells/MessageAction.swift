@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCommonComponents
 import UIKit
 
@@ -41,7 +40,8 @@ enum MessageAction: CaseIterable {
     // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
     present,
     openQuote,
-    resetSession
+    resetSession,
+    react(MessageReaction)
 
     var title: String? {
         let key: String?

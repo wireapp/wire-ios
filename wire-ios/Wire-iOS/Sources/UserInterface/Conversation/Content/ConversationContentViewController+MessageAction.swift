@@ -117,7 +117,8 @@ extension ConversationContentViewController {
             let selectedMessage = dataSource.selectedMessage
 
             session.perform({
-                Message.setLikedMessage(message, liked: updatedLikedState)
+//                Message.setLikedMessage(message, liked: updatedLikedState)
+                message.addReaction(.thumbsUp)
             })
 
             if updatedLikedState {

@@ -17,10 +17,16 @@
 //
 
 import UIKit
+import WireDataModel
+
+protocol ReactionPickerDelegate: AnyObject {
+    func didPickReaction(reaction: MessageReaction)
+}
 
 class BasicReactionPicker: UIView {
     private let horizontalStackView = UIStackView(axis: .horizontal)
     private var buttons: [UIButton] = []
+    weak var delegate: ReactionPickerDelegate?
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -40,7 +46,10 @@ private extension BasicReactionPicker {
         horizontalStackView.distribution = .equalSpacing
         horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizontalStackView)
-        NSLayoutConstraint.activate(horizontalStackView.fitInConstraints(view: self, insets: UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)))
+        NSLayoutConstraint.activate(
+            horizontalStackView.fitInConstraints(view: self,
+                                                 insets: UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0))
+        )
         addButtons()
     }
 
@@ -56,6 +65,7 @@ private extension BasicReactionPicker {
     }
 
     @objc func didTapEmoji(sender: UIButton) {
-
+        guard let reaction = MessageReaction.messageReaction(from: sender.titleLabel?.text ?? "") else { return }
+        delegate?.didPickReaction(reaction: reaction)
     }
 }

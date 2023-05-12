@@ -20,12 +20,32 @@ import Foundation
 
 @objc public enum MessageReaction: UInt16 {
     case like
-    case thumbUp
+    case thumbsUp
+    case thumbsDown
+    case slightlySmiling
+    case beamingFace
+    case frowningFace
+
+    public static func messageReaction(from unicodeValue: String) -> MessageReaction? {
+        switch unicodeValue {
+        case "❤️": return .like
+        case "👍": return .thumbsUp
+        case "🙂": return .slightlySmiling
+        case "😁": return .beamingFace
+        case "☹️": return .frowningFace
+        case "👎": return .thumbsDown
+        default: return nil
+        }
+    }
 
     public var unicodeValue: String {
         switch self {
         case .like: return "❤️"
-        case .thumbUp: return "👍"
+        case .thumbsUp: return "👍"
+        case .slightlySmiling: return "🙂"
+        case .beamingFace: return "😁"
+        case .frowningFace: return "☹️"
+        case .thumbsDown: return "👎"
         }
     }
 }

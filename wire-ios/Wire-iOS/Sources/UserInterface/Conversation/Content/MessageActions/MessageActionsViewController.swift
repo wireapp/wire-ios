@@ -26,9 +26,14 @@ class MessageActionsViewController: UIAlertController {
         super.viewDidLoad()
     }
 
-    func addMessageActions(_ actions: [MessageAction], withActionController actionController: ConversationMessageActionController) {
+    func addMessageActions(_ actions: [MessageAction],
+                           withActionController actionController: ConversationMessageActionController,
+                           reactionPickerDelegate: ReactionPickerDelegate?
+    ) {
         self.actionController = actionController
-        addReactionsView()
+        if let delegate = reactionPickerDelegate {
+            addReactionsView(withDelegate: delegate)
+        }
         actions.forEach { action in
             addAction(action, withActionController: actionController)
         }
@@ -40,8 +45,9 @@ class MessageActionsViewController: UIAlertController {
         addAction(cancelAction)
     }
 
-    private func addReactionsView() {
+    private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
         let reactionPicker = BasicReactionPicker()
+        reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(reactionPicker)
         NSLayoutConstraint.activate([
@@ -60,7 +66,6 @@ class MessageActionsViewController: UIAlertController {
         else { return }
         let style: UIAlertAction.Style = (action == .delete) ? .destructive : .default
         let newAction = UIAlertAction(title: title, style: style) { [action, weak actionController] _ in
-
             actionController?.perform(action: action)
          }
         if let image = action.icon?.makeImage(size: .small, color: SemanticColors.Icon.foregroundDefaultBlack) {

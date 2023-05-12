@@ -39,7 +39,7 @@ extension ZMConversationMessage {
 
         set {
             if newValue {
-                ZMMessage.addReaction(.thumbUp, toMessage: self)
+                ZMMessage.addReaction(.thumbsUp, toMessage: self)
             } else {
                 ZMMessage.removeReaction(onMessage: self)
             }
@@ -59,6 +59,14 @@ extension ZMConversationMessage {
                 return users
             }.first ?? []
     }
+
+//    var myReaction: MessageReaction? {
+//        let reactionString = usersReaction.filter { (reaction, users)in
+//            users.contains(where: { $0.isSelfUser })
+//        }.first?.key
+//        guard let value = reactionString else { return  nil }
+//        return  MessageReaction(rawValue: value)
+//    }
 
     var sortedLikers: [UserType] {
         return likers.sorted { $0.name < $1.name }
