@@ -28,6 +28,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     var keyEncryptor: MockEARKeyEncryptorInterface!
 
     var prepareForMigrationCalls = 0
+    var isAppRunningInBackground = true
 
     // MARK: - Life cycle
 
@@ -69,6 +70,10 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
         prepareForMigrationCalls += 1
         try onReady(uiMOC)
+    }
+
+    func applicationIsInBackground() -> Bool {
+        return isAppRunningInBackground
     }
 
     // MARK: - Mock helpers
@@ -561,6 +566,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let decryptedDatabaseKey = Data.randomEncryptionKey()
         let context = LAContext()
 
+        isAppRunningInBackground = false
+
         // Mock
         keyRepository.fetchPrivateKeyDescription_MockValue = keys.privateKey
         keyRepository.fetchDatabaseKeyDescription_MockValue = encryptedDatabaseKey
@@ -638,6 +645,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
+        isAppRunningInBackground = false
+
         // Mock
         mockFetchingPrivateKeys(
             primary: primaryKeys.privateKey,
@@ -654,11 +663,14 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys_PrimaryKeyNotFound() throws {
         // Given
+        let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
+
+        isAppRunningInBackground = true
 
         // Mock
         mockFetchingPrivateKeys(
-            primary: nil,
+            primary: primaryKeys.privateKey,
             secondary: secondaryKeys.privateKey
         )
 
@@ -763,6 +775,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
         // Given
         let sut = EARService(accountID: userIdentifier, databaseContexts: [uiMOC])
+        sut.delegate = self
+        isAppRunningInBackground = false
+
         let oldDatabaseKey = try sut.generateKeys()
 
         let oldPublicKeys = try sut.fetchPublicKeys()
