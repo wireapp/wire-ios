@@ -631,6 +631,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func processPendingCallEvents() throws {
+        WireLogger.updateEvent.info("process pending call events")
         try updateEventProcessor!.processPendingCallEvents()
     }
 
