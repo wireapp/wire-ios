@@ -82,7 +82,7 @@ public protocol EARServiceDelegate: AnyObject {
     /// When the migration can be started, invoke the `onReady` closure.
 
     func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows
-    func applicationIsInBackground() -> Bool
+
 }
 
 public enum EARServiceFailure: Error {
@@ -405,11 +405,9 @@ public class EARService: EARServiceInterface {
     // MARK: - Private keys
 
     public func fetchPrivateKeys() throws -> EARPrivateKeys {
-        let context = LAContext()
-
         do {
             return EARPrivateKeys(
-                primary: try? fetchPrimaryPrivateKey(context: context),
+                primary: try? fetchPrimaryPrivateKey(),
                 secondary: try fetchSecondaryPrivateKey()
             )
         } catch {
@@ -418,15 +416,7 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    enum FetchPrimaryPrivateKeyError: Error {
-        case background
-    }
-
     private func fetchPrimaryPrivateKey(context: LAContext? = nil) throws -> SecKey {
-        guard delegate?.applicationIsInBackground() == false else {
-            throw FetchPrimaryPrivateKeyError.background
-        }
-
         if let context = context {
             let authenticatedKeyDescription = PrivateEARKeyDescription.primaryKeyDescription(
                 accountID: accountID,

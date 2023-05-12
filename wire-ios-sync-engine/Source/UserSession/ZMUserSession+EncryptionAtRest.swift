@@ -146,8 +146,4 @@ extension ZMUserSession: EARServiceDelegate {
         )
     }
 
-    public func applicationIsInBackground() -> Bool {
-        return applicationStatusDirectory?.operationStatus.isInBackground == true
-    }
-
 }
