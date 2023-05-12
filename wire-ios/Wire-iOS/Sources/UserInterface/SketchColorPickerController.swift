@@ -120,8 +120,8 @@ final class SketchColorPickerController: UIViewController {
         let brushWidth = brushWidths.first ?? SketchColorPickerDefaultBrushWidth
 
         var colorToBrushWidthMapper: [UIColor: CGFloat] = [:]
-        for color in sketchColors {
-            colorToBrushWidthMapper[color.color] = brushWidth
+        for brush in sketchColors {
+            colorToBrushWidthMapper[brush.color] = brushWidth
         }
 
         self.colorToBrushWidthMapper = colorToBrushWidthMapper
