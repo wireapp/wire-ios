@@ -88,41 +88,41 @@ enum SketchColors: CaseIterable {
     var color: UIColor {
         switch self {
         case .black:
-            return SketchColorValues.blackColor
+            return SketchColorValues.black
         case .white:
-            return SketchColorValues.whiteColor
+            return SketchColorValues.white
         case .blue:
-            return SketchColorValues.blueColor
+            return SketchColorValues.blue
         case .green:
-            return SketchColorValues.greenColor
+            return SketchColorValues.green
         case .yellow:
-            return SketchColorValues.yellowColor
+            return SketchColorValues.yellow
         case .red:
-            return SketchColorValues.redColor
+            return SketchColorValues.red
         case .orange:
-            return SketchColorValues.orangeColor
+            return SketchColorValues.orange
         case .purple:
-            return SketchColorValues.purpleColor
+            return SketchColorValues.purple
         case .brown:
-            return SketchColorValues.brownColor
+            return SketchColorValues.brown
         case .turquoise:
-            return SketchColorValues.turquoiseColor
+            return SketchColorValues.turquoise
         case .sky:
-            return SketchColorValues.skyColor
+            return SketchColorValues.sky
         case .lime:
-            return SketchColorValues.limeColor
+            return SketchColorValues.lime
         case .cyan:
-            return SketchColorValues.cyanColor
+            return SketchColorValues.cyan
         case .lilac:
-            return SketchColorValues.lilacColor
+            return SketchColorValues.lilac
         case .coral:
-            return SketchColorValues.coralColor
+            return SketchColorValues.coral
         case .pink:
-            return SketchColorValues.pinkColor
+            return SketchColorValues.pink
         case .chocolate:
-            return SketchColorValues.chocolateColor
+            return SketchColorValues.chocolate
         case .gray:
-            return SketchColorValues.grayColor
+            return SketchColorValues.gray
         }
     }
 }

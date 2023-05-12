@@ -83,8 +83,8 @@ final class ColorKnobView: UIView {
 
     // MARK: - Helpers
     var knobBorderColor: UIColor? {
-        if knobColor == SemanticColors.DrawingColors.blackColor ||
-           knobColor == SemanticColors.DrawingColors.whiteColor {
+        if knobColor == SemanticColors.DrawingColors.black ||
+           knobColor == SemanticColors.DrawingColors.white {
             return .black
         }
         return knobColor
