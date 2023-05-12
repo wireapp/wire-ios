@@ -456,24 +456,24 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     // MARK: - fetchPrivateKeys
 
-    public var fetchPrivateKeys_Invocations: [Void] = []
-    public var fetchPrivateKeys_MockError: Error?
-    public var fetchPrivateKeys_MockMethod: (() throws -> EARPrivateKeys)?
-    public var fetchPrivateKeys_MockValue: EARPrivateKeys?
+    public var fetchPrivateKeysIncludingPrimary_Invocations: [Bool] = []
+    public var fetchPrivateKeysIncludingPrimary_MockError: Error?
+    public var fetchPrivateKeysIncludingPrimary_MockMethod: ((Bool) throws -> EARPrivateKeys)?
+    public var fetchPrivateKeysIncludingPrimary_MockValue: EARPrivateKeys?
 
-    public func fetchPrivateKeys() throws -> EARPrivateKeys {
-        fetchPrivateKeys_Invocations.append(())
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys {
+        fetchPrivateKeysIncludingPrimary_Invocations.append(includingPrimary)
 
-        if let error = fetchPrivateKeys_MockError {
+        if let error = fetchPrivateKeysIncludingPrimary_MockError {
             throw error
         }
 
-        if let mock = fetchPrivateKeys_MockMethod {
-            return try mock()
-        } else if let mock = fetchPrivateKeys_MockValue {
+        if let mock = fetchPrivateKeysIncludingPrimary_MockMethod {
+            return try mock(includingPrimary)
+        } else if let mock = fetchPrivateKeysIncludingPrimary_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchPrivateKeys`")
+            fatalError("no mock for `fetchPrivateKeysIncludingPrimary`")
         }
     }
 
