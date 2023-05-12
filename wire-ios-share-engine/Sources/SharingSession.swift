@@ -158,7 +158,7 @@ public class SharingSession {
     }
 
     /// Directory of all application statuses
-     let applicationStatusDirectory: ApplicationStatusDirectory
+    private let applicationStatusDirectory: ApplicationStatusDirectory
 
     /// The list to which save notifications of the UI moc are appended and persistet
     private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
@@ -321,8 +321,6 @@ public class SharingSession {
 
         setupCaches(at: cachesDirectory)
         setupObservers()
-
-        self.earService.delegate = self
     }
 
     public convenience init(

@@ -41,15 +41,3 @@ extension SharingSession: SharingSessionEncryptionAtRestInterface {
     }
 
 }
-
-extension SharingSession: EARServiceDelegate {
-
-    public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {
-        // No op
-    }
-
-    public func applicationIsInBackground() -> Bool {
-        return applicationStatusDirectory.operationState != .foreground
-    }
-
-}
