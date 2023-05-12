@@ -102,7 +102,7 @@ class EventProcessor: UpdateEventProcessor {
         if syncContext.encryptMessagesAtRest {
             do {
                 Self.logger.info("trying to get EAR keys")
-                let privateKeys = try earService.fetchPrivateKeys()
+                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
                 processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
             } catch {
                 Self.logger.error("failed to fetch EAR keys: \(String(describing: error))")

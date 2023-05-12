@@ -71,7 +71,7 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// Private keys are used to decrypt context.
 
-    func fetchPrivateKeys() throws -> EARPrivateKeys
+    func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys
 
 }
 
@@ -404,10 +404,10 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Private keys
 
-    public func fetchPrivateKeys() throws -> EARPrivateKeys {
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys {
         do {
             return EARPrivateKeys(
-                primary: try? fetchPrimaryPrivateKey(),
+                primary: includingPrimary ? try? fetchPrimaryPrivateKey() : nil,
                 secondary: try fetchSecondaryPrivateKey()
             )
         } catch {
