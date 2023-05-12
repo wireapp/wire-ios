@@ -46,7 +46,7 @@ class EventProcessorTests: MessagingTest {
 
         earService = MockEARServiceInterface()
         earService.fetchPublicKeys_MockError = MockError()
-        earService.fetchPrivateKeys_MockError = MockError()
+        earService.fetchPrivateKeysIncludingPrimary_MockError = MockError()
 
         sut = EventProcessor(
             storeProvider: coreDataStack,
