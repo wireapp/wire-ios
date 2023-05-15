@@ -44,11 +44,11 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint --fix
 
     # Stage the changes made by SwiftLint for commit
-    git add .
+    git add -u
 
-    # Commit the changes with a temporary message for review
-    git commit -m "chore: SwiftLint auto-fixes" --no-verify
-
-    echo "Verify the commit and push again."
+    git diff-index --quiet HEAD || git commit -m "chore: swiftLint auto-fixes" --no-verify
+    echo "SwiftLint issues fixed and committed."
     exit 1
+else
+    echo "SwiftLint found no issues."
 fi
