@@ -70,12 +70,20 @@ final class ProfileHeaderViewController: UIViewController {
     var isAdminRole: Bool {
         didSet {
             groupRoleIndicator.isHidden = !self.isAdminRole
+
             if groupRoleIndicator.isHidden {
-                groupRoleIndicator.fadeOut()
+                UIView.animate(withDuration: 0.80) { [unowned self] in
+                       self.groupRoleIndicator.isHidden = true
+                       self.groupRoleIndicator.alpha = 0
+                   }
             } else {
-                groupRoleIndicator.fadeIn()
+                UIView.animate(withDuration: 0.80) { [unowned self] in
+                self.groupRoleIndicator.isHidden =  false
+                self.groupRoleIndicator.alpha = 1
+                }
             }
 
+           animateUserImageView()
         }
     }
 
