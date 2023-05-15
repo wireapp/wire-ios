@@ -25,8 +25,8 @@ if ! command -v swiftlint &> /dev/null; then
     echo "Warning: SwiftLint is not installed."
     echo "Please install SwiftLint by following the instructions at:"
     echo "https://github.com/realm/SwiftLint#installation"
-    echo "SwiftLint will not be executed. Proceed with the push."
-    exit 0
+    echo "SwiftLint will not be executed. Push cancelledProceed with the push."
+    exit 1
 fi
 
 # Get the branch name and the commit hash of the previous push
@@ -35,3 +35,21 @@ PREVIOUS_COMMIT=$(git rev-parse HEAD@{1})
 
 # Run SwiftLint on the files that have changed since the last push
 SWIFTLINT_OUTPUT=$(git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint lint --quiet)
+
+# Check if SwiftLint found any issues
+if [ -n "$SWIFTLINT_OUTPUT" ]; then
+    echo "SwiftLint found issues in the following files:"
+    echo "$SWIFTLINT_OUTPUT"
+    echo "Auto-fixing SwiftLint issues..."
+
+    # Auto-fix any fixable issues using SwiftLint
+    git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint --fix
+
+    # Stage the changes made by SwiftLint for commit
+    git add .
+
+    # Commit the changes with a temporary message for review
+    git commit -m "SwiftLint auto-fixes" --no-verify
+
+    exit 1
+fi
