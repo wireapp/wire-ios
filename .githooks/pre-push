@@ -40,6 +40,14 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     echo "$SWIFTLINT_OUTPUT"
     echo "Auto-fixing SwiftLint issues..."
 
+    # Check if there are any staged changes
+    STAGED_FILES=$(git diff --name-only --cached)
+
+    if [ -n "$STAGED_FILES" ]; then
+        # Stash the current changes
+        git stash push --keep-index --include-untracked --quiet
+    fi
+
     # Auto-fix any fixable issues using SwiftLint
     FIXED_FILES=$(git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint --fix)
 
@@ -53,7 +61,15 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     else
         echo "No changes made by SwiftLint."
     fi
+
+    # Apply the stashed changes, if any
+    if [ -n "$STAGED_FILES" ]; then
+        git stash pop --quiet
+    fi
+
+    echo "Push aborted, verify SwiftLint commit and retry."
     exit 1
 else
     echo "SwiftLint found no issues."
 fi
+
