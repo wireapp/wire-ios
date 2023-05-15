@@ -299,9 +299,6 @@ private extension AppDelegate {
         return sessionManager
     }
 
-    
-    
-    
     private func queueInitializationOperations(launchOptions: LaunchOptions) {
         var operations = launchOperations.map {
             BlockOperation(block: $0.execute)
