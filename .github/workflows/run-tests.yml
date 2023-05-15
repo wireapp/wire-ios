@@ -1,6 +1,11 @@
 name: Run Tests
 on: [pull_request]
 
+# This is what will cancel the workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
@@ -93,7 +98,7 @@ jobs:
           echo "Building WireSystem..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireSystem..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSystem -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireSystem.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTesting
@@ -103,7 +108,7 @@ jobs:
           echo "Building WireTesting..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireTesting..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTesting -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2'  | xcpretty --report junit --output build/reports/WireTesting.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireUtilities
@@ -113,7 +118,7 @@ jobs:
           echo "Building WireUtilities..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireUtilities..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireUtilities.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireCryptobox
@@ -123,7 +128,7 @@ jobs:
           echo "Building WireCryptobox..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireCryptobox..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireCryptobox.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTransport
@@ -133,7 +138,7 @@ jobs:
           echo "Building WireTransport..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireTransport..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireTransport.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireLinkPreview
@@ -143,7 +148,7 @@ jobs:
           echo "Building WireLinkPreview..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireLinkPreview..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireLinkPreview.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireImages
@@ -153,7 +158,7 @@ jobs:
           echo "Building WireImages..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireImages..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireImages -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireImages.junit
           exit ${PIPESTATUS[0]}          
 
       - name: Test WireProtos
@@ -173,7 +178,7 @@ jobs:
           echo "Building WireMockTransport..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireMockTransport..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireMockTransport.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireDataModel
@@ -182,8 +187,7 @@ jobs:
           echo "WireDataModel has changes"
           echo "Building WireDataModel..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
-          echo "Testing WireDataModel..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireDataModel.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test WireRequestStrategy
@@ -193,9 +197,9 @@ jobs:
           echo "Building WireRequestStrategy..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireRequestStrategy..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireRequestStrategy.junit
           exit ${PIPESTATUS[0]}
-
+          
       - name: Test WireShareEngine
         if: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
         run: |
@@ -203,7 +207,7 @@ jobs:
           echo "Building WireShareEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireShareEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireShareEngine.junit
           exit ${PIPESTATUS[0]}
 
       - name: Test WireSyncEngine
@@ -213,7 +217,7 @@ jobs:
           echo "Building WireSyncEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireSyncEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireSyncEngine.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test Wire-iOS
@@ -223,7 +227,7 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing Wire-iOS..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/Wire-iOS.junit
           exit ${PIPESTATUS[0]}
           
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
@@ -236,6 +240,20 @@ jobs:
           echo "Building WireNotificationEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
           echo "Testing WireNotificationEngine..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.2' | xcpretty --report junit --output build/reports/WireNotificationEngine.junit
           exit ${PIPESTATUS[0]}
-    
+
+      - name: Upload Test Reports as Artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            build/reports/*.junit
+
+      - name: Prepare visual representation of test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: always()
+        with:
+          files: |
+            build/reports/*.junit
