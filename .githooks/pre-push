@@ -47,7 +47,7 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     git add .
 
     # Commit the changes with a temporary message for review
-    git commit -m "SwiftLint auto-fixes" --no-verify
+    git commit -m "chore: SwiftLint auto-fixes" --no-verify
 
     echo "Verify the commit and push again."
     exit 1
