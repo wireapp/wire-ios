@@ -33,11 +33,11 @@ platform :ios do
     end
 
     after_all do |lane|
-        begin
-            delete_keychain if is_running_on_ci
-        rescue
-            puts "No keychain found, skipping deletion..."
-        end
+        # begin
+        #     delete_keychain if is_running_on_ci
+        # rescue
+        #     puts "No keychain found, skipping deletion..."
+        # end
     end
 
     desc "Prepare for development"
