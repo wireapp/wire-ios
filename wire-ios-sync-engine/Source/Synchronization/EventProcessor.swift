@@ -99,13 +99,14 @@ class EventProcessor: UpdateEventProcessor {
     }
 
     private func processEvents(callEventsOnly: Bool) throws {
+        WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
         if syncContext.encryptMessagesAtRest {
             do {
-                Self.logger.info("trying to get EAR keys")
+                WireLogger.updateEvent.info("trying to get EAR keys")
                 let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
                 processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
             } catch {
-                Self.logger.error("failed to fetch EAR keys: \(String(describing: error))")
+                WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
                 throw error
             }
         } else {
@@ -145,19 +146,25 @@ class EventProcessor: UpdateEventProcessor {
         with privateKeys: EARPrivateKeys? = nil,
         callEventsOnly: Bool = false
     ) {
-        Self.logger.trace("process stored update events")
+        WireLogger.updateEvent.info("process stored update events (callEventsOnly: \(callEventsOnly))")
 
         eventDecoder.processStoredEvents(
             with: privateKeys,
             callEventsOnly: callEventsOnly
         ) { [weak self] (decryptedUpdateEvents) in
-            Self.logger.info("decrypted update events: \(decryptedUpdateEvents.count)")
+            WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database")
 
             guard let `self` = self else { return }
 
             let date = Date()
             let fetchRequest = prefetchRequest(updateEvents: decryptedUpdateEvents)
             let prefetchResult = syncContext.executeFetchRequestBatchOrAssert(fetchRequest)
+
+            let eventDescriptions = decryptedUpdateEvents.map {
+                ZMUpdateEvent.eventTypeString(for: $0.type) ?? "unknown"
+            }
+
+            WireLogger.updateEvent.info("consuming events: \(eventDescriptions)")
 
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
@@ -170,7 +177,7 @@ class EventProcessor: UpdateEventProcessor {
             ZMConversation.calculateLastUnreadMessages(in: syncContext)
             syncContext.saveOrRollback()
 
-            Logging.eventProcessing.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
+            WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
         }
     }
 
