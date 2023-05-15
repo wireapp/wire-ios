@@ -278,6 +278,11 @@ extension Payload {
         static var eventType: ZMUpdateEventType {
             return .conversationMemberUpdate
         }
+        
+        
+        
+        
+        
 
         let id: UUID?
         let qualifiedID: QualifiedID?
