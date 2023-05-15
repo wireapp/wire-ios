@@ -276,8 +276,7 @@ final class ProfileHeaderViewController: UIViewController {
             heightConstraint,
             guestIndicatorHeightConstraint,
             federatedIndicatorHeightConstraint,
-            externalIndicatorHeightConstraint,
-            heightImageConstraint
+            externalIndicatorHeightConstraint
         ])
     }
 
