@@ -209,11 +209,6 @@ extension Payload {
         let hasMore: Bool?
     }
 
-    
-    
-    
-    
-    
     struct QualifiedConversationList: Codable {
         enum CodingKeys: String, CodingKey {
             case found = "found"
