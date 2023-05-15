@@ -32,7 +32,7 @@ PREVIOUS_BRANCH=$(git rev-parse --abbrev-ref HEAD@{1})
 PREVIOUS_COMMIT=$(git rev-parse HEAD@{1})
 
 # Run SwiftLint on the files that have changed since the last push
-SWIFTLINT_OUTPUT=$(git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint lint --quiet)
+SWIFTLINT_OUTPUT=$(git diff --name-status $PREVIOUS_COMMIT..HEAD | awk '$1 != "D" && $2 ~ /\.swift$/ {print $2}' | xargs swiftlint lint --quiet)
 
 # Check if SwiftLint found any issues
 if [ -n "$SWIFTLINT_OUTPUT" ]; then
@@ -49,7 +49,7 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     fi
 
     # Auto-fix any fixable issues using SwiftLint
-    FIXED_FILES=$(git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint --fix)
+    FIXED_FILES=$(git diff --name-status $PREVIOUS_COMMIT..HEAD | awk '$1 != "D" && $2 ~ /\.swift$/ {print $2}' | xargs swiftlint --fix)
 
     # Stage the changes made by SwiftLint for commit
     if [ -n "$FIXED_FILES" ]; then
@@ -72,4 +72,3 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
 else
     echo "SwiftLint found no issues."
 fi
-
