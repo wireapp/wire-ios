@@ -80,9 +80,9 @@ platform :ios do
                 app_identifier: []
             )
         end
-        
+
         app_bundle_id = get_xcconfig_value(
-            path: './../../wire-ios/Configuration/Release.xcconfig',
+            path: './wire-ios/Configuration/Release.xcconfig',
             name: 'WIRE_BUNDLE_ID'
         )
         sigh(
