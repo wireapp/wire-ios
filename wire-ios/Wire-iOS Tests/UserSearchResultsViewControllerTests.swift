@@ -90,8 +90,6 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testThatItOverflowsWithTooManyUsers_darkMode() {
-        // TODO: [AGIS] Remove that when we get rid of ColorSchemeVariant from UserCell
-        ColorScheme.default.variant = .dark
         createSUT()
         sut.overrideUserInterfaceStyle = .dark
         sut.users = mockSearchResultUsers()

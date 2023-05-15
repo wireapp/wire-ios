@@ -275,12 +275,12 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         // hightlight the lowest cell if keyboard is collapsed
         if isKeyboardCollapsed || UIDevice.current.userInterfaceIdiom == .pad {
             if indexPath.item == collectionViewSelectedIndex {
-                cell.backgroundColor = .from(scheme: .cellHighlight)
+                cell.backgroundColor = SemanticColors.View.backgroundUserCellHightLighted
             } else {
-                cell.backgroundColor = .from(scheme: .background)
+                cell.backgroundColor = SemanticColors.View.backgroundUserCell
             }
         } else {
-            cell.backgroundColor = .from(scheme: .background)
+            cell.backgroundColor = SemanticColors.View.backgroundUserCell
         }
 
         return cell

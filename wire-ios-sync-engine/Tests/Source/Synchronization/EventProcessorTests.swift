@@ -21,11 +21,14 @@ import XCTest
 
 class EventProcessorTests: MessagingTest {
 
+    struct MockError: Error { }
+
     var sut: EventProcessor!
     var syncStatus: SyncStatus!
     var syncStateDelegate: ZMSyncStateDelegate!
     var eventProcessingTracker: EventProcessingTracker!
     var mockEventsConsumers: [MockEventConsumer]!
+    var earService: MockEARServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -41,9 +44,17 @@ class EventProcessorTests: MessagingTest {
         syncStatus = SyncStatus(managedObjectContext: coreDataStack.syncContext,
                                 syncStateDelegate: syncStateDelegate)
 
-        sut = EventProcessor(storeProvider: coreDataStack,
-                             syncStatus: syncStatus,
-                             eventProcessingTracker: eventProcessingTracker)
+        earService = MockEARServiceInterface()
+        earService.fetchPublicKeys_MockError = MockError()
+        earService.fetchPrivateKeys_MockError = MockError()
+
+        sut = EventProcessor(
+            storeProvider: coreDataStack,
+            syncStatus: syncStatus,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService
+        )
+
         sut.eventConsumers = mockEventsConsumers
     }
 
@@ -51,6 +62,7 @@ class EventProcessorTests: MessagingTest {
         eventProcessingTracker = nil
         syncStateDelegate = nil
         syncStatus = nil
+        earService = nil
         sut = nil
 
         super.tearDown()
@@ -162,5 +174,67 @@ class EventProcessorTests: MessagingTest {
         XCTAssertEqual(batchFetchRequest.remoteIdentifiersToFetch, conversationIdSet)
         XCTAssertEqual(batchFetchRequest.noncesToFetch, messageNonceSet)
     }
+
+    // MARK: - Is ready to process events
+
+    func test_IsNotReadyToProcessEvents_IfSyncing() throws {
+        try assertIsReadyToProccessEvents(
+            expectation: false,
+            isSyncing: true
+        )
+    }
+
+    func test_IsNotReadyToProcessEvents_IfDatabaseLocked() throws {
+        try assertIsReadyToProccessEvents(
+            expectation: false,
+            isDatabaseLocked: true
+        )
+    }
+
+    private func assertIsReadyToProccessEvents(
+        expectation: Bool,
+        isSyncing: Bool = false,
+        isDatabaseLocked: Bool = false
+    ) throws {
+        // Given
+        if isSyncing {
+            syncStatus.currentSyncPhase = .fetchingMissedEvents
+            syncStatus.pushChannelEstablishedDate = nil
+            XCTAssertTrue(syncStatus.isSyncing)
+        } else {
+            syncStatus.currentSyncPhase = .done
+            syncStatus.pushChannelEstablishedDate = Date()
+            XCTAssertFalse(syncStatus.isSyncing)
+        }
+
+        if isDatabaseLocked {
+            let earService = EARService(
+                accountID: userIdentifier,
+                databaseContexts: [uiMOC, syncMOC]
+            )
+
+            try earService.enableEncryptionAtRest(
+                context: syncMOC,
+                skipMigration: true
+            )
+
+            earService.lockDatabase()
+
+            XCTAssertTrue(syncMOC.encryptMessagesAtRest)
+            XCTAssertTrue(syncMOC.isLocked)
+        } else {
+            XCTAssertFalse(syncMOC.encryptMessagesAtRest)
+            XCTAssertFalse(syncMOC.isLocked)
+        }
+
+        // Then
+        XCTAssertEqual(sut.isReadyToProcessEvents, expectation)
+    }
+
+}
+
+class MockOperationStateProvider: OperationStateProvider {
+
+    var operationState = SyncEngineOperationState.background
 
 }

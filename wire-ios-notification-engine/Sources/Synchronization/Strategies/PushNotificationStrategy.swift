@@ -26,42 +26,35 @@ protocol PushNotificationStrategyDelegate: AnyObject {
 
 }
 
-final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, UpdateEventProcessor {
+final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
 
     // MARK: - Properties
 
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
-    private var moc: NSManagedObjectContext!
 
     weak var delegate: PushNotificationStrategyDelegate?
-
-    var eventDecoder: EventDecoder!
-    var eventMOC: NSManagedObjectContext!
 
     // MARK: - Life cycle
 
     init(
-        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        eventContext: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         pushNotificationStatus: PushNotificationStatus,
         notificationsTracker: NotificationsTracker?
     ) {
         super.init(
-            withManagedObjectContext: managedObjectContext,
+            withManagedObjectContext: syncContext,
             applicationStatus: applicationStatus
         )
 
         sync = NotificationStreamSync(
-            moc: managedObjectContext,
+            moc: syncContext,
             notificationsTracker: notificationsTracker,
             delegate: self
         )
 
         self.pushNotificationStatus = pushNotificationStatus
-        self.moc = managedObjectContext
-        self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: managedObjectContext)
     }
 
     // MARK: - Methods
@@ -83,28 +76,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
         return self.pushNotificationStatus.hasEventsToFetch
     }
 
-    func processEventsIfReady() -> Bool {
-        return true
-    }
-
-    var eventConsumers: [ZMEventConsumer] {
-        get {
-            return []
-        }
-        set(newValue) {
-        }
-    }
-
-    @objc public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        eventDecoder.decryptAndStoreEvents(updateEvents) { decryptedUpdateEvents in
-            self.delegate?.pushNotificationStrategy(self, didFetchEvents: decryptedUpdateEvents)
-        }
-    }
-
-    @objc public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        // Events will be processed in the foreground
-    }
-
 }
 
 // MARK: - Notification stream sync delegate
@@ -112,6 +83,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
+        WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
+
         var eventIds: [UUID] = []
         var parsedEvents: [ZMUpdateEvent] = []
         var latestEventId: UUID?
@@ -129,7 +102,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             }
         }
 
-        storeUpdateEvents(parsedEvents, ignoreBuffer: true)
+        delegate?.pushNotificationStrategy(self, didFetchEvents: parsedEvents)
         pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
 
         if !hasMoreToFetch {

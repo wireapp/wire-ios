@@ -37,8 +37,10 @@ final class UserConnectionView: UIView, Copyable {
 
     private let firstLabel = UILabel()
     private let secondLabel = UILabel()
-    private let labelContainer = UIView()
+    private let labelContainer = UIStackView(axis: .vertical)
     private let userImageView = UserImageView()
+    private let guestIndicator = LabelIndicator(context: .guest)
+    private let guestWarningView = GuestAccountWarningView()
 
     var user: UserType {
         didSet {
@@ -61,6 +63,7 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func setup() {
+        labelContainer.spacing = 0.0
         self.backgroundColor = SemanticColors.View.backgroundConversationView
         [firstLabel, secondLabel].forEach {
             $0.numberOfLines = 0
@@ -71,9 +74,10 @@ final class UserConnectionView: UIView, Copyable {
         userImageView.size = .big
         userImageView.user = user
 
-        [labelContainer, userImageView].forEach(addSubview)
-        [firstLabel, secondLabel].forEach(labelContainer.addSubview)
+        [labelContainer, userImageView, guestIndicator, guestWarningView].forEach(addSubview)
+        [firstLabel, secondLabel].forEach(labelContainer.addArrangedSubview)
         updateLabels()
+        updateGuestAccountViews()
     }
 
     private func updateLabels() {
@@ -93,7 +97,7 @@ final class UserConnectionView: UIView, Copyable {
 
     private func updateSecondLabel() {
         guard nil != handleLabelText else { return }
-        secondLabel.attributedText = correlationLabelText
+        secondLabel.attributedText = correlationLabelText ?? NSAttributedString(string: "")
         secondLabel.accessibilityIdentifier = "correlation"
     }
 
@@ -114,36 +118,35 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func createConstraints() {
-        let verticalMargin: CGFloat = 16
         [userImageView,
          labelContainer,
-         firstLabel,
-         secondLabel].prepareForLayout()
+         guestIndicator,
+         guestWarningView].prepareForLayout()
 
         NSLayoutConstraint.activate([
             labelContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-            labelContainer.topAnchor.constraint(equalTo: topAnchor),
+            labelContainer.topAnchor.constraint(equalTo: topAnchor, constant: 16.0),
             labelContainer.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor),
 
-            userImageView.topAnchor.constraint(greaterThanOrEqualTo: labelContainer.bottomAnchor),
+            userImageView.topAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant:  30.0),
             userImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            userImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             userImageView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
-            userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 264),
-            userImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            userImageView.heightAnchor.constraint(equalToConstant: 200),
 
-            firstLabel.topAnchor.constraint(equalTo: labelContainer.topAnchor, constant: verticalMargin),
-            firstLabel.heightAnchor.constraint(equalToConstant: 16),
-            secondLabel.topAnchor.constraint(equalTo: firstLabel.bottomAnchor),
-            firstLabel.heightAnchor.constraint(equalToConstant: 16),
-            secondLabel.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: -verticalMargin),
+            guestIndicator.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 8.0),
+            guestIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-            firstLabel.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor),
-            firstLabel.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor),
-
-            secondLabel.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor),
-            secondLabel.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor)
+            guestWarningView.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor, constant: 30.0),
+            guestWarningView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18.0),
+            guestWarningView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -23.0),
+            guestWarningView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
         ])
+    }
+
+    private func updateGuestAccountViews() {
+        let viewer = SelfUser.current
+        let isGuest = !viewer.isTeamMember || !viewer.canAccessCompanyInformation(of: user)
+        guestIndicator.isHidden = !isGuest
     }
 }

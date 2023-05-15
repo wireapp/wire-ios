@@ -29,10 +29,10 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         previousApiVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = .v0
 
-
         syncMOC.performGroupedBlockAndWait {
             self.createSelfClient()
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     override func tearDown() {
