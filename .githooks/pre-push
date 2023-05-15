@@ -72,3 +72,5 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
 else
     echo "SwiftLint found no issues."
 fi
+echo "safely exit"
+exit 1
