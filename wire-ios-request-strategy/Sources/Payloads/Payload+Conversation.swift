@@ -394,6 +394,9 @@ extension Payload {
         let qualifiedUserIDs: [QualifiedID]?
         let role: String
 
+        
+        
+        
         init?(userIDs: [UUID]? = nil, qualifiedUserIDs: [QualifiedID]? = nil) {
             self.userIDs = userIDs
             self.qualifiedUserIDs = qualifiedUserIDs
