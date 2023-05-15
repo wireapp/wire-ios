@@ -18,14 +18,12 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
-#!/bin/bash
-
 # Check if SwiftLint is installed
 if ! command -v swiftlint &> /dev/null; then
-    echo "Warning: SwiftLint is not installed."
+    echo "Error: SwiftLint is not installed."
     echo "Please install SwiftLint by following the instructions at:"
     echo "https://github.com/realm/SwiftLint#installation"
-    echo "SwiftLint will not be executed. Push cancelledProceed with the push."
+    echo "Push aborted."
     exit 1
 fi
 
@@ -51,5 +49,6 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     # Commit the changes with a temporary message for review
     git commit -m "SwiftLint auto-fixes" --no-verify
 
+    echo "Verify the commit and push again."
     exit 1
 fi
