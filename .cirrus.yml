@@ -14,3 +14,4 @@ task:
   - brew install carthage
   - sh ./setup.sh
   - bundle exec fastlane ios prepare_for_release build_type:"AppStore" build_number:1234
+  - bundle exec fastlane ios build_for_release build_type:"AppStore" build_number:1234
