@@ -58,7 +58,7 @@ scripts/download-assets.sh "$@"
 echo ""
 
 echo "ℹ️  Doing additional postprocessing..."
-Scripts/postprocess.sh
+scripts/postprocess.sh
 echo ""
 
 cd wire-ios
@@ -69,6 +69,10 @@ echo ""
 
 echo "ℹ️ Update Licenses File..."
 swift run --package-path Scripts/updateLicenses
+echo ""
+
+echo "ℹ️ Install Git hook"
+scripts/githooks-install.sh
 echo ""
 
 cd ..
