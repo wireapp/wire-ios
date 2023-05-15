@@ -26,9 +26,10 @@ class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
     // MARK: - Life Cycle
 
     override func tearDown() {
-        // Delete keychain items
-        let account = Account(userName: "", userIdentifier: accountIdentifier)
-        try! EncryptionKeys.deleteKeys(for: account)
+        try? sharingSession.earService.disableEncryptionAtRest(
+            context: sharingSession.userInterfaceContext,
+            skipMigration: true
+        )
 
         super.tearDown()
     }
@@ -45,9 +46,12 @@ class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
 
     func testThatDatabaseIsLocked_BeforeUnlockingDatabase() throws {
         // given
-        try enableEncryptionAtRest()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
+        try sharingSession.earService.enableEncryptionAtRest(
+            context: sharingSession.userInterfaceContext,
+            skipMigration: true
+        )
+
+        sharingSession.earService.lockDatabase()
 
         // then
         XCTAssertTrue(sharingSession.isDatabaseLocked)
@@ -55,30 +59,20 @@ class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
 
     func testThatDatabaseIsUnlocked_AfterUnlockingDatabase() throws {
         // given
-        try enableEncryptionAtRest()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        try sharingSession.earService.enableEncryptionAtRest(
+            context: sharingSession.userInterfaceContext,
+            skipMigration: true
+        )
+
+        sharingSession.earService.lockDatabase()
+        XCTAssertTrue(sharingSession.isDatabaseLocked)
 
         // when
         let context = LAContext()
         try sharingSession.unlockDatabase(with: context)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertFalse(sharingSession.isDatabaseLocked)
-    }
-
-    // MARK: - Helpers
-
-    func enableEncryptionAtRest() throws {
-        let account = Account(userName: "", userIdentifier: accountIdentifier)
-
-        try! EncryptionKeys.deleteKeys(for: account)
-        sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
-
-        let encryptionKeys = try EncryptionKeys.createKeys(for: account)
-        try sharingSession.userInterfaceContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
-
-        sharingSession.userInterfaceContext.saveOrRollback()
     }
 
 }

@@ -52,15 +52,6 @@ class OperationStatusTests: MessagingTest {
         XCTAssertEqual(sut.operationState, .background)
     }
 
-    func testOperationState_whenInBackgroundWithOngoingCall() {
-        // when
-        sut.isInBackground = true
-        sut.hasOngoingCall = true
-
-        // then
-        XCTAssertEqual(sut.operationState, .backgroundCall)
-    }
-
     func testThatBackgroundTaskIsUpdatingOperationState() {
 
         // given
