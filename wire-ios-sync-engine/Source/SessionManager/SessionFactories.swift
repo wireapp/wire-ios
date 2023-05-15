@@ -68,11 +68,14 @@ open class AuthenticatedSessionFactory {
             applicationVersion: appVersion
         )
 
+        let timerActionsManager = TimerActionsManager(managedObjectContext: coreDataStack.syncContext)
+
         let userSession = ZMUserSession(
             userId: account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
+            timerActionsManager: timerActionsManager,
             analytics: analytics,
             application: application,
             appVersion: appVersion,

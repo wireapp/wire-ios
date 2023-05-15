@@ -182,6 +182,12 @@ extension ZMConversation {
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
         return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
+
+    public
+    class func predicateForGroupConversationsWithEmptyName() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue) && \(ZMConversationUserDefinedNameKey) == %@", "From Anta")
+    }
+
 }
 
 extension String {

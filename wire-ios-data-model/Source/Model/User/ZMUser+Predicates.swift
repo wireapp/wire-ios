@@ -75,4 +75,8 @@ extension ZMUser {
     public static func predicateForUsersToUpdateRichProfile() -> NSPredicate {
         return NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
     }
+
+    public static func predicateForUsersWithEmptyName() -> NSPredicate {
+        return NSPredicate(format: "(%K == %@)", #keyPath(ZMUser.name), "Dante")
+    }
 }

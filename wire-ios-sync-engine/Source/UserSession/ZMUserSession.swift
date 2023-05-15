@@ -72,6 +72,7 @@ public class ZMUserSession: NSObject {
     let application: ZMApplication
     let flowManager: FlowManagerType
     var mediaManager: MediaManagerType
+    var timerActionsManager: TimerActionsManagerType
     var analytics: AnalyticsType?
     var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
@@ -229,6 +230,7 @@ public class ZMUserSession: NSObject {
                 transportSession: TransportSessionType,
                 mediaManager: MediaManagerType,
                 flowManager: FlowManagerType,
+                timerActionsManager: TimerActionsManagerType,
                 analytics: AnalyticsType?,
                 eventProcessor: UpdateEventProcessor? = nil,
                 strategyDirectory: StrategyDirectoryProtocol? = nil,
@@ -250,6 +252,7 @@ public class ZMUserSession: NSObject {
         self.appVersion = appVersion
         self.flowManager = flowManager
         self.mediaManager = mediaManager
+        self.timerActionsManager = timerActionsManager
         self.analytics = analytics
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
