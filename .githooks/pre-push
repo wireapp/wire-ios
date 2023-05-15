@@ -41,13 +41,18 @@ if [ -n "$SWIFTLINT_OUTPUT" ]; then
     echo "Auto-fixing SwiftLint issues..."
 
     # Auto-fix any fixable issues using SwiftLint
-    git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint --fix
+    FIXED_FILES=$(git diff --name-only $PREVIOUS_COMMIT..HEAD | grep -E '\.(swift)$' | xargs swiftlint --fix)
 
     # Stage the changes made by SwiftLint for commit
-    git add -u
+    if [ -n "$FIXED_FILES" ]; then
+        git add $FIXED_FILES
 
-    git diff-index --quiet HEAD || git commit -m "chore: swiftLint auto-fixes" --no-verify
-    echo "SwiftLint issues fixed and committed."
+        # Commit the changes with the message "SwiftLint auto-fixes"
+        git commit -m "chore: SwiftLint auto-fixes"
+        echo "SwiftLint issues fixed and committed."
+    else
+        echo "No changes made by SwiftLint."
+    fi
     exit 1
 else
     echo "SwiftLint found no issues."
