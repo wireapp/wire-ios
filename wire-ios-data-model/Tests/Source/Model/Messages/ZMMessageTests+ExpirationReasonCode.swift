@@ -20,12 +20,12 @@ import XCTest
 @testable import WireDataModel
 
 class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
-    var message: ZMMessage?
+    var message: ZMOTRMessage?
 
     override func setUp() {
         super.setUp()
 
-        message = try? conversation.appendText(content: "Hallo") as? ZMMessage
+        message = try? conversation.appendText(content: "Hallo") as? ZMOTRMessage
         message?.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
     }
 
@@ -82,14 +82,14 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         message.expire()
 
         // then
-        assert(reasonCode: nil, expectedReason: .unknown)
+        assert(reasonCode: nil, expectedReason: nil)
         assert(reasonCode: 0, expectedReason: .unknown)
         assert(reasonCode: 1, expectedReason: .federationRemoteError)
     }
 
     // MARK: - Helper
     
-    private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure) {
+    private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure?) {
         guard let message = message else {
             XCTFail("Failed to add message")
             return
