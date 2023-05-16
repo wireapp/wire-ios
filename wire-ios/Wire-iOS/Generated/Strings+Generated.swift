@@ -1533,6 +1533,8 @@ internal enum L10n {
         internal static let `open` = L10n.tr("Localizable", "content.message.open", fallback: "Open")
         /// Original message
         internal static let originalLabel = L10n.tr("Localizable", "content.message.original_label", fallback: "Original message")
+        /// Reactions
+        internal static let reactions = L10n.tr("Localizable", "content.message.reactions", fallback: "Reactions")
         /// Reply
         internal static let reply = L10n.tr("Localizable", "content.message.reply", fallback: "Reply")
         /// Resend

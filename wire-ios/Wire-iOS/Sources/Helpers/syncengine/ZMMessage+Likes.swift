@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ZMConversationMessage {
 
-    var canBeLiked: Bool {
+    var canAddReaction: Bool {
         guard let conversation = conversationLike else {
             return false
         }
@@ -39,7 +39,7 @@ extension ZMConversationMessage {
 
         set {
             if newValue {
-                ZMMessage.addReaction(.thumbsUp, toMessage: self)
+                ZMMessage.addReaction(.like, toMessage: self)
             } else {
                 ZMMessage.removeReaction(onMessage: self)
             }
@@ -60,13 +60,13 @@ extension ZMConversationMessage {
             }.first ?? []
     }
 
-//    var myReaction: MessageReaction? {
-//        let reactionString = usersReaction.filter { (reaction, users)in
-//            users.contains(where: { $0.isSelfUser })
-//        }.first?.key
-//        guard let value = reactionString else { return  nil }
-//        return  MessageReaction(rawValue: value)
-//    }
+    var myReaction: MessageReaction? {
+        let reactionString = usersReaction.filter { (reaction, users)in
+            users.contains(where: { $0.isSelfUser })
+        }.first?.key
+        guard let value = reactionString else { return  nil }
+        return  MessageReaction.messageReaction(from: value)
+    }
 
     var sortedLikers: [UserType] {
         return likers.sorted { $0.name < $1.name }

@@ -17,9 +17,12 @@
 //
 
 import WireCommonComponents
+import WireDataModel
 import UIKit
 
-enum MessageAction: CaseIterable {
+enum MessageAction: CaseIterable, Equatable {
+    static var allCases: [MessageAction] = [.digitallySign, .copy, .reply, .openDetails, .edit, .save, .cancel, .download, .forward, .like, .unlike, .resend, .showInConversation, .sketchDraw, .sketchEmoji, .present, .openQuote, .resetSession, .delete, .react(.like)]
+    
     case
     digitallySign,
     copy,
@@ -81,7 +84,8 @@ enum MessageAction: CaseIterable {
             key = "image.add_emoji"
         case .present,
              .openQuote,
-             .resetSession:
+             .resetSession,
+             .react:
             key = nil
         }
 
@@ -123,7 +127,8 @@ enum MessageAction: CaseIterable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession:
+             .resetSession,
+             .react:
             return nil
         }
     }
@@ -168,7 +173,8 @@ enum MessageAction: CaseIterable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession:
+             .resetSession,
+             .react:
             imageName = nil
         }
 
@@ -205,6 +211,8 @@ enum MessageAction: CaseIterable {
             return #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
             return #selector(ConversationMessageActionController.revealMessage)
+        case .react(_):
+            return #selector(ConversationMessageActionController.addReaction(reaction:) )
         case .present,
              .sketchDraw,
              .sketchEmoji,

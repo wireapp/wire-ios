@@ -408,7 +408,7 @@ final class MessageToolboxView: UIView {
         if case .reactions? = dataSource?.content {
             showLikeButton = message.liked || message.hasReactions()
         } else {
-            showLikeButton = message.canBeLiked
+            showLikeButton = message.canAddReaction
         }
 
         // Prepare Animations

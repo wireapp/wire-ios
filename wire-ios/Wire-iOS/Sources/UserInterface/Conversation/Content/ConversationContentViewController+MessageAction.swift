@@ -163,6 +163,8 @@ extension ConversationContentViewController {
             isLoadingViewVisible = true
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
+        case .react(let reaction):
+            message.addReaction(reaction)
         }
     }
 

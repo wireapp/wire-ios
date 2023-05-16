@@ -578,6 +578,7 @@
 "content.message.copy" = "Copy";
 "content.message.download" = "Download";
 "content.message.details" = "Details";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Reply";

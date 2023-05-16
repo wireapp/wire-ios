@@ -17,8 +17,19 @@
 //
 
 import UIKit
+import WireDataModel
 
 class MessageActionsViewController: UIAlertController {
+    private static let MessageLabelMarker = "__CUSTOM_CONTENT_MARKER__"
+
+    static func controller(withActions actions: [MessageAction],
+                           actionController: ConversationMessageActionController) -> MessageActionsViewController {
+        let controller = MessageActionsViewController(title: MessageLabelMarker,
+                                            message: nil,
+                                            preferredStyle: .actionSheet)
+        controller.addMessageActions(actions, withActionController: actionController)
+        return controller
+    }
 
     var actionController: ConversationMessageActionController?
 
@@ -26,16 +37,12 @@ class MessageActionsViewController: UIAlertController {
         super.viewDidLoad()
     }
 
-    func addMessageActions(_ actions: [MessageAction],
-                           withActionController actionController: ConversationMessageActionController,
-                           reactionPickerDelegate: ReactionPickerDelegate?
-    ) {
+    private func addMessageActions(_ actions: [MessageAction],
+                           withActionController actionController: ConversationMessageActionController) {
         self.actionController = actionController
-        if let delegate = reactionPickerDelegate {
-            addReactionsView(withDelegate: delegate)
-        }
+        addReactionsView(withDelegate: self)
         actions.forEach { action in
-            addAction(action, withActionController: actionController)
+            addAction(action)
         }
         addCancelAction()
     }
@@ -49,18 +56,26 @@ class MessageActionsViewController: UIAlertController {
         let reactionPicker = BasicReactionPicker()
         reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
+
+
+        guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
+              let customContainer =  customContentPlaceholder.superview else { return }
+
         view.addSubview(reactionPicker)
         NSLayoutConstraint.activate([
-            reactionPicker.heightAnchor.constraint(equalToConstant: 64.0),
-            reactionPicker.widthAnchor.constraint(equalTo: view.widthAnchor)
+            reactionPicker.heightAnchor.constraint(equalToConstant: 72),
+            reactionPicker.widthAnchor.constraint(equalTo: customContainer.widthAnchor),
+            reactionPicker.leadingAnchor.constraint(equalTo: customContainer.leadingAnchor),
+            reactionPicker.topAnchor.constraint(equalTo: customContainer.topAnchor),
+            customContainer.heightAnchor.constraint(equalTo: reactionPicker.heightAnchor)
         ])
+            customContentPlaceholder.text = ""
 
-        let placeholder = UIAlertAction(title: "\n\n\n", style: .default, handler: nil)
-        addAction(placeholder)
     }
 
-    private func addAction(_ action: MessageAction, withActionController actionController: ConversationMessageActionController) {
+    private func addAction(_ action: MessageAction) {
         guard let title = action.title,
+              let actionController = actionController,
               let selector = action.selector,
             actionController.canPerformAction(selector)
         else { return }
@@ -74,5 +89,27 @@ class MessageActionsViewController: UIAlertController {
         newAction.setValue(CATextLayerAlignmentMode.right, forKey: "titleTextAlignment")
         addAction(newAction)
     }
+}
 
+extension MessageActionsViewController: ReactionPickerDelegate {
+    func didPickReaction(reaction: WireDataModel.MessageReaction) {
+        actionController?.perform(action: .react(reaction))
+    }
+}
+
+
+private extension UIView {
+
+    func findLabel(withText text: String) -> UILabel? {
+        if let label = self as? UILabel, label.text == text {
+            return label
+        }
+        for subview in self.subviews {
+            if let found = subview.findLabel(withText: text) {
+                return found
+            }
+        }
+
+        return nil
+    }
 }

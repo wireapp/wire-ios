@@ -221,10 +221,8 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     func messageActionsMenuController() -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
-        let actionsMenuController = MessageActionsViewController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionsMenuController.addMessageActions(MessageAction.allCases,
-                                                withActionController: actionController,
-                                                reactionPickerDelegate: nil)
+        let actionsMenuController = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
+        
         return actionsMenuController
     }
 

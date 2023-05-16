@@ -160,6 +160,7 @@ internal enum Asset {
     internal static let white = ColorAsset(name: "White")
   }
   internal enum Images {
+    internal static let allEmojis = ImageAsset(name: "All Emojis")
     internal static let archiveFilled = ImageAsset(name: "Archive Filled")
     internal static let archiveOutline = ImageAsset(name: "Archive Outline")
     internal static let contactsFilled = ImageAsset(name: "Contacts Filled")

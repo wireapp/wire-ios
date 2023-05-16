@@ -18,12 +18,14 @@
 
 import UIKit
 import WireDataModel
+import WireCommonComponents
 
 protocol ReactionPickerDelegate: AnyObject {
     func didPickReaction(reaction: MessageReaction)
 }
 
 class BasicReactionPicker: UIView {
+    private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
     private var buttons: [UIButton] = []
     weak var delegate: ReactionPickerDelegate?
@@ -42,25 +44,42 @@ class BasicReactionPicker: UIView {
 private extension BasicReactionPicker {
 
     func setupViews() {
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.text = L10n.Localizable.Content.Message.reactions
+        addSubview(titleLabel)
+
         horizontalStackView.alignment = .center
         horizontalStackView.distribution = .equalSpacing
         horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizontalStackView)
-        NSLayoutConstraint.activate(
-            horizontalStackView.fitInConstraints(view: self,
-                                                 insets: UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0))
-        )
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8.0),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
+            horizontalStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8.0),
+            horizontalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
+            horizontalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
+            horizontalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 16.0)
+        ])
         addButtons()
     }
 
     func addButtons() {
-        ["👍", "🙂", "❤️", "☹️", "👎", "🫥"].forEach { emoji in
+        ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
             let button = UIButton()
+            button.titleLabel?.font = FontSpec.largeRegularFont.font?.withSize(30.0)
             button.setTitle(emoji, for: .normal)
             button.addTarget(self, action: #selector(didTapEmoji(sender:)), for: .touchUpInside)
             horizontalStackView.addArrangedSubview(button)
-
         }
+
+        let button = UIButton()
+        let image = Asset.Images.allEmojis.image
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
+        horizontalStackView.addArrangedSubview(button)
+    }
+
+    @objc func didTapMoreEmojis() {
 
     }
 
