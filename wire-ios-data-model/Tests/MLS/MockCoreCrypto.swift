@@ -694,14 +694,14 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - newAcmeEnrollment
 
-    var mockNewAcmeEnrollment: ((CiphersuiteName) throws -> WireE2eIdentity)?
+    var mockNewAcmeEnrollment: ((String, String, String, UInt32, CiphersuiteName) throws -> WireE2eIdentity)?
 
-    func newAcmeEnrollment(ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
+    func newAcmeEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
         guard let mock = mockNewAcmeEnrollment else {
-            fatalError("no mock for `newAcmeEnrollment`")
+            fatalError("no mock for `newAcmeEnrollment")
         }
 
-        return try mock(ciphersuite)
+        return try mock(clientId, displayName, handle, expiryDays, ciphersuite)
     }
 
     // MARK: - restoreFromDisk
@@ -718,7 +718,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - markConversationAsChildOf
 
-    var mockMarkConversationAsChildOf: ((ConversationId, ConversationId) throws -> ())?
+    var mockMarkConversationAsChildOf: ((ConversationId, ConversationId) throws -> Void)?
 
     func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
         guard let mock = mockMarkConversationAsChildOf else {
@@ -727,4 +727,17 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
         try mock(childId, parentId)
     }
+
+    // MARK: - e2eiMlsInit
+
+    var mockE2eiMlsInit: ((WireE2eIdentity, String) throws -> Void)?
+
+    func e2eiMlsInit(e2ei: WireE2eIdentity, certificateChain: String) throws {
+        guard let mock = mockE2eiMlsInit else {
+            fatalError("no mock for `e2eiMlsInit")
+        }
+
+        try mock(e2ei, certificateChain)
+    }
+
 }
