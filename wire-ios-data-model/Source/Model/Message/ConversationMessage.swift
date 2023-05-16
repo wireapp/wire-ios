@@ -75,9 +75,6 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// ZMDeliveryStateDelivered
     var deliveryState: ZMDeliveryState { get }
 
-    /// Reason why the message has not been sent
-    var failedToSendReason: MessageSendFailure { get }
-
     /// True if the message has been successfully sent to the server
     var isSent: Bool { get }
 
@@ -170,6 +167,12 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 public protocol ConversationCompositeMessage {
     /// The composite message associated with the message. If the message is not a composite message, it will be nil
     var compositeMessageData: CompositeMessageData? { get }
+}
+
+public protocol SwiftConversationMessage {
+
+    /// Reason why the message has not been sent
+    var failedToSendReason: MessageSendFailure? { get }
 }
 
 public extension ZMConversationMessage {
@@ -326,10 +329,6 @@ extension ZMMessage {
 
     @objc public var isSent: Bool {
         return true
-    }
-
-    @objc public var failedToSendReason: MessageSendFailure {
-        return .unknown
     }
 
     @objc public var deliveryState: ZMDeliveryState {
