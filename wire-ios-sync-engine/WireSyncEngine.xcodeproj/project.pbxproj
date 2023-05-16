@@ -1971,7 +1971,6 @@
 			isa = PBXGroup;
 			children = (
 				EE38DDED280437E500D4983D /* BlacklistReason.swift */,
-				0664F2E52A0E25C200E5C34E /* TimerActionsManager.swift */,
 				63C5321E27FDB283009DFFF4 /* SyncStatus.swift */,
 				063AFA3E264B30C400DCBCED /* BuildType.swift */,
 				161ACB2B23F5B9E900ABFF33 /* URLActionProcessors */,
@@ -2312,6 +2311,7 @@
 				5EDF03EB2245563C00C04007 /* LinkPreviewAssetUploadRequestStrategy+Helper.swift */,
 				06DE14CE24B85BD0006CB6B3 /* ZMSyncStateDelegate.h */,
 				2B155969295093360069AE34 /* HotfixPatch.swift */,
+				0664F2E52A0E25C200E5C34E /* TimerActionsManager.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";

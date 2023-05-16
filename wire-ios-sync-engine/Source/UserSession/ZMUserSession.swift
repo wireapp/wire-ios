@@ -588,6 +588,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.notifyThirdPartyServices()
         }
 
+        timerActionsManager.applyTimerActionsIfNeeded(Date())
         fetchFeatureConfigs()
     }
 

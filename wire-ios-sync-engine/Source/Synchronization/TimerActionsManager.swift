@@ -23,7 +23,7 @@ public protocol TimerActionsManagerType: AnyObject {
 
     func applyTimerActionsIfNeeded(_ checkTime: Date)
 }
-
+/// add tests
 final class TimerActionsManager: NSObject, TimerActionsManagerType {
 
     // MARK: - Models
@@ -59,6 +59,7 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
                     event.action?()
                 }
             }
+            self.managedObjectContext?.saveOrRollback()
         }
     }
 
@@ -76,7 +77,7 @@ extension TimerActionsManager {
 
     private func refreshUsersWithMissingMetadata() -> Event {
         /// Refresh users without metadata every 3 hours.
-        let refreshInterval: TimeInterval = 2
+        let refreshInterval: TimeInterval = 20
 
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersWithEmptyName())
         guard let users = self.managedObjectContext?.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
@@ -90,7 +91,7 @@ extension TimerActionsManager {
 
     private func refreshConversationsWithMissingMetadata() -> Event {
         /// Refresh conversations without metadata every 3 hours.
-        let refreshInterval: TimeInterval = 2
+        let refreshInterval: TimeInterval = 20
 
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicateForGroupConversationsWithEmptyName())
         guard let conversations = self.managedObjectContext?.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else {
@@ -106,7 +107,7 @@ extension TimerActionsManager {
 
 }
 
-private extension UserDefaults {
+public extension UserDefaults {
 
     /// check for 2 accounts
     private var lastDataRefreshDateKey: String { "LastDataRefreshDateKey" }

@@ -48,17 +48,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         createSubviews()
 
         if let conversation = conversation as? ZMConversation {
-            ZMUserSession.shared()?.perform {
-//                conversation.needsToBeUpdatedFromBackend = true
-//
-//                let moc = conversation.managedObjectContext
-//                let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicateForGroupConversationsWithEmptyName())
-//                if let conversations = moc?.fetchOrAssert(request: fetchRequest) as? [ZMConversation] {
-//                    conversations.forEach { con in
-//                        con.needsToBeUpdatedFromBackend = true
-//                    }
-//                }
-//            }
             conversation.refetchParticipantsIfNeeded()
 
             token = ConversationChangeInfo.add(observer: self, for: conversation)
