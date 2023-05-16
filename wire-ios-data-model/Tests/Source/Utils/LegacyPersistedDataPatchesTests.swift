@@ -212,7 +212,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
             let sessionsURL = otrURL.appendingPathComponent("sessions")
             let oldSession = sessionsURL.appendingPathComponent(newClient.remoteIdentifier!)
-            var newSession = sessionsURL.appendingPathComponent(newClient.sessionIdentifier!.rawValue)
+            let newSession = sessionsURL.appendingPathComponent(newClient.sessionIdentifier!.rawValue)
 
             XCTAssertTrue(FileManager.default.fileExists(atPath: newSession.path))
             let previousData = try! Data(contentsOf: newSession)
@@ -226,7 +226,6 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
 
             // THEN
-            newSession = sessionsURL.appendingPathComponent(newClient.sessionIdentifier!.rawValue)
             let readData = try? Data(contentsOf: newSession)
             XCTAssertNotNil(readData)
             XCTAssertEqual(readData, previousData)
