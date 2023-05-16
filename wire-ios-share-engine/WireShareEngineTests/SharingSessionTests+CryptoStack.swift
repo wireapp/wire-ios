@@ -270,7 +270,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
     }
 
     func decryptMessage(conversationId: ConversationId, payload: [UInt8]) throws -> DecryptedMessage {
-        return .init(message: nil, proposals: [], isActive: false, commitDelay: nil, senderClientId: nil, hasEpochChanged: false)
+        return .init(message: nil, proposals: [], isActive: false, commitDelay: nil, senderClientId: nil, hasEpochChanged: false, identity: nil)
     }
 
     func encryptMessage(conversationId: ConversationId, message: [UInt8]) throws -> [UInt8] {
@@ -428,7 +428,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     }
 
-    func newAcmeEnrollment(ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
+    func newAcmeEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
         fatalError("not implemented")
     }
 
@@ -436,4 +436,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return 0
     }
 
+    func e2eiMlsInit(e2ei: WireE2eIdentity, certificateChain: String) throws {
+        fatalError("not implemented")
+    }
 }
