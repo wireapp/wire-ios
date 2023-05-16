@@ -22,9 +22,6 @@ import XCTest
 
 final class MessageActionsViewControllerTests: ZMSnapshotTestCase {
 
-//    var sut: MessageActionsViewController!
-
-
     override func setUp() {
         super.setUp()
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
@@ -34,15 +31,16 @@ final class MessageActionsViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testContextMenuForTextMessage() {
-//        // GIVEN
-//        let message = MockMessageFactory.textMessage(withText: "Test tests")
-//        message.senderUser = MockUserType.createUser(name: "Bob")
-//
-//        // WHEN
-//        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-//        let sut = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
-//
-//        // THEN
-//        verify(matching: sut.view)
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Test tests")
+        message.senderUser = MockUserType.createUser(name: "Bob")
+
+        // WHEN
+        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let sut = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
+
+        // THEN
+        verify(matching: sut)
     }
+
 }
