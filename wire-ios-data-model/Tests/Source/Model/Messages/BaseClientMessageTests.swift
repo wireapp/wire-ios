@@ -54,8 +54,12 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
     var expectedRecipients: [String: [String]]!
 
     override func setUp() {
-        super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
 
+        super.setUp()
+        
         self.syncMOC.performGroupedBlockAndWait {
             self.syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
 
