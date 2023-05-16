@@ -2608,6 +2608,46 @@ internal enum L10n {
         }
       }
     }
+    internal enum Drawing {
+      internal enum Colors {
+        /// black
+        internal static let black = L10n.tr("Localizable", "drawing.colors.black", fallback: "black")
+        /// blue
+        internal static let blue = L10n.tr("Localizable", "drawing.colors.blue", fallback: "blue")
+        /// brown
+        internal static let brown = L10n.tr("Localizable", "drawing.colors.brown", fallback: "brown")
+        /// chocolate
+        internal static let chocolate = L10n.tr("Localizable", "drawing.colors.chocolate", fallback: "chocolate")
+        /// coral
+        internal static let coral = L10n.tr("Localizable", "drawing.colors.coral", fallback: "coral")
+        /// cyan
+        internal static let cyan = L10n.tr("Localizable", "drawing.colors.cyan", fallback: "cyan")
+        /// gray
+        internal static let gray = L10n.tr("Localizable", "drawing.colors.gray", fallback: "gray")
+        /// green
+        internal static let green = L10n.tr("Localizable", "drawing.colors.green", fallback: "green")
+        /// lilac
+        internal static let lilac = L10n.tr("Localizable", "drawing.colors.lilac", fallback: "lilac")
+        /// lime
+        internal static let lime = L10n.tr("Localizable", "drawing.colors.lime", fallback: "lime")
+        /// orange
+        internal static let orange = L10n.tr("Localizable", "drawing.colors.orange", fallback: "orange")
+        /// pink
+        internal static let pink = L10n.tr("Localizable", "drawing.colors.pink", fallback: "pink")
+        /// purple
+        internal static let purple = L10n.tr("Localizable", "drawing.colors.purple", fallback: "purple")
+        /// red
+        internal static let red = L10n.tr("Localizable", "drawing.colors.red", fallback: "red")
+        /// sky
+        internal static let sky = L10n.tr("Localizable", "drawing.colors.sky", fallback: "sky")
+        /// turquoise
+        internal static let turquoise = L10n.tr("Localizable", "drawing.colors.turquoise", fallback: "turquoise")
+        /// white
+        internal static let white = L10n.tr("Localizable", "drawing.colors.white", fallback: "white")
+        /// yellow
+        internal static let yellow = L10n.tr("Localizable", "drawing.colors.yellow", fallback: "yellow")
+      }
+    }
     internal enum Email {
       /// Email
       internal static let placeholder = L10n.tr("Localizable", "email.placeholder", fallback: "Email")
