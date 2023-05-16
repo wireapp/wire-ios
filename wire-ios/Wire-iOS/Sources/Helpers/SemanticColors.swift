@@ -191,6 +191,27 @@ public enum SemanticColors {
         static let backgroundPickUp = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
     }
+
+    public enum DrawingColors {
+        static let black = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
+        static let white = UIColor(light: Asset.Colors.white, dark: Asset.Colors.white)
+        static let blue = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Light)
+        static let green = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Light)
+        static let yellow = UIColor(light: Asset.Colors.amber500Dark, dark: Asset.Colors.amber500Dark)
+        static let red = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Light)
+        static let orange = UIColor(red: 0.992, green: 0.514, blue: 0.071, alpha: 1)
+        static let purple = UIColor(light: Asset.Colors.purple600Light, dark: Asset.Colors.purple600Light)
+        static let brown = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Light)
+        static let turquoise = UIColor(light: Asset.Colors.turquoise500Light, dark: Asset.Colors.turquoise500Light)
+        static let sky = UIColor(light: Asset.Colors.blue500Dark, dark: Asset.Colors.blue500Dark)
+        static let lime = UIColor(light: Asset.Colors.green500Dark, dark: Asset.Colors.green500Dark)
+        static let cyan = UIColor(light: Asset.Colors.turquoise500Dark, dark: Asset.Colors.turquoise500Dark)
+        static let lilac = UIColor(light: Asset.Colors.purple500Dark, dark: Asset.Colors.purple500Dark)
+        static let coral = UIColor(light: Asset.Colors.red500Dark, dark: Asset.Colors.red500Dark)
+        static let pink = UIColor(red: 0.922, green: 0.137, blue: 0.608, alpha: 1)
+        static let chocolate = UIColor(red: 0.384, green: 0.184, blue: 0, alpha: 1)
+        static let gray = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray70)
+    }
 }
 
 extension UIColor {

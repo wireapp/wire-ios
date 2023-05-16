@@ -21,16 +21,26 @@ import WireCanvas
 import WireCommonComponents
 import WireSyncEngine
 
+// MARK: - CanvasViewControllerDelegate - didExportImage
+
 protocol CanvasViewControllerDelegate: AnyObject {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage)
 }
+
+// MARK: - CanvasViewControllerEditMode
 
 enum CanvasViewControllerEditMode: UInt {
     case draw
     case emoji
 }
 
+// MARK: - CanvasViewController
+
 final class CanvasViewController: UIViewController, UINavigationControllerDelegate {
+
+    // MARK: - Properties
+
+    typealias SketchColors = SemanticColors.DrawingColors
 
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()
@@ -54,6 +64,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     let emojiKeyboardViewController = EmojiKeyboardViewController()
     let colorPickerController = SketchColorPickerController()
+
+    // MARK: - Override methods
 
     override var shouldAutorotate: Bool {
         switch UIDevice.current.userInterfaceIdiom {
@@ -102,6 +114,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         updateButtonSelection()
         createConstraints()
     }
+
+    // MARK: - Configure Navigation Items and Elements
 
     func configureNavigationItems() {
         let undoImage = StyleKitIcon.undo.makeImage(size: .tiny, color: .black)
@@ -160,35 +174,22 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             iconButton.layer.cornerRadius = 12
             iconButton.clipsToBounds = true
             iconButton.applyStyle(.iconButtonStyle)
+            iconButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
+            iconButton.setIconColor(UIColor.accent(), for: [.highlighted, .selected])
         }
     }
 
     func configureColorPicker() {
-        colorPickerController.sketchColors = [.black,
-                                              .white,
-                                              SemanticColors.LegacyColors.strongBlue,
-                                              SemanticColors.LegacyColors.strongLimeGreen,
-                                              SemanticColors.LegacyColors.brightYellow,
-                                              SemanticColors.LegacyColors.vividRed,
-                                              SemanticColors.LegacyColors.brightOrange,
-                                              SemanticColors.LegacyColors.softPink,
-                                              SemanticColors.LegacyColors.violet,
-                                              UIColor(red: 0.688, green: 0.342, blue: 0.002, alpha: 1),
-                                              UIColor(red: 0.381, green: 0.192, blue: 0.006, alpha: 1),
-                                              UIColor(red: 0.894, green: 0.735, blue: 0.274, alpha: 1),
-                                              UIColor(red: 0.905, green: 0.317, blue: 0.466, alpha: 1),
-                                              UIColor(red: 0.58, green: 0.088, blue: 0.318, alpha: 1),
-                                              UIColor(red: 0.431, green: 0.65, blue: 0.749, alpha: 1),
-                                              UIColor(red: 0.6, green: 0.588, blue: 0.278, alpha: 1),
-                                              UIColor(red: 0.44, green: 0.44, blue: 0.44, alpha: 1)]
+        colorPickerController.sketchColors = SketchColor.getAllColors()
 
         colorPickerController.view.addSubview(separatorLine)
         colorPickerController.delegate = self
         colorPickerController.willMove(toParent: self)
         view.addSubview(colorPickerController.view)
         addChild(colorPickerController)
-        colorPickerController.selectedColorIndex = colorPickerController.sketchColors.firstIndex(of: UIColor.accent()) ?? 0
     }
+
+    // MARK: - Configure Constraints
 
     private func createConstraints() {
         guard let colorPicker = colorPickerController.view else { return }
@@ -204,7 +205,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             colorPicker.topAnchor.constraint(equalTo: view.topAnchor),
             colorPicker.leftAnchor.constraint(equalTo: view.leftAnchor),
             colorPicker.rightAnchor.constraint(equalTo: view.rightAnchor),
-            colorPicker.heightAnchor.constraint(equalToConstant: 48),
+            colorPicker.heightAnchor.constraint(equalToConstant: 60),
 
             separatorLine.topAnchor.constraint(equalTo: colorPicker.bottomAnchor),
             separatorLine.leftAnchor.constraint(equalTo: colorPicker.leftAnchor),
@@ -285,6 +286,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     }
 }
 
+// MARK: - CanvasDelegate
+
 extension CanvasViewController: CanvasDelegate {
 
     func canvasDidChange(_ canvas: Canvas) {
@@ -294,6 +297,8 @@ extension CanvasViewController: CanvasDelegate {
     }
 
 }
+
+// MARK: - EmojiKeyboardViewControllerDelegate
 
 extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
 
@@ -379,6 +384,8 @@ extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
+
 extension CanvasViewController: UIImagePickerControllerDelegate {
 
     @objc func pickImage() {
@@ -408,6 +415,8 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
     }
 
 }
+
+// MARK: - SketchColorPickerControllerDelegate
 
 extension CanvasViewController: SketchColorPickerControllerDelegate {
 
