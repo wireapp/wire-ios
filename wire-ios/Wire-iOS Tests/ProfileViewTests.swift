@@ -58,7 +58,6 @@ final class ProfileViewTests: ZMSnapshotTestCase {
     }
 
     func test_notConnectedUser() {
-
         //given
         let selfUser = MockUserType.createSelfUser(name: "selfUser", inTeam: UUID())
         let testUser = MockUserType.createUser(name: "Test")
