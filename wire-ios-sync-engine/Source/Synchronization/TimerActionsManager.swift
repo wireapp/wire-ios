@@ -29,9 +29,11 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
     // MARK: - Models
 
     struct Event {
-        let interval: TimeInterval
         let action: (() -> Void)?
     }
+
+    /// Performing actions 3 hours.
+    private let interval: TimeInterval = 20
 
     weak var managedObjectContext: NSManagedObjectContext?
 
@@ -45,19 +47,14 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
 
     public func applyTimerActionsIfNeeded(_ currentCheckTime: Date) {
         managedObjectContext?.performGroupedBlock {
-            defer {
-                self.setLastCheckTime(currentCheckTime)
-            }
-
             guard let lastCheckDate = UserDefaults.standard.lastDataRefreshDate else {
+                self.setLastCheckTime(currentCheckTime)
                 return
             }
-            let events = self.makeEventsList()
 
-            events.forEach { event in
-                if (lastCheckDate + event.interval) <= currentCheckTime {
-                    event.action?()
-                }
+            if (lastCheckDate + self.interval) <= currentCheckTime {
+                self.makeEventsList().forEach { $0.action?() }
+                self.setLastCheckTime(currentCheckTime)
             }
             self.managedObjectContext?.saveOrRollback()
         }
@@ -68,7 +65,7 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
     }
 
     private func makeEventsList() -> [Event] {
-        return [refreshUsersWithMissingMetadata(),
+        return [//refreshUsersWithMissingMetadata(),
                 refreshConversationsWithMissingMetadata()]
     }
 }
@@ -76,32 +73,48 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
 extension TimerActionsManager {
 
     private func refreshUsersWithMissingMetadata() -> Event {
-        /// Refresh users without metadata every 3 hours.
-        let refreshInterval: TimeInterval = 20
 
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersWithEmptyName())
         guard let users = self.managedObjectContext?.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
-            return Event(interval: refreshInterval, action: nil)
+            return Event(action: nil)
         }
 
-        return Event(interval: refreshInterval) {
+        return Event {
             users.forEach { $0.refreshData() }
         }
+
     }
 
     private func refreshConversationsWithMissingMetadata() -> Event {
-        /// Refresh conversations without metadata every 3 hours.
-        let refreshInterval: TimeInterval = 20
 
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicateForGroupConversationsWithEmptyName())
         guard let conversations = self.managedObjectContext?.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else {
-            return Event(interval: refreshInterval, action: nil)
+            return Event(action: nil)
         }
 
-        return Event(interval: refreshInterval) {
-            conversations.forEach { convo in
-                convo.needsToBeUpdatedFromBackend = true
-            }
+//        let pred44 = ZMConversation.sortedFetchRequest()
+//        //sortedFetchRequest(with: NSPredicate(format: "domain == %@", "foma.wire.link"))
+//        let conversations44 = managedObjectContext?.fetchOrAssert(request: pred44)
+////        print(conversations44?.count)
+//        let conversations444 = conversations44 as? [ZMConversation]
+//        let conversations4444 = conversations444!.filter { $0.userDefinedName == nil }
+//        print(conversations444?.count)
+/////////
+        let fetchRequest1 = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
+        fetchRequest1.predicate = NSPredicate(format: "domain == %@", "foma.wire.link")
+
+        let conversations44 = managedObjectContext?.executeFetchRequestOrAssert(fetchRequest1) as? [ZMConversation]
+        print(conversations44?.count)
+/////////
+//        let conversations33 = self.managedObjectContext?.fetchOrAssert(request: fetchRequest)
+//        print(conversations33?.count)
+//        let conversation22 = ZMConversation.fetch(with: UUID(uuidString: "38304EB5-9C5D-453C-8FDD-513794B90DD3")!, domain: "foma.wire.link", in: managedObjectContext!)
+//        print(conversation22?.userDefinedName)
+//        print(conversation22?.domain)
+//        print(conversation22?.remoteIdentifier)
+
+        return Event {
+            conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
         }
     }
 
@@ -109,7 +122,6 @@ extension TimerActionsManager {
 
 public extension UserDefaults {
 
-    /// check for 2 accounts
     private var lastDataRefreshDateKey: String { "LastDataRefreshDateKey" }
 
     var lastDataRefreshDate: Date? {

@@ -185,7 +185,7 @@ extension ZMConversation {
 
     public
     class func predicateForGroupConversationsWithEmptyName() -> NSPredicate {
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue) && \(ZMConversationUserDefinedNameKey) == %@", "From Anta")
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue) && \(ZMConversationUserDefinedNameKey) == nil")
     }
 
 }

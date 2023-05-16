@@ -52,7 +52,7 @@ extension ZMUserSession {
         startEphemeralTimers()
         deleteOldEphemeralMessages()
         processPendingEvents()
-        print("lastDataRefreshDate: \(UserDefaults.shared().lastDataRefreshDate)")
+
     }
 
     func processPendingEvents() {
