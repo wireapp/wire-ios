@@ -44,8 +44,7 @@ final class SketchColorPickerController: UIViewController {
 
             colorsCollectionView.reloadData()
             colorsCollectionView.selectItem(
-                at: IndexPath(row: selectedColorIndex,
-                section: 0),
+                at: IndexPath(row: selectedColorIndex, section: 0),
                 animated: false,
                 scrollPosition: []
             )
@@ -65,8 +64,7 @@ final class SketchColorPickerController: UIViewController {
     var selectedColorIndex: Int = 0 {
         didSet {
             colorsCollectionView.selectItem(
-                at: IndexPath(row: selectedColorIndex,
-                section: 0),
+                at: IndexPath(row: selectedColorIndex, section: 0),
                 animated: false,
                 scrollPosition: []
             )
