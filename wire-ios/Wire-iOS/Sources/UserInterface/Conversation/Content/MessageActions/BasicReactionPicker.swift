@@ -25,7 +25,8 @@ protocol ReactionPickerDelegate: AnyObject {
 }
 
 class BasicReactionPicker: UIView {
-    private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textUserPropertyCellName)
+    private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
+                                              color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
     private var buttons: [UIButton] = []
     weak var delegate: ReactionPickerDelegate?

@@ -31,7 +31,7 @@ class MessageActionsViewController: UIAlertController {
         return controller
     }
 
-    var actionController: ConversationMessageActionController?
+    private var actionController: ConversationMessageActionController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,11 +57,12 @@ class MessageActionsViewController: UIAlertController {
         reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
 
-
         guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
               let customContainer =  customContentPlaceholder.superview else { return }
 
         view.addSubview(reactionPicker)
+        customContentPlaceholder.text = ""
+
         NSLayoutConstraint.activate([
             reactionPicker.heightAnchor.constraint(equalToConstant: 72),
             reactionPicker.widthAnchor.constraint(equalTo: customContainer.widthAnchor),
@@ -69,20 +70,18 @@ class MessageActionsViewController: UIAlertController {
             reactionPicker.topAnchor.constraint(equalTo: customContainer.topAnchor),
             customContainer.heightAnchor.constraint(equalTo: reactionPicker.heightAnchor)
         ])
-            customContentPlaceholder.text = ""
-
     }
 
     private func addAction(_ action: MessageAction) {
         guard let title = action.title,
               let actionController = actionController,
               let selector = action.selector,
-            actionController.canPerformAction(selector)
+              actionController.canPerformAction(selector)
         else { return }
         let style: UIAlertAction.Style = (action == .delete) ? .destructive : .default
         let newAction = UIAlertAction(title: title, style: style) { [action, weak actionController] _ in
             actionController?.perform(action: action)
-         }
+        }
         if let image = action.icon?.makeImage(size: .small, color: SemanticColors.Icon.foregroundDefaultBlack) {
             newAction.setValue(image, forKey: "image")
         }
@@ -99,7 +98,6 @@ extension MessageActionsViewController: ReactionPickerDelegate {
 
 
 private extension UIView {
-
     func findLabel(withText text: String) -> UILabel? {
         if let label = self as? UILabel, label.text == text {
             return label

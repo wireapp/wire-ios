@@ -179,7 +179,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-//            showMenu()
             guard let controller = messageActionsMenuController() else { return }
             cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: controller)
         }
