@@ -21,12 +21,14 @@ import XCTest
 
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
-    var flag = DeveloperFlag.proteusViaCoreCrypto
     var mockProteusService: MockProteusServiceInterface!
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = true
+
         mockProteusService = MockProteusServiceInterface()
 
         syncMOC.performGroupedBlockAndWait {
@@ -35,8 +37,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     }
 
     override func tearDown() {
-        flag.isOn = false
         mockProteusService = nil
+
+        DeveloperFlag.storage = UserDefaults.standard
         super.tearDown()
     }
 

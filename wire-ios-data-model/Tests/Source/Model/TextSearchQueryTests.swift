@@ -32,10 +32,16 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
     override class func setUp() {
         super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+    
     func testThatItOnlyReturnsResultFromTheCorrectConversationNotYetIndexed() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
