@@ -40,7 +40,10 @@ class PushNotificationStatusTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        sut = PushNotificationStatus(managedObjectContext: syncMOC)
+        sut = PushNotificationStatus(
+            managedObjectContext: syncMOC,
+            lastEventIDRepository: LastEventIDRepository(userID: accountIdentifier)
+        )
     }
 
     override func tearDown() {

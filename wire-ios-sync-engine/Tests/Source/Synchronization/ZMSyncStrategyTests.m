@@ -110,7 +110,16 @@
     self.fetchRequestForTrackedObjects2 = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     self.fetchRequestForTrackedObjects2.predicate = [NSPredicate predicateWithFormat:@"userDefinedName != nil"];
 
-    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC cookieStorage:[[FakeCookieStorage alloc] init] requestCancellation:self application:self.application syncStateDelegate:self analytics:nil];
+    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
+
+    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
+                                                                                         cookieStorage:[[FakeCookieStorage alloc] init]
+                                                                                   requestCancellation:self
+                                                                                           application:self.application
+                                                                                     syncStateDelegate:self
+                                                                                 lastEventIDRepository:lastEventIDRepository
+                                                                                             analytics:nil];
     
     NotificationDispatcher *notificationDispatcher =
     [[NotificationDispatcher alloc] initWithManagedObjectContext:self.coreDataStack.viewContext];

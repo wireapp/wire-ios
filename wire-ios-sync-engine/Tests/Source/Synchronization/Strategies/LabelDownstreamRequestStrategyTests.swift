@@ -32,7 +32,11 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
         mockSyncStateDelegate = MockSyncStateDelegate()
-        mockSyncStatus = MockSyncStatus(managedObjectContext: syncMOC, syncStateDelegate: mockSyncStateDelegate)
+        mockSyncStatus = MockSyncStatus(
+            managedObjectContext: syncMOC,
+            syncStateDelegate: mockSyncStateDelegate,
+            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+        )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
         sut = LabelDownstreamRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)

@@ -39,6 +39,7 @@ extension Notification.Name {
         }
     }
 
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     fileprivate unowned var syncStateDelegate: ZMSyncStateDelegate
@@ -69,9 +70,14 @@ extension Notification.Name {
         return pushChannelEstablishedDate != nil
     }
 
-    public init(managedObjectContext: NSManagedObjectContext, syncStateDelegate: ZMSyncStateDelegate) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        syncStateDelegate: ZMSyncStateDelegate,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
         self.managedObjectContext = managedObjectContext
         self.syncStateDelegate = syncStateDelegate
+        self.lastEventIDRepository = lastEventIDRepository
         super.init()
 
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
@@ -179,14 +185,14 @@ extension SyncStatus {
         zmLog.debug("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
-            managedObjectContext.zm_lastNotificationID = nil
+            lastEventIDRepository.storeLastEventID(nil)
             currentSyncPhase = .fetchingLastUpdateEventID
             needsToRestartQuickSync = false
         }
     }
 
     var hasPersistedLastEventID: Bool {
-        return managedObjectContext.zm_lastNotificationID != nil
+        return lastEventIDRepository.fetchLastEventID() != nil
     }
 
     public func updateLastUpdateEventID(eventID: UUID) {
@@ -197,14 +203,13 @@ extension SyncStatus {
     public func persistLastUpdateEventID() {
         guard let lastUpdateEventID = lastUpdateEventID else { return }
         zmLog.debug("persist last eventID: \(lastUpdateEventID)")
-        managedObjectContext.zm_lastNotificationID = lastUpdateEventID
+        lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }
 
     public func removeLastUpdateEventID() {
         lastUpdateEventID = nil
         zmLog.debug("remove last eventID")
-        managedObjectContext.zm_lastNotificationID = nil
-        managedObjectContext.enqueueDelayedSave()
+        lastEventIDRepository.storeLastEventID(nil)
     }
 }
 

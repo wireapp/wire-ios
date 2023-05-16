@@ -52,7 +52,11 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     
     self.requestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
-    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC syncStateDelegate:self.syncStateDelegate];
+    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
+    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
+                                                             syncStateDelegate:self.syncStateDelegate
+                                                         lastEventIDRepository:lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockOperationStatus = [[OperationStatus alloc] init];
     self.mockOperationStatus.isInBackground = NO;
@@ -81,7 +85,8 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                       syncStatus:self.mockSyncStatus
                                                                  operationStatus:self.mockOperationStatus
-                                                      useLegacyPushNotifications:NO];
+                                                      useLegacyPushNotifications:NO
+                                                           lastEventIDRepository:lastEventIDRepository];
 }
 
 - (void)tearDown {
@@ -401,6 +406,8 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
+    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
     ZMMissingUpdateEventsTranscoder *sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.syncMOC
                                                                                             notificationsTracker:nil
                                                                                                   eventProcessor:self.mockUpdateEventProcessor
@@ -409,7 +416,8 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                                                       syncStatus:self.mockSyncStatus
                                                                                                  operationStatus:self.mockOperationStatus
-                                                                                      useLegacyPushNotifications:NO];
+                                                                                      useLegacyPushNotifications:NO
+                                                                                           lastEventIDRepository:lastEventIDRepository];
     
     WaitForAllGroupsToBeEmpty(0.5);
     [sut.listPaginator resetFetching];

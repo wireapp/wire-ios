@@ -158,6 +158,7 @@
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
 		EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */; };
 		EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */; };
+		EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */; };
 		EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		EE98A0AE296EFBE60055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		EE98A0AF296EFBE60055E981 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -395,6 +396,7 @@
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
+		EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaults.swift; sourceTree = "<group>"; };
 		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthInteger_RandomTests.swift; sourceTree = "<group>"; };
@@ -519,7 +521,9 @@
 				3E88BE5E1B1F496600232589 /* Frameworks */,
 				3E88BD391B1F3EA300232589 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		3E88BD391B1F3EA300232589 /* Products */ = {
 			isa = PBXGroup;
@@ -694,6 +698,7 @@
 				5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */,
 				EF2AFC9C228176C3008C921A /* UUID+Data.swift */,
 				067BB07025068D6500946EC8 /* String+HexDecodedData.swift */,
+				EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1045,6 +1050,7 @@
 				BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */,
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
+				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,

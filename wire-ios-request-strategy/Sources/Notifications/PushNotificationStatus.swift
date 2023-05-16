@@ -37,13 +37,18 @@ open class PushNotificationStatus: NSObject {
     private var eventIdRanking = NSMutableOrderedSet()
     private var completionHandlers: [UUID: FetchCompletion] = [:]
     private let managedObjectContext: NSManagedObjectContext
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
 
     public var hasEventsToFetch: Bool {
         return eventIdRanking.count > 0
     }
 
-    public init(managedObjectContext: NSManagedObjectContext) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
         self.managedObjectContext = managedObjectContext
+        self.lastEventIDRepository = lastEventIDRepository
     }
 
     /// Schedule to fetch an event with a given UUID
@@ -70,7 +75,7 @@ open class PushNotificationStatus: NSObject {
         }
 
         if lastEventIdIsNewerThan(
-            lastEventId: managedObjectContext.zm_lastNotificationID,
+            lastEventId: lastEventIDRepository.fetchLastEventID(),
             eventId: eventId
         ) {
             Logging.eventProcessing.info("Already fetched event with [\(eventId)]")
@@ -99,11 +104,10 @@ open class PushNotificationStatus: NSObject {
 
         guard finished else { return }
 
-        Logging.eventProcessing.info("Finished to fetching all available events")
+        WireLogger.updateEvent.info("finished to fetching all available events, last event id: \(lastEventId)")
 
         if let lastEventId = lastEventId {
-            managedObjectContext.zm_lastNotificationID = lastEventId
-            managedObjectContext.saveOrRollback()
+            lastEventIDRepository.storeLastEventID(lastEventId)
         }
 
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID

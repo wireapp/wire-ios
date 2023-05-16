@@ -44,12 +44,21 @@
     [self verifyMockLater:self.downstreamSync];
     
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
-    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC syncStateDelegate:self.syncStateDelegate];
+
+    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
+
+    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
+                                                             syncStateDelegate:self.syncStateDelegate
+                                                         lastEventIDRepository:lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockApplicationStatus = [[MockApplicationStatus alloc] init];
     self.mockApplicationStatus.mockSynchronizationState = ZMSynchronizationStateSlowSyncing;
 
-    self.sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatus:self.mockApplicationStatus syncStatus:self.mockSyncStatus];
+    self.sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC
+                                                                 applicationStatus:self.mockApplicationStatus
+                                                                        syncStatus:self.mockSyncStatus
+                                                             lastEventIDRepository:lastEventIDRepository];
     self.sut.lastUpdateEventIDSync = self.downstreamSync;
 }
 
@@ -97,7 +106,12 @@
 - (void)testThatItCreatesTheRightDownstreamSync
 {
     // when
-    ZMLastUpdateEventIDTranscoder *sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatus:self.mockApplicationStatus syncStatus:self.mockSyncStatus];
+    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
+    ZMLastUpdateEventIDTranscoder *sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC
+                                                                                           applicationStatus:self.mockApplicationStatus
+                                                                                                  syncStatus:self.mockSyncStatus
+                                                                                       lastEventIDRepository:lastEventIDRepository];
     id transcoder = sut.lastUpdateEventIDSync.transcoder;
     
     // then

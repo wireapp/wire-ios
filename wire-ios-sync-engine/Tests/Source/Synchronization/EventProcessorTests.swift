@@ -41,8 +41,11 @@ class EventProcessorTests: MessagingTest {
 
         syncStateDelegate = MockSyncStateDelegate()
 
-        syncStatus = SyncStatus(managedObjectContext: coreDataStack.syncContext,
-                                syncStateDelegate: syncStateDelegate)
+        syncStatus = SyncStatus(
+            managedObjectContext: coreDataStack.syncContext,
+            syncStateDelegate: syncStateDelegate,
+            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+        )
 
         earService = MockEARServiceInterface()
         earService.fetchPublicKeys_MockError = MockError()

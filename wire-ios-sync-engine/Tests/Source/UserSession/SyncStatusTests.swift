@@ -26,7 +26,7 @@ final class SyncStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
         mockSyncDelegate = MockSyncStateDelegate()
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
     }
 
     override func tearDown() {
@@ -36,12 +36,20 @@ final class SyncStatusTests: MessagingTest {
         super.tearDown()
     }
 
+    private func createSut() -> SyncStatus {
+        return SyncStatus(
+            managedObjectContext: uiMOC,
+            syncStateDelegate: mockSyncDelegate,
+            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+        )
+    }
+
     func testThatWhenIntializingWithoutLastEventIDItStartsInStateFetchingLastUpdateEventID() {
         // given
         uiMOC.zm_lastNotificationID = nil
 
         // when
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
@@ -52,7 +60,7 @@ final class SyncStatusTests: MessagingTest {
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
 
         // when
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
@@ -226,7 +234,7 @@ final class SyncStatusTests: MessagingTest {
 
     func testThatItNotifiesTheStateDelegateWhenStartingSlowSync() {
         // given
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
 
         // then
@@ -236,7 +244,7 @@ final class SyncStatusTests: MessagingTest {
     func testThatItNotifiesTheStateDelegateWhenStartingQuickSync() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // then
@@ -261,7 +269,7 @@ final class SyncStatusTests: MessagingTest {
     func testThatItNotifiesTheStateDelegateWhenPushChannelClosedThatSyncStarted() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
         mockSyncDelegate.didCallStartQuickSync = false
@@ -282,7 +290,7 @@ extension SyncStatusTests {
     func testThatItStartsQuickSyncWhenPushChannelOpens_PreviousPhaseDone() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
 
@@ -307,7 +315,7 @@ extension SyncStatusTests {
     func testThatItRestartsQuickSyncWhenPushChannelOpens_PreviousInQuickSync() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
@@ -328,7 +336,7 @@ extension SyncStatusTests {
     func testThatItRestartsQuickSyncWhenPushChannelClosedDuringQuickSync() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
@@ -351,7 +359,7 @@ extension SyncStatusTests {
     func testThatItRestartsSlowSyncWhenRestartSlowSyncIsCalled() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
 
@@ -366,7 +374,7 @@ extension SyncStatusTests {
     func testThatItRestartsSlowSyncWhenRestartSlowSyncNotificationIsFired() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -382,7 +390,7 @@ extension SyncStatusTests {
     func testThatItDoesNotRestartsQuickSyncWhenPushChannelIsClosed() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
@@ -404,7 +412,7 @@ extension SyncStatusTests {
     func testThatItEntersSlowSyncIfQuickSyncFailed() {
         // given
         uiMOC.zm_lastNotificationID = UUID.timeBasedUUID() as UUID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // when
@@ -419,7 +427,7 @@ extension SyncStatusTests {
         let oldID = UUID.timeBasedUUID() as UUID
         let newID = UUID.timeBasedUUID() as UUID
         uiMOC.zm_lastNotificationID = oldID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // when
@@ -435,7 +443,7 @@ extension SyncStatusTests {
         let oldID = UUID.timeBasedUUID() as UUID
         let newID = UUID.timeBasedUUID() as UUID
         uiMOC.zm_lastNotificationID = oldID
-        sut = SyncStatus(managedObjectContext: uiMOC, syncStateDelegate: mockSyncDelegate)
+        sut = createSut()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // when

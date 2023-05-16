@@ -484,12 +484,12 @@
 		EE128A66286DE31200558550 /* UserClient+MLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */; };
 		EE128A68286DE35F00558550 /* CodableHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A67286DE35F00558550 /* CodableHelpers.swift */; };
 		EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */; };
+		EE22185E2892C22C008EF6ED /* MockConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */; };
 		EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */; };
 		EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */; };
 		EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */; };
 		EE22F80F29DD82110053E1C6 /* DatabaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */; };
 		EE22F81229DD84ED0053E1C6 /* EARKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */; };
-		EE22185E2892C22C008EF6ED /* MockConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */; };
 		EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */; };
 		EE2BA00625CB3AA8001EB606 /* InvalidFeatureRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */; };
 		EE2BA00925CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */; };
@@ -498,10 +498,10 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
+		EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */; };
 		EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */; };
 		EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */; };
 		EE428C5229F1533000ECB715 /* EARKeyEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */; };
-		EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */; };
 		EE42938A252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */; };
 		EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */; };
 		EE42938E252C460000E70670 /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938D252C460000E70670 /* Changes.swift */; };
@@ -509,6 +509,7 @@
 		EE46B92828A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE46B92728A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift */; };
 		EE47346729A3784F00E6C04E /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE47346629A3784F00E6C04E /* AutoMockable.generated.swift */; };
 		EE4CCA95256C558400848212 /* Feature.AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4CCA94256C558400848212 /* Feature.AppLock.swift */; };
+		EE5316422A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */; };
 		EE5E2C1526DFC31900C3928A /* MessageDestructionTimeoutType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5E2C1426DFC31900C3928A /* MessageDestructionTimeoutType.swift */; };
 		EE5E2C1926DFC67900C3928A /* MessageDestructionTimeoutValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5E2C1826DFC67900C3928A /* MessageDestructionTimeoutValue.swift */; };
 		EE5F54CC259B22C400F11F3C /* Account+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */; };
@@ -1357,13 +1358,13 @@
 		EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+MLSPublicKeys.swift"; sourceTree = "<group>"; };
 		EE128A67286DE35F00558550 /* CodableHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableHelpers.swift; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
+		EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel4.0.xcdatamodel; sourceTree = "<group>"; };
 		EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEARKeyDescription.swift; sourceTree = "<group>"; };
 		EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyRepository.swift; sourceTree = "<group>"; };
-		EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE28991D26B4422800E7BAF0 /* Feature.ConferenceCalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConferenceCalling.swift; sourceTree = "<group>"; };
 		EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemoval.swift; sourceTree = "<group>"; };
 		EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemovalTests.swift; sourceTree = "<group>"; };
@@ -1373,10 +1374,10 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
+		EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMBaseTest+Async.swift"; sourceTree = "<group>"; };
 		EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EARServiceTests.swift; path = Tests/Source/EAR/EARServiceTests.swift; sourceTree = SOURCE_ROOT; };
 		EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyGenerator.swift; sourceTree = "<group>"; };
 		EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyEncryptor.swift; sourceTree = "<group>"; };
-		EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMBaseTest+Async.swift"; sourceTree = "<group>"; };
 		EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+ManagedObjectObservation.swift"; sourceTree = "<group>"; };
 		EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectObserverToken.swift; sourceTree = "<group>"; };
 		EE42938D252C460000E70670 /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
@@ -1384,6 +1385,7 @@
 		EE46B92728A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift"; sourceTree = "<group>"; };
 		EE47346629A3784F00E6C04E /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AutoMockable.generated.swift; path = sourcery/generated/AutoMockable.generated.swift; sourceTree = SOURCE_ROOT; };
 		EE4CCA94256C558400848212 /* Feature.AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.AppLock.swift; sourceTree = "<group>"; };
+		EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastUpdateEventIDRepository.swift; sourceTree = "<group>"; };
 		EE5E2C1426DFC31900C3928A /* MessageDestructionTimeoutType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutType.swift; sourceTree = "<group>"; };
 		EE5E2C1826DFC67900C3928A /* MessageDestructionTimeoutValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutValue.swift; sourceTree = "<group>"; };
 		EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Keychain.swift"; sourceTree = "<group>"; };
@@ -2152,6 +2154,15 @@
 			name = Reaction;
 			sourceTree = "<group>";
 		};
+		EE032B3429A62CD600E1DDF3 /* Proteus */ = {
+			isa = PBXGroup;
+			children = (
+				EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */,
+				EE79699729D469A700075E38 /* CryptoboxMigrationManagerTests.swift */,
+			);
+			path = Proteus;
+			sourceTree = "<group>";
+		};
 		EE22F81029DD82290053E1C6 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
@@ -2165,15 +2176,6 @@
 				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
 			);
 			path = EAR;
-			sourceTree = "<group>";
-		};
-		EE032B3429A62CD600E1DDF3 /* Proteus */ = {
-			isa = PBXGroup;
-			children = (
-				EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */,
-				EE79699729D469A700075E38 /* CryptoboxMigrationManagerTests.swift */,
-			);
-			path = Proteus;
 			sourceTree = "<group>";
 		};
 		EE28991C26B4420A00E7BAF0 /* ConferenceCalling */ = {
@@ -2668,6 +2670,7 @@
 		F9A706421CAEE01D00C2F5FE /* Utilis */ = {
 			isa = PBXGroup;
 			children = (
+				EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */,
 				F963E9671D9ADD5A00098AD3 /* Protos */,
 				EE22F81029DD82290053E1C6 /* EAR */,
 				F9331C851CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.h */,
@@ -3731,6 +3734,7 @@
 				EEA985982555668A002BEF02 /* ZMUser+AnalyticsIdentifier.swift in Sources */,
 				F125BAD71EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift in Sources */,
 				54F84CFD1F9950B300ABD7D5 /* DuplicatedEntityRemoval.swift in Sources */,
+				EE5316422A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift in Sources */,
 				A90B3E2D23A255D5003EFED4 /* ZMConversation+Creation.swift in Sources */,
 				06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */,
 				87C1C25F207F7DA80083BF6B /* InvalidGenericMessageDataRemoval.swift in Sources */,
