@@ -32,6 +32,10 @@ class ReactionCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public func configureData(type: String, count: Int) {
+        reactionToggleButton.configureData(type: type, count: count)
+    }
+
     func addViews() {
         backgroundColor = .clear
         addSubview(reactionToggleButton)

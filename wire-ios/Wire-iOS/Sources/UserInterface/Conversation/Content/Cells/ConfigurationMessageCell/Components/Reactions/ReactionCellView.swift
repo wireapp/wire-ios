@@ -20,19 +20,21 @@ import Foundation
 import UIKit
 import WireDataModel
 
+public struct Reaction: Equatable {
+    let reaction: String
+    let count: Int
+}
+
 final class ReactionsCellView: UIView, ConversationMessageCell {
-    let reactionView = ReactionView()
+    let reactionView = ReactionCollectionView()
 
     struct Configuration: Equatable {
         let color: UIColor
-        // let reactions: [Reaction]
+        //let reactions: [Reaction]
 
     }
 
-    struct Reaction: Equatable {
-        let reaction: UnicodeScalar
-        let count: UInt
-    }
+    let arrayReactions: [Reaction] = []
 
     var isSelected: Bool  = false
 
@@ -41,6 +43,11 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
 
     func configure(with object: Configuration, animated: Bool) {
+        guard let test = message?.usersReaction  else { return }
+        let count = test.count
+
+        reactionView.configureData(reactionArray: arrayReactions)
+
         backgroundColor = object.color
     }
 

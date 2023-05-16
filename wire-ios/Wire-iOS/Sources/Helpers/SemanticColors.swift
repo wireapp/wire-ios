@@ -66,6 +66,8 @@ public enum SemanticColors {
         static let textTabBar = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let textFieldFloatingLabel = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
         static let textSecurityEnabled = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
     }
 
     public enum SearchBar {

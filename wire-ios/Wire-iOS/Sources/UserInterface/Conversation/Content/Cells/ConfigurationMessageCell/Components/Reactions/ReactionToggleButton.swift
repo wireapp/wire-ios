@@ -25,6 +25,11 @@ class ReactionToggleButton: UIControl {
 
     typealias ButtonColors = SemanticColors.Button
 
+    private let emojiLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+                                      color: SemanticColors.Label.textDefault)
+    private let counterLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
+                                        color: SemanticColors.Label.textDefault)
+
     var isToggled: Bool {
         didSet {
             guard oldValue != isToggled else { return }
@@ -40,18 +45,14 @@ class ReactionToggleButton: UIControl {
         layer.cornerRadius = 12
         layer.masksToBounds = true
 
-        let emojiLabel = UILabel()
-        let counterLabel = UILabel()
-        emojiLabel.text = "❤️"
-        counterLabel.text = "1"
-
         let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .center
+        stackView.spacing = 4
 
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 5, left: 8, bottom: 5, right: 8)
+        stackView.layoutMargins = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 0)
 
         stackView.isUserInteractionEnabled = false
 
@@ -74,6 +75,11 @@ class ReactionToggleButton: UIControl {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public func configureData(type: String, count: Int) {
+        emojiLabel.text  = type
+        counterLabel.text = String(count)
+    }
+
     private func updateAppearance() {
         backgroundColor = isToggled
         ? ButtonColors.backgroundReactionSelected :
@@ -82,6 +88,10 @@ class ReactionToggleButton: UIControl {
         layer.borderColor = isToggled
         ? ButtonColors.borderReactionSelected.cgColor :
         ButtonColors.borderReactionNormal.cgColor
+
+        counterLabel.textColor = isToggled
+        ? SemanticColors.Label.textReactionCounterSelected :
+        SemanticColors.Label.textDefault
     }
 
     @objc
