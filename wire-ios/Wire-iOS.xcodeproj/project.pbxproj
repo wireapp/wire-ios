@@ -1087,6 +1087,7 @@
 		D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D311F87E29EEA1BE00D9CF7E /* MessageActionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */; };
 		D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */; };
+		D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */; };
 		D337012828996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */; };
 		D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */; };
 		D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
@@ -3097,6 +3098,7 @@
 		D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFileRestrictionsProtocol.swift; sourceTree = "<group>"; };
 		D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewController.swift; sourceTree = "<group>"; };
 		D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPicker.swift; sourceTree = "<group>"; };
+		D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewControllerTests.swift; sourceTree = "<group>"; };
 		D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DropInteractionTests.swift"; sourceTree = "<group>"; };
 		D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelViewTests.swift; sourceTree = "<group>"; };
 		D35EEDC428C2374300949F02 /* NetworkSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSessionTests.swift; sourceTree = "<group>"; };
@@ -4397,6 +4399,7 @@
 				1661C71A21A7113A003DCE1C /* ConversationFileMessageCellTests.swift */,
 				1661C74221A83B25003DCE1C /* ConversationAudioMessageCellTests.swift */,
 				16030DAC21A846A200F8032E /* ConversationVideoMessageCellTests.swift */,
+				D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */,
 				5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */,
 				06A5CFB52632A4D4006D2891 /* ConversationMessageSenderSnapshotTests.swift */,
 			);
@@ -8118,8 +8121,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				168A16AF1D9597C2005CFA6C /* MainInterface.storyboard in Resources */,
-				017ABBBB299542BA0004C243 /* Images.xcassets in Resources */,
-				017ABBBA299541F50004C243 /* Colors.xcassets in Resources */,
 				EFFE707222F2DB38007CEA38 /* session_manager.json in Resources */,
 				BF2ADF461E27C3DB00E81B1E /* Localizable.strings in Resources */,
 			);
@@ -9861,6 +9862,7 @@
 				6370DA212577934C00B5C8F1 /* PulsingIconImageViewTests.swift in Sources */,
 				BF78687F1D86B3710063762F /* LocationDataTests.swift in Sources */,
 				EF2A8DEF214AAB13002C9058 /* ContactsCellSnapshotTests.swift in Sources */,
+				D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */,
 				EF25F8871FC57F320040C3CC /* ValidatedTextFieldTests.swift in Sources */,
 				EE09DE6025B24B2000B515F0 /* AppLockModuleRouterTests.swift in Sources */,
 				5E2B13E820E67EA7002F27E2 /* VerticalColumnCollectionViewLayoutTests.swift in Sources */,
