@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		015C22DB2A1564B1009119CA /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C22DA2A1564B1009119CA /* MockCoreCrypto.swift */; };
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
@@ -80,7 +79,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		015C22DA2A1564B1009119CA /* MockCoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCrypto.swift; sourceTree = "<group>"; };
 		165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -191,7 +189,6 @@
 				637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */,
 				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
 				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
-				015C22DA2A1564B1009119CA /* MockCoreCrypto.swift */,
 				EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
 			);
 			path = WireShareEngineTests;
@@ -471,7 +468,6 @@
 				CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */,
 				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
 				EE0BA28E29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
-				015C22DB2A1564B1009119CA /* MockCoreCrypto.swift in Sources */,
 				CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */,
 				166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */,
 				637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */,
