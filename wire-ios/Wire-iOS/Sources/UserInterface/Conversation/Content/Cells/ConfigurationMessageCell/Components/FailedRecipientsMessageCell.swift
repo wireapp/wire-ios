@@ -48,7 +48,6 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
     private var config: Configuration? {
         didSet {
-            buttonAction = config?.buttonAction
             updateUI()
         }
     }
