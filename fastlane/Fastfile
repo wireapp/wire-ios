@@ -63,7 +63,7 @@ platform :ios do
 
     end
 
-    def download_distribution_certificate_and_profiles
+    def download_distribution_certificate_and_profiles(build)
         if is_running_on_ci 
             match(
                 git_url: "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-certificates.git",
@@ -86,17 +86,21 @@ platform :ios do
             name: 'WIRE_BUNDLE_ID'
         )
         puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
+        should_sigh_adhoc = !build.appstore_build
         sigh(
+            adhoc: should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: app_bundle_id
         )
         sigh(
+            adhoc: should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-share"
         )
         sigh(
+            adhoc: should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-notification"
@@ -157,7 +161,7 @@ platform :ios do
                 sh "cd .. && cp -R ./Carthage ~/tmp/cache/Carthage"
             end
 
-            download_distribution_certificate_and_profiles
+            download_distribution_certificate_and_profiles(build)
         end
     end
 
