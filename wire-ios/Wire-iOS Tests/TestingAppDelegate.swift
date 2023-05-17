@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 @testable import Wire
 
 /// The App Delegate to use for the test target.
 
-final class TestingAppDelegate: AppDelegate {
+final class TestingAppDelegate: UIResponder, UIApplicationDelegate {
 
-    // We don't want the self user to be automatically configured as it is in production code.
-    // Explicit configuration (via `SelfUser.provider = someSelfUserProvider` ) helps clarify
-    // mocking scenarios by asserting that the test writer provides the self user themselves.
+    var window: UIWindow?
 
-    override var shouldConfigureSelfUserProvider: Bool {
-        return false
-    }
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+          window = UIWindow()
+          window?.rootViewController = UIViewController()
+          window?.makeKeyAndVisible()
 
+          return true
+      }
 }
