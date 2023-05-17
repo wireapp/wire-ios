@@ -85,6 +85,7 @@ platform :ios do
             path: './wire-ios/Configuration/Release.xcconfig',
             name: 'WIRE_BUNDLE_ID'
         )
+        puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
         sigh(
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
