@@ -32,6 +32,7 @@
 @property (nonatomic) ZMSingleRequestSync *downstreamSync;
 @property (nonatomic) MockSyncStatus *mockSyncStatus;
 @property (nonatomic) id syncStateDelegate;
+@property (nonatomic) LastEventIDRepository *lastEventIDRepository;
 
 @end
 
@@ -45,12 +46,12 @@
     
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
 
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+    self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
                                                                                     userDefaults:NSUserDefaults.standardUserDefaults];
 
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
                                                              syncStateDelegate:self.syncStateDelegate
-                                                         lastEventIDRepository:lastEventIDRepository];
+                                                         lastEventIDRepository:self.lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockApplicationStatus = [[MockApplicationStatus alloc] init];
     self.mockApplicationStatus.mockSynchronizationState = ZMSynchronizationStateSlowSyncing;
@@ -58,7 +59,7 @@
     self.sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC
                                                                  applicationStatus:self.mockApplicationStatus
                                                                         syncStatus:self.mockSyncStatus
-                                                             lastEventIDRepository:lastEventIDRepository];
+                                                             lastEventIDRepository:self.lastEventIDRepository];
     self.sut.lastUpdateEventIDSync = self.downstreamSync;
 }
 
@@ -192,7 +193,7 @@
     [self.sut persistLastUpdateEventID];
     
     // then
-    XCTAssertEqualObjects(uuid, self.uiMOC.zm_lastNotificationID);
+    XCTAssertEqualObjects(uuid, [self.lastEventIDRepository fetchLastEventID]);
     
 }
 
@@ -207,7 +208,7 @@
     [self.sut persistLastUpdateEventID];
     
     // then
-    XCTAssertNil(self.uiMOC.zm_lastNotificationID);
+    XCTAssertNil([self.lastEventIDRepository fetchLastEventID]);
 }
 
 - (void)testThatTheLastUpdateEventIDIsNotPersistedIfTheResponseIsAPermanentError
@@ -220,7 +221,7 @@
     [self.sut persistLastUpdateEventID];
     
     // then
-    XCTAssertNil(self.uiMOC.zm_lastNotificationID);
+    XCTAssertNil([self.lastEventIDRepository fetchLastEventID]);
 }
 
 - (void)testThatItEncodesTheRightRequestWithoutClient

@@ -91,8 +91,10 @@
     ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
     selfConversation.remoteIdentifier = self.userIdentifier;
     selfConversation.conversationType = ZMConversationTypeSelf;
-    
-    self.syncMOC.zm_lastNotificationID = [NSUUID UUID];
+
+    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
+    [lastEventIDRepository storeLastEventID:[NSUUID UUID]];
     
     [self.syncMOC saveOrRollback];
         
@@ -109,9 +111,6 @@
     self.fetchRequestForTrackedObjects1.predicate = [NSPredicate predicateWithFormat:@"name != nil"];
     self.fetchRequestForTrackedObjects2 = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     self.fetchRequestForTrackedObjects2.predicate = [NSPredicate predicateWithFormat:@"userDefinedName != nil"];
-
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
 
     self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
                                                                                          cookieStorage:[[FakeCookieStorage alloc] init]

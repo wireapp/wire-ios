@@ -34,7 +34,9 @@ class EventProcessorTests: MessagingTest {
         super.setUp()
 
         createSelfClient()
-        syncMOC.zm_lastNotificationID = UUID() // simulate a completed slow sync
+
+        // simulate a completed slow sync
+        LastEventIDRepository(userID: userIdentifier).storeLastEventID(UUID())
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         eventProcessingTracker = EventProcessingTracker()
