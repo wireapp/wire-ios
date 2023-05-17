@@ -88,7 +88,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
     }
 
     // MARK: - Helper
-    
+
     private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure?) {
         guard let message = message else {
             XCTFail("Failed to add message")
