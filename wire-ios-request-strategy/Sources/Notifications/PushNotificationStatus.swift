@@ -104,7 +104,7 @@ open class PushNotificationStatus: NSObject {
 
         guard finished else { return }
 
-        WireLogger.updateEvent.info("finished to fetching all available events, last event id: \(lastEventId)")
+        WireLogger.updateEvent.info("finished fetching all available events, last event id: \(lastEventId)")
 
         if let lastEventId = lastEventId {
             lastEventIDRepository.storeLastEventID(lastEventId)
