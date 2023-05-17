@@ -416,7 +416,7 @@ fileprivate struct FfiConverterDuration: FfiConverterRustBuffer {
     }
 }
 
-// sourcery: AutoMockable
+
 public protocol CoreCryptoProtocol {
     func `mlsInit`(`clientId`: ClientId, `ciphersuites`: [CiphersuiteName]) throws
     func `mlsGenerateKeypairs`(`ciphersuites`: [CiphersuiteName]) throws -> [[UInt8]]

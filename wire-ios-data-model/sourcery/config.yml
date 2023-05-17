@@ -1,6 +1,5 @@
 sources:
   - ../Source
-  - ../CoreCrypto
 templates:
   - ./AutoMockable.stencil
 output:
