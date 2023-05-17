@@ -123,6 +123,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+        // load programmatically storyboard to avoid code to be executed during tests
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateInitialViewController()
+        window?.rootViewController = vc
+        window?.makeKeyAndVisible()
+        
         voIPPushManager.registerForVoIPPushes()
         ZMSLog.switchCurrentLogToPrevious()
 
