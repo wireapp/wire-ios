@@ -19,6 +19,7 @@
 import XCTest
 import AVFoundation
 import Photos
+import WireCommonComponents
 @testable import Wire
 
 final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControllerDelegate {
@@ -98,6 +99,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         mockImageManager = MockImageManager()
         splitView = SplitLayoutObservableMock()
         delegateMock = CameraKeyboardViewControllerDelegateMock()
+        FontScheme.configure(with: .large)
     }
 
     override func tearDown() {
