@@ -40,10 +40,8 @@ class MessageActionsViewController: UIAlertController {
     private func addMessageActions(_ actions: [MessageAction],
                            withActionController actionController: ConversationMessageActionController) {
         self.actionController = actionController
-        addReactionsView(withDelegate: self)
-        actions.forEach { action in
-            addAction(action)
-        }
+//        addReactionsView(withDelegate: self)
+        actions.forEach { addAction($0) }
         addCancelAction()
     }
 

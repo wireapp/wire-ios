@@ -20,14 +20,12 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class MessageActionsViewControllerTests: ZMSnapshotTestCase {
+final class MessageActionsViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
-
-        recordMode = true
     }
 
     func testContextMenuForTextMessage() {
