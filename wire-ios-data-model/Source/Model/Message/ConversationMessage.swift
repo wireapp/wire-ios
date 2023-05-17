@@ -301,12 +301,6 @@ extension ZMMessage: ZMConversationMessage {
         return fileSharingFeature.status == .disabled
     }
 
-//    public var failedToSendUsers: [UserType]? {
-//        guard let recipients = failedToSendRecipients else {
-//            return nil
-//        }
-//        return Array(recipients)
-//    }
 }
 
 extension ZMMessage {
