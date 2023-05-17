@@ -133,6 +133,25 @@ private extension CiphersuiteName {
     }
 }
 
+/// Type of credential: either Basic or X509 certificate (probably more to come)
+public enum MlsCredentialType: ConvertToInner {
+    typealias Inner = CoreCryptoSwift.MlsCredentialType
+
+    case basic
+    case x509
+}
+
+private extension MlsCredentialType {
+    func convert() -> Inner {
+        switch self {
+        case .basic:
+            return CoreCryptoSwift.MlsCredentialType.basic
+        case .x509:
+            return CoreCryptoSwift.MlsCredentialType.x509
+        }
+    }
+}
+
 public struct ProteusAutoPrekeyBundle: ConvertToInner {
     typealias Inner = CoreCryptoSwift.ProteusAutoPrekeyBundle
     func convert() -> Inner {
@@ -458,30 +477,30 @@ public class CoreCryptoWrapper {
     /// 2. ``clientId`` should stay consistent as it will be verified against the stored signature & identity to validate the persisted credential
     /// 3. ``key`` should be appropriately stored in a secure location (i.e. WebCrypto private key storage)
     ///
-    public init(path: String, key: String, clientId: ClientId, entropySeed: [UInt8]?) throws {
-        self.coreCrypto = try CoreCrypto(path: path, key: key, clientId: clientId, entropySeed: entropySeed)
+    public init(path: String, key: String, clientId: ClientId, ciphersuites: [CoreCryptoSwift.CiphersuiteName], entropySeed: [UInt8]?) throws {
+        self.coreCrypto = try CoreCrypto(path: path, key: key, clientId: clientId, ciphersuites: ciphersuites, entropySeed: entropySeed)
     }
 
     /// Almost identical to ```CoreCrypto/init``` but allows a 2 phase initialization of MLS.First, calling this will
     /// set up the keystore and will allow generating proteus prekeys.Then, those keys can be traded for a clientId.
     /// Use this clientId to initialize MLS with ```CoreCrypto/mlsInit```.
-    public static func deferredInit(path: String, key: String, entropySeed: [UInt8]?) throws -> CoreCrypto {
-        try CoreCrypto.deferredInit(path: path, key: key, entropySeed: entropySeed)
+    public static func deferredInit(path: String, key: String, ciphersuites: [CoreCryptoSwift.CiphersuiteName], entropySeed: [UInt8]?) throws -> CoreCrypto {
+        try CoreCrypto.deferredInit(path: path, key: key, ciphersuites: ciphersuites, entropySeed: entropySeed)
     }
 
     /// Use this after ```CoreCrypto/deferredInit``` when you have a clientId. It initializes MLS.
     ///
     /// - parameter clientId: client identifier
-    public func mlsInit(clientId: ClientId) throws {
-        try self.coreCrypto.mlsInit(clientId: clientId)
+    public func mlsInit(clientId: ClientId, ciphersuites: [CoreCryptoSwift.CiphersuiteName]) throws {
+        try self.coreCrypto.mlsInit(clientId: clientId, ciphersuites: ciphersuites)
     }
 
     /// Generates a MLS KeyPair/CredentialBundle with a temporary, random client ID.
     /// This method is designed to be used in conjunction with ```CoreCrypto/mlsInitWithClientId``` and represents the first step in this process
     ///
     /// - returns: the TLS-serialized identity key (i.e. the signature keypair's public key)
-    public func mlsGenerateKeypair() throws -> [UInt8] {
-        try self.coreCrypto.mlsGenerateKeypair()
+    public func mlsGenerateKeypairs(ciphersuites: [CoreCryptoSwift.CiphersuiteName]) throws -> [[UInt8]] {
+        try self.coreCrypto.mlsGenerateKeypairs(ciphersuites: ciphersuites)
     }
 
     /// Updates the current temporary Client ID with the newly provided one. This is the second step in the externally-generated clients process
@@ -490,8 +509,8 @@ public class CoreCryptoWrapper {
     ///
     /// - parameter clientId: The newly allocated Client ID from the MLS Authentication Service
     /// - parameter signaturePublicKey: The public key you obtained at step 1, for authentication purposes
-    public func mlsInitWithClientId(clientId: ClientId, signaturePublicKey: [UInt8]) throws {
-        try self.coreCrypto.mlsInitWithClientId(clientId: clientId, signaturePublicKey: signaturePublicKey)
+    public func mlsInitWithClientId(clientId: ClientId, signaturePublicKeys: [[UInt8]], ciphersuites: [CoreCryptoSwift.CiphersuiteName]) throws {
+        try self.coreCrypto.mlsInitWithClientId(clientId: clientId, signaturePublicKeys: signaturePublicKeys, ciphersuites: ciphersuites)
     }
 
     /// `CoreCrypto` is supposed to be a singleton. Knowing that, it does some optimizations by
@@ -511,20 +530,20 @@ public class CoreCryptoWrapper {
     }
 
     /// - returns: The client's public key
-    public func clientPublicKey() throws -> [UInt8] {
-        return try self.coreCrypto.clientPublicKey()
+    public func clientPublicKey(ciphersuite: CoreCryptoSwift.CiphersuiteName) throws -> [UInt8] {
+        return try self.coreCrypto.clientPublicKey(ciphersuite: ciphersuite)
     }
 
     /// Fetches a requested amount of keypackages
     /// - parameter amountRequested: The amount of keypackages requested
     /// - returns: An array of length `amountRequested` containing TLS-serialized KeyPackages
-    public func clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
-        return try self.coreCrypto.clientKeypackages(amountRequested: amountRequested)
+    public func clientKeypackages(ciphersuite: CoreCryptoSwift.CiphersuiteName, amountRequested: UInt32) throws -> [[UInt8]] {
+        return try self.coreCrypto.clientKeypackages(ciphersuite: ciphersuite, amountRequested: amountRequested)
     }
 
     /// - returns: The amount of valid, non-expired KeyPackages that are persisted in the backing storage
-    public func clientValidKeypackagesCount() throws -> UInt64 {
-        return try self.coreCrypto.clientValidKeypackagesCount()
+    public func clientValidKeypackagesCount(ciphersuite: CoreCryptoSwift.CiphersuiteName) throws -> UInt64 {
+        return try self.coreCrypto.clientValidKeypackagesCount(ciphersuite: ciphersuite)
     }
 
     /// Creates a new conversation with the current client being the sole member
@@ -693,8 +712,8 @@ public class CoreCryptoWrapper {
     /// - parameter conversationId: conversation identifier
     /// - parameter epoch: the current epoch of the group
     /// - returns: a message with the proposal to be add a new client
-    public func newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
-        return try self.coreCrypto.newExternalAddProposal(conversationId: conversationId, epoch: epoch)
+    public func newExternalAddProposal(conversationId: ConversationId, epoch: UInt64, ciphersuite: CoreCryptoSwift.CiphersuiteName, credentialType: MlsCredentialType) throws -> [UInt8] {
+        return try self.coreCrypto.newExternalAddProposal(conversationId: conversationId, epoch: epoch, ciphersuite: ciphersuite, credentialType: credentialType.convert())
     }
 
     /// Crafts a new external Remove proposal. Enables a client outside a group to request removal
@@ -721,8 +740,8 @@ public class CoreCryptoWrapper {
     /// - parameter publicGroupState: a TLS encoded `PublicGroupState` fetched from the Delivery Service
     /// - parameter config: - configuration of the MLS group
     /// - returns: an object of type `ConversationInitBundle`
-    public func joinByExternalCommit(publicGroupState: [UInt8], configuration: CustomConfiguration) throws -> ConversationInitBundle {
-        try self.coreCrypto.joinByExternalCommit(publicGroupState: publicGroupState, customConfiguration: configuration.convert()).convertTo()
+    public func joinByExternalCommit(publicGroupState: [UInt8], configuration: CustomConfiguration, credentialType: MlsCredentialType) throws -> ConversationInitBundle {
+        try self.coreCrypto.joinByExternalCommit(publicGroupState: publicGroupState, customConfiguration: configuration.convert(), credentialType: credentialType.convert()).convertTo()
     }
 
     /// Exports a TLS-serialized view of the current group state corresponding to the provided conversation ID.
@@ -959,22 +978,35 @@ public class CoreCryptoWrapper {
     /// - parameter displayName: human readable name displayed in the application e.g. `Smith, Alice M (QA)`
     /// - parameter handle: user handle e.g. `alice.smith.qa@example.com`
     /// - parameter expiryDays: generated x509 certificate expiry
-    /// - parameter ciphersuite: For generating signing key material. Only ``CoreCryptoSwift.CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519`` is supported currently
+    /// - parameter ciphersuite: For generating signing key material.
     /// - returns: The new ``CoreCryptoSwift.WireE2eIdentity`` object
-    public func newAcmeEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: CoreCryptoSwift.CiphersuiteName = CoreCryptoSwift.CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519) throws -> CoreCryptoSwift.WireE2eIdentity {
-        if ciphersuite != CoreCryptoSwift.CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519 {
-            throw CoreCryptoSwift.E2eIdentityError.NotYetSupported(message: "This ACME ciphersuite isn't supported. Only `Ciphersuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519` is as of now")
-        }
-
-        return try self.coreCrypto.newAcmeEnrollment(clientId: clientId, displayName: displayName, handle: handle, expiryDays: expiryDays, ciphersuite: ciphersuite)
+    public func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: CoreCryptoSwift.CiphersuiteName) throws -> CoreCryptoSwift.WireE2eIdentity {
+        return try self.coreCrypto.e2eiNewEnrollment(clientId: clientId, displayName: displayName, handle: handle, expiryDays: expiryDays, ciphersuite: ciphersuite)
     }
 
     /// Parses the ACME server response from the endpoint fetching x509 certificates and uses it to initialize the MLS client with a certificate
     ///
     /// - parameter e2ei: the enrollment instance used to fetch the certificates
     /// - parameter certificateChain: the raw response from ACME server
-    public func e2eiMlsInit(e2ei: CoreCryptoSwift.WireE2eIdentity, certificateChain: String) throws {
-        return try self.coreCrypto.e2eiMlsInit(e2ei: e2ei, certificateChain: certificateChain)
+    public func e2eiMlsInit(enrollment: CoreCryptoSwift.WireE2eIdentity, certificateChain: String) throws {
+        return try self.coreCrypto.e2eiMlsInit(enrollment: enrollment, certificateChain: certificateChain)
+    }
+
+    /// Allows persisting an active enrollment (for example while redirecting the user during OAuth) in order to resume
+    /// it later with [MlsCentral::e2eiEnrollmentStashPop]
+    ///
+    /// - parameter e2ei: the enrollment instance to persist
+    /// - returns: a handle to fetch the enrollment later with [MlsCentral::e2eiEnrollmentStashPop]
+    public func e2eiEnrollmentStash(enrollment: CoreCryptoSwift.WireE2eIdentity) throws -> [UInt8] {
+        return try self.coreCrypto.e2eiEnrollmentStash(enrollment: enrollment)
+    }
+
+    /// Fetches the persisted enrollment and deletes it from the keystore
+    ///
+    /// - parameter handle: returned by [MlsCentral::e2eiEnrollmentStash]
+    /// - returns: the persisted enrollment instance
+    public func e2eiEnrollmentStashPop(handle: [UInt8]) throws -> CoreCryptoSwift.WireE2eIdentity {
+        return try self.coreCrypto.e2eiEnrollmentStashPop(handle: handle)
     }
 
     /// - returns: The CoreCrypto version
