@@ -36,13 +36,16 @@ import XCTest
 class PushNotificationStatusTests: MessagingTestBase {
 
     var sut: PushNotificationStatus!
+    var lastEventIDRepository: LastEventIDRepository!
 
     override func setUp() {
         super.setUp()
 
+        lastEventIDRepository = LastEventIDRepository(userID: accountIdentifier)
+
         sut = PushNotificationStatus(
             managedObjectContext: syncMOC,
-            lastEventIDRepository: LastEventIDRepository(userID: accountIdentifier)
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -213,10 +216,9 @@ class PushNotificationStatusTests: MessagingTestBase {
     func testThatCompletionHandlerIsCalledImmediatelyIfEventHasAlreadyBeenFetched() {
         // given
         let eventId = UUID.timeBasedUUID() as UUID
+        lastEventIDRepository.storeLastEventID(eventId)
         let expectation = self.expectation(description: "completion handler was called")
         syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.zm_lastNotificationID = eventId
-
             // when
             self.sut.fetch(eventId: eventId) {
                 expectation.fulfill()
