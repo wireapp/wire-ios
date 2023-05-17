@@ -550,9 +550,19 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
     }
 
     override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
         super.setUp()
+
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
