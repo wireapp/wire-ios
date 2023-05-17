@@ -47,6 +47,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             path: config.path,
             key: config.key,
             clientId: clientID,
+            ciphersuites: [CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519],
             entropySeed: nil
         )
 
@@ -58,6 +59,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         let coreCrypto = try CoreCrypto.deferredInit(
             path: path,
             key: key,
+            ciphersuites: [CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519],
             entropySeed: nil
         )
 
@@ -71,7 +73,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
 
-        try coreCrypto.mlsInit(clientId: clientIdBytes)
+        try coreCrypto.mlsInit(clientId: clientIdBytes,
+                               ciphersuites: [CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519])
         didInitializeMLS = true
     }
 

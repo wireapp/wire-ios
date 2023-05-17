@@ -86,6 +86,8 @@ public final class MLSController: MLSControllerProtocol {
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
 
+    var ciphersuiteName: CiphersuiteName = CiphersuiteName.mls128Dhkemp256Aes128gcmSha256P256
+    
     // The number of days to wait until refreshing the key material for a group.
 
     private static var keyMaterialRefreshIntervalInDays: UInt {
@@ -184,7 +186,7 @@ public final class MLSController: MLSControllerProtocol {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey() }
+                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(`ciphersuite`: ciphersuiteName) }
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
             }
@@ -481,7 +483,7 @@ public final class MLSController: MLSControllerProtocol {
     private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
         do {
             let estimatedLocalKeyPackageCount = try coreCrypto.perform {
-                try $0.clientValidKeypackagesCount()
+                try $0.clientValidKeypackagesCount(ciphersuite: ciphersuiteName)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
             let lastCheckWasMoreThan24Hours = userDefaults.hasMoreThan24HoursPassedSinceLastCheck
@@ -525,7 +527,7 @@ public final class MLSController: MLSControllerProtocol {
         var keyPackages = [Bytes]()
 
         do {
-            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(amountRequested: amountRequested) }
+            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: ciphersuiteName, amountRequested: amountRequested) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -654,7 +656,13 @@ public final class MLSController: MLSControllerProtocol {
         logger.info("requesting to join group (\(groupID)")
 
         do {
-            let proposal = try coreCrypto.perform { try $0.newExternalAddProposal(conversationId: groupID.bytes, epoch: epoch) }
+            let proposal = try coreCrypto.perform {
+                try $0.newExternalAddProposal(conversationId: groupID.bytes,
+                                              epoch: epoch,
+                                              ciphersuite: ciphersuiteName,
+                                              credentialType: .basic)
+            }
+            
             try await sendProposal(proposal, groupID: groupID)
             logger.info("success: requested to join group (\(groupID)")
         } catch {
