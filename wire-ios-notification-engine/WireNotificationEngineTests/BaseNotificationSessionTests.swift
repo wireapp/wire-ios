@@ -98,8 +98,7 @@ class BaseTest: ZMTBaseTest {
         pushNotificationStatus = PushNotificationStatus(managedObjectContext: coreDataStack.syncContext)
 
         pushNotificationStrategy = PushNotificationStrategy(
-            withManagedObjectContext: coreDataStack.syncContext,
-            eventContext: coreDataStack.eventContext,
+            syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             pushNotificationStatus: PushNotificationStatus(managedObjectContext: coreDataStack.syncContext),
             notificationsTracker: nil

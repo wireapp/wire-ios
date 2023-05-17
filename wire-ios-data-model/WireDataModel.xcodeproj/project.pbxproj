@@ -484,6 +484,11 @@
 		EE128A66286DE31200558550 /* UserClient+MLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */; };
 		EE128A68286DE35F00558550 /* CodableHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A67286DE35F00558550 /* CodableHelpers.swift */; };
 		EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */; };
+		EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */; };
+		EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */; };
+		EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */; };
+		EE22F80F29DD82110053E1C6 /* DatabaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */; };
+		EE22F81229DD84ED0053E1C6 /* EARKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */; };
 		EE22185E2892C22C008EF6ED /* MockConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */; };
 		EE22F80929DD818B0053E1C6 /* BaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */; };
 		EE22F80B29DD81C50053E1C6 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */; };
@@ -498,6 +503,9 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
+		EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */; };
+		EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */; };
+		EE428C5229F1533000ECB715 /* EARKeyEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */; };
 		EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */; };
 		EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */; };
 		EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */; };
@@ -1358,6 +1366,12 @@
 		EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+MLSPublicKeys.swift"; sourceTree = "<group>"; };
 		EE128A67286DE35F00558550 /* CodableHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableHelpers.swift; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
+		EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel4.0.xcdatamodel; sourceTree = "<group>"; };
+		EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEARKeyDescription.swift; sourceTree = "<group>"; };
+		EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyRepository.swift; sourceTree = "<group>"; };
 		EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE22F80729DC6D880053E1C6 /* ZMEventModel4.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ZMEventModel4.0.xcdatamodel; sourceTree = "<group>"; };
 		EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEARKeyDescription.swift; sourceTree = "<group>"; };
@@ -1374,6 +1388,9 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
+		EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EARServiceTests.swift; path = Tests/Source/EAR/EARServiceTests.swift; sourceTree = SOURCE_ROOT; };
+		EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyGenerator.swift; sourceTree = "<group>"; };
+		EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyEncryptor.swift; sourceTree = "<group>"; };
 		EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMBaseTest+Async.swift"; sourceTree = "<group>"; };
 		EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EARServiceTests.swift; path = Tests/Source/EAR/EARServiceTests.swift; sourceTree = SOURCE_ROOT; };
 		EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyGenerator.swift; sourceTree = "<group>"; };
@@ -2152,6 +2169,21 @@
 				CE4EDC081D6D9A3D002A20AA /* Reaction.swift */,
 			);
 			name = Reaction;
+			sourceTree = "<group>";
+		};
+		EE22F81029DD82290053E1C6 /* EAR */ = {
+			isa = PBXGroup;
+			children = (
+				EEC57C4929E407CC0068DFDA /* EARService.swift */,
+				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
+				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
+				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
+				EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */,
+				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
+				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
+				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
+			);
+			path = EAR;
 			sourceTree = "<group>";
 		};
 		EE032B3429A62CD600E1DDF3 /* Proteus */ = {
