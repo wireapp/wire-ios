@@ -303,7 +303,9 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
     var zoomLevel: Int32 = 0
 }
 
-class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage {
+//
+class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
+
     // MARK: - ConversationCompositeMessage
     var compositeMessageData: CompositeMessageData?
 
@@ -338,8 +340,8 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var conversationLike: ConversationLike? = .none
 
     var deliveryState: ZMDeliveryState = .delivered
-    var failedToSendReason: MessageSendFailure = .unknown
-    var failedToSendUsers: [UserType]? = nil
+    var failedToSendReason: MessageSendFailure? = .unknown
+    var failedToSendUsers: [UserType] = []
 
     var imageMessageData: ZMImageMessageData? = .none
     var knockMessageData: ZMKnockMessageData? = .none

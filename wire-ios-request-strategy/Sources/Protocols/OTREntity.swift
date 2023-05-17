@@ -144,7 +144,7 @@ extension OTREntity {
                 return []
             }
             clientListByUser = clientListByUserID.materializingUsers(withDomain: nil, in: context)
-        case .v1, .v2, .v3:
+        case .v1, .v2, .v3, .v4:
             guard let payload = Payload.MessageSendingStatus(response) else {
                 return []
             }
