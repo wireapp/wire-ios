@@ -303,7 +303,6 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
     var zoomLevel: Int32 = 0
 }
 
-//
 class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
 
     // MARK: - ConversationCompositeMessage
