@@ -51,10 +51,6 @@ extension Notification.Name {
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
-    fileprivate var pushChannelIsOpen: Bool {
-        return pushChannelEstablishedDate != nil
-    }
-
     public var isSlowSyncing: Bool {
         return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
@@ -62,18 +58,15 @@ extension Notification.Name {
     private var isForceQuickSync = false
 
     public var isSyncing: Bool {
-        // TODO: Improve this solution.
-        // When triggering a quick sync in the bg when answering a call,
-        // we need to be able to process events. But I'm not certain if this
-        // is the best way. I think we're using this computed property to control
-        // whether the sync bar in the ui is shown or not. In this case, it makes
-        // sense that we only hide the bar if the syncing is complete and push
-        // channel is open.
-        if isForceQuickSync {
-            return currentSyncPhase.isSyncing
-        } else {
-            return currentSyncPhase.isSyncing || !pushChannelIsOpen
-        }
+        return currentSyncPhase.isSyncing || !isPushChannelOpen
+    }
+
+    public var isSyncingInBackground: Bool {
+        return currentSyncPhase.isSyncing
+    }
+
+    public var isPushChannelOpen: Bool {
+        return pushChannelEstablishedDate != nil
     }
 
     public init(managedObjectContext: NSManagedObjectContext, syncStateDelegate: ZMSyncStateDelegate) {
@@ -164,7 +157,7 @@ extension SyncStatus {
         currentSyncPhase = phase.nextPhase
 
         if currentSyncPhase == .done {
-            if needsToRestartQuickSync && pushChannelIsOpen {
+            if needsToRestartQuickSync && isPushChannelOpen {
                 // If the push channel closed while fetching notifications
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents

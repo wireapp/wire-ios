@@ -559,21 +559,25 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
     func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled() throws {
         // given
         XCTAssertTrue(login())
+        var session = try XCTUnwrap(userSession)
+        XCTAssertFalse(session.encryptMessagesAtRest)
+
         let expectedText = "Hello World"
-        userSession?.perform({
+        session.perform({
             let groupConversation = self.conversation(for: self.groupConversation)
             try! groupConversation?.appendText(content: expectedText)
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        try userSession?.setEncryptionAtRest(enabled: true)
+        try session.setEncryptionAtRest(enabled: true)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(userSession?.encryptMessagesAtRest, true)
+        session = try XCTUnwrap(userSession)
+        XCTAssertTrue(session.encryptMessagesAtRest)
 
-        try userSession?.unlockDatabase(with: LAContext())
+        try session.unlockDatabase(with: LAContext())
         let groupConversation = self.conversation(for: self.groupConversation)
         let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(clientMessage?.messageText, expectedText)
@@ -581,24 +585,28 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2 
     func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled() throws {
-
         // given
         XCTAssertTrue(login())
+        var session = try XCTUnwrap(userSession)
+
         let expectedText = "Hello World"
 
-        try userSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
-        userSession?.perform({
+        try session.setEncryptionAtRest(enabled: true, skipMigration: true)
+        XCTAssertTrue(session.encryptMessagesAtRest)
+
+        session.perform({
             let groupConversation = self.conversation(for: self.groupConversation)
             try! groupConversation?.appendText(content: expectedText)
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        try userSession?.setEncryptionAtRest(enabled: false)
+        try session.setEncryptionAtRest(enabled: false)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(userSession?.encryptMessagesAtRest, false)
+        session = try XCTUnwrap(userSession)
+        XCTAssertFalse(session.encryptMessagesAtRest)
 
         let groupConversation = self.conversation(for: self.groupConversation)
         let clientMessage = groupConversation?.lastMessage as? ZMClientMessage

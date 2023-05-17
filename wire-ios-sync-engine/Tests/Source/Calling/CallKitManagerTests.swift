@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -176,12 +176,12 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         }
     }
 
-    var lookupConversationAndSyncCalls: Int = 0
-    func lookupConversationAndSync(
-        by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
-    ) {
-        lookupConversationAndSyncCalls += 1
+    var lookupConversationAndProcessPendingCallEventsCalls = 0
+    func lookupConversationAndProcessPendingCallEvents(
+        by handle: WireSyncEngine.CallHandle,
+        completionHandler: @escaping (WireUtilities.Result<ZMConversation>
+    ) -> Void) {
+        lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
     }
 
@@ -500,22 +500,22 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     /* Disabled for now, pending furter investigation
-    func testThatCallAnswerActionFailWhenCallCantBeJoined() {
-        // given
-        let otherUser = self.otherUser(moc: self.uiMOC)
-        let provider = MockProvider(foo: true)
-        let conversation = self.conversation(type: .oneOnOne)
+     func testThatCallAnswerActionFailWhenCallCantBeJoined() {
+     // given
+     let otherUser = self.otherUser(moc: self.uiMOC)
+     let provider = MockProvider(foo: true)
+     let conversation = self.conversation(type: .oneOnOne)
 
-        sut.reportIncomingCall(from: otherUser, in: conversation, video: false)
-        let action = MockCallAnswerAction(call: sut.callUUID(for: conversation)!)
-        self.sut.provider(provider, perform: action)
+     sut.reportIncomingCall(from: otherUser, in: conversation, video: false)
+     let action = MockCallAnswerAction(call: sut.callUUID(for: conversation)!)
+     self.sut.provider(provider, perform: action)
 
-        // when
-        mockWireCallCenterV3.update(callState: .terminating(reason: .lostMedia), conversationId: conversation.remoteIdentifier!, callerId: otherUser.remoteIdentifier, isVideo: false)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        // then
-        XCTAssertTrue(action.hasFailed)
-    }
+     // when
+     mockWireCallCenterV3.update(callState: .terminating(reason: .lostMedia), conversationId: conversation.remoteIdentifier!, callerId: otherUser.remoteIdentifier, isVideo: false)
+     XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+     // then
+     XCTAssertTrue(action.hasFailed)
+     }
      */
 
     func testThatStartCallActionIsFulfilledWhenCallIsJoined() {
@@ -941,9 +941,10 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)
     }
 
-    // MARK: - Call Rejection
 
-    func test_itSyncsBeforeRejectingCall() {
+    // MARK: - Rejecting Calls
+
+    func test_itProcessesCallEventsBeforeRejectingCall() {
         // given
         let conversation = conversation()
         let otherUser = otherUser(moc: uiMOC)
@@ -961,7 +962,7 @@ class CallKitManagerTest: DatabaseTest {
         sut.provider(callKitProvider, perform: mockEndCallAction)
 
         // then
-        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndSyncCalls, 1)
+        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndProcessPendingCallEventsCalls, 1)
     }
 
     func test_itUnregistersCallAfterRejecting() {
@@ -1031,6 +1032,33 @@ class CallKitManagerTest: DatabaseTest {
         // we verify that it was only reported once
         XCTAssertEqual(self.callKitProvider.timesReportCallEndedAtCalled, 1)
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .remoteEnded)
+    }
+
+    // MARK: - Answering calls
+
+    func test_itProcessesCallEventsBeforeAcceptingCall() {
+        // given
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        guard let callKitCall = sut.callRegister.lookupCall(by: conversation) else {
+            XCTFail("no call handle")
+            return
+        }
+
+        mockCallKitManagerDelegate.mockConversations = [
+            callKitCall.handle: conversation
+        ]
+
+        let mockAnswerCallAction = MockCallAnswerAction(call: callKitCall.id)
+
+        // when
+        sut.provider(callKitProvider, perform: mockAnswerCallAction)
+
+        // then
+        XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndProcessPendingCallEventsCalls, 1)
     }
 
 }

@@ -25,7 +25,14 @@ class PushTokenStorageTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        PushTokenStorage.storage = UserDefaults()
+        PushTokenStorage.storage = UserDefaults(suiteName: "PushTokenStorageTests")!
+        PushTokenStorage.pushToken = nil
+    }
+
+    override func tearDown() {
+        PushTokenStorage.pushToken = nil
+        PushTokenStorage.storage.reset()
+        super.tearDown()
     }
 
     // MARK: - Tests

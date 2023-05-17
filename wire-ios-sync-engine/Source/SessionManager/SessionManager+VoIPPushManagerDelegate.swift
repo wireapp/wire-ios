@@ -61,6 +61,23 @@ extension SessionManager: VoIPPushManagerDelegate {
         })
     }
 
+    public func processPendingCallEvents(accountID: UUID) {
+        WireLogger.calling.info("process pending call events preemptively")
+
+        guard
+            let account = accountManager.account(with: accountID),
+            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "processPendingCallEvents")
+        else {
+            WireLogger.calling.error("failed to process pending call events preemptively")
+            return
+        }
+
+        withSession(for: account) { session in
+            try? session.processPendingCallEvents()
+            BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+        }
+    }
+
 }
 
 private extension VoIPPushPayload {

@@ -50,10 +50,7 @@
     self.mediaManager = [[MockMediaManager alloc] init];
     self.flowManagerMock = [[FlowManagerMock alloc] init];
 
-    NSUUID *userId = [NSUUID createUUID];
-    [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier = userId;
-    
-    [self createSutWithUserId:userId];
+    [self createSut];
 
     self.sut.thirdPartyServicesDelegate = self.thirdPartyServices;
     self.sut.sessionManager = (id<SessionManagerType>)self.mockSessionManager;

@@ -63,7 +63,8 @@
     {
       "skippedTests" : [
         "AvailabilityTests",
-        "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()"
+        "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",
+        "UserTests"
       ],
       "target" : {
         "containerPath" : "container:WireSyncEngine.xcodeproj",

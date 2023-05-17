@@ -22,11 +22,17 @@ extension ZMClientMessage: EncryptionAtRestMigratable {
 
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
-    func migrateTowardEncryptionAtRest(in moc: NSManagedObjectContext) {
+    func migrateTowardEncryptionAtRest(
+        in context: NSManagedObjectContext,
+        key: VolatileData
+    ) {
         normalizedText = ""
     }
 
-    func migrateAwayFromEncryptionAtRest(in moc: NSManagedObjectContext) {
+    func migrateAwayFromEncryptionAtRest(
+        in context: NSManagedObjectContext,
+        key: VolatileData
+    ) {
         updateNormalizedText()
     }
 

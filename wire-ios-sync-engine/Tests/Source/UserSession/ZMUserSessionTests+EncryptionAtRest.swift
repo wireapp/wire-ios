@@ -22,9 +22,12 @@ import LocalAuthentication
 
 class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
-    var calledSetEncryptionAtRest: (Bool, Account, EncryptionKeys)?
-    func setEncryptionAtRest(enabled: Bool, account: Account, encryptionKeys: EncryptionKeys) {
-        calledSetEncryptionAtRest = (enabled, account, encryptionKeys)
+    var prepareForMigration_Invocations = [Account]()
+    func prepareForMigration(
+        for account: WireDataModel.Account,
+        onReady: @escaping (NSManagedObjectContext) throws -> Void
+    ) {
+        prepareForMigration_Invocations.append(account)
     }
 
     func userSessionDidUnlock(_ session: ZMUserSession) {
@@ -49,7 +52,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     private var factory: BackgroundActivityFactory!
 
     private var account: Account {
-        Account(userName: "", userIdentifier: ZMUser.selfUser(in: syncMOC).remoteIdentifier)
+        return coreDataStack.account
     }
 
     override func setUp() {
@@ -63,7 +66,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     override func tearDown() {
         factory = nil
         activityManager = nil
-        try! EncryptionKeys.deleteKeys(for: account)
+        try? sut.setEncryptionAtRest(enabled: false, skipMigration: true)
 
         super.tearDown()
     }
@@ -87,8 +90,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         try sut.setEncryptionAtRest(enabled: true)
 
         // then
-        XCTAssertNotNil(userSessionDelegate.calledSetEncryptionAtRest)
-        XCTAssertEqual(userSessionDelegate.calledSetEncryptionAtRest?.0, true)
+        XCTAssertEqual(userSessionDelegate.prepareForMigration_Invocations, [account])
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
@@ -104,8 +106,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         try sut.setEncryptionAtRest(enabled: false)
 
         // then
-        XCTAssertNotNil(userSessionDelegate.calledSetEncryptionAtRest)
-        XCTAssertEqual(userSessionDelegate.calledSetEncryptionAtRest?.0, false)
+        XCTAssertEqual(userSessionDelegate.prepareForMigration_Invocations, [account])
     }
 
     // MARK: - Database locking/unlocking
@@ -224,14 +225,13 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // when
         _ = factory.startBackgroundActivity(withName: "Activity 1")!
         application.simulateApplicationDidEnterBackground()
-
-        XCTAssertNotNil(sut.managedObjectContext.encryptionKeys)
+        XCTAssertNotNil(sut.managedObjectContext.databaseKey)
 
         _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler is called.")], timeout: 4.0)
 
         // then
         XCTAssertTrue(sut.isDatabaseLocked)
-        XCTAssertNil(sut.managedObjectContext.encryptionKeys)
+        XCTAssertNil(sut.managedObjectContext.databaseKey)
     }
 
     // MARK: - Database lock handler/observer
@@ -290,24 +290,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     }
 
     // MARK: - Misc
-
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func testThatOldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
-        // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
-
-        let oldKeys = try EncryptionKeys.createKeys(for: account)
-
-        // when
-        setEncryptionAtRest(enabled: true)
-
-        // then
-        let newKeys = syncMOC.encryptionKeys
-
-        XCTAssertFalse(sut.isDatabaseLocked)
-        XCTAssertNotEqual(oldKeys, newKeys)
-    }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatIfDatabaseIsLocked_ThenUserSessionLockIsSet() throws {

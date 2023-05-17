@@ -132,7 +132,7 @@ class ApplicationStatusDirectory: ApplicationStatus {
 }
 
 /// A Wire session to share content from a share extension
-/// - note: this is the entry point of this framework. Users of 
+/// - note: this is the entry point of this framework. Users of
 /// the framework should create an instance as soon as possible in
 /// the lifetime of the extension, and hold on to that session
 /// for the entire lifetime.
@@ -197,6 +197,8 @@ public class SharingSession {
     private let strategyFactory: StrategyFactory
 
     public let appLockController: AppLockType
+
+    let earService: EARServiceInterface
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureService = FeatureService(context: coreDataStack.viewContext)
@@ -266,7 +268,8 @@ public class SharingSession {
         )
     }
 
-    internal init(
+
+    init(
         accountIdentifier: UUID,
         coreDataStack: CoreDataStack,
         transportSession: ZMTransportSession,
@@ -277,7 +280,8 @@ public class SharingSession {
         operationLoop: RequestGeneratingOperationLoop,
         strategyFactory: StrategyFactory,
         appLockConfig: AppLockController.LegacyConfig?,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
+        earService: EARServiceInterface? = nil
     ) throws {
 
         self.coreDataStack = coreDataStack
@@ -287,6 +291,14 @@ public class SharingSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
+
+        self.earService = earService ?? EARService(
+            accountID: accountIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ]
+        )
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
         self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)

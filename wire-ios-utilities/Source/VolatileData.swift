@@ -63,3 +63,11 @@ public class VolatileData {
     }
 
 }
+
+extension VolatileData: Equatable {
+
+    public static func == (lhs: VolatileData, rhs: VolatileData) -> Bool {
+        return lhs._storage == rhs._storage
+    }
+
+}

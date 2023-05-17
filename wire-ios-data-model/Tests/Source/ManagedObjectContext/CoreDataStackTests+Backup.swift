@@ -30,14 +30,13 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         super.tearDown()
     }
 
-    func createBackup(accountIdentifier: UUID, encryptionKeys: EncryptionKeys? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
-
+    func createBackup(accountIdentifier: UUID, databaseKey: VolatileData? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
         var result: Result<URL>?
         CoreDataStack.backupLocalStorage(accountIdentifier: accountIdentifier,
                                          clientIdentifier: name,
                                          applicationContainer: applicationContainer,
                                          dispatchGroup: self.dispatchGroup,
-                                         encryptionKeys: encryptionKeys) {
+                                         databaseKey: databaseKey) {
             result = $0.map { $0.url }
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
@@ -136,11 +135,13 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         directory.viewContext.encryptMessagesAtRest = true
-        directory.viewContext.encryptionKeys = validEncryptionKeys
+        directory.viewContext.databaseKey = validDatabaseKey
 
         // when
-        guard let result = createBackup(accountIdentifier: uuid,
-                                        encryptionKeys: validEncryptionKeys) else {
+        guard let result = createBackup(
+            accountIdentifier: uuid,
+            databaseKey: directory.viewContext.databaseKey
+        ) else {
             return XCTFail()
         }
         directory.viewContext.saveOrRollback()
@@ -165,12 +166,14 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         directory.viewContext.encryptMessagesAtRest = true
-        directory.viewContext.encryptionKeys = nil
+        directory.viewContext.databaseKey = nil
         directory.viewContext.saveOrRollback()
 
         // when
-        guard let result = createBackup(accountIdentifier: uuid,
-                                        encryptionKeys: nil) else {
+        guard let result = createBackup(
+            accountIdentifier: uuid,
+            databaseKey: nil
+        ) else {
             return XCTFail()
         }
 
