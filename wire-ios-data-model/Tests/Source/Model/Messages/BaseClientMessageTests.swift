@@ -170,6 +170,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
 
         self.expectedRecipients = nil
         super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
     }
 
     func assertRecipients(_ recipients: [Proteus_UserEntry], file: StaticString = #file, line: UInt = #line) {
