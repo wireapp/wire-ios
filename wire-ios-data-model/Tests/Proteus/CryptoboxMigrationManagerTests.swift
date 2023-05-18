@@ -25,11 +25,14 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     var sut: CryptoboxMigrationManager!
     var mockFileManager: MockFileManagerInterface!
-    var proteusViaCoreCryptoFlag = DeveloperFlag.proteusViaCoreCrypto
+    var proteusViaCoreCryptoFlag: DeveloperFlag!
     var mockProteusService: MockProteusServiceInterface!
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        proteusViaCoreCryptoFlag = .proteusViaCoreCrypto
+
         mockFileManager = MockFileManagerInterface()
         sut = CryptoboxMigrationManager(fileManager: mockFileManager)
         mockProteusService = MockProteusServiceInterface()
@@ -46,11 +49,13 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         sut = nil
         mockFileManager = nil
         mockProteusService = nil
-        proteusViaCoreCryptoFlag.isOn = false
 
         syncMOC.performAndWait({
             syncMOC.proteusService = nil
         })
+
+        proteusViaCoreCryptoFlag.isOn = false
+        DeveloperFlag.storage = UserDefaults.standard
 
         super.tearDown()
     }
@@ -118,7 +123,6 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
                 XCTFail("failed to perform migration: \(error.localizedDescription)")
             }
         }
-
 
         // Then
         XCTAssertEqual(mockFileManager.removeItemAt_Invocations, [cryptoboxDirectory])

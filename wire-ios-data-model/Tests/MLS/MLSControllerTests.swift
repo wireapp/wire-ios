@@ -46,7 +46,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
 
-        mockCoreCrypto.mockClientValidKeypackagesCount = {
+        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             return 100
         }
 
@@ -242,7 +242,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
                     isActive: false,
                     commitDelay: nil,
                     senderClientId: nil,
-                    hasEpochChanged: false
+                    hasEpochChanged: false,
+                    identity: nil
                 )
             }
 
@@ -282,7 +283,8 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
                     isActive: false,
                     commitDelay: nil,
                     senderClientId: sender.string.data(using: .utf8)!.bytes,
-                    hasEpochChanged: false
+                    hasEpochChanged: false,
+                    identity: nil
                 )
             }
 
@@ -1125,15 +1127,15 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
 
         // mock that we don't have enough unclaimed kp locally
-        mockCoreCrypto.mockClientValidKeypackagesCount = {
+        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             UInt64(unsufficientKeyPackagesAmount)
         }
 
         // mock keyPackages returned by core cryto
         var mockClientKeypackagesCount = 0
-        mockCoreCrypto.mockClientKeypackages = {
+        mockCoreCrypto.mockClientKeypackages = { _, amountRequested in
             mockClientKeypackagesCount += 1
-            XCTAssertEqual($0, UInt32(self.sut.targetUnclaimedKeyPackageCount))
+            XCTAssertEqual(amountRequested, UInt32(self.sut.targetUnclaimedKeyPackageCount))
             return keyPackages
         }
 
@@ -1174,7 +1176,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
 
         // mock that there are enough kp locally
-        mockCoreCrypto.mockClientValidKeypackagesCount = {
+        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
@@ -1206,7 +1208,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         userDefaultsTestSuite.test_setLastKeyPackageCountDate(.distantPast)
 
         // mock that we don't have enough unclaimed kp locally
-        mockCoreCrypto.mockClientValidKeypackagesCount = {
+        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             return UInt64(unsufficientKeyPackagesAmount)
         }
 
@@ -1220,7 +1222,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             uploadKeyPackages.fulfill()
         }
 
-        mockCoreCrypto.mockClientKeypackages = { _ in
+        mockCoreCrypto.mockClientKeypackages = { _, _ in
             XCTFail("shouldn't be generating key packages")
             return []
         }
@@ -1245,7 +1247,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         var mockClientValidKeypackagesCountCount = 0
-        mockCoreCrypto.mockClientValidKeypackagesCount = {
+        mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             mockClientValidKeypackagesCountCount += 1
             return UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
