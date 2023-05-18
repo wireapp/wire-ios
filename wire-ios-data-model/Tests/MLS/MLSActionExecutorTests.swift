@@ -338,7 +338,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [Bytes]()
 
-        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _ in
+        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
                 conversationId: groupID.bytes,
@@ -431,7 +431,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [Bytes]()
-        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _ in
+        mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
                 conversationId: groupID.bytes,

@@ -95,7 +95,8 @@ class MLSDecryptionControllerTests: BaseTest {
                     isActive: false,
                     commitDelay: nil,
                     senderClientId: nil,
-                    hasEpochChanged: false
+                    hasEpochChanged: false,
+                    identity: nil
                 )
             }
 
@@ -135,7 +136,8 @@ class MLSDecryptionControllerTests: BaseTest {
                     isActive: false,
                     commitDelay: nil,
                     senderClientId: sender.string.data(using: .utf8)!.bytes,
-                    hasEpochChanged: false
+                    hasEpochChanged: false,
+                    identity: nil
                 )
             }
 
