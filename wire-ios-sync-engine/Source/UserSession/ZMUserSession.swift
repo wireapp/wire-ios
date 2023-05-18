@@ -230,7 +230,7 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
-    private let lastEventIDRepository: LastEventIDRepositoryInterface
+    let lastEventIDRepository: LastEventIDRepositoryInterface
 
     public init(
         userId: UUID,
