@@ -247,7 +247,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             case .joinGroup(let publicGroupState):
                 let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(publicGroupState: publicGroupState.bytes,
-                                                                                                  customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)) }
+                                                                                                  customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil), credentialType: .basic) }
 
                 return CommitBundle(
                     welcome: nil,

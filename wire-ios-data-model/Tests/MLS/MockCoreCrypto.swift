@@ -20,55 +20,18 @@ import Foundation
 import WireDataModel
 import CoreCryptoSwift
 
-class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
-
-    var coreCrypto: MockCoreCrypto
-
-    init(coreCrypto: MockCoreCrypto = .init()) {
-        self.coreCrypto = coreCrypto
-    }
-
-    var performCount = 0
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        performCount += 1
-        return try block(coreCrypto)
-    }
-
-    var unsafePerformCount = 0
-    func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        unsafePerformCount += 1
-        return try block(coreCrypto)
-    }
-
-    var mockMlsInit: ((String) throws -> Void)?
-
-    func mlsInit(clientID: String) throws {
-        guard let mock = mockMlsInit else {
-            fatalError("no mock for `mlsInit`")
-        }
-
-        try mock(clientID)
-    }
-
-    var tearDownCount = 0
-    func tearDown() throws {
-        tearDownCount += 1
-    }
-
-}
-
 class MockCoreCrypto: CoreCryptoProtocol {
-
+    
     // MARK: - mlsInit
 
-    var mockMlsInit: ((ClientId) throws -> Void)?
+    var mockMlsInit: ((ClientId, [CiphersuiteName]) throws -> Void)?
 
-    func mlsInit(clientId: ClientId) throws {
+    func mlsInit(clientId: ClientId, ciphersuites: [CoreCryptoSwift.CiphersuiteName]) throws {
         guard let mock = mockMlsInit else {
             fatalError("no mock for `mlsInit`")
         }
 
-        try mock(clientId)
+        try mock(clientId, ciphersuites)
     }
 
     // MARK: - mlsGenerateKeypair
@@ -85,14 +48,15 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - mlsInitWithClientId
 
-    var mockMlsInitWithClientId: ((ClientId, Bytes) throws -> Void)?
+    var mockMlsInitWithClientId: ((ClientId, [Bytes], [CiphersuiteName]) throws -> Void)?
 
-    func mlsInitWithClientId(clientId: ClientId, signaturePublicKey: [UInt8]) throws {
+    func mlsInitWithClientId(clientId: ClientId, signaturePublicKeys: [[UInt8]], ciphersuites: [CiphersuiteName]) throws {
+
         guard let mock = mockMlsInitWithClientId else {
             fatalError("no mock for `mlsInitWithClientId`")
         }
 
-        try mock(clientId, signaturePublicKey)
+        try mock(clientId, signaturePublicKeys, ciphersuites)
     }
 
     // MARK: - setCallbacks
@@ -103,38 +67,38 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - clientPublicKey
 
-    var mockClientPublicKey: (() throws -> [UInt8])?
+    var mockClientPublicKey: ((CiphersuiteName) throws -> [UInt8])?
 
-    func clientPublicKey() throws -> [UInt8] {
+    func clientPublicKey(ciphersuite: CoreCryptoSwift.CiphersuiteName) throws -> [UInt8] {
         guard let mock = mockClientPublicKey else {
             fatalError("no mock for `clientPublicKey`")
         }
 
-        return try mock()
+        return try mock(ciphersuite)
     }
 
     // MARK: - clientKeypackages
 
-    var mockClientKeypackages: ((UInt32) throws -> [[UInt8]])?
+    var mockClientKeypackages: ((CiphersuiteName, UInt32) throws -> [[UInt8]])?
 
-    func clientKeypackages(amountRequested: UInt32) throws -> [[UInt8]] {
+    func clientKeypackages(ciphersuite: CiphersuiteName, amountRequested: UInt32) throws -> [[UInt8]] {
         guard let mock = mockClientKeypackages else {
             fatalError("no mock for `clientKeypackages`")
         }
 
-        return try mock(amountRequested)
+        return try mock(ciphersuite, amountRequested)
     }
 
     // MARK: - clientValidKeypackagesCount
 
-    var mockClientValidKeypackagesCount: (() throws -> UInt64)?
+    var mockClientValidKeypackagesCount: ((CiphersuiteName) throws -> UInt64)?
 
-    func clientValidKeypackagesCount() throws -> UInt64 {
+    func clientValidKeypackagesCount(ciphersuite: CiphersuiteName) throws -> UInt64 {
         guard let mock = mockClientValidKeypackagesCount else {
             fatalError("no mock for `clientValidKeypackagesCount`")
         }
 
-        return try mock()
+        return try mock(ciphersuite)
     }
 
     // MARK: - createConversation
@@ -307,14 +271,15 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - newExternalAddProposal
 
-    var mockNewExternalAddProposal: ((ConversationId, UInt64) throws -> [UInt8])?
+    var mockNewExternalAddProposal: ((ConversationId, UInt64, CiphersuiteName, MlsCredentialType) throws -> [UInt8])?
 
-    func newExternalAddProposal(conversationId: ConversationId, epoch: UInt64) throws -> [UInt8] {
+    func newExternalAddProposal(conversationId: CoreCryptoSwift.ConversationId, epoch: UInt64, ciphersuite: CoreCryptoSwift.CiphersuiteName, credentialType: CoreCryptoSwift.MlsCredentialType) throws -> [UInt8] {
+
         guard let mock = mockNewExternalAddProposal else {
             fatalError("no mock for `newExternalAddProposal`")
         }
 
-        return try mock(conversationId, epoch)
+        return try mock(conversationId, epoch, ciphersuite, credentialType)
     }
 
     // MARK: - newExternalRemoveProposal
@@ -331,17 +296,17 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - joinByExternalCommit
 
-    var mockJoinByExternalCommit: ((Bytes, CustomConfiguration) throws -> ConversationInitBundle)?
+    var mockJoinByExternalCommit: ((Bytes, CustomConfiguration, MlsCredentialType) throws -> ConversationInitBundle)?
 
-    func joinByExternalCommit(
-        publicGroupState: [UInt8],
-        customConfiguration: CustomConfiguration
-    ) throws -> ConversationInitBundle {
+    func joinByExternalCommit(publicGroupState: [UInt8],
+                              customConfiguration: CustomConfiguration,
+                              credentialType: MlsCredentialType) throws -> ConversationInitBundle {
+
         guard let mock = mockJoinByExternalCommit else {
             fatalError("no mock for `joinByExternalCommit`")
         }
 
-        return try mock(publicGroupState, customConfiguration)
+        return try mock(publicGroupState, customConfiguration, credentialType)
     }
 
     // MARK: - exportGroupState
@@ -694,14 +659,14 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - newAcmeEnrollment
 
-    var mockNewAcmeEnrollment: ((CiphersuiteName) throws -> WireE2eIdentity)?
+    var mockNewAcmeEnrollment: ((String, String, String, UInt32, CiphersuiteName) throws -> WireE2eIdentity)?
 
-    func newAcmeEnrollment(ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
+    func newAcmeEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
         guard let mock = mockNewAcmeEnrollment else {
-            fatalError("no mock for `newAcmeEnrollment`")
+            fatalError("no mock for `newAcmeEnrollment")
         }
 
-        return try mock(ciphersuite)
+        return try mock(clientId, displayName, handle, expiryDays, ciphersuite)
     }
 
     // MARK: - restoreFromDisk
@@ -718,7 +683,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - markConversationAsChildOf
 
-    var mockMarkConversationAsChildOf: ((ConversationId, ConversationId) throws -> ())?
+    var mockMarkConversationAsChildOf: ((ConversationId, ConversationId) throws -> Void)?
 
     func markConversationAsChildOf(childId: ConversationId, parentId: ConversationId) throws {
         guard let mock = mockMarkConversationAsChildOf else {
@@ -727,4 +692,66 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
         try mock(childId, parentId)
     }
+
+    // MARK: - e2eiMlsInit
+
+    var mockE2eiMlsInit: ((WireE2eIdentity, String) throws -> Void)?
+
+    func e2eiMlsInit(enrollment: WireE2eIdentity, certificateChain: String) throws {
+        guard let mock = mockE2eiMlsInit else {
+            fatalError("no mock for `e2eiMlsInit")
+        }
+
+        try mock(enrollment, certificateChain)
+    }
+
+    // MARK: - mlsGenerateKeypairs
+
+    var mockMlsGenerateKeypairs: (([CiphersuiteName]) throws -> [[UInt8]])?
+
+    func mlsGenerateKeypairs(ciphersuites: [CiphersuiteName]) throws -> [[UInt8]] {
+        guard let mock = mockMlsGenerateKeypairs else {
+            fatalError("no mock for `mlsGenerateKeypairs")
+        }
+
+        return try mock(ciphersuites)
+    }
+    
+    // MARK: - e2eiNewEnrollment
+    
+    var mockE2eiNewEnrollment: ((String, String, String, UInt32, CiphersuiteName) throws -> WireE2eIdentity)?
+    
+    func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: CiphersuiteName) throws -> WireE2eIdentity {
+        guard let mock = mockE2eiNewEnrollment else {
+            fatalError("no mock for `e2eiNewEnrollment")
+        }
+
+        return try mock(clientId, displayName, handle, expiryDays, ciphersuite)
+    }
+
+    // MARK: - e2eiEnrollmentStash
+    
+    var mockE2eiEnrollmentStash: ((WireE2eIdentity) throws -> [UInt8])?
+    
+    func e2eiEnrollmentStash(enrollment: WireE2eIdentity) throws -> [UInt8] {
+        guard let mock = mockE2eiEnrollmentStash else {
+            fatalError("no mock for `e2eiEnrollmentStash")
+        }
+
+        return try mock(enrollment)
+    }
+    
+    // MARK: - e2eiEnrollmentStashPop
+
+    var mockE2eiEnrollmentStashPop: (([UInt8]) throws -> WireE2eIdentity)?
+
+    func e2eiEnrollmentStashPop(handle: [UInt8]) throws -> WireE2eIdentity {
+        guard let mock = mockE2eiEnrollmentStashPop else {
+            fatalError("no mock for `e2eiEnrollmentStash")
+        }
+
+        return try mock(handle)
+    }
+    
 }
+

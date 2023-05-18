@@ -61,7 +61,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         let mockCoreCrypto = MockCoreCrypto()
 
         var mlsInitCalled = false
-        mockCoreCrypto.mockMlsInit = { _ in
+        mockCoreCrypto.mockMlsInit = { _, _ in
             mlsInitCalled = true
         }
 
@@ -80,7 +80,7 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         let mockCoreCrypto = MockCoreCrypto()
 
         var mlsInitCalls = 0
-        mockCoreCrypto.mockMlsInit = { _ in
+        mockCoreCrypto.mockMlsInit = { _, _ in
             mlsInitCalls += 1
         }
 

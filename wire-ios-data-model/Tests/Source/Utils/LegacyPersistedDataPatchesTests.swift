@@ -119,9 +119,16 @@ class FrameworkVersionTests: XCTestCase {
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     override class func setUp() {
-        super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
+
+        super.setUp()
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
     }
 
     func testThatItApplyPatchesWhenNoVersion() {

@@ -23,10 +23,16 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     override class func setUp() {
         super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+    
     // MARK: - Fixtures
 
     func fileAsset() -> WireDataModel.CacheAsset {

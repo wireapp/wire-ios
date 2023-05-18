@@ -28,6 +28,8 @@ public protocol SafeCoreCryptoProtocol {
     func tearDown() throws
 }
 
+let defaultCipherSuite = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
+
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public enum CoreCryptoSetupFailure: Error, Equatable {
         case failedToGetClientIDBytes
@@ -47,6 +49,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             path: config.path,
             key: config.key,
             clientId: clientID,
+            ciphersuites: [defaultCipherSuite],
             entropySeed: nil
         )
 
@@ -58,6 +61,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         let coreCrypto = try CoreCrypto.deferredInit(
             path: path,
             key: key,
+            ciphersuites: [defaultCipherSuite],
             entropySeed: nil
         )
 
@@ -71,7 +75,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
 
-        try coreCrypto.mlsInit(clientId: clientIdBytes)
+        try coreCrypto.mlsInit(clientId: clientIdBytes,
+                               ciphersuites: [defaultCipherSuite])
         didInitializeMLS = true
     }
 
