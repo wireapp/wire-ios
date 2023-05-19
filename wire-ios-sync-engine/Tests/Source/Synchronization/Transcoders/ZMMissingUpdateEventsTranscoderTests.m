@@ -52,7 +52,9 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     
     self.requestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
-    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC syncStateDelegate:self.syncStateDelegate];
+    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
+                                                             syncStateDelegate:self.syncStateDelegate
+                                                         lastEventIDRepository:self.lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockOperationStatus = [[OperationStatus alloc] init];
     self.mockOperationStatus.isInBackground = NO;
@@ -81,7 +83,8 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                       syncStatus:self.mockSyncStatus
                                                                  operationStatus:self.mockOperationStatus
-                                                      useLegacyPushNotifications:NO];
+                                                      useLegacyPushNotifications:NO
+                                                           lastEventIDRepository:self.lastEventIDRepository];
 }
 
 - (void)tearDown {
@@ -409,7 +412,8 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                                                       syncStatus:self.mockSyncStatus
                                                                                                  operationStatus:self.mockOperationStatus
-                                                                                      useLegacyPushNotifications:NO];
+                                                                                      useLegacyPushNotifications:NO
+                                                                                           lastEventIDRepository:self.lastEventIDRepository];
     
     WaitForAllGroupsToBeEmpty(0.5);
     [sut.listPaginator resetFetching];
@@ -889,7 +893,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     NSUUID *lastID = NSUUID.createUUID;
     // sync strategy is mocked to return the uiMOC when asked for the syncMOC
-    self.uiMOC.zm_lastNotificationID = lastID;
+    [self.lastEventIDRepository storeLastEventID:lastID];
     [self expectMockPushNotificationStatusHasEventsToFetch:YES inBackground:YES];
 
     // when

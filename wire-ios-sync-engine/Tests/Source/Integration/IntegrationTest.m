@@ -36,9 +36,11 @@
     self.mockEnvironment = [[MockEnvironment alloc] init];
     self.mockLoginDelegete = [[MockLoginDelegate alloc] init];
     self.appState = @"authenticated";
-    
+
     self.currentUserIdentifier = [NSUUID createUUID];
     [self configureDefaultAPIVersion];
+    self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.currentUserIdentifier
+                                                            sharedUserDefaults:self.sharedUserDefaults];
     [self _setUp];
 }
 
@@ -49,10 +51,11 @@
     self.mockMediaManager = nil;
     self.currentUserIdentifier = nil;
     self.mockEnvironment = nil;
-    
+
     WaitForAllGroupsToBeEmpty(0.5);
     [NSFileManager.defaultManager removeItemAtURL:[MockUserClient mockEncryptionSessionDirectory] error:nil];
     [self resetCurrentAPIVersion];
+    [self.lastEventIDRepository storeLastEventID:nil];
     [super tearDown];
 }
 

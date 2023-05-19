@@ -174,7 +174,8 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
           applicationGroupIdentifier: appGroupID,
           accountIdentifier: accountID,
           environment: BackendEnvironment.shared,
-          analytics: nil
+          analytics: nil,
+          sharedUserDefaults: .applicationGroup
       )
 
       session.delegate = self

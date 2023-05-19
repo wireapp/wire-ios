@@ -24,6 +24,7 @@ class ConnectionTests_Swift: IntegrationTest {
 
     override func setUp() {
         super.setUp()
+        createSelfUserAndConversation()
         setCurrentAPIVersion(.v0)
     }
 
@@ -35,6 +36,8 @@ class ConnectionTests_Swift: IntegrationTest {
     }
 
     func testThatConnectionRequestsToTwoUsersAreAddedToPending() {
+        XCTAssertTrue(login())
+
         // given two remote users
         let userName1 = "Hans Von Üser"
         let userName2 = "Hannelore Isstgern"
@@ -57,8 +60,6 @@ class ConnectionTests_Swift: IntegrationTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        XCTAssertTrue(login())
 
         let active = ZMConversationList.conversations(inUserSession: userSession!)
         let count = active.count
@@ -100,6 +101,11 @@ class ConnectionTests_Swift: IntegrationTest {
         // when the remote user accepts the connection requests
         mockTransportSession.performRemoteChanges { session in
             session.remotelyAcceptConnection(to: mockUser1)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        mockTransportSession.performRemoteChanges { session in
             session.remotelyAcceptConnection(to: mockUser2)
         }
 

@@ -46,7 +46,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
     override func session(
         for account: Account,
         coreDataStack: CoreDataStack,
-        configuration: ZMUserSession.Configuration = .init()
+        configuration: ZMUserSession.Configuration = .init(),
+        sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
         return ZMUserSession(
             userId: account.userIdentifier,
@@ -57,7 +58,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
-            configuration: configuration
+            configuration: configuration,
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 
@@ -104,6 +106,9 @@ extension IntegrationTest {
 
         UserClientRequestFactory._test_overrideNumberOfKeys = 1
 
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         deleteSharedContainerContent()
         ZMPersistentCookieStorage.setDoNotPersistToKeychain(!useRealKeychain)
@@ -141,8 +146,9 @@ extension IntegrationTest {
         sharedSearchDirectory = nil
         mockTransportSession?.cleanUp()
         mockTransportSession = nil
-        userSession = nil
+        userSession?.lastEventIDRepository.storeLastEventID(nil)
         userSession?.tearDown()
+        userSession = nil
         sessionManager = nil
         selfUser = nil
         user1 = nil
@@ -203,6 +209,7 @@ extension IntegrationTest {
 
     @objc
     func recreateSessionManagerAndDeleteLocalData() {
+        userSession?.lastEventIDRepository.storeLastEventID(nil)
         closePushChannelAndWaitUntilClosed()
         mockTransportSession.resetReceivedRequests()
         destroySharedSearchDirectory()
@@ -251,7 +258,8 @@ extension IntegrationTest {
             pushTokenService: pushTokenService,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete

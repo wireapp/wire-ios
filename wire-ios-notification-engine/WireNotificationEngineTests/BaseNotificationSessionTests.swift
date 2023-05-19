@@ -41,6 +41,7 @@ class BaseTest: ZMTBaseTest {
     var pushNotificationStatus: PushNotificationStatus!
     var pushNotificationStrategy: PushNotificationStrategy!
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
+    var lastEventIDRepository: LastEventIDRepository!
 
     override func setUp() {
         super.setUp()
@@ -57,6 +58,11 @@ class BaseTest: ZMTBaseTest {
         let account = Account(
             userName: "",
             userIdentifier: accountIdentifier
+        )
+
+        lastEventIDRepository = LastEventIDRepository(
+            userID: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         coreDataStack = CoreDataStack(
@@ -92,16 +98,21 @@ class BaseTest: ZMTBaseTest {
             transportSession: transportSession,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: registrationStatus,
-            linkPreviewDetector: linkPreviewDetector
+            linkPreviewDetector: linkPreviewDetector,
+            lastEventIDRepository: lastEventIDRepository
         )
 
-        pushNotificationStatus = PushNotificationStatus(managedObjectContext: coreDataStack.syncContext)
+        pushNotificationStatus = PushNotificationStatus(
+            managedObjectContext: coreDataStack.syncContext,
+            lastEventIDRepository: lastEventIDRepository
+        )
 
         pushNotificationStrategy = PushNotificationStrategy(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            pushNotificationStatus: PushNotificationStatus(managedObjectContext: coreDataStack.syncContext),
-            notificationsTracker: nil
+            pushNotificationStatus: pushNotificationStatus,
+            notificationsTracker: nil,
+            lastEventIDRepository: lastEventIDRepository
         )
 
         createSelfUserAndClient()
@@ -140,6 +151,7 @@ class BaseTest: ZMTBaseTest {
         pushNotificationStatus = nil
         pushNotificationStrategy = nil
         mockCryptoboxMigrationManager = nil
+        lastEventIDRepository = nil
         super.tearDown()
     }
 

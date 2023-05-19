@@ -50,7 +50,11 @@ extension IntegrationTest {
         XCTAssertNotNil(searchUser)
         XCTAssertEqual(searchUser?.name, name)
 
-        searchUser?.connect(completion: {_ in })
+        let didConnect = expectation(description: "did connect to user")
+        searchUser?.connect { _ in
+            didConnect.fulfill()
+        }
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     @objc

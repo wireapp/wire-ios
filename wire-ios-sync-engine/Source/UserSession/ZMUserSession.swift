@@ -230,6 +230,8 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+
     public init(
         userId: UUID,
         transportSession: TransportSessionType,
@@ -244,7 +246,8 @@ public class ZMUserSession: NSObject {
         appVersion: String,
         coreDataStack: CoreDataStack,
         configuration: Configuration,
-        earService: EARServiceInterface? = nil
+        earService: EARServiceInterface? = nil,
+        sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -276,6 +279,11 @@ public class ZMUserSession: NSObject {
                 coreDataStack.searchContext
             ],
             canPerformKeyMigration: true
+        )
+
+        self.lastEventIDRepository = LastEventIDRepository(
+            userID: userId,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         super.init()
@@ -348,14 +356,17 @@ public class ZMUserSession: NSObject {
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
-        return StrategyDirectory(contextProvider: coreDataStack,
-                                 applicationStatusDirectory: applicationStatusDirectory!,
-                                 cookieStorage: transportSession.cookieStorage,
-                                 pushMessageHandler: localNotificationDispatcher!,
-                                 flowManager: flowManager,
-                                 updateEventProcessor: updateEventProcessor!,
-                                 localNotificationDispatcher: localNotificationDispatcher!,
-                                 useLegacyPushNotifications: useLegacyPushNotifications)
+        return StrategyDirectory(
+            contextProvider: coreDataStack,
+            applicationStatusDirectory: applicationStatusDirectory!,
+            cookieStorage: transportSession.cookieStorage,
+            pushMessageHandler: localNotificationDispatcher!,
+            flowManager: flowManager,
+            updateEventProcessor: updateEventProcessor!,
+            localNotificationDispatcher: localNotificationDispatcher!,
+            useLegacyPushNotifications: useLegacyPushNotifications,
+            lastEventIDRepository: lastEventIDRepository
+        )
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
@@ -368,12 +379,15 @@ public class ZMUserSession: NSObject {
     }
 
     private func createApplicationStatusDirectory() -> ApplicationStatusDirectory {
-        let applicationStatusDirectory = ApplicationStatusDirectory(withManagedObjectContext: self.syncManagedObjectContext,
-                                                                    cookieStorage: transportSession.cookieStorage,
-                                                                    requestCancellation: transportSession,
-                                                                    application: application,
-                                                                    syncStateDelegate: self,
-                                                                    analytics: analytics)
+        let applicationStatusDirectory = ApplicationStatusDirectory(
+            withManagedObjectContext: self.syncManagedObjectContext,
+            cookieStorage: transportSession.cookieStorage,
+            requestCancellation: transportSession,
+            application: application,
+            syncStateDelegate: self,
+            lastEventIDRepository: lastEventIDRepository,
+            analytics: analytics
+        )
 
         applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
         self.hasCompletedInitialSync = !applicationStatusDirectory.syncStatus.isSlowSyncing
