@@ -252,7 +252,8 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
             application: application,
             appVersion: "00000",
             coreDataStack: coreDataStack,
-            configuration: .init()
+            configuration: .init(),
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 }

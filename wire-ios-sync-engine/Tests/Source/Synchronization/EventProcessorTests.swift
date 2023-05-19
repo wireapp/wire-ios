@@ -34,15 +34,20 @@ class EventProcessorTests: MessagingTest {
         super.setUp()
 
         createSelfClient()
-        syncMOC.zm_lastNotificationID = UUID() // simulate a completed slow sync
+
+        // simulate a completed slow sync
+        lastEventIDRepository.storeLastEventID(UUID())
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         eventProcessingTracker = EventProcessingTracker()
 
         syncStateDelegate = MockSyncStateDelegate()
 
-        syncStatus = SyncStatus(managedObjectContext: coreDataStack.syncContext,
-                                syncStateDelegate: syncStateDelegate)
+        syncStatus = SyncStatus(
+            managedObjectContext: coreDataStack.syncContext,
+            syncStateDelegate: syncStateDelegate,
+            lastEventIDRepository: lastEventIDRepository
+        )
 
         earService = MockEARServiceInterface()
         earService.fetchPublicKeys_MockError = MockError()
