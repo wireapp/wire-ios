@@ -31,7 +31,7 @@ protocol CallKitManagerDelegate: AnyObject {
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     )
 
-    func lookupConversationAndSync(
+    func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation>) -> Void
     )
@@ -632,7 +632,7 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        delegate.lookupConversationAndSync(by: call.handle) { [weak self] result in
+        delegate.lookupConversationAndProcessPendingCallEvents(by: call.handle) { [weak self] result in
             guard let `self` = self else {
                 action.fail()
                 return
@@ -694,16 +694,15 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        callRegister.unregisterCall(call)
-
         guard let delegate = delegate else {
             logger.warn("fail: perform end call action: delegate doesn't exist")
             log("fail CXEndCallAction because can't fetch conversation")
             action.fail()
+            callRegister.unregisterCall(call)
             return
         }
 
-        delegate.lookupConversation(by: call.handle) { [weak self] result in
+        delegate.lookupConversationAndProcessPendingCallEvents(by: call.handle) { [weak self] result in
             guard let `self` = self else {
                 action.fail()
                 return
@@ -713,12 +712,14 @@ extension CallKitManager: CXProviderDelegate {
             case .success(let conversation):
                 conversation.voiceChannel?.leave()
                 action.fulfill()
+                self.callRegister.unregisterCall(call)
                 self.logger.info("success: perform end call action")
 
             case .failure(let error):
                 self.logger.error("fail: perform end call action: couldn't fetch conversation: \(error)")
                 self.log("fail CXEndCallAction because can't fetch conversation: \(error)")
                 action.fail()
+                self.callRegister.unregisterCall(call)
             }
         }
     }
@@ -807,18 +808,6 @@ extension CallKitManager: CXProviderDelegate {
 
 extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
 
-    private var shouldHandleCallStates: Bool {
-        switch (requirePushTokenType, application.applicationState) {
-        case (.standard, .background):
-            // Processing call states in the background wiLl interfere with
-            // CallKit calls triggered from the NSE.
-            return false
-
-        default:
-            return true
-        }
-    }
-
     public func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
@@ -827,11 +816,6 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         previousCallState: CallState?
     ) {
         logger.info("received new call state: \(callState)")
-
-        guard shouldHandleCallStates else {
-            logger.info("not handling call state: app state is \(String(describing: application.applicationState))")
-            return
-        }
 
         switch callState {
         case .incoming(let hasVideo, let shouldRing, degraded: _):

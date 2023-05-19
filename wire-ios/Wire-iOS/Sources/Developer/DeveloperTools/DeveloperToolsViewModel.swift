@@ -87,6 +87,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         case dismissButtonTapped
         case itemTapped(Item)
+        case itemCopyRequested(Item)
 
     }
 
@@ -128,18 +129,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             ]
         ))
 
-        sections.append(Section(
-            header: "Backend info",
-            items: [
-                .text(TextItem(title: "Name", value: backendName)),
-                .text(TextItem(title: "Domain", value: backendDomain)),
-                .text(TextItem(title: "API version", value: apiVersion)),
-                .destination(DestinationItem(title: "Preferred API version", makeView: {
-                    AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
-                })),
-                .text(TextItem(title: "Is federation enabled?", value: isFederationEnabled))
-            ]
-        ))
+        sections.append(backendInfoSection)
 
         if let selfUser = selfUser {
             sections.append(Section(
@@ -176,6 +166,37 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
     }
 
+    private lazy var backendInfoSection: Section = {
+        let header = "Backend info"
+        var items = [Item]()
+
+        items.append(.text(TextItem(title: "Name", value: backendName)))
+
+        if canSwitchBackend {
+            items.append(.destination(DestinationItem(title: "Switch backend", makeView: {
+                AnyView(SwitchBackendView(viewModel: SwitchBackendViewModel()))
+            })))
+        }
+
+        items.append(.text(TextItem(title: "Domain", value: backendDomain)))
+        items.append(.text(TextItem(title: "API version", value: apiVersion)))
+        items.append(.destination(DestinationItem(title: "Preferred API version", makeView: {
+            AnyView(PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel()))
+        })))
+
+        items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+
+        return Section(
+            header: header,
+            items: items
+        )
+    }()
+
+    private var canSwitchBackend: Bool {
+        guard let sessionManager = SessionManager.shared else { return false }
+        return sessionManager.canSwitchBackend() == nil
+    }
+
     // MARK: - Events
 
     func handleEvent(_ event: Event) {
@@ -183,7 +204,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         case .dismissButtonTapped:
             onDismiss?()
 
-        case let .itemTapped(.text(textItem)):
+        case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value
 
         case let .itemTapped(.button(buttonItem)):

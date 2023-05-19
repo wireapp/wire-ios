@@ -2053,17 +2053,19 @@ internal enum L10n {
         internal enum ManyParticipantsConfirmation {
           /// Call
           internal static let call = L10n.tr("Localizable", "conversation.call.many_participants_confirmation.call", fallback: "Call")
-          /// This will call %d people
-          internal static func message(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "conversation.call.many_participants_confirmation.message", p1, fallback: "This will call %d people")
+          /// Are you sure you want to call %d people?
+          internal static func title(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "conversation.call.many_participants_confirmation.title", p1, fallback: "Are you sure you want to call %d people?")
           }
-          /// Start a call
-          internal static let title = L10n.tr("Localizable", "conversation.call.many_participants_confirmation.title", fallback: "Start a call")
         }
       }
       internal enum ConnectionView {
+        /// Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.
+        internal static let encryptionInfo = L10n.tr("Localizable", "conversation.connection_view.encryption_info", fallback: "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.")
         /// in Contacts
         internal static let inAddressBook = L10n.tr("Localizable", "conversation.connection_view.in_address_book", fallback: "in Contacts")
+        /// Please still be careful with who you share sensitive information.
+        internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
       }
       internal enum Create {
         internal enum GroupName {
@@ -2600,6 +2602,46 @@ internal enum L10n {
           /// Unfortunately, your digital signature failed. Please try again.
           internal static let noSignature = L10n.tr("Localizable", "digital_signature.alert.error.no_signature", fallback: "Unfortunately, your digital signature failed. Please try again.")
         }
+      }
+    }
+    internal enum Drawing {
+      internal enum Colors {
+        /// black
+        internal static let black = L10n.tr("Localizable", "drawing.colors.black", fallback: "black")
+        /// blue
+        internal static let blue = L10n.tr("Localizable", "drawing.colors.blue", fallback: "blue")
+        /// brown
+        internal static let brown = L10n.tr("Localizable", "drawing.colors.brown", fallback: "brown")
+        /// chocolate
+        internal static let chocolate = L10n.tr("Localizable", "drawing.colors.chocolate", fallback: "chocolate")
+        /// coral
+        internal static let coral = L10n.tr("Localizable", "drawing.colors.coral", fallback: "coral")
+        /// cyan
+        internal static let cyan = L10n.tr("Localizable", "drawing.colors.cyan", fallback: "cyan")
+        /// gray
+        internal static let gray = L10n.tr("Localizable", "drawing.colors.gray", fallback: "gray")
+        /// green
+        internal static let green = L10n.tr("Localizable", "drawing.colors.green", fallback: "green")
+        /// lilac
+        internal static let lilac = L10n.tr("Localizable", "drawing.colors.lilac", fallback: "lilac")
+        /// lime
+        internal static let lime = L10n.tr("Localizable", "drawing.colors.lime", fallback: "lime")
+        /// orange
+        internal static let orange = L10n.tr("Localizable", "drawing.colors.orange", fallback: "orange")
+        /// pink
+        internal static let pink = L10n.tr("Localizable", "drawing.colors.pink", fallback: "pink")
+        /// purple
+        internal static let purple = L10n.tr("Localizable", "drawing.colors.purple", fallback: "purple")
+        /// red
+        internal static let red = L10n.tr("Localizable", "drawing.colors.red", fallback: "red")
+        /// sky
+        internal static let sky = L10n.tr("Localizable", "drawing.colors.sky", fallback: "sky")
+        /// turquoise
+        internal static let turquoise = L10n.tr("Localizable", "drawing.colors.turquoise", fallback: "turquoise")
+        /// white
+        internal static let white = L10n.tr("Localizable", "drawing.colors.white", fallback: "white")
+        /// yellow
+        internal static let yellow = L10n.tr("Localizable", "drawing.colors.yellow", fallback: "yellow")
       }
     }
     internal enum Email {
@@ -3993,13 +4035,13 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "profile.block_dialog.title", fallback: "Block?")
       }
       internal enum CancelConnectionRequestDialog {
-        /// No
-        internal static let buttonNo = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.button_no", fallback: "No")
+        /// Cancel
+        internal static let buttonCancel = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.button_cancel", fallback: "Cancel")
         /// Yes
         internal static let buttonYes = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.button_yes", fallback: "Yes")
-        /// Cancel your connection request to %@?
+        /// Remove connection request to %@.
         internal static func message(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "profile.cancel_connection_request_dialog.message", String(describing: p1), fallback: "Cancel your connection request to %@?")
+          return L10n.tr("Localizable", "profile.cancel_connection_request_dialog.message", String(describing: p1), fallback: "Remove connection request to %@.")
         }
         /// Cancel Request?
         internal static let title = L10n.tr("Localizable", "profile.cancel_connection_request_dialog.title", fallback: "Cancel Request?")
@@ -4031,8 +4073,14 @@ internal enum L10n {
         internal static let groupAdmin = L10n.tr("Localizable", "profile.details.group_admin", fallback: "Group admin")
         /// Guest
         internal static let guest = L10n.tr("Localizable", "profile.details.guest", fallback: "Guest")
+        /// Get certainty about %@’s identity before connecting.
+        internal static func identityWarning(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.")
+        }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")
+        /// Please verify the person's identity before accepting the connection request.
+        internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.")
         /// Details
         internal static let title = L10n.tr("Localizable", "profile.details.title", fallback: "Details")
       }

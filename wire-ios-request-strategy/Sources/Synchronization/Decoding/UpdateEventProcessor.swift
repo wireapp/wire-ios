@@ -29,5 +29,7 @@ public protocol UpdateEventProcessor: AnyObject {
 
     func processEventsIfReady() -> Bool
 
+    func processPendingCallEvents() throws
+
     var eventConsumers: [ZMEventConsumer] { get set }
 }

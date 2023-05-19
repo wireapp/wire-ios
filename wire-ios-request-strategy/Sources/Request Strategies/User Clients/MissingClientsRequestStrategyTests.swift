@@ -402,7 +402,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     func testThatItRemovesOtherMissingClientsEvenIfOneOfThemHasANilValue() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
-            let payload : [ String: [String: Any]] = [
+            let payload: [ String: [String: Any]] = [
                 self.otherClient.user!.remoteIdentifier!.transportString(): [
                         self.otherClient.remoteIdentifier!: [
                             "id": 3, "key": self.validPrekey
@@ -427,7 +427,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let otherClient2 = self.createClient(user: self.otherUser)
-            let payload : [ String: [String: AnyObject]] = [
+            let payload: [ String: [String: AnyObject]] = [
                 self.otherUser.remoteIdentifier!.transportString(): [
                     self.otherClient.remoteIdentifier!: NSNull(),
                     otherClient2.remoteIdentifier!: NSNull()]
@@ -502,6 +502,27 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             // THEN
             XCTAssertEqual(message.missingRecipients.count, 0)
             XCTAssertFalse(message.isExpired)
+        }
+    }
+
+    func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient_V4() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let message = self.message(missingRecipient: self.otherClient)
+            let request = self.missingClientsRequest(missingClients: [self.otherClient])
+            
+            // WHEN
+            XCTAssertEqual(message.missingRecipients.count, 1)
+            guard let response = self.response(forMissing: [self.otherClient], apiVersion: .v4) else {
+                return XCTFail("Response is invalid")
+            }
+            _ = self.sut.updateUpdatedObject(self.selfClient,
+                                             requestUserInfo: request.userInfo,
+                                             response: response,
+                                             keysToParse: request.keys)
+            
+            // THEN
+            XCTAssertEqual(message.missingRecipients.count, 0)
         }
     }
 
@@ -732,7 +753,7 @@ extension MissingClientsRequestStrategyTests {
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/users/list-prekeys", file: file, line: line)
-        case .v1, .v2, .v3:
+        case .v1, .v2, .v3, .v4:
             XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/users/list-prekeys", file: file, line: line)
         }
 
@@ -792,7 +813,7 @@ extension MissingClientsRequestStrategyTests {
     }
 
     /// Returns response for missing clients
-    func response(forMissing clients: [UserClient]) -> ZMTransportResponse {
+    private func response(forMissing clients: [UserClient]) -> ZMTransportResponse {
         var payload: [String: [String: Any]] = [:]
         for missingClient in clients {
             let key = missingClient.user!.remoteIdentifier!.transportString()
@@ -804,6 +825,50 @@ extension MissingClientsRequestStrategyTests {
             payload[key] = prevValue
         }
         return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+    }
+
+    private func response(forMissing clients: [UserClient], apiVersion: APIVersion) -> ZMTransportResponse? {
+        switch apiVersion {
+        case .v0:
+            return response(forMissing: clients)
+        case .v1, .v2, .v3:
+            guard let payloadData = prekeyByQualifiedUser.payloadData() else {
+                return nil
+            }
+            let responseString = String(bytes: payloadData, encoding: .utf8)
+            return ZMTransportResponse(payload: responseString! as ZMTransportData,
+                                       httpStatus: 200,
+                                       transportSessionError: nil,
+                                       apiVersion: apiVersion.rawValue)
+
+        case .v4:
+            let prekeyByQualifiedUser_V4 = Payload.PrekeyByQualifiedUserIDV4(prekeyByQualifiedUserID: prekeyByQualifiedUser, failed: nil)
+            guard let payloadData = prekeyByQualifiedUser_V4.payloadData() else {
+                return nil
+            }
+            let responseString = String(bytes: payloadData, encoding: .utf8)
+            return ZMTransportResponse(payload: responseString! as ZMTransportData,
+                                       httpStatus: 200,
+                                       transportSessionError: nil,
+                                       apiVersion: apiVersion.rawValue)
+
+        }
+    }
+
+    private var prekeyByQualifiedUser: Payload.PrekeyByQualifiedUserID {
+        let domain = otherClient.user?.domain ?? "wire.com"
+        let prekey: Payload.Prekey = Payload.Prekey(key: validPrekey, id: 3)
+        let prekeyByUser: Payload.PrekeyByUserID = [
+            otherClient.user!.remoteIdentifier.transportString(): [
+                otherClient.remoteIdentifier!: prekey
+            ]
+        ]
+
+        let prekeyByQualifiedUser: Payload.PrekeyByQualifiedUserID = [
+            domain: prekeyByUser
+        ]
+
+        return prekeyByQualifiedUser
     }
 
     /// Returns missing client request

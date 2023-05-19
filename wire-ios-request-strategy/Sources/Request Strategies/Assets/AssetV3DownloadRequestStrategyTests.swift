@@ -328,11 +328,11 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 // tests on result of request
 extension AssetV3DownloadRequestStrategyTests {
 
-    func testThatItMarksDownloadAsSuccessIfSuccessfulDownloadAndDecryption_V3() {
+    func testThatItMarksDownloadAsSuccessIfSuccessfulDownloadAndDecryption_V3() throws {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
 
         var message: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
@@ -382,10 +382,10 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-//        When the backend redirects to the cloud service to get the image, it could be that the
-//        network bandwidth of the device is really bad. If the time interval is pretty long before
-//        the connectivity returns, the cloud responds with an error having status code 403
-//        -> retry the image request and do not delete the asset client message.
+    // When the backend redirects to the cloud service to get the image, it could be that the
+    // network bandwidth of the device is really bad. If the time interval is pretty long before
+    // the connectivity returns, the cloud responds with an error having status code 403
+    // -> retry the image request and do not delete the asset client message.
     func testThatItMarksDownloadAsFailedIfCannotDownload_TemporaryError_403_V3() {
         let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
@@ -487,12 +487,12 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItSendsNonCoreDataChangeNotification_AfterSuccessfullyDownloadingAsset() {
+    func testThatItSendsNonCoreDataChangeNotification_AfterSuccessfullyDownloadingAsset() throws {
 
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
 
@@ -528,10 +528,10 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItRecategorizeMessageAfterDownloadingAssetContent() {
+    func testThatItRecategorizeMessageAfterDownloadingAssetContent() throws {
         let plainTextData = self.verySmallJPEGData()
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 
@@ -543,13 +543,13 @@ extension AssetV3DownloadRequestStrategyTests {
             var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
             imageMetaData.tag = "medium"
             asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
-                                                        mimeType: "image/jpeg",
-                                                        name: nil,
-                                                        imageMetaData: imageMetaData)
+                                                       mimeType: "image/jpeg",
+                                                       name: nil,
+                                                       imageMetaData: imageMetaData)
             asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
-                                                          sha256: sha,
-                                                          assetId: "someId",
-                                                          assetToken: "someToken")
+                                                         sha256: sha,
+                                                         assetId: "someId",
+                                                         assetToken: "someToken")
 
             let genericMessage = GenericMessage(content: asset, nonce: messageId)
 
@@ -594,16 +594,16 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() {
+    func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() throws {
         guard let plainTextData = ("<svg width=\"100\" height=\"100\">"
-            + "<rect width=\"100\" height=\"100\"/>"
-            + "</svg>").data(using: .utf8) else {
-                XCTFail("Unable to convert SVG to Data")
-                return
+                                   + "<rect width=\"100\" height=\"100\"/>"
+                                   + "</svg>").data(using: .utf8) else {
+            XCTFail("Unable to convert SVG to Data")
+            return
         }
 
         let key = Data.randomEncryptionKey()
-        let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+        let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 
@@ -615,13 +615,13 @@ extension AssetV3DownloadRequestStrategyTests {
             var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
             imageMetaData.tag = "medium"
             asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
-                                                        mimeType: "image/svg+xml",
-                                                        name: nil,
-                                                        imageMetaData: imageMetaData)// Even if we treat them as files, SVGs are sent as images.
+                                                       mimeType: "image/svg+xml",
+                                                       name: nil,
+                                                       imageMetaData: imageMetaData)// Even if we treat them as files, SVGs are sent as images.
             asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
-                                                          sha256: sha,
-                                                          assetId: "someId",
-                                                          assetToken: "someToken")
+                                                         sha256: sha,
+                                                         assetId: "someId",
+                                                         assetToken: "someToken")
 
             let genericMessage = GenericMessage(content: asset, nonce: messageId)
 
