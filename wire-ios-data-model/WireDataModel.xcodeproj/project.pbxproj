@@ -552,6 +552,7 @@
 		EEAAD75C252C6DAE00E6A44E /* ModifiedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75B252C6DAE00E6A44E /* ModifiedObjects.swift */; };
 		EEAAD75E252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75D252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift */; };
 		EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75F252C713E00E6A44E /* ClassIdentifier.swift */; };
+		EEB121AE2A175C9500E74D39 /* LastEventIDRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */; };
 		EEB5DE0A283784F9009B4741 /* Feature+DigitalSignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */; };
 		EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */; };
 		EEB803AB283F61E600412F62 /* Feature.MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB803AA283F61E600412F62 /* Feature.MLS.swift */; };
@@ -1431,6 +1432,7 @@
 		EEAAD75B252C6DAE00E6A44E /* ModifiedObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifiedObjects.swift; sourceTree = "<group>"; };
 		EEAAD75D252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMManagedObject+ClassIdentifier.swift"; sourceTree = "<group>"; };
 		EEAAD75F252C713E00E6A44E /* ClassIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassIdentifier.swift; sourceTree = "<group>"; };
+		EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastEventIDRepositoryTests.swift; sourceTree = "<group>"; };
 		EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+DigitalSignature.swift"; sourceTree = "<group>"; };
 		EEB5DE0B2837877A009B4741 /* zmessaging2.101.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.101.0.xcdatamodel; sourceTree = "<group>"; };
 		EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-101-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1954,6 +1956,7 @@
 				EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */,
 				16827AF12732AB2E0079405D /* InvalidDomainRemovalTests.swift */,
 				E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */,
+				EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */,
 			);
 			name = Utils;
 			path = Tests/Source/Utils;
@@ -4222,6 +4225,7 @@
 				1684141722282A1A00FCB9BC /* TransferStateMigrationTests.swift in Sources */,
 				16DF3B5F2289510600D09365 /* ZMConversationTests+Legalhold.swift in Sources */,
 				169FF3AA27157F0100330C2E /* ZMSearchUserTests+Connections.swift in Sources */,
+				EEB121AE2A175C9500E74D39 /* LastEventIDRepositoryTests.swift in Sources */,
 				EE2BA00925CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift in Sources */,
 				63123BCC291BBB7A009A5179 /* MLSQualifiedClientIdTests.swift in Sources */,
 				EE98878E28882BFF002340D2 /* MLSControllerTests.swift in Sources */,
