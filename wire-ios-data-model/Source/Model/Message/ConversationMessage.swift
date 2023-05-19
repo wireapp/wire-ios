@@ -32,6 +32,12 @@ public enum ZMDeliveryState: UInt {
 }
 
 @objc
+public enum MessageSendFailure: Int {
+    case unknown
+    case federationRemoteError
+}
+
+@objc
 public protocol ReadReceipt {
 
     @available(*, deprecated, message: "Use `userType` instead")
@@ -161,6 +167,12 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 public protocol ConversationCompositeMessage {
     /// The composite message associated with the message. If the message is not a composite message, it will be nil
     var compositeMessageData: CompositeMessageData? { get }
+}
+
+public protocol SwiftConversationMessage {
+
+    /// Reason why the message has not been sent
+    var failedToSendReason: MessageSendFailure? { get }
 }
 
 public extension ZMConversationMessage {

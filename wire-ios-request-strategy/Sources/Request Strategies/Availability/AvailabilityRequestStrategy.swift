@@ -40,6 +40,8 @@ public class AvailabilityRequestStrategy: AbstractRequestStrategy {
         return modifiedSync.nextRequest(for: apiVersion)
     }
 
+    public var expirationReasonCode: NSNumber?
+
 }
 
 extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {

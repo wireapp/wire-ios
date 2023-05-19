@@ -42,6 +42,7 @@ static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
 NSString * const ZMMessageIsExpiredKey = @"isExpired";
+NSString * const ZMMessageExpirationReasonCodeKey = @"expirationReasonCode";
 NSString * const ZMMessageMissingRecipientsKey = @"missingRecipients";
 NSString * const ZMMessageServerTimestampKey = @"serverTimestamp";
 NSString * const ZMMessageImageTypeKey = @"imageType";
@@ -109,6 +110,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 @interface ZMMessage (CoreDataForward)
 
 @property (nonatomic) BOOL isExpired;
+@property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic) NSDate *expirationDate;
 @property (nonatomic) NSDate *destructionDate;
 @property (nonatomic) BOOL isObfuscated;
@@ -128,6 +130,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 
 @dynamic missingRecipients;
 @dynamic isExpired;
+@dynamic expirationReasonCode;
 @dynamic expirationDate;
 @dynamic destructionDate;
 @dynamic senderClientID;
@@ -222,6 +225,17 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 - (void)removeExpirationDate;
 {
     self.expirationDate = nil;
+}
+
+- (void)setIsExpired:(BOOL)isExpired;
+{
+    [self willChangeValueForKey:ZMMessageIsExpiredKey];
+    [self setPrimitiveValue:@(isExpired) forKey:ZMMessageIsExpiredKey];
+    [self didChangeValueForKey:ZMMessageIsExpiredKey];
+
+    if (isExpired == NO) {
+        self.expirationReasonCode = nil;
+    }
 }
 
 - (void)markAsSent
@@ -554,6 +568,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         NSArray *newKeys = @[
                              ZMMessageConversationKey,
                              ZMMessageExpirationDateKey,
+                             ZMMessageExpirationReasonCodeKey,
                              ZMMessageImageTypeKey,
                              ZMMessageIsAnimatedGifKey,
                              ZMMessageMediumRemoteIdentifierDataKey,

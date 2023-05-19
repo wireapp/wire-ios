@@ -45,10 +45,6 @@ final class WipeCompletionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-
     private func configureSubviews() {
         view.addSubview(wireLogoInfoView)
 
