@@ -41,8 +41,6 @@ class PushNotificationStatusTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        lastEventIDRepository = LastEventIDRepository(userID: accountIdentifier)
-
         sut = PushNotificationStatus(
             managedObjectContext: syncMOC,
             lastEventIDRepository: lastEventIDRepository

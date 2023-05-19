@@ -60,7 +60,10 @@ class BaseTest: ZMTBaseTest {
             userIdentifier: accountIdentifier
         )
 
-        lastEventIDRepository = LastEventIDRepository(userID: accountIdentifier)
+        lastEventIDRepository = LastEventIDRepository(
+            userID: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
 
         coreDataStack = CoreDataStack(
             account: account,

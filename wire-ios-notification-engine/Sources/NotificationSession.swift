@@ -123,7 +123,7 @@ public class NotificationSession {
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
         analytics: AnalyticsType?,
-        userDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -166,7 +166,7 @@ public class NotificationSession {
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
             accountIdentifier: accountIdentifier,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 
@@ -177,11 +177,11 @@ public class NotificationSession {
         accountContainer: URL,
         analytics: AnalyticsType?,
         accountIdentifier: UUID,
-        userDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults
     ) throws {
         let lastEventIDRepository = LastEventIDRepository(
             userID: accountIdentifier,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         )
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
