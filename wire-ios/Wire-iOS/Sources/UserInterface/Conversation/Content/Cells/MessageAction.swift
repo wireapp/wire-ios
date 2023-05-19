@@ -21,7 +21,26 @@ import WireDataModel
 import UIKit
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.digitallySign, .copy, .reply, .openDetails, .edit, .save, .cancel, .download, .forward, .like, .unlike, .resend, .showInConversation, .sketchDraw, .sketchEmoji, .present, .openQuote, .resetSession, .delete, .react(.like)]
+    static var allCases: [MessageAction] = [.digitallySign,
+                                            .copy,
+                                            .reply,
+                                            .openDetails,
+                                            .edit,
+                                            .save,
+                                            .cancel,
+                                            .download,
+                                            .forward,
+                                            .like,
+                                            .unlike,
+                                            .resend,
+                                            .showInConversation,
+                                            .sketchDraw,
+                                            .sketchEmoji,
+                                            .present,
+                                            .openQuote,
+                                            .resetSession,
+                                            .delete,
+                                            .react(.like)]
     
     case
     digitallySign,
