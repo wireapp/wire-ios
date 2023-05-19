@@ -470,6 +470,23 @@ class SessionManagertests_AccountDeletion: IntegrationTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }
 
+    func testThatItDeletesTheLastEventID_WhenDeletingActiveUserSessionAccount() throws {
+        // given
+        XCTAssert(login())
+
+        let account = sessionManager!.accountManager.selectedAccount!
+        let repository = LastEventIDRepository(userID: account.userIdentifier)
+        XCTAssertNotNil(repository.fetchLastEventID())
+
+        // when
+        performIgnoringZMLogError {
+            self.sessionManager!.delete(account: account)
+        }
+
+        // then
+        XCTAssertNil(repository.fetchLastEventID())
+    }
+
 }
 
 class SessionManagerTests_AuthenticationFailure: IntegrationTest {

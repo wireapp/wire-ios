@@ -731,6 +731,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self?.environment.cookieStorage(for: account).deleteKeychainItems()
             }
 
+            if deleteAccount {
+                self?.activeUserSession?.lastEventIDRepository.storeLastEventID(nil)
+            }
+
             self?.activeUserSession?.close(deleteCookie: deleteCookie)
             self?.activeUserSession = nil
 
