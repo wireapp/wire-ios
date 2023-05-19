@@ -478,7 +478,8 @@ class SessionManagertests_AccountDeletion: IntegrationTest {
         // given
         XCTAssert(login())
 
-        let account = sessionManager!.accountManager.selectedAccount!
+        let sessionManager = try XCTUnwrap(sessionManager)
+        let account = try XCTUnwrap(sessionManager.accountManager.selectedAccount)
         let repository = LastEventIDRepository(
             userID: account.userIdentifier,
             sharedUserDefaults: sharedUserDefaults
@@ -487,7 +488,7 @@ class SessionManagertests_AccountDeletion: IntegrationTest {
 
         // when
         performIgnoringZMLogError {
-            self.sessionManager!.delete(account: account)
+            sessionManager.delete(account: account)
         }
 
         // then
