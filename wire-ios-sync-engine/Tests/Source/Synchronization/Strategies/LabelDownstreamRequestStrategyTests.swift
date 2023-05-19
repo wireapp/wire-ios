@@ -35,7 +35,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
             syncStateDelegate: mockSyncStateDelegate,
-            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+            lastEventIDRepository: lastEventIDRepository
         )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing

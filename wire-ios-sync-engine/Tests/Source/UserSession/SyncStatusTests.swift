@@ -23,18 +23,14 @@ final class SyncStatusTests: MessagingTest {
 
     var sut: SyncStatus!
     var mockSyncDelegate: MockSyncStateDelegate!
-    var lastEventIDRepository: LastEventIDRepository!
 
     override func setUp() {
         super.setUp()
         mockSyncDelegate = MockSyncStateDelegate()
-        lastEventIDRepository = LastEventIDRepository(userID: userIdentifier)
         sut = createSut()
     }
 
     override func tearDown() {
-        lastEventIDRepository.storeLastEventID(nil)
-        lastEventIDRepository = nil
         mockSyncDelegate = nil
         sut = nil
         super.tearDown()

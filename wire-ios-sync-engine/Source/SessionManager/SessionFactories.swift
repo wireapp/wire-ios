@@ -56,7 +56,7 @@ open class AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        userDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
 
         let transportSession = ZMTransportSession(
@@ -80,7 +80,7 @@ open class AuthenticatedSessionFactory {
             appVersion: appVersion,
             coreDataStack: coreDataStack,
             configuration: configuration,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         )
 
         userSession.startRequestLoopTracker()

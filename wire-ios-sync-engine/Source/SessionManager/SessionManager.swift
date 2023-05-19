@@ -302,7 +302,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         fatal("init() not implemented")
     }
 
-    private let userDefaults: UserDefaults
+    private let sharedUserDefaults: UserDefaults
 
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
@@ -319,7 +319,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
-        userDefaults: UserDefaults = .standard
+        sharedUserDefaults: UserDefaults
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -369,7 +369,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             proxyCredentials: proxyCredentials,
             isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         )
 
         configureBlacklistDownload()
@@ -431,7 +431,7 @@ public final class SessionManager: NSObject, SessionManagerType {
          isDeveloperModeEnabled: Bool = false,
          proxyCredentials: ProxyCredentials?,
          isUnauthenticatedTransportSessionReady: Bool = false,
-         userDefaults: UserDefaults = .standard
+         sharedUserDefaults: UserDefaults
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -446,7 +446,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.callKitManager = callKitManager
         self.proxyCredentials = proxyCredentials
         self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
-        self.userDefaults = userDefaults
+        self.sharedUserDefaults = sharedUserDefaults
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -989,7 +989,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }

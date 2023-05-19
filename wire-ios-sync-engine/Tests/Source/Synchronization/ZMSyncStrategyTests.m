@@ -92,9 +92,7 @@
     selfConversation.remoteIdentifier = self.userIdentifier;
     selfConversation.conversationType = ZMConversationTypeSelf;
 
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
-    [lastEventIDRepository storeLastEventID:[NSUUID UUID]];
+    [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
     
     [self.syncMOC saveOrRollback];
         
@@ -117,7 +115,7 @@
                                                                                    requestCancellation:self
                                                                                            application:self.application
                                                                                      syncStateDelegate:self
-                                                                                 lastEventIDRepository:lastEventIDRepository
+                                                                                 lastEventIDRepository:self.lastEventIDRepository
                                                                                              analytics:nil];
     
     NotificationDispatcher *notificationDispatcher =

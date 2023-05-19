@@ -33,7 +33,7 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
             syncStateDelegate: mockSyncStateDelegate,
-            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+            lastEventIDRepository: lastEventIDRepository
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 

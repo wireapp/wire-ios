@@ -61,9 +61,7 @@
     // when
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
 
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.currentUserIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
-    NSUUID *lastNotificationId = [lastEventIDRepository fetchLastEventID];
+    NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
 
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@", lastNotificationId.transportString ,selfUser.selfClient.remoteIdentifier];
@@ -82,7 +80,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqualObjects([lastEventIDRepository fetchLastEventID], notificationID);
+    XCTAssertEqualObjects([self.lastEventIDRepository fetchLastEventID], notificationID);
 }
 
 - (void)testThatItFetchesTheNotificationStreamWhenReceivingNotificationOfTypeNotice_TriesAgainWhenReceiving_401
@@ -118,9 +116,8 @@
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
     
     __block NSUInteger requestCount = 0;
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.currentUserIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
-    NSUUID *lastNotificationId = [lastEventIDRepository fetchLastEventID];
+
+    NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@", lastNotificationId.transportString, selfUser.selfClient.remoteIdentifier];
         if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
@@ -142,7 +139,7 @@
     
     // then
     XCTAssertEqual(requestCount, 2lu);
-    XCTAssertEqualObjects([lastEventIDRepository fetchLastEventID], notificationID);
+    XCTAssertEqualObjects([self.lastEventIDRepository fetchLastEventID], notificationID);
 }
 
 #pragma mark - Helper

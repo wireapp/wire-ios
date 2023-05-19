@@ -32,7 +32,6 @@
 @property (nonatomic) ZMSingleRequestSync *downstreamSync;
 @property (nonatomic) MockSyncStatus *mockSyncStatus;
 @property (nonatomic) id syncStateDelegate;
-@property (nonatomic) LastEventIDRepository *lastEventIDRepository;
 
 @end
 
@@ -45,9 +44,6 @@
     [self verifyMockLater:self.downstreamSync];
     
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
-
-    self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
 
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
                                                              syncStateDelegate:self.syncStateDelegate
@@ -107,12 +103,10 @@
 - (void)testThatItCreatesTheRightDownstreamSync
 {
     // when
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
     ZMLastUpdateEventIDTranscoder *sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC
                                                                                            applicationStatus:self.mockApplicationStatus
                                                                                                   syncStatus:self.mockSyncStatus
-                                                                                       lastEventIDRepository:lastEventIDRepository];
+                                                                                       lastEventIDRepository:self.lastEventIDRepository];
     id transcoder = sut.lastUpdateEventIDSync.transcoder;
     
     // then

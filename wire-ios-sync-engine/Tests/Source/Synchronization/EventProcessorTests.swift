@@ -36,7 +36,7 @@ class EventProcessorTests: MessagingTest {
         createSelfClient()
 
         // simulate a completed slow sync
-        LastEventIDRepository(userID: userIdentifier).storeLastEventID(UUID())
+        lastEventIDRepository.storeLastEventID(UUID())
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         eventProcessingTracker = EventProcessingTracker()
@@ -46,7 +46,7 @@ class EventProcessorTests: MessagingTest {
         syncStatus = SyncStatus(
             managedObjectContext: coreDataStack.syncContext,
             syncStateDelegate: syncStateDelegate,
-            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+            lastEventIDRepository: lastEventIDRepository
         )
 
         earService = MockEARServiceInterface()

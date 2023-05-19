@@ -45,11 +45,11 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
     @objc
     public init(
         userID: UUID,
-        userDefaults: UserDefaults = .standard
+        sharedUserDefaults: UserDefaults
     ) {
         storage = PrivateUserDefaults(
             userID: userID,
-            storage: userDefaults
+            storage: sharedUserDefaults
         )
 
         super.init()

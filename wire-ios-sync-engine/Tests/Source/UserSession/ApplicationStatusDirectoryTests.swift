@@ -36,7 +36,7 @@ class ApplicationStatusDirectoryTests: MessagingTest {
             requestCancellation: self,
             application: mockApplication,
             syncStateDelegate: self,
-            lastEventIDRepository: LastEventIDRepository(userID: userIdentifier)
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 

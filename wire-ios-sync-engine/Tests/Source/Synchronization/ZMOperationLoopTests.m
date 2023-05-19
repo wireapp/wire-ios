@@ -43,16 +43,13 @@
     self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
 
-    
     self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
                                                                                          cookieStorage:self.cookieStorage
                                                                                    requestCancellation:self.mockRequestCancellation
                                                                                            application:self.application
                                                                                      syncStateDelegate:self.mockSyncDelegate
-                                                                                 lastEventIDRepository:lastEventIDRepository
+                                                                                 lastEventIDRepository:self.lastEventIDRepository
                                                                                              analytics:nil];
     
     self.syncStatus = self.applicationStatusDirectory.syncStatus;

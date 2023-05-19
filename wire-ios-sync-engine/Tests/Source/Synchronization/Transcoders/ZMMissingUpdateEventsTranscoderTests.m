@@ -42,7 +42,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 @property (nonatomic) MockUpdateEventProcessor *mockUpdateEventProcessor;
 @property (nonatomic) id syncStateDelegate;
 @property (nonatomic) id mockApplicationDirectory;
-@property (nonatomic) LastEventIDRepository *lastEventIDRepository;
 
 @end
 
@@ -53,8 +52,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     
     self.requestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
-    self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
                                                              syncStateDelegate:self.syncStateDelegate
                                                          lastEventIDRepository:self.lastEventIDRepository];
@@ -407,8 +404,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     WaitForAllGroupsToBeEmpty(0.5);
 
     // when
-    LastEventIDRepository *lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
-                                                                                    userDefaults:NSUserDefaults.standardUserDefaults];
     ZMMissingUpdateEventsTranscoder *sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.syncMOC
                                                                                             notificationsTracker:nil
                                                                                                   eventProcessor:self.mockUpdateEventProcessor
@@ -418,7 +413,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                                                                       syncStatus:self.mockSyncStatus
                                                                                                  operationStatus:self.mockOperationStatus
                                                                                       useLegacyPushNotifications:NO
-                                                                                           lastEventIDRepository:lastEventIDRepository];
+                                                                                           lastEventIDRepository:self.lastEventIDRepository];
     
     WaitForAllGroupsToBeEmpty(0.5);
     [sut.listPaginator resetFetching];

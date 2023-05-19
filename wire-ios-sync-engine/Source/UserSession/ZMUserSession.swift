@@ -247,7 +247,7 @@ public class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         configuration: Configuration,
         earService: EARServiceInterface? = nil,
-        userDefaults: UserDefaults = .standard
+        sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -283,7 +283,7 @@ public class ZMUserSession: NSObject {
 
         self.lastEventIDRepository = LastEventIDRepository(
             userID: userId,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         )
 
         super.init()

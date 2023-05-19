@@ -47,7 +47,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration = .init(),
-        userDefaults: UserDefaults = .standard
+        sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
         return ZMUserSession(
             userId: account.userIdentifier,
@@ -59,7 +59,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             appVersion: appVersion,
             coreDataStack: coreDataStack,
             configuration: configuration,
-            userDefaults: userDefaults
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 
@@ -258,7 +258,8 @@ extension IntegrationTest {
             pushTokenService: pushTokenService,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
