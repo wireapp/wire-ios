@@ -1108,6 +1108,8 @@
 		D36E027829374EEA006C3E5A /* NSLayoutConstraint+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */; };
 		D36E027A293758DD006C3E5A /* CallHeaderBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E0279293758DD006C3E5A /* CallHeaderBar.swift */; };
 		D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
+		D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */; };
+		D398BB202A14ED0900B6EEB8 /* ReactionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */; };
 		D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */; };
 		D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DC6294CAFEF00DD272F /* AccessibilityActionView.swift */; };
 		D3BF754B29B093FD008459B5 /* WarningLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BF754A29B093FD008459B5 /* WarningLabelView.swift */; };
@@ -3107,6 +3109,8 @@
 		D364822B299630CD009EEE4D /* UIDevice+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Orientation.swift"; sourceTree = "<group>"; };
 		D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Helper.swift"; sourceTree = "<group>"; };
 		D36E0279293758DD006C3E5A /* CallHeaderBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallHeaderBar.swift; sourceTree = "<group>"; };
+		D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReactionPickerViewController.swift; sourceTree = "<group>"; };
+		D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCollectionView.swift; sourceTree = "<group>"; };
 		D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstablishingCallStatusView.swift; sourceTree = "<group>"; };
 		D3A74DC6294CAFEF00DD272F /* AccessibilityActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityActionView.swift; sourceTree = "<group>"; };
 		D3BF754A29B093FD008459B5 /* WarningLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelView.swift; sourceTree = "<group>"; };
@@ -7042,6 +7046,7 @@
 		D311F87C29EE9F5000D9CF7E /* MessageActions */ = {
 			isa = PBXGroup;
 			children = (
+				D398BB1A2A14BB4D00B6EEB8 /* CompleteReactionPicker */,
 				D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */,
 				D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */,
 			);
@@ -7055,6 +7060,15 @@
 				D35EEDCA28C7E95F00949F02 /* CookieProvider.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		D398BB1A2A14BB4D00B6EEB8 /* CompleteReactionPicker */ = {
+			isa = PBXGroup;
+			children = (
+				D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */,
+				D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */,
+			);
+			path = CompleteReactionPicker;
 			sourceTree = "<group>";
 		};
 		D3C34E6328C0C710004A1AF1 /* SimpleNotificationServiceExtension */ = {
@@ -8446,6 +8460,7 @@
 				551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */,
 				876B94821D7D8C870063AE89 /* UIView+SlideInState.swift in Sources */,
 				5E35F736217F417200D3F4FE /* BurstTimestampTableViewCell.swift in Sources */,
+				D398BB202A14ED0900B6EEB8 /* ReactionsCollectionView.swift in Sources */,
 				E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */,
 				EE742AB8284DE66400A6B5F3 /* DeveloperToolsViewModel.swift in Sources */,
 				BFAF4CAD1CEB670F00780537 /* AudioRecordViewController.swift in Sources */,
@@ -8884,6 +8899,7 @@
 				BF4D99CD1E79AAD400A7B08F /* ParticipantsCellViewModel.swift in Sources */,
 				16A94AF8209B5334008A5718 /* CallGridViewController.swift in Sources */,
 				7C440E7A23472E9900D91B5F /* FolderCreationNameCell.swift in Sources */,
+				D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */,
 				16719A101D99647D00AA6B63 /* GiphySearchViewController.swift in Sources */,
 				EF2E2F6E223BAF410038D7D9 /* MediaBar.swift in Sources */,
 				EF7F8FC121B5761C00D7723C /* ConversationReadReceiptSettingChangedCellDescription.swift in Sources */,

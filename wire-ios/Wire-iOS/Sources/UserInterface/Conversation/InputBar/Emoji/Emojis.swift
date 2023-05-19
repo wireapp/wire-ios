@@ -33,13 +33,15 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     let cellProvider: CellProvider
 
+    private let initialSections: [EmojiSection]
     private var sections: [EmojiSection]
     private let recentlyUsed: RecentlyUsedEmojiSection
 
     init(provider: @escaping CellProvider) {
         cellProvider = provider
         self.recentlyUsed = RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate()
-        sections = EmojiSectionType.all.compactMap(FileEmojiSection.init)
+        initialSections = EmojiSectionType.all.compactMap(FileEmojiSection.init)
+        sections = initialSections
         super.init()
         insertRecentlyUsedSectionIfNeeded()
     }
@@ -86,6 +88,23 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         return true
     }
 
+    //~!@#$%^& naming
+    func filterEmojis(withQuery query: String) {
+        if query.isEmpty {
+            sections = initialSections
+            return
+        }
+        sections = []
+        initialSections.forEach { section in
+            let filtered = section.emoji.filter {
+                guard let unicodeScalar = $0.unicodeScalars.first else { return false }
+                return (unicodeScalar.properties.name ?? "").contains(query.uppercased())
+            }
+            guard !filtered.isEmpty else { return }
+            let newSection = FileEmojiSection(emoji: filtered, type: section.type)
+            sections.append(newSection)
+        }
+    }
 }
 
 enum EmojiSectionType: String {
@@ -139,6 +158,11 @@ struct FileEmojiSection: EmojiSection {
         let filename = "emoji_\(type.rawValue)"
         guard let url = Bundle.main.url(forResource: filename, withExtension: "plist") else { return nil }
         guard let emoji = NSArray(contentsOf: url) as? [Emoji] else { return nil }
+        self.emoji = emoji
+        self.type = type
+    }
+
+    init(emoji: [Emoji], type: EmojiSectionType) {
         self.emoji = emoji
         self.type = type
     }

@@ -22,6 +22,7 @@ import WireCommonComponents
 
 protocol ReactionPickerDelegate: AnyObject {
     func didPickReaction(reaction: MessageReaction)
+    func didTapMoreEmojis()
 }
 
 class BasicReactionPicker: UIView {
@@ -81,7 +82,7 @@ private extension BasicReactionPicker {
     }
 
     @objc func didTapMoreEmojis() {
-
+        delegate?.didTapMoreEmojis()
     }
 
     @objc func didTapEmoji(sender: UIButton) {

@@ -40,7 +40,7 @@ class MessageActionsViewController: UIAlertController {
     private func addMessageActions(_ actions: [MessageAction],
                            withActionController actionController: ConversationMessageActionController) {
         self.actionController = actionController
-//        addReactionsView(withDelegate: self)
+        addReactionsView(withDelegate: self)
         actions.forEach { addAction($0) }
         addCancelAction()
     }
@@ -92,6 +92,27 @@ extension MessageActionsViewController: ReactionPickerDelegate {
     func didPickReaction(reaction: WireDataModel.MessageReaction) {
         actionController?.perform(action: .react(reaction))
     }
+
+    func didTapMoreEmojis() {
+        let pickerController = CompleteReactionPickerViewController()
+        pickerController.delegate = self
+        present(pickerController, animated: true)
+    }
+}
+
+extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
+    func emojiPickerDidSelectEmoji(_ emoji: String) {
+        guard let reaction = MessageReaction.messageReaction(from: emoji) else {
+            dismiss(animated: true)
+            return
+        }
+        actionController?.perform(action: .react(reaction))
+        dismiss(animated: true)
+        return
+    }
+
+    func emojiPickerDeleteTapped() {}
+
 }
 
 

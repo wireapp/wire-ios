@@ -18,14 +18,14 @@
 
 import UIKit
 
-protocol EmojiKeyboardViewControllerDelegate: AnyObject {
-    func emojiKeyboardViewController(_ viewController: EmojiKeyboardViewController, didSelectEmoji emoji: String)
-    func emojiKeyboardViewControllerDeleteTapped(_ viewController: EmojiKeyboardViewController)
+protocol EmojiPickerViewControllerDelegate: AnyObject {
+    func emojiPickerDidSelectEmoji(_ emoji: String)
+    func emojiPickerDeleteTapped()
 }
 
 final class EmojiKeyboardViewController: UIViewController {
 
-    weak var delegate: EmojiKeyboardViewControllerDelegate?
+    weak var delegate: EmojiPickerViewControllerDelegate?
     fileprivate var emojiDataSource: EmojiDataSource!
     fileprivate let collectionView = EmojiCollectionView()
     let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.all)
@@ -118,7 +118,7 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func delete() {
-        delegate?.emojiKeyboardViewControllerDeleteTapped(self)
+        delegate?.emojiPickerDeleteTapped()
         guard deleting else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
             self.delete()
@@ -142,7 +142,7 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
-        delegate?.emojiKeyboardViewController(self, didSelectEmoji: emoji)
+        delegate?.emojiPickerDidSelectEmoji(emoji)
         guard let result = emojiDataSource.register(used: emoji) else { return }
         collectionView.performBatchUpdates({
             switch result {
