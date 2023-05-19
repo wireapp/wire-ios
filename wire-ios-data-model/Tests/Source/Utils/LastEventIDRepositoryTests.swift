@@ -24,40 +24,62 @@ final class LastEventIDRepositoryTests: XCTestCase {
 
     var sut: LastEventIDRepository!
     var userID: UUID!
+    var userDefaults: UserDefaults!
 
     // MARK: - Life cycle
 
     override func setUp() {
         super.setUp()
         userID = UUID.create()
-        sut = LastEventIDRepository(userID: userID, userDefaults: .standard)
+        userDefaults = .random()
+        sut = LastEventIDRepository(userID: userID, sharedUserDefaults: userDefaults)
     }
 
     override func tearDown() {
-        sut.storeLastEventID(nil)
         sut = nil
         userID = nil
+        userDefaults.reset()
+        userDefaults = nil
         super.tearDown()
     }
 
-    // MARK: - Fetch and store
+    // MARK: - Helper
 
-    func test_fetchAndStoreLastEventID() throws {
+    var userDefaultsKey: String {
+        return "\(userID.uuidString)_lastEventID"
+    }
+
+    var getStoredValue: String? {
+        return userDefaults.string(forKey: userDefaultsKey)
+    }
+
+    func storeValue(_ string: String) {
+        userDefaults.set(string, forKey: userDefaultsKey)
+    }
+
+    // MARK: - Store
+
+    func test_StoreLastEventID() throws {
         // Given
         let eventID = UUID()
-        XCTAssertNil(sut.fetchLastEventID())
+        XCTAssertNil(getStoredValue)
 
         // When
         sut.storeLastEventID(eventID)
 
         // Then
-        XCTAssertEqual(sut.fetchLastEventID(), eventID)
+        XCTAssertEqual(getStoredValue, eventID.uuidString)
+    }
 
-        // When
-        sut.storeLastEventID(nil)
+    // MARK: - Fetch
+
+    func test_FetchLastEventID() throws {
+        // Given
+        let eventID = UUID()
+        storeValue(eventID.uuidString)
 
         // Then
-        XCTAssertNil(sut.fetchLastEventID())
+        XCTAssertEqual(sut.fetchLastEventID(), eventID)
     }
 
 }

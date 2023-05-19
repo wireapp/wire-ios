@@ -32,7 +32,6 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
     // MARK: - Properties
 
     private let storage: PrivateUserDefaults<Key>
-    private let key = "LastEventID"
 
     // MARK: - Types
 
