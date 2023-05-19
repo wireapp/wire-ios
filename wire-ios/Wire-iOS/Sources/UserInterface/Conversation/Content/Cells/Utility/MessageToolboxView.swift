@@ -284,7 +284,6 @@ final class MessageToolboxView: UIView {
         case .reactions(let reactionsString):
             updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.attributedText = reactionsString
-                print("AGIS:\(reactionsString)")
                 self.detailsLabel.isHidden = false
                 self.detailsLabel.numberOfLines = 1
                 self.hideAndCleanStatusLabel()

@@ -23,18 +23,16 @@ import WireDataModel
 public struct Reaction: Equatable {
     let reaction: String
     let count: Int
+    let isSelfUserReacting: Bool
 }
 
 final class ReactionsCellView: UIView, ConversationMessageCell {
+
+    typealias Configuration = Void
+
     let reactionView = ReactionCollectionView()
 
-    struct Configuration: Equatable {
-        let color: UIColor
-        //let reactions: [Reaction]
-
-    }
-
-    let arrayReactions: [Reaction] = []
+    var arrayReactions: [Reaction] = []
 
     var isSelected: Bool  = false
 
@@ -43,12 +41,16 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
 
     func configure(with object: Configuration, animated: Bool) {
-        guard let test = message?.usersReaction  else { return }
-        let count = test.count
-
-        reactionView.configureData(reactionArray: arrayReactions)
-
-        backgroundColor = object.color
+        guard var reactionsByUsers = message?.usersReaction  else { return }
+        
+        reactionView.reactions = reactionsByUsers.compactMap { reaction, usersWhoReacted in
+            guard !usersWhoReacted.isEmpty else { return nil }
+            return Reaction(
+                reaction: reaction,
+                count: usersWhoReacted.count,
+                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser)
+            )
+        }
     }
 
     override init(frame: CGRect) {

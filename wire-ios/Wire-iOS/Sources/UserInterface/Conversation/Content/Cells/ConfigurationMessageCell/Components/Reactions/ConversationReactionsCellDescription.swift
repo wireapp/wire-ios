@@ -23,13 +23,14 @@ import WireDataModel
 final class ReactionMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ReactionsCellView
+    typealias Configuration = Void
 
-    let configuration: View.Configuration
 
-    init(message: ZMConversationMessage, color: UIColor) {
+    init(message: ZMConversationMessage) {
         self.message = message
-        self.configuration = .init(color: color)
     }
+
+    let configuration: Void
 
     var topMargin: Float = 0
 

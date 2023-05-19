@@ -75,9 +75,10 @@ class ReactionToggleButton: UIControl {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configureData(type: String, count: Int) {
+    public func configureData(type: String, count: Int,  isToggled: Bool) {
         emojiLabel.text  = type
         counterLabel.text = String(count)
+        self.isToggled = isToggled
     }
 
     private func updateAppearance() {

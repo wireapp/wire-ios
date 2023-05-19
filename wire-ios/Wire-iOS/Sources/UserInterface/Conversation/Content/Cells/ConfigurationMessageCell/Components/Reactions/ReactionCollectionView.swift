@@ -28,7 +28,11 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
     }()
 
-    var reactionArray: [Reaction] = []
+    var reactions = [Reaction]() {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
 
     var contentHeight: CGFloat {
         return collectionView.contentSize.height
@@ -46,10 +50,6 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    public func configureData(reactionArray: [Reaction]) {
-        self.reactionArray = reactionArray
     }
 
     func createCollectionView() {
@@ -71,12 +71,17 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return reactionArray.count
+        return reactions.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath) as! ReactionCollectionViewCell
-        cell.configureData(type: reactionArray[indexPath.row].reaction, count: reactionArray[indexPath.row].count)
+        let reaction = reactions[indexPath.row]
+        cell.configureData(
+            type: reaction.reaction,
+            count: reaction.count,
+            isToggled: reaction.isSelfUserReacting
+        )
         return cell
     }
 

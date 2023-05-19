@@ -243,7 +243,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if !message.isSystem {
-            add(description: ReactionMessageCellDescription(message: message, color: UIColor.red))
+            add(description: ReactionMessageCellDescription(message: message))
         }
 
         if let topCelldescription = cellDescriptions.first {
