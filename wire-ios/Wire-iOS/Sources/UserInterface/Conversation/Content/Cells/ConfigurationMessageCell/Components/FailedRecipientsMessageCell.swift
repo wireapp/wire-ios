@@ -115,6 +115,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
         contentStackView.alignment = .leading
         contentStackView.spacing = 2
+        usersView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
         [totalCountView, usersView].forEach(contentStackView.addArrangedSubview)
 
         stackView.alignment = .leading
