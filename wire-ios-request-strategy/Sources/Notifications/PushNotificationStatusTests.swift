@@ -41,6 +41,11 @@ class PushNotificationStatusTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
+        lastEventIDRepository = LastEventIDRepository(
+            userID: UUID(),
+            sharedUserDefaults: sharedUserDefaults
+        )
+
         sut = PushNotificationStatus(
             managedObjectContext: syncMOC,
             lastEventIDRepository: lastEventIDRepository
@@ -49,7 +54,7 @@ class PushNotificationStatusTests: MessagingTestBase {
 
     override func tearDown() {
         sut = nil
-
+        lastEventIDRepository = nil
         super.tearDown()
     }
 
