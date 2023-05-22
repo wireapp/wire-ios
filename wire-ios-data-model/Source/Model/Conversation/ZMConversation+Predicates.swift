@@ -169,7 +169,6 @@ extension ZMConversation {
                                                                                                        NSNumber(value: ZMConnectionStatus.ignored.rawValue),
                                                                                                        NSNumber(value: ZMConnectionStatus.cancelled.rawValue)]) // pending connections should be in other list, ignored and cancelled are not displayed
         let predicate1 = NSCompoundPredicate(orPredicateWithSubpredicates: [notAConnection, activeConnection]) // one-to-one conversations and not pending and not ignored connections
-
         let noConnection = NSPredicate(format: "\(ZMConversationConnectionKey) == nil") // group conversations
         let notBlocked = NSPredicate(format: "\(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blocked.rawValue) && \(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blockedMissingLegalholdConsent.rawValue)")
         let predicate2 = NSCompoundPredicate(orPredicateWithSubpredicates: [noConnection, notBlocked]) // group conversations and not blocked connections
@@ -183,7 +182,11 @@ extension ZMConversation {
     }
 
     class func predicateForConversationsWithoutMetadata() -> NSPredicate {
-        let oneToOneConversationWithoutMetadata = NSPredicate(format: "%K == %d && (ANY %K.user.%K == YES)", ZMConversationConversationTypeKey, ZMConversationType.oneOnOne.rawValue, ZMConversationParticipantRolesKey, #keyPath(ZMUser.hasIncompleteMetadata))
+        let oneToOneConversationWithoutMetadata = NSPredicate(format: "%K == %d && (ANY %K.user.%K == YES)",
+                                                              ZMConversationConversationTypeKey,
+                                                              ZMConversationType.oneOnOne.rawValue,
+                                                              ZMConversationParticipantRolesKey,
+                                                              #keyPath(ZMUser.hasIncompleteMetadata))
         let groupConversationWithoutMetadata = NSPredicate(format: "\(ZMConversationHasIncompleteMetadataKey) == YES")
 
         return NSCompoundPredicate(orPredicateWithSubpredicates: [oneToOneConversationWithoutMetadata, groupConversationWithoutMetadata])

@@ -78,6 +78,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the account of the user is deleted
     var isAccountDeleted: Bool { get }
 
+    /// Whether the account of the user has incomplete metadata
+    var hasIncompleteMetadata: Bool { get }
+
     /// Wheater the user is under legal hold
     var isUnderLegalHold: Bool { get }
 
