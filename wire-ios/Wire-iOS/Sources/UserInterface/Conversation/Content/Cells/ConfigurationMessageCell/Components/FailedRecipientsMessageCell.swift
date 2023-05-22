@@ -86,7 +86,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
             return
         }
 
-        button.isHidden = false
+        [totalCountView, button].forEach { $0.isHidden = false }
         usersView.isHidden = isCollapsed
         totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
         usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
