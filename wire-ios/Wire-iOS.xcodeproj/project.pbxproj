@@ -815,7 +815,6 @@
 		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */; };
 		A91833132419347F00CBD0B7 /* TokenFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833122419347F00CBD0B7 /* TokenFieldTests.swift */; };
 		A9184F0925C097EF00AE7842 /* MockConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9184F0825C097EE00AE7842 /* MockConversation.swift */; };
-		A9207B2C2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9207B2B2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift */; };
 		A923F1C02428C12A003F361F /* URLs+zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1BF2428C12A003F361F /* URLs+zip.swift */; };
 		A923F1C72428C71A003F361F /* ZipFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1C42428C572003F361F /* ZipFileTests.swift */; };
 		A923F1C924290325003F361F /* SplitViewControllerTransitionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1C824290325003F361F /* SplitViewControllerTransitionContext.swift */; };
@@ -1089,6 +1088,7 @@
 		D3095763283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D337012828996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */; };
+		D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */; };
 		D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
 		D35EEDBC28C2004000949F02 /* AccessAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455E728B2E210005ACD74 /* AccessAPIClient.swift */; };
 		D35EEDBD28C2004000949F02 /* NotificationsAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455ED28B2E4CE005ACD74 /* NotificationsAPIClient.swift */; };
@@ -2756,7 +2756,6 @@
 		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentTests.swift; sourceTree = "<group>"; };
 		A91833122419347F00CBD0B7 /* TokenFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenFieldTests.swift; sourceTree = "<group>"; };
 		A9184F0825C097EE00AE7842 /* MockConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
-		A9207B2B2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperOptionsControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		A923F1BF2428C12A003F361F /* URLs+zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLs+zip.swift"; sourceTree = "<group>"; };
 		A923F1C42428C572003F361F /* ZipFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipFileTests.swift; sourceTree = "<group>"; };
 		A923F1C824290325003F361F /* SplitViewControllerTransitionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewControllerTransitionContext.swift; sourceTree = "<group>"; };
@@ -3097,6 +3096,7 @@
 		D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaShareRestrictionManager.swift; sourceTree = "<group>"; };
 		D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFileRestrictionsProtocol.swift; sourceTree = "<group>"; };
 		D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DropInteractionTests.swift"; sourceTree = "<group>"; };
+		D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelViewTests.swift; sourceTree = "<group>"; };
 		D35EEDC428C2374300949F02 /* NetworkSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSessionTests.swift; sourceTree = "<group>"; };
 		D35EEDC728C7E68100949F02 /* URLRequestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestable.swift; sourceTree = "<group>"; };
 		D35EEDCA28C7E95F00949F02 /* CookieProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieProvider.swift; sourceTree = "<group>"; };
@@ -6388,14 +6388,6 @@
 			path = Token;
 			sourceTree = "<group>";
 		};
-		A9207B2A2715E7D2008C1F22 /* DeveloperOptions */ = {
-			isa = PBXGroup;
-			children = (
-				A9207B2B2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift */,
-			);
-			path = DeveloperOptions;
-			sourceTree = "<group>";
-		};
 		A923F1C32428C562003F361F /* ZipFile */ = {
 			isa = PBXGroup;
 			children = (
@@ -6643,7 +6635,6 @@
 				A9712D5B2743C44E0008F380 /* Giphy */,
 				A961465E273C0B6600986596 /* SearchGroup */,
 				A97559F22729AA4500217714 /* Collection */,
-				A9207B2A2715E7D2008C1F22 /* DeveloperOptions */,
 				63750519262477BE0083DC27 /* Components */,
 				87BEB0D71C734D550094BFE9 /* Mocks */,
 				064AB3D425BAE36A00380D9B /* PasswordRules */,
@@ -6698,6 +6689,7 @@
 				EF21A06A21305C4000B9120C /* ConversationTitleViewTests.swift */,
 				7CFDC2801FD9A98100285047 /* AvailabilityTitleViewTests.swift */,
 				5EF7BA60221AB89300815625 /* ProfileViewTests.swift */,
+				D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */,
 				BF0BDF891DABF32B003C61DE /* DestructionCountdownViewTests.swift */,
 				BF16FC4B1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift */,
 				D594343F203DCECA006AA0C0 /* ConversationOptionsViewControllerTests.swift */,
@@ -9557,7 +9549,6 @@
 				EF159F381FD59607006E0A9C /* TextFieldValidatorTests.swift in Sources */,
 				7C440E86234B460400D91B5F /* FolderPickerControllerSnapshotTests.swift in Sources */,
 				1658C19620A1E2FA00148F6D /* MockVoiceChannel.swift in Sources */,
-				A9207B2C2715E7F3008C1F22 /* DeveloperOptionsControllerSnapshotTests.swift in Sources */,
 				5502C6E522B7B800000684B7 /* LegalHoldAlertFactoryTests.swift in Sources */,
 				D35EEDC028C2004000949F02 /* SimpleNotificationService.swift in Sources */,
 				D3C34E6E28C1593C004A1AF1 /* AccessTokenEndpointTests.swift in Sources */,
@@ -9767,6 +9758,7 @@
 				A95C76C2240E915D0047CD29 /* CompositeMessageCellTests.swift in Sources */,
 				EF223F5D2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift in Sources */,
 				EF2FEDC8228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift in Sources */,
+				D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */,
 				876AE7601C159A9C00E3E743 /* StringFingerprintTests.swift in Sources */,
 				5E8FFC0821ECCC9B0052DF03 /* MockAuthenticationFeatureProvider.swift in Sources */,
 				A9C7BEC0237C0FFB005D676A /* ColorSchemeTests.swift in Sources */,
