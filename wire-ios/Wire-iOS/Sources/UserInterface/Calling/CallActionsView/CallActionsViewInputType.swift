@@ -38,7 +38,7 @@ extension CallActionsViewInputType {
             return .dark(blurred: true)
         }
 
-        switch (isVideoCall) {
+        switch isVideoCall {
         case true: return .dark(blurred: true)
         case false: return .light
         }

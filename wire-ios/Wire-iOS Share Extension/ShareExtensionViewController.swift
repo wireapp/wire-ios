@@ -315,7 +315,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .error(let error):
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
-                
+
                 if let errorDescription = (error as? UnsentSendableError)?.errorDescription {
                     let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription) { _ in
                         self.extensionContext?.completeRequest(returningItems: [])

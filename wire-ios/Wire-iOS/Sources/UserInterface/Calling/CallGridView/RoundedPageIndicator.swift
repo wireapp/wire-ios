@@ -41,7 +41,6 @@ class RoundedPageIndicator: RoundedBlurView {
             pageControl.preferredIndicatorImage = defaultPageIndicator
         }
 
-
         if #available(iOS 14.0, *) {
             pageControl.backgroundStyle = .minimal
             pageControl.allowsContinuousInteraction = false

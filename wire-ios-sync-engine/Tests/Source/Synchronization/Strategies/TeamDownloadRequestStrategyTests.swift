@@ -355,7 +355,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v4)
     }
 
-    func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion){
+    func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion) {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
