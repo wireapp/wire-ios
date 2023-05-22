@@ -126,8 +126,7 @@ final class UserCellTests: ZMSnapshotTestCase {
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), videoState: .started, microphoneState: .unmuted, activeSpeakerState: .inactive)
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        // TODO: - [AGIS] Get rid of the variant
-        sut.configure(with: config, variant: .dark, selfUser: SelfUser.current)
+        sut.configure(with: config, selfUser: SelfUser.current)
         sut.overrideUserInterfaceStyle = .dark
         verifyInAllColorSchemes(matching: sut)
     }
@@ -135,8 +134,7 @@ final class UserCellTests: ZMSnapshotTestCase {
     func testUserScreenSharingInsideOngoingVideoCall() {
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), videoState: .screenSharing, microphoneState: .unmuted, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        // TODO: - [AGIS] Get rid of the variant
-        sut.configure(with: config, variant: .dark, selfUser: SelfUser.current)
+        sut.configure(with: config, selfUser: SelfUser.current)
         sut.overrideUserInterfaceStyle = .dark
         verifyInAllColorSchemes(matching: sut)
     }

@@ -35,17 +35,11 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-                ? .init(white: 0, alpha: 0.08)
-                : .clear
+            ? SemanticColors.View.backgroundUserCellHightLighted
+            : SemanticColors.View.backgroundUserCell
         }
     }
 
-    var variant: ColorSchemeVariant = ColorScheme.default.variant {
-        didSet {
-            guard oldValue != variant else { return }
-            configureColors()
-        }
-    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,6 +52,8 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     }
 
     fileprivate func setup() {
+
+        backgroundColor = SemanticColors.View.backgroundUserCell
         participantIconView.translatesAutoresizingMaskIntoConstraints = false
         participantIconView.contentMode = .scaleAspectFit
         participantIconView.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
@@ -96,11 +92,16 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     }
 
     private func configureColors() {
-        let sectionTextColor = UIColor.from(scheme: .sectionText, variant: variant)
+        let sectionTextColor = SemanticColors.Icon.foregroundDefault
         backgroundColor = .clear
-        participantIconView.setIcon(.person, size: .tiny, color: UIColor.from(scheme: .textForeground, variant: variant))
-        accessoryIconView.setIcon(.disclosureIndicator, size: 12, color: sectionTextColor)
-        titleLabel.textColor = UIColor.from(scheme: .textForeground, variant: variant)
+
+        participantIconView.setTemplateIcon(.person, size: .tiny)
+        participantIconView.tintColor = SemanticColors.Icon.foregroundDefault
+
+        accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
+        accessoryIconView.tintColor = sectionTextColor
+
+        titleLabel.textColor = SemanticColors.Label.textDefault
     }
 
     private func setupAccessibility(with rowType: ParticipantsRowType) {
@@ -118,11 +119,10 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 }
 
 extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
-    func configure(with configuration: CallParticipantsListCellConfiguration, variant: ColorSchemeVariant,
+    func configure(with configuration: CallParticipantsListCellConfiguration,
                    selfUser: UserType) {
         guard case let .showAll(totalCount: totalCount) = configuration else { preconditionFailure() }
 
-        self.variant = variant
         titleLabel.text = Participants.showAll(totalCount)
     }
 }
@@ -131,7 +131,6 @@ extension ShowAllParticipantsCell: ParticipantsCellConfigurable {
     func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
         guard case let .showAll(count) = rowType else { preconditionFailure() }
         titleLabel.text = Participants.showAll(count)
-        backgroundColor = .from(scheme: .barBackground)
         cellIdentifier = "cell.call.show_all_participants"
         setupAccessibility(with: rowType)
     }

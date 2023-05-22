@@ -91,7 +91,7 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     private func updateConfiguration(animated: Bool = false) {
         callDegradationController.state = configuration.degradationState
         contentController.configuration = configuration
-        contentNavigationController.navigationBar.tintColor = UIColor.from(scheme: .textForeground, variant: configuration.effectiveColorVariant)
+        contentNavigationController.navigationBar.tintColor = SemanticColors.Label.textDefault
         contentNavigationController.navigationBar.isTranslucent = true
         contentNavigationController.navigationBar.barTintColor = .clear
         contentNavigationController.navigationBar.setBackgroundImage(UIImage.singlePixelImage(with: .clear), for: .default)

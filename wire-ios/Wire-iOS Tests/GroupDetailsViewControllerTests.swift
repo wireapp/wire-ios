@@ -28,7 +28,6 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
         super.setUp()
         coreDataFixture = CoreDataFixture()
         SelfUser.provider = coreDataFixture.selfUserProvider
-        ColorScheme.default.variant = .light
     }
 
     override func tearDown() {

@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 
 // This protocol describes the input for a `CallActionsView`.
-protocol CallActionsViewInputType: CallTypeProvider, ColorVariantProvider {
+protocol CallActionsViewInputType: CallTypeProvider {
     var canToggleMediaType: Bool { get }
     var isMuted: Bool { get }
     var mediaState: MediaState { get }
@@ -38,10 +38,9 @@ extension CallActionsViewInputType {
             return .dark(blurred: true)
         }
 
-        switch (isVideoCall, variant) {
-        case (true, _): return .dark(blurred: true)
-        case (false, .light): return .light
-        case (false, .dark): return .dark(blurred: false)
+        switch (isVideoCall) {
+        case true: return .dark(blurred: true)
+        case false: return .light
         }
     }
 }
