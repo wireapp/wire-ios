@@ -361,7 +361,7 @@ final class SearchResultsViewController: UIViewController {
 
         /// Refetch users if needed
         ZMUserSession.shared()?.perform {
-            contacts.filter { !$0.hasValidName }.forEach { $0.refreshData() }
+            contacts.filter { $0.hasIncompleteMetadata }.forEach { $0.refreshData() }
         }
 
         if let filteredParticpants = filterConversation?.localParticipants {

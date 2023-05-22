@@ -204,6 +204,12 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    public var hasIncompleteMetadata: Bool {
+        guard let user = user else { return false }
+
+        return user.hasIncompleteMetadata
+    }
+
     public var hasDigitalSignatureEnabled: Bool {
         return user?.hasDigitalSignatureEnabled ?? false
     }

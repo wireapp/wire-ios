@@ -291,6 +291,21 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatConversationHasIncompleteMetadata_WhenFailedDuringSlowSyncPhase() {
+        // given
+        self.apiVersion = .v4
+        startSlowSync()
+        fetchConversationListDuringSlowSync()
+
+        // when
+        fetchConversationsDuringSlowSync(failed: [qualifiedID(for: groupConversation)])
+
+        // then
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(self.groupConversation.hasIncompleteMetadata)
+        }
+    }
+
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
         self.apiVersion = .v1

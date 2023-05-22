@@ -459,9 +459,17 @@
 "content.system.message_sent_timestamp" = "Sent";
 "content.system.message_delivered_timestamp" = "Delivered";
 "content.system.message_read_timestamp" = "Seen";
-"content.system.failedtosend_message_timestamp" = "Sending failed.";
-"content.system.failedtosend_message_timestamp_resend" = "Resend";
-"content.system.failedtosend_message_timestamp_delete" = "Delete";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the owning backend **%@** appears to be offline. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.count" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.will_get_later" = "**%@** will get your message later.";
+"content.system.failedtosend_participants.will_never_get" = "**%@** won’t get your message.";
+"content.system.failedtosend_participants.learn_more" = "%@ [Learn more](%@)";
+
 "content.system.like_tooltip" = "Tap to like";
 "content.system.deleted_message_prefix_timestamp" = "Deleted: %@";
 "content.system.edited_message_prefix_timestamp" = "Edited: %@";
@@ -1964,3 +1972,23 @@ to reset this device and log in again";
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
 "add-email-password-step.cta-button.title" = "Confirm";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "black";
+"drawing.colors.white" = "white";
+"drawing.colors.blue" = "blue";
+"drawing.colors.green" = "green";
+"drawing.colors.yellow" = "yellow";
+"drawing.colors.red" = "red";
+"drawing.colors.orange" = "orange";
+"drawing.colors.purple" = "purple";
+"drawing.colors.brown" = "brown";
+"drawing.colors.turquoise" = "turquoise";
+"drawing.colors.sky" = "sky";
+"drawing.colors.lime" = "lime";
+"drawing.colors.cyan" = "cyan";
+"drawing.colors.lilac" = "lilac";
+"drawing.colors.coral" = "coral";
+"drawing.colors.pink" = "pink";
+"drawing.colors.chocolate" = "chocolate";
+"drawing.colors.gray" = "gray";

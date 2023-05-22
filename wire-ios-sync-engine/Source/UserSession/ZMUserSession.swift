@@ -97,6 +97,8 @@ public class ZMUserSession: NSObject {
 
     public lazy var featureService = FeatureService(context: syncContext)
 
+    let earService: EARServiceInterface
+
     public var appLockController: AppLockType
 
     public var fileSharingFeature: Feature.FileSharing {
@@ -226,21 +228,23 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
-    public init(userId: UUID,
-                transportSession: TransportSessionType,
-                mediaManager: MediaManagerType,
-                flowManager: FlowManagerType,
-                timerActionsManager: TimerActionsManagerType,
-                analytics: AnalyticsType?,
-                eventProcessor: UpdateEventProcessor? = nil,
-                strategyDirectory: StrategyDirectoryProtocol? = nil,
-                syncStrategy: ZMSyncStrategy? = nil,
-                operationLoop: ZMOperationLoop? = nil,
-                application: ZMApplication,
-                appVersion: String,
-                coreDataStack: CoreDataStack,
-                configuration: Configuration) {
-
+    public init(
+        userId: UUID,
+        transportSession: TransportSessionType,
+        mediaManager: MediaManagerType,
+        flowManager: FlowManagerType,
+        timerActionsManager: TimerActionsManagerType,
+        analytics: AnalyticsType?,
+        eventProcessor: UpdateEventProcessor? = nil,
+        strategyDirectory: StrategyDirectoryProtocol? = nil,
+        syncStrategy: ZMSyncStrategy? = nil,
+        operationLoop: ZMOperationLoop? = nil,
+        application: ZMApplication,
+        appVersion: String,
+        coreDataStack: CoreDataStack,
+        configuration: Configuration,
+        earService: EARServiceInterface? = nil
+    ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
             coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
@@ -263,8 +267,20 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+
+        self.earService = earService ?? EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext,
+                coreDataStack.searchContext
+            ],
+            canPerformKeyMigration: true
+        )
+
         super.init()
 
+        self.earService.delegate = self
         appLockController.delegate = self
 
         configureCaches()
@@ -336,9 +352,12 @@ public class ZMUserSession: NSObject {
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
-        return EventProcessor(storeProvider: self.coreDataStack,
-                              syncStatus: applicationStatusDirectory!.syncStatus,
-                              eventProcessingTracker: eventProcessingTracker)
+        return EventProcessor(
+            storeProvider: self.coreDataStack,
+            syncStatus: applicationStatusDirectory!.syncStatus,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService
+        )
     }
 
     private func createApplicationStatusDirectory() -> ApplicationStatusDirectory {
@@ -433,18 +452,6 @@ public class ZMUserSession: NSObject {
 
     public func requestSlowSync() {
         applicationStatusDirectory?.requestSlowSync()
-    }
-
-    private var onProcessedEvents: ((Bool) -> Void)?
-
-    public func requestQuickSync(completion: ((Bool) -> Void)? = nil) {
-        guard let applicationStatusDirectory = applicationStatusDirectory else {
-            completion?(false)
-            return
-        }
-
-        applicationStatusDirectory.requestQuickSync()
-        onProcessedEvents = completion
     }
 
     // MARK: - Access Token
@@ -612,9 +619,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        let block = onProcessedEvents
-        onProcessedEvents = nil
-        block?(!hasMoreEventsToProcess)
+    }
+
+    func processPendingCallEvents() throws {
+        try updateEventProcessor!.processPendingCallEvents()
     }
 
     private func fetchFeatureConfigs() {

@@ -349,7 +349,7 @@ extension ZMConversation {
         guard let session = ZMUserSession.shared() else {
             return
         }
-        sortedOtherParticipants.filter { !$0.hasValidName }.forEach { user in
+        sortedOtherParticipants.filter { $0.hasIncompleteMetadata }.forEach { user in
             session.perform {
                 user.refreshData()
             }
