@@ -462,6 +462,14 @@
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the owning backend **%@** appears to be offline. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.count" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.will_get_later" = "**%@** will get your message later.";
+"content.system.failedtosend_participants.will_never_get" = "**%@** won’t get your message.";
+"content.system.failedtosend_participants.learn_more" = "%@ [Learn more](%@)";
+
 "content.system.like_tooltip" = "Tap to like";
 "content.system.deleted_message_prefix_timestamp" = "Deleted: %@";
 "content.system.edited_message_prefix_timestamp" = "Edited: %@";

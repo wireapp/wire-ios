@@ -38,6 +38,7 @@
 extern NSString * _Nonnull const ZMMessageIsExpiredKey;
 extern NSString * _Nonnull const ZMMessageExpirationReasonCodeKey;
 extern NSString * _Nonnull const ZMMessageMissingRecipientsKey;
+extern NSString * _Nonnull const ZMMessageFailedToSendRecipientsKey;
 extern NSString * _Nonnull const ZMMessageImageTypeKey;
 extern NSString * _Nonnull const ZMMessageIsAnimatedGifKey;
 extern NSString * _Nonnull const ZMMessageMediumRemoteIdentifierDataKey;

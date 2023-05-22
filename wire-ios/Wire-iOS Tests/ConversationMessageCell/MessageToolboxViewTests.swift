@@ -263,8 +263,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verifyInAllPhoneWidths(view: sut)
-
+        verify(view: sut)
     }
 
     func testThatItDisplaysLongListOfLikers() {
