@@ -445,7 +445,8 @@ platform :ios do
             dsym_paths: [
             "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
             ],
-            site: "datadoghq.eu")
+            site: "datadoghq.eu"
+        )
     end
 
     desc "Run security plans"
