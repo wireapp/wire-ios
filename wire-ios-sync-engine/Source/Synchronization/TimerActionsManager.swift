@@ -65,7 +65,7 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
     }
 
     private func makeEventsList() -> [Event] {
-        return [//refreshUsersWithMissingMetadata(),
+        return [refreshUsersWithMissingMetadata(),
                 refreshConversationsWithMissingMetadata()]
     }
 }
@@ -74,7 +74,7 @@ extension TimerActionsManager {
 
     private func refreshUsersWithMissingMetadata() -> Event {
 
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersWithEmptyName())
+        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersWithIncompleteMetadata())
         guard let users = self.managedObjectContext?.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
             return Event(action: nil)
         }
@@ -86,35 +86,13 @@ extension TimerActionsManager {
     }
 
     private func refreshConversationsWithMissingMetadata() -> Event {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationHasIncompleteMetadataKey) == YES")
 
-        let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicateForGroupConversationsWithEmptyName())
-        guard let conversations = self.managedObjectContext?.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else {
-            return Event(action: nil)
-        }
-
-//        let pred44 = ZMConversation.sortedFetchRequest()
-//        //sortedFetchRequest(with: NSPredicate(format: "domain == %@", "foma.wire.link"))
-//        let conversations44 = managedObjectContext?.fetchOrAssert(request: pred44)
-////        print(conversations44?.count)
-//        let conversations444 = conversations44 as? [ZMConversation]
-//        let conversations4444 = conversations444!.filter { $0.userDefinedName == nil }
-//        print(conversations444?.count)
-/////////
-        let fetchRequest1 = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        fetchRequest1.predicate = NSPredicate(format: "domain == %@", "foma.wire.link")
-
-        let conversations44 = managedObjectContext?.executeFetchRequestOrAssert(fetchRequest1) as? [ZMConversation]
-        print(conversations44?.count)
-/////////
-//        let conversations33 = self.managedObjectContext?.fetchOrAssert(request: fetchRequest)
-//        print(conversations33?.count)
-//        let conversation22 = ZMConversation.fetch(with: UUID(uuidString: "38304EB5-9C5D-453C-8FDD-513794B90DD3")!, domain: "foma.wire.link", in: managedObjectContext!)
-//        print(conversation22?.userDefinedName)
-//        print(conversation22?.domain)
-//        print(conversation22?.remoteIdentifier)
+        let conversations = managedObjectContext?.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
 
         return Event {
-            conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
+            conversations?.forEach { $0.needsToBeUpdatedFromBackend = true }
         }
     }
 

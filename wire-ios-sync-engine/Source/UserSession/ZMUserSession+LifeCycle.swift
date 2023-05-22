@@ -52,7 +52,6 @@ extension ZMUserSession {
         startEphemeralTimers()
         deleteOldEphemeralMessages()
         processPendingEvents()
-
     }
 
     func processPendingEvents() {

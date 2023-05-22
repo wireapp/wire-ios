@@ -52,6 +52,25 @@ import Foundation
         return task
     }
 
+    public func refetchIncompleteUserMetadata() {
+        let managedObjectContext = contextProvider.viewContext
+        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersWithIncompleteMetadata())
+        guard let users = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+            return
+        }
+        users.forEach { $0.refreshData() }
+    }
+
+    public func refetchIncompleteConversationMetadata() {
+        let managedObjectContext = contextProvider.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
+        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationHasIncompleteMetadataKey) == YES")
+
+        let conversations = managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
+
+        conversations?.forEach { $0.needsToBeUpdatedFromBackend = true }
+    }
+
     /// Lookup a user by user Id and returns a search user in the directory results. If the user doesn't exists
     /// an empty directory result is returned.
     ///

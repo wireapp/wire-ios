@@ -224,5 +224,4 @@ extension UserType {
         }
     }
 
-
 }
