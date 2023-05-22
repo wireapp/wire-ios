@@ -95,7 +95,7 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
-static NSString *const HasIncompleteMetadata = @"hasIncompleteMetadata";
+static NSString *const HasIncompleteMetadataKey = @"hasIncompleteMetadata";
 static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
 
 @interface ZMBoxedSelfUser : NSObject
@@ -371,7 +371,7 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
                                            MessagesFailedToSendRecipientKey,
-                                           HasIncompleteMetadata
+                                           HasIncompleteMetadataKey
                                            ]];
         keys = [ignoredKeys copy];
     });
