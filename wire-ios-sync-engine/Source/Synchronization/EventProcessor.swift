@@ -73,10 +73,10 @@ class EventProcessor: UpdateEventProcessor {
     /// - Returns: **True** if there are still more events to process
     @objc
     public func processEventsIfReady() -> Bool { // TODO jacob shouldn't be public
-        Self.logger.trace("process events if ready")
+        WireLogger.updateEvent.info("process events if ready")
 
         guard isReadyToProcessEvents else {
-            Self.logger.info("not ready to process events")
+            WireLogger.updateEvent.info("not ready to process events")
             return true
         }
 
@@ -94,6 +94,7 @@ class EventProcessor: UpdateEventProcessor {
 
     func processPendingCallEvents() throws {
         try syncContext.performGroupedAndWait { _ in
+            self.eventBuffer?.processAllEventsInBuffer()
             try self.processEvents(callEventsOnly: true)
         }
     }
@@ -140,6 +141,7 @@ class EventProcessor: UpdateEventProcessor {
     public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
         _ = processEventsIfReady()
+        try? processPendingCallEvents()
     }
 
     private func processStoredUpdateEvents(
