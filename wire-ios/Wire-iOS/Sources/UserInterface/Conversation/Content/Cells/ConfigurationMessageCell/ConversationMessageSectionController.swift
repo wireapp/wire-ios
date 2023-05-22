@@ -74,7 +74,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     /// The message that is being presented.
-    var message: ZMConversationMessage {
+    var message: ConversationMessage {
         didSet {
             updateDelegates()
         }
@@ -96,16 +96,20 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// Whether this section is selected
     private var selected: Bool
 
+    /// Whether this section is collapsed
+    private var isCollapsed: Bool
+
     private var changeObservers: [Any] = []
 
     deinit {
         changeObservers.removeAll()
     }
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
+    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
         self.message = message
         self.context = context
         self.selected = selected
+        self.isCollapsed = true
 
         super.init()
 
@@ -242,6 +246,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
+        if isFailedRecipientsVisible(in: context) {
+            let buttonAction = {
+                self.isCollapsed = !self.isCollapsed
+                self.cellDelegate?.conversationMessageShouldUpdate()
+            }
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers,
+                                                                                     buttonAction: { buttonAction() },
+                                                                                     isCollapsed: isCollapsed)
+            add(description: cellDescription)
+        }
+
         if let topCelldescription = cellDescriptions.first {
             topCelldescription.topMargin = context.spacing
         }
@@ -281,6 +296,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
+    }
+
+    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+        return !message.failedToSendUsers.isEmpty
     }
 
     // MARK: - Highlight

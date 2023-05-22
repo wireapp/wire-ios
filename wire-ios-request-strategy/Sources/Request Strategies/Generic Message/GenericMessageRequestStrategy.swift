@@ -56,6 +56,10 @@ import Foundation
         // no-op
     }
 
+    public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+        // no-op
+    }
+
     public func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }

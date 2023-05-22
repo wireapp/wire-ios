@@ -173,6 +173,10 @@ public protocol SwiftConversationMessage {
 
     /// Reason why the message has not been sent
     var failedToSendReason: MessageSendFailure? { get }
+
+    /// The list of users who didn't receive the message (e.g their backend is offline)
+    var failedToSendUsers: [UserType] { get }
+
 }
 
 public extension ZMConversationMessage {
@@ -296,6 +300,7 @@ extension ZMMessage: ZMConversationMessage {
 
         return fileSharingFeature.status == .disabled
     }
+
 }
 
 extension ZMMessage {
@@ -369,4 +374,11 @@ extension ZMMessage {
     @objc public var deletionTimeout: TimeInterval {
         return -1
     }
+}
+
+// MARK: - Message send failure properties
+extension ZMMessage {
+
+    @NSManaged public var failedToSendRecipients: Set<ZMUser>?
+
 }

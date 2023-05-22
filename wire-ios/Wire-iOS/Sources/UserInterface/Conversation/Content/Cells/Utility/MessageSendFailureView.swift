@@ -44,7 +44,7 @@ final class MessageSendFailureView: UIView {
 
     // MARK: - Setup UI
     func setTitle(_ errorMessage: String) {
-        titleLabel.attributedText = .markdown(from: errorMessage, style: .labelStyle)
+        titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
     }
 
     private func setupViews() {
@@ -82,10 +82,11 @@ final class MessageSendFailureView: UIView {
     }
 
 }
-// MARK: - DownStyle extension
-private extension DownStyle {
 
-    static var labelStyle: DownStyle {
+// MARK: - DownStyle extension
+    public extension DownStyle {
+
+    static var errorLabelStyle: DownStyle {
         let style = DownStyle()
         style.baseFont = FontSpec.mediumRegularFont.font!
         style.baseFontColor = SemanticColors.Label.textErrorDefault

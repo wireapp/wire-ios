@@ -1950,6 +1950,28 @@ internal enum L10n {
           /// Retry
           internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
         }
+        internal enum FailedtosendParticipants {
+          /// **%@ participants** didn’t get your message.
+          internal static func count(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.count", String(describing: p1), fallback: "**%@ participants** didn’t get your message.")
+          }
+          /// Hide Details
+          internal static let hideDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.hide_details", fallback: "Hide Details")
+          /// %@ [Learn more](%@)
+          internal static func learnMore(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.learn_more", String(describing: p1), String(describing: p2), fallback: "%@ [Learn more](%@)")
+          }
+          /// Show Details
+          internal static let showDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.show_details", fallback: "Show Details")
+          /// **%@** will get your message later.
+          internal static func willGetLater(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_get_later", String(describing: p1), fallback: "**%@** will get your message later.")
+          }
+          /// **%@** won’t get your message.
+          internal static func willNeverGet(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get", String(describing: p1), fallback: "**%@** won’t get your message.")
+          }
+        }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")

@@ -96,6 +96,7 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
 static NSString *const HasIncompleteMetadata = @"hasIncompleteMetadata";
+static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -369,6 +370,7 @@ static NSString *const HasIncompleteMetadata = @"hasIncompleteMetadata";
                                            NeedsToRefetchLabelsKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
+                                           MessagesFailedToSendRecipientKey,
                                            HasIncompleteMetadata
                                            ]];
         keys = [ignoredKeys copy];
