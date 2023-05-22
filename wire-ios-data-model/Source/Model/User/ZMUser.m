@@ -95,6 +95,7 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
+static NSString *const HasIncompleteMetadata = @"hasIncompleteMetadata";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -367,7 +368,8 @@ static NSString *const DomainKey = @"domain";
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
-                                           DomainKey
+                                           DomainKey,
+                                           HasIncompleteMetadata
                                            ]];
         keys = [ignoredKeys copy];
     });

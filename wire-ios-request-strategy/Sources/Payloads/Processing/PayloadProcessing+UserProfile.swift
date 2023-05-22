@@ -98,6 +98,7 @@ extension Payload.UserProfile {
             user.needsToBeUpdatedFromBackend = false
         }
 
+        user.hasIncompleteMetadata = false
         user.updatePotentialGapSystemMessagesIfNeeded()
     }
 

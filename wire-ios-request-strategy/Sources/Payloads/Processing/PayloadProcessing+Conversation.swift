@@ -125,6 +125,7 @@ extension Payload.Conversation {
         updateConversationStatus(for: conversation)
 
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.hasIncompleteMetadata = otherUser.hasIncompleteMetadata
     }
 
     func updateOrCreateSelfConversation(in context: NSManagedObjectContext,
@@ -144,6 +145,7 @@ extension Payload.Conversation {
         conversation.conversationType = .`self`
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.hasIncompleteMetadata = false
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -168,6 +170,7 @@ extension Payload.Conversation {
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.hasIncompleteMetadata = false
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
