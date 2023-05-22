@@ -226,7 +226,6 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         button.setTitle(buttonTitle, for: .normal)
     }
 
-
     // MARK: - Methods
 
     @objc
