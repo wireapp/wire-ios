@@ -74,7 +74,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     /// The message that is being presented.
-    var message: ZMConversationMessage {
+    var message: ConversationMessage {
         didSet {
             updateDelegates()
         }
@@ -97,7 +97,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var selected: Bool
 
     /// Whether this section is collapsed
-    private var collapsed: Bool
+    private var isCollapsed: Bool
 
     private var changeObservers: [Any] = []
 
@@ -105,11 +105,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         changeObservers.removeAll()
     }
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
+    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
         self.message = message
         self.context = context
         self.selected = selected
-        self.collapsed = true
+        self.isCollapsed = true
 
         super.init()
 
@@ -246,16 +246,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
-        if let failedToSendUsers = message.failedToSendUsers, !failedToSendUsers.isEmpty {
+        if isFailedRecipientsVisible(in: context) {
             let buttonAction = {
-                self.collapsed = !self.collapsed
+                self.isCollapsed = !self.isCollapsed
                 self.cellDelegate?.conversationMessageShouldUpdate()
             }
 
-            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: failedToSendUsers,
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers,
                                                                                      clientsWithoutSession: message.clientsWithoutSession,
-                                                                                     isCollapsed: collapsed,
-                                                                                     buttonAction: { buttonAction() })
+                                                                                     buttonAction: { buttonAction() },
+                                                                                     isCollapsed: isCollapsed)
             add(description: cellDescription)
         }
 
@@ -298,6 +298,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
+    }
+
+    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+        return !message.failedToSendUsers.isEmpty
     }
 
     // MARK: - Highlight

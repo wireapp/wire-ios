@@ -145,12 +145,13 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
 
             case .v4:
                 guard let rawData = response.rawData,
-                      let payload = Payload.PrekeyByQualifiedUserIDWithFailedUsers(rawData),
+                      let payload = Payload.PrekeyByQualifiedUserIDV4(rawData),
                       let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
                 else {
                     return false
                 }
-                return payload.establishSessions(with: selfClient, context: managedObjectContext)
+                let prekeys = payload.prekeyByQualifiedUserID
+                return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
             }
         } else {
             fatal("We only expect request about missing clients")

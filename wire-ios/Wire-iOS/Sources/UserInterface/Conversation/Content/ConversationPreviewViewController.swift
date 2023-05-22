@@ -69,10 +69,6 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
         ])
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-
     // MARK: Preview Actions
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")

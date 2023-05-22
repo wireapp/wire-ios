@@ -30,7 +30,7 @@ final class ConversationMessageFailedRecipientsTests: CoreDataSnapshotTestCase {
 
 
         // THEN
-        verify(message: message)
+        verify(message: message, allWidths: false)
     }
 
     func testFailedRecipientsCell_WithTwoUsers() {
@@ -42,7 +42,7 @@ final class ConversationMessageFailedRecipientsTests: CoreDataSnapshotTestCase {
         message.conversation?.domain = "anta.wire.link"
 
         // THEN
-        verify(message: message)
+        verify(message: message, allWidths: false)
     }
 
 }

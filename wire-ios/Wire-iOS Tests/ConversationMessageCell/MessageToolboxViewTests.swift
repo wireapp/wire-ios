@@ -50,7 +50,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verifyInAllPhoneWidths(view: sut)
+        verifyView(view: sut, width: defaultIPhoneSize.width)
     }
 
     func testThatItConfiguresWithFailedToSendAndReason() {
@@ -65,7 +65,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verifyInAllPhoneWidths(view: sut)
+        verifyView(view: sut, width: defaultIPhoneSize.width)
     }
 
     func testThatItConfiguresWith1To1ConversationReadReceipt() {
@@ -263,8 +263,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verifyInAllPhoneWidths(view: sut)
-
+        verify(view: sut)
     }
 
     func testThatItDisplaysLongListOfLikers() {

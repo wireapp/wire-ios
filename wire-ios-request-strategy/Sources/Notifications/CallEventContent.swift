@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct CallEventContent: Decodable {
+public struct CallEventContent: Codable {
 
     public enum CodingKeys: String, CodingKey {
 
@@ -49,6 +49,18 @@ public struct CallEventContent: Decodable {
     public let resp: Bool
 
     // MARK: - Life cycle
+
+    init(
+        type: String,
+        properties: Properties?,
+        callerIDString: String?,
+        resp: Bool
+    ) {
+        self.type = type
+        self.properties = properties
+        self.callerIdString = callerIDString
+        self.resp = resp
+    }
 
     public init?(from event: ZMUpdateEvent) {
         guard
@@ -132,13 +144,21 @@ public struct CallEventContent: Decodable {
 
 extension CallEventContent {
 
-    struct Properties: Decodable {
+    struct Properties: Codable {
 
         private let videosend: String
 
         var isVideo: Bool {
             return videosend == "true"
         }
+    }
+
+}
+
+extension ZMUpdateEvent {
+
+    var isCallEvent: Bool {
+        return CallEventContent(from: self) != nil
     }
 
 }

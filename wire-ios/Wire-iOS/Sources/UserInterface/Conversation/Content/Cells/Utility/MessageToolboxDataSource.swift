@@ -60,10 +60,12 @@ extension MessageToolboxContent: Comparable {
  * An object that determines what content to display for the given message.
  */
 
+typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
+
 class MessageToolboxDataSource {
 
     /// The displayed message.
-    let message: ZMConversationMessage
+    let message: ConversationMessage
 
     /// The content to display for the message.
     private(set) var content: MessageToolboxContent
@@ -83,7 +85,7 @@ class MessageToolboxDataSource {
     // MARK: - Initialization
 
     /// Creates a toolbox data source for the given message.
-    init(message: ZMConversationMessage) {
+    init(message: ConversationMessage) {
         self.message = message
         self.content = .details(timestamp: nil, status: nil, countdown: nil)
     }
@@ -119,7 +121,7 @@ class MessageToolboxDataSource {
             var detailsString: String
 
             switch message.failedToSendReason {
-            case .unknown:
+            case .unknown, .none:
                 detailsString = FailedToSendMessage.generalReason
             case .federationRemoteError:
                 detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",

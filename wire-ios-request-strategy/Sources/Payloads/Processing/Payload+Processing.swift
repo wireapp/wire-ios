@@ -123,30 +123,6 @@ extension Payload.PrekeyByQualifiedUserID {
 
 }
 
-extension Payload.PrekeyByQualifiedUserIDWithFailedUsers {
-    /// Establish new sessions using the prekeys retreived for each client.
-    ///
-    /// - parameter selfClient: The self user's client
-    /// - parameter context: The `NSManagedObjectContext` on which the operation should be performed
-    ///
-    /// - returns `True` if there's more sessions which needs to be established.
-    func establishSessions(with selfClient: UserClient, context: NSManagedObjectContext) -> Bool {
-        for (domain, prekeyByUserID) in self.prekeyByQualifiedUserID {
-            _ = prekeyByUserID.establishSessions(with: selfClient, context: context, domain: domain)
-        }
-
-        /// If the failedUserIDs is not empty, we cannot retrieve prekeys for them.
-        /// All failed user clients should be marked as invalid.
-        if let qualifiedIDs = self.failedUserIDs {
-            qualifiedIDs.markAsInvalid(selfClient: selfClient, context: context)
-        }
-
-        let hasMoreMissingClients = selfClient.missingClients?.isEmpty == false
-        return hasMoreMissingClients
-    }
-
-}
-
 extension Array where Array.Element == QualifiedID {
 
     func markAsInvalid(selfClient: UserClient, context: NSManagedObjectContext) {

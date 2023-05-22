@@ -35,7 +35,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     private let separatorLineView = UIView()
     private let typeLabel = UILabel()
     private let IDLabel = UILabel()
-    private let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
     private let fullIDLabel = CopyableLabel()
     private let verifiedToggle = Switch(style: .default)
     private let verifiedToggleLabel = UILabel()

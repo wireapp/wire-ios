@@ -75,12 +75,6 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// ZMDeliveryStateDelivered
     var deliveryState: ZMDeliveryState { get }
 
-    /// Reason why the message has not been sent
-    var failedToSendReason: MessageSendFailure { get }
-
-    /// The list of users who didn't receive the message (e.g their backend is offline)
-    var failedToSendUsers: [UserType]? { get }
-
     /// True if the message has been successfully sent to the server
     var isSent: Bool { get }
 
@@ -173,6 +167,16 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 public protocol ConversationCompositeMessage {
     /// The composite message associated with the message. If the message is not a composite message, it will be nil
     var compositeMessageData: CompositeMessageData? { get }
+}
+
+public protocol SwiftConversationMessage {
+
+    /// Reason why the message has not been sent
+    var failedToSendReason: MessageSendFailure? { get }
+
+    /// The list of users who didn't receive the message (e.g their backend is offline)
+    var failedToSendUsers: [UserType] { get }
+
 }
 
 public extension ZMConversationMessage {
@@ -297,12 +301,6 @@ extension ZMMessage: ZMConversationMessage {
         return fileSharingFeature.status == .disabled
     }
 
-    public var failedToSendUsers: [UserType]? {
-        guard let recipients = failedToSendRecipients else {
-            return nil
-        }
-        return Array(recipients)
-    }
 }
 
 extension ZMMessage {
@@ -336,10 +334,6 @@ extension ZMMessage {
 
     @objc public var isSent: Bool {
         return true
-    }
-
-    @objc public var failedToSendReason: MessageSendFailure {
-        return .unknown
     }
 
     @objc public var deliveryState: ZMDeliveryState {

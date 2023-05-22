@@ -25,7 +25,7 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {
-        let failedToReceiveUsers: [UserType]
+        let users: [UserType]
         let clientsWithoutSession: [UserClient]?
         let buttonAction: Completion
         let isCollapsed: Bool
@@ -49,7 +49,6 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
     private var config: Configuration? {
         didSet {
-            buttonAction = config?.buttonAction
             updateUI()
         }
     }
@@ -73,11 +72,62 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         self.config = object
     }
 
+//    private func updateUI() {
+//        /// Aproved
+//        guard let config = config else {
+//            return
+//        }
+//
+//        isCollapsed = config.isCollapsed
+//        buttonAction = config.buttonAction
+//        let content = configureContent(for: config.users)
+//
+//        guard config.users.count > 1 else {
+//            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+//            [totalCountView, button].forEach { $0.isHidden = true }
+//            return
+//        }
+//
+//        [totalCountView, button].forEach { $0.isHidden = false }
+//        usersView.isHidden = isCollapsed
+//        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
+//        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+//        setupButtonTitle()
+//
+//        layoutIfNeeded()
+//    }
+
+    private func updateUI() {
+        guard let config = config else {
+            return
+        }
+
+        isCollapsed = config.isCollapsed
+        buttonAction = config.buttonAction
+        let usersWithoutSession = config.clientsWithoutSession?.compactMap { $0.user }
+        let content = configureContent(for: (config.users, usersWithoutSession))
+
+        guard config.users.count > 1 else {
+            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+            [totalCountView, button].forEach { $0.isHidden = true }
+            return
+        }
+
+        [totalCountView, button].forEach { $0.isHidden = false }
+        usersView.isHidden = isCollapsed
+        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
+        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+        setupButtonTitle()
+
+        layoutIfNeeded()
+    }
+
     private func setupViews() {
         addSubview(stackView)
 
         contentStackView.alignment = .leading
         contentStackView.spacing = 2
+        usersView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
         [totalCountView, usersView].forEach(contentStackView.addArrangedSubview)
 
         stackView.alignment = .leading
@@ -111,41 +161,24 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         button.accessibilityIdentifier = "details.button"
     }
 
-    private func updateUI() {
-        guard let config = config else {
-            return
-        }
+    // MARK: - Configure content
 
-        isCollapsed = config.isCollapsed
-        buttonAction = config.buttonAction
-        let usersWithoutSession = config.clientsWithoutSession?.compactMap { $0.user }
-        let content = configureContent(for: (config.failedToReceiveUsers, usersWithoutSession))
-
-        guard config.failedToReceiveUsers.count > 1 else {
-            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
-            [totalCountView, button].forEach { $0.isHidden = true }
-            return
-        }
-
-        button.isHidden = false
-        usersView.isHidden = isCollapsed
-        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
-        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
-        setupButtonTitle()
-
-        layoutIfNeeded()
-    }
-
-    private func setupButtonTitle() {
-        let buttonTitle = isCollapsed ? FailedtosendParticipants.showDetails : FailedtosendParticipants.hideDetails
-        button.setTitle(buttonTitle, for: .normal)
-    }
+    //    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
+    //        /// Aproved
+    //        let totalCountText = FailedtosendParticipants.count(users.count)
+    //
+    //        let userNames = users.compactMap { $0.name }.joined(separator: ", ")
+    //        let detailsText = FailedtosendParticipants.willGetLater(userNames)
+    //        let detailsWithLinkText = FailedtosendParticipants.learnMore(detailsText, URL.wr_backendOfflineLearnMore.absoluteString)
+    //
+    //        return (totalCountText, detailsWithLinkText)
+    //    }
 
     private func configureContent(for users: (failedToReceive: [UserType], withoutSession: [UserType]?)) -> (count: String, details: String) {
         let failedToReceiveUsers = users.failedToReceive
         var withoutSessionUsers = users.withoutSession
 
-        let totalParticipantsCount = FailedtosendParticipants.didNotGet(failedToReceiveUsers.count)
+        let totalCountText = FailedtosendParticipants.didNotGetMessage(failedToReceiveUsers.count)
 
         /// The list of participants who will receive the message later.
         let detailsText1 = willGetMessage(participants: failedToReceiveUsers)
@@ -159,19 +192,19 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
             detailsText2 = willNeverGetMessage(participants: withoutSessionUsers)
         }
 
-        /// Combine details
+        /// Complete details
         let details = [detailsText1, detailsText2].joined(separator: "\n")
         let detailsWithLinkText = FailedtosendParticipants.learnMore(details, URL.wr_backendOfflineLearnMore.absoluteString)
 
-        return (totalParticipantsCount, detailsWithLinkText)
+        return (totalCountText, detailsWithLinkText)
     }
 
     private func willGetMessage(participants: [UserType]) -> String {
         let userNames = participants
-                        .compactMap { $0.name }
-                        .filter { !$0.isEmpty }
-                        .joined(separator: ", ")
-        return !userNames.isEmpty ? FailedtosendParticipants.willGetLater(userNames) : ""
+            .compactMap { $0.name }
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+        return !userNames.isEmpty ? FailedtosendParticipants.willGetMessageLater(userNames) : ""
     }
 
     private func willNeverGetMessage(participants: [UserType]) -> String {
@@ -183,10 +216,16 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         }
 
         let userWithoutSessionNames = domainsFrequency
-                                      .compactMap { $0 }
-                                      .joined(separator: ", ")
-        return !userWithoutSessionNames.isEmpty ? FailedtosendParticipants.willNeverGet(userWithoutSessionNames) : ""
+            .compactMap { $0 }
+            .joined(separator: ", ")
+        return !userWithoutSessionNames.isEmpty ? FailedtosendParticipants.willNeverGetMessage(userWithoutSessionNames) : ""
     }
+
+    private func setupButtonTitle() {
+        let buttonTitle = isCollapsed ? FailedtosendParticipants.showDetails : FailedtosendParticipants.hideDetails
+        button.setTitle(buttonTitle, for: .normal)
+    }
+
 
     // MARK: - Methods
 
@@ -217,8 +256,8 @@ class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCel
     var accessibilityIdentifier: String? = nil
     var accessibilityLabel: String? = nil
 
-    init(failedRecipients: [UserType], clientsWithoutSession: [UserClient]?, isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(failedToReceiveUsers: failedRecipients,
+    init(failedRecipients: [UserType], clientsWithoutSession: [UserClient]?, buttonAction: @escaping Completion, isCollapsed: Bool) {
+        configuration = View.Configuration(users: failedRecipients,
                                            clientsWithoutSession: clientsWithoutSession,
                                            buttonAction: buttonAction,
                                            isCollapsed: isCollapsed)

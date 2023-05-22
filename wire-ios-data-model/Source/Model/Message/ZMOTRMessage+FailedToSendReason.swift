@@ -18,18 +18,25 @@
 
 import Foundation
 
-public extension ZMOTRMessage {
+extension ZMMessage: SwiftConversationMessage {
 
-    override var failedToSendReason: MessageSendFailure {
-        guard 
+    public var failedToSendReason: MessageSendFailure? {
+        guard
             isExpired,
             let reasonCode = expirationReasonCode,
             let expirationReason = MessageSendFailure(rawValue: reasonCode.intValue)
         else {
-            return .unknown
+            return nil
         }
 
         return expirationReason
+    }
+
+    public var failedToSendUsers: [UserType] {
+        guard let recipients = failedToSendRecipients else {
+            return []
+        }
+        return Array(recipients)
     }
 
 }

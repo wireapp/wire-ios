@@ -223,7 +223,8 @@ final class MessageToolboxView: UIView {
     }
 
     func configureForMessage(_ message: ZMConversationMessage, forceShowTimestamp: Bool, animated: Bool = false) {
-        if dataSource?.message.nonce != message.nonce {
+        if let message = message as? ConversationMessage,
+           dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
 
