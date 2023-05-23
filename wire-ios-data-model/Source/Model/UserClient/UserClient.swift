@@ -354,6 +354,21 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
     }
 
+    public func deleteSession() {
+        assert(self.managedObjectContext!.zm_isSyncContext, "Delete should happen on sync context since the cryptobox could be accessed only from there")
+
+        guard let sessionIdentifier = self.sessionIdentifier,
+              let managedObjectContext = self.managedObjectContext
+        else { return }
+
+        guard let syncClient = (try? managedObjectContext.existingObject(with: self.objectID)) as? UserClient
+        else { return }
+
+        // Delete session and fingerprint
+        UserClient.deleteSession(for: sessionIdentifier, managedObjectContext: managedObjectContext)
+        syncClient.fingerprint = .none
+    }
+
     public func resolveDecryptionFailedSystemMessages() {
         let request = NSBatchUpdateRequest(entityName: ZMSystemMessage.entityName())
 

@@ -123,6 +123,29 @@ extension Payload.PrekeyByQualifiedUserID {
 
 }
 
+extension Array where Array.Element == QualifiedID {
+
+    func markAsInvalid(selfClient: UserClient, context: NSManagedObjectContext) {
+        for qualifiedUserId in self {
+            guard let user = ZMUser.fetch(with: qualifiedUserId.uuid, domain: qualifiedUserId.domain, in: context) else {
+                continue
+            }
+            for client in user.clients {
+                guard let clientID = client.remoteIdentifier,
+                      let client = UserClient.fetchUserClient(withRemoteId: clientID,
+                                                                     forUser: user,
+                                                                     createIfNeeded: true)
+                else {
+                    continue
+                }
+
+                client.markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: selfClient)
+            }
+        }
+    }
+
+}
+
 // MARK: - UserClient
 
 extension UserClient {

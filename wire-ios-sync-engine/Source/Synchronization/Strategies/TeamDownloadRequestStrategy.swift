@@ -242,7 +242,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
             _ = teamListPayload.teams.first?.createOrUpdateTeam(in: managedObjectContext)
 
             syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
-
         case .v4:
             guard
                 let rawData = response.rawData,

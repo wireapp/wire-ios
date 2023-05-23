@@ -251,7 +251,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 self.isCollapsed = !self.isCollapsed
                 self.cellDelegate?.conversationMessageShouldUpdate()
             }
+
             let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers,
+                                                                                     clientsWithoutSession: message.clientsWithoutSession,
                                                                                      buttonAction: { buttonAction() },
                                                                                      isCollapsed: isCollapsed)
             add(description: cellDescription)
@@ -369,4 +371,30 @@ extension ConversationMessageSectionController: ZMUserObserver {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
     }
+}
+
+private extension ZMConversationMessage {
+
+    var clientsWithoutSession: [UserClient]? {
+        guard let conversation = conversationLike as? ZMConversation,
+              let syncMoc = conversation.managedObjectContext?.zm_sync else {
+                  return nil
+              }
+
+        var clients: [UserClient] = []
+        syncMoc.performGroupedBlockAndWait {
+            conversation.localParticipantsExcludingSelf
+                .map { $0.clients }
+                .joined()
+                .forEach { client in
+                    if let existingClient = try? syncMoc.existingObject(with: client.objectID) as? UserClient,
+                       !existingClient.hasSessionWithSelfClient {
+                        clients.append(client)
+                    }
+                }
+        }
+
+        return clients
+    }
+
 }
