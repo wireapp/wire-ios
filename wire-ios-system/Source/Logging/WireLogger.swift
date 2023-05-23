@@ -167,5 +167,5 @@ public extension WireLogger {
     static let environment = WireLogger(tag: "environment")
     static let updateEvent = WireLogger(tag: "update-event")
     static let performance = WireLogger(tag: "performance")
-    static let backup = WireLogger(tag: "Backup")
+
 }

@@ -780,19 +780,14 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.configureUserNotifications()
 
             completion(session)
-            WireLogger.ear.info("activateSession")
+
             // If the user isn't logged in it's because they still need
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
-                WireLogger.ear.info("isLoggedIn")
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
-            } else {
-                WireLogger.ear.info("is Not logged IN")
             }
-            
         }
-        
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {

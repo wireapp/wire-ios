@@ -19,7 +19,7 @@
 import Foundation
 import WireUtilities
 
-private let log = WireLogger(tag: "Backup")
+private let log = ZMSLog(tag: "Backup")
 
 extension CoreDataStack {
 
@@ -164,7 +164,7 @@ extension CoreDataStack {
         dispatchGroup: ZMSDispatchGroup? = nil,
         completion: @escaping ((Result<URL>) -> Void)
         ) {
-        log.info("importLocalStorage")
+
         func fail(_ error: BackupImportError) {
             log.debug("error backing up local store: \(error)")
             DispatchQueue.main.async(group: dispatchGroup) {
@@ -179,24 +179,20 @@ extension CoreDataStack {
 
         workQueue.async(group: dispatchGroup) {
             do {
-                log.info("BackupMetadata")
                 let metadata = try BackupMetadata(url: metadataURL)
 
                 let model = CoreDataStack.loadMessagingModel()
                 if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: model) {
-                    log.error("incompatibleBackup")
                     return fail(.incompatibleBackup(verificationError))
                 }
 
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
-                log.debug("Create target directory")
                 // Create target directory
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: true)
-                log.debug("prepareStoreForBackupImport")
+
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
-                log.debug("Import the persistent store to the account data directory")
 
                 // Import the persistent store to the account data directory
                 try coordinator.replacePersistentStore(
@@ -213,8 +209,6 @@ extension CoreDataStack {
                     completion(.success(accountDirectory))
                 }
             } catch let error {
-                log.error("failedToCopyy")
-
                 fail(.failedToCopy(error))
             }
         }
