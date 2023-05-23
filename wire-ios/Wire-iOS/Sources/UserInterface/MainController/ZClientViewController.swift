@@ -229,10 +229,6 @@ final class ZClientViewController: UIViewController {
         return childForStatusBar
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .default
-    }
-
     // MARK: trait
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
