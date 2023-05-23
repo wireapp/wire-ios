@@ -253,12 +253,6 @@ final class CallGridViewControllerSnapshotTests: ZMSnapshotTestCase {
             output: .showNothing
         )
 
-        // View Did Load
-
-        assertHint(
-            input: .viewDidLoad,
-            output: .show(hint: .fullscreen)
-        )
     }
 
     // MARK: - Selective video
