@@ -22,9 +22,10 @@ import Foundation
 public protocol TimerActionsManagerType: AnyObject {
 
     func applyTimerActionsIfNeeded(_ checkTime: Date)
+
 }
-/// add tests
-final class TimerActionsManager: NSObject, TimerActionsManagerType {
+
+public final class TimerActionsManager: NSObject, TimerActionsManagerType {
 
     // MARK: - Models
 
@@ -33,7 +34,7 @@ final class TimerActionsManager: NSObject, TimerActionsManagerType {
     }
 
     /// Performing actions 3 hours.
-    private let interval: TimeInterval = 20
+    private let interval: TimeInterval = 3 * 60 * 60
 
     weak var managedObjectContext: NSManagedObjectContext?
 

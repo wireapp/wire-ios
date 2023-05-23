@@ -28,4 +28,28 @@ class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
             XCTAssertNotNil($0.zm_messageObfuscationTimer)
         }
     }
+
+    func testThatTimersAreStartedWhenUserSessionIsCreated1() {
+        // given
+        var applyTimerActionsIsCalled = false
+        let timerActionsManager = MockTimerActionsManager()
+        sut.timerActionsManager = timerActionsManager
+
+        // when
+        XCTAssertFalse(timerActionsManager.applyTimerActionsIsCalled)
+        sut.didFinishQuickSync()
+
+        // then
+        XCTAssertTrue(timerActionsManager.applyTimerActionsIsCalled)
+    }
+}
+
+private class MockTimerActionsManager: TimerActionsManagerType {
+
+    var applyTimerActionsIsCalled: Bool = false
+
+    func applyTimerActionsIfNeeded(_ checkTime: Date) {
+        applyTimerActionsIsCalled = true
+    }
+
 }
