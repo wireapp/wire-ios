@@ -140,8 +140,11 @@ class EventProcessor: UpdateEventProcessor {
 
     public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
-        _ = processEventsIfReady()
-        try? processPendingCallEvents()
+        if syncContext.isLocked {
+            try? processPendingCallEvents()
+        } else {
+            _ = processEventsIfReady()
+        }
     }
 
     private func processStoredUpdateEvents(
