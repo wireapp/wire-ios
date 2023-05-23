@@ -93,6 +93,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         mockKeyDeletion()
         keyEncryptor.encryptDatabaseKeyPublicKey_MockValue = .randomEncryptionKey()
         mockKeyStorage()
+        try? mockKeyFetching()
     }
 
     func mockKeyDeletion() {
@@ -104,6 +105,40 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func mockKeyStorage() {
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
         keyRepository.storeDatabaseKeyDescriptionKey_MockMethod = { _, _ in }
+    }
+
+    func mockKeyFetching() throws {
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
+
+        keyRepository.fetchPublicKeyDescription_MockMethod = { description in
+            switch description.label {
+            case "public":
+                return primaryKeys.publicKey
+
+            case "secondary-public":
+                return secondaryKeys.publicKey
+
+            default:
+                throw EarKeyRepositoryFailure.keyNotFound
+            }
+        }
+
+        keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
+            switch description.label {
+            case "private":
+                return primaryKeys.privateKey
+
+            case "secondary-private":
+                return secondaryKeys.privateKey
+
+            default:
+                throw EarKeyRepositoryFailure.keyNotFound
+            }
+        }
+
+        keyRepository.fetchDatabaseKeyDescription_MockValue = .randomEncryptionKey()
+        keyEncryptor.decryptDatabaseKeyPrivateKey_MockValue = .randomEncryptionKey()
     }
 
     // MARK: - Migration
@@ -188,6 +223,10 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Then new keys are stored
         XCTAssertEqual(keyRepository.storePublicKeyDescriptionKey_Invocations.count, 2)
         XCTAssertEqual(keyRepository.storeDatabaseKeyDescriptionKey_Invocations.count, 1)
+
+        // Then we force refetch database key
+        XCTAssertEqual(keyRepository.fetchPrivateKeyDescription_Invocations.count, 1)
+        XCTAssertEqual(keyEncryptor.decryptDatabaseKeyPrivateKey_Invocations.count, 1)
 
         // Then migration was not run
         XCTAssertEqual(prepareForMigrationCalls, 0)

@@ -195,7 +195,8 @@ public class EARService: EARServiceInterface {
 
             do {
                 try self.deleteExistingKeys()
-                let databaseKey = try self.generateKeys()
+                try self.generateKeys()
+                let databaseKey = try self.fetchDecyptedDatabaseKey(context: LAContext())
 
                 if !skipMigration {
                     try context.migrateTowardEncryptionAtRest(databaseKey: databaseKey)
@@ -299,6 +300,7 @@ public class EARService: EARServiceInterface {
         try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
     }
 
+    @discardableResult
     func generateKeys() throws -> VolatileData {
         WireLogger.ear.info("generating new keys")
 
