@@ -2053,12 +2053,10 @@ internal enum L10n {
         internal enum ManyParticipantsConfirmation {
           /// Call
           internal static let call = L10n.tr("Localizable", "conversation.call.many_participants_confirmation.call", fallback: "Call")
-          /// This will call %d people
-          internal static func message(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "conversation.call.many_participants_confirmation.message", p1, fallback: "This will call %d people")
+          /// Are you sure you want to call %d people?
+          internal static func title(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "conversation.call.many_participants_confirmation.title", p1, fallback: "Are you sure you want to call %d people?")
           }
-          /// Start a call
-          internal static let title = L10n.tr("Localizable", "conversation.call.many_participants_confirmation.title", fallback: "Start a call")
         }
       }
       internal enum ConnectionView {
@@ -2604,6 +2602,46 @@ internal enum L10n {
           /// Unfortunately, your digital signature failed. Please try again.
           internal static let noSignature = L10n.tr("Localizable", "digital_signature.alert.error.no_signature", fallback: "Unfortunately, your digital signature failed. Please try again.")
         }
+      }
+    }
+    internal enum Drawing {
+      internal enum Colors {
+        /// black
+        internal static let black = L10n.tr("Localizable", "drawing.colors.black", fallback: "black")
+        /// blue
+        internal static let blue = L10n.tr("Localizable", "drawing.colors.blue", fallback: "blue")
+        /// brown
+        internal static let brown = L10n.tr("Localizable", "drawing.colors.brown", fallback: "brown")
+        /// chocolate
+        internal static let chocolate = L10n.tr("Localizable", "drawing.colors.chocolate", fallback: "chocolate")
+        /// coral
+        internal static let coral = L10n.tr("Localizable", "drawing.colors.coral", fallback: "coral")
+        /// cyan
+        internal static let cyan = L10n.tr("Localizable", "drawing.colors.cyan", fallback: "cyan")
+        /// gray
+        internal static let gray = L10n.tr("Localizable", "drawing.colors.gray", fallback: "gray")
+        /// green
+        internal static let green = L10n.tr("Localizable", "drawing.colors.green", fallback: "green")
+        /// lilac
+        internal static let lilac = L10n.tr("Localizable", "drawing.colors.lilac", fallback: "lilac")
+        /// lime
+        internal static let lime = L10n.tr("Localizable", "drawing.colors.lime", fallback: "lime")
+        /// orange
+        internal static let orange = L10n.tr("Localizable", "drawing.colors.orange", fallback: "orange")
+        /// pink
+        internal static let pink = L10n.tr("Localizable", "drawing.colors.pink", fallback: "pink")
+        /// purple
+        internal static let purple = L10n.tr("Localizable", "drawing.colors.purple", fallback: "purple")
+        /// red
+        internal static let red = L10n.tr("Localizable", "drawing.colors.red", fallback: "red")
+        /// sky
+        internal static let sky = L10n.tr("Localizable", "drawing.colors.sky", fallback: "sky")
+        /// turquoise
+        internal static let turquoise = L10n.tr("Localizable", "drawing.colors.turquoise", fallback: "turquoise")
+        /// white
+        internal static let white = L10n.tr("Localizable", "drawing.colors.white", fallback: "white")
+        /// yellow
+        internal static let yellow = L10n.tr("Localizable", "drawing.colors.yellow", fallback: "yellow")
       }
     }
     internal enum Email {
