@@ -233,7 +233,6 @@ public class ZMUserSession: NSObject {
         transportSession: TransportSessionType,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
-       // timerActionsManager: TimerActionsManagerType,
         analytics: AnalyticsType?,
         eventProcessor: UpdateEventProcessor? = nil,
         strategyDirectory: StrategyDirectoryProtocol? = nil,

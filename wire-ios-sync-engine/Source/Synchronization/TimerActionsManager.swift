@@ -33,7 +33,7 @@ public final class TimerActionsManager: NSObject, TimerActionsManagerType {
         let action: (() -> Void)?
     }
 
-    /// Performing actions 3 hours.
+    /// Performing actions every 3 hours.
     private let interval: TimeInterval = 3 * 60 * 60
 
     weak var managedObjectContext: NSManagedObjectContext?

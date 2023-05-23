@@ -181,7 +181,7 @@ extension ZMConversation {
         return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
 
-    public class func predicateForConversationsWithoutMetadata() -> NSPredicate {
+    public static func predicateForConversationsWithoutMetadata() -> NSPredicate {
         let oneToOneConversationWithoutMetadata = NSPredicate(format: "%K == %d && (ANY %K.user.%K == YES)",
                                                               ZMConversationConversationTypeKey,
                                                               ZMConversationType.oneOnOne.rawValue,
