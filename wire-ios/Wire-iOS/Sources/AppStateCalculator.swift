@@ -115,6 +115,7 @@ class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
+        WireLogger(tag: "AppState").debug("transitioning to app state: \(appState)")
         ZMSLog(tag: "AppState").debug("transitioning to app state: \(appState)")
         delegate?.appStateCalculator(self, didCalculate: appState, completion: {
             completion?()
@@ -198,6 +199,7 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+        WireLogger.ear.info("sessionManagerDidReportLockChange")
         if session.isLocked {
             transition(to: .locked)
         } else {
@@ -221,6 +223,7 @@ extension AppStateCalculator: SessionManagerDelegate {
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(addedAccount: Bool) {
         // TODO: [John] Avoid singleton.
+        WireLogger.ear.info("userAuthenticationDidComplete")
         if ZMUserSession.shared()?.isLocked == true {
             transition(to: .locked)
         } else {
