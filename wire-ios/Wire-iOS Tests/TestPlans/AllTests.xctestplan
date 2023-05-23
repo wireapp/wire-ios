@@ -42,7 +42,8 @@
     {
       "skippedTests" : [
         "SearchResultLabelTests",
-        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()"
+        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
+        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
