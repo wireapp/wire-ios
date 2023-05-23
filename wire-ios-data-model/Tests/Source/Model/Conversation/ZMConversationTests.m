@@ -1517,7 +1517,7 @@
     
     // then
     XCTAssertNotNil(conversation);
-    XCTAssertEqualObjects(conversation.displayName, @"…");
+    XCTAssertEqualObjects(conversation.displayName, @"");
 }
 
 - (void)testThatTheDisplayNameIsAlwaysTheOtherparticipantsNameInOneOnOneConversations
