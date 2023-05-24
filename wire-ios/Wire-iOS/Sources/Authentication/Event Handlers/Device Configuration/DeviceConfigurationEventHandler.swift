@@ -23,8 +23,6 @@ class DeviceConfigurationEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
-        guard case .configureDevice = currentStep else { return nil }
-
         if statusProvider?.sharedUserSession?.hasCompletedInitialSync == true {
             return [.hideLoadingView, postAction]
         } else {
