@@ -244,6 +244,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Private Helpers
 private extension AppDelegate {
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
+        // Fix: set the applicationGroup so updating the callkit enable is set to NSE
+        VoIPPushHelperOperation().execute()
         createAppRootRouter(launchOptions: launchOptions)
         queueInitializationOperations(launchOptions: launchOptions)
     }
