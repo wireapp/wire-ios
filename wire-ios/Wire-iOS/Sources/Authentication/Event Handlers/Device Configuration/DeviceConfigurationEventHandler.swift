@@ -23,10 +23,18 @@ class DeviceConfigurationEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
-        if statusProvider?.sharedUserSession?.hasCompletedInitialSync == true {
-            return [.hideLoadingView, postAction]
-        } else {
-            return [.transition(.pendingInitialSync(next: nil), mode: .normal)]
+        // We normally expect the current step to be `configureDevice`, but in some cases
+        // it also happens to be `deleteClient` so we handle in this case as well.
+        switch currentStep {
+        case .configureDevice, .deleteClient:
+            if statusProvider?.sharedUserSession?.hasCompletedInitialSync == true {
+                return [.hideLoadingView, postAction]
+            } else {
+                return [.transition(.pendingInitialSync(next: nil), mode: .normal)]
+            }
+
+        default:
+            return nil
         }
     }
 
