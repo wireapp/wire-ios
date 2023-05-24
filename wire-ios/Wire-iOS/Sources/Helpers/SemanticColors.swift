@@ -133,6 +133,7 @@ public enum SemanticColors {
         static let backgroundPurple = UIColor(light: Asset.Colors.purple100Light, dark: Asset.Colors.purple900Dark)
         static let backgroundTurqoise = UIColor(light: Asset.Colors.turquoise100Light, dark: Asset.Colors.turquoise900Dark)
         static let backgroundCallOverlay = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
+        static let backgroundCallTopOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
     }
 
     public enum TabBar {

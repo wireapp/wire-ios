@@ -23,9 +23,13 @@ import WireSyncEngine
 import avs
 import WireCommonComponents
 
+// MARK: - CallTopOverlayControllerDelegate
+
 protocol CallTopOverlayControllerDelegate: AnyObject {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?)
 }
+
+// MARK: - CallState
 
 extension CallState {
     public func description(callee: String, conversation: String, isGroup: Bool) -> String {
@@ -45,28 +49,13 @@ extension CallState {
     }
 }
 
+// MARK: - CallTopOverlayController
+
 final class CallTopOverlayController: UIViewController {
+
+    // MARK: - Properties
+
     private let durationLabel = UILabel()
-
-    class TapableAccessibleView: UIView {
-        let onAccessibilityActivate: () -> Void
-
-        init(onAccessibilityActivate: @escaping () -> Void) {
-            self.onAccessibilityActivate = onAccessibilityActivate
-            super.init(frame: .zero)
-        }
-
-        @available(*, unavailable)
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        override func accessibilityActivate() -> Bool {
-            onAccessibilityActivate()
-            return true
-        }
-    }
-
     private let interactiveView = UIView()
     private let muteIcon = UIImageView()
     private var muteIconWidth: NSLayoutConstraint?
@@ -88,6 +77,8 @@ final class CallTopOverlayController: UIViewController {
         stopCallDurationTimer()
     }
 
+    // MARK: - Init
+
     init(conversation: ZMConversation) {
         self.conversation = conversation
         callDurationFormatter.allowedUnits = [.minute, .second]
@@ -106,9 +97,7 @@ final class CallTopOverlayController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    // MARK: - Override methods
 
     override func loadView() {
         view = TapableAccessibleView(onAccessibilityActivate: { [weak self] in
@@ -121,7 +110,7 @@ final class CallTopOverlayController: UIViewController {
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openCall(_:)))
 
         view.clipsToBounds = true
-        view.backgroundColor = SemanticColors.LegacyColors.strongLimeGreen
+        view.backgroundColor = SemanticColors.View.backgroundCallTopOverlay
         view.accessibilityIdentifier = "OpenOngoingCallButton"
         view.shouldGroupAccessibilityChildren = true
         view.isAccessibilityElement = true
@@ -134,7 +123,7 @@ final class CallTopOverlayController: UIViewController {
         durationLabel.translatesAutoresizingMaskIntoConstraints = false
         interactiveView.addSubview(durationLabel)
         durationLabel.font = FontSpec(.small, .semibold).font
-        durationLabel.textColor = .white
+        durationLabel.textColor = SemanticColors.Label.textDefault
         durationLabel.lineBreakMode = .byTruncatingMiddle
         durationLabel.textAlignment = .center
 
@@ -166,6 +155,8 @@ final class CallTopOverlayController: UIViewController {
         didSet {
             if displayMuteIcon {
                 muteIcon.setIcon(.microphoneOff, size: 12, color: .white)
+                muteIcon.setTemplateIcon(.microphoneOff, size: 12)
+                muteIcon.tintColor = SemanticColors.Icon.foregroundDefaultWhite
                 muteIconWidth?.constant = 12
             } else {
                 muteIcon.image = nil
@@ -173,6 +164,8 @@ final class CallTopOverlayController: UIViewController {
             }
         }
     }
+
+    // MARK: - Update methods
 
     fileprivate func updateCallDurationTimer(for callState: CallState) {
         switch callState {
@@ -227,17 +220,45 @@ final class CallTopOverlayController: UIViewController {
         callDurationTimer = nil
     }
 
+
+    // MARK: - Actions
+
     @objc
     private func openCall(_ sender: UITapGestureRecognizer?) {
         delegate?.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: conversation.voiceChannel)
     }
+
+    // MARK: - TapableAccessibleView
+
+    class TapableAccessibleView: UIView {
+        let onAccessibilityActivate: () -> Void
+
+        init(onAccessibilityActivate: @escaping () -> Void) {
+            self.onAccessibilityActivate = onAccessibilityActivate
+            super.init(frame: .zero)
+        }
+
+        @available(*, unavailable)
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func accessibilityActivate() -> Bool {
+            onAccessibilityActivate()
+            return true
+        }
+    }
 }
+
+// MARK: - CallTopOverlayController: WireCallCenterCallStateObserver
 
 extension CallTopOverlayController: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateCallDurationTimer(for: callState)
     }
 }
+
+// MARK: - CallTopOverlayController: MuteStateObserver
 
 extension CallTopOverlayController: MuteStateObserver {
     func callCenterDidChange(muted: Bool) {
