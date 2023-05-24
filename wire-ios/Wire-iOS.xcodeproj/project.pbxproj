@@ -1108,6 +1108,9 @@
 		D36E027829374EEA006C3E5A /* NSLayoutConstraint+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */; };
 		D36E027A293758DD006C3E5A /* CallHeaderBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E0279293758DD006C3E5A /* CallHeaderBar.swift */; };
 		D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
+		D39210A12A1C9C8700FA616A /* ReactionSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39210A02A1C9C8700FA616A /* ReactionSectionViewController.swift */; };
+		D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39210A22A1CC1C100FA616A /* ReactionCategoryButton.swift */; };
+		D39210A62A1D5D3700FA616A /* CompleteReactionPickerViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39210A42A1D5CEE00FA616A /* CompleteReactionPickerViewControllerTests.swift */; };
 		D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */; };
 		D398BB202A14ED0900B6EEB8 /* ReactionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */; };
 		D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */; };
@@ -3109,6 +3112,9 @@
 		D364822B299630CD009EEE4D /* UIDevice+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Orientation.swift"; sourceTree = "<group>"; };
 		D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Helper.swift"; sourceTree = "<group>"; };
 		D36E0279293758DD006C3E5A /* CallHeaderBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallHeaderBar.swift; sourceTree = "<group>"; };
+		D39210A02A1C9C8700FA616A /* ReactionSectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionSectionViewController.swift; sourceTree = "<group>"; };
+		D39210A22A1CC1C100FA616A /* ReactionCategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCategoryButton.swift; sourceTree = "<group>"; };
+		D39210A42A1D5CEE00FA616A /* CompleteReactionPickerViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReactionPickerViewControllerTests.swift; sourceTree = "<group>"; };
 		D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReactionPickerViewController.swift; sourceTree = "<group>"; };
 		D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCollectionView.swift; sourceTree = "<group>"; };
 		D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstablishingCallStatusView.swift; sourceTree = "<group>"; };
@@ -4404,6 +4410,7 @@
 				1661C74221A83B25003DCE1C /* ConversationAudioMessageCellTests.swift */,
 				16030DAC21A846A200F8032E /* ConversationVideoMessageCellTests.swift */,
 				D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */,
+				D39210A42A1D5CEE00FA616A /* CompleteReactionPickerViewControllerTests.swift */,
 				5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */,
 				06A5CFB52632A4D4006D2891 /* ConversationMessageSenderSnapshotTests.swift */,
 			);
@@ -7067,6 +7074,8 @@
 			children = (
 				D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */,
 				D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */,
+				D39210A02A1C9C8700FA616A /* ReactionSectionViewController.swift */,
+				D39210A22A1CC1C100FA616A /* ReactionCategoryButton.swift */,
 			);
 			path = CompleteReactionPicker;
 			sourceTree = "<group>";
@@ -9024,6 +9033,7 @@
 				BF808B571DE71F3000718076 /* UserNameTakeOverViewController.swift in Sources */,
 				D56A2D44207DFC9E00DB59F5 /* UIAlertController+Restore.swift in Sources */,
 				D51894792050490E00C095C1 /* ActionCell.swift in Sources */,
+				D39210A12A1C9C8700FA616A /* ReactionSectionViewController.swift in Sources */,
 				87DCF4941D34E9BA00BB420F /* ZMAddressBookContact+LocalInvitation.swift in Sources */,
 				EF7E96F0214BFBE100475C63 /* ContactsViewController+UITableViewDelegate.swift in Sources */,
 				87AAE4231E43234A00E1D13A /* MessagePresenter+ConversationImages.swift in Sources */,
@@ -9500,6 +9510,7 @@
 				BF0555BD1E6D785C00D3E9D4 /* CallCellViewModel.swift in Sources */,
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
+				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,
 				EF68E71B20BD5B5A003F3594 /* IPadPopoverConstants.swift in Sources */,
 				A9681D8123883877004FE917 /* IconToggleSubtitleCell.swift in Sources */,
@@ -9915,6 +9926,7 @@
 				16C02A12204EE5EC00811912 /* GroupConversationCellTests.swift in Sources */,
 				A9EDC143252225B2009DB9E1 /* AnalyticsCallingTrackerTests.swift in Sources */,
 				D35EEDC228C2004000949F02 /* Logger.swift in Sources */,
+				D39210A62A1D5D3700FA616A /* CompleteReactionPickerViewControllerTests.swift in Sources */,
 				EFDBA23F229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift in Sources */,
 				5E33F0D520ADA94B00414EA6 /* MockCallPermissions.swift in Sources */,
 				BFAF4CAF1CEB791B00780537 /* AudioRecordViewControllerTests.swift in Sources */,

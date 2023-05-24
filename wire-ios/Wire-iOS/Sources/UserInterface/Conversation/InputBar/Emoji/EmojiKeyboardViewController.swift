@@ -129,7 +129,7 @@ final class EmojiKeyboardViewController: UIViewController {
 
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
 
-    func sectionViewController(_ viewController: EmojiSectionViewController, didSelect type: EmojiSectionType, scrolling: Bool) {
+    func sectionViewController(_ viewController: UIViewController, didSelect type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
         collectionView.scrollToItem(at: indexPath, at: .left, animated: !scrolling)

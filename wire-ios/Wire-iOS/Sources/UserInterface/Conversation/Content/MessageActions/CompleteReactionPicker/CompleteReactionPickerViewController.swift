@@ -23,7 +23,7 @@ class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private  let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.all)
+    private  let sectionViewController = ReactionSectionViewController(types: EmojiSectionType.all)
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
 
@@ -57,19 +57,20 @@ class CompleteReactionPickerViewController: UIViewController {
     }
 
     func setupViews() {
+        typealias Strings = L10n.Localizable.Content.Reactions
         view.addSubview(topBar)
         topBar.delegate = self
         topBar.needsSeparator = false
         topBar.backgroundColor = SemanticColors.View.backgroundDefault
-        topBar.configure(title: "Select Reaction", subtitle: nil, topAnchor: safeTopAnchor) //~!@#$%^&*(
+        topBar.configure(title: Strings.title, subtitle: nil, topAnchor: safeTopAnchor)
 
         addChild(sectionViewController)
         view.addSubview(sectionViewController.view)
         sectionViewController.didMove(toParent: self)
 
-        searchBar.backgroundColor = SemanticColors.View.backgroundDefault
-//        searchBar.colo
-        searchBar.placeholder = "Search for Emoji"
+        searchBar.backgroundImage = UIImage()
+        searchBar.searchTextField.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        searchBar.placeholder = Strings.search
         view.addSubview(searchBar)
         view.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(collectionView)
@@ -86,17 +87,17 @@ class CompleteReactionPickerViewController: UIViewController {
             topBar.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             topBar.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
 
-            searchBar.topAnchor.constraint(equalTo: topBar.safeBottomAnchor, constant: 10.0),
+            searchBar.topAnchor.constraint(equalTo: topBar.safeBottomAnchor),
             searchBar.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 10.0),
             searchBar.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -10.0),
 
-            sectionViewControllerView.topAnchor.constraint(equalTo: searchBar.safeBottomAnchor),
+            sectionViewControllerView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: -8.0),
             sectionViewControllerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 10.0),
             sectionViewControllerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -10.0),
-            sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400.0),
+            sectionViewControllerView.heightAnchor.constraint(equalToConstant: 44.0),
 
 
-            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeBottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeBottomAnchor, constant: 18.0),
             collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: safeBottomAnchor)
@@ -120,10 +121,10 @@ class CompleteReactionPickerViewController: UIViewController {
 
 extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelegate {
 
-    func sectionViewController(_ viewController: EmojiSectionViewController, didSelect type: EmojiSectionType, scrolling: Bool) {
+    func sectionViewController(_ viewController: UIViewController, didSelect type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
-        collectionView.scrollToItem(at: indexPath, at: .left, animated: !scrolling)
+        collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
     }
 
 }
@@ -134,24 +135,15 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
         delegate?.emojiPickerDidSelectEmoji(emoji)
-        guard let result = emojiDataSource.register(used: emoji) else { return }
-        collectionView.performBatchUpdates({
-            switch result {
-            case .insert(let section): collectionView.insertSections(IndexSet(integer: section))
-            case .reload(let section): collectionView.reloadSections(IndexSet(integer: section))
-            }
-        }, completion: { _ in
-            self.updateSectionSelection()
-        })
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let (first, last) = (section == 0, section == collectionView.numberOfSections)
-        return UIEdgeInsets(top: 0, left: !first ? 12 : 0, bottom: 0, right: !last ? 12 : 0)
     }
 
     func scrollViewDidScroll(_ scrolLView: UIScrollView) {
         updateSectionSelection()
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 12
+                            , right: 0)
     }
 }
 

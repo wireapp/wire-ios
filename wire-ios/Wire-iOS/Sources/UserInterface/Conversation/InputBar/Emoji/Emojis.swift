@@ -83,12 +83,14 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     }
 
     @discardableResult func insertRecentlyUsedSectionIfNeeded() -> Bool {
-        guard let first = sections.first, !(first is RecentlyUsedEmojiSection), !recentlyUsed.emoji.isEmpty else { return false }
+        guard let first = sections.first,
+              !(first is RecentlyUsedEmojiSection),
+              !recentlyUsed.emoji.isEmpty
+        else { return false }
         sections.insert(recentlyUsed, at: 0)
         return true
     }
 
-    //~!@#$%^& naming
     func filterEmojis(withQuery query: String) {
         if query.isEmpty {
             sections = initialSections
@@ -125,6 +127,21 @@ enum EmojiSectionType: String {
         }
     }
 
+
+    var imageAsset: ImageAsset {
+        switch self {
+        case .recent: return Asset.Images.recents
+        case .people: return Asset.Images.smileysPeople
+        case .nature: return Asset.Images.animalsNature
+        case .food: return Asset.Images.foodDrink
+        case .travel: return Asset.Images.travelPlaces
+        case .activities: return Asset.Images.activity
+        case .objects: return Asset.Images.objects
+        case .symbols: return Asset.Images.symbols
+        case .flags: return Asset.Images.flags
+        }
+    }
+
     static var all: [EmojiSectionType] {
         return [
             EmojiSectionType.recent,
@@ -138,7 +155,6 @@ enum EmojiSectionType: String {
             .flags
         ]
     }
-
 }
 
 protocol EmojiSection {
