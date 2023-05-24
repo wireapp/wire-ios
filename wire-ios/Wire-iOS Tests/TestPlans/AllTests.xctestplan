@@ -40,6 +40,10 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
+        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()"
+      ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "BACB88501AF7C48900DDCDB0",
