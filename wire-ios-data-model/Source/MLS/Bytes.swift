@@ -1,10 +1,6 @@
 //
 // Wire
-<<<<<<<< HEAD:wire-ios/Wire-iOS Tests/StringCapitalizationTests.swift
 // Copyright (C) 2023 Wire Swiss GmbH
-========
-// Copyright (C) 2022 Wire Swiss GmbH
->>>>>>>> feat/mls:wire-ios-data-model/Source/MLS/Bytes.swift
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,19 +18,6 @@
 
 import Foundation
 
-<<<<<<<< HEAD:wire-ios/Wire-iOS Tests/StringCapitalizationTests.swift
-final class StringCapitalizationTests: XCTestCase {
-
-    func testThatTheFirstLetterOfTheSentenceIsCapitalized() {
-        // GIVEN
-        let givenString = "hello world!"
-
-        // WHEN
-        let result = givenString.capitalizingFirstCharacterOnly
-
-        // THEN
-        XCTAssertEqual(result, "Hello world!")
-========
 public typealias Bytes = [UInt8]
 
 public extension Bytes {
@@ -60,7 +43,6 @@ public extension Data {
 
     var bytes: Bytes {
         return .init(self)
->>>>>>>> feat/mls:wire-ios-data-model/Source/MLS/Bytes.swift
     }
 
 }

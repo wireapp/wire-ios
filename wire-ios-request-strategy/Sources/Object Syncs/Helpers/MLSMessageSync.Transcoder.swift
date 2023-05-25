@@ -45,7 +45,7 @@ extension MLSMessageSync {
                 Logging.mls.warn("can't send mls message on api version: \(apiVersion.rawValue)")
                 return nil
 
-            case .v2, .v3:
+            case .v2, .v3, .v4:
                 return internalRequest(for: entity, apiVersion: apiVersion)
             }
         }
@@ -115,7 +115,7 @@ extension MLSMessageSync {
             case .v0, .v1:
                 return
 
-            case .v2, .v3:
+            case .v2, .v3, .v4:
                 v2processResponse(response, for: entity)
             }
         }
