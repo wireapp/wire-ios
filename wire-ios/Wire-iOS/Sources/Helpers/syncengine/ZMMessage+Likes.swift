@@ -61,11 +61,12 @@ extension ZMConversationMessage {
     }
 
     var myReaction: MessageReaction? {
-        let reactionString = usersReaction.filter { (reaction, users)in
-            users.contains(where: { $0.isSelfUser })
-        }.first?.key
-        guard let value = reactionString else { return  nil }
-        return  MessageReaction.messageReaction(from: value)
+//        let reactionString = usersReaction.filter { (reaction, users)in
+//            users.contains(where: { $0.isSelfUser })
+//        }.first?.key
+//        guard let value = reactionString else { return  nil }
+//        return  MessageReaction.messageReaction(from: value)
+        return nil
     }
 
     var sortedLikers: [UserType] {

@@ -28,7 +28,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
     }
 
-    func testContextMenuForTextMessage() {
+    func testMenuActionsForTextMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.senderUser = MockUserType.createUser(name: "Bob")
@@ -38,7 +38,18 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let sut = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
 
         // THEN
+        let actionsTitles = sut.actions.map { $0.title ?? "" }
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Like", "Delete", "Cancel"])
+    }
+}
+
+final class BasicReactionPickerTests: ZMSnapshotTestCase {
+    var sut = BasicReactionPicker()
+
+    func test_BasicReactionPicker() {
+        sut.sizeToFit()
+        sut.backgroundColor = .white
+        sut.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))
         verify(matching: sut)
     }
-
 }
