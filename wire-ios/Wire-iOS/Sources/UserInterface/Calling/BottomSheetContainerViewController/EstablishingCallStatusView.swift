@@ -107,7 +107,7 @@ class EstablishingCallStatusView: UIView {
 
             profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).withPriority(.defaultLow + 1.0),
             profileImageView.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16.0).withPriority(.required),
-            profileImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -20.0).withPriority(.required)
+            profileImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -20.0).withPriority(.required),
             spaceView.heightAnchor.constraint(equalToConstant: spacerHeight)
         ])
     }

@@ -70,14 +70,6 @@ extension Notification.Name {
         return pushChannelEstablishedDate != nil
     }
 
-    public var isSyncingInBackground: Bool {
-        return currentSyncPhase.isSyncing
-    }
-
-    public var isPushChannelOpen: Bool {
-        return pushChannelEstablishedDate != nil
-    }
-
     public init(
         managedObjectContext: NSManagedObjectContext,
         syncStateDelegate: ZMSyncStateDelegate,
@@ -218,13 +210,6 @@ extension SyncStatus {
         lastUpdateEventID = nil
         zmLog.debug("remove last eventID")
         lastEventIDRepository.storeLastEventID(nil)
-    }
-
-    public func removeLastUpdateEventID() {
-        lastUpdateEventID = nil
-        zmLog.debug("remove last eventID")
-        managedObjectContext.zm_lastNotificationID = nil
-        managedObjectContext.enqueueDelayedSave()
     }
 }
 

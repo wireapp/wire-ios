@@ -231,10 +231,6 @@ final class ConversationCreationController: UIViewController {
         return false
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ColorScheme.default.statusBarStyle
-    }
-
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: { _ in
             self.collectionViewController.collectionView?.collectionViewLayout.invalidateLayout()
