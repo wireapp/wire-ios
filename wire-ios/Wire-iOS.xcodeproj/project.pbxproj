@@ -2939,7 +2939,6 @@
 		BAA1F7E21B610D89002402B6 /* SketchColorCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SketchColorCollectionViewCell.swift; path = Sketchpad/SketchColorCollectionViewCell.swift; sourceTree = "<group>"; };
 		BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BACB88541AF7C48900DDCDB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BACB88551AF7C48900DDCDB0 /* AggregateArrayTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AggregateArrayTests.m; sourceTree = "<group>"; };
 		BAD4D0651B613D4E008585A5 /* ColorKnobView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ColorKnobView.swift; path = Sketchpad/ColorKnobView.swift; sourceTree = "<group>"; };
 		BAECFF581B3D7BB70027C5ED /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BAECFF591B3D7BB70027C5ED /* de */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
@@ -6716,7 +6715,6 @@
 				54D355E1255939640004DAC7 /* Routers */,
 				1E12C04D1BFA6346001A8A26 /* TestCategories */,
 				DBD990471B39927A000ACF94 /* InputBar */,
-				BACB88551AF7C48900DDCDB0 /* AggregateArrayTests.m */,
 				1E2267EB1B382F1F003980E3 /* PeoplePickerTests */,
 				1E18C2B71AFBB7E00043F3CF /* EmoticonSubstitution */,
 				BACB88531AF7C48900DDCDB0 /* Supporting Files */,
