@@ -26,7 +26,7 @@ final class StringCapitalizationTests: XCTestCase {
         let givenString = "hello world!"
 
         // WHEN
-        let result = givenString.capitalizedCharacter
+        let result = givenString.capitalizingFirstCharacterOnly
 
         // THEN
         XCTAssertEqual(result, "Hello world!")

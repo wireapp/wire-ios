@@ -20,7 +20,7 @@ import Foundation
 
 extension String {
     /// The first character in each sentence changed to its corresponding uppercase value.
-    /// All remaining characters set to their corresponding lowercase values.
+    /// All remaining characters set to their corresponding values.
     ///
     /// Caveat:
 
@@ -28,7 +28,7 @@ extension String {
     ///  The second sentence won't get capitalized.
     ///
     ///  2. It doesn't work if the first string is a whitespace character and delimiter.
-    var capitalizedCharacter: String {
+    var capitalizingFirstCharacterOnly: String {
         let firstLetter = self.prefix(1).capitalized
 
         let remainingLetters = self.dropFirst()
