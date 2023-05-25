@@ -1963,3 +1963,23 @@ to reset this device and log in again";
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
 "add-email-password-step.cta-button.title" = "Confirm";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "black";
+"drawing.colors.white" = "white";
+"drawing.colors.blue" = "blue";
+"drawing.colors.green" = "green";
+"drawing.colors.yellow" = "yellow";
+"drawing.colors.red" = "red";
+"drawing.colors.orange" = "orange";
+"drawing.colors.purple" = "purple";
+"drawing.colors.brown" = "brown";
+"drawing.colors.turquoise" = "turquoise";
+"drawing.colors.sky" = "sky";
+"drawing.colors.lime" = "lime";
+"drawing.colors.cyan" = "cyan";
+"drawing.colors.lilac" = "lilac";
+"drawing.colors.coral" = "coral";
+"drawing.colors.pink" = "pink";
+"drawing.colors.chocolate" = "chocolate";
+"drawing.colors.gray" = "gray";
