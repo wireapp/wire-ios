@@ -188,22 +188,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        guard let actionController = cellDescription?.actionController else {
-            return false
-        }
-
-        return actionController.canPerformAction(action) == true
-    }
-
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        return cellDescription?.actionController
-    }
-
     func messageActionsMenuController() -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
         let actionsMenuController = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
