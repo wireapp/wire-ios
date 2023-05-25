@@ -71,15 +71,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .nseV2:
             return false
 
-        case .nseDebugging:
-            return false
-
-        case .nseDebugEntryPoint:
-            return false
-
-        case .useDevelopmentBackendAPI:
-            return false
-
         case .deprecatedCallingUI:
             return false
         }
