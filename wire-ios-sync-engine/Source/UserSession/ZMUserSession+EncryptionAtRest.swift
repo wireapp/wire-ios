@@ -79,7 +79,8 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// database key.
 
     public var encryptMessagesAtRest: Bool {
-        return managedObjectContext.encryptMessagesAtRest
+        guard let context = coreDataStack?.viewContext else { return false }
+        return context.encryptMessagesAtRest
     }
 
     /// Whether the database is currently locked.

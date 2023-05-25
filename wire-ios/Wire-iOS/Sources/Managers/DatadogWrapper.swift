@@ -226,6 +226,9 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
+    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+          log(level: .debug, message: message.logDescription, attributes: attributes)
+      }
 
     public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
@@ -251,4 +254,7 @@ extension DatadogWrapper: WireSystem.LoggerProtocol {
         log(level: .critical, message: message.logDescription, attributes: attributes)
     }
 
+      public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+          log(level: .critical, message: message.logDescription, attributes: attributes)
+      }
 }

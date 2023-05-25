@@ -22,27 +22,67 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
+    case enableMLSSupport
     case showCreateMLSGroupToggle
+    case proteusViaCoreCrypto
     case nseV2
     case deprecatedCallingUI
 
     public var description: String {
         switch self {
+        case .enableMLSSupport:
+          return "Turn on to enable MLS support. This will cause the app to register an MLS client."
+
         case .showCreateMLSGroupToggle:
             return "Turn on to show the MLS toggle when creating a new group."
+
+        case .proteusViaCoreCrypto:
+            return "Turn on to use CoreCrypto for proteus messaging."
 
         case .nseV2:
             return "Turn on to use the new implementation of the notification service extension."
 
         case .deprecatedCallingUI:
             return "Turn on to use deprecated calling UI"
-
         }
     }
 
     public var isOn: Bool {
-        get { return Self.storage.bool(forKey: rawValue) }
-        set { Self.storage.set(newValue, forKey: rawValue) }
+        get {
+            return Self.storage.object(forKey: rawValue) as? Bool ?? defaultValue
+        }
+
+        set {
+            Self.storage.set(newValue, forKey: rawValue)
+        }
+    }
+
+    private var defaultValue: Bool {
+        switch self {
+        case .enableMLSSupport:
+            return false
+
+        case .showCreateMLSGroupToggle:
+            return false
+
+        case .proteusViaCoreCrypto:
+            return false
+
+        case .nseV2:
+            return false
+
+        case .nseDebugging:
+            return false
+
+        case .nseDebugEntryPoint:
+            return false
+
+        case .useDevelopmentBackendAPI:
+            return false
+
+        case .deprecatedCallingUI:
+            return false
+        }
     }
 
     static public func clearAllFlags() {
