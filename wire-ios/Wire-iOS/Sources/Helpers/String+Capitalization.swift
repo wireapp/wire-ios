@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,21 @@
 
 import Foundation
 
-extension NSString {
+extension String {
+    /// The first character in each sentence changed to its corresponding uppercase value.
+    /// All remaining characters set to their corresponding values.
+    ///
+    /// Caveat:
 
-    var uppercasedWithCurrentLocale: String {
-        return uppercased(with: NSLocale.current)
+    ///  1. The implementation only works with a string that contains one sentence.
+    ///  The second sentence won't get capitalized.
+    ///
+    ///  2. It doesn't work if the first string is a whitespace character and delimiter.
+    var capitalizingFirstCharacterOnly: String {
+        let firstLetter = self.prefix(1).capitalized
+
+        let remainingLetters = self.dropFirst()
+
+        return firstLetter + remainingLetters
     }
-
-    var lowercasedWithCurrentLocale: String {
-        return lowercased(with: NSLocale.current)
-    }
-
 }
