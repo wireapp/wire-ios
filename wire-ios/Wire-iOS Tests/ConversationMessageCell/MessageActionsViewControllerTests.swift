@@ -48,6 +48,7 @@ final class BasicReactionPickerTests: ZMSnapshotTestCase {
 
     func test_BasicReactionPicker() {
         sut.sizeToFit()
+        sut.backgroundColor = .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))
         verify(matching: sut)
     }
