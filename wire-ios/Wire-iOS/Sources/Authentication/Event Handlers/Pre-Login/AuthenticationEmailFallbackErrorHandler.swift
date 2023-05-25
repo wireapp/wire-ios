@@ -38,8 +38,10 @@ class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler {
         // Handle the actions
         var actions: [AuthenticationCoordinatorAction] = [.hideLoadingView]
 
-        // Show a guidance dot if the user caused the failure
-        if error.userSessionErrorCode != .networkError {
+        if error.userSessionErrorCode == .invalidEmailVerificationCode {
+            actions.append(.executeFeedbackAction(.clearInputFields))
+        } else if error.userSessionErrorCode != .networkError {
+            // Show a guidance dot if the user caused the failure
             actions.append(.executeFeedbackAction(.showGuidanceDot))
         }
 

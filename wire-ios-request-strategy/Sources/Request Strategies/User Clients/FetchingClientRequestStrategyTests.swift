@@ -567,8 +567,9 @@ extension FetchClientRequestStrategyTests {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
-            self.selfClient.keysStore.encryptionContext.perform {
-                try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.selfClient.keysStore.lastPreKey()) // just a bogus key is OK
+            // TODO: [John] use flag here
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
+                try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.syncMOC.zm_cryptKeyStore.lastPreKey()) // just a bogus key is OK
             }
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))

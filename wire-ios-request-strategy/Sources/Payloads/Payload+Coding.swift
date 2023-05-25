@@ -109,9 +109,15 @@ extension Encodable {
 
     /// Encode object to binary payload and log an error if it fails
     ///
-    /// - parameter encoder: JSONEncoder to use
+    /// - Parameters:
+    ///   - apiVersion: the api version to encode the payload for
+    ///   - encoder: JSONEncoder to use
 
-    func payloadData(encoder: JSONEncoder = .defaultEncoder) -> Data? {
+    func payloadData(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> Data? {
+        if let apiVersion = apiVersion {
+            encoder.setAPIVersion(apiVersion)
+        }
+
         do {
             return try encoder.encode(self)
         } catch let error {
@@ -120,15 +126,16 @@ extension Encodable {
         }
     }
 
-    /// Encode object to binary payload for a specific api version and log an error if it fails
+    /// Encode object to string payload and log an error if it fails.
     ///
     /// - Parameters:
     ///   - apiVersion: the api version to encode the payload for
     ///   - encoder: JSONEncoder to use
 
-    func payloadData(apiVersion: APIVersion, encoder: JSONEncoder = .defaultEncoder) -> Data? {
-        encoder.setAPIVersion(apiVersion)
-        return payloadData(encoder: encoder)
+    func payloadString(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> String? {
+        return payloadData(apiVersion: apiVersion, encoder: encoder).flatMap {
+            String(data: $0, encoding: .utf8)
+        }
     }
 
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {

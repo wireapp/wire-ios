@@ -23,11 +23,9 @@ public struct CallEventContent: Codable {
     public enum CodingKeys: String, CodingKey {
 
         case type
-
         case properties = "props"
-
-        case callerIdString = "src_userid"
-
+        case callerUserID = "src_userid"
+        case callerClientID = "src_clientid"
         case resp
 
     }
@@ -42,9 +40,9 @@ public struct CallEventContent: Codable {
 
     let properties: Properties?
 
-    /// Caller Id.
+    let callerUserID: String?
 
-    let callerIdString: String?
+    public let callerClientID: String
 
     public let resp: Bool
 
@@ -53,12 +51,14 @@ public struct CallEventContent: Codable {
     init(
         type: String,
         properties: Properties?,
-        callerIDString: String?,
+        callerUserID: String?,
+        callerClientID: String,
         resp: Bool
     ) {
         self.type = type
         self.properties = properties
-        self.callerIdString = callerIDString
+        self.callerUserID = callerUserID
+        self.callerClientID = callerClientID
         self.resp = resp
     }
 
@@ -87,7 +87,7 @@ public struct CallEventContent: Codable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return callerIdString.flatMap(UUID.init)
+        return callerUserID.flatMap(UUID.init)
     }
 
     public var callState: LocalNotificationType.CallState? {
@@ -130,6 +130,10 @@ public struct CallEventContent: Codable {
 
     public var isRemoteMute: Bool {
         return type == "REMOTEMUTE"
+    }
+
+    public var isConferenceKey: Bool {
+        return type == "CONFKEY"
     }
 
     public var isVideo: Bool {

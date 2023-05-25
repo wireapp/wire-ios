@@ -30,7 +30,8 @@
 
 - (instancetype _Nonnull)initWithManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
                                     applicationStatus:(id<ZMApplicationStatus> _Nonnull)applicationStatus
-                                           syncStatus:(SyncStatus * _Nonnull)syncStatus;
+                                           syncStatus:(SyncStatus * _Nonnull)syncStatus
+                                lastEventIDRepository:(id<LastEventIDRepositoryInterface> _Nonnull)lastEventIDRepository;
 
 
 - (void)startRequestingLastUpdateEventIDWithoutPersistingIt;

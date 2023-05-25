@@ -357,7 +357,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
         [client deleteClientAndEndSession];
     }
     
-    [self.managedObjectContext deleteAndCreateNewEncryptionContext];
+    [self.managedObjectContext tearDownCryptoStack];
     [self invalidateCookieAndNotify];
 }
 

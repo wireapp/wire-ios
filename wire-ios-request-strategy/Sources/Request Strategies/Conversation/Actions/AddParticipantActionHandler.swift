@@ -36,6 +36,20 @@ extension ConversationAddParticipantsError {
 
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
+    private let eventProcessor: ConversationEventProcessorProtocol
+
+    convenience required init(context: NSManagedObjectContext) {
+        self.init(context: context, eventProcessor: ConversationEventProcessor(context: context))
+    }
+
+    init(
+        context: NSManagedObjectContext,
+        eventProcessor: ConversationEventProcessorProtocol
+    ) {
+        self.eventProcessor = eventProcessor
+        super.init(context: context)
+    }
+
     override func request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
@@ -123,16 +137,14 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
             guard
                 let payload = response.payload,
-                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
-                let rawData = response.rawData,
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>(rawData, decoder: .defaultDecoder)
+                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 action.notifyResult(.failure(.unknown))
                 return
             }
 
-            conversationEvent.process(in: context, originalEvent: updateEvent)
+            eventProcessor.processConversationEvents([updateEvent])
 
             action.notifyResult(.success(Void()))
 

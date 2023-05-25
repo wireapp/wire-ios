@@ -26,9 +26,11 @@ class APIVersionResolverTests: ZMTBaseTest {
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
     override func setUp() {
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         mockDelegate = .init()
         transportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         setCurrentAPIVersion(nil)
+
         super.setUp()
     }
 
@@ -36,6 +38,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         mockDelegate = nil
         transportSession = nil
         resetCurrentAPIVersion()
+        BackendInfo.storage = UserDefaults.standard
         super.tearDown()
     }
 
@@ -158,21 +161,21 @@ class APIVersionResolverTests: ZMTBaseTest {
     func testThatItResolvesThePreferredAPIVersion() throws {
         // Given client has prod and dev versions in dev mode.
         let sut = createSUT(
-            clientProdVersions: [.v0, .v1],
-            clientDevVersions: [.v2],
+            clientProdVersions: [.v0, .v1, .v2],
+            clientDevVersions: [.v3],
             isDeveloperModeEnabled: true
         )
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
-            developmentVersions: 2...2,
+            productionVersions: 0...2,
+            developmentVersions: 3...3,
             domain: "foo.com",
             isFederationEnabled: true
         )
 
         // Given there is a preferred version.
-        BackendInfo.preferredAPIVersion = .v2
+        BackendInfo.preferredAPIVersion = .v3
         XCTAssertNil(BackendInfo.apiVersion)
 
         // When version is resolved.
@@ -181,7 +184,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it's the preferred version.
-        XCTAssertEqual(BackendInfo.apiVersion, .v2)
+        XCTAssertEqual(BackendInfo.apiVersion, .v3)
         XCTAssertEqual(BackendInfo.domain, "foo.com")
         XCTAssertEqual(BackendInfo.isFederationEnabled, true)
     }
@@ -346,6 +349,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
         // Given federation is not enabled.
         BackendInfo.isFederationEnabled = false
+        BackendInfo.domain = "foo.com"
 
         // Backend now has federation enabled.
         mockBackendInfo(
@@ -365,6 +369,35 @@ class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertTrue(mockDelegate.didReportFederationHasBeenEnabled)
     }
 
+    func testThatItReportsToDelegate_WhenNotFederatedBackendSwitchedToFederatedBackend() throws {
+        // Given client has prod versions.
+        let sut = createSUT(
+            clientProdVersions: Set(APIVersion.allCases),
+            clientDevVersions: []
+        )
+
+        // Given federation is not enabled.
+        BackendInfo.domain = "simple.example.org"
+        BackendInfo.isFederationEnabled = false
+
+        // Backend now has federation enabled.
+        mockBackendInfo(
+            productionVersions: 0...2,
+            developmentVersions: nil,
+            domain: "federated.example.com",
+            isFederationEnabled: true
+        )
+
+        // When version is resolved.
+        let done = expectation(description: "done")
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then federation is enabled but do not forward to delegate.
+        XCTAssertEqual(BackendInfo.domain, "federated.example.com")
+        XCTAssertTrue(BackendInfo.isFederationEnabled)
+        XCTAssertFalse(mockDelegate.didReportFederationHasBeenEnabled)
+    }
 }
 
 // MARK: - Mocks

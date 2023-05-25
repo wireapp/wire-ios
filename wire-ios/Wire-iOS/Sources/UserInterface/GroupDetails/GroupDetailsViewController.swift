@@ -201,6 +201,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             sections.append(servicesSection)
         }
 
+        // Protocol details
+        sections.append(MessageProtocolSectionController(messageProtocol: conversation.messageProtocol))
+
         return sections
     }
 

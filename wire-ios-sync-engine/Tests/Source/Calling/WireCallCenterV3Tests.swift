@@ -718,12 +718,43 @@ class WireCallCenterV3Tests: MessagingTest {
 
         // then
         XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 1)
-        if let event = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
+        if let (event, conversationType) = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
             XCTAssertEqual(event.conversationId, oneOnOneConversationID)
             XCTAssertEqual(event.userId, userId)
             XCTAssertEqual(event.clientId, clientId)
             XCTAssertEqual(event.data, data)
+            XCTAssertEqual(conversationType, .oneToOne)
         }
+    }
+
+    func testThatProcessCallEventIsContextSafe() {
+        // given
+        let userID = AVSIdentifier.stub
+        let clientID = "foo"
+        let data = verySmallJPEGData()
+        let callEvent = CallEvent(
+            data: data,
+            currentTimestamp: Date(),
+            serverTimestamp: Date(),
+            conversationId: oneOnOneConversationID,
+            userId: userID,
+            clientId: clientID
+        )
+
+        sut.setCallReady(version: 3)
+
+        // expect
+        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+
+        // when
+        syncMOC.performAndWait {
+            sut.processCallEvent(callEvent) {
+                calledCompletionHandler.fulfill()
+            }
+        }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItCallProcessCallEventCompletionHandler() {

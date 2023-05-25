@@ -38,7 +38,7 @@ public class MockAVSWrapper: AVSWrapperType {
     public var hasOngoingCall = false
     public var mockMembers: [AVSCallMember] = []
 
-    var receivedCallEvents: [CallEvent] = []
+    var receivedCallEvents: [(CallEvent, AVSConversationType)] = []
 
     public required init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
         // do nothing
@@ -70,8 +70,8 @@ public class MockAVSWrapper: AVSWrapperType {
         setVideoStateArguments = (conversationId, videoState)
     }
 
-    public func received(callEvent: CallEvent) -> CallError? {
-        receivedCallEvents.append(callEvent)
+    public func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError? {
+        receivedCallEvents.append((callEvent, conversationType))
         return callError
     }
 

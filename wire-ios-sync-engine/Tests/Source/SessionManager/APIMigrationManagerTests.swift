@@ -255,7 +255,8 @@ class APIMigrationManagerTests: MessagingTest {
             application: application,
             appVersion: "999",
             coreDataStack: createCoreDataStack(),
-            configuration: .init()
+            configuration: .init(),
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 }

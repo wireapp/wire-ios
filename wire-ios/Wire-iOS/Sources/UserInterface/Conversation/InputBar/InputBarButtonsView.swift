@@ -151,56 +151,70 @@ final class InputBarButtonsView: UIView {
     }
 
     private func layoutAndConstrainButtonRows() {
-        let minButtonWidth: CGFloat = constants.minimumButtonWidth(forWidth: bounds.width)
+        let minButtonWidth = constants.minimumButtonWidth(forWidth: bounds.width)
 
-        guard bounds.size.width >= minButtonWidth * 2 else { return }
-
-        // Drop existing constraints
-        buttons.forEach {
-            $0.roundCorners(edge: .leading)
-            $0.roundCorners(edge: .trailing)
-            $0.removeFromSuperview()
-            buttonInnerContainer.addSubview($0)
+        guard bounds.size.width >= minButtonWidth * 2 else {
+            return
         }
 
-        let ratio = floorf(Float(bounds.width / minButtonWidth))
-        let numberOfButtons: Int = Int(ratio)
-        multilineLayout = numberOfButtons < buttons.count
+        // Reset the container.
+        buttonInnerContainer.removeSubviews()
 
-        let (firstRow, secondRow): ([UIButton], [UIButton])
+        // Reset the buttons.
+        for button in buttons {
+            button.removeRoundedCorners()
+            button.removeFromSuperview()
+            buttonInnerContainer.addSubview(button)
+        }
 
-        expandRowButton.isHidden = !multilineLayout
+        // Distribute buttons over rows.
+        let maxNumberOfButtonsPerRow = Int(floorf(Float(bounds.width / minButtonWidth)))
+        let isMultilineLayout = buttons.count > maxNumberOfButtonsPerRow
 
-        if multilineLayout {
+        let firstRow, secondRow: [UIButton]
+
+        if isMultilineLayout {
             firstRow = buttons.prefix(customButtonCount) + [expandRowButton]
             secondRow = [UIButton](buttons.suffix(buttons.count - customButtonCount))
             buttonRowHeight.constant = constants.buttonsBarHeight * 2
+            expandRowButton.isHidden = false
         } else {
             firstRow = buttons
             secondRow = []
             buttonRowHeight.constant = constants.buttonsBarHeight
+            expandRowButton.isHidden = true
         }
 
+        // Round buttons.
         firstRow.first?.roundCorners(edge: .leading, radius: 12)
         firstRow.last?.roundCorners(edge: .trailing, radius: 12)
         secondRow.first?.roundCorners(edge: .leading, radius: 12)
 
-        var constraints = constrainRowOfButtons(firstRow,
-                                                inset: 0,
-                                                rowIsFull: true,
-                                                referenceButton: .none)
+        var constraints = constrainRowOfButtons(
+            firstRow,
+            inset: 0,
+            rowIsFull: true,
+            referenceButton: .none
+        )
 
         defer {
             NSLayoutConstraint.activate(constraints)
+            showRow(0, animated: true)
         }
 
-        guard !secondRow.isEmpty else { return }
+        guard !secondRow.isEmpty else {
+            return
+        }
 
-        let filled = secondRow.count == numberOfButtons
+        let filled = secondRow.count == maxNumberOfButtonsPerRow
         let referenceButton = firstRow.count > 1 ? firstRow[1] : firstRow[0]
 
-        constraints.append(contentsOf: constrainRowOfButtons(secondRow, inset: constants.buttonsBarHeight, rowIsFull: filled, referenceButton: referenceButton)
-        )
+        constraints.append(contentsOf: constrainRowOfButtons(
+            secondRow,
+            inset: constants.buttonsBarHeight,
+            rowIsFull: filled,
+            referenceButton: referenceButton
+        ))
 
         setupAccessibility()
     }
