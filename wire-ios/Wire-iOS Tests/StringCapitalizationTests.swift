@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+@testable import Wire
 
-extension NSString {
+final class StringCapitalizationTests: XCTestCase {
 
-    var uppercasedWithCurrentLocale: String {
-        return uppercased(with: NSLocale.current)
-    }
+    func testThatTheFirstLetterOfTheSentenceIsCapitalized() {
+        // GIVEN
+        let givenString = "hello world!"
 
-    var lowercasedWithCurrentLocale: String {
-        return lowercased(with: NSLocale.current)
+        // WHEN
+        let result = givenString.capitalizingFirstCharacterOnly
+
+        // THEN
+        XCTAssertEqual(result, "Hello world!")
     }
 
 }
