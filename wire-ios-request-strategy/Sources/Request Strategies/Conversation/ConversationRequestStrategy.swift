@@ -424,6 +424,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         }
 
         newConversation.remoteIdentifier = conversationID
+        print(response)
+        print(payload)
         payload.updateOrCreate(in: managedObjectContext)
         newConversation.needsToBeUpdatedFromBackend = deletedDuplicate
     }

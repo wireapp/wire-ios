@@ -173,6 +173,14 @@ extension Payload.Conversation {
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
+        if let failedToAddUsers = failedToAddUsers, !failedToAddUsers.isEmpty {
+            updateSystemMessage(for: conversation, messageType: .newConversation, context: context)
+        }
+        // update system message
+        /// find the system message
+        /// updateSystemMessage(for: conversation, type: .newConversation, context: context)
+        /// update failed users
+        /// update main users
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -184,6 +192,20 @@ extension Payload.Conversation {
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
         }
+    }
+
+    func updateSystemMessage(for conversation: ZMConversation, messageType: ZMSystemMessageType, context: NSManagedObjectContext) {
+        let fetchRequest = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
+        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %d",
+                                             ZMMessageConversationKey, conversation,
+                                             ZMMessageSystemMessageTypeKey, messageType.rawValue)
+        let mes = context.fetchOrAssert(request: fetchRequest) as [ZMSystemMessage]
+        guard let systemMessage = mes.first else {
+            return
+        }
+        //systemMessage.userTypes -> remove users
+        //systemMessage.failedToAddUsers -> add users
+        print(mes.count)
     }
 
     func updateMetadata(for conversation: ZMConversation, context: NSManagedObjectContext) {
