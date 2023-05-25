@@ -30,6 +30,8 @@ class ReactionToggleButton: UIControl {
     private let counterLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
                                         color: SemanticColors.Label.textDefault)
 
+    private var onToggle: (() -> Void)?
+
     var isToggled: Bool {
         didSet {
             guard oldValue != isToggled else { return }
@@ -75,10 +77,16 @@ class ReactionToggleButton: UIControl {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configureData(type: String, count: Int,  isToggled: Bool) {
+    public func configureData(
+        type: String,
+        count: Int,
+        isToggled: Bool,
+        onToggle: @escaping () -> Void
+    ) {
         emojiLabel.text  = type
         counterLabel.text = String(count)
         self.isToggled = isToggled
+        self.onToggle = onToggle
     }
 
     private func updateAppearance() {
@@ -97,7 +105,7 @@ class ReactionToggleButton: UIControl {
 
     @objc
     private func didToggle() {
-        isToggled.toggle()
+        onToggle?()
     }
 
 }

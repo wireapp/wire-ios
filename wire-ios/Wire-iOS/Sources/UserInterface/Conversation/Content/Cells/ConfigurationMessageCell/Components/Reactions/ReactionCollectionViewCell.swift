@@ -32,8 +32,18 @@ class ReactionCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configureData(type: String, count: Int, isToggled: Bool) {
-        reactionToggleButton.configureData(type: type, count: count, isToggled: isToggled)
+    public func configureData(
+        type: String,
+        count: Int,
+        isToggled: Bool,
+        onToggle: @escaping () -> Void
+    ) {
+        reactionToggleButton.configureData(
+            type: type,
+            count: count,
+            isToggled: isToggled,
+            onToggle: onToggle
+        )
     }
 
     func addViews() {

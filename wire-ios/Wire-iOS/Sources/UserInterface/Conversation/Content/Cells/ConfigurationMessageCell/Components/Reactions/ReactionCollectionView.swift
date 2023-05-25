@@ -78,9 +78,11 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath) as! ReactionCollectionViewCell
         let reaction = reactions[indexPath.row]
         cell.configureData(
-            type: reaction.reaction,
+            type: reaction.type.rawValue,
             count: reaction.count,
-            isToggled: reaction.isSelfUserReacting
+            isToggled: reaction.isSelfUserReacting,
+            onToggle: reaction.performReaction
+
         )
         return cell
     }

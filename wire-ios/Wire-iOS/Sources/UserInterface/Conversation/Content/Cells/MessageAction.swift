@@ -34,6 +34,7 @@ enum MessageAction: CaseIterable {
     forward,
     like,
     unlike,
+//    react(ReactionType),
     resend,
     showInConversation,
     sketchDraw,

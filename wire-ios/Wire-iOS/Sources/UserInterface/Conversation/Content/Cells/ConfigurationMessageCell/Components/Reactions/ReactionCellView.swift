@@ -20,10 +20,20 @@ import Foundation
 import UIKit
 import WireDataModel
 
-public struct Reaction: Equatable {
-    let reaction: String
+public struct Reaction {
+
+    let type: ReactionType
     let count: Int
     let isSelfUserReacting: Bool
+    let performReaction: () -> Void
+
+}
+
+enum ReactionType: String {
+    case like = "❤️"
+    case laugh = "🤣"
+    case anger = "😡"
+
 }
 
 final class ReactionsCellView: UIView, ConversationMessageCell {
@@ -40,15 +50,35 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    func configure(with object: Configuration, animated: Bool) {
-        guard var reactionsByUsers = message?.usersReaction  else { return }
-        
-        reactionView.reactions = reactionsByUsers.compactMap { reaction, usersWhoReacted in
-            guard !usersWhoReacted.isEmpty else { return nil }
+    func configure(
+        with object: Configuration,
+        animated: Bool
+    ) {
+        guard let message = message
+        else {
+            return
+        }
+
+        reactionView.reactions = message.usersReaction.compactMap { reaction, usersWhoReacted in
+            guard
+                let reactionType = ReactionType(rawValue: reaction),
+                !usersWhoReacted.isEmpty
+            else {
+                return nil
+            }
+
             return Reaction(
-                reaction: reaction,
+                type: reactionType,
                 count: usersWhoReacted.count,
-                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser)
+                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
+                performReaction: { [weak self] in
+                    guard let `self` = self else { return }
+                    self.delegate?.perform(
+                        action: .like,
+                        for: message,
+                        view: self
+                    )
+                }
             )
         }
     }
