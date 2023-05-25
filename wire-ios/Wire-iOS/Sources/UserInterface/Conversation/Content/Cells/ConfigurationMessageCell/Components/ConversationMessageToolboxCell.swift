@@ -83,7 +83,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     }
 
     func messageToolboxViewDidRequestLike(_ messageToolboxView: MessageToolboxView) {
-        perform(action: .like)
+        perform(action: .react(.like))
     }
 
     func messageToolboxViewDidSelectDelete(_ sender: UIView?) {

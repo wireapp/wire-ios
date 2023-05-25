@@ -39,7 +39,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
         // THEN
         let actionsTitles = sut.actions.map { $0.title ?? "" }
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Like", "Delete", "Cancel"])
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
     }
 }
 
@@ -47,6 +47,7 @@ final class BasicReactionPickerTests: ZMSnapshotTestCase {
     var sut = BasicReactionPicker()
 
     func test_BasicReactionPicker() {
+        recordMode = true
         sut.sizeToFit()
         sut.backgroundColor = .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))

@@ -30,8 +30,6 @@ enum MessageAction: CaseIterable, Equatable {
                                             .cancel,
                                             .download,
                                             .forward,
-                                            .like,
-                                            .unlike,
                                             .resend,
                                             .showInConversation,
                                             .sketchDraw,
@@ -53,8 +51,6 @@ enum MessageAction: CaseIterable, Equatable {
     cancel,
     download,
     forward,
-    like,
-    unlike,
     resend,
     showInConversation,
     sketchDraw,
@@ -89,10 +85,6 @@ enum MessageAction: CaseIterable, Equatable {
             key = "content.message.download"
         case .forward:
             key = "content.message.forward"
-        case .like:
-            key = "content.message.like"
-        case .unlike:
-            key = "content.message.unlike"
         case .resend:
             key = "content.message.resend"
         case .showInConversation:
@@ -131,10 +123,6 @@ enum MessageAction: CaseIterable, Equatable {
             return .downArrow
         case .forward:
             return .export
-        case .like:
-            return .liked
-        case .unlike:
-            return .like
         case .resend:
             return .redo
         case .showInConversation:
@@ -177,10 +165,6 @@ enum MessageAction: CaseIterable, Equatable {
             imageName = "chevron.down"
         case .forward:
             imageName = "square.and.arrow.up"
-        case .like:
-            imageName = "suit.heart"
-        case .unlike:
-            imageName = "suit.heart.fill"
         case .resend:
             imageName = "arrow.clockwise"
         case .showInConversation:
@@ -222,10 +206,6 @@ enum MessageAction: CaseIterable, Equatable {
             return #selector(ConversationMessageActionController.downloadMessage)
         case .forward:
             return #selector(ConversationMessageActionController.forwardMessage)
-        case .like:
-            return #selector(ConversationMessageActionController.likeMessage)
-        case .unlike:
-            return #selector(ConversationMessageActionController.unlikeMessage)
         case .resend:
             return #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
@@ -258,10 +238,6 @@ enum MessageAction: CaseIterable, Equatable {
             return MessageAction.RevealButton.description
         case .delete:
             return MessageAction.DeleteButton.description
-        case .unlike:
-            return MessageAction.LikeButton.description
-        case .like:
-            return MessageAction.UnlikeButton.description
         default:
             return nil
         }
