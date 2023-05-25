@@ -323,7 +323,6 @@
 		5E423CD92295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E423CD82295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift */; };
 		5E4B1385204FE58D00ED5DF1 /* TimeInterval+Days.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1384204FE58D00ED5DF1 /* TimeInterval+Days.swift */; };
 		5E4B1387204FE7DA00ED5DF1 /* SystemAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1386204FE7DA00ED5DF1 /* SystemAnimationCurves.swift */; };
-		5E4B1389204FEFCD00ED5DF1 /* UIColor+CallQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1388204FEFCD00ED5DF1 /* UIColor+CallQuality.swift */; };
 		5E4BC1C0218A0A4300A8682E /* UnknownMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BF218A0A4300A8682E /* UnknownMessageCellDescription.swift */; };
 		5E4BC1CA218C9F6600A8682E /* ConversationQuoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1C9218C9F6600A8682E /* ConversationQuoteCell.swift */; };
 		5E4BC1CC218CA94D00A8682E /* ZMConversationMessage+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1CB218CA94D00A8682E /* ZMConversationMessage+Date.swift */; };
@@ -2206,7 +2205,6 @@
 		5E423CD82295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationViewController+PrivacyAlert.swift"; sourceTree = "<group>"; };
 		5E4B1384204FE58D00ED5DF1 /* TimeInterval+Days.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Days.swift"; sourceTree = "<group>"; };
 		5E4B1386204FE7DA00ED5DF1 /* SystemAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemAnimationCurves.swift; sourceTree = "<group>"; };
-		5E4B1388204FEFCD00ED5DF1 /* UIColor+CallQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CallQuality.swift"; sourceTree = "<group>"; };
 		5E4BC1BF218A0A4300A8682E /* UnknownMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownMessageCellDescription.swift; sourceTree = "<group>"; };
 		5E4BC1C9218C9F6600A8682E /* ConversationQuoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationQuoteCell.swift; sourceTree = "<group>"; };
 		5E4BC1CB218CA94D00A8682E /* ZMConversationMessage+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+Date.swift"; sourceTree = "<group>"; };
@@ -4252,7 +4250,6 @@
 			isa = PBXGroup;
 			children = (
 				55DD5C331FA236F60082170C /* CallQualityViewController.swift */,
-				5E4B1388204FEFCD00ED5DF1 /* UIColor+CallQuality.swift */,
 				5E678060204E8BEB002F63FB /* CallQualityPresentationTransition.swift */,
 				5EB45760204EA75300BA217A /* CallQualityDismissalTransition.swift */,
 			);
@@ -9250,7 +9247,6 @@
 				5EA73D8820D901000001D106 /* DetailsCollectionViewCell.swift in Sources */,
 				A9EB722323C1581A00DA8240 /* ContactsViewController.swift in Sources */,
 				EF98987620C6AAD2005680C5 /* ClientColorVariantProtocol.swift in Sources */,
-				5E4B1389204FEFCD00ED5DF1 /* UIColor+CallQuality.swift in Sources */,
 				16519D8B232108EF00C9D76D /* ConversationActionController+DeleteGroup.swift in Sources */,
 				871BC2571D34F8F800DF0793 /* NavigationTransition.swift in Sources */,
 				8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */,
