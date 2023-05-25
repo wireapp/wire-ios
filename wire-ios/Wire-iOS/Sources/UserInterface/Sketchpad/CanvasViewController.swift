@@ -300,7 +300,7 @@ extension CanvasViewController: CanvasDelegate {
 
 // MARK: - EmojiKeyboardViewControllerDelegate
 
-extension CanvasViewController: EmojiKeyboardViewControllerDelegate {
+extension CanvasViewController: EmojiPickerViewControllerDelegate {
 
     func showEmojiKeyboard(animated: Bool) {
         guard !isEmojiKeyboardInTransition, let emojiKeyboardView = emojiKeyboardViewController.view else { return }
