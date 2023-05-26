@@ -70,6 +70,7 @@
 		06C412AC238FCAA80018866F /* Int+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AB238FCAA80018866F /* Int+Const.swift */; };
 		06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */; };
 		06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */; };
+		06E097982A20BEE000B38C4A /* ZMConversation+ValidName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E097972A20BEE000B38C4A /* ZMConversation+ValidName.swift */; };
 		06E69AB425C8301D00B678BF /* UIColor+TeamCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFF9E841FBF335700491F9A /* UIColor+TeamCreation.swift */; };
 		06E69AB825C9A37700B678BF /* AttributedStringOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870534001DD6265100A7F822 /* AttributedStringOperators.swift */; };
 		06E89AFE25C82C51008E3846 /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E89AFD25C82C50008E3846 /* UnlockViewController.swift */; };
@@ -1951,6 +1952,7 @@
 		06C412AB238FCAA80018866F /* Int+Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Const.swift"; sourceTree = "<group>"; };
 		06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DragAndDrop.swift"; sourceTree = "<group>"; };
 		06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestLinkInfoCell.swift; sourceTree = "<group>"; };
+		06E097972A20BEE000B38C4A /* ZMConversation+ValidName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+ValidName.swift"; sourceTree = "<group>"; };
 		06E89AFD25C82C50008E3846 /* UnlockViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockViewController.swift; sourceTree = "<group>"; };
 		06E89AFF25C82CA9008E3846 /* PasscodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeTextField.swift; sourceTree = "<group>"; };
 		06F2664123881A0D006BD21F /* LabelIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelIndicator.swift; sourceTree = "<group>"; };
@@ -6279,6 +6281,7 @@
 				BF52C15A1CAEBDC00037331F /* ArchivedList */,
 				877ABB461E8118E300CBCF2B /* BackgroundViewController.swift */,
 				879325091E83BB5C00190067 /* ZMConversation+Status.swift */,
+				06E097972A20BEE000B38C4A /* ZMConversation+ValidName.swift */,
 				EF6E9FE523193477000B7785 /* UIViewControllerTransitioningDelegate+Present.swift */,
 			);
 			path = ConversationList;
@@ -8744,6 +8747,7 @@
 				F12CDAE31E4386A100CEFCEB /* ChangeHandleViewController.swift in Sources */,
 				87B8C3401DF9788B0015EC89 /* LinkOpener.swift in Sources */,
 				5EE73BED21230BF30032986D /* RegistrationActivationErrorHandler.swift in Sources */,
+				06E097982A20BEE000B38C4A /* ZMConversation+ValidName.swift in Sources */,
 				7C4918A11F8BB1A20038AF4B /* UIScreen+SafeArea.swift in Sources */,
 				8775BF1C2007C6B900A8AD93 /* SearchGroupSelector.swift in Sources */,
 				872C8242214BFA8700236A76 /* UITextView+Range.swift in Sources */,

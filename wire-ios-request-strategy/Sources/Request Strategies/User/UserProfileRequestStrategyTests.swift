@@ -271,7 +271,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItHasIncompleteMetadata_WhenSuccessfullyProcessingResponseWithFailedUsers_V4() {
+    func testThatItIsPendingMetadataRefresh_WhenSuccessfullyProcessingResponseWithFailedUsers_V4() {
         syncMOC.performGroupedBlockAndWait {
             // given
             self.apiVersion = .v4
@@ -297,7 +297,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlockAndWait {
             // then
-            XCTAssertTrue(self.otherUser.hasIncompleteMetadata)
+            XCTAssertTrue(self.otherUser.isPendingMetadataRefresh)
         }
     }
 

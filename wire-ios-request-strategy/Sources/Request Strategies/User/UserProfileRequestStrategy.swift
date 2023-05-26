@@ -350,7 +350,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
         for qualifiedID in users {
             let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            user?.hasIncompleteMetadata = true
+            user?.isPendingMetadataRefresh = true
             user?.needsToBeUpdatedFromBackend = false
         }
     }

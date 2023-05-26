@@ -368,7 +368,7 @@ final class ConversationListViewModel: NSObject {
             conversationListType = .folder(label)
         }
 
-        return conversationDirectory.conversations(by: conversationListType).map({ SectionItem(item: $0, kind: kind) })
+        return conversationDirectory.conversations(by: conversationListType).filter({ $0.hasValidName }).map({ SectionItem(item: $0, kind: kind) })
     }
 
     /// Select the item at an index path

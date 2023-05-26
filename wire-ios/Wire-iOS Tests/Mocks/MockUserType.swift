@@ -64,7 +64,8 @@ class MockUserType: NSObject, UserType, Decodable {
     var canModifyAccessControlSettings = false
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
-    var hasIncompleteMetadata = false
+    var isPendingMetadataRefresh = false
+    var hasValidName = false
 
     // MARK: - UserType Conformance
 

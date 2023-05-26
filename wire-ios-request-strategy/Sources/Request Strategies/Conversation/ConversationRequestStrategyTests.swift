@@ -291,7 +291,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatConversationHasIncompleteMetadata_WhenFailedDuringSlowSyncPhase() {
+    func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
         // given
         self.apiVersion = .v4
         startSlowSync()
@@ -302,7 +302,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(self.groupConversation.hasIncompleteMetadata)
+            XCTAssertTrue(self.groupConversation.isPendingMetadataRefresh)
         }
     }
 
