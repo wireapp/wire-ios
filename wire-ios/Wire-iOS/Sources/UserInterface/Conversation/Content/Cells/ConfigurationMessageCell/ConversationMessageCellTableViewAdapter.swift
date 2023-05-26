@@ -176,6 +176,11 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     // MARK: - Menu
 
+    func showMenu() {
+        guard let controller = messageActionsMenuController() else { return }
+        cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: controller)
+    }
+
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
@@ -183,38 +188,11 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        guard let actionController = cellDescription?.actionController else {
-            return false
-        }
-
-        return actionController.canPerformAction(action) == true
-    }
-
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        return cellDescription?.actionController
-    }
-
-    func showMenu() {
-        guard cellDescription?.supportsActions == true else {
-            return
-        }
-
-        let needsFirstResponder = cellDescription?.delegate?.conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(self)
-        registerMenuObservers()
-
-        let menu = UIMenuController.shared
-        menu.menuItems = ConversationMessageActionController.allMessageActions
-
-        if needsFirstResponder != false {
-            self.becomeFirstResponder()
-        }
-
-        menu.showMenu(from: selectionView, rect: selectionRect)
+    func messageActionsMenuController() -> MessageActionsViewController? {
+        guard let actionController = cellDescription?.actionController else { return nil }
+        let actionsMenuController = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
+        
+        return actionsMenuController
     }
 
     // MARK: - Single Tap Action
@@ -233,32 +211,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    // MARK: - Target / Action
-
-    private func registerMenuObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(menuWillShow), name: UIMenuController.willShowMenuNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide), name: UIMenuController.didHideMenuNotification, object: nil)
-    }
-
-    @objc private func menuWillShow(_ note: Notification) {
-        showsMenu = true
-        setSelectedByMenu(true, animated: true)
-        NotificationCenter.default.removeObserver(self, name: UIMenuController.willShowMenuNotification, object: nil)
-    }
-
-    @objc private func menuDidHide(_ note: Notification) {
-        showsMenu = false
-        setSelectedByMenu(false, animated: true)
-        NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
-    }
-
-    func setSelectedByMenu(_ isSelected: Bool, animated: Bool) {
-        let animations = {
-            self.selectionView.alpha = isSelected ? 0.4 : 1
-        }
-
-        UIView.animate(withDuration: 0.32, animations: animations)
-    }
 
     // MARK: - SelectableView
 

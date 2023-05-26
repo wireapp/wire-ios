@@ -109,31 +109,7 @@ extension ConversationContentViewController {
             openSketch(for: message, in: .draw)
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
-        case .like, .unlike:
-            // The new liked state, the value is flipped
-            let updatedLikedState = !Message.isLikedMessage(message)
-            guard let indexPath = dataSource.topIndexPath(for: message) else { return }
 
-            let selectedMessage = dataSource.selectedMessage
-
-            session.perform({
-                Message.setLikedMessage(message, liked: updatedLikedState)
-            })
-
-            if updatedLikedState {
-                // Deselect if necessary to show list of likers
-                if selectedMessage == message {
-                    willSelectRow(at: indexPath, tableView: tableView)
-                }
-
-                Analytics.shared.tagLiked(in: conversation)
-            } else {
-                // Select if necessary to prevent message from collapsing
-                if !(selectedMessage == message) && !Message.hasReactions(message) {
-                    willSelectRow(at: indexPath, tableView: tableView)
-                    tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-                }
-            }
         case .forward:
             showForwardFor(message: message, from: view)
         case .showInConversation:
@@ -162,6 +138,11 @@ extension ConversationContentViewController {
             isLoadingViewVisible = true
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
+        case .react(let reaction):
+            Analytics.shared.tagReacted(in: conversation)
+            session.perform {
+                message.addReaction(reaction)
+            }
         }
     }
 

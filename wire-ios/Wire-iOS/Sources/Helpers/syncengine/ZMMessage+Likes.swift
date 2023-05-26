@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ZMConversationMessage {
 
-    var canBeLiked: Bool {
+    var canAddReaction: Bool {
         guard let conversation = conversationLike else {
             return false
         }
@@ -68,6 +68,9 @@ extension ZMConversationMessage {
         return readReceipts.sorted { $0.userType.name < $1.userType.name }
     }
 
+    func addReaction(_ reaction: MessageReaction) {
+        ZMMessage.addReaction(reaction, toMessage: self)
+    }
 }
 
 extension Message {

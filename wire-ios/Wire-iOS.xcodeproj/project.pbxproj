@@ -1087,6 +1087,9 @@
 		D3095762283CEB1C00CEC620 /* MediaShareRestrictionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */; };
 		D3095763283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
+		D311F87E29EEA1BE00D9CF7E /* MessageActionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */; };
+		D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */; };
+		D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */; };
 		D337012828996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */; };
 		D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */; };
 		D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */; };
@@ -3095,6 +3098,9 @@
 		D30880FD292E521D00DDEAB0 /* CallingActionsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingActionsInfoViewController.swift; sourceTree = "<group>"; };
 		D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaShareRestrictionManager.swift; sourceTree = "<group>"; };
 		D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFileRestrictionsProtocol.swift; sourceTree = "<group>"; };
+		D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewController.swift; sourceTree = "<group>"; };
+		D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPicker.swift; sourceTree = "<group>"; };
+		D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewControllerTests.swift; sourceTree = "<group>"; };
 		D337012728996269009C86FD /* ConversationInputBarViewController+DropInteractionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DropInteractionTests.swift"; sourceTree = "<group>"; };
 		D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelViewTests.swift; sourceTree = "<group>"; };
 		D35EEDC428C2374300949F02 /* NetworkSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSessionTests.swift; sourceTree = "<group>"; };
@@ -4395,6 +4401,7 @@
 				1661C71A21A7113A003DCE1C /* ConversationFileMessageCellTests.swift */,
 				1661C74221A83B25003DCE1C /* ConversationAudioMessageCellTests.swift */,
 				16030DAC21A846A200F8032E /* ConversationVideoMessageCellTests.swift */,
+				D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */,
 				5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */,
 				06A5CFB52632A4D4006D2891 /* ConversationMessageSenderSnapshotTests.swift */,
 			);
@@ -6149,6 +6156,7 @@
 		8FC85180199245760008B66B /* Content */ = {
 			isa = PBXGroup;
 			children = (
+				D311F87C29EE9F5000D9CF7E /* MessageActions */,
 				5E3A6C23206A4DDF00907484 /* Previews */,
 				8FC85181199245760008B66B /* Cells */,
 				A92CB35623CDF6D100F12797 /* ConversationContentViewControllerDelegate.swift */,
@@ -7031,6 +7039,15 @@
 				D30880FD292E521D00DDEAB0 /* CallingActionsInfoViewController.swift */,
 			);
 			path = CallingActionsInfoViewController;
+			sourceTree = "<group>";
+		};
+		D311F87C29EE9F5000D9CF7E /* MessageActions */ = {
+			isa = PBXGroup;
+			children = (
+				D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */,
+				D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */,
+			);
+			path = MessageActions;
 			sourceTree = "<group>";
 		};
 		D35EEDC628C7E64800949F02 /* Helpers */ = {
@@ -9009,6 +9026,7 @@
 				5E3A6C22206A3AD500907484 /* ConversationActionController.swift in Sources */,
 				8710673E1C0DC5570035603B /* SettingsCellDescriptorFactory.swift in Sources */,
 				060E5336257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift in Sources */,
+				D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */,
 				D5189477205045A100C095C1 /* LinkHeaderCell.swift in Sources */,
 				A9681D8623884FF1004FE917 /* Message+DateFormatter.swift in Sources */,
 				0637968F2964E2FE00674AAA /* Assets+Generated.swift in Sources */,
@@ -9231,6 +9249,7 @@
 				A9275F6124223AB4007CB2BC /* DynamicsProxy.swift in Sources */,
 				5E769C5821AE948F00785EB7 /* MessageDetailsDataSource.swift in Sources */,
 				EF066E1621EF938C00D56CAD /* MessageActionResponder.swift in Sources */,
+				D311F87E29EEA1BE00D9CF7E /* MessageActionsViewController.swift in Sources */,
 				637387C726443C31004FEF79 /* VideoKind.swift in Sources */,
 				1660F23A1FBF32D400A0EE54 /* MediaPlayerController.swift in Sources */,
 				167961AF20445FB400B72ACC /* ProfileTitleView.swift in Sources */,
@@ -9847,6 +9866,7 @@
 				6370DA212577934C00B5C8F1 /* PulsingIconImageViewTests.swift in Sources */,
 				BF78687F1D86B3710063762F /* LocationDataTests.swift in Sources */,
 				EF2A8DEF214AAB13002C9058 /* ContactsCellSnapshotTests.swift in Sources */,
+				D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */,
 				EF25F8871FC57F320040C3CC /* ValidatedTextFieldTests.swift in Sources */,
 				EE09DE6025B24B2000B515F0 /* AppLockModuleRouterTests.swift in Sources */,
 				5E2B13E820E67EA7002F27E2 /* VerticalColumnCollectionViewLayoutTests.swift in Sources */,

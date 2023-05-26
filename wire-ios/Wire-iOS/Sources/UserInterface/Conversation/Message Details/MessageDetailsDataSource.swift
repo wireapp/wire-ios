@@ -88,7 +88,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
 
         // Compute the title and display mode
-        let showLikesTab = message.canBeLiked
+        let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
         supportsReadReceipts = message.needsReadConfirmation
 

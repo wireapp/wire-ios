@@ -25,6 +25,11 @@ public let ZMReactionUsersValueKey      = "users"
 @objc public enum TransportReaction: UInt32 {
     case none  = 0
     case heart = 1
+    case thumbsUp
+    case thumbsDown
+    case slightlySmiling
+    case beamingFace
+    case frowningFace
 }
 
 @objcMembers open class Reaction: ZMManagedObject {
@@ -57,6 +62,16 @@ public let ZMReactionUsersValueKey      = "users"
         switch unicode {
         case MessageReaction.like.unicodeValue:
             return .heart
+        case MessageReaction.thumbsUp.unicodeValue:
+            return .thumbsUp
+        case MessageReaction.thumbsDown.unicodeValue:
+            return .thumbsDown
+        case MessageReaction.slightlySmiling.unicodeValue:
+            return .slightlySmiling
+        case MessageReaction.beamingFace.unicodeValue:
+            return .beamingFace
+        case MessageReaction.frowningFace.unicodeValue:
+            return .frowningFace
         default:
             return .none
         }
