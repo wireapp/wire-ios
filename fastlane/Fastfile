@@ -24,7 +24,6 @@ platform :ios do
 
     desc "Fetch dependencies"
     lane :prepare do |options|
-        xcode_version = options[:xcode_version]
         # Saving `Carthage bootstrap` running time by reusing the Cathage artifacts.
         # When the Cathage framworks is not pre-built(e.g. in feature branch), this option can save the time of building.
         # When cache_carthage = YES, 
@@ -78,12 +77,6 @@ platform :ios do
 
     desc "Build for testing"
     lane :build do |options|
-        xcode_version = options[:xcode_version]
-
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-        end
-
         build = Build.new(options: options)
 
         run_tests(
@@ -102,20 +95,13 @@ platform :ios do
 
     desc "Test without building"
     lane :test do |options|
-        xcode_version = options[:xcode_version]
-
+        xcode_version = xcversion
+        
         ios_version = "16.2"
         if !xcode_version.nil?
-            xcversion(version: xcode_version)
 
             if xcode_version == "14.2"
                 ios_version = "16.2"
-            elsif xcode_version == "13.2.1"
-                ios_version = "15.2"
-            elsif xcode_version == "13.1"
-                 ios_version = "15.0"
-            elsif xcode_version == "12.4"
-                ios_version = "14.4"
             end
         end
 
