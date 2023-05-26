@@ -177,7 +177,7 @@ extension ZMConversation {
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
-        return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
+         return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
 }
 

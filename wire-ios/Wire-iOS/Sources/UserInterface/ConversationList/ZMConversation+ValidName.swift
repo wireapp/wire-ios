@@ -21,27 +21,28 @@ import WireDataModel
 
 extension ZMConversation {
 
-    private var hasValidNameForGroup: Bool {
+    private var hasIncompleteMetadataForGroup: Bool {
         guard let name = userDefinedName else {
             return false
         }
         return !name.isEmpty
     }
 
-    private var hasValidNameForOneToOne: Bool {
-        if let _ = participants.first (where: { !$0.hasValidName }) {
+    private var hasIncompleteMetadataForOneToOne: Bool {
+        if let _ = participants.filter({ !$0.isAccountDeleted })
+                               .first (where: { !$0.hasValidName }) {
             return false
         } else {
             return true
         }
     }
 
-    var hasValidName: Bool {
+    var hasIncompleteMetadata: Bool {
         switch conversationType {
         case .group:
-            return hasValidNameForGroup
+            return hasIncompleteMetadataForGroup
         case .oneOnOne:
-            return hasValidNameForOneToOne
+            return hasIncompleteMetadataForOneToOne
         default:
             return true
         }
