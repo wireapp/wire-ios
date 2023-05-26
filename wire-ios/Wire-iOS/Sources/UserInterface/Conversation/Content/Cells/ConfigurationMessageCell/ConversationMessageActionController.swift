@@ -100,10 +100,6 @@ final class ConversationMessageActionController {
             return message.canBeDownloaded
         case .forward:
             return message.canBeForwarded
-        case .like:
-            return message.canAddReaction && !message.liked
-        case .unlike:
-            return message.canAddReaction && message.liked
         case .resend:
             return message.canBeResent
         case .showInConversation:
@@ -179,7 +175,7 @@ final class ConversationMessageActionController {
     }
 
     var doubleTapAction: MessageAction? {
-        return message.canAddReaction ? .like : nil
+        return message.canAddReaction ? .react(.like) : nil
     }
 
     // MARK: - Handler
@@ -224,14 +220,6 @@ final class ConversationMessageActionController {
 
     @objc func forwardMessage() {
         perform(action: .forward)
-    }
-
-    @objc func likeMessage() {
-        perform(action: .like)
-    }
-
-    @objc func unlikeMessage() {
-        perform(action: .like)
     }
 
     @objc func deleteMessage() {

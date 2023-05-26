@@ -40,7 +40,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         return view
     }()
-    lazy var likeButton = iconButton(messageAction: .like)
+    lazy var likeButton = iconButton(messageAction: .react(.like))
 
     let inverse: Bool
 
@@ -239,8 +239,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             return #selector(revealCurrent(_:))
         case .delete:
             return #selector(deleteCurrent)
-        case .like, .unlike:
-            return #selector(likeCurrent)
         default:
             return nil
         }
@@ -350,7 +348,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
     fileprivate func updateLikeButton() {
 
-        let messageAction: MessageAction = currentMessage.liked ? .like : .unlike
+        let messageAction: MessageAction = .react(.like)
 
         likeButton.setIcon(messageAction.icon, size: .tiny, for: .normal)
         updateLikeButtonStyle()
@@ -468,13 +466,11 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
 extension ConversationImagesViewController: MessageActionResponder {
     func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
-        switch action {
-        case .like:
-            likeCurrent()
-        default:
-            perform(action: action,
-                    for: message,
-                    sender: view)
+        perform(action: action,
+                for: message,
+                sender: view)
+        if action == .react(.like) {
+            updateLikeButton()
         }
     }
 }

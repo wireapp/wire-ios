@@ -29,7 +29,6 @@ class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
-    private var buttons: [UIButton] = []
     weak var delegate: ReactionPickerDelegate?
 
     required init?(coder: NSCoder) {
@@ -56,9 +55,9 @@ private extension BasicReactionPicker {
         addSubview(horizontalStackView)
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8.0),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
             horizontalStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8.0),
-            horizontalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
+            horizontalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
             horizontalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
             horizontalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 16.0)
         ])
@@ -68,14 +67,14 @@ private extension BasicReactionPicker {
     func addButtons() {
         ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
             let button = UIButton()
-            button.titleLabel?.font = FontSpec.largeRegularFont.font?.withSize(30.0)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 30)
             button.setTitle(emoji, for: .normal)
             button.addTarget(self, action: #selector(didTapEmoji(sender:)), for: .touchUpInside)
             horizontalStackView.addArrangedSubview(button)
         }
 
         let button = UIButton()
-        let image = Asset.Images.allEmojis.image
+        let image = Asset.Images.addEmojis.image
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
         horizontalStackView.addArrangedSubview(button)

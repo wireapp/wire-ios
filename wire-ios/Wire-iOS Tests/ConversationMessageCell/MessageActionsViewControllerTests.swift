@@ -39,7 +39,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
         // THEN
         let actionsTitles = sut.actions.map { $0.title ?? "" }
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Like", "Delete", "Cancel"])
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
     }
 }
 

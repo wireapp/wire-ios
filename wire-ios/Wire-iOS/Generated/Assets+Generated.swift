@@ -167,7 +167,7 @@ internal enum Asset {
     internal static let conversationsFilled = ImageAsset(name: "Conversations Filled")
     internal static let conversationsOutline = ImageAsset(name: "Conversations Outline")
     internal static let activity = ImageAsset(name: "Activity")
-    internal static let allEmojis = ImageAsset(name: "All Emojis")
+    internal static let addEmojis = ImageAsset(name: "Add Emojis")
     internal static let animalsNature = ImageAsset(name: "Animals & Nature")
     internal static let flags = ImageAsset(name: "Flags")
     internal static let foodDrink = ImageAsset(name: "Food & Drink")
