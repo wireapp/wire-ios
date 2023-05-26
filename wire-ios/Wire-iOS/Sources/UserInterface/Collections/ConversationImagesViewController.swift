@@ -472,6 +472,7 @@ extension ConversationImagesViewController: MessageActionResponder {
         if action == .react(.like) {
             updateLikeButton()
         }
+        // TODO: remove after implementing reactions
     }
 }
 

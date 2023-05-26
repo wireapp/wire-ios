@@ -8123,6 +8123,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				168A16AF1D9597C2005CFA6C /* MainInterface.storyboard in Resources */,
+				017ABBBB299542BA0004C243 /* Images.xcassets in Resources */,
+				017ABBBA299541F50004C243 /* Colors.xcassets in Resources */,
 				EFFE707222F2DB38007CEA38 /* session_manager.json in Resources */,
 				BF2ADF461E27C3DB00E81B1E /* Localizable.strings in Resources */,
 			);
