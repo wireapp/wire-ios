@@ -26,7 +26,7 @@ class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
     override func request(for action: FetchSubgroupAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion > .v2 else {
+        guard apiVersion > .v3 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }

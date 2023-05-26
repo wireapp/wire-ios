@@ -38,12 +38,20 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
 
     // MARK: - Request generation
 
-    func test_itGeneratesARequest_APIV3() throws {
+    func test_itGeneratesARequest_APIV4() throws {
         try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v3/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(type)",
-               expectedMethod: .methodGET,
-               apiVersion: .v3
+            expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(type)",
+            expectedMethod: .methodGET,
+            apiVersion: .v4
+        )
+    }
+
+    func test_itDoesntGenerateRequests_APIV3() {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v3,
+            expectedError: .endpointUnavailable
         )
     }
 

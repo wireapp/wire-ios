@@ -51,7 +51,7 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: FetchMLSGroupInfoActio
             for: action,
                expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue) groupinfo",
                expectedMethod: .methodGET,
-               apiVersion: .v3 // TODO: Use .v4
+               apiVersion: .v4
         )
     }
 
