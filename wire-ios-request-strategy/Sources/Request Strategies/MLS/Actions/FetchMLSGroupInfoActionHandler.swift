@@ -20,7 +20,7 @@ import Foundation
 import WireTransport
 import WireDataModel
 
-class FetchMLSConversationGroupInfoActionHandler: FetchMLSGroupInfoActionHandler<FetchMLSConversationGroupInfoAction> {
+class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSConversationGroupInfoAction> {
 
     override func request(for action: FetchMLSConversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
@@ -42,7 +42,7 @@ class FetchMLSConversationGroupInfoActionHandler: FetchMLSGroupInfoActionHandler
     }
 }
 
-class FetchMLSSubconversationGroupInfoActionHandler: FetchMLSGroupInfoActionHandler<FetchMLSSubconversationGroupInfoAction> {
+class FetchMLSSubconversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSSubconversationGroupInfoAction> {
 
     override func request(for action: FetchMLSSubconversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
@@ -64,7 +64,7 @@ class FetchMLSSubconversationGroupInfoActionHandler: FetchMLSGroupInfoActionHand
     }
 }
 
-class FetchMLSGroupInfoActionHandler<T: FetchMLSGroupInfoAction>: ActionHandler<T> {
+class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: ActionHandler<T> {
 
     func request(for action: T, path: String, apiVersion: APIVersion, minRequiredAPIVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
@@ -116,7 +116,7 @@ class FetchMLSGroupInfoActionHandler<T: FetchMLSGroupInfoAction>: ActionHandler<
     }
 }
 
-extension FetchMLSGroupInfoActionHandler {
+extension BaseFetchMLSGroupInfoActionHandler {
 
     // MARK: - Payload
 

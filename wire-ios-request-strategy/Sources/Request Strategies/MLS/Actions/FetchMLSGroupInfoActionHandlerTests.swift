@@ -66,8 +66,8 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: FetchMLSGroupInfoActio
 }
 
 class FetchMLSGroupInfoActionHandlerTests<
-    Action: FetchMLSGroupInfoAction,
-    Handler: FetchMLSGroupInfoActionHandler<Action>
+    Action: BaseFetchMLSGroupInfoAction,
+    Handler: BaseFetchMLSGroupInfoActionHandler<Action>
 >: ActionHandlerTestBase<Action, Handler> {
 
     let domain = "example.com"

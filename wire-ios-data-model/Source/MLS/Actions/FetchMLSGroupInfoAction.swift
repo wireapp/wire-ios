@@ -16,7 +16,7 @@
 
 import Foundation
 
-public final class FetchMLSConversationGroupInfoAction: FetchMLSGroupInfoAction {
+public final class FetchMLSConversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
 
     public var conversationId: UUID
     public var domain: String
@@ -32,7 +32,7 @@ public final class FetchMLSConversationGroupInfoAction: FetchMLSGroupInfoAction 
     }
 }
 
-public final class FetchMLSSubconversationGroupInfoAction: FetchMLSGroupInfoAction {
+public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
 
     public var conversationId: UUID
     public var domain: String
@@ -51,7 +51,7 @@ public final class FetchMLSSubconversationGroupInfoAction: FetchMLSGroupInfoActi
     }
 }
 
-public class FetchMLSGroupInfoAction: EntityAction {
+public class BaseFetchMLSGroupInfoAction: EntityAction {
 
     public typealias Result = Data
 
