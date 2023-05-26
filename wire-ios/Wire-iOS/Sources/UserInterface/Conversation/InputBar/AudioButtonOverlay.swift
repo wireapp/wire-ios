@@ -43,7 +43,7 @@ final class AudioButtonOverlay: UIView {
 
     let darkColor = SemanticColors.Label.textDefault
     let brightColor = SemanticColors.View.backgroundDefault
-    let greenColor = SemanticColors.Icon.backgroundJoinCall
+    let greenColor = SemanticColors.Button.backgroundAudioMessageOverlay
     let grayColor = SemanticColors.View.backgroundUserCell
     let superviewColor = SemanticColors.View.backgroundDefault
 
