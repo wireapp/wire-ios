@@ -63,22 +63,22 @@ final class CallParticipantDetailsView: RoundedBlurView {
 
     override func setupViews() {
         super.setupViews()
-            [microphoneImageView, labelContainerView].forEach {
-                $0.translatesAutoresizingMaskIntoConstraints = false
-                addSubview($0)
-            }
-            nameLabel.translatesAutoresizingMaskIntoConstraints = false
-            labelContainerView.addSubview(nameLabel)
-            labelContainerView.backgroundColor = .black
-            labelContainerView.layer.cornerRadius = 3.0
-            labelContainerView.layer.masksToBounds = true
-            microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
-                                                                             color: SemanticColors.Icon.foregroundMicrophone)
-            microphoneImageView.backgroundColor = SemanticColors.Icon.foregroundDefaultWhite
-            microphoneImageView.contentMode = .center
-            microphoneImageView.layer.cornerRadius = 3.0
-            microphoneImageView.layer.masksToBounds = true
-            blurView.alpha = 0
+        [microphoneImageView, labelContainerView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            addSubview($0)
+        }
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        labelContainerView.addSubview(nameLabel)
+        labelContainerView.backgroundColor = .black
+        labelContainerView.layer.cornerRadius = 3.0
+        labelContainerView.layer.masksToBounds = true
+        microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
+                                                                         color: SemanticColors.Icon.foregroundMicrophone)
+        microphoneImageView.backgroundColor = SemanticColors.Icon.foregroundDefaultWhite
+        microphoneImageView.contentMode = .center
+        microphoneImageView.layer.cornerRadius = 3.0
+        microphoneImageView.layer.masksToBounds = true
+        blurView.alpha = 0
     }
 
     override func createConstraints() {
@@ -104,8 +104,9 @@ final class CallParticipantDetailsView: RoundedBlurView {
     }
 
     private func makeMicrophone(hidden: Bool) {
-            self.microphoneWidth?.constant = hidden ? 0 : 22
-            self.setNeedsDisplay()
+        self.microphoneWidth?.constant = hidden ? 0 : 22
+        self.microphoneImageView.isHidden = hidden
+        self.setNeedsDisplay()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
