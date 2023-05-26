@@ -27,6 +27,7 @@ final class IncomingConnectionView: UIView {
     private let securityLevelView = SecurityLevelView()
     private let userImageView = UserImageView()
     private let incomingConnectionFooter = UIView()
+    private let warningView = WarningLabelView()
     private let acceptButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
     private let ignoreButton = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
 
@@ -77,7 +78,10 @@ final class IncomingConnectionView: UIView {
         incomingConnectionFooter.addSubview(acceptButton)
         incomingConnectionFooter.addSubview(ignoreButton)
 
-        [usernameLabel, userDetailView, securityLevelView, userImageView, incomingConnectionFooter].forEach(addSubview)
+        warningView.update(withUser: user)
+        warningView.translatesAutoresizingMaskIntoConstraints = false
+
+        [usernameLabel, userDetailView, securityLevelView, userImageView, warningView, incomingConnectionFooter].forEach(addSubview)
         setupLabelText()
     }
 
@@ -129,13 +133,18 @@ final class IncomingConnectionView: UIView {
             securityLevelView.trailingAnchor.constraint(equalTo: trailingAnchor),
             securityLevelView.bottomAnchor.constraint(lessThanOrEqualTo: userImageView.topAnchor),
 
+            userImageView.topAnchor.constraint(greaterThanOrEqualTo: securityLevelView.bottomAnchor, constant: 10).withPriority(.required),
             userImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            userImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            userImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -60.0).withPriority(.defaultLow),
             userImageView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
             userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 264),
 
-            incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: userImageView.bottomAnchor),
+            warningView.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 30),
+            warningView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 44),
+            warningView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -44),
+
+            incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: warningView.bottomAnchor),
             incomingConnectionFooter.leftAnchor.constraint(equalTo: leftAnchor),
             incomingConnectionFooter.bottomAnchor.constraint(equalTo: bottomAnchor),
             incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor)
