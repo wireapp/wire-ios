@@ -1,6 +1,8 @@
 opt_out_usage
 default_platform(:ios)
 
+ensure_xcode_version
+
 platform :ios do
     before_all do |lane|
         lanes_with_api_key = [:upload_app_store, :upload_testflight, :create_version, :submit_review]
