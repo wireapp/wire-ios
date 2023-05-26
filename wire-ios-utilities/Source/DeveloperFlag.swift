@@ -66,9 +66,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .nseV2:
             return false
-
-        case .deprecatedCallingUI:
-            return false
         }
     }
 
