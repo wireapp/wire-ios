@@ -71,7 +71,7 @@ public protocol EARServiceInterface: AnyObject {
     ///
     /// Private keys are used to decrypt context.
 
-    func fetchPrivateKeys() throws -> EARPrivateKeys
+    func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys
 
 }
 
@@ -195,7 +195,8 @@ public class EARService: EARServiceInterface {
 
             do {
                 try self.deleteExistingKeys()
-                let databaseKey = try self.generateKeys()
+                try self.generateKeys()
+                let databaseKey = try self.fetchDecyptedDatabaseKey(context: LAContext())
 
                 if !skipMigration {
                     try context.migrateTowardEncryptionAtRest(databaseKey: databaseKey)
@@ -299,6 +300,7 @@ public class EARService: EARServiceInterface {
         try keyRepository.deleteDatabaseKey(description: databaseKeyDescription)
     }
 
+    @discardableResult
     func generateKeys() throws -> VolatileData {
         WireLogger.ear.info("generating new keys")
 
@@ -404,10 +406,10 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Private keys
 
-    public func fetchPrivateKeys() throws -> EARPrivateKeys {
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys {
         do {
             return EARPrivateKeys(
-                primary: try? fetchPrimaryPrivateKey(),
+                primary: includingPrimary ? try? fetchPrimaryPrivateKey() : nil,
                 secondary: try fetchSecondaryPrivateKey()
             )
         } catch {

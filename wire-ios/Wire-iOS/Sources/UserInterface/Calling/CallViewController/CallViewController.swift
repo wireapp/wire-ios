@@ -300,9 +300,6 @@ final class CallViewController: UIViewController {
         establishingCallStatusView.setProfileImage(hidden: configuration.mediaState.isSendingVideo)
         establishingCallStatusView.updateState(state: state)
         establishingCallStatusView.setTitle(title: configuration.title)
-        if let participants = voiceChannel.conversation?.participants as? [ZMUser] {
-            establishingCallStatusView.configureSecurityLevelView(with: participants)
-        }
         guard establishingCallStatusView.superview == nil else { return }
         establishingCallStatusView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(establishingCallStatusView)

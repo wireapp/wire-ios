@@ -35,17 +35,18 @@ extern NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize;
 
 @property (nonatomic, readonly) BOOL hasLastUpdateEventID;
 @property (nonatomic, readonly) BOOL isDownloadingMissingNotifications;
-@property (nonatomic, readonly) NSUUID *lastUpdateEventID;
+@property (nonatomic, readonly) NSUUID * _Nullable lastUpdateEventID;
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
-                        notificationsTracker:(NotificationsTracker *)notificationsTracker
-                              eventProcessor:(id<UpdateEventProcessor>)eventProcessor
-        previouslyReceivedEventIDsCollection:(id<PreviouslyReceivedEventIDsCollection>)eventIDsCollection
-                           applicationStatus:(id<ZMApplicationStatus>)applicationStatus
-                      pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                                  syncStatus:(SyncStatus *)syncStatus
-                             operationStatus:(OperationStatus *)operationStatus
-                  useLegacyPushNotifications:(BOOL)useLegacyPushNotifications;
+- (instancetype _Nonnull)initWithManagedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext
+                        notificationsTracker:(NotificationsTracker * _Nullable)notificationsTracker
+                              eventProcessor:(id<UpdateEventProcessor> _Nonnull)eventProcessor
+        previouslyReceivedEventIDsCollection:(id<PreviouslyReceivedEventIDsCollection> _Nullable)eventIDsCollection
+                           applicationStatus:(id<ZMApplicationStatus> _Nonnull)applicationStatus
+                      pushNotificationStatus:(PushNotificationStatus * _Nonnull)pushNotificationStatus
+                                  syncStatus:(SyncStatus * _Nonnull)syncStatus
+                             operationStatus:(OperationStatus * _Nonnull)operationStatus
+                  useLegacyPushNotifications:(BOOL)useLegacyPushNotifications
+                       lastEventIDRepository:(id<LastEventIDRepositoryInterface> _Nonnull)lastEventIDRepository;
 
 - (void)startDownloadingMissingNotifications;
 

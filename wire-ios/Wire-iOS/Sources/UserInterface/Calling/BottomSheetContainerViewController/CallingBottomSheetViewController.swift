@@ -46,17 +46,7 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
     private let callDegradationController = CallDegradationController()
 
     var bottomSheetMinimalOffset: CGFloat {
-        var offset = 0.0
-        switch voiceChannel.state {
-        case .incoming:
-            offset = UIDevice.current.twoDimensionOrientation.isLandscape ? 128.0 : 250.0
-        default:
-            offset = 128.0
-        }
-        if case .established = callInfoConfiguration?.state, let configuration = callInfoConfiguration, configuration.classification != .none {
-            offset += SecurityLevelView.SecurityLevelViewHeight
-        }
-        return offset
+        return callingActionsInfoViewController.actionsViewHeightConstraint.constant
     }
 
     let callingActionsInfoViewController: CallingActionsInfoViewController
@@ -140,7 +130,7 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
         super.viewWillTransition(to: size, with: coordinator)
         updateConstraints(forHeight: size.height)
     }
-
+    
     private func updateConstraints(forHeight height: CGFloat) {
         let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
         // if landscape then bottom sheet should take whole screen (without headerBar)

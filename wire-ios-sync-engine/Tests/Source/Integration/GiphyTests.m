@@ -53,6 +53,7 @@
             
             return [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:202 transportSessionError:nil apiVersion:0];
         }
+        return NULL;
     };
     
     // when

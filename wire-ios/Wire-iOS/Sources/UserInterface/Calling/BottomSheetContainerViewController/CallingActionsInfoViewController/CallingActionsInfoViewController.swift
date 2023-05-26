@@ -30,7 +30,7 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
     private var participantsHeaderView = UIView()
     private let securityLevelView = SecurityLevelView()
     private var participantsHeaderLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textSectionHeader)
-    private var actionsViewHeightConstraint: NSLayoutConstraint!
+    private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
     var isIncomingCall: Bool = false
 
     let actionsView = CallingActionsView()
@@ -93,7 +93,7 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
         collectionView.bounces = true
         collectionView.delegate = self
         self.collectionView = collectionView
-        [actionsView, securityLevelView, participantsHeaderView, collectionView].forEach(stackView.addArrangedSubview)
+        [securityLevelView, actionsView, participantsHeaderView, collectionView].forEach(stackView.addArrangedSubview)
         CallParticipantsListCellConfiguration.prepare(collectionView)
         view.backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
@@ -128,7 +128,7 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
 
     func updateActionViewHeight() {
         guard UIDevice.current.twoDimensionOrientation.isLandscape else {
-            actionsViewHeightConstraint.constant =  isIncomingCall ? 250 : 128
+            actionsViewHeightConstraint.constant =  (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
             actionsView.verticalStackView.alignment = .fill
             return
         }

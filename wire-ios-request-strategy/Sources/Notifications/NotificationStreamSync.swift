@@ -28,11 +28,16 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     private var notificationsTracker: NotificationsTracker?
     private var listPaginator: ZMSimpleListRequestPaginator!
     private var managedObjectContext: NSManagedObjectContext!
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
     private weak var notificationStreamSyncDelegate: NotificationStreamSyncDelegate?
 
-    public init(moc: NSManagedObjectContext,
-                notificationsTracker: NotificationsTracker?,
-                delegate: NotificationStreamSyncDelegate) {
+    public init(
+        moc: NSManagedObjectContext,
+        notificationsTracker: NotificationsTracker?,
+        eventIDRespository: LastEventIDRepositoryInterface,
+        delegate: NotificationStreamSyncDelegate
+    ) {
+        self.lastEventIDRepository = eventIDRespository
         super.init()
         managedObjectContext = moc
         listPaginator = ZMSimpleListRequestPaginator.init(basePath: "/notifications",
@@ -67,11 +72,11 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
     private var lastUpdateEventID: UUID? {
         get {
-            return self.managedObjectContext.zm_lastNotificationID
+            lastEventIDRepository.fetchLastEventID()
         }
 
         set {
-            self.managedObjectContext.zm_lastNotificationID = newValue
+            lastEventIDRepository.storeLastEventID(newValue)
         }
     }
 
