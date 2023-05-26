@@ -30,7 +30,7 @@ private let zmLog = ZMSLog(tag: "calling")
  */
 public class WireCallCenterV3: NSObject {
 
-    static let logger = Logger(subsystem: "VoIP Push", category: "WireCallCenter")
+    static let logger = WireLogger.calling
 
     /// The maximum number of participants for a legacy video call.
 
@@ -433,6 +433,7 @@ extension WireCallCenterV3 {
      */
 
     public func answerCall(conversation: ZMConversation, video: Bool) -> Bool {
+        Self.logger.info("answering call")
         guard let conversationId = conversation.avsIdentifier else { return false }
 
         endAllCalls(exluding: conversationId)
@@ -466,6 +467,7 @@ extension WireCallCenterV3 {
      */
 
     public func startCall(conversation: ZMConversation, video: Bool) -> Bool {
+        Self.logger.info("starting call")
         guard let conversationId = conversation.avsIdentifier else { return false }
 
         endAllCalls(exluding: conversationId)
@@ -525,6 +527,7 @@ extension WireCallCenterV3 {
      */
 
     public func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
+        Self.logger.info("closing call")
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
@@ -543,6 +546,7 @@ extension WireCallCenterV3 {
      */
 
     public func rejectCall(conversationId: AVSIdentifier) {
+        Self.logger.info("rejecting call")
         avsWrapper.rejectCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
@@ -558,6 +562,7 @@ extension WireCallCenterV3 {
      */
 
     public func endAllCalls(exluding: AVSIdentifier? = nil) {
+        Self.logger.info("ending all calls")
         nonIdleCalls.forEach { (key: AVSIdentifier, callState: CallState) in
             guard exluding == nil || key != exluding else { return }
 
@@ -577,6 +582,7 @@ extension WireCallCenterV3 {
      */
 
     public func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+        Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 
         if let snapshot = callSnapshots[conversationId] {
@@ -626,6 +632,7 @@ extension WireCallCenterV3 {
 
     /// Sends a call OTR message when requested by AVS through `wcall_send_h`.
     func send(token: WireCallMessageToken, conversationId: AVSIdentifier, targets: AVSClientList?, data: Data, dataLength: Int) {
+        Self.logger.info("sending call message for AVS")
         zmLog.debug("\(self): send call message, transport = \(String(describing: transport))")
         transport?.send(data: data, conversationId: conversationId, targets: targets.map(\.clients), completionHandler: { [weak self] status in
             self?.avsWrapper.handleResponse(httpStatus: status, reason: "", context: token)
@@ -634,6 +641,7 @@ extension WireCallCenterV3 {
 
     /// Sends an SFT call message when requested by AVS through `wcall_sft_req_h`.
     func sendSFT(token: WireCallMessageToken, url: String, data: Data) {
+        Self.logger.info("sending SFT message for AVS")
         zmLog.debug("\(self): send SFT call message, transport = \(String(describing: transport))")
 
         guard let endpoint = URL(string: url) else {
@@ -677,7 +685,7 @@ extension WireCallCenterV3 {
     /// - parameter callEvent: calling event to process.
     /// - parameter completionHandler: called after the call event has been processed (this will for example wait for AVS to signal that it's ready).
     func processCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
-        Self.logger.trace("process call event")
+        Self.logger.info("process call event")
         if isReady {
             handleCallEvent(callEvent, completionHandler: completionHandler)
         } else {
@@ -685,11 +693,27 @@ extension WireCallCenterV3 {
         }
     }
 
-    fileprivate func handleCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
-        Self.logger.trace("handle call event")
-        let result = avsWrapper.received(callEvent: callEvent)
+    private func handleCallEvent(
+        _ callEvent: CallEvent,
+        completionHandler: @escaping () -> Void
+    ) {
+        Self.logger.info("handle call event (timestamp: \(callEvent.currentTimestamp))")
 
-        if let context = uiMOC, let error = result {
+        guard
+            let context = uiMOC,
+            let conversationType = self.conversationType(from: callEvent)
+        else {
+            Self.logger.warn("can't handle call event: unable to determine conversation type")
+            completionHandler()
+            return
+        }
+
+        let result = avsWrapper.received(
+            callEvent: callEvent,
+            conversationType: conversationType
+        )
+
+        if let error = result {
             WireCallCenterCallErrorNotification(
                 context: context,
                 error: error,
@@ -698,6 +722,24 @@ extension WireCallCenterV3 {
         }
 
         completionHandler()
+    }
+
+    private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
+        guard let context = uiMOC else { return nil }
+
+        var conversationType: AVSConversationType?
+
+        context.performAndWait {
+            let conversation = ZMConversation.fetch(
+                with: callEvent.conversationId.identifier,
+                domain: callEvent.conversationId.domain,
+                in: context
+            )
+
+            conversationType = conversation?.avsConversationType
+        }
+
+        return conversationType
     }
 
     /// Handles a change in calling state.
@@ -737,6 +779,26 @@ extension WireCallCenterV3 {
                                                                    messageTime: messageTime,
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
+        }
+    }
+
+}
+
+extension ZMConversation {
+
+    var avsConversationType: AVSConversationType? {
+        switch (conversationType, messageProtocol) {
+        case (.oneOnOne, _):
+            return .oneToOne
+
+        case (.group, .proteus):
+            return .conference
+
+        case (.group, .mls):
+            return .mlsConference
+
+        default:
+            return nil
         }
     }
 

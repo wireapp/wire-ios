@@ -57,7 +57,7 @@ class AccessTokenMigrationTests: XCTestCase {
         tokenRenewer.shoudFail = false
 
         // When
-        try await sut.perform(with: tokenRenewer, clientID: clientID)
+        try await sut.perform(withTokenRenewer: tokenRenewer, clientID: clientID)
 
         // Then
         XCTAssertEqual(tokenRenewer.calls.setAccessTokenRenewalObserver.count, 1)
@@ -75,7 +75,7 @@ class AccessTokenMigrationTests: XCTestCase {
 
         // When / Then
         do {
-            try await sut.perform(with: tokenRenewer, clientID: clientID)
+            try await sut.perform(withTokenRenewer: tokenRenewer, clientID: clientID)
             XCTFail("expected an error")
         } catch let error as AccessTokenMigration.Error {
             XCTAssertEqual(error, .failedToRenewAccessToken)

@@ -1272,42 +1272,4 @@
     XCTAssertEqual(lastMessage.systemMessageData.systemMessageType, ZMSystemMessageTypeDecryptionFailed);
 }
 
-- (void)testThatItNotifiesWhenInsertingCannotDecryptMessage {
-    
-    // given
-    XCTAssertTrue([self login]);
-    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
-    [self establishSessionWithMockUser:self.user1];
-    
-    // expect
-    XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the observer"];
-    
-    id token = [NotificationInContext addObserverWithName:ZMConversation.failedToDecryptMessageNotificationName
-                                       context:self.userSession.managedObjectContext.notificationContext
-                                        object:nil
-                                         queue:nil
-                                         using:^(NotificationInContext * note) {
-                                             XCTAssertEqualObjects(conversation.remoteIdentifier, [(ZMConversation *)note.object remoteIdentifier]);
-                                             XCTAssertNotNil(note.userInfo[@"cause"]);
-                                             XCTAssertEqualObjects(note.userInfo[@"cause"], @3);
-                                             [expectation fulfill];
-                                         }];
-    
-    // when
-    [self performIgnoringZMLogError:^{
-        [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation>  _Nonnull __strong __unused session) {
-            [self.selfToUser1Conversation insertOTRMessageFromClient:self.user1.clients.anyObject
-                                                            toClient:self.selfUser.clients.anyObject
-                                                                data:[@"😱" dataUsingEncoding:NSUTF8StringEncoding]];
-        }];
-
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-    
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:5]);
-    
-    // then
-    token = nil;
-}
-
 @end

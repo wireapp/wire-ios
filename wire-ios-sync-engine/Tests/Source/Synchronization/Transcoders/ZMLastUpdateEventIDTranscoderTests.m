@@ -44,12 +44,18 @@
     [self verifyMockLater:self.downstreamSync];
     
     self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
-    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC syncStateDelegate:self.syncStateDelegate];
+
+    self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
+                                                             syncStateDelegate:self.syncStateDelegate
+                                                         lastEventIDRepository:self.lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockApplicationStatus = [[MockApplicationStatus alloc] init];
     self.mockApplicationStatus.mockSynchronizationState = ZMSynchronizationStateSlowSyncing;
 
-    self.sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatus:self.mockApplicationStatus syncStatus:self.mockSyncStatus];
+    self.sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC
+                                                                 applicationStatus:self.mockApplicationStatus
+                                                                        syncStatus:self.mockSyncStatus
+                                                             lastEventIDRepository:self.lastEventIDRepository];
     self.sut.lastUpdateEventIDSync = self.downstreamSync;
 }
 
@@ -97,7 +103,10 @@
 - (void)testThatItCreatesTheRightDownstreamSync
 {
     // when
-    ZMLastUpdateEventIDTranscoder *sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatus:self.mockApplicationStatus syncStatus:self.mockSyncStatus];
+    ZMLastUpdateEventIDTranscoder *sut = [[ZMLastUpdateEventIDTranscoder alloc] initWithManagedObjectContext:self.uiMOC
+                                                                                           applicationStatus:self.mockApplicationStatus
+                                                                                                  syncStatus:self.mockSyncStatus
+                                                                                       lastEventIDRepository:self.lastEventIDRepository];
     id transcoder = sut.lastUpdateEventIDSync.transcoder;
     
     // then
@@ -178,7 +187,7 @@
     [self.sut persistLastUpdateEventID];
     
     // then
-    XCTAssertEqualObjects(uuid, self.uiMOC.zm_lastNotificationID);
+    XCTAssertEqualObjects(uuid, [self.lastEventIDRepository fetchLastEventID]);
     
 }
 
@@ -193,7 +202,7 @@
     [self.sut persistLastUpdateEventID];
     
     // then
-    XCTAssertNil(self.uiMOC.zm_lastNotificationID);
+    XCTAssertNil([self.lastEventIDRepository fetchLastEventID]);
 }
 
 - (void)testThatTheLastUpdateEventIDIsNotPersistedIfTheResponseIsAPermanentError
@@ -206,7 +215,7 @@
     [self.sut persistLastUpdateEventID];
     
     // then
-    XCTAssertNil(self.uiMOC.zm_lastNotificationID);
+    XCTAssertNil([self.lastEventIDRepository fetchLastEventID]);
 }
 
 - (void)testThatItEncodesTheRightRequestWithoutClient

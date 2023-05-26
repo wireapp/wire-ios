@@ -48,6 +48,15 @@ extension MockTransportSession {
             "fileSharing": [
                 "status": "enabled"
             ],
+            "mls": [
+                "status": "disabled",
+                "config": [
+                    "protocolToggleUsers": [],
+                    "defaultProtocol": "proteus",
+                    "allowedCipherSuites": [1],
+                    "defaultCipherSuite": 1
+                ]
+            ],
             "selfDeletingMessages": [
                 "status": "enabled",
                 "config": [

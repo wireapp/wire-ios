@@ -132,7 +132,7 @@ class ApplicationStatusDirectory: ApplicationStatus {
 }
 
 /// A Wire session to share content from a share extension
-/// - note: this is the entry point of this framework. Users of 
+/// - note: this is the entry point of this framework. Users of
 /// the framework should create an instance as soon as possible in
 /// the lifetime of the extension, and hold on to that session
 /// for the entire lifetime.
@@ -145,7 +145,7 @@ public class SharingSession {
     /// - LoggedOut: No user is logged in
     /// - missingSharedContainer: The shared container is missing
     public enum InitializationError: Error {
-        case needsMigration, loggedOut, missingSharedContainer
+        case needsMigration, loggedOut, missingSharedContainer, pendingCryptoboxMigration
     }
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
@@ -212,11 +212,13 @@ public class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
 
-    public convenience init(applicationGroupIdentifier: String,
-                            accountIdentifier: UUID,
-                            hostBundleIdentifier: String,
-                            environment: BackendEnvironmentProvider,
-                            appLockConfig: AppLockController.LegacyConfig?) throws {
+    public convenience init(
+        applicationGroupIdentifier: String,
+        accountIdentifier: UUID,
+        hostBundleIdentifier: String,
+        environment: BackendEnvironmentProvider,
+        appLockConfig: AppLockController.LegacyConfig?
+    ) throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
@@ -262,8 +264,10 @@ public class SharingSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            appLockConfig: appLockConfig)
+            appLockConfig: appLockConfig
+        )
     }
+
 
     init(
         accountIdentifier: UUID,
@@ -276,8 +280,10 @@ public class SharingSession {
         operationLoop: RequestGeneratingOperationLoop,
         strategyFactory: StrategyFactory,
         appLockConfig: AppLockController.LegacyConfig?,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
         earService: EARServiceInterface? = nil
     ) throws {
+
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
@@ -299,16 +305,32 @@ public class SharingSession {
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
 
+        let accountDirectory = coreDataStack.accountContainer
+        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
+            throw InitializationError.pendingCryptoboxMigration
+        }
+
+        setUpCoreCryptoStack(
+            sharedContainerURL: coreDataStack.applicationContainer,
+            syncContext: coreDataStack.syncContext
+        )
+
+        coreDataStack.syncContext.performAndWait {
+            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+        }
+
         setupCaches(at: cachesDirectory)
         setupObservers()
     }
 
-    public convenience init(accountIdentifier: UUID,
-                            coreDataStack: CoreDataStack,
-                            transportSession: ZMTransportSession,
-                            cachesDirectory: URL,
-                            accountContainer: URL,
-                            appLockConfig: AppLockController.LegacyConfig?) throws {
+    public convenience init(
+        accountIdentifier: UUID,
+        coreDataStack: CoreDataStack,
+        transportSession: ZMTransportSession,
+        cachesDirectory: URL,
+        accountContainer: URL,
+        appLockConfig: AppLockController.LegacyConfig?
+    ) throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
         let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)

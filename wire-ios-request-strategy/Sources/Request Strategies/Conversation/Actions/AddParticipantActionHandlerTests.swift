@@ -42,7 +42,13 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
-        sut = AddParticipantActionHandler(context: syncMOC)
+        sut = AddParticipantActionHandler(
+            context: syncMOC,
+            eventProcessor: ConversationEventProcessor(
+                context: syncMOC,
+                conversationService: MockConversationService()
+            )
+        )
     }
 
     override func tearDown() {
@@ -133,19 +139,27 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let action = AddParticipantAction(users: [user], conversation: conversation)
-            let member = Payload.ConversationMember(id: user.remoteIdentifier,
-                                                    qualifiedID: user.qualifiedID,
-                                                    conversationRole: ZMConversation.defaultMemberRoleName)
-            let memberJoined = Payload.UpdateConverationMemberJoin(userIDs: [user.remoteIdentifier],
-                                                                   users: [member])
-            let conversationEvent = conversationEventPayload(from: memberJoined,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let member = Payload.ConversationMember(
+                id: user.remoteIdentifier,
+                qualifiedID: user.qualifiedID,
+                conversationRole: ZMConversation.defaultMemberRoleName
+            )
+            let memberJoined = Payload.UpdateConverationMemberJoin(
+                userIDs: [user.remoteIdentifier],
+                users: [member]
+            )
+            let conversationEvent = conversationEventPayload(
+                from: memberJoined,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -199,19 +213,27 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let member = Payload.ConversationMember(id: user.remoteIdentifier,
-                                                    qualifiedID: user.qualifiedID,
-                                                    conversationRole: ZMConversation.defaultMemberRoleName)
-            let memberJoined = Payload.UpdateConverationMemberJoin(userIDs: [user.remoteIdentifier],
-                                                                   users: [member])
-            let conversationEvent = conversationEventPayload(from: memberJoined,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let member = Payload.ConversationMember(
+                id: user.remoteIdentifier,
+                qualifiedID: user.qualifiedID,
+                conversationRole: ZMConversation.defaultMemberRoleName
+            )
+            let memberJoined = Payload.UpdateConverationMemberJoin(
+                userIDs: [user.remoteIdentifier],
+                users: [member]
+            )
+            let conversationEvent = conversationEventPayload(
+                from: memberJoined,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)

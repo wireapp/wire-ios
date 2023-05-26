@@ -93,6 +93,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         mockKeyDeletion()
         keyEncryptor.encryptDatabaseKeyPublicKey_MockValue = .randomEncryptionKey()
         mockKeyStorage()
+        try? mockKeyFetching()
     }
 
     func mockKeyDeletion() {
@@ -104,6 +105,40 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func mockKeyStorage() {
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
         keyRepository.storeDatabaseKeyDescriptionKey_MockMethod = { _, _ in }
+    }
+
+    func mockKeyFetching() throws {
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
+
+        keyRepository.fetchPublicKeyDescription_MockMethod = { description in
+            switch description.label {
+            case "public":
+                return primaryKeys.publicKey
+
+            case "secondary-public":
+                return secondaryKeys.publicKey
+
+            default:
+                throw EarKeyRepositoryFailure.keyNotFound
+            }
+        }
+
+        keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
+            switch description.label {
+            case "private":
+                return primaryKeys.privateKey
+
+            case "secondary-private":
+                return secondaryKeys.privateKey
+
+            default:
+                throw EarKeyRepositoryFailure.keyNotFound
+            }
+        }
+
+        keyRepository.fetchDatabaseKeyDescription_MockValue = .randomEncryptionKey()
+        keyEncryptor.decryptDatabaseKeyPrivateKey_MockValue = .randomEncryptionKey()
     }
 
     // MARK: - Migration
@@ -188,6 +223,10 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Then new keys are stored
         XCTAssertEqual(keyRepository.storePublicKeyDescriptionKey_Invocations.count, 2)
         XCTAssertEqual(keyRepository.storeDatabaseKeyDescriptionKey_Invocations.count, 1)
+
+        // Then we force refetch database key
+        XCTAssertEqual(keyRepository.fetchPrivateKeyDescription_Invocations.count, 1)
+        XCTAssertEqual(keyEncryptor.decryptDatabaseKeyPrivateKey_Invocations.count, 1)
 
         // Then migration was not run
         XCTAssertEqual(prepareForMigrationCalls, 0)
@@ -645,10 +684,29 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When
-        let privateKeys = try sut.fetchPrivateKeys()
+        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
 
         // Then
         XCTAssertEqual(privateKeys.primary, primaryKeys.privateKey)
+        XCTAssertEqual(privateKeys.secondary, secondaryKeys.privateKey)
+    }
+
+    func test_FetchPrivateKeys_ExcludingPrimary() throws {
+        // Given
+        let primaryKeys = try generatePrimaryKeyPair()
+        let secondaryKeys = try generateSecondaryKeyPair()
+
+        // Mock
+        mockFetchingPrivateKeys(
+            primary: primaryKeys.privateKey,
+            secondary: secondaryKeys.privateKey
+        )
+
+        // When
+        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: false)
+
+        // Then
+        XCTAssertNil(privateKeys.primary)
         XCTAssertEqual(privateKeys.secondary, secondaryKeys.privateKey)
     }
 
@@ -663,7 +721,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When
-        let privateKeys = try sut.fetchPrivateKeys()
+        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
 
         // Then
         XCTAssertNil(privateKeys.primary)
@@ -678,7 +736,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When then
-        XCTAssertThrowsError(try sut.fetchPrivateKeys()) { error in
+        XCTAssertThrowsError(try sut.fetchPrivateKeys(includingPrimary: true)) { error in
             guard case EarKeyRepositoryFailure.keyNotFound = error else {
                 return XCTFail("unexpected error")
             }
@@ -766,7 +824,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let oldDatabaseKey = try sut.generateKeys()
 
         let oldPublicKeys = try sut.fetchPublicKeys()
-        let oldPrivateKeys = try sut.fetchPrivateKeys()
+        let oldPrivateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
         let oldPrimaryPublicKey = oldPublicKeys.primary
         let oldPrimaryPrivateKey = try XCTUnwrap(oldPrivateKeys.primary)
         let oldSecondaryPublicKey = oldPublicKeys.secondary
@@ -779,7 +837,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertFalse(uiMOC.isLocked)
 
         let newPublicKeys = try sut.fetchPublicKeys()
-        let newPrivateKeys = try sut.fetchPrivateKeys()
+        let newPrivateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
         let newPrimaryPublicKey = newPublicKeys.primary
         let newPrimaryPrivateKey = try XCTUnwrap(newPrivateKeys.primary)
         let newSecondaryPublicKey = newPublicKeys.secondary

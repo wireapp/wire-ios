@@ -86,6 +86,9 @@ public final class AutomationHelper: NSObject {
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
 
+    public var preferredAPIversion: APIVersion?
+    public var allowMLSGroupCreation: Bool?
+
     /// Whether to use the old calling overlay.
     public let deprecatedCallingUI: Bool
 
@@ -125,9 +128,13 @@ public final class AutomationHelper: NSObject {
             let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIversion.rawValue),
             let apiVersion = Int32(value)
         {
+            WireLogger.environment.info("automation helper will set preferred api version to \(apiVersion)")
             BackendInfo.preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
+
         deprecatedCallingUI = arguments.hasFlag(AutomationKey.deprecatedCallingUI)
+
+        allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
 
         super.init()
     }
@@ -149,6 +156,7 @@ public final class AutomationHelper: NSObject {
         case useAppCenter = "use-app-center"
         case keepCallingOverlayVisible = "keep-calling-overlay-visible"
         case preferredAPIversion = "preferred-api-version"
+        case allowMLSGroupCreation = "allow-mls-group-creation"
         case deprecatedCallingUI = "deprecated-calling-ui"
     }
     /// Returns the login email and password credentials if set in the given arguments

@@ -207,6 +207,29 @@ public class FeatureService {
         }
     }
 
+    // MARK: - MLS
+
+    public func fetchMLS() -> Feature.MLS {
+        guard
+            let feature = Feature.fetch(name: .mls, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! JSONDecoder().decode(Feature.MLS.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeMLS(_ mls: Feature.MLS) {
+        let config = try! JSONEncoder().encode(mls.config)
+
+        Feature.updateOrCreate(havingName: .mls, in: context) {
+            $0.status = mls.status
+            $0.config = config
+        }
+    }
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -232,6 +255,9 @@ public class FeatureService {
 
             case .digitalSignature:
                 storeDigitalSignature(.init())
+
+            case .mls:
+                storeMLS(.init())
             }
         }
     }

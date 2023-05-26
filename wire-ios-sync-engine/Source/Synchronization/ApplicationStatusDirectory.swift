@@ -39,20 +39,35 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
 
     fileprivate var callInProgressObserverToken: Any?
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, cookieStorage: ZMPersistentCookieStorage, requestCancellation: ZMRequestCancellation, application: ZMApplication, syncStateDelegate: ZMSyncStateDelegate, analytics: AnalyticsType? = nil) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        cookieStorage: ZMPersistentCookieStorage,
+        requestCancellation: ZMRequestCancellation,
+        application: ZMApplication,
+        syncStateDelegate: ZMSyncStateDelegate,
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        analytics: AnalyticsType? = nil
+    ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
         self.callEventStatus = CallEventStatus()
         self.analytics = analytics
         self.teamInvitationStatus = TeamInvitationStatus()
         self.operationStatus.isInBackground = application.applicationState == .background
-        self.syncStatus = SyncStatus(managedObjectContext: managedObjectContext, syncStateDelegate: syncStateDelegate)
+        self.syncStatus = SyncStatus(
+            managedObjectContext: managedObjectContext,
+            syncStateDelegate: syncStateDelegate,
+            lastEventIDRepository: lastEventIDRepository
+        )
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
         self.clientRegistrationStatus = ZMClientRegistrationStatus(managedObjectContext: managedObjectContext,
                                                                    cookieStorage: cookieStorage,
                                                                    registrationStatusDelegate: syncStateDelegate)
-        self.pushNotificationStatus = PushNotificationStatus(managedObjectContext: managedObjectContext)
+        self.pushNotificationStatus = PushNotificationStatus(
+            managedObjectContext: managedObjectContext,
+            lastEventIDRepository: lastEventIDRepository
+        )
         self.proxiedRequestStatus = ProxiedRequestsStatus(requestCancellation: requestCancellation)
         self.userProfileImageUpdateStatus = UserProfileImageUpdateStatus(managedObjectContext: managedObjectContext)
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)

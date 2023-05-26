@@ -21,8 +21,21 @@ import XCTest
 import WireTesting
 @testable import WireDataModel
 
-public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
+class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
+    override class func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
+        super.setUp()
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+    
     func createConversation(on moc: NSManagedObjectContext? = nil) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc ?? uiMOC)
         conversation.remoteIdentifier = UUID()

@@ -43,6 +43,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 @property (nonatomic, weak) id<ClientRegistrationDelegate> clientRegistrationDelegate;
 @property (nonatomic) NotificationsTracker *notificationsTracker;
 @property (nonatomic) BOOL useLegacyPushNotifications;
+@property (nonatomic) id<LastEventIDRepositoryInterface> lastEventIDRepository;
 
 
 - (void)appendPotentialGapSystemMessageIfNeededWithResponse:(ZMTransportResponse *)response;
@@ -65,6 +66,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
                                   syncStatus:(SyncStatus *)syncStatus
                              operationStatus:(OperationStatus *)operationStatus
                   useLegacyPushNotifications:(BOOL)useLegacyPushNotifications
+                       lastEventIDRepository:(id<LastEventIDRepositoryInterface> _Nonnull)lastEventIDRepository
 
 {
     self = [super initWithManagedObjectContext:managedObjectContext applicationStatus:applicationStatus];
@@ -76,6 +78,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         self.syncStatus = syncStatus;
         self.operationStatus = operationStatus;
         self.useLegacyPushNotifications = useLegacyPushNotifications;
+        self.lastEventIDRepository = lastEventIDRepository;
         self.listPaginator = [[ZMSimpleListRequestPaginator alloc] initWithBasePath:NotificationsPath
                                                                            startKey:StartKey
                                                                            pageSize:ZMMissingUpdateEventsTranscoderListPageSize
@@ -111,12 +114,12 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (NSUUID *)lastUpdateEventID
 {
-    return self.managedObjectContext.zm_lastNotificationID;
+    return [self.lastEventIDRepository fetchLastEventID];
 }
 
 - (void)setLastUpdateEventID:(NSUUID *)lastUpdateEventID
 {
-    self.managedObjectContext.zm_lastNotificationID = lastUpdateEventID;
+    [self.lastEventIDRepository storeLastEventID:lastUpdateEventID];
 }
 
 - (void)appendPotentialGapSystemMessageIfNeededWithResponse:(ZMTransportResponse *)response

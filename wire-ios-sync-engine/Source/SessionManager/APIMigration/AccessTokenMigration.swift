@@ -40,10 +40,10 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     }
 
     func perform(with session: ZMUserSession, clientID: String) async throws {
-        try await perform(with: session, clientID: clientID)
+        try await perform(withTokenRenewer: session, clientID: clientID)
     }
 
-    func perform(with tokenRenewer: AccessTokenRenewing, clientID: String) async throws {
+    func perform(withTokenRenewer tokenRenewer: AccessTokenRenewing, clientID: String) async throws {
         logger.info("performing access token migration for clientID \(clientID)")
 
         tokenRenewer.setAccessTokenRenewalObserver(self)

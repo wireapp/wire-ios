@@ -67,7 +67,10 @@ final class APIVersionResolver {
     }
 
     private func handleResponse(_ response: ZMTransportResponse) {
+        WireLogger.environment.info("received api version response")
+
         guard response.result == .success else {
+            WireLogger.environment.warn("api version response was not success, falling back to v0")
             BackendInfo.apiVersion = .v0
             BackendInfo.domain = "wire.com"
             BackendInfo.isFederationEnabled = false
@@ -88,6 +91,7 @@ final class APIVersionResolver {
         let commonProductionVersions = backendProdVersions.intersection(clientProdVersions)
 
         if commonProductionVersions.isEmpty {
+            WireLogger.environment.warn("no common api versions, app will be blacklisted")
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
         } else if
@@ -95,17 +99,23 @@ final class APIVersionResolver {
             let preferredAPIVersion = BackendInfo.preferredAPIVersion,
             allBackendVersions.contains(preferredAPIVersion)
         {
+            WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
+        } else if let apiVersion = commonProductionVersions.max() {
+            WireLogger.environment.info("resolving to max common api version \(apiVersion.rawValue)")
+            BackendInfo.apiVersion = apiVersion
         } else {
-            BackendInfo.apiVersion = commonProductionVersions.max()
+            WireLogger.environment.warn("api version was not resolved")
+            BackendInfo.apiVersion = nil
         }
 
+        let previousBackendDomain = BackendInfo.domain
         BackendInfo.domain = payload.domain
 
         let wasFederationEnabled = BackendInfo.isFederationEnabled
         BackendInfo.isFederationEnabled = payload.federation
 
-        if !wasFederationEnabled && BackendInfo.isFederationEnabled {
+        if previousBackendDomain == payload.domain && !wasFederationEnabled && BackendInfo.isFederationEnabled {
             delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
         }
 
@@ -171,7 +181,7 @@ public extension APIVersion {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    static let productionVersions: Set<Self> = [.v0, .v1, .v2]
+    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3]
 
     /// API versions currently under development and not suitable for production
     /// environments.

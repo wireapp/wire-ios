@@ -37,18 +37,27 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    func startUI(_ startUI: StartUIViewController,
-                 createConversationWith users: UserSet,
-                 name: String,
-                 allowGuests: Bool,
-                 allowServices: Bool,
-                 enableReceipts: Bool) {
+    func startUI(
+        _ startUI: StartUIViewController,
+        createConversationWith users: UserSet,
+        name: String,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        encryptionProtocol: EncryptionProtocol
+    ) {
+        guard let viewController = viewController as? UIViewController else { return }
 
-        let createConversationClosure = {
-            self.createConversation(withUsers: users, name: name, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts)
+        viewController.dismissIfNeeded {
+            self.createConversation(
+                withUsers: users,
+                name: name,
+                allowGuests: allowGuests,
+                allowServices: allowServices,
+                enableReceipts: enableReceipts,
+                encryptionProtocol: encryptionProtocol
+            )
         }
-
-        (viewController as? UIViewController)?.dismissIfNeeded(completion: createConversationClosure)
     }
 
     /// Create a new conversation or open existing 1-to-1 conversation
@@ -72,23 +81,44 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    private func createConversation(withUsers users: UserSet?, name: String?, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool) {
-        guard let users = users, let userSession = ZMUserSession.shared() else { return }
+    private func createConversation(
+        withUsers users: UserSet?,
+        name: String?,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        encryptionProtocol: EncryptionProtocol
+    ) {
+        guard
+            let users = users,
+            let userSession = ZMUserSession.shared()
+        else {
+            return
+        }
 
-        var conversation: ZMConversation! = nil
+        var conversation: ZMConversation?
 
-        userSession.enqueue({
-            conversation = ZMConversation.insertGroupConversation(session: userSession,
-                                                                  participants: Array(users),
-                                                                  name: name,
-                                                                  team: ZMUser.selfUser().team,
-                                                                  allowGuests: allowGuests,
-                                                                  allowServices: allowServices,
-                                                                  readReceipts: enableReceipts)
-        }, completionHandler: {
+        userSession.enqueue {
+            conversation = ZMConversation.insertGroupConversation(
+                moc: userSession.viewContext,
+                participants: users.materialize(in: userSession.viewContext),
+                name: name,
+                team: ZMUser.selfUser().team,
+                allowGuests: allowGuests,
+                allowServices: allowServices,
+                readReceipts: enableReceipts,
+                messageProtocol: encryptionProtocol == .mls ? .mls : .proteus
+            )
+        } completionHandler: {
+            guard let conversation = conversation else {return }
+
             delay(0.3) {
-                ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+                ZClientViewController.shared?.select(
+                    conversation: conversation,
+                    focusOnView: true,
+                    animated: true
+                )
             }
-        })
+        }
     }
 }

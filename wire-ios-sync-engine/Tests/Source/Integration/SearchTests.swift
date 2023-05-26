@@ -382,8 +382,9 @@ class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let user = searchForConnectedUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let userName = userName else { XCTFail("missing userName"); return }
+        guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("searchQuery"); return }
+        guard let user = searchForConnectedUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing user"); return }
 
         // when
         mockTransportSession.resetReceivedRequests()
@@ -399,7 +400,7 @@ class SearchTests: IntegrationTest {
         XCTAssertEqual(requests.first?.method, .methodGET)
     }
 
-    func testThatItDownloadsV3PreviewAssetWhenOnlyV3AssetsArePrensentInSearchUserResponse_UnconnectedUser() {
+    func testThatItDownloadsV3PreviewAssetWhenOnlyV3AssetsArePresentInSearchUserResponse_UnconnectedUser() {
         // given
         var profileImageData: Data?
         var userName: String?
@@ -424,9 +425,9 @@ class SearchTests: IntegrationTest {
         XCTAssertEqual(searchUser.previewImageData, profileImageData)
 
         let requests = mockTransportSession.receivedRequests()
-        XCTAssertEqual(requests.count, 4)
-        XCTAssertEqual(requests[3].path, "/assets/v3/\(user4.previewProfileAssetIdentifier!)")
-        XCTAssertEqual(requests[3].method, .methodGET)
+        XCTAssertEqual(requests.count, 3)
+        XCTAssertEqual(requests[2].path, "/assets/v3/\(user4.previewProfileAssetIdentifier!)")
+        XCTAssertEqual(requests[2].method, .methodGET)
     }
 
     func testThatItDownloadsMediumAssetForSearchUserWhenAssetAndLegacyIdArePresentUsingV3() {
@@ -454,9 +455,9 @@ class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let userName = userName else { XCTFail("missing userName"); return }
+        guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("missing searchQuery"); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing searchUser"); return }
         searchUser.requestPreviewProfileImage()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
