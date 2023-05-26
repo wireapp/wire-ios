@@ -201,7 +201,7 @@ final class TypingIndicatorView: UIView {
     }
 
     func updateNameLabel() {
-        nameLabel.text = typingUsers.compactMap { $0.name?.uppercased(with: Locale.current) }.joined(separator: ", ")
+        nameLabel.text = typingUsers.compactMap { $0.name?.capitalizingFirstCharacterOnly }.joined(separator: ", ")
     }
 
     func setHidden(_ hidden: Bool, animated: Bool, completion: Completion? = nil) {
