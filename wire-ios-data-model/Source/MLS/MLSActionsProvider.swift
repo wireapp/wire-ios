@@ -65,6 +65,13 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws -> MLSSubgroup
 
+    func deleteSubgroup(
+        conversationID: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        context: NotificationContext
+    ) async throws
+
 }
 
 class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -154,6 +161,21 @@ class MLSActionsProvider: MLSActionsProviderProtocol {
         )
 
         return try await action.perform(in: context)
+    }
+
+    func deleteSubgroup(
+        conversationID: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        context: NotificationContext
+    ) async throws {
+        var action = DeleteSubgroupAction(
+            conversationID: conversationID,
+            domain: domain,
+            subgroupType: subgroupType
+        )
+
+        try await action.perform(in: context)
     }
 
 }

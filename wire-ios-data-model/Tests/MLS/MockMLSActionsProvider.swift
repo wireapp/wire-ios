@@ -112,4 +112,18 @@ class MockMLSActionsProvider: MLSActionsProviderProtocol {
         return mock(conversationId, domain)
     }
 
+    typealias DeleteSubgroupMock = (UUID, String, SubgroupType) -> Void
+    var deleteSubgroupMock = [DeleteSubgroupMock]()
+
+    func deleteSubgroup(
+        conversationID: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        context: NotificationContext
+    ) async throws {
+        guard let mock = deleteSubgroupMock.first else { throw MockError.unmockedMethodInvoked }
+        deleteSubgroupMock.removeFirst()
+        return mock(conversationID, domain, subgroupType)
+    }
+
 }

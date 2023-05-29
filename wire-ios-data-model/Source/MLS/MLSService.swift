@@ -1023,17 +1023,15 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Subgroup
 
-    private func createOrJoinSubgroup(conversationID: QualifiedID) async {
+    private func createOrJoinSubgroup(parentID: QualifiedID) async {
         do {
             guard let notificationContext = context?.notificationContext else {
                 // TODO: handle
                 return
             }
 
-            let subgroup = try await actionsProvider.fetchSubgroup(
-                conversationID: conversationID.uuid,
-                domain: conversationID.domain,
-                type: .conference,
+            let subgroup = try await fetchSubgroup(
+                parentID: parentID,
                 context: notificationContext
             )
 
@@ -1045,7 +1043,10 @@ public final class MLSService: MLSServiceInterface {
             if subgroup.epoch <= 0 {
                 try await createSubgroup(with: groupID)
             } else if subgroup.epochTimestamp.ageInDays >= 1 {
-                deleteSubgroup()
+                try await deleteSubgroup(
+                    parentID: parentID,
+                    context: notificationContext
+                )
                 try await createSubgroup(with: groupID)
             } else {
                 joinSubgroup()
@@ -1055,13 +1056,33 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    private func fetchSubgroup(
+        parentID: QualifiedID,
+        context: NotificationContext
+    ) async throws -> MLSSubgroup {
+        return try await actionsProvider.fetchSubgroup(
+            conversationID: parentID.uuid,
+            domain: parentID.domain,
+            type: .conference,
+            context: context
+        )
+    }
+
     private func createSubgroup(with id: MLSGroupID) async throws {
         try createGroup(for: id)
         try await updateKeyMaterial(for: id)
     }
 
-    private func deleteSubgroup() {
-        fatalError("not implemented")
+    private func deleteSubgroup(
+        parentID: QualifiedID,
+        context: NotificationContext
+    ) async throws {
+        try await actionsProvider.deleteSubgroup(
+            conversationID: parentID.uuid,
+            domain: parentID.domain,
+            subgroupType: .conference,
+            context: context
+        )
     }
 
     private func joinSubgroup() {
