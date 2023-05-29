@@ -19,6 +19,7 @@
 import Foundation
 
 @objc public enum MessageReaction: UInt16 {
+    // TODO: remove all cases and keep as string
     case like
     case thumbsUp
     case thumbsDown

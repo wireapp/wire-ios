@@ -29,7 +29,6 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
         sut = CompleteReactionPickerViewController()
         sut.view.setNeedsLayout()
         sut.view.layoutIfNeeded()
-        recordMode = true
     }
 
     func testReactionPicker() {
@@ -41,6 +40,21 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
         sut.view.subviews.forEach {
             if let collectionView = $0 as? UICollectionView {
                 collectionView.scrollToItem(at: IndexPath(item: 0, section: 4),
+                                            at: .top,
+                                            animated: false)
+            }
+        }
+
+        // THEN
+        verify(matching: sut)
+    }
+
+
+    func testReactionPicker_scrolledToBottom() {
+        // GIVEN WHEN
+        sut.view.subviews.forEach {
+            if let collectionView = $0 as? UICollectionView {
+                collectionView.scrollToItem(at: IndexPath(item: 0, section: 7),
                                             at: .top,
                                             animated: false)
             }
