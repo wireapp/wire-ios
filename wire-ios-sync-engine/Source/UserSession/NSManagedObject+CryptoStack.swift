@@ -29,7 +29,7 @@ extension NSManagedObjectContext {
         )
 
         proteusService = nil
-        mlsController = nil
+        mlsService = nil
         try? coreCrypto?.tearDown()
         coreCrypto = nil
     }
