@@ -1021,6 +1021,53 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    // MARK: - Subgroup
+
+    private func createOrJoinSubgroup(conversationID: QualifiedID) async {
+        do {
+            guard let notificationContext = context?.notificationContext else {
+                // TODO: handle
+                return
+            }
+
+            let subgroup = try await actionsProvider.fetchSubgroup(
+                conversationID: conversationID.uuid,
+                domain: conversationID.domain,
+                type: .conference,
+                context: notificationContext
+            )
+
+            guard let groupID = MLSGroupID(base64Encoded: subgroup.groupID) else {
+                // TODO: handle
+                return
+            }
+
+            if subgroup.epoch <= 0 {
+                try await createSubgroup(with: groupID)
+            } else if subgroup.epochTimestamp.ageInDays >= 1 {
+                deleteSubgroup()
+                try await createSubgroup(with: groupID)
+            } else {
+                joinSubgroup()
+            }
+        } catch {
+            // TODO: handle
+        }
+    }
+
+    private func createSubgroup(with id: MLSGroupID) async throws {
+        try createGroup(for: id)
+        try await updateKeyMaterial(for: id)
+    }
+
+    private func deleteSubgroup() {
+        fatalError("not implemented")
+    }
+
+    private func joinSubgroup() {
+        fatalError("not implemented")
+    }
+
 }
 
 // MARK: - Helper types
