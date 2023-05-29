@@ -1066,10 +1066,10 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         let expectation = XCTestExpectation(description: "Send Message")
         expectation.isInverted = true
 
-        // mock fetching public group state
-        var fetchPublicGroupStateCount = 0
-        mockActionsProvider.fetchPublicGroupStateMock.append({ _, _ in
-            fetchPublicGroupStateCount += 1
+        // mock fetching group info
+        var fetchGroupInfoCount = 0
+        mockActionsProvider.fetchConversationGroupInfoMock.append({ _, _ in
+            fetchGroupInfoCount += 1
             return Data()
         })
 
@@ -1084,7 +1084,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(fetchPublicGroupStateCount, 0)
+        XCTAssertEqual(fetchGroupInfoCount, 0)
     }
 
     // MARK: - Wipe Groups
