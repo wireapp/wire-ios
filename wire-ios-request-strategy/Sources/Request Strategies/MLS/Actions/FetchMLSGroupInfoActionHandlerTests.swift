@@ -49,7 +49,7 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: FetchMLSGroupInfoActio
     func test_itGeneratesARequest_APIV4() throws {
         try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue) groupinfo",
+               expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue)/groupinfo",
                expectedMethod: .methodGET,
                apiVersion: .v4
         )
