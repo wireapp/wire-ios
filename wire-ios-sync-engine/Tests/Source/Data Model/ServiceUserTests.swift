@@ -82,8 +82,6 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var isPendingMetadataRefresh: Bool = false
 
-    var hasValidName: Bool = false
-
     var richProfile: [UserRichProfileField] = []
 
     /// Whether the user can create conversations.

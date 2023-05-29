@@ -65,7 +65,6 @@ class MockUserType: NSObject, UserType, Decodable {
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
     var isPendingMetadataRefresh = false
-    var hasValidName = false
 
     // MARK: - UserType Conformance
 

@@ -77,13 +77,6 @@ extension ZMUser: UserType {
         return selfUser.isFederating(with: self)
     }
 
-    public var hasValidName: Bool {
-        guard let name = name else {
-            return false
-        }
-        return !name.isEmpty
-    }
-
     // MARK: - Conversation Roles
 
     public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {

@@ -172,7 +172,7 @@ extension SearchTask {
                 let copiedConnectedUsers = connectedUsers.compactMap({ self.contextProvider.viewContext.object(with: $0.objectID) as? ZMUser })
                 let searchConnectedUsers = copiedConnectedUsers
                                            .map { ZMSearchUser(contextProvider: self.contextProvider, user: $0) }
-                                           .filter { $0.hasValidName }
+                                           .filter { !$0.hasEmptyName }
                 let copiedteamMembers = teamMembers.compactMap({ self.contextProvider.viewContext.object(with: $0.objectID) as? Member })
                 let searchTeamMembers = copiedteamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: self.contextProvider, user: $0) }
 
@@ -577,4 +577,15 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
+}
+
+extension ZMSearchUser {
+
+    public var hasEmptyName: Bool {
+        guard let name = name else {
+            return true
+        }
+        return name.isEmpty
+    }
+
 }

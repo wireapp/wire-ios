@@ -23,17 +23,16 @@ extension ZMConversation {
 
     private var hasIncompleteMetadataForGroup: Bool {
         guard let name = userDefinedName else {
-            return false
+            return true
         }
-        return !name.isEmpty
+        return name.isEmpty
     }
 
     private var hasIncompleteMetadataForOneToOne: Bool {
-        if let _ = participants.filter({ !$0.isAccountDeleted })
-                               .first (where: { !$0.hasValidName }) {
-            return false
-        } else {
+        if let _ = participants.first (where: { $0.hasEmptyName }) {
             return true
+        } else {
+            return false
         }
     }
 
@@ -44,8 +43,19 @@ extension ZMConversation {
         case .oneOnOne:
             return hasIncompleteMetadataForOneToOne
         default:
+            return false
+        }
+    }
+
+}
+
+extension UserType {
+
+    public var hasEmptyName: Bool {
+        guard let name = name else {
             return true
         }
+        return name.isEmpty
     }
 
 }

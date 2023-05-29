@@ -81,9 +81,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Determines if the user may have incomplete metadata.
     var isPendingMetadataRefresh: Bool { get }
 
-    /// Whether the user has no name.
-    var hasValidName: Bool { get }
-
     /// Whether the user is under legal hold.
     var isUnderLegalHold: Bool { get }
 
