@@ -55,6 +55,7 @@ protocol MLSActionsProviderProtocol {
     func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
+        subgroupType: SubgroupType?,
         context: NotificationContext
     ) async throws -> Data
 
@@ -138,14 +139,26 @@ class MLSActionsProvider: MLSActionsProviderProtocol {
     func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
+        subgroupType: SubgroupType?,
         context: NotificationContext
     ) async throws -> Data {
-        var action = FetchMLSConversationGroupInfoAction(
-            conversationId: conversationId,
-            domain: domain
-        )
+        if let subgroupType = subgroupType {
+            var action = FetchMLSSubconversationGroupInfoAction(
+                conversationId: conversationId,
+                domain: domain,
+                subgroupType: subgroupType
+            )
 
-        return try await action.perform(in: context)
+            return try await action.perform(in: context)
+
+        } else {
+            var action = FetchMLSConversationGroupInfoAction(
+                conversationId: conversationId,
+                domain: domain
+            )
+
+            return try await action.perform(in: context)
+        }
     }
 
     func fetchSubgroup(

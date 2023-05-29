@@ -621,7 +621,7 @@ public final class MLSService: MLSServiceInterface {
 
         generatePendingJoins(in: context).forEach { pendingJoin in
             Task {
-                try await sendExternalCommit(groupID: pendingJoin.groupID)
+                try await joinByExternalCommit(groupID: pendingJoin.groupID)
             }
         }
 
@@ -695,9 +695,15 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - External Commits
 
-    private func sendExternalCommit(groupID: MLSGroupID) async throws {
+    private func joinByExternalCommit(
+        groupID: MLSGroupID,
+        subgroupType: SubgroupType? = nil
+    ) async throws {
         try await retryOnCommitFailure(for: groupID, operation: { [weak self] in
-            try await self?.internalSendExternalCommit(groupID: groupID)
+            try await self?.internalJoinByExternalCommit(
+                groupID: groupID,
+                subgroupType: subgroupType
+            )
         })
     }
 
@@ -705,7 +711,10 @@ public final class MLSService: MLSServiceInterface {
         case conversationNotFound
     }
 
-    private func internalSendExternalCommit(groupID: MLSGroupID) async throws {
+    private func internalJoinByExternalCommit(
+        groupID: MLSGroupID,
+        subgroupType: SubgroupType?
+    ) async throws {
         do {
             logger.info("sending external commit to join group (\(groupID)")
 
@@ -721,6 +730,7 @@ public final class MLSService: MLSServiceInterface {
             let publicGroupState = try await actionsProvider.fetchConversationGroupInfo(
                 conversationId: conversationInfo.identifier,
                 domain: conversationInfo.domain,
+                subgroupType: subgroupType,
                 context: context.notificationContext
             )
 
@@ -1049,7 +1059,7 @@ public final class MLSService: MLSServiceInterface {
                 )
                 try await createSubgroup(with: groupID)
             } else {
-                joinSubgroup()
+                try await joinSubgroup(with: groupID)
             }
         } catch {
             // TODO: handle
@@ -1085,8 +1095,11 @@ public final class MLSService: MLSServiceInterface {
         )
     }
 
-    private func joinSubgroup() {
-        fatalError("not implemented")
+    private func joinSubgroup(with id: MLSGroupID) async throws {
+        try await joinByExternalCommit(
+            groupID: id,
+            subgroupType: .conference
+        )
     }
 
 }
