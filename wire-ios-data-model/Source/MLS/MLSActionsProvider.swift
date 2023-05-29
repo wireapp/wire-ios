@@ -58,6 +58,13 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws -> Data
 
+    func fetchSubgroup(
+        conversationID: UUID,
+        domain: String,
+        type: SubgroupType,
+        context: NotificationContext
+    ) async throws -> MLSSubgroup
+
 }
 
 class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -133,4 +140,20 @@ class MLSActionsProvider: MLSActionsProviderProtocol {
 
         return try await action.perform(in: context)
     }
+
+    func fetchSubgroup(
+        conversationID: UUID,
+        domain: String,
+        type: SubgroupType,
+        context: NotificationContext
+    ) async throws -> MLSSubgroup {
+        var action = FetchSubgroupAction(
+            domain: domain,
+            conversationId: conversationID,
+            type: type
+        )
+
+        return try await action.perform(in: context)
+    }
+
 }
