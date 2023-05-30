@@ -18,30 +18,24 @@
 
 import Foundation
 
-public struct RecurringAction {
+struct RecurringAction {
 
-    public typealias Action = () -> Void
+    typealias Action = () -> Void
 
-    public let id: String
-    public let interval: TimeInterval
-    public let perform: Action
-
-    public init(id: String, interval: TimeInterval, perform: @escaping Action) {
-        self.id = id
-        self.interval = interval
-        self.perform = perform
-    }
+    let id: String
+    let interval: TimeInterval
+    let perform: Action
 
 }
 
-public protocol RecurringActionServiceInterface {
+protocol RecurringActionServiceInterface {
 
     func performActionsIfNeeded()
     func registerAction(_ action: RecurringAction)
 
 }
 
-public final class RecurringActionService: NSObject, RecurringActionServiceInterface {
+class RecurringActionService: RecurringActionServiceInterface {
 
     private var actions = [RecurringAction]()
 

@@ -94,8 +94,9 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
+    var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+
     public lazy var featureService = FeatureService(context: syncContext)
-    public lazy var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
 
     let earService: EARServiceInterface
 

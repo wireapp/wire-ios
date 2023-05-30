@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+@testable import WireSyncEngine
 
 class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
@@ -59,4 +60,52 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         // then
         XCTAssertEqual(mockRecurringActionService.actions.count, 1)
     }
+}
+
+
+class RecurringActionServiceTests: ZMTBaseTest {
+
+    var sut: RecurringActionService!
+    let actionID = "11"
+    var actionPerformed = false
+
+    override func setUp() {
+        super.setUp()
+
+        sut = RecurringActionService()
+    }
+
+    override func tearDown() {
+        sut = nil
+        actionPerformed = false
+
+        super.tearDown()
+    }
+
+    func testThatItPerformsAction() {
+        // given
+        let action = RecurringAction(id: actionID, interval: 2, perform: { self.actionPerformed = true })
+        sut.registerAction(action)
+        sut.persistLastActionDate(for: actionID, newDate: Date() - 20)
+
+        // when
+        sut.performActionsIfNeeded()
+
+        // then
+        XCTAssertTrue(actionPerformed)
+    }
+
+    func testThatItDoesNotPerformAction_TimeHasNotExpired() {
+        // given
+        let action = RecurringAction(id: actionID, interval: 25, perform: { self.actionPerformed = true })
+        sut.registerAction(action)
+        sut.persistLastActionDate(for: actionID, newDate: Date() - 20)
+
+        // when
+        sut.performActionsIfNeeded()
+
+        // then
+        XCTAssertFalse(actionPerformed)
+    }
+
 }
