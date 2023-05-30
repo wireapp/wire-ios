@@ -65,7 +65,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -73,7 +73,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
         _ = try createSharingSession()
 
         // THEN
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -84,7 +84,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -92,7 +92,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
         _ = try createSharingSession()
 
         // THEN
-        XCTAssertNotNil(context.mlsController)
+        XCTAssertNotNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -104,7 +104,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -112,7 +112,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
         _ = try createSharingSession()
 
         // THEN
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
     }
@@ -124,7 +124,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -132,7 +132,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
         _ = try createSharingSession()
 
         // THEN
-        XCTAssertNotNil(context.mlsController)
+        XCTAssertNotNil(context.mlsService)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -144,7 +144,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -152,7 +152,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
         _ = try createSharingSession()
 
         // THEN
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
     }
