@@ -24,7 +24,7 @@ public enum MLSDecryptResult: Equatable {
     case proposal(_ commitDelay: UInt64)
 }
 
-public protocol MLSControllerProtocol {
+public protocol MLSServiceInterface {
 
     func uploadKeyPackagesIfNeeded()
 
@@ -55,14 +55,14 @@ public protocol MLSControllerProtocol {
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
 }
 
-public protocol MLSControllerDelegate: AnyObject {
+public protocol MLSServiceDelegate: AnyObject {
 
-    func mlsControllerDidCommitPendingProposal(for groupID: MLSGroupID)
-    func mlsControllerDidUpdateKeyMaterialForAllGroups()
+    func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
+    func mlsServiceDidUpdateKeyMaterialForAllGroups()
 
 }
 
-public final class MLSController: MLSControllerProtocol {
+public final class MLSService: MLSServiceInterface {
 
     // MARK: - Properties
 
@@ -102,7 +102,7 @@ public final class MLSController: MLSControllerProtocol {
 
     private static let backendMessageHoldTimeInDays: UInt = 28
 
-    weak var delegate: MLSControllerDelegate?
+    weak var delegate: MLSServiceDelegate?
 
     // MARK: - Life cycle
 
@@ -135,7 +135,7 @@ public final class MLSController: MLSControllerProtocol {
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
-        delegate: MLSControllerDelegate? = nil,
+        delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol
     ) {
         self.context = context
@@ -231,7 +231,7 @@ public final class MLSController: MLSControllerProtocol {
         Task {
             await updateKeyMaterialForAllStaleGroups()
             lastKeyMaterialUpdateCheck = Date()
-            delegate?.mlsControllerDidUpdateKeyMaterialForAllGroups()
+            delegate?.mlsServiceDidUpdateKeyMaterialForAllGroups()
         }
     }
 
@@ -964,7 +964,7 @@ public final class MLSController: MLSControllerProtocol {
             let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
             conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
-            delegate?.mlsControllerDidCommitPendingProposal(for: groupID)
+            delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch MLSActionExecutor.Error.noPendingProposals {
             logger.info("no proposals to commit in group (\(groupID))...")
             clearPendingProposalCommitDate(for: groupID)
