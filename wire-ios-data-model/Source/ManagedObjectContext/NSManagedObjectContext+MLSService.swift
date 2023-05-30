@@ -21,17 +21,17 @@ import CoreCryptoSwift
 
 extension NSManagedObjectContext {
 
-    private static let mlsControllerUserInfoKey = "MLSControllerUserInfoKey"
+    private static let mlsServiceUserInfoKey = "MLSServiceUserInfoKey"
 
-    public var mlsController: MLSControllerProtocol? {
+    public var mlsService: MLSServiceInterface? {
         get {
-            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-            return userInfo[Self.mlsControllerUserInfoKey] as? MLSControllerProtocol
+            precondition(zm_isSyncContext, "MLSService should only be accessed on the sync context")
+            return userInfo[Self.mlsServiceUserInfoKey] as? MLSServiceInterface
         }
 
         set {
-            precondition(zm_isSyncContext, "MLSController should only be accessed on the sync context")
-            userInfo[Self.mlsControllerUserInfoKey] = newValue
+            precondition(zm_isSyncContext, "MLSService should only be accessed on the sync context")
+            userInfo[Self.mlsServiceUserInfoKey] = newValue
         }
     }
 
