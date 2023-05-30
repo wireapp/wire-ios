@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
+		013E3EE82A26177D00C66E64 /* CoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 013E3EE72A26177D00C66E64 /* CoreCrypto.xcframework */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		0191513A29ACB3CA00920D04 /* SpyUserClientKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */; };
 		0191513C29ACB46000920D04 /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513B29ACB46000920D04 /* MockProteusProvider.swift */; };
@@ -290,8 +291,6 @@
 		6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */; };
 		6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */; };
 		63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63709F642993E7A600577D4B /* libcore_crypto_ffi.a */; };
-		63709F6B2994108700577D4B /* CoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6A2994108700577D4B /* CoreCrypto */; };
-		63709F6D2994108700577D4B /* LibCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6C2994108700577D4B /* LibCoreCrypto */; };
 		6374562229C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */; };
 		6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */; };
 		638805652410FE920043B641 /* ButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638805642410FE920043B641 /* ButtonState.swift */; };
@@ -825,6 +824,7 @@
 /* Begin PBXFileReference section */
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
+		013E3EE72A26177D00C66E64 /* CoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = CoreCrypto.xcframework; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
 		0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpyUserClientKeyStore.swift; path = Tests/Source/Helper/SpyUserClientKeyStore.swift; sourceTree = SOURCE_ROOT; };
 		0191513B29ACB46000920D04 /* MockProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
@@ -1143,7 +1143,6 @@
 		63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Protobuf.swift"; sourceTree = "<group>"; };
 		6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Federation.swift"; sourceTree = "<group>"; };
 		6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Federation.swift"; sourceTree = "<group>"; };
-		63709F632993E70B00577D4B /* CoreCrypto */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CoreCrypto; sourceTree = "<group>"; };
 		63709F642993E7A600577D4B /* libcore_crypto_ffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcore_crypto_ffi.a; path = CoreCrypto/lib/libcore_crypto_ffi.a; sourceTree = "<group>"; };
 		6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoKeyProviderTests.swift; sourceTree = "<group>"; };
 		63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Composite.swift"; sourceTree = "<group>"; };
@@ -1748,9 +1747,8 @@
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
 				EE67F6C3296F05FD001D7C88 /* PINCache.xcframework in Frameworks */,
 				63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */,
-				63709F6B2994108700577D4B /* CoreCrypto in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
-				63709F6D2994108700577D4B /* LibCoreCrypto in Frameworks */,
+				013E3EE82A26177D00C66E64 /* CoreCrypto.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1990,7 +1988,7 @@
 		63709F622993E70A00577D4B /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				63709F632993E70B00577D4B /* CoreCrypto */,
+				013E3EE72A26177D00C66E64 /* CoreCrypto.xcframework */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -3355,8 +3353,6 @@
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
-				63709F6A2994108700577D4B /* CoreCrypto */,
-				63709F6C2994108700577D4B /* LibCoreCrypto */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -4435,17 +4431,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		63709F6A2994108700577D4B /* CoreCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CoreCrypto;
-		};
-		63709F6C2994108700577D4B /* LibCoreCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LibCoreCrypto;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {
