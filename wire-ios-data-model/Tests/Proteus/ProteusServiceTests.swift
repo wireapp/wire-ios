@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-import CoreCryptoSwift
+import CoreCrypto
 @testable import WireDataModel
 
 class ProteusServiceTests: XCTestCase {

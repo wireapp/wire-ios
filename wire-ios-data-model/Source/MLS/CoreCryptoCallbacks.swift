@@ -18,7 +18,7 @@
 
 
 import Foundation
-import CoreCryptoSwift
+import CoreCrypto
 
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 

@@ -21,7 +21,7 @@ import Foundation
 import WireDataModel
 import WireTesting
 import WireMockTransport
-import CoreCryptoSwift
+import CoreCrypto
 @testable import WireShareEngine
 
 class SharingSessionTestsCryptoStack: BaseTest {

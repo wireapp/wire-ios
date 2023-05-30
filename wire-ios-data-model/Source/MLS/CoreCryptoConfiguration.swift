@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import CoreCryptoSwift
+import CoreCrypto
 import CoreCrypto
 import WireSystem
 
