@@ -88,7 +88,7 @@ extension TimerActionsManager {
 
     private func refreshConversationsWithMissingMetadata() -> Event {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationHasIncompleteMetadataKey) == YES")
+        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
 
         let conversations = managedObjectContext?.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
 

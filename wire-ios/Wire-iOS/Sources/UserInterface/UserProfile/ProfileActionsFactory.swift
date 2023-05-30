@@ -188,7 +188,7 @@ final class ProfileActionsFactory {
             // Show connection request actions for unconnected users from different teams.
             if user.isPendingApprovalByOtherUser {
                 actions.append(.cancelConnectionRequest)
-            } else if (user.isConnected || isOnSameTeam) && !user.hasIncompleteMetadata {
+            } else if (user.isConnected && !user.hasEmptyName) || isOnSameTeam  {
                 actions.append(.openOneToOne)
             } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)
@@ -200,7 +200,8 @@ final class ProfileActionsFactory {
             }
 
             // If the user is not from the same team as the other user, allow blocking
-            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && !user.hasIncompleteMetadata {
+
+            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && !user.hasEmptyName {
                 actions.append(.block(isBlocked: false))
             }
 

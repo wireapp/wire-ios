@@ -121,6 +121,21 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_Group_ResetsIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.groupConversation.isPendingMetadataRefresh = true
+            let qualifiedID = self.groupConversation.qualifiedID!
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           type: BackendConversationType.group.rawValue)
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            XCTAssertFalse(self.groupConversation.isPendingMetadataRefresh)
+        }
+    }
+
     func testUpdateOrCreateConversation_Group_UpdatesUserDefinedName() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -425,6 +440,27 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_OneToOne_ResetsIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
+            self.otherUser.isPendingMetadataRefresh = true
+            let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
+            let qualifiedID = self.oneToOneConversation.qualifiedID!
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           type: BackendConversationType.oneOnOne.rawValue,
+                                                           members: members)
+
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            XCTAssertEqual(self.oneToOneConversation.isPendingMetadataRefresh, self.otherUser.isPendingMetadataRefresh)
+        }
+    }
+
     func testUpdateOrCreateConversation_OneToOne_MergesWithExistingConversation() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
@@ -567,6 +603,23 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(selfConversation.lastServerTimeStamp, serverTimestamp)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Self_ResetsIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self.syncMOC)
+            selfConversation.domain = self.owningDomain
+            selfConversation.isPendingMetadataRefresh = true
+            let conversationPayload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
+                                                           type: BackendConversationType.`self`.rawValue)
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            XCTAssertFalse(selfConversation.isPendingMetadataRefresh)
         }
     }
 

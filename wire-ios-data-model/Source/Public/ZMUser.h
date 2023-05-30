@@ -79,7 +79,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 @property (nonatomic, readonly) BOOL isTeamMember;
 
-@property (nonatomic) BOOL hasIncompleteMetadata;
+@property (nonatomic) BOOL isPendingMetadataRefresh;
 
 /// Request a refresh of the user data from the backend.
 /// This is useful for non-connected user, that we will otherwise never refetch

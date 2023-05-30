@@ -80,7 +80,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var isVerified: Bool = false
 
-    var hasIncompleteMetadata: Bool = false
+    var isPendingMetadataRefresh: Bool = false
 
     var richProfile: [UserRichProfileField] = []
 

@@ -204,10 +204,10 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
-    public var hasIncompleteMetadata: Bool {
+    public var isPendingMetadataRefresh: Bool {
         guard let user = user else { return false }
 
-        return user.hasIncompleteMetadata
+        return user.isPendingMetadataRefresh
     }
 
     public var hasDigitalSignatureEnabled: Bool {

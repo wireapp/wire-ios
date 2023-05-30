@@ -64,7 +64,7 @@ import Foundation
     public func refetchIncompleteConversationMetadata() {
         let managedObjectContext = contextProvider.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationHasIncompleteMetadataKey) == YES")
+        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
 
         let conversations = managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
 
