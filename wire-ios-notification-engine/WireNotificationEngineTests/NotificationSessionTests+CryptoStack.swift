@@ -64,7 +64,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -72,7 +72,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -83,7 +83,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -91,7 +91,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNotNil(context.mlsController)
+        XCTAssertNotNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -103,7 +103,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -111,7 +111,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
     }
@@ -124,7 +124,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -132,7 +132,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNotNil(context.mlsController)
+        XCTAssertNotNil(context.mlsService)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -144,7 +144,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         let context = coreDataStack.syncContext
 
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -152,7 +152,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNil(context.mlsController)
+        XCTAssertNil(context.mlsService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
     }
