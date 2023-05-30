@@ -30,7 +30,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         super.setUp()
 
         mockConversation = MockGroupDetailsConversation()
-        mockConversation.displayName = "iOS Team"
+        mockConversation.meaningfulDisplayName = "iOS Team"
         mockConversation.securityLevel = .notSecure
 
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
@@ -175,7 +175,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser.canModifyTitleInConversation = true
 
         mockConversation.sortedOtherParticipants = [mockSelfUser]
-        mockConversation.displayName = "Empty group conversation"
+        mockConversation.meaningfulDisplayName = "Empty group conversation"
 
         sut = GroupDetailsViewController(conversation: mockConversation)
 

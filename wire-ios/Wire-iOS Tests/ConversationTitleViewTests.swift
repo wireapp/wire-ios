@@ -29,7 +29,7 @@ final class ConversationTitleViewTests: XCTestCase {
         super.setUp()
         conversation = SwiftMockConversation()
         conversation.relatedConnectionState = .accepted
-        conversation.displayName = "Alan Turing"
+        conversation.meaningfulDisplayName = "Alan Turing"
     }
 
     override func tearDown() {

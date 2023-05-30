@@ -82,7 +82,7 @@ final class GroupConversationCellTests: XCTestCase {
         let groupConversation = createGroupConversation()
 
         // WHEN
-        groupConversation.displayName = "Anna, Bruno, Claire, Dean"
+        groupConversation.meaningfulDisplayName = "Anna, Bruno, Claire, Dean"
 
         // THEN
         verify(conversation: groupConversation)
@@ -93,7 +93,7 @@ final class GroupConversationCellTests: XCTestCase {
         let groupConversation = createGroupConversation()
 
         // WHEN
-        groupConversation.displayName  = "Loooooooooooooooooooooooooong name"
+        groupConversation.meaningfulDisplayName  = "Loooooooooooooooooooooooooong name"
 
         // THEN
         verify(conversation: groupConversation)

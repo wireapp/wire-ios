@@ -55,7 +55,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
         otherUserConversation.conversationType = .oneOnOne
 
         // title
-        otherUserConversation.displayName = otherUser.name!
+        otherUserConversation.meaningfulDisplayName = otherUser.name!
 
         // subtitle
         otherUserConversation.connectedUserType = otherUser
@@ -420,7 +420,7 @@ final class ConversationListCellTests: ZMSnapshotTestCase {
         let conversation = MockConversation()
         let newUser = MockUserType.createUser(name: "Ana")
         conversation.stableRandomParticipants = [newUser, otherUser]
-        conversation.displayName = "Ana, Bruno"
+        conversation.meaningfulDisplayName = "Ana, Bruno"
 
         // then
         verify(conversation)
@@ -429,7 +429,7 @@ final class ConversationListCellTests: ZMSnapshotTestCase {
     private func createGroupConversation() -> MockConversation {
         let conversation = MockConversation()
         conversation.stableRandomParticipants = [otherUser]
-        conversation.displayName = otherUser.displayName
+        conversation.meaningfulDisplayName = otherUser.displayName
 
         return conversation
     }
