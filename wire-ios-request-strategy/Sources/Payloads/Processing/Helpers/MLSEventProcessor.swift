@@ -53,12 +53,12 @@ class MLSEventProcessor: MLSEventProcessing {
            Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
         }
 
-        guard let mlsController = context.mlsController else {
-            return logWarn(aborting: .conversationUpdate, withReason: .missingMLSController)
+        guard let mlsService = context.mlsService else {
+            return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
         let previousStatus = conversation.mlsStatus
-        let conversationExists = mlsController.conversationExists(groupID: mlsGroupID)
+        let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
         conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
 
         context.saveOrRollback()
@@ -81,15 +81,15 @@ class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .joiningGroup, withReason: .missingGroupID)
         }
 
-        guard let mlsController = context.mlsController else {
-            return logWarn(aborting: .joiningGroup, withReason: .missingMLSController)
+        guard let mlsService = context.mlsService else {
+            return logWarn(aborting: .joiningGroup, withReason: .missingMLSService)
         }
 
         guard let status = conversation.mlsStatus, status.isPendingJoin else {
             return logWarn(aborting: .joiningGroup, withReason: .other(reason: "MLS status is not .pendingJoin"))
         }
 
-        mlsController.registerPendingJoin(groupID)
+        mlsService.registerPendingJoin(groupID)
         Logging.mls.info("MLS event processor added group (\(groupID)) to be joined")
     }
 
@@ -98,12 +98,12 @@ class MLSEventProcessor: MLSEventProcessing {
     func process(welcomeMessage: String, in context: NSManagedObjectContext) {
         Logging.mls.info("MLS event processor is processing welcome message")
 
-        guard let mlsController = context.mlsController else {
-            return logWarn(aborting: .processingWelcome, withReason: .missingMLSController)
+        guard let mlsService = context.mlsService else {
+            return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
 
         do {
-            let groupID = try mlsController.processWelcomeMessage(welcomeMessage: welcomeMessage)
+            let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
             guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
                 return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
@@ -133,11 +133,11 @@ class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
         }
 
-        guard let mlsController = context.mlsController else {
-            return logWarn(aborting: .conversationWipe, withReason: .missingMLSController)
+        guard let mlsService = context.mlsService else {
+            return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        mlsController.wipeGroup(mlsGroupID)
+        mlsService.wipeGroup(mlsGroupID)
     }
 
     // MARK: Log Helpers
@@ -156,7 +156,7 @@ class MLSEventProcessor: MLSEventProcessing {
     private enum AbortReason {
         case notMLSConversation
         case missingGroupID
-        case missingMLSController
+        case missingMLSService
         case other(reason: String)
 
         var stringValue: String {
@@ -165,8 +165,8 @@ class MLSEventProcessor: MLSEventProcessing {
                 return "not an MLS conversation"
             case .missingGroupID:
                 return "missing group ID"
-            case .missingMLSController:
-                return "missing MLSController"
+            case .missingMLSService:
+                return "missing mlsService"
             case .other(reason: let reason):
                 return reason
             }

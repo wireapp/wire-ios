@@ -141,11 +141,11 @@ extension ZMUserSession {
                     throw CryptoStackSetupError.missingCoreCrypto
                 }
 
-                try createMLSControllerIfNeeded(coreCrypto: coreCrypto, clientID: clientID)
+                try createMLSServiceIfNeeded(coreCrypto: coreCrypto, clientID: clientID)
 
                 WireLogger.coreCrypto.info("success: setup crypto stack (mls)")
-            } catch let error as MLSControllerSetupFailure {
-                WireLogger.coreCrypto.error("fail: setup MLSController: \(String(describing: error))")
+            } catch let error as MLSServiceSetupFailure {
+                WireLogger.coreCrypto.error("fail: setup mlsService: \(String(describing: error))")
             } catch {
                 WireLogger.coreCrypto.error("fail: setup crypto stack (mls): \(String(describing: error))")
             }
@@ -189,26 +189,26 @@ extension ZMUserSession {
 
     // MARK: - MLS
 
-    private func createMLSControllerIfNeeded(
+    private func createMLSServiceIfNeeded(
         coreCrypto: SafeCoreCryptoProtocol,
         clientID: String
     ) throws {
         guard
             shouldSetupMLS,
-            syncContext.mlsController == nil
+            syncContext.mlsService == nil
         else {
             return
         }
 
         guard let syncStatus = syncStatus else {
-            throw MLSControllerSetupFailure.missingSyncStatus
+            throw MLSServiceSetupFailure.missingSyncStatus
         }
 
         guard let userDefaults = UserDefaults(suiteName: "com.wire.mls.\(clientID)") else {
-            throw MLSControllerSetupFailure.invalidUserDefaults
+            throw MLSServiceSetupFailure.invalidUserDefaults
         }
 
-        syncContext.mlsController = MLSController(
+        syncContext.mlsService = MLSService(
             context: syncContext,
             coreCrypto: coreCrypto,
             conversationEventProcessor: ConversationEventProcessor(context: syncContext),
@@ -221,7 +221,7 @@ extension ZMUserSession {
         return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
-    private enum MLSControllerSetupFailure: Error {
+    private enum MLSServiceSetupFailure: Error {
         case missingSyncStatus
         case invalidUserDefaults
     }

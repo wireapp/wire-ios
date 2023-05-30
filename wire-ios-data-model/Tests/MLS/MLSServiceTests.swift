@@ -21,9 +21,9 @@ import XCTest
 import CoreCryptoSwift
 @testable import WireDataModel
 
-class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
+class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
-    var sut: MLSController!
+    var sut: MLSService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockMLSActionExecutor: MockMLSActionExecutor!
@@ -50,7 +50,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
             return 100
         }
 
-        sut = MLSController(
+        sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
             mlsActionExecutor: mockMLSActionExecutor,
@@ -104,7 +104,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         )
     }
 
-    // MARK: - MLSControllerDelegate
+    // MARK: - mlsServiceDelegate
 
     var pendingProposalCommitExpectations = [MLSGroupID: XCTestExpectation]()
     var keyMaterialUpdatedExpectation: XCTestExpectation?
@@ -112,11 +112,11 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
     // Since SUT may schedule timers to commit pending proposals, we create expectations
     // and fulfill them when SUT informs us the commit was made.
 
-    func mlsControllerDidCommitPendingProposal(for: MLSGroupID) {
+    func mlsServiceDidCommitPendingProposal(for: MLSGroupID) {
         pendingProposalCommitExpectations[groupID]?.fulfill()
     }
 
-    func mlsControllerDidUpdateKeyMaterialForAllGroups() {
+    func mlsServiceDidUpdateKeyMaterialForAllGroups() {
         keyMaterialUpdatedExpectation?.fulfill()
     }
 
@@ -137,7 +137,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         })
 
         // When
-        let sut = MLSController(
+        let sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
             conversationEventProcessor: mockConversationEventProcessor,
@@ -154,7 +154,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
     // MARK: - Message Encryption
 
-    typealias EncryptionError = MLSController.MLSMessageEncryptionError
+    typealias EncryptionError = MLSService.MLSMessageEncryptionError
 
     func test_Encrypt_IsSuccessful() {
         do {
@@ -202,7 +202,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
 
     // MARK: - Message Decryption
 
-    typealias DecryptionError = MLSController.MLSMessageDecryptionError
+    typealias DecryptionError = MLSService.MLSMessageDecryptionError
 
     func test_Decrypt_ThrowsFailedToConvertMessageToBytes() {
         syncMOC.performAndWait {
@@ -353,7 +353,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // when / then
-        assertItThrows(error: MLSController.MLSGroupCreationError.failedToCreateGroup) {
+        assertItThrows(error: MLSService.MLSGroupCreationError.failedToCreateGroup) {
             try sut.createGroup(for: groupID)
         }
 
@@ -486,7 +486,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // when / then
-        await assertItThrows(error: MLSController.MLSAddMembersError.noMembersToAdd) {
+        await assertItThrows(error: MLSService.MLSAddMembersError.noMembersToAdd) {
             try await sut.addMembersToConversation(with: [], for: mlsGroupID)
         }
     }
@@ -506,7 +506,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         // No mock for claiming key packages.
 
         // Then
-        await assertItThrows(error: MLSController.MLSAddMembersError.failedToClaimKeyPackages) {
+        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages) {
             // When
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
@@ -657,7 +657,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // When / Then
-        await assertItThrows(error: MLSController.MLSRemoveParticipantsError.noClientsToRemove) {
+        await assertItThrows(error: MLSService.MLSRemoveParticipantsError.noClientsToRemove) {
             try await sut.removeMembersFromConversation(with: [], for: mlsGroupID)
         }
     }
@@ -1287,7 +1287,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         keyMaterialUpdatedExpectation = expectation
 
         // When
-        let sut = MLSController(
+        let sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
             mlsActionExecutor: mockMLSActionExecutor,
@@ -1375,7 +1375,7 @@ class MLSControllerTests: ZMConversationTestsBase, MLSControllerDelegate {
         }
 
         // When
-        let sut = MLSController(
+        let sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
             mlsActionExecutor: mockMLSActionExecutor,

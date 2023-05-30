@@ -23,9 +23,9 @@ import WireTesting
 import CoreCryptoSwift
 @testable import WireNotificationEngine
 
-class MLSDecryptionControllerTests: BaseTest {
+class MLSDecryptionServiceTests: BaseTest {
 
-    var sut: MLSDecryptionController!
+    var sut: MLSDecryptionService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var syncMOC: NSManagedObjectContext!
@@ -39,7 +39,7 @@ class MLSDecryptionControllerTests: BaseTest {
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
 
-        sut = MLSDecryptionController(
+        sut = MLSDecryptionService(
             context: syncMOC,
             coreCrypto: mockSafeCoreCrypto
         )
@@ -55,7 +55,7 @@ class MLSDecryptionControllerTests: BaseTest {
 
     // MARK: - Decryption
 
-    typealias DecryptionError = MLSDecryptionController.MLSMessageDecryptionError
+    typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
     func test_Decrypt_ThrowsFailedToConvertMessageToBytes() {
         syncMOC.performAndWait {

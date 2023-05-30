@@ -75,7 +75,7 @@ final class MessageSyncTests: MessagingTestBase {
             // Given
             self.groupConversation.messageProtocol = .mls
             self.groupConversation.mlsGroupID = MLSGroupID([1, 2, 3])
-            self.syncMOC.mlsController = MockMLSController()
+            self.syncMOC.mlsService = MockMLSService()
 
             let message = MockOTREntity(
                 conversation: self.groupConversation,

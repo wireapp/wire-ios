@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModel
 
-// Temporary Mock until we find a way to use a single mocked `MLSControllerProcotol` accross frameworks
-class MockMLSController: MLSControllerProtocol {
+// Temporary Mock until we find a way to use a single mocked `mlsServiceProcotol` accross frameworks
+class MockMLSService: MLSServiceInterface {
 
     func commitPendingProposals(in groupID: WireDataModel.MLSGroupID) async throws {
     }

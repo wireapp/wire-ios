@@ -19,10 +19,10 @@
 import Foundation
 import WireDataModel
 
-class MockMLSController: MLSControllerProtocol {
+class MockMLSService: MLSServiceInterface {
 
     var mockDecryptResult: MLSDecryptResult?
-    var mockDecryptionError: MLSController.MLSMessageDecryptionError?
+    var mockDecryptionError: MLSService.MLSMessageDecryptionError?
     var calls = Calls()
 
     struct Calls {

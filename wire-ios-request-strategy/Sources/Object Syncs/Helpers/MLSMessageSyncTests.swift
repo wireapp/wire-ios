@@ -22,13 +22,13 @@ import XCTest
 final class MLSMessageSyncTests: MessagingTestBase {
 
     var sut: MLSMessageSync<MockOTREntity>!
-    var mockMLSController: MockMLSController!
+    var mockMLSService: MockMLSService!
     var mockMessage: MockOTREntity!
 
     override func setUp() {
         super.setUp()
         sut = MLSMessageSync(context: syncMOC)
-        mockMLSController = MockMLSController()
+        mockMLSService = MockMLSService()
         mockMessage = MockOTREntity(
             messageData: Data([1, 2, 3]),
             conversation: groupConversation,
@@ -38,13 +38,13 @@ final class MLSMessageSyncTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             self.groupConversation.mlsGroupID = MLSGroupID([1, 2, 3])
             self.groupConversation.messageProtocol = .mls
-            self.syncMOC.mlsController = self.mockMLSController
+            self.syncMOC.mlsService = self.mockMLSService
         }
     }
 
     override func tearDown() {
         sut = nil
-        mockMLSController = nil
+        mockMLSService = nil
         mockMessage = nil
         super.tearDown()
     }
@@ -70,7 +70,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it preemptively commits pending proposals.
-        XCTAssertEqual(self.mockMLSController.calls.commitPendingProposalsInGroup, [MLSGroupID([1, 2, 3])])
+        XCTAssertEqual(self.mockMLSService.calls.commitPendingProposalsInGroup, [MLSGroupID([1, 2, 3])])
     }
 
     // MARK: - Request generation

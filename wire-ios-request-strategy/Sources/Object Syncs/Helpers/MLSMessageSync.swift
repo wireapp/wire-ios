@@ -62,7 +62,7 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
     }
 
     func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
-        guard let mlsController = context.mlsController else {
+        guard let mlsService = context.mlsService else {
             Logging.mls.info("not syncing message b/c no mls controller")
             return
         }
@@ -75,7 +75,7 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
         Task {
             do {
                 Logging.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID))")
-                try await mlsController.commitPendingProposals(in: groupID)
+                try await mlsService.commitPendingProposals(in: groupID)
             } catch {
                 Logging.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID)): \(String(describing: error))")
             }

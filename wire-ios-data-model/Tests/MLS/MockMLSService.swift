@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-class MockMLSController: MLSControllerProtocol {
+class MockMLSService: MLSServiceInterface {
 
     // MARK: - Types
 

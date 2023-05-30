@@ -348,8 +348,8 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func testThatMLSGroupIsCreated() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            let mlsController = MockMLSController()
-            self.syncMOC.mlsController = mlsController
+            let mlsService = MockMLSService()
+            self.syncMOC.mlsService = mlsService
 
             let id = UUID.create()
             let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
@@ -390,9 +390,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertEqual(mlsController.createGroupCalls.count, 1)
+            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
 
-            let createGroupCall = mlsController.createGroupCalls.element(atIndex: 0)
+            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
             XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
             XCTAssertEqual(self.groupConversation.mlsStatus, .ready)
         }

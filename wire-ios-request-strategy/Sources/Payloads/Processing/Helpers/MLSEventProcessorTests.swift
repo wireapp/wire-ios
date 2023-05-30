@@ -21,7 +21,7 @@ import XCTest
 
 class MLSEventProcessorTests: MessagingTestBase {
 
-    var mlsControllerMock: MockMLSController!
+    var mlsServiceMock: MockMLSService!
     var conversation: ZMConversation!
     var domain = "example.com"
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
@@ -29,8 +29,8 @@ class MLSEventProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         syncMOC.performGroupedBlockAndWait {
-            self.mlsControllerMock = MockMLSController()
-            self.syncMOC.mlsController = self.mlsControllerMock
+            self.mlsServiceMock = MockMLSService()
+            self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64EncodedBytes!)
             self.conversation.domain = self.domain
@@ -39,7 +39,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     override func tearDown() {
-        mlsControllerMock = nil
+        mlsServiceMock = nil
         conversation = nil
         super.tearDown()
     }
@@ -50,7 +50,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             let message = "welcome message"
-            self.mlsControllerMock.groupID = self.conversation.mlsGroupID
+            self.mlsServiceMock.groupID = self.conversation.mlsGroupID
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
@@ -58,7 +58,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
 
             // Then
-            XCTAssertEqual(message, self.mlsControllerMock.processedWelcomeMessage)
+            XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
             XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }
@@ -122,8 +122,8 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.mlsControllerMock.groupsPendingJoin.count, 1)
-            XCTAssertEqual(self.mlsControllerMock.groupsPendingJoin.first, self.conversation.mlsGroupID)
+            XCTAssertEqual(self.mlsServiceMock.groupsPendingJoin.count, 1)
+            XCTAssertEqual(self.mlsServiceMock.groupsPendingJoin.first, self.conversation.mlsGroupID)
         }
     }
 
@@ -149,8 +149,8 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mlsControllerMock.calls.wipeGroup.count, 1)
-            XCTAssertEqual(mlsControllerMock.calls.wipeGroup.first, groupID)
+            XCTAssertEqual(mlsServiceMock.calls.wipeGroup.count, 1)
+            XCTAssertEqual(mlsServiceMock.calls.wipeGroup.first, groupID)
         }
     }
 
@@ -167,7 +167,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mlsControllerMock.calls.wipeGroup.count, 0)
+            XCTAssertEqual(mlsServiceMock.calls.wipeGroup.count, 0)
         }
     }
 
@@ -185,7 +185,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertTrue(self.mlsControllerMock.groupsPendingJoin.isEmpty)
+            XCTAssertTrue(self.mlsServiceMock.groupsPendingJoin.isEmpty)
         }
     }
 
@@ -199,7 +199,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             // Given
             self.conversation.mlsStatus = originalValue
             self.conversation.messageProtocol = mockMessageProtocol
-            self.mlsControllerMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
+            self.mlsServiceMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
 
             // When
             MLSEventProcessor.shared.updateConversationIfNeeded(

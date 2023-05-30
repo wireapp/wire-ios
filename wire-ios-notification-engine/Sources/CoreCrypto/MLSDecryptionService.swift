@@ -21,7 +21,7 @@ import WireDataModel
 import CoreData
 import CoreCryptoSwift
 
-class MLSDecryptionController: MLSControllerProtocol {
+class MLSDecryptionService: MLSServiceInterface {
 
     // MARK: - Properties
 
@@ -37,7 +37,7 @@ class MLSDecryptionController: MLSControllerProtocol {
 
     // MARK: - Methods
 
-    // TODO: Avoid this code duplication from `MLSController`
+    // TODO: Avoid this code duplication from `mlsService`
 
     public enum MLSMessageDecryptionError: Error {
 
@@ -86,7 +86,7 @@ class MLSDecryptionController: MLSControllerProtocol {
         return MLSClientID(data: senderClientID.data)?.clientID
     }
 
-    // TODO: Avoid this code duplication from `MLSController`
+    // TODO: Avoid this code duplication from `mlsService`
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
         guard let context = context else {

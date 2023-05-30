@@ -613,7 +613,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Self.logger.trace("did finish quick sync")
         processEvents()
 
-        syncContext.mlsController?.performPendingJoins()
+        syncContext.mlsService?.performPendingJoins()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
@@ -651,10 +651,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func commitPendingProposalsIfNeeded() {
-        let mlsController = syncContext.mlsController
+        let mlsService = syncContext.mlsService
         Task {
             do {
-                try await mlsController?.commitPendingProposals()
+                try await mlsService?.commitPendingProposals()
             } catch {
                 Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }

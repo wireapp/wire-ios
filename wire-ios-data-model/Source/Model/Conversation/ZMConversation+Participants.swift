@@ -170,14 +170,14 @@ extension ZMConversation {
         case .mls:
             Logging.mls.info("adding \(participants.count) participants to conversation (\(String(describing: qualifiedID)))")
 
-            var mlsController: MLSControllerProtocol?
+            var mlsService: MLSServiceInterface?
 
             context.zm_sync.performAndWait {
-                mlsController = context.zm_sync.mlsController
+                mlsService = context.zm_sync.mlsService
             }
 
             guard
-                let mlsController = mlsController,
+                let mlsService = mlsService,
                 let groupID = mlsGroupID?.base64EncodedString,
                 let mlsGroupID = MLSGroupID(base64Encoded: groupID)
             else {
@@ -194,7 +194,7 @@ extension ZMConversation {
 
             Task {
                 do {
-                    try await mlsController.addMembersToConversation(with: mlsUsers, for: mlsGroupID)
+                    try await mlsService.addMembersToConversation(with: mlsUsers, for: mlsGroupID)
 
                     context.perform {
                         completion(.success(()))
@@ -251,14 +251,14 @@ extension ZMConversation {
         case (.mls, false):
             Logging.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
-            var mlsController: MLSControllerProtocol?
+            var mlsService: MLSServiceInterface?
 
             context.zm_sync.performAndWait {
-                mlsController = context.zm_sync.mlsController
+                mlsService = context.zm_sync.mlsService
             }
 
             guard
-                let mlsController = mlsController,
+                let mlsService = mlsService,
                 let groupID = mlsGroupID,
                 let userID = user.qualifiedID
             else {
@@ -270,7 +270,7 @@ extension ZMConversation {
             Task {
                 do {
                     let clientIDs = try await provider.fetchUserClients(for: userID, in: context.notificationContext)
-                    try await mlsController.removeMembersFromConversation(with: clientIDs, for: groupID)
+                    try await mlsService.removeMembersFromConversation(with: clientIDs, for: groupID)
 
                     context.perform {
                         completion(.success(()))

@@ -30,14 +30,14 @@ public enum EventConversation {
 class EventDecoderTest: MessagingTestBase {
 
     var sut: EventDecoder!
-    var mockMLSController = MockMLSController()
+    var mockMLSService = MockMLSService()
 
     override func setUp() {
         super.setUp()
         sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.mlsController = self.mockMLSController
+            self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
             let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -468,7 +468,7 @@ extension EventDecoderTest {
             // Given
             let messageData = randomData
             let senderClientID = "clientID"
-            mockMLSController.mockDecryptResult = MLSDecryptResult.message(messageData, senderClientID)
+            mockMLSService.mockDecryptResult = MLSDecryptResult.message(messageData, senderClientID)
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),
@@ -499,7 +499,7 @@ extension EventDecoderTest {
                 groupID: mlsGroupID
             )
             let expectedCommitDate = event.timestamp! + TimeInterval(commitDelay)
-            mockMLSController.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
+            mockMLSService.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
 
             // When
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
@@ -507,7 +507,7 @@ extension EventDecoderTest {
             // Then
             XCTAssertNil(decryptedEvent)
 
-            let scheduleCommitPendingProposalsCalls = mockMLSController.calls.scheduleCommitPendingProposals
+            let scheduleCommitPendingProposalsCalls = mockMLSService.calls.scheduleCommitPendingProposals
             XCTAssertEqual(1, scheduleCommitPendingProposalsCalls.count)
             XCTAssertEqual(mlsGroupID, scheduleCommitPendingProposalsCalls[0].0)
             XCTAssertEqual(expectedCommitDate, scheduleCommitPendingProposalsCalls[0].1)
@@ -524,7 +524,7 @@ extension EventDecoderTest {
                 groupID: mlsGroupID
             )
             event.source = .webSocket
-            mockMLSController.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
+            mockMLSService.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
 
             // When
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
@@ -532,10 +532,10 @@ extension EventDecoderTest {
             // Then
             XCTAssertNil(decryptedEvent)
             XCTAssertTrue(wait(withTimeout: 3.0) { [self] in
-                !mockMLSController.calls.commitPendingProposals.isEmpty
+                !mockMLSService.calls.commitPendingProposals.isEmpty
             })
 
-            let commitPendingProposalsCalls: [Void] = mockMLSController.calls.commitPendingProposals
+            let commitPendingProposalsCalls: [Void] = mockMLSService.calls.commitPendingProposals
             XCTAssertEqual(1, commitPendingProposalsCalls.count)
         }
     }
@@ -550,7 +550,7 @@ extension EventDecoderTest {
                 groupID: mlsGroupID
             )
             event.source = .download
-            mockMLSController.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
+            mockMLSService.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
 
             // When
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
@@ -558,7 +558,7 @@ extension EventDecoderTest {
             // Then
             XCTAssertNil(decryptedEvent)
             spinMainQueue(withTimeout: 1)
-            let commitPendingProposalsCalls: [Void] = mockMLSController.calls.commitPendingProposals
+            let commitPendingProposalsCalls: [Void] = mockMLSService.calls.commitPendingProposals
             XCTAssertEqual(0, commitPendingProposalsCalls.count)
         }
     }
@@ -596,7 +596,7 @@ extension EventDecoderTest {
     func test_DecryptMLSMessage_ReturnsNil_WhenDecryptedDataIsNil() {
         syncMOC.performAndWait {
             // Given
-            mockMLSController.mockDecryptResult = nil
+            mockMLSService.mockDecryptResult = nil
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),
@@ -611,10 +611,10 @@ extension EventDecoderTest {
         }
     }
 
-    func test_DecryptMLSMessage_ReturnsNil_WhenMLSControllerThrows() {
+    func test_DecryptMLSMessage_ReturnsNil_WhenmlsServiceThrows() {
         syncMOC.performAndWait {
             // Given
-            mockMLSController.mockDecryptionError = .failedToDecryptMessage
+            mockMLSService.mockDecryptionError = .failedToDecryptMessage
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),

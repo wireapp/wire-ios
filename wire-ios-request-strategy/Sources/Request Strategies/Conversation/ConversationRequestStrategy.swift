@@ -390,8 +390,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             Logging.mls.info("resetting `mlsStatus` to `ready` b/c self client is creator")
             newConversation.mlsStatus = .ready
 
-            guard let mlsController = managedObjectContext.mlsController else {
-                Logging.mls.warn("failed to create mls group: MLSController doesn't exist")
+            guard let mlsService = managedObjectContext.mlsService else {
+                Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
                 return
             }
 
@@ -401,7 +401,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             }
 
             do {
-                try mlsController.createGroup(for: groupID)
+                try mlsService.createGroup(for: groupID)
             } catch let error {
                 Logging.mls.error("failed to create mls group: \(String(describing: error))")
                 return
@@ -411,7 +411,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
             Task {
                 do {
-                    try await mlsController.addMembersToConversation(with: users, for: groupID)
+                    try await mlsService.addMembersToConversation(with: users, for: groupID)
                 } catch let error {
                     Logging.mls.error("failed to add members to new mls group: \(String(describing: error))")
                     return
