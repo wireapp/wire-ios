@@ -53,6 +53,8 @@ public protocol MLSServiceInterface {
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
+
+    func createOrJoinSubgroup(parentID: QualifiedID) async
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -1033,7 +1035,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Subgroup
 
-    private func createOrJoinSubgroup(parentID: QualifiedID) async {
+    public func createOrJoinSubgroup(parentID: QualifiedID) async {
         do {
             logger.info("create or join subgroup in parent conversation (\(parentID))")
 
