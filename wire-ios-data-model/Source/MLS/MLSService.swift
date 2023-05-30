@@ -1035,8 +1035,10 @@ public final class MLSService: MLSServiceInterface {
 
     private func createOrJoinSubgroup(parentID: QualifiedID) async {
         do {
+            logger.info("create or join subgroup in parent conversation (\(parentID))")
+
             guard let notificationContext = context?.notificationContext else {
-                // TODO: handle
+                logger.error("failed to create or join subgroup: missing notification context")
                 return
             }
 
@@ -1057,7 +1059,7 @@ public final class MLSService: MLSServiceInterface {
                 try await joinSubgroup(with: subgroup.groupID)
             }
         } catch {
-            // TODO: handle
+            logger.error("failed to create or join subgroup in parent conversation (\(parentID)): \(String(describing: error))")
         }
     }
 
@@ -1065,36 +1067,60 @@ public final class MLSService: MLSServiceInterface {
         parentID: QualifiedID,
         context: NotificationContext
     ) async throws -> MLSSubgroup {
-        return try await actionsProvider.fetchSubgroup(
-            conversationID: parentID.uuid,
-            domain: parentID.domain,
-            type: .conference,
-            context: context
-        )
+        do {
+            logger.info("fetching subgroup with parent id (\(parentID))")
+            return try await actionsProvider.fetchSubgroup(
+                conversationID: parentID.uuid,
+                domain: parentID.domain,
+                type: .conference,
+                context: context
+            )
+        } catch {
+            logger.error("failed to fetch subgroup with parent id (\(parentID)): \(String(describing: error))")
+            throw error
+        }
     }
 
     private func createSubgroup(with id: MLSGroupID) async throws {
-        try createGroup(for: id)
-        try await updateKeyMaterial(for: id)
+        do {
+            logger.info("creating subgroup with id (\(id))")
+            try createGroup(for: id)
+            try await updateKeyMaterial(for: id)
+        } catch {
+            logger.error("failed to create subgroup with id (\(id)): \(String(describing: error))")
+            throw error
+        }
     }
 
     private func deleteSubgroup(
         parentID: QualifiedID,
         context: NotificationContext
     ) async throws {
-        try await actionsProvider.deleteSubgroup(
-            conversationID: parentID.uuid,
-            domain: parentID.domain,
-            subgroupType: .conference,
-            context: context
-        )
+        do {
+            logger.info("deleting subgroup with parent id (\(parentID))")
+            try await actionsProvider.deleteSubgroup(
+                conversationID: parentID.uuid,
+                domain: parentID.domain,
+                subgroupType: .conference,
+                context: context
+            )
+        } catch {
+            logger.error("failed to delete subgroup with parent id (\(parentID)): \(String(describing: error))")
+            throw error
+        }
     }
 
     private func joinSubgroup(with id: MLSGroupID) async throws {
-        try await joinByExternalCommit(
-            groupID: id,
-            subgroupType: .conference
-        )
+        do {
+            logger.info("joining subgroup with id (\(id))")
+            try await joinByExternalCommit(
+                groupID: id,
+                subgroupType: .conference
+            )
+        } catch {
+            logger.error("failed to join subgroup with id (\(id)): \(String(describing: error))")
+            throw error
+        }
     }
 
 }
