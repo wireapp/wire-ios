@@ -70,7 +70,7 @@ jobs:
   run-tests:
     needs: detect-changes
     if: ${{ needs.detect-changes.outputs.any == 'true' }}
-    runs-on: macOS-latest
+    runs-on: macos-13
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
@@ -79,9 +79,15 @@ jobs:
       
     steps:
       - uses: actions/checkout@v3
-      - uses: maxim-lobanov/setup-xcode@v1
+      
+      - name: Retrieve Xcode version
+        run: |
+          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+        id: xcode-version
+
+      - uses: maxim-lobanov/setup-xcode@v1.5.1
         with:
-          xcode-version: cat $(.xcode-version)
+          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
   
       - name: Setup workspace
         run: |
