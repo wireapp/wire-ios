@@ -174,7 +174,6 @@
     [group enter];
     [completionGroup notifyOnQueue:dispatch_get_global_queue(0, 0) block:^{
         [self.managedObjectContext performGroupedBlock:^{
-            [self didCompleteProcessingImageOwner:owner];
             [self.imageOwnersBeingPreprocessed removeObject:owner];
             [group leave];
         }];
@@ -222,11 +221,6 @@
     if ([imageOwner respondsToSelector:@selector(processingDidFinish)])  {
         [(id)imageOwner processingDidFinish];
     }
-}
-
-
-- (void)didCompleteProcessingImageOwner:(__unused id<ZMImageOwner>)imageOwner;
-{
 }
 
 
