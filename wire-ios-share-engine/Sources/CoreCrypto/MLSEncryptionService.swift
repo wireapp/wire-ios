@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import CoreCryptoSwift
 
-class MLSEncryptionController: MLSControllerProtocol {
+class MLSEncryptionService: MLSServiceInterface {
 
     private let coreCrypto: SafeCoreCryptoProtocol
 

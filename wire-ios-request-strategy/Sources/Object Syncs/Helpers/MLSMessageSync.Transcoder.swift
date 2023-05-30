@@ -87,14 +87,14 @@ extension MLSMessageSync {
                 return nil
             }
 
-            guard let mlsController = context.mlsController else {
-                Logging.mls.warn("failed to encrypt message: MLSController is missing.")
+            guard let mlsService = context.mlsService else {
+                Logging.mls.warn("failed to encrypt message: mlsService is missing.")
                 return nil
             }
 
             do {
                 return try message.encryptForTransport { messageData in
-                    let encryptedBytes = try mlsController.encrypt(message: messageData.bytes, for: groupID)
+                    let encryptedBytes = try mlsService.encrypt(message: messageData.bytes, for: groupID)
                     return encryptedBytes.data
                 }
             } catch let error {
