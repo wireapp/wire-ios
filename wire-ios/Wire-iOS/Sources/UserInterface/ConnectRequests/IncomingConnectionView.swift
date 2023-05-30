@@ -30,9 +30,11 @@ final class IncomingConnectionView: UIView {
     private let usernameLabel = UILabel()
     private let userDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
+    private let verticalStackView = UIStackView(axis: .vertical)
     private let userImageView = UserImageView()
     private let federatedIndicator = LabelIndicator(context: .federated)
     private let incomingConnectionFooter = UIView()
+    private let warningView = WarningLabelView()
     private let acceptButton = Button(style: .accentColorTextButtonStyle,
                                       cornerRadius: 16,
                                       fontSpec: .normalSemiboldFont)
@@ -94,7 +96,12 @@ final class IncomingConnectionView: UIView {
         incomingConnectionFooter.addSubview(acceptButton)
         incomingConnectionFooter.addSubview(ignoreButton)
 
-        [usernameLabel, userDetailView, securityLevelView, userImageView, federatedIndicator, incomingConnectionFooter].forEach(addSubview)
+        warningView.update(withUser: user)
+        warningView.translatesAutoresizingMaskIntoConstraints = false
+        verticalStackView.spacing = 30.0
+        verticalStackView.alignment = .center
+        [usernameLabel, userDetailView, securityLevelView, verticalStackView, incomingConnectionFooter].forEach(addSubview)
+        [userImageView, federatedIndicator, warningView].forEach{ verticalStackView.addArrangedSubview($0) }
         setupLabelText()
     }
 
@@ -119,7 +126,8 @@ final class IncomingConnectionView: UIView {
          userDetailView,
          securityLevelView,
          federatedIndicator,
-         userImageView].prepareForLayout()
+         userImageView,
+         verticalStackView].prepareForLayout()
 
         NSLayoutConstraint.activate([
             ignoreButton.leftAnchor.constraint(equalTo: incomingConnectionFooter.leftAnchor, constant: 16),
@@ -147,16 +155,14 @@ final class IncomingConnectionView: UIView {
             securityLevelView.trailingAnchor.constraint(equalTo: trailingAnchor),
             securityLevelView.bottomAnchor.constraint(lessThanOrEqualTo: userImageView.topAnchor),
 
-            userImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            userImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            userImageView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
             userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 264),
 
-            federatedIndicator.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 20),
-            federatedIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+            verticalStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            verticalStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            verticalStackView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
 
-            incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: userImageView.bottomAnchor),
+            incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: warningView.bottomAnchor),
             incomingConnectionFooter.leftAnchor.constraint(equalTo: leftAnchor),
             incomingConnectionFooter.bottomAnchor.constraint(equalTo: bottomAnchor),
             incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor)
