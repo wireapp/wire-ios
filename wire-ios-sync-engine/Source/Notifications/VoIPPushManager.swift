@@ -24,6 +24,7 @@ import avs
 public protocol VoIPPushManagerDelegate: AnyObject {
 
     func processIncomingRealVoIPPush(payload: [AnyHashable: Any], completion: @escaping () -> Void)
+    func processPendingCallEvents(accountID: UUID)
 
 }
 
@@ -173,6 +174,8 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
                 reason: .unanswered
             )
         }
+
+        delegate?.processPendingCallEvents(accountID: accountID)
     }
 
     private func processVoIPPush(
