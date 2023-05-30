@@ -84,7 +84,7 @@ jobs:
       
       - name: Select Xcode
         run: |
-          bundle exec fastlane run xcodes select_for_current_build_only:true
+          fastlane run xcodes select_for_current_build_only:true
 
       - name: Setup workspace
         run: |
