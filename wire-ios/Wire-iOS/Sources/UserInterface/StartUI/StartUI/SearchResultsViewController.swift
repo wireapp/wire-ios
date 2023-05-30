@@ -241,7 +241,7 @@ final class SearchResultsViewController: UIViewController {
         updateVisibleSections()
 
         searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
-        refreshMissingMetadata()
+        updateIncompleteMetadataIfNeeded()
     }
 
     @objc
@@ -267,7 +267,7 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    private func refreshMissingMetadata() {
+    private func updateIncompleteMetadataIfNeeded() {
         ZMUserSession.shared()?.perform {
             self.searchDirectory.refetchIncompleteUserMetadata()
             self.searchDirectory.refetchIncompleteConversationMetadata()

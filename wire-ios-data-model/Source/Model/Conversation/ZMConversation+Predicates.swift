@@ -180,16 +180,10 @@ extension ZMConversation {
         return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
 
-    public static func predicateForConversationsWithoutMetadata() -> NSPredicate {
-        let oneToOneConversationWithoutMetadata = NSPredicate(format: "%K == %d && (ANY %K.user.%K == YES)",
-                                                              ZMConversationConversationTypeKey,
-                                                              ZMConversationType.oneOnOne.rawValue,
-                                                              ZMConversationParticipantRolesKey,
-                                                              #keyPath(ZMUser.isPendingMetadataRefresh))
-        let groupConversationWithoutMetadata = NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
-
-        return NSCompoundPredicate(orPredicateWithSubpredicates: [oneToOneConversationWithoutMetadata, groupConversationWithoutMetadata])
+    public static func predicateForConversationsArePendingToRefreshMetadata() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
     }
+
 }
 
 extension String {

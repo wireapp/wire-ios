@@ -48,7 +48,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         createSubviews()
 
         if let conversation = conversation as? ZMConversation {
-            conversation.refetchParticipantsIfNeeded()
+            ZMUserSession.shared()?.perform {
+                conversation.refetchParticipantsIfNeeded()
+            }
 
             token = ConversationChangeInfo.add(observer: self, for: conversation)
             if let session = ZMUserSession.shared() {
@@ -346,13 +348,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 extension ZMConversation {
 
     func refetchParticipantsIfNeeded() {
-        guard let session = ZMUserSession.shared() else {
-            return
-        }
-        sortedOtherParticipants.filter { $0.isPendingMetadataRefresh }.forEach { user in
-            session.perform {
-                user.refreshData()
-            }
+        for user in sortedOtherParticipants where user.isPendingMetadataRefresh {
+            user.refreshData()
         }
     }
 

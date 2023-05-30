@@ -53,20 +53,18 @@ import Foundation
     }
 
     public func refetchIncompleteUserMetadata() {
-        let managedObjectContext = contextProvider.viewContext
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersWithIncompleteMetadata())
-        guard let users = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
+        guard let users = contextProvider.viewContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
             return
         }
         users.forEach { $0.refreshData() }
     }
 
     public func refetchIncompleteConversationMetadata() {
-        let managedObjectContext = contextProvider.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
+        fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-        let conversations = managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
+        let conversations = contextProvider.viewContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
 
         conversations?.forEach { $0.needsToBeUpdatedFromBackend = true }
     }

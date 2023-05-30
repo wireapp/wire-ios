@@ -95,7 +95,7 @@ public class ZMUserSession: NSObject {
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
     public lazy var featureService = FeatureService(context: syncContext)
-    public lazy var timerActionsManager: TimerActionsManagerType = TimerActionsManager(managedObjectContext: syncContext)
+    public lazy var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
 
     let earService: EARServiceInterface
 
@@ -401,6 +401,13 @@ public class ZMUserSession: NSObject {
                                syncMOC: syncManagedObjectContext)
     }
 
+    private func configureRecurringActions() {
+        perform {
+            self.recurringActionService.registerAction(self.refreshUsersMissingMetadata())
+            self.recurringActionService.registerAction(self.refreshConversationsMissingMetadata())
+        }
+    }
+
     func startRequestLoopTracker() {
         transportSession.requestLoopDetectionCallback = { path in
             guard !path.hasSuffix("/typing") else { return }
@@ -588,13 +595,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
     public func didFinishQuickSync() {
         Self.logger.trace("did finish quick sync")
         processEvents()
+        configureRecurringActions()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
 
-        timerActionsManager.applyTimerActionsIfNeeded(Date())
         fetchFeatureConfigs()
+        recurringActionService.performActionsIfNeeded()
     }
 
     func processEvents() {

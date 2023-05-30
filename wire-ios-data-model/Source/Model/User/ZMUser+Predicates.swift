@@ -76,7 +76,7 @@ extension ZMUser {
         return NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
     }
 
-    public static func predicateForUsersWithIncompleteMetadata() -> NSPredicate {
+    public static func predicateForUsersArePendingToRefreshMetadata() -> NSPredicate {
         return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
 }
