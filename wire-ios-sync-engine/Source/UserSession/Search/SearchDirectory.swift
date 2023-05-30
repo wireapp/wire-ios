@@ -25,12 +25,18 @@ import Foundation
     let transportSession: TransportSessionType
     var isTornDown = false
 
+    public var refetchIncompleteUserMetadata: (() -> Void)?
+    public var refetchIncompleteConversationMetadata: (() -> Void)?
+
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
     public convenience init(userSession: ZMUserSession) {
         self.init(searchContext: userSession.searchManagedObjectContext, contextProvider: userSession, transportSession: userSession.transportSession)
+
+        self.refetchIncompleteUserMetadata = userSession.refreshUsersMissingMetadata().perform
+        self.refetchIncompleteConversationMetadata = userSession.refreshConversationsMissingMetadata().perform
     }
 
     init(searchContext: NSManagedObjectContext, contextProvider: ContextProvider, transportSession: TransportSessionType) {
@@ -50,23 +56,6 @@ import Foundation
         }
 
         return task
-    }
-
-    public func refetchIncompleteUserMetadata() {
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
-        guard let users = contextProvider.viewContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
-            return
-        }
-        users.forEach { $0.refreshData() }
-    }
-
-    public func refetchIncompleteConversationMetadata() {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-        fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
-
-        let conversations = contextProvider.viewContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation]
-
-        conversations?.forEach { $0.needsToBeUpdatedFromBackend = true }
     }
 
     /// Lookup a user by user Id and returns a search user in the directory results. If the user doesn't exists

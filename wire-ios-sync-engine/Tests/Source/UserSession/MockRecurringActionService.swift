@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,20 @@
 //
 
 import Foundation
-import XCTest
+@testable import WireSyncEngine
 
-class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
+class MockRecurringActionService: RecurringActionServiceInterface {
 
-    func testThatTimersAreStartedWhenUserSessionIsCreated() {
-        // then
-        XCTAssertNotNil(sut.managedObjectContext.zm_messageDeletionTimer)
-        sut.syncManagedObjectContext.performGroupedAndWait {
-            XCTAssertNotNil($0.zm_messageObfuscationTimer)
-        }
+    var performActionsIsCalled: Bool = false
+
+    var actions = [RecurringAction]()
+
+    func performActionsIfNeeded() {
+        performActionsIsCalled = true
+    }
+
+    func registerAction(_ action: RecurringAction) {
+        actions.append(action)
     }
 
 }
-

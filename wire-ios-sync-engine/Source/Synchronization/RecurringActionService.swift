@@ -20,11 +20,17 @@ import Foundation
 
 public struct RecurringAction {
 
-    typealias Action = () -> Void
+    public typealias Action = () -> Void
 
-    let id: String
-    let interval: TimeInterval
-    let perform: Action
+    public let id: String
+    public let interval: TimeInterval
+    public let perform: Action
+
+    public init(id: String, interval: TimeInterval, perform: @escaping Action) {
+        self.id = id
+        self.interval = interval
+        self.perform = perform
+    }
 
 }
 

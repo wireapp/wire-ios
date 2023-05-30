@@ -268,10 +268,8 @@ final class SearchResultsViewController: UIViewController {
     }
 
     private func updateIncompleteMetadataIfNeeded() {
-        ZMUserSession.shared()?.perform {
-            self.searchDirectory.refetchIncompleteUserMetadata()
-            self.searchDirectory.refetchIncompleteConversationMetadata()
-        }
+        searchDirectory.refetchIncompleteUserMetadata?()
+        searchDirectory.refetchIncompleteConversationMetadata?()
     }
 
     func searchForUsers(withQuery query: String) {
