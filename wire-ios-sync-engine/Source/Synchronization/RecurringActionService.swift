@@ -31,30 +31,33 @@ public struct RecurringAction {
 public protocol RecurringActionServiceInterface {
 
     func performActionsIfNeeded()
-    func registerAction(_ action: RecurringAction?)
+    func registerAction(_ action: RecurringAction)
 
 }
 
 public final class RecurringActionService: NSObject, RecurringActionServiceInterface {
 
-    private var actions = [RecurringAction?]()
+    private var actions = [RecurringAction]()
 
     public func performActionsIfNeeded() {
         let currentDate = Date()
 
-        actions.compactMap({  $0 }).forEach { action in
+        actions.forEach { action in
+
             guard let lastActionDate = lastActionDate(for: action.id) else {
                 persistLastActionDate(for: action.id, newDate: currentDate)
                 return
             }
+
             if (lastActionDate + action.interval) <= currentDate {
                 action.perform()
                 persistLastActionDate(for: action.id, newDate: currentDate)
             }
+
         }
     }
 
-    public func registerAction(_ action: RecurringAction?) {
+    public func registerAction(_ action: RecurringAction) {
         actions.append(action)
     }
 

@@ -20,38 +20,37 @@ import Foundation
 
 extension ZMUserSession {
 
-    func refreshUsersMissingMetadata() -> RecurringAction? {
+    func refreshUsersMissingMetadata() -> RecurringAction {
         /// Performing actions every 3 hours.
         let interval: TimeInterval = 3 * 60 * 60
 
-        let action: () = {
-            let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
-            guard let users = self.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
-                return
+        return RecurringAction(id: UUID().uuidString, interval: interval) {
+            self.perform {
+                let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
+                guard let users = self.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+                    return
+                }
+                users.forEach { $0.refreshData() }
             }
-            users.forEach { $0.refreshData() }
-        }()
-
-        return RecurringAction(id: UUID().uuidString,
-                               interval: interval) { action }
+        }
     }
 
-    func refreshConversationsMissingMetadata() -> RecurringAction? {
+    func refreshConversationsMissingMetadata() -> RecurringAction {
         /// Performing actions every 3 hours.
         let interval: TimeInterval = 3 * 60 * 60
+        
+        return RecurringAction(id: UUID().uuidString, interval: interval) {
+            self.perform {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
+                fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-        let action: () = {
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
-
-            guard let conversations = self.managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
-                return
+                guard let conversations = self.managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                    return
+                }
+                conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
             }
-            conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
-        }()
 
-        return RecurringAction(id: UUID().uuidString,
-                               interval: interval) { action }
+        }
     }
 
 }
