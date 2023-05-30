@@ -1045,21 +1045,16 @@ public final class MLSService: MLSServiceInterface {
                 context: notificationContext
             )
 
-            guard let groupID = MLSGroupID(base64Encoded: subgroup.groupID) else {
-                // TODO: handle
-                return
-            }
-
             if subgroup.epoch <= 0 {
-                try await createSubgroup(with: groupID)
+                try await createSubgroup(with: subgroup.groupID)
             } else if subgroup.epochTimestamp.ageInDays >= 1 {
                 try await deleteSubgroup(
                     parentID: parentID,
                     context: notificationContext
                 )
-                try await createSubgroup(with: groupID)
+                try await createSubgroup(with: subgroup.groupID)
             } else {
-                try await joinSubgroup(with: groupID)
+                try await joinSubgroup(with: subgroup.groupID)
             }
         } catch {
             // TODO: handle

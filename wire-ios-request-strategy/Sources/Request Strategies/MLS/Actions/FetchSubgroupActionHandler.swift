@@ -54,12 +54,13 @@ class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
         case (200, _):
             guard
                 let data = response.rawData,
-                let payload = try? JSONDecoder().decode(Subgroup.self, from: data)
+                let payload = try? JSONDecoder().decode(Subgroup.self, from: data),
+                let mlsSubgroup = payload.mlsSubgroup
             else {
                 action.fail(with: .malformedResponse)
                 return
             }
-            action.succeed(with: payload.mlsSubgroup)
+            action.succeed(with: mlsSubgroup)
         case (400, _):
             action.fail(with: .invalidParameters)
         case (403, "access-denied"):
@@ -130,7 +131,11 @@ extension FetchSubgroupActionHandler {
 }
 
 extension FetchSubgroupActionHandler.Subgroup {
-    var mlsSubgroup: MLSSubgroup {
+    var mlsSubgroup: MLSSubgroup? {
+        guard let groupID = MLSGroupID(base64Encoded: groupID) else {
+            return nil
+        }
+
         return MLSSubgroup(
             cipherSuite: cipherSuite,
             epoch: epoch,
@@ -157,4 +162,3 @@ extension FetchSubgroupActionHandler.SubgroupMember {
         QualifiedClientID(userID: userID, domain: domain, clientID: clientID)
     }
 }
-
