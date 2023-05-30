@@ -92,7 +92,8 @@ class StoreUpdateEventTests: MessagingTestBase {
         let callEventContent = CallEventContent(
             type: "CONFSTART",
             properties: nil,
-            callerIDString: nil,
+            callerUserID: nil,
+            callerClientID: "",
             resp: false
         )
 

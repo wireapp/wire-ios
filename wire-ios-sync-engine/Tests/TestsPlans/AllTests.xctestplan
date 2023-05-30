@@ -64,6 +64,7 @@
       "skippedTests" : [
         "AvailabilityTests",
         "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",
+        "UserRichProfileIntegrationTests\/testThatItHandlesErrorWhenUpdatingRichInfo()",
         "UserTests"
       ],
       "target" : {

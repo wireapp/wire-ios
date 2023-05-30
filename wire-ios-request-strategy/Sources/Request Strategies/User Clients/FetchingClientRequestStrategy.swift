@@ -47,6 +47,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     var userClientByUserClientIDTranscoder: UserClientByUserClientIDTranscoder
     var userClientByQualifiedUserIDTranscoder: UserClientByQualifiedUserIDTranscoder
 
+    private let entitySync: EntityActionSync
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
 
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
@@ -56,6 +58,10 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         self.userClientsByUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserIDTranscoder)
         self.userClientsByUserClientID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserClientIDTranscoder)
         self.userClientsByQualifiedUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByQualifiedUserIDTranscoder)
+
+        entitySync = EntityActionSync(actionHandlers: [
+            FetchUserClientsActionHandler(context: managedObjectContext)
+        ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -107,7 +113,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         return
             userClientsByUserClientID.nextRequest(for: apiVersion) ??
             userClientsByUserID.nextRequest(for: apiVersion) ??
-            userClientsByQualifiedUserID.nextRequest(for: apiVersion)
+            userClientsByQualifiedUserID.nextRequest(for: apiVersion) ??
+            entitySync.nextRequest(for: apiVersion)
     }
 
 }

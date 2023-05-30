@@ -69,7 +69,8 @@ final class SessionManagerTests: IntegrationTest {
             requiredPushTokenType: requiredTokenType,
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         sessionManager.start(launchOptions: launchOptions)
@@ -164,7 +165,8 @@ final class SessionManagerTests: IntegrationTest {
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         let environment = MockEnvironment()
@@ -254,7 +256,8 @@ final class SessionManagerTests: IntegrationTest {
             detector: jailbreakDetector,
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         let environment = MockEnvironment()
@@ -315,7 +318,8 @@ final class SessionManagerTests: IntegrationTest {
             detector: jailbreakDetector,
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         XCTAssertTrue(self.delegate.jailbroken)
@@ -470,6 +474,27 @@ class SessionManagertests_AccountDeletion: IntegrationTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }
 
+    func testThatItDeletesTheLastEventID_WhenDeletingActiveUserSessionAccount() throws {
+        // given
+        XCTAssert(login())
+
+        let sessionManager = try XCTUnwrap(sessionManager)
+        let account = try XCTUnwrap(sessionManager.accountManager.selectedAccount)
+        let repository = LastEventIDRepository(
+            userID: account.userIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
+        XCTAssertNotNil(repository.fetchLastEventID())
+
+        // when
+        performIgnoringZMLogError {
+            sessionManager.delete(account: account)
+        }
+
+        // then
+        XCTAssertNil(repository.fetchLastEventID())
+    }
+
 }
 
 class SessionManagerTests_AuthenticationFailure: IntegrationTest {
@@ -550,9 +575,19 @@ class SessionManagerTests_EncryptionAtRestMigration: IntegrationTest {
     }
 
     override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
         super.setUp()
+
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
@@ -1029,7 +1064,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            isUnauthenticatedTransportSessionReady: true
+            isUnauthenticatedTransportSessionReady: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         let environment = MockEnvironment()
@@ -1085,7 +1121,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
-            callKitManager: MockCallKitManager()
+            callKitManager: MockCallKitManager(),
+            sharedUserDefaults: sharedUserDefaults
         )
 
         let environment = MockEnvironment()
