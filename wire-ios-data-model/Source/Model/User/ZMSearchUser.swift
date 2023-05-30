@@ -407,6 +407,10 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.isGroupAdmin(in: conversation) == true
     }
 
+    public var canCreateMLSGroups: Bool {
+        return user?.canCreateMLSGroups == true
+    }
+
     public override func isEqual(_ object: Any?) -> Bool {
         guard let otherSearchUser = object as? ZMSearchUser else { return false }
 

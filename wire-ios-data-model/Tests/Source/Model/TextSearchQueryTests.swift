@@ -30,6 +30,18 @@ private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 
 class TextSearchQueryTests: BaseZMClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+    
     func testThatItOnlyReturnsResultFromTheCorrectConversationNotYetIndexed() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -101,7 +113,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
     func testThatItDoesntPopulateTheNormalizedTextField_WhenEncryptMessagesAtRestIsEnabled() {
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = validEncryptionKeys
+        uiMOC.databaseKey = validDatabaseKey
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()

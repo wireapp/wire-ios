@@ -52,7 +52,19 @@ enum Payload {
         let id: Int?
     }
 
-    struct Location: Codable {
+    struct PrekeyByQualifiedUserIDV4: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case prekeyByQualifiedUserID = "qualified_user_client_prekeys"
+            case failed = "failed_to_list"
+        }
+
+        let prekeyByQualifiedUserID: Payload.PrekeyByQualifiedUserID
+        let failed: [QualifiedID]?
+
+    }
+
+    struct Location: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case longitude = "lon"
@@ -63,7 +75,7 @@ enum Payload {
         let latitide: Double
     }
 
-    struct UserClient: Codable {
+    struct UserClient: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case id
@@ -84,7 +96,7 @@ enum Payload {
         let deviceModel: String?
 
         init(id: String,
-             deviceClass: String,
+             deviceClass: String? = nil,
              type: String? = nil,
              creationDate: Date? = nil,
              label: String? = nil,
@@ -140,6 +152,18 @@ enum Payload {
         case pending
         case disabled
         case noConsent = "no_consent"
+    }
+
+    struct UserProfilesV4: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case found = "found"
+            case failed = "failed"
+        }
+
+        let found: [Payload.UserProfile]
+        let failed: [QualifiedID]?
+
     }
 
     struct UserProfile: Codable {

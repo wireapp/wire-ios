@@ -94,7 +94,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
         switch apiVersion {
         case .v0:
             _ = entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
-        case .v1, .v2, .v3:
+        case .v1, .v2, .v3, .v4:
             let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
             _ = payload?.updateClientsChanges(for: entity)
         }
@@ -110,7 +110,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             switch apiVersion {
             case .v0:
                 return entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate).contains(.missing)
-            case .v1, .v2, .v3:
+            case .v1, .v2, .v3, .v4:
                 let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
                 return payload?.updateClientsChanges(for: entity) ?? false
             }
@@ -130,12 +130,14 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     fileprivate func purgeEncryptedPayloadCache() {
-        guard let selfClient = ZMUser.selfUser(in: context).selfClient() else {
-            return
-        }
-        selfClient.keysStore.encryptionContext.perform { (session) in
-            session.purgeEncryptedPayloadCache()
-        }
+        context.proteusProvider.perform(
+            withProteusService: { _ in },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform { (session) in
+                    session.purgeEncryptedPayloadCache()
+                }
+            }
+        )
     }
 
 }

@@ -25,7 +25,7 @@ extension Notification.Name {
 
 }
 
-@objcMembers public class SyncStatus: NSObject, SyncProgress {
+@objcMembers public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
 
@@ -39,6 +39,7 @@ extension Notification.Name {
         }
     }
 
+    private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     fileprivate unowned var syncStateDelegate: ZMSyncStateDelegate
@@ -49,9 +50,7 @@ extension Notification.Name {
     public internal (set) var needsToRestartQuickSync: Bool = false
     public internal (set) var pushChannelEstablishedDate: Date?
 
-    fileprivate var pushChannelIsOpen: Bool {
-        return pushChannelEstablishedDate != nil
-    }
+    var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isSlowSyncing: Bool {
         return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
@@ -60,23 +59,25 @@ extension Notification.Name {
     private var isForceQuickSync = false
 
     public var isSyncing: Bool {
-        // TODO: Improve this solution.
-        // When triggering a quick sync in the bg when answering a call,
-        // we need to be able to process events. But I'm not certain if this
-        // is the best way. I think we're using this computed property to control
-        // whether the sync bar in the ui is shown or not. In this case, it makes
-        // sense that we only hide the bar if the syncing is complete and push
-        // channel is open.
-        if isForceQuickSync {
-            return currentSyncPhase.isSyncing
-        } else {
-            return currentSyncPhase.isSyncing || !pushChannelIsOpen
-        }
+        return currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
-    public init(managedObjectContext: NSManagedObjectContext, syncStateDelegate: ZMSyncStateDelegate) {
+    public var isSyncingInBackground: Bool {
+        return currentSyncPhase.isSyncing
+    }
+
+    public var isPushChannelOpen: Bool {
+        return pushChannelEstablishedDate != nil
+    }
+
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        syncStateDelegate: ZMSyncStateDelegate,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
         self.managedObjectContext = managedObjectContext
         self.syncStateDelegate = syncStateDelegate
+        self.lastEventIDRepository = lastEventIDRepository
         super.init()
 
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
@@ -115,6 +116,26 @@ extension Notification.Name {
         syncStateDelegate.didStartSlowSync()
     }
 
+    public func performQuickSync() async {
+        return await withCheckedContinuation { [weak self] continuation in
+            guard let `self` = self else {
+                continuation.resume()
+                return
+            }
+
+            // The continuation should be resumed when quick sync finishes.
+            quickSyncContinuation = continuation
+            currentSyncPhase = .fetchingMissedEvents
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
+    }
+
+    func notifyQuickSyncDidFinish() {
+        syncStateDelegate.didFinishQuickSync()
+        quickSyncContinuation?.resume()
+        quickSyncContinuation = nil
+    }
+
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
@@ -142,7 +163,7 @@ extension SyncStatus {
         currentSyncPhase = phase.nextPhase
 
         if currentSyncPhase == .done {
-            if needsToRestartQuickSync && pushChannelIsOpen {
+            if needsToRestartQuickSync && isPushChannelOpen {
                 // If the push channel closed while fetching notifications
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents
@@ -152,7 +173,7 @@ extension SyncStatus {
             }
 
             zmLog.debug("sync complete")
-            syncStateDelegate.didFinishQuickSync()
+            notifyQuickSyncDidFinish()
             isForceQuickSync = false
         }
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -164,14 +185,14 @@ extension SyncStatus {
         zmLog.debug("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
-            managedObjectContext.zm_lastNotificationID = nil
+            lastEventIDRepository.storeLastEventID(nil)
             currentSyncPhase = .fetchingLastUpdateEventID
             needsToRestartQuickSync = false
         }
     }
 
     var hasPersistedLastEventID: Bool {
-        return managedObjectContext.zm_lastNotificationID != nil
+        return lastEventIDRepository.fetchLastEventID() != nil
     }
 
     public func updateLastUpdateEventID(eventID: UUID) {
@@ -182,14 +203,13 @@ extension SyncStatus {
     public func persistLastUpdateEventID() {
         guard let lastUpdateEventID = lastUpdateEventID else { return }
         zmLog.debug("persist last eventID: \(lastUpdateEventID)")
-        managedObjectContext.zm_lastNotificationID = lastUpdateEventID
+        lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }
 
     public func removeLastUpdateEventID() {
         lastUpdateEventID = nil
         zmLog.debug("remove last eventID")
-        managedObjectContext.zm_lastNotificationID = nil
-        managedObjectContext.enqueueDelayedSave()
+        lastEventIDRepository.storeLastEventID(nil)
     }
 }
 
@@ -264,3 +284,5 @@ extension SyncStatus {
         }
     }
 }
+
+

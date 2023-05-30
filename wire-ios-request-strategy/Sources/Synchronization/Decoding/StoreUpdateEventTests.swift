@@ -19,20 +19,46 @@
 import WireTesting
 @testable import WireRequestStrategy
 
+@available(iOS 15, *)
 class StoreUpdateEventTests: MessagingTestBase {
+
+    struct Failure: Error {
+
+        var description: String
+
+        init(_ description: String) {
+            self.description = description
+        }
+
+    }
 
     var account: Account!
     var publicKey: SecKey?
-    var encryptionKeys: EncryptionKeys?
+    var publicKeys: EARPublicKeys!
+    var privateKeys: EARPrivateKeys!
 
-    override func setUp() {
-        super.setUp()
+    // MARK: - Life cycle
 
-        self.eventMOC.performGroupedBlockAndWait { [self] in
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
+        try eventMOC.performAndWait {
             account = Account(userName: "John Doe", userIdentifier: UUID())
-            // Notice: keys are nil when test with iOS 15 simulator. ref:https://wearezeta.atlassian.net/browse/SQCORE-1188
-            encryptionKeys = try? EncryptionKeys.createKeys(for: account)
-            publicKey = try? EncryptionKeys.publicKey(for: account)
+            let keyGenerator = EARKeyGenerator()
+            let primaryID = "stored-update-event-tests.primary.\(account.userIdentifier)"
+            let primaryKeys = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: primaryID)
+            let secondaryID = "stored-update-event-tests.secondary.\(account.userIdentifier)"
+            let secondaryKeys = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: secondaryID)
+
+            publicKeys = EARPublicKeys(
+                primary: primaryKeys.publicKey,
+                secondary: secondaryKeys.publicKey
+            )
+
+            privateKeys = EARPrivateKeys(
+                primary: primaryKeys.privateKey,
+                secondary: secondaryKeys.privateKey
+            )
         }
     }
 
@@ -40,359 +66,426 @@ class StoreUpdateEventTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         account = nil
         publicKey = nil
-        encryptionKeys = nil
+        privateKeys = nil
         super.tearDown()
     }
 
-    func testThatYouCanCreateAnEvent() {
+    // MARK: - Helpers
 
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
-            event.appendDebugInformation("Highly informative description")
+    private func createConversation(
+        id: UUID = .create(),
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        return conversation
+    }
 
-            // when
-            if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2) {
+    private func createNewConversationEvent(for conversation: ZMConversation) -> ZMUpdateEvent {
+        let payload = payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
+        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
+        event.appendDebugInformation("Highly informative description")
+        return event
+    }
 
-                // then
-                XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-                XCTAssertEqual(storedEvent.payload, event.payload as NSDictionary)
-                XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-                XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-                XCTAssertEqual(storedEvent.sortIndex, 2)
-                XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
-            } else {
-                XCTFail("Did not create storedEvent")
+    private func createNewCallEvent(for conversation: ZMConversation) throws -> ZMUpdateEvent {
+        let callEventContent = CallEventContent(
+            type: "CONFSTART",
+            properties: nil,
+            callerUserID: nil,
+            callerClientID: "",
+            resp: false
+        )
+
+        let calling = Calling(content: try callEventContent.encodeToJSONString())
+        let genericMessage = GenericMessage(content: calling)
+        let serializedData = try genericMessage.serializedData()
+
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversation.addOTRMessage,
+            data: ["text": serializedData.base64String()]
+        )!
+
+        let event = ZMUpdateEvent(
+            fromEventStreamPayload: payload,
+            uuid: .create()
+        )!
+
+        event.appendDebugInformation("Highly informative description")
+        return event
+
+    }
+
+    private func createStoredEvent(index: UInt) throws -> StoredUpdateEvent {
+        return try createStoredEvents(indices: [index])[0]
+    }
+
+    private func createStoredEvents(indices: [UInt]) throws -> [StoredUpdateEvent] {
+        let conversation = createConversation(in: uiMOC)
+        let eventsAndIndices = indices.map { index in
+            (createNewConversationEvent(for: conversation), index)
+        }
+
+        return try createStoredEvents(eventsAndIndices: eventsAndIndices)
+    }
+
+    private func createStoredEvent(
+        from event: ZMUpdateEvent,
+        index: UInt
+    ) throws -> StoredUpdateEvent {
+        return try createStoredEvents(eventsAndIndices: [(event, index)])[0]
+    }
+
+    private func createStoredEvents(eventsAndIndices: [(ZMUpdateEvent, UInt)]) throws -> [StoredUpdateEvent] {
+        return try eventsAndIndices.map { event, index in
+            guard let storedEvent = StoredUpdateEvent.encryptAndCreate(
+                event,
+                context: eventMOC,
+                index: Int64(index)
+            ) else {
+                throw Failure("Could not create storedEvents")
             }
+
+            return storedEvent
         }
     }
 
-    func testThatItFetchesAllStoredEvents() {
+    private func createStoredEvents(encrypt: Bool) throws -> ([ZMUpdateEvent], [StoredUpdateEvent]) {
+        let conversation = self.createConversation(in: self.uiMOC)
+        let event1 = self.createNewConversationEvent(for: conversation)
+        let event2 = try self.createNewCallEvent(for: conversation)
 
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
+        guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+            event1,
+            context: self.eventMOC,
+            index: 2,
+            publicKeys: encrypt ? self.publicKeys : nil
+        ) else {
+            throw Failure("Did not create storedEvent")
+        }
 
-            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 0),
-                  let storedEvent2 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 1),
-                  let storedEvent3 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2)
-            else {
-                return XCTFail("Could not create storedEvents")
+        guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+            event2,
+            context: self.eventMOC,
+            index: 3,
+            publicKeys: encrypt ? self.publicKeys : nil
+        ) else {
+            throw Failure("Did not create storedEvent")
+        }
+
+        // Then first event is encrypted and not a call event
+        assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+        XCTAssertEqual(storedEvent1.sortIndex, 2)
+        XCTAssertNotNil(storedEvent1.payload)
+        XCTAssertFalse(storedEvent1.isCallEvent)
+        XCTAssertEqual(storedEvent1.isEncrypted, encrypt)
+
+        // Then second event is encrypted and a call event
+        assertStoredEventProperties(storedEvent: storedEvent2, event: event2)
+        XCTAssertEqual(storedEvent2.sortIndex, 3)
+        XCTAssertNotNil(storedEvent2.payload)
+        XCTAssertTrue(storedEvent2.isCallEvent)
+        XCTAssertEqual(storedEvent2.isEncrypted, encrypt)
+
+        return ([event1, event2], [storedEvent1, storedEvent2])
+    }
+
+    private func decryptStoredEvent(
+        event: StoredUpdateEvent,
+        privateKey: SecKey
+    ) throws -> NSDictionary {
+        guard let encryptedPayload = event.payload?[StoredUpdateEvent.encryptedPayloadKey] else {
+            throw Failure("expected encrypted payload")
+        }
+
+        guard let decryptedData = SecKeyCreateDecryptedData(
+            privateKey,
+            .eciesEncryptionCofactorX963SHA256AESGCM,
+            encryptedPayload as! CFData,
+            nil
+        ) else {
+            throw Failure("failed to decrypt payload")
+        }
+
+        guard let payload = try JSONSerialization.jsonObject(
+            with: decryptedData as Data,
+            options: []
+        ) as? NSDictionary else {
+            throw Failure("failed to serialize payload")
+        }
+
+        return payload
+    }
+
+    private func assertStoredEventProperties(
+        storedEvent: StoredUpdateEvent,
+        event: ZMUpdateEvent
+    ) {
+        XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
+        XCTAssertEqual(storedEvent.isTransient, event.isTransient)
+        XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
+        XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
+    }
+
+    // MARK: - Encrypt and create
+
+    func test_EncryptAndCreate_Unencrypted() throws {
+        try eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+            let event2 = try self.createNewCallEvent(for: conversation)
+
+            // When we store the events without public keys.
+            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: nil
+            ) else {
+                return XCTFail("Did not create storedEvent")
             }
 
-            // when
-            let batch = StoredUpdateEvent.nextEvents(self.eventMOC, batchSize: 4)
+            guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+                event2,
+                context: self.eventMOC,
+                index: 3,
+                publicKeys: nil
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
 
-            // then
-            XCTAssertEqual(batch.count, 3)
-            XCTAssertTrue(batch.contains(storedEvent1))
-            XCTAssertTrue(batch.contains(storedEvent2))
-            XCTAssertTrue(batch.contains(storedEvent3))
+            // Then first event is not encrypted
+            assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+            XCTAssertEqual(storedEvent1.sortIndex, 2)
+            XCTAssertFalse(storedEvent1.isCallEvent)
+            XCTAssertFalse(storedEvent1.isEncrypted)
+            XCTAssertEqual(storedEvent1.payload, event1.payload as NSDictionary)
+
+            // Then second event is not encrypted
+            assertStoredEventProperties(storedEvent: storedEvent2, event: event2)
+            XCTAssertEqual(storedEvent2.sortIndex, 3)
+            XCTAssertTrue(storedEvent2.isCallEvent)
+            XCTAssertFalse(storedEvent2.isEncrypted)
+            XCTAssertEqual(storedEvent2.payload, event2.payload as NSDictionary)
+        }
+    }
+
+    func test_EncryptAndCreate_Encrypted() throws {
+        try eventMOC.performAndWait {
+            // Given some events.
+            let conversation = self.createConversation(in: self.uiMOC)
+            let event1 = self.createNewConversationEvent(for: conversation)
+            let event2 = try createNewCallEvent(for: conversation)
+
+            // When we store the events with public keys.
+            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
+                event1,
+                context: self.eventMOC,
+                index: 2,
+                publicKeys: self.publicKeys
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
+
+            guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
+                event2,
+                context: self.eventMOC,
+                index: 3,
+                publicKeys: self.publicKeys
+            ) else {
+                return XCTFail("Did not create storedEvent")
+            }
+
+            // Then first event is encrypted
+            assertStoredEventProperties(storedEvent: storedEvent1, event: event1)
+            XCTAssertEqual(storedEvent1.sortIndex, 2)
+            XCTAssertNotNil(storedEvent1.payload)
+            XCTAssertFalse(storedEvent1.isCallEvent)
+            XCTAssertTrue(storedEvent1.isEncrypted)
+
+            // Then second event is encrypted
+            assertStoredEventProperties(storedEvent: storedEvent2, event: event2)
+            XCTAssertEqual(storedEvent2.sortIndex, 3)
+            XCTAssertNotNil(storedEvent2.payload)
+            XCTAssertTrue(storedEvent2.isCallEvent)
+            XCTAssertTrue(storedEvent2.isEncrypted)
+        }
+    }
+
+    // MARK: - Next events
+
+    func test_NextEvents() throws {
+        try eventMOC.performAndWait {
+            // Given some stored events.
+            let storedEvents = try self.createStoredEvents(indices: [0, 1, 2])
+
+            // When we fetch a batch of events.
+            let batch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 4,
+                callEventsOnly: false
+            )
+
+            // Then all the events are returned.
+            XCTAssertEqual(batch, storedEvents)
             batch.forEach { XCTAssertFalse($0.isFault) }
         }
     }
 
-    func testThatItOrdersEventsBySortIndex() {
+    func test_NextEvents_OrderedResults() throws {
+        try eventMOC.performAndWait {
+            // Given some stored events with various indices.
+            let storedEvents = try self.createStoredEvents(indices: [0, 30, 10])
 
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID.create())!
+            // When we fetch a batch of events.
+            let batch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 3,
+                callEventsOnly: false
+            )
 
-            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 0),
-                  let storedEvent2 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 30),
-                  let storedEvent3 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 10)
-            else {
-                return XCTFail("Could not create storedEvents")
-            }
-
-            // when
-            let storedEvents = StoredUpdateEvent.nextEvents(self.eventMOC, batchSize: 3)
-
-            // then
-            XCTAssertEqual(storedEvents[0], storedEvent1)
-            XCTAssertEqual(storedEvents[1], storedEvent3)
-            XCTAssertEqual(storedEvents[2], storedEvent2)
+            // Then they are returned in the correct order.
+            XCTAssertEqual(batch[0], storedEvents[0])
+            XCTAssertEqual(batch[1], storedEvents[2])
+            XCTAssertEqual(batch[2], storedEvents[1])
         }
     }
 
-    func testThatItReturnsOnlyDefinedBatchSize() {
+    func test_NextEvents_BatchSize() throws {
+        try eventMOC.performAndWait {
+            // Given some stored events.
+            let storedEvents = try self.createStoredEvents(indices: [0, 1, 2])
 
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID.create())!
+            // When we fetch a small batch.
+            let firstBatch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 2,
+                callEventsOnly: false
+            )
 
-            guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 0),
-                  let storedEvent2 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 10),
-                  let storedEvent3 = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 30)
-            else {
-                return XCTFail("Could not create storedEvents")
-            }
+            // Then the batch size is correct
+            XCTAssertEqual(firstBatch, Array(storedEvents.prefix(2)))
 
-            // when
-            let firstBatch = StoredUpdateEvent.nextEvents(self.eventMOC, batchSize: 2)
-
-            // then
-            XCTAssertEqual(firstBatch.count, 2)
-            XCTAssertTrue(firstBatch.contains(storedEvent1))
-            XCTAssertTrue(firstBatch.contains(storedEvent2))
-            XCTAssertFalse(firstBatch.contains(storedEvent3))
-
-            // when
+            // When we fetch another batch.
             firstBatch.forEach(self.eventMOC.delete)
-            let secondBatch = StoredUpdateEvent.nextEvents(self.eventMOC, batchSize: 2)
+            let secondBatch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 2,
+                callEventsOnly: false
+            )
 
-            // then
-            XCTAssertEqual(secondBatch.count, 1)
-            XCTAssertTrue(secondBatch.contains(storedEvent3))
+            // Then
+            XCTAssertEqual(secondBatch, Array(storedEvents.dropFirst(2)))
         }
     }
 
-    func testThatItReturnsHighestIndex() {
+    func test_NextEvents_CallEventsOnly() throws {
+        try eventMOC.performAndWait {
+            // Given stored events (containing 1 call event)
+            let storedEvents = try self.createStoredEvents(encrypt: false).1
 
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
+            // When we fetch a batch
+            let batch = StoredUpdateEvent.nextEvents(
+                self.eventMOC,
+                batchSize: 2,
+                callEventsOnly: true
+            )
 
-            guard (StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 0) != nil),
-                  (StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 1) != nil),
-                  (StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2) != nil)
-            else {
-                return XCTFail("Could not create storedEvents")
-            }
+            // Then we only get 1 event (call event)
+            XCTAssertEqual(batch, Array(storedEvents.dropFirst()))
+        }
+    }
 
-            // when
+    // MARK: - Highest index
+
+    func test_HighestIndex() throws {
+        try eventMOC.performAndWait {
+            // Given some events.
+            let storedEvents = try self.createStoredEvents(indices: [0, 1, 2])
+
+            // When we query the highest index.
             let highestIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
-            // then
+            // Then
             XCTAssertEqual(highestIndex, 2)
         }
     }
 
-    func testThatItCanConvertAnEventToStoredEventAndBack() {
+    // MARK: - Event from stored events
 
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
+    func test_EventFromStoredEvents_Unencrypted() throws {
+        try eventMOC.performAndWait {
+            // Given some uncrypted events.
+            let (updateEvents, storedEvents) = try self.createStoredEvents(encrypt: false)
 
-            // when
-            guard let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 0)
-            else {
-                return XCTFail("Could not create storedEvents")
+            // When we retrieve the events without private keys.
+            let fetchedEvents = StoredUpdateEvent.eventsFromStoredEvents(
+                storedEvents,
+                privateKeys: nil
+            )
 
-            }
-
-            guard let restoredEvent = StoredUpdateEvent.eventsFromStoredEvents([storedEvent]).first
-            else {
-                return XCTFail("Could not create original event")
-            }
-
-            // then
-            XCTAssertEqual(restoredEvent, event)
-            XCTAssertEqual(restoredEvent.payload["foo"] as? String, event.payload["foo"] as? String)
-            XCTAssertEqual(restoredEvent.isTransient, event.isTransient)
-            XCTAssertEqual(restoredEvent.source, event.source)
-            XCTAssertEqual(restoredEvent.uuid, event.uuid)
-        }
-    }
-}
-
-// MARK: - Encrypting / Decrypting events using public / private keys
-
-extension StoreUpdateEventTests {
-    func testThatItEncryptsEventIfThePublicKeyIsNotNil() throws {
-        // given
-        try eventMOC.performGroupedAndWait { _ in
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
-            event.appendDebugInformation("Highly informative description")
-
-            // when
-            if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2, publicKey: self.publicKey) {
-                XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-                XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-                XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-                XCTAssertEqual(storedEvent.sortIndex, 2)
-                XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
-                XCTAssertNotNil(storedEvent.payload)
-
-                #if targetEnvironment(simulator) && swift(>=5.4)
-                if #available(iOS 15, *) {
-                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-                }
-                #endif
-
-                XCTAssertTrue(storedEvent.isEncrypted)
-
-                guard let privateKey = self.encryptionKeys?.privateKey else {
-                    XCTFail("private key not found")
-                    return
-                }
-
-                let decryptedData = SecKeyCreateDecryptedData(privateKey,
-                                                              .eciesEncryptionCofactorX963SHA256AESGCM,
-                                                              storedEvent.payload![StoredUpdateEvent.encryptedPayloadKey] as! CFData,
-                                                              nil)
-                let payload: NSDictionary = try JSONSerialization.jsonObject(with: decryptedData! as Data, options: []) as! NSDictionary
-                XCTAssertEqual(payload, event.payload as NSDictionary)
-
-            } else {
-                XCTFail("Did not create storedEvent")
-            }
+            // Then we can process and delete all events.
+            XCTAssertEqual(fetchedEvents.eventsToProcess, updateEvents)
+            XCTAssertEqual(fetchedEvents.eventsToDelete, storedEvents)
         }
     }
 
-    func testThatItDoesNotEncryptEventIfThePublicKeyIsNil() throws {
-        // given
-        publicKey = nil
+    func test_EventFromStoredEvents_Encrypted() throws {
+        try eventMOC.performAndWait {
+            // Given some encrypted stored events.
+            let (updateEvents, storedEvents) = try self.createStoredEvents(encrypt: true)
 
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
-            event.appendDebugInformation("Highly informative description")
+            // When we retrieve the events with private keys.
+            let fetchedEvents = StoredUpdateEvent.eventsFromStoredEvents(
+                storedEvents,
+                privateKeys: self.privateKeys
+            )
 
-            // when
-            if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2, publicKey: self.publicKey) {
-                XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-                XCTAssertEqual(storedEvent.payload, event.payload as NSDictionary)
-                XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-                XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-                XCTAssertEqual(storedEvent.sortIndex, 2)
-                XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
-                XCTAssertNotNil(storedEvent.payload)
-                XCTAssertFalse(storedEvent.isEncrypted)
-            } else {
-                XCTFail("Did not create storedEvent")
-            }
+            // Then we process and delete all events.
+            XCTAssertEqual(fetchedEvents.eventsToProcess, updateEvents)
+            XCTAssertEqual(fetchedEvents.eventsToDelete, storedEvents)
         }
     }
 
-    func testThatItDecryptsAndConvertsStoreEventToTheUpdateEventIfThePrivateKeyIsNotNil() throws {
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
-            event.appendDebugInformation("Highly informative description")
+    func test_EventFromStoredEvents_Encrypted_SecondaryPrivateKeyOnly() throws {
+        try eventMOC.performAndWait {
+            // Given some encrypted events.
+            let (updateEvents, storedEvents) = try self.createStoredEvents(encrypt: true)
 
-            if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2, publicKey: self.publicKey) {
-                XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-                XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-                XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-                XCTAssertEqual(storedEvent.sortIndex, 2)
-                XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
-                XCTAssertNotNil(storedEvent.payload)
-                #if targetEnvironment(simulator) && swift(>=5.4)
-                if #available(iOS 15, *) {
-                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-                }
-                #endif
-                XCTAssertTrue(storedEvent.isEncrypted)
+            // When we retrieve the events with only the secondary private key.
+            self.privateKeys = EARPrivateKeys(
+                primary: nil,
+                secondary: self.privateKeys.secondary
+            )
 
-                // when
-                let convertedEvents = StoredUpdateEvent.eventsFromStoredEvents([storedEvent], encryptionKeys: self.encryptionKeys)
+            let fetchedEvents = StoredUpdateEvent.eventsFromStoredEvents(
+                storedEvents,
+                privateKeys: self.privateKeys
+            )
 
-                // then
-                XCTAssertEqual(convertedEvents.first!.debugInformation, event.debugInformation)
-                XCTAssertEqual(convertedEvents.first!.payload as NSDictionary, event.payload as NSDictionary)
-                XCTAssertEqual(convertedEvents.first!.isTransient, event.isTransient)
-                XCTAssertEqual(convertedEvents.first!.source, event.source)
-                XCTAssertEqual(convertedEvents.first!.uuid?.transportString(), event.uuid?.transportString())
-
-            } else {
-                XCTFail("Did not create storedEvent")
-            }
+            // Then we process and delete only the events associated with the secondary key.
+            XCTAssertEqual(fetchedEvents.eventsToProcess, updateEvents.filter(\.isCallEvent))
+            XCTAssertEqual(fetchedEvents.eventsToDelete, storedEvents.filter(\.isCallEvent))
         }
     }
 
-    func testThatItConvertsStoreEventToTheUpdateEventIfThePrivateKeyIsNil() throws {
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
-            event.appendDebugInformation("Highly informative description")
+    func test_EventFromStoredEvents_Encrypted_NoPrivateKeys() throws {
+        try eventMOC.performAndWait {
+            // Given some encrypted events.
+            let (_, storedEvents) = try self.createStoredEvents(encrypt: true)
 
-            if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2, publicKey: nil) {
-                XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-                XCTAssertEqual(storedEvent.payload, event.payload as NSDictionary)
-                XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-                XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-                XCTAssertEqual(storedEvent.sortIndex, 2)
-                XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
-                XCTAssertNotNil(storedEvent.payload)
-                XCTAssertFalse(storedEvent.isEncrypted)
+            // When we retrieve the events with no private keys.
+            let convertedEvents = StoredUpdateEvent.eventsFromStoredEvents(
+                storedEvents,
+                privateKeys: nil
+            )
 
-                // when
-                let convertedEvents = StoredUpdateEvent.eventsFromStoredEvents([storedEvent], encryptionKeys: nil)
-
-                // then
-                XCTAssertEqual(convertedEvents.first!.debugInformation, event.debugInformation)
-                XCTAssertEqual(convertedEvents.first!.payload as NSDictionary, event.payload as NSDictionary)
-                XCTAssertEqual(convertedEvents.first!.isTransient, event.isTransient)
-                XCTAssertEqual(convertedEvents.first!.source, event.source)
-                XCTAssertEqual(convertedEvents.first!.uuid?.transportString(), event.uuid?.transportString())
-
-            } else {
-                XCTFail("Did not create storedEvent")
-            }
+            // Then we can neither process nor delete any events.
+            XCTAssertTrue(convertedEvents.eventsToProcess.isEmpty)
+            XCTAssertTrue(convertedEvents.eventsToDelete.isEmpty)
         }
     }
 
-    func testThatItCanNotConvertEncryptedStoredEventWithoutPrivateKey() throws {
-        // given
-        self.eventMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            let payload = self.payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
-            event.appendDebugInformation("Highly informative description")
-
-            if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: 2, publicKey: self.publicKey) {
-                XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
-                XCTAssertEqual(storedEvent.isTransient, event.isTransient)
-                XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
-                XCTAssertEqual(storedEvent.sortIndex, 2)
-                XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
-                XCTAssertNotNil(storedEvent.payload)
-                #if targetEnvironment(simulator) && swift(>=5.4)
-                if #available(iOS 15, *) {
-                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-                }
-                #endif
-                XCTAssertTrue(storedEvent.isEncrypted)
-
-                // when
-                let convertedEvents = StoredUpdateEvent.eventsFromStoredEvents([storedEvent], encryptionKeys: nil)
-
-                // then
-                XCTAssertTrue(convertedEvents.isEmpty)
-            } else {
-                XCTFail("Did not create storedEvent")
-            }
-        }
-    }
 }

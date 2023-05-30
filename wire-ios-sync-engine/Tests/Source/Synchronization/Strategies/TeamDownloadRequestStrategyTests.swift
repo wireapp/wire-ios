@@ -25,17 +25,23 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
     var mockSyncStateDelegate: MockSyncStateDelegate!
+    let teamID = UUID.create()
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockSyncStateDelegate = MockSyncStateDelegate()
-        mockSyncStatus = MockSyncStatus(managedObjectContext: syncMOC, syncStateDelegate: mockSyncStateDelegate)
+        mockSyncStatus = MockSyncStatus(
+            managedObjectContext: syncMOC,
+            syncStateDelegate: mockSyncStateDelegate,
+            lastEventIDRepository: lastEventIDRepository
+        )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
         syncMOC.performGroupedBlockAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.remoteIdentifier = UUID()
+            user.teamIdentifier = self.teamID
         }
     }
 
@@ -341,16 +347,39 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
     // MARK: Slow sync
 
-    func testThatItDownloadsAllTeams_DuringSlowSync() {
+    func testThatItDownloadsAllTeams_DuringSlowSync_V0() {
+        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v0)
+    }
+
+    func testThatItDownloadsAllTeams_DuringSlowSync_V3() {
+        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v3)
+    }
+
+    func testThatItDownloadsSelfUserTeam_DuringSlowSync_V4() {
+        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v4)
+    }
+
+    func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion){
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
 
         // when
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sut.nextRequest(for: apiVersion) else { return XCTFail("No request generated") }
 
         // then
-        XCTAssertEqual(request.path, "/teams")
+        switch apiVersion {
+        case .v0:
+            XCTAssertEqual(request.path, "/teams")
+        case .v1:
+            XCTAssertEqual(request.path, "/v1/teams")
+        case .v2:
+            XCTAssertEqual(request.path, "/v2/teams")
+        case .v3:
+            XCTAssertEqual(request.path, "/v3/teams")
+        case .v4:
+            XCTAssertEqual(request.path, "/v4/teams/\(teamID.transportString())")
+        }
         XCTAssertEqual(request.method, .methodGET)
     }
 

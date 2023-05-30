@@ -86,7 +86,7 @@ final class MessageDetailsActionTests: XCTestCase {
     func testThatDetailsAreNotAvailableInGroup_Ephemeral() {
         withGroupMessage(belongsToTeam: false, teamGroup: false) { message in
             message.isEphemeral = true
-            XCTAssertFalse(message.canBeLiked)
+            XCTAssertFalse(message.canAddReaction)
             XCTAssertFalse(message.areMessageDetailsAvailable)
             XCTAssertFalse(message.areReadReceiptsDetailsAvailable)
         }
@@ -95,7 +95,7 @@ final class MessageDetailsActionTests: XCTestCase {
     func testThatDetailsAreAvailableInTeamGroup_Ephemeral() {
         withGroupMessage(belongsToTeam: true, teamGroup: true) { message in
             message.isEphemeral = true
-            XCTAssertFalse(message.canBeLiked)
+            XCTAssertFalse(message.canAddReaction)
             XCTAssertTrue(message.areMessageDetailsAvailable)
             XCTAssertTrue(message.areReadReceiptsDetailsAvailable)
         }

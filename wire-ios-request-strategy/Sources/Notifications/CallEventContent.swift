@@ -18,16 +18,14 @@
 
 import Foundation
 
-public struct CallEventContent: Decodable {
+public struct CallEventContent: Codable {
 
     public enum CodingKeys: String, CodingKey {
 
         case type
-
         case properties = "props"
-
-        case callerIdString = "src_userid"
-
+        case callerUserID = "src_userid"
+        case callerClientID = "src_clientid"
         case resp
 
     }
@@ -42,13 +40,27 @@ public struct CallEventContent: Decodable {
 
     let properties: Properties?
 
-    /// Caller Id.
+    let callerUserID: String?
 
-    let callerIdString: String
+    public let callerClientID: String
 
     public let resp: Bool
 
     // MARK: - Life cycle
+
+    init(
+        type: String,
+        properties: Properties?,
+        callerUserID: String?,
+        callerClientID: String,
+        resp: Bool
+    ) {
+        self.type = type
+        self.properties = properties
+        self.callerUserID = callerUserID
+        self.callerClientID = callerClientID
+        self.resp = resp
+    }
 
     public init?(from event: ZMUpdateEvent) {
         guard
@@ -75,7 +87,7 @@ public struct CallEventContent: Decodable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return UUID(uuidString: callerIdString)
+        return callerUserID.flatMap(UUID.init)
     }
 
     public var callState: LocalNotificationType.CallState? {
@@ -120,6 +132,10 @@ public struct CallEventContent: Decodable {
         return type == "REMOTEMUTE"
     }
 
+    public var isConferenceKey: Bool {
+        return type == "CONFKEY"
+    }
+
     public var isVideo: Bool {
         guard let properties = properties else {
             return false
@@ -132,13 +148,21 @@ public struct CallEventContent: Decodable {
 
 extension CallEventContent {
 
-    struct Properties: Decodable {
+    struct Properties: Codable {
 
         private let videosend: String
 
         var isVideo: Bool {
             return videosend == "true"
         }
+    }
+
+}
+
+extension ZMUpdateEvent {
+
+    var isCallEvent: Bool {
+        return CallEventContent(from: self) != nil
     }
 
 }

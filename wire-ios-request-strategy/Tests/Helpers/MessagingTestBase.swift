@@ -19,6 +19,7 @@
 import WireDataModel
 import WireTesting
 import WireCryptobox
+@testable import WireRequestStrategy
 
 class MessagingTestBase: ZMTBaseTest {
 
@@ -50,8 +51,15 @@ class MessagingTestBase: ZMTBaseTest {
         return self.coreDataStack.eventContext
     }
 
-    override func setUp() {
+    override class func setUp() {
         super.setUp()
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
         BackgroundActivityFactory.shared.resume()
 
@@ -102,61 +110,140 @@ class MessagingTestBase: ZMTBaseTest {
 extension MessagingTestBase {
 
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(text: String,
-                                             conversation: ZMConversation? = nil,
-                                             source: ZMUpdateEventSource = .pushNotification
-        ) -> ZMUpdateEvent {
-
-        let message = GenericMessage(content: Text(content: text))
-        return self.decryptedUpdateEventFromOtherClient(message: message, conversation: conversation, source: source)
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(message: GenericMessage,
-                                             conversation: ZMConversation? = nil,
-                                             source: ZMUpdateEventSource = .pushNotification
-        ) -> ZMUpdateEvent {
-        let cyphertext = self.encryptedMessageToSelf(message: message, from: self.otherClient)
-        let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
-                            "sender": self.otherClient.remoteIdentifier!,
-                            "text": cyphertext.base64String()
-        ]
-        return self.decryptedUpdateEventFromOtherClient(innerPayload: innerPayload,
-                                                        conversation: conversation,
-                                                        source: source,
-                                                        type: "conversation.otr-message-add"
+    func decryptedUpdateEventFromOtherClient(
+        text: String,
+        conversation: ZMConversation? = nil,
+        source: ZMUpdateEventSource = .pushNotification,
+        eventDecoder: EventDecoder
+    ) -> ZMUpdateEvent {
+        return decryptedUpdateEventFromOtherClient(
+            message: GenericMessage(content: Text(content: text)),
+            conversation: conversation,
+            source: source,
+            eventDecoder: eventDecoder
         )
     }
 
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedAssetUpdateEventFromOtherClient(message: GenericMessage,
-                                                  conversation: ZMConversation? = nil,
-                                                  source: ZMUpdateEventSource = .pushNotification
-        ) -> ZMUpdateEvent {
-        let cyphertext = self.encryptedMessageToSelf(message: message, from: self.otherClient)
-        let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
-                            "sender": self.otherClient.remoteIdentifier!,
-                            "id": UUID.create().transportString(),
-                            "key": cyphertext.base64String()
+    func decryptedUpdateEventFromOtherClient(
+        message: GenericMessage,
+        conversation: ZMConversation? = nil,
+        source: ZMUpdateEventSource = .pushNotification,
+        eventDecoder: EventDecoder
+    ) -> ZMUpdateEvent {
+        let cyphertext = encryptedMessageToSelf(message: message, from: otherClient)
+        let innerPayload = ["recipient": selfClient.remoteIdentifier!,
+                            "sender": otherClient.remoteIdentifier!,
+                            "text": cyphertext.base64String()
         ]
-        return self.decryptedUpdateEventFromOtherClient(innerPayload: innerPayload,
-                                                        conversation: conversation,
-                                                        source: source,
-                                                        type: "conversation.otr-asset-add"
-                            )
+        return decryptedUpdateEventFromOtherClient(
+            innerPayload: innerPayload,
+            conversation: conversation,
+            source: source,
+            type: "conversation.otr-message-add",
+            eventDecoder: eventDecoder
+        )
     }
 
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    private func decryptedUpdateEventFromOtherClient(innerPayload: [String: Any],
-                                                     conversation: ZMConversation?,
-                                                     source: ZMUpdateEventSource,
-                                                     type: String
-        ) -> ZMUpdateEvent {
+    func decryptedAssetUpdateEventFromOtherClient(
+        message: GenericMessage,
+        conversation: ZMConversation? = nil,
+        source: ZMUpdateEventSource = .pushNotification,
+        eventDecoder: EventDecoder
+    ) -> ZMUpdateEvent {
+        let cyphertext = encryptedMessageToSelf(message: message, from: otherClient)
+        let innerPayload = ["recipient": selfClient.remoteIdentifier!,
+                            "sender": otherClient.remoteIdentifier!,
+                            "id": UUID.create().transportString(),
+                            "key": cyphertext.base64String()
+        ]
+        return decryptedUpdateEventFromOtherClient(
+            innerPayload: innerPayload,
+            conversation: conversation,
+            source: source,
+            type: "conversation.otr-asset-add",
+            eventDecoder: eventDecoder
+        )
+    }
+
+    func encryptedUpdateEventToSelfFromOtherClient(
+        message: GenericMessage,
+        conversation: ZMConversation? = nil,
+        source: ZMUpdateEventSource = .pushNotification
+    ) -> ZMUpdateEvent {
+        let cyphertext = encryptedMessageToSelf(
+            message: message,
+            from: otherClient
+        )
+
+        let innerPayload = [
+            "recipient": selfClient.remoteIdentifier!,
+            "sender": otherClient.remoteIdentifier!,
+            "text": cyphertext.base64String()
+        ]
+
+        return encryptedUpdateEventFromOtherClient(
+            innerPayload: innerPayload,
+            conversation: conversation,
+            source: source,
+            type: "conversation.otr-message-add"
+        )
+    }
+
+    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
+    private func decryptedUpdateEventFromOtherClient(
+        innerPayload: [String: Any],
+        conversation: ZMConversation?,
+        source: ZMUpdateEventSource,
+        type: String,
+        eventDecoder: EventDecoder
+    ) -> ZMUpdateEvent {
+        let event = encryptedUpdateEventFromOtherClient(
+            innerPayload: innerPayload,
+            conversation: conversation,
+            source: source,
+            type: type
+        )
+
+        var decryptedEvent: ZMUpdateEvent?
+
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
+            decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(
+                event,
+                in: self.syncMOC
+            ) { sessionID, encryptedData in
+                guard let result = try self.syncMOC.proteusService?.decrypt(data: encryptedData, forSession: sessionID) else {
+                    return nil
+                }
+
+                return (didCreateNewSession: result.didCreateSession, decryptedData: result.decryptedData)
+            }
+        } else {
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
+                decryptedEvent = eventDecoder.decryptProteusEventAndAddClient(
+                    event,
+                    in: self.syncMOC
+                ) { sessionID, encryptedData in
+                    try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
+                }
+            }
+        }
+
+        return decryptedEvent!
+    }
+
+    private func encryptedUpdateEventFromOtherClient(
+        innerPayload: [String: Any],
+        conversation: ZMConversation?,
+        source: ZMUpdateEventSource,
+        type: String
+    ) -> ZMUpdateEvent {
         let payload = [
             "type": type,
-            "from": self.otherUser.remoteIdentifier!.transportString(),
+            "from": otherUser.remoteIdentifier!.transportString(),
             "data": innerPayload,
-            "conversation": (conversation ?? self.groupConversation).remoteIdentifier!.transportString(),
+            "conversation": (conversation ?? groupConversation).remoteIdentifier!.transportString(),
             "time": Date().transportString()
             ] as [String: Any]
         let wrapper = [
@@ -164,13 +251,7 @@ extension MessagingTestBase {
             "payload": [payload]
             ] as [String: Any]
 
-        let event = ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: source)!.first!
-
-        var decryptedEvent: ZMUpdateEvent?
-        self.selfClient.keysStore.encryptionContext.perform { session in
-            decryptedEvent = session.decryptAndAddClient(event, in: self.syncMOC)
-        }
-        return decryptedEvent!
+        return ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: source)!.first!
     }
 
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
@@ -354,13 +435,13 @@ extension MessagingTestBase {
 extension MessagingTestBase {
     public func payloadForMessage(in conversation: ZMConversation?,
                                   type: String,
-                                  data: NSDictionary) -> NSMutableDictionary? {
+                                  data: Any) -> NSMutableDictionary? {
         return payloadForMessage(in: conversation!, type: type, data: data, time: nil)
     }
 
     public func payloadForMessage(in conversation: ZMConversation,
                                   type: String,
-                                  data: NSDictionary,
+                                  data: Any,
                                   time: Date?) -> NSMutableDictionary? {
         //      {
         //         "conversation" : "8500be67-3d7c-4af0-82a6-ef2afe266b18",
@@ -381,7 +462,7 @@ extension MessagingTestBase {
 
     public func payloadForMessage(in conversation: ZMConversation,
                                   type: String,
-                                  data: NSDictionary,
+                                  data: Any,
                                   time: Date?,
                                   from: ZMUser) -> NSMutableDictionary? {
 

@@ -47,6 +47,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     var userClientByUserClientIDTranscoder: UserClientByUserClientIDTranscoder
     var userClientByQualifiedUserIDTranscoder: UserClientByQualifiedUserIDTranscoder
 
+    private let entitySync: EntityActionSync
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
 
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
@@ -56,6 +58,10 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         self.userClientsByUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserIDTranscoder)
         self.userClientsByUserClientID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserClientIDTranscoder)
         self.userClientsByQualifiedUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByQualifiedUserIDTranscoder)
+
+        entitySync = EntityActionSync(actionHandlers: [
+            FetchUserClientsActionHandler(context: managedObjectContext)
+        ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -91,7 +97,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                         self.userClientsByUserID.sync(identifiers: userIdSet)
                     }
 
-                case .v2, .v3:
+                case .v2, .v3, .v4:
                     if let domain = user.domain.nonEmptyValue ?? BackendInfo.domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
@@ -107,7 +113,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         return
             userClientsByUserClientID.nextRequest(for: apiVersion) ??
             userClientsByUserID.nextRequest(for: apiVersion) ??
-            userClientsByQualifiedUserID.nextRequest(for: apiVersion)
+            userClientsByQualifiedUserID.nextRequest(for: apiVersion) ??
+            entitySync.nextRequest(for: apiVersion)
     }
 
 }
@@ -151,7 +158,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     // Fallback.
                     result.1.append(userClientID)
                 }
-            case .v2, .v3:
+            case .v2, .v3, .v4:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)
                 }
@@ -286,7 +293,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v1:
             return v1Request(for: identifiers)
 
-        case .v2, .v3:
+        case .v2, .v3, .v4:
             return v2Request(for: identifiers, apiVersion: apiVersion)
         }
     }
@@ -341,7 +348,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         case .v0:
             return
 
-        case .v1, .v2, .v3:
+        case .v1, .v2, .v3, .v4:
             commonResponseHandling(response: response, for: identifiers)
         }
     }
