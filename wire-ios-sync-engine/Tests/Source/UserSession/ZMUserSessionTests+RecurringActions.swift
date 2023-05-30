@@ -62,7 +62,6 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     }
 }
 
-
 class RecurringActionServiceTests: ZMTBaseTest {
 
     var sut: RecurringActionService!
