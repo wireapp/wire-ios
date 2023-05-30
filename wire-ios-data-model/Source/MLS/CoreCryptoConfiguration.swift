@@ -18,7 +18,6 @@
 
 import Foundation
 import CoreCrypto
-import CoreCrypto
 import WireSystem
 
 public struct CoreCryptoConfiguration {
