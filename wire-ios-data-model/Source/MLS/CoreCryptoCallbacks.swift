@@ -18,7 +18,7 @@
 
 
 import Foundation
-import CoreCrypto
+import WireCoreCrypto
 
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 

@@ -18,7 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
-import CoreCrypto
+import WireCoreCrypto
 
 class MockMLSActionExecutor: MLSActionExecutorProtocol {
 

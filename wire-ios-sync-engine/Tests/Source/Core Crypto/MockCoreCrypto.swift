@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import CoreCrypto
+import WireCoreCrypto
 
 class MockCoreCrypto: CoreCryptoProtocol {
     

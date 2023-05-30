@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import CoreCrypto
+import WireCoreCrypto
 
 // MARK: - Protocols
 

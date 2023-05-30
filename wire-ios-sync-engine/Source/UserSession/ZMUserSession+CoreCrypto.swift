@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import WireRequestStrategy
-import CoreCrypto
+import WireCoreCrypto
 
 extension ZMUserSession {
 
