@@ -159,10 +159,9 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
     func testForContextProfileViewer_ForUserWithoutName() {
         // GIVEN
         selfUser.teamRole = .member
-        mockUser.emailAddress = nil
+        mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
         mockUser.name = nil
         mockUser.domain = "foma.wire.link"
-        mockUser.handle = nil
         mockUser.initials = ""
 
         // WHEN
