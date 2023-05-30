@@ -73,6 +73,9 @@ jobs:
     runs-on: macOS-latest
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      GITHUB_AVS_ACCESS_TOKEN: ${{ secrets.ZENKINS_WORKFLOW_PAT }}
+      AVS_REPO: ${{ secrets.AVS_REPO }}
       
     steps:
       - uses: actions/checkout@v3

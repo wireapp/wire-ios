@@ -33,7 +33,7 @@ public protocol AVSWrapperType {
     func endCall(conversationId: AVSIdentifier)
     func rejectCall(conversationId: AVSIdentifier)
     func close()
-    func received(callEvent: CallEvent) -> CallError?
+    func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError?
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState)
     func handleResponse(httpStatus: Int, reason: String, context: WireCallMessageToken)
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
@@ -172,7 +172,7 @@ public class AVSWrapper: AVSWrapperType {
     }
 
     /// Notifies AVS that we received a remote event.
-    public func received(callEvent: CallEvent) -> CallError? {
+    public func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError? {
         var result: CallError?
 
         callEvent.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
@@ -180,7 +180,7 @@ public class AVSWrapper: AVSWrapperType {
             let currentTime = UInt32(callEvent.currentTimestamp.timeIntervalSince1970)
             let serverTime = UInt32(callEvent.serverTimestamp.timeIntervalSince1970)
             zmLog.debug("wcall_recv_msg: currentTime = \(currentTime), serverTime = \(serverTime)")
-            result = CallError(wcall_error: wcall_recv_msg(handle, bytes, callEvent.data.count, currentTime, serverTime, callEvent.conversationId.serialized, callEvent.userId.serialized, callEvent.clientId))
+            result = CallError(wcall_error: wcall_recv_msg(handle, bytes, callEvent.data.count, currentTime, serverTime, callEvent.conversationId.serialized, callEvent.userId.serialized, callEvent.clientId, conversationType.rawValue))
         }
 
         return result
@@ -285,7 +285,7 @@ public class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, contextRef in
+    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, myClientsOnly, contextRef in
         guard let token = token else {
             return EINVAL
         }

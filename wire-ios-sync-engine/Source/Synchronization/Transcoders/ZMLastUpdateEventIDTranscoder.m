@@ -28,6 +28,7 @@
 @property (nonatomic) ZMSingleRequestSync *lastUpdateEventIDSync;
 @property (nonatomic) NSUUID *lastUpdateEventID;
 @property (nonatomic, weak) SyncStatus *syncStatus;
+@property (nonatomic) id<LastEventIDRepositoryInterface> lastEventIDRepository;
 
 @end
 
@@ -37,11 +38,13 @@
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                            applicationStatus:(id<ZMApplicationStatus>)applicationStatus
                                   syncStatus:(SyncStatus *)syncStatus
+                       lastEventIDRepository:(id<LastEventIDRepositoryInterface> _Nonnull)lastEventIDRepository
 {
     self = [super initWithManagedObjectContext:moc applicationStatus:applicationStatus];
     if(self) {
         self.syncStatus = syncStatus;
         self.lastUpdateEventIDSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:moc];
+        self.lastEventIDRepository = lastEventIDRepository;
     }
     return self;
 }
@@ -60,7 +63,7 @@
 - (void)persistLastUpdateEventID
 {
     if(self.lastUpdateEventID != nil) {
-        self.managedObjectContext.zm_lastNotificationID = self.lastUpdateEventID;
+        [self.lastEventIDRepository storeLastEventID:self.lastUpdateEventID];
     }
     self.lastUpdateEventID = nil;
 }

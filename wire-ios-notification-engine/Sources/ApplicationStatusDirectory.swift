@@ -41,7 +41,8 @@ class ApplicationStatusDirectory: ApplicationStatus {
 
     public convenience init(
         syncContext: NSManagedObjectContext,
-        transportSession: ZMTransportSession
+        transportSession: ZMTransportSession,
+        lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
@@ -52,7 +53,8 @@ class ApplicationStatusDirectory: ApplicationStatus {
             transportSession: transportSession,
             authenticationStatus: authenticationStatus,
             clientRegistrationStatus: clientRegistrationStatus,
-            linkPreviewDetector: linkPreviewDetector
+            linkPreviewDetector: linkPreviewDetector,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -61,13 +63,17 @@ class ApplicationStatusDirectory: ApplicationStatus {
         transportSession: ZMTransportSession,
         authenticationStatus: AuthenticationStatusProvider,
         clientRegistrationStatus: ClientRegistrationStatus,
-        linkPreviewDetector: LinkPreviewDetectorType
+        linkPreviewDetector: LinkPreviewDetectorType,
+        lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.linkPreviewDetector = linkPreviewDetector
-        self.pushNotificationStatus = PushNotificationStatus(managedObjectContext: managedObjectContext)
+        self.pushNotificationStatus = PushNotificationStatus(
+            managedObjectContext: managedObjectContext,
+            lastEventIDRepository: lastEventIDRepository
+        )
     }
 
     // MARK: - Methods
