@@ -84,8 +84,7 @@ jobs:
       
       - name: Select Xcode
         run: |
-          sudo xcode-select -switch /Applications/Xcode_14.2.app
-          /usr/bin/xcodebuild -version
+          bundle exec fastlane run xcodes select_for_current_build_only:true
 
       - name: Setup workspace
         run: |
