@@ -94,7 +94,13 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
+    public var syncStatus: SyncStatusProtocol? {
+        return applicationStatusDirectory?.syncStatus
+    }
+
     public lazy var featureService = FeatureService(context: syncContext)
+
+    let earService: EARServiceInterface
 
     public var appLockController: AppLockType
 
@@ -225,20 +231,25 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
-    public init(userId: UUID,
-                transportSession: TransportSessionType,
-                mediaManager: MediaManagerType,
-                flowManager: FlowManagerType,
-                analytics: AnalyticsType?,
-                eventProcessor: UpdateEventProcessor? = nil,
-                strategyDirectory: StrategyDirectoryProtocol? = nil,
-                syncStrategy: ZMSyncStrategy? = nil,
-                operationLoop: ZMOperationLoop? = nil,
-                application: ZMApplication,
-                appVersion: String,
-                coreDataStack: CoreDataStack,
-                configuration: Configuration) {
+    let lastEventIDRepository: LastEventIDRepositoryInterface
 
+    public init(
+        userId: UUID,
+        transportSession: TransportSessionType,
+        mediaManager: MediaManagerType,
+        flowManager: FlowManagerType,
+        analytics: AnalyticsType?,
+        eventProcessor: UpdateEventProcessor? = nil,
+        strategyDirectory: StrategyDirectoryProtocol? = nil,
+        syncStrategy: ZMSyncStrategy? = nil,
+        operationLoop: ZMOperationLoop? = nil,
+        application: ZMApplication,
+        appVersion: String,
+        coreDataStack: CoreDataStack,
+        configuration: Configuration,
+        earService: EARServiceInterface? = nil,
+        sharedUserDefaults: UserDefaults
+    ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
             coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
@@ -260,11 +271,31 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+
+        self.earService = earService ?? EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext,
+                coreDataStack.searchContext
+            ],
+            canPerformKeyMigration: true
+        )
+
+        self.lastEventIDRepository = LastEventIDRepository(
+            userID: userId,
+            sharedUserDefaults: sharedUserDefaults
+        )
+
         super.init()
 
+        self.earService.delegate = self
         appLockController.delegate = self
 
         configureCaches()
+
+        // Proteus needs to be setup before client registration starts
+        setupCryptoStack(stage: .proteus(userID: userId))
 
         syncManagedObjectContext.performGroupedBlockAndWait {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -279,6 +310,10 @@ public class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
         }
+
+        // This should happen after the request strategies are created b/c
+        // it needs to make network requests upon initialization.
+        setupCryptoStack(stage: .mls)
 
         updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
@@ -322,29 +357,38 @@ public class ZMUserSession: NSObject {
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
-        return StrategyDirectory(contextProvider: coreDataStack,
-                                 applicationStatusDirectory: applicationStatusDirectory!,
-                                 cookieStorage: transportSession.cookieStorage,
-                                 pushMessageHandler: localNotificationDispatcher!,
-                                 flowManager: flowManager,
-                                 updateEventProcessor: updateEventProcessor!,
-                                 localNotificationDispatcher: localNotificationDispatcher!,
-                                 useLegacyPushNotifications: useLegacyPushNotifications)
+        return StrategyDirectory(
+            contextProvider: coreDataStack,
+            applicationStatusDirectory: applicationStatusDirectory!,
+            cookieStorage: transportSession.cookieStorage,
+            pushMessageHandler: localNotificationDispatcher!,
+            flowManager: flowManager,
+            updateEventProcessor: updateEventProcessor!,
+            localNotificationDispatcher: localNotificationDispatcher!,
+            useLegacyPushNotifications: useLegacyPushNotifications,
+            lastEventIDRepository: lastEventIDRepository
+        )
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
-        return EventProcessor(storeProvider: self.coreDataStack,
-                              syncStatus: applicationStatusDirectory!.syncStatus,
-                              eventProcessingTracker: eventProcessingTracker)
+        return EventProcessor(
+            storeProvider: self.coreDataStack,
+            syncStatus: applicationStatusDirectory!.syncStatus,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService
+        )
     }
 
     private func createApplicationStatusDirectory() -> ApplicationStatusDirectory {
-        let applicationStatusDirectory = ApplicationStatusDirectory(withManagedObjectContext: self.syncManagedObjectContext,
-                                                                    cookieStorage: transportSession.cookieStorage,
-                                                                    requestCancellation: transportSession,
-                                                                    application: application,
-                                                                    syncStateDelegate: self,
-                                                                    analytics: analytics)
+        let applicationStatusDirectory = ApplicationStatusDirectory(
+            withManagedObjectContext: self.syncManagedObjectContext,
+            cookieStorage: transportSession.cookieStorage,
+            requestCancellation: transportSession,
+            application: application,
+            syncStateDelegate: self,
+            lastEventIDRepository: lastEventIDRepository,
+            analytics: analytics
+        )
 
         applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
         self.hasCompletedInitialSync = !applicationStatusDirectory.syncStatus.isSlowSyncing
@@ -430,18 +474,6 @@ public class ZMUserSession: NSObject {
 
     public func requestSlowSync() {
         applicationStatusDirectory?.requestSlowSync()
-    }
-
-    private var onProcessedEvents: ((Bool) -> Void)?
-
-    public func requestQuickSync(completion: ((Bool) -> Void)? = nil) {
-        guard let applicationStatusDirectory = applicationStatusDirectory else {
-            completion?(false)
-            return
-        }
-
-        applicationStatusDirectory.requestQuickSync()
-        onProcessedEvents = completion
     }
 
     // MARK: - Access Token
@@ -581,10 +613,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Self.logger.trace("did finish quick sync")
         processEvents()
 
+        syncContext.mlsService?.performPendingJoins()
+
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
 
+        commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
     }
 
@@ -608,9 +643,22 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        let block = onProcessedEvents
-        onProcessedEvents = nil
-        block?(!hasMoreEventsToProcess)
+    }
+
+    func processPendingCallEvents() throws {
+        WireLogger.updateEvent.info("process pending call events")
+        try updateEventProcessor!.processPendingCallEvents()
+    }
+
+    private func commitPendingProposalsIfNeeded() {
+        let mlsService = syncContext.mlsService
+        Task {
+            do {
+                try await mlsService?.commitPendingProposals()
+            } catch {
+                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+            }
+        }
     }
 
     private func fetchFeatureConfigs() {
@@ -624,6 +672,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+        setupCryptoStack(stage: .mls)
+
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier

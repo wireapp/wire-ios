@@ -32,6 +32,7 @@
 @class ZMConnection;
 @class ApplicationMock;
 @class ZMAssetClientMessage;
+@class LastUpdateEventRepository;
 
 @import WireCryptobox;
 @import WireImages;
@@ -61,6 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL shouldUseInMemoryStore;
 
 @property (nonatomic) CallNotificationStyle mockCallNotificationStyle;
+
+@property (nonatomic) LastEventIDRepository *lastEventIDRepository;
 
 /// perform operations pretending that the uiMOC is a syncMOC
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;

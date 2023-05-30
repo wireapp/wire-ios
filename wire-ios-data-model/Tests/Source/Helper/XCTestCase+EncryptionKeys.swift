@@ -32,18 +32,12 @@ extension XCTestCase {
         return (publicKeySec!, privateKeySec!)
     }
 
-    var validEncryptionKeys: EncryptionKeys {
-        let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
-        let databaseKey = Data.zmRandomSHA256Key()
-
-        return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey)
+    var validDatabaseKey: VolatileData {
+        return VolatileData(from: .zmRandomSHA256Key())
     }
 
-    var malformedEncryptionKeys: EncryptionKeys {
-        let (publicKeySec, privateKeySec) = generatePublicPrivateKey()
-        let databaseKey = Data.zmRandomSHA256Key()
-
-        return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey.dropFirst())
+    var malformedDatabaseKey: VolatileData {
+        return VolatileData(from: .zmRandomSHA256Key().dropFirst())
     }
 
 }

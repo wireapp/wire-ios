@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 import avs
+import CoreCrypto
 
 enum ApplicationLaunchType {
     case unknown
@@ -243,6 +244,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Private Helpers
 private extension AppDelegate {
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
+        // Fix: set the applicationGroup so updating the callkit enable is set to NSE
+        VoIPPushHelperOperation().execute()
         createAppRootRouter(launchOptions: launchOptions)
         queueInitializationOperations(launchOptions: launchOptions)
     }
@@ -292,7 +295,8 @@ private extension AppDelegate {
             requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
-            isDeveloperModeEnabled: Bundle.developerModeEnabled
+            isDeveloperModeEnabled: Bundle.developerModeEnabled,
+            sharedUserDefaults: .applicationGroup
         )
 
         voIPPushManager.delegate = sessionManager

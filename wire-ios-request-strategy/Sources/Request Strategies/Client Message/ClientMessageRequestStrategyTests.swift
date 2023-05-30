@@ -441,10 +441,10 @@ extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() {
         self.syncMOC.performGroupedBlockAndWait {
-
             // GIVEN
+            let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
             let text = "Everything"
-            let event = self.decryptedUpdateEventFromOtherClient(text: text)
+            let event = self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 
             // WHEN
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)

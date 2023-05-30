@@ -2086,6 +2086,16 @@ internal enum L10n {
           /// Too many characters
           internal static let toolong = L10n.tr("Localizable", "conversation.create.guidance.toolong", fallback: "Too many characters")
         }
+        internal enum Mls {
+          /// Cancel
+          internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
+          /// Select Protocol
+          internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
+          /// Select MLS to create a MLS conversation (Beta functionality, use at your own risk).
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a MLS conversation (Beta functionality, use at your own risk).")
+          /// Protocol
+          internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
+        }
         internal enum Options {
           /// Guests: %@, Services: %@, Read receipts: %@
           internal static func subtitle(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
@@ -2604,6 +2614,46 @@ internal enum L10n {
         }
       }
     }
+    internal enum Drawing {
+      internal enum Colors {
+        /// black
+        internal static let black = L10n.tr("Localizable", "drawing.colors.black", fallback: "black")
+        /// blue
+        internal static let blue = L10n.tr("Localizable", "drawing.colors.blue", fallback: "blue")
+        /// brown
+        internal static let brown = L10n.tr("Localizable", "drawing.colors.brown", fallback: "brown")
+        /// chocolate
+        internal static let chocolate = L10n.tr("Localizable", "drawing.colors.chocolate", fallback: "chocolate")
+        /// coral
+        internal static let coral = L10n.tr("Localizable", "drawing.colors.coral", fallback: "coral")
+        /// cyan
+        internal static let cyan = L10n.tr("Localizable", "drawing.colors.cyan", fallback: "cyan")
+        /// gray
+        internal static let gray = L10n.tr("Localizable", "drawing.colors.gray", fallback: "gray")
+        /// green
+        internal static let green = L10n.tr("Localizable", "drawing.colors.green", fallback: "green")
+        /// lilac
+        internal static let lilac = L10n.tr("Localizable", "drawing.colors.lilac", fallback: "lilac")
+        /// lime
+        internal static let lime = L10n.tr("Localizable", "drawing.colors.lime", fallback: "lime")
+        /// orange
+        internal static let orange = L10n.tr("Localizable", "drawing.colors.orange", fallback: "orange")
+        /// pink
+        internal static let pink = L10n.tr("Localizable", "drawing.colors.pink", fallback: "pink")
+        /// purple
+        internal static let purple = L10n.tr("Localizable", "drawing.colors.purple", fallback: "purple")
+        /// red
+        internal static let red = L10n.tr("Localizable", "drawing.colors.red", fallback: "red")
+        /// sky
+        internal static let sky = L10n.tr("Localizable", "drawing.colors.sky", fallback: "sky")
+        /// turquoise
+        internal static let turquoise = L10n.tr("Localizable", "drawing.colors.turquoise", fallback: "turquoise")
+        /// white
+        internal static let white = L10n.tr("Localizable", "drawing.colors.white", fallback: "white")
+        /// yellow
+        internal static let yellow = L10n.tr("Localizable", "drawing.colors.yellow", fallback: "yellow")
+      }
+    }
     internal enum Email {
       /// Email
       internal static let placeholder = L10n.tr("Localizable", "email.placeholder", fallback: "Email")
@@ -2970,6 +3020,14 @@ internal enum L10n {
         internal static let enabled = L10n.tr("Localizable", "group_details.guest_options_cell.enabled", fallback: "On")
         /// Guests
         internal static let title = L10n.tr("Localizable", "group_details.guest_options_cell.title", fallback: "Guests")
+      }
+      internal enum MessageProtocol {
+        /// Cipher Suite
+        internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite", fallback: "Cipher Suite")
+        /// Protocol details (beta)
+        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details (beta)")
+        /// Protocol
+        internal static let title = L10n.tr("Localizable", "group_details.message_protocol.title", fallback: "Protocol")
       }
       internal enum NotificationOptionsCell {
         /// You can be notified about everything (including audio and video calls) or only when someone mentions you or replies to one of your messages.
@@ -5625,8 +5683,8 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "voice.network_error.title", fallback: "No Internet Connection")
       }
       internal enum PickUpButton {
-        /// Accept
-        internal static let title = L10n.tr("Localizable", "voice.pick_up_button.title", fallback: "Accept")
+        /// Pick Up
+        internal static let title = L10n.tr("Localizable", "voice.pick_up_button.title", fallback: "Pick Up")
       }
       internal enum SpeakerButton {
         /// Speaker

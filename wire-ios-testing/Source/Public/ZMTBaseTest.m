@@ -119,6 +119,12 @@
     self.innerFakeSyncContext = [FakeGroupContext sync];
     
     [NSUUID reseedUUID:self.name];
+
+    self.sharedUserDefaults = [NSUserDefaults random];
+
+    if (self.sharedUserDefaults == nil) {
+        self.sharedUserDefaults = [NSUserDefaults standardUserDefaults];
+    }
 }
 
 - (void)tearDown
@@ -130,6 +136,7 @@
     self.innerFakeSyncContext = nil;
     self.mocksToBeVerified = nil;
     self.expectations = nil;
+    [self.sharedUserDefaults reset];
     [super tearDown];
 }
 

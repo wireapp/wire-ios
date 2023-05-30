@@ -19,15 +19,35 @@
 import XCTest
 @testable import Wire
 
-final class IncomingConnectionViewTests: XCTestCase {
+// MARK: - IncomingConnectionViewTests
+
+final class IncomingConnectionViewTests: ZMSnapshotTestCase {
+
+    // MARK: - Properties
+
+    let sutBackgroundColor = SemanticColors.View.backgroundDefault
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItRendersWithUserName() {
         let user = SwiftMockLoader.mockUsers().first!
+        let sut = IncomingConnectionView(user: user)
+
+        sut.backgroundColor = sutBackgroundColor
+        verify(matching: sut.layoutForTest())
+    }
+
+
+    func testThatItRendersWithUnconnectedUser() {
+        let user = MockUserType.createUser(name: "Test")
+        user.isConnected = false
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = .white
@@ -38,7 +58,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let user = SwiftMockLoader.mockUsers().last! // The last user does not have a username
         let sut = IncomingConnectionView(user: user)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
@@ -49,7 +69,7 @@ final class IncomingConnectionViewTests: XCTestCase {
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
@@ -60,11 +80,25 @@ final class IncomingConnectionViewTests: XCTestCase {
 
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
-        sut.backgroundColor = .white
+        sut.backgroundColor = sutBackgroundColor
+        verify(matching: sut.layoutForTest())
+    }
+
+    func testThatItRendersWithFederatedUser() {
+        let user = SwiftMockLoader.mockUsers().first!
+        let mockClassificationProvider = MockClassificationProvider()
+        mockClassificationProvider.returnClassification = .notClassified
+        user.isFederated = true
+
+        let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
+
+        sut.backgroundColor = sutBackgroundColor
         verify(matching: sut.layoutForTest())
     }
 
 }
+
+// MARK: - UIView extension
 
 fileprivate extension UIView {
 

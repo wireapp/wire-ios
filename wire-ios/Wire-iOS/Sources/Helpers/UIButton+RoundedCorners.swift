@@ -27,6 +27,11 @@ extension UIButton {
         case bottom
     }
 
+    func removeRoundedCorners() {
+        layer.cornerRadius = 0
+        clipsToBounds = false
+    }
+
     func roundCorners(edge: Edge, radius: CGFloat = 0) {
         layer.cornerRadius = radius
         clipsToBounds = true

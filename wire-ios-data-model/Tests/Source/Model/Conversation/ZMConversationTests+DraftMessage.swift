@@ -33,7 +33,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     func testThatItEncryptsDraftMessage_WhenEncryptionAtRestIsEnabled() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = validEncryptionKeys
+        uiMOC.databaseKey = validDatabaseKey
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -49,7 +49,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     func testThatItDiscardsDraftMessage_WhenEncryptionAtRestIsEnabled_And_DatabaseKeyIsMissing() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = nil
+        uiMOC.databaseKey = nil
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -66,14 +66,14 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     func testThatEncryptedDraftMessageCanBeAccessed_WhenDatabaseKeyIsAvailable() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = validEncryptionKeys
+        uiMOC.databaseKey = validDatabaseKey
 
         let draftText = "Draft test"
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.draftMessage = DraftMessage(text: draftText, mentions: [], quote: nil)
 
         // WHEN
-        XCTAssertNotNil(uiMOC.encryptionKeys)
+        XCTAssertNotNil(uiMOC.databaseKey)
 
         // THEN
         XCTAssertEqual(conversation.draftMessage?.text, draftText)
@@ -83,14 +83,14 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     func testThatEncryptedDraftMessageCantBeAccessed_WhenDatabaseKeyIsMissing() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = validEncryptionKeys
+        uiMOC.databaseKey = validDatabaseKey
 
         let draftText = "Draft test"
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.draftMessage = DraftMessage(text: draftText, mentions: [], quote: nil)
 
         // WHEN
-        uiMOC.encryptionKeys = nil
+        uiMOC.databaseKey = nil
 
         // THEN
         XCTAssertNil(conversation.draftMessage)

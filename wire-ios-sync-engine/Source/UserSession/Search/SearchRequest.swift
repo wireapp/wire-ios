@@ -22,24 +22,45 @@ import WireDataModel
 public struct SearchOptions: OptionSet {
     public let rawValue: Int
 
-    /// Users you are connected to via connection request
+    /// Users you are connected to via connection request.
+
     public static let contacts = SearchOptions(rawValue: 1 << 0)
-    /// Users found in your address book
+
+    /// Users found in your address book.
+
     public static let addressBook = SearchOptions(rawValue: 1 << 1)
-    /// Users which are a member of the same team as you
+
+    /// Users which are a member of the same team as you.
+
     public static let teamMembers = SearchOptions(rawValue: 1 << 2)
-    /// Exclude team members which aren't in an active conversation with you
+
+    /// Exclude team members which aren't in an active conversation with you.
+
     public static let excludeNonActiveTeamMembers = SearchOptions(rawValue: 1 << 3)
-    /// Exclude team members with the role .partner which aren't in an active conversation with you
+
+    /// Exclude team members with the role .partner which aren't in an active conversation with you.
+
     public static let excludeNonActivePartners = SearchOptions(rawValue: 1 << 4)
-    /// Users from the public directory
+
+    /// Users from the public directory.
+
     public static let directory = SearchOptions(rawValue: 1 << 5)
-    /// Group conversations you are or were a participant of
+
+    /// Group conversations you are or were a participant of.
+
     public static let conversations = SearchOptions(rawValue: 1 << 6)
-    /// Services which are enabled in your team
+
+    /// Services which are enabled in your team.
+
     public static let services = SearchOptions(rawValue: 1 << 7)
-    /// Users from federated servers
+
+    /// Users from federated servers.
+
     public static let federated = SearchOptions(rawValue: 1 << 8)
+
+    /// Only search the local database.
+
+    public static let localResultsOnly = SearchOptions(rawValue: 1 << 9)
 
     public init(rawValue: Int) {
         self.rawValue = rawValue

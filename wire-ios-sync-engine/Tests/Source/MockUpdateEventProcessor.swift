@@ -41,4 +41,8 @@ public class MockUpdateEventProcessor: NSObject, WireSyncEngine.UpdateEventProce
         storedEvents.append(contentsOf: updateEvents)
     }
 
+    public func processPendingCallEvents() throws {
+
+    }
+
 }

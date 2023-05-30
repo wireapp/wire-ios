@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 @objc
 public protocol StrategyDirectoryProtocol {
@@ -36,23 +37,29 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public let eventConsumers: [ZMEventConsumer]
     public let contextChangeTrackers: [ZMContextChangeTracker]
 
-    init(contextProvider: ContextProvider,
-         applicationStatusDirectory: ApplicationStatusDirectory,
-         cookieStorage: ZMPersistentCookieStorage,
-         pushMessageHandler: PushMessageHandler,
-         flowManager: FlowManagerType,
-         updateEventProcessor: UpdateEventProcessor,
-         localNotificationDispatcher: LocalNotificationDispatcher,
-         useLegacyPushNotifications: Bool) {
+    init(
+        contextProvider: ContextProvider,
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        cookieStorage: ZMPersistentCookieStorage,
+        pushMessageHandler: PushMessageHandler,
+        flowManager: FlowManagerType,
+        updateEventProcessor: UpdateEventProcessor,
+        localNotificationDispatcher: LocalNotificationDispatcher,
+        useLegacyPushNotifications: Bool,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) {
 
-        self.strategies = Self.buildStrategies(contextProvider: contextProvider,
-                                               applicationStatusDirectory: applicationStatusDirectory,
-                                               cookieStorage: cookieStorage,
-                                               pushMessageHandler: pushMessageHandler,
-                                               flowManager: flowManager,
-                                               updateEventProcessor: updateEventProcessor,
-                                               localNotificationDispatcher: localNotificationDispatcher,
-                                               useLegacyPushNotifications: useLegacyPushNotifications)
+        self.strategies = Self.buildStrategies(
+            contextProvider: contextProvider,
+            applicationStatusDirectory: applicationStatusDirectory,
+            cookieStorage: cookieStorage,
+            pushMessageHandler: pushMessageHandler,
+            flowManager: flowManager,
+            updateEventProcessor: updateEventProcessor,
+            localNotificationDispatcher: localNotificationDispatcher,
+            useLegacyPushNotifications: useLegacyPushNotifications,
+            lastEventIDRepository: lastEventIDRepository
+        )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
         self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
@@ -75,22 +82,26 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         }
     }
 
-    static func buildStrategies(contextProvider: ContextProvider,
-                                applicationStatusDirectory: ApplicationStatusDirectory,
-                                cookieStorage: ZMPersistentCookieStorage,
-                                pushMessageHandler: PushMessageHandler,
-                                flowManager: FlowManagerType,
-                                updateEventProcessor: UpdateEventProcessor,
-                                localNotificationDispatcher: LocalNotificationDispatcher,
-                                useLegacyPushNotifications: Bool) -> [Any] {
-
+    static func buildStrategies(
+        contextProvider: ContextProvider,
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        cookieStorage: ZMPersistentCookieStorage,
+        pushMessageHandler: PushMessageHandler,
+        flowManager: FlowManagerType,
+        updateEventProcessor: UpdateEventProcessor,
+        localNotificationDispatcher: LocalNotificationDispatcher,
+        useLegacyPushNotifications: Bool,
+        lastEventIDRepository: LastEventIDRepositoryInterface
+    ) -> [Any] {
         let syncMOC = contextProvider.syncContext
         let strategies: [Any] = [
+            // TODO: [John] use flag here
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                userKeysStore: syncMOC.zm_cryptKeyStore),
+                proteusProvider: ProteusProvider(context: syncMOC)
+            ),
             MissingClientsRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -103,7 +114,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,
                 operationStatus: applicationStatusDirectory.operationStatus,
-                useLegacyPushNotifications: useLegacyPushNotifications),
+                useLegacyPushNotifications: useLegacyPushNotifications,
+                lastEventIDRepository: lastEventIDRepository),
             FetchingClientRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -189,7 +201,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus,
+                lastEventIDRepository: lastEventIDRepository),
             ZMSelfStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -264,7 +277,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
                 userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus),
-            localNotificationDispatcher
+            localNotificationDispatcher,
+            MLSRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory
+            )
         ]
 
         return strategies

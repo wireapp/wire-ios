@@ -26,7 +26,12 @@ class VoIPPushHelperTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        VoIPPushHelper.storage = UserDefaults()
+        VoIPPushHelper.storage = UserDefaults(suiteName: "VoIPPushHelperTests")!
+    }
+
+    override func tearDown() {
+        VoIPPushHelper.storage.reset()
+        super.tearDown()
     }
 
     // MARK: - Tests
@@ -63,6 +68,7 @@ class VoIPPushHelperTests: XCTestCase {
 
     func testIsAVSReady() {
         // Given
+        VoIPPushHelper.isAVSReady = false
         XCTAssertFalse(VoIPPushHelper.isAVSReady)
 
         // When

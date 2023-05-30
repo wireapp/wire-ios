@@ -22,14 +22,25 @@ import WireCommonComponents
 
 final class IncomingConnectionView: UIView {
 
+    // MARK: - Properties
+
+    typealias UserAction = (UserType) -> Void
+    typealias ConnectionRequest = L10n.Localizable.Inbox.ConnectionRequest
+
     private let usernameLabel = UILabel()
     private let userDetailView = UserNameDetailView()
     private let securityLevelView = SecurityLevelView()
+    private let verticalStackView = UIStackView(axis: .vertical)
     private let userImageView = UserImageView()
+    private let federatedIndicator = LabelIndicator(context: .federated)
     private let incomingConnectionFooter = UIView()
-    private let acceptButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-    private let ignoreButton = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-
+    private let warningView = WarningLabelView()
+    private let acceptButton = Button(style: .accentColorTextButtonStyle,
+                                      cornerRadius: 16,
+                                      fontSpec: .normalSemiboldFont)
+    private let ignoreButton = Button(style: .secondaryTextButtonStyle,
+                                      cornerRadius: 16,
+                                      fontSpec: .normalSemiboldFont)
     private let classificationProvider: ClassificationProviding?
 
     var user: UserType {
@@ -39,11 +50,15 @@ final class IncomingConnectionView: UIView {
         }
     }
 
-    typealias UserAction = (UserType) -> Void
     var onAccept: UserAction?
     var onIgnore: UserAction?
 
-    init(user: UserType, classificationProvider: ClassificationProviding? = ZMUserSession.shared()) {
+    // MARK: - Init
+
+    init(
+        user: UserType,
+        classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+    ) {
         self.user = user
         self.classificationProvider = classificationProvider
 
@@ -60,13 +75,15 @@ final class IncomingConnectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Setup views and layout
+
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
-        acceptButton.setTitle("inbox.connection_request.connect_button_title".localized(uppercased: true), for: .normal)
+        acceptButton.setTitle(ConnectionRequest.connectButtonTitle, for: .normal)
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
-        ignoreButton.setTitle("inbox.connection_request.ignore_button_title".localized(uppercased: true), for: .normal)
+        ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle, for: .normal)
         ignoreButton.addTarget(self, action: #selector(onIgnoreButton), for: .touchUpInside)
 
         userImageView.accessibilityLabel = "user image"
@@ -74,10 +91,17 @@ final class IncomingConnectionView: UIView {
         userImageView.size = .big
         userImageView.user = user
 
+        updateFederatedIndicator()
+
         incomingConnectionFooter.addSubview(acceptButton)
         incomingConnectionFooter.addSubview(ignoreButton)
 
-        [usernameLabel, userDetailView, securityLevelView, userImageView, incomingConnectionFooter].forEach(addSubview)
+        warningView.update(withUser: user)
+        warningView.translatesAutoresizingMaskIntoConstraints = false
+        verticalStackView.spacing = 30.0
+        verticalStackView.alignment = .center
+        [usernameLabel, userDetailView, securityLevelView, verticalStackView, incomingConnectionFooter].forEach(addSubview)
+        [userImageView, federatedIndicator, warningView].forEach{ verticalStackView.addArrangedSubview($0) }
         setupLabelText()
     }
 
@@ -101,7 +125,9 @@ final class IncomingConnectionView: UIView {
          usernameLabel,
          userDetailView,
          securityLevelView,
-         userImageView].prepareForLayout()
+         federatedIndicator,
+         userImageView,
+         verticalStackView].prepareForLayout()
 
         NSLayoutConstraint.activate([
             ignoreButton.leftAnchor.constraint(equalTo: incomingConnectionFooter.leftAnchor, constant: 16),
@@ -129,17 +155,24 @@ final class IncomingConnectionView: UIView {
             securityLevelView.trailingAnchor.constraint(equalTo: trailingAnchor),
             securityLevelView.bottomAnchor.constraint(lessThanOrEqualTo: userImageView.topAnchor),
 
-            userImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            userImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            userImageView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
             userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 264),
 
-            incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: userImageView.bottomAnchor),
+            verticalStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            verticalStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            verticalStackView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
+
+            incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: warningView.bottomAnchor),
             incomingConnectionFooter.leftAnchor.constraint(equalTo: leftAnchor),
             incomingConnectionFooter.bottomAnchor.constraint(equalTo: bottomAnchor),
             incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor)
         ])
+    }
+
+    // MARK: - Methods
+
+    private func updateFederatedIndicator() {
+        federatedIndicator.isHidden = !user.isFederated
     }
 
     // MARK: - Actions

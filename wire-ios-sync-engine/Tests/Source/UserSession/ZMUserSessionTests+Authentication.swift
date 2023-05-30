@@ -32,6 +32,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         syncMOC.performGroupedBlockAndWait {
             self.createSelfClient()
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     override func tearDown() {

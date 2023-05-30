@@ -110,6 +110,13 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         )
 
+        service.storeMLS(
+            Feature.MLS(
+                status: payload.mls.status,
+                config: payload.mls.config
+            )
+        )
+
         service.storeSelfDeletingMessages(
             Feature.SelfDeletingMessages(
                 status: payload.selfDeletingMessages.status,
@@ -132,7 +139,9 @@ extension GetFeatureConfigsActionHandler {
         let conversationGuestLinks: FeatureStatus
         let digitalSignatures: FeatureStatus
         let fileSharing: FeatureStatus
+        let mls: FeatureStatusWithConfig<Feature.MLS.Config>
         let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>
+
     }
 
 }

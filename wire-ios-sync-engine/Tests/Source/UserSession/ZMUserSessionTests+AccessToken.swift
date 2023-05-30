@@ -23,11 +23,6 @@ import XCTest
 
 class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
-    override func tearDown() {
-        BackendInfo.apiVersion = nil
-        super.tearDown()
-    }
-
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
         createSelfClient()
 

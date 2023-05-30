@@ -29,6 +29,13 @@ extension ZMBaseManagedObjectTest {
         return conversation
     }
 
+    @discardableResult
+    func createMLSGroup(in moc: NSManagedObjectContext) -> MLSGroup {
+        let group = MLSGroup.insertNewObject(in: moc)
+        group.id = MLSGroupID(.random(length: 32))
+        return group
+    }
+
     func createTeam(in moc: NSManagedObjectContext) -> Team {
         let team = Team.insertNewObject(in: moc)
         team.remoteIdentifier = UUID()

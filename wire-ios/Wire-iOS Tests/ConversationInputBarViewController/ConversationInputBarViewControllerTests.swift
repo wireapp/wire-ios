@@ -265,6 +265,22 @@ final class ConversationInputBarViewControllerTests: ZMSnapshotTestCase {
         } as () -> UIViewController)
     }
 
+    func testClassifiedWithTypingIndicator() {
+        verifyInAllPhoneWidths(createSut: {
+            self.mockClassificationProvider.returnClassification = .classified
+
+            let sut = ConversationInputBarViewController(
+                conversation: self.mockConversation,
+                classificationProvider: self.mockClassificationProvider
+            )
+
+            sut.typingIndicatorView.typingUsers = [MockUserType.createUser(name: "Bruno")]
+            sut.typingIndicatorView.setHidden(false, animated: false)
+
+            return sut
+        } as () -> UIViewController)
+    }
+
     func testNoClassificationNormalState() {
         verifyInAllPhoneWidths(createSut: {
             self.mockClassificationProvider.returnClassification = .none

@@ -25,6 +25,7 @@ final class CustomBackendView: UIView {
                                      fontSpec: .headerSemiboldFont,
                                      color: SemanticColors.Label.textSectionHeader)
         label.textAlignment = .right
+        label.accessibilityIdentifier = "Backend domain"
         return label
     }()
 

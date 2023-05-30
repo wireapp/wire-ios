@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // MARK: - Conversation
 
@@ -85,21 +86,29 @@ extension Payload.Conversation {
         }
     }
 
-    func updateOrCreateOneToOneConversation(in context: NSManagedObjectContext,
-                                            serverTimestamp: Date,
-                                            source: Source) {
+    func updateOrCreateOneToOneConversation(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) {
 
-        guard let conversationID = id ?? qualifiedID?.uuid,
-              let rawConversationType = type else {
-                  Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
-                  return
-              }
+        guard
+            let conversationID = id ?? qualifiedID?.uuid,
+            let rawConversationType = type
+        else {
+            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            return
+        }
 
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
 
-        guard let otherMember = members?.others.first, let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid else {
+        guard
+            let otherMember = members?.others.first,
+            let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
+        else {
             let conversation = ZMConversation.fetch(with: conversationID, domain: qualifiedID?.domain, in: context)
-            conversation?.conversationType = conversationType
+            // TODO: use conversation type from the backend once it returns the correct value
+            conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
             conversation?.needsToBeUpdatedFromBackend = false
             return
         }
@@ -117,7 +126,9 @@ extension Payload.Conversation {
 
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
-        conversation.conversationType = conversationType
+
+        // TODO: use conversation type from the backend once it returns the correct value
+        conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -168,11 +179,14 @@ extension Payload.Conversation {
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.epoch = UInt64(epoch ?? 0)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
+        updateMessageProtocol(for: conversation)
+        updateMLSStatus(for: conversation, context: context, source: source)
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -183,6 +197,22 @@ extension Payload.Conversation {
                 // Slow synced conversations should be considered read from the start
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
+        }
+    }
+
+    // There is a bug in the backend where the conversation type is not correct for
+    // connection requests across federated backends. Instead of returning `.connection` type,
+    // it returns `oneOnOne.
+    // We fix this temporarily on our side by checking the connection status of the conversation.
+    private func conversationType(for conversation: ZMConversation?, from type: ZMConversationType) -> ZMConversationType {
+        guard let conversation = conversation else {
+            return type
+        }
+
+        if conversation.connection?.status == .sent {
+            return .connection
+        } else {
+            return type
         }
     }
 
@@ -239,6 +269,34 @@ extension Payload.Conversation {
 
         if let messageTimer = messageTimer {
             conversation.updateMessageDestructionTimeout(timeout: messageTimer)
+        }
+    }
+
+    private func updateMessageProtocol(for conversation: ZMConversation) {
+        guard let messageProtocolString = messageProtocol else {
+            Logging.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let messageProtocol = MessageProtocol(string: messageProtocolString) else {
+            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        conversation.messageProtocol = messageProtocol
+    }
+
+    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext, source: Source) {
+        let mlsEventProcessor = MLSEventProcessor.shared
+
+        mlsEventProcessor.updateConversationIfNeeded(
+            conversation: conversation,
+            groupID: mlsGroupID,
+            context: context
+        )
+
+        if source == .slowSync {
+            mlsEventProcessor.joinMLSGroupWhenReady(forConversation: conversation, context: context)
         }
     }
 
@@ -325,45 +383,14 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLe
         }
 
         let sender = fetchOrCreateSender(in: context)
+
+        // Idea for improvement, return removed users from this call to benefit from
+        // checking that the participants are in the conversation before being removed
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
-    }
 
-}
-
-extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        guard
-            let conversation = fetchOrCreateConversation(in: context)
-        else {
-            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
-            return
+        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
+            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
         }
-
-        if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
-            let selfUser = ZMUser.selfUser(in: context)
-            let users = Set(usersAndRoles.map { $0.0 })
-            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
-
-            if users.contains(selfUser) || newUsers {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-
-            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
-            // NOTE: legacy code path for backwards compatibility with servers without role support
-
-            let users = Set(users)
-            let selfUser = ZMUser.selfUser(in: context)
-
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
-        }
-
     }
 
 }
@@ -495,6 +522,55 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         // TODO jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+    }
+
+}
+
+extension Payload.UpdateConversationMLSWelcome {
+
+    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+        MLSEventProcessor.shared.process(
+            welcomeMessage: data,
+            in: context
+        )
+    }
+
+}
+
+extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
+
+    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+        guard
+            let conversation = fetchOrCreateConversation(in: context)
+        else {
+            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
+            return
+        }
+
+        if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
+            let selfUser = ZMUser.selfUser(in: context)
+            let users = Set(usersAndRoles.map { $0.0 })
+            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
+
+            if users.contains(selfUser) || newUsers {
+                // TODO jacob refactor to append method on conversation
+                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+            }
+
+            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
+        } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+            // NOTE: legacy code path for backwards compatibility with servers without role support
+
+            let users = Set(users)
+            let selfUser = ZMUser.selfUser(in: context)
+
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
+                // TODO jacob refactor to append method on conversation
+                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+            }
+            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+        }
+
     }
 
 }

@@ -160,5 +160,12 @@ public extension WireLogger {
     static let calling = WireLogger(tag: "calling")
     static let messaging = WireLogger(tag: "messaging")
     static let backend = WireLogger(tag: "backend")
+    static let ear = WireLogger(tag: "encryption-at-rest")
+    static let keychain = WireLogger(tag: "keychain")
+    static let mls = WireLogger(tag: "mls")
+    static let coreCrypto = WireLogger(tag: "core-crypto")
+    static let environment = WireLogger(tag: "environment")
+    static let updateEvent = WireLogger(tag: "update-event")
+    static let performance = WireLogger(tag: "performance")
 
 }

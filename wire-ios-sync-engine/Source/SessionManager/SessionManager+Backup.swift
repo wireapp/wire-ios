@@ -56,7 +56,7 @@ extension SessionManager {
             clientIdentifier: clientId,
             applicationContainer: sharedContainerURL,
             dispatchGroup: dispatchGroup,
-            encryptionKeys: activeUserSession.managedObjectContext.encryptionKeys,
+            databaseKey: activeUserSession.managedObjectContext.databaseKey,
             completion: { [dispatchGroup] in
                 SessionManager.handle(result: $0,
                                       password: password,

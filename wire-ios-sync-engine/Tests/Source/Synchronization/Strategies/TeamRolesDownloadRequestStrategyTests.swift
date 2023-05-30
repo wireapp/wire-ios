@@ -30,7 +30,11 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockSyncStateDelegate = MockSyncStateDelegate()
-        mockSyncStatus = MockSyncStatus(managedObjectContext: syncMOC, syncStateDelegate: mockSyncStateDelegate)
+        mockSyncStatus = MockSyncStatus(
+            managedObjectContext: syncMOC,
+            syncStateDelegate: mockSyncStateDelegate,
+            lastEventIDRepository: lastEventIDRepository
+        )
         sut = TeamRolesDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
         syncMOC.performGroupedBlockAndWait {

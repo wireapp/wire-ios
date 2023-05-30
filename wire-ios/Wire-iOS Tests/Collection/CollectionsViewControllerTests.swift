@@ -51,7 +51,7 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        accentColor = .vividRed
+        accentColor = .strongBlue
 
         let conversation = MockConversation() as Any as! ZMConversation
         let assetCollection = MockCollection.empty

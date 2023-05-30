@@ -160,15 +160,33 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
 
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
-    func migrateTowardEncryptionAtRest(in moc: NSManagedObjectContext) throws {
-        let (ciphertext, nonce) = try moc.encryptData(data: data)
+    func migrateTowardEncryptionAtRest(
+        in context: NSManagedObjectContext,
+        key: VolatileData
+    ) throws {
+        let (ciphertext, nonce) = try context.encryptData(
+            data: data,
+            key: key
+        )
+
         self.data = ciphertext
         self.nonce = nonce
     }
 
-    func migrateAwayFromEncryptionAtRest(in moc: NSManagedObjectContext) throws {
-        guard let nonce = nonce else { return }
-        let plaintext = try moc.decryptData(data: data, nonce: nonce)
+    func migrateAwayFromEncryptionAtRest(
+        in context: NSManagedObjectContext,
+        key: VolatileData
+    ) throws {
+        guard let nonce = nonce else {
+            return
+        }
+
+        let plaintext = try context.decryptData(
+            data: data,
+            nonce: nonce,
+            key: key
+        )
+
         self.data = plaintext
         self.nonce = nil
     }

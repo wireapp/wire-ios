@@ -72,6 +72,7 @@
     self.basePath = nil;
     self.sut = nil;
     self.singleRequestSync = nil;
+    self.coreDataStack = nil;
 
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];

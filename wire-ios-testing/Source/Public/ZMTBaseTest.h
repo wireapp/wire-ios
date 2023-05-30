@@ -90,6 +90,9 @@ typedef BOOL(^VerificationBlock)(void);
 @property (nonatomic, strong, nonnull, readonly) id<ZMSGroupQueue> fakeUIContext;
 @property (nonatomic, strong, nonnull, readonly) id<ZMSGroupQueue> fakeSyncContext;
 
+@property (nonatomic, nonnull) NSUserDefaults *sharedUserDefaults;
+
+
 @end
 
 

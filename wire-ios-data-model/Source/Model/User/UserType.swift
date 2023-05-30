@@ -215,6 +215,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// the user has team or not
     @objc
     var hasTeam: Bool { get }
+
+    /// Whether the user is allowed to create MLS groups.
+    var canCreateMLSGroups: Bool { get }
 }
 
 /// Methods and properties related to managing 1:1 user connections.

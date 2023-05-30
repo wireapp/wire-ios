@@ -23,14 +23,27 @@ extension ZMConversation: EncryptionAtRestMigratable {
     static let predicateForObjectsNeedingMigration: NSPredicate? =
         NSPredicate(format: "%K != nil", #keyPath(ZMConversation.draftMessageData))
 
-    func migrateTowardEncryptionAtRest(in moc: NSManagedObjectContext) throws {
-        guard let data = draftMessageData else { return }
-        let (ciphertext, nonce) = try moc.encryptData(data: data)
+    func migrateTowardEncryptionAtRest(
+        in context: NSManagedObjectContext,
+        key: VolatileData
+    ) throws {
+        guard let data = draftMessageData else {
+            return
+        }
+
+        let (ciphertext, nonce) = try context.encryptData(
+            data: data,
+            key: key
+        )
+
         draftMessageData = ciphertext
         draftMessageNonce = nonce
     }
 
-    func migrateAwayFromEncryptionAtRest(in moc: NSManagedObjectContext) throws {
+    func migrateAwayFromEncryptionAtRest(
+        in context: NSManagedObjectContext,
+        key: VolatileData
+    ) throws {
         guard
             let data = draftMessageData,
             let nonce = draftMessageNonce
@@ -38,7 +51,12 @@ extension ZMConversation: EncryptionAtRestMigratable {
             return
         }
 
-        let plaintext = try moc.decryptData(data: data, nonce: nonce)
+        let plaintext = try context.decryptData(
+            data: data,
+            nonce: nonce,
+            key: key
+        )
+
         draftMessageData = plaintext
         draftMessageNonce = nil
     }

@@ -28,7 +28,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
         createSelfClient(onMOC: uiMOC)
         uiMOC.encryptMessagesAtRest = false
-        uiMOC.encryptionKeys = nil
+        uiMOC.databaseKey = nil
     }
 
     // MARK: - Positive Tests
@@ -56,7 +56,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         let genericMessage = createGenericMessage(text: "Hello, world")
 
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = validEncryptionKeys
+        uiMOC.databaseKey = validDatabaseKey
 
         // When
         try sut.setGenericMessage(genericMessage)
@@ -74,17 +74,17 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let oldGenericMessage = try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
-        let encryptionKeys = uiMOC.encryptionKeys
+        let databaseKey = uiMOC.databaseKey
 
         // When
         let newGenericMessage = createGenericMessage(text: "Goodbye!")
 
-        uiMOC.encryptionKeys = nil
+        uiMOC.databaseKey = nil
 
         XCTAssertThrowsError(try sut.setGenericMessage(newGenericMessage))
 
         // Then
-        uiMOC.encryptionKeys = encryptionKeys
+        uiMOC.databaseKey = databaseKey
 
         XCTAssertEqual(sut.underlyingMessage, oldGenericMessage)
     }
@@ -96,7 +96,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
 
         // When
-        uiMOC.encryptionKeys = nil
+        uiMOC.databaseKey = nil
 
         // Then
         XCTAssertNil(sut.underlyingMessage)
@@ -107,17 +107,17 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let oldGenericMessage = try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
-        let encryptionKeys = uiMOC.encryptionKeys
+        let databaseKey = uiMOC.databaseKey
 
         // When
         let newGenericMessage = createGenericMessage(text: "Goodbye!")
 
-        uiMOC.encryptionKeys = malformedEncryptionKeys
+        uiMOC.databaseKey = malformedDatabaseKey
 
         XCTAssertThrowsError(try sut.setGenericMessage(newGenericMessage))
 
         // Then
-        uiMOC.encryptionKeys = encryptionKeys
+        uiMOC.databaseKey = databaseKey
 
         XCTAssertEqual(sut.underlyingMessage, oldGenericMessage)
     }
@@ -129,7 +129,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
 
         // When
-        uiMOC.encryptionKeys = malformedEncryptionKeys
+        uiMOC.databaseKey = malformedDatabaseKey
 
         // Then
         XCTAssertNil(sut.underlyingMessage)
@@ -146,7 +146,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         let genericMessage = createGenericMessage(text: text)
 
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.encryptionKeys = validEncryptionKeys
+        uiMOC.databaseKey = validDatabaseKey
 
         try sut.setGenericMessage(genericMessage)
 

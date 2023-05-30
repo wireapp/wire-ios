@@ -146,6 +146,7 @@ extension ZMOTRMessage {
                     prefetchResult.add([message])
                 }
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID {
+                zmLog.warn("senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: updateEvent.senderClientID)))")
                 return nil
             }
 

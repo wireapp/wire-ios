@@ -41,7 +41,8 @@ extension ZMMessage {
              .conversationKnock:
             return payload.dictionary(forKey: "data")?["nonce"] as? UUID
         case .conversationClientMessageAdd,
-             .conversationOtrMessageAdd:
+             .conversationOtrMessageAdd,
+             .conversationMLSMessageAdd:
             // if event is otr message then payload should be already decrypted and should contain generic message data
             let base64Content = payload.string(forKey: "data")
             let message = GenericMessage(withBase64String: base64Content)

@@ -83,17 +83,16 @@ extension CoreDataStack {
     ///   - accountIdentifier: identifier of account being backed up
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
-    ///   - encryptionKeys: EAR encryption keys
+    ///   - databaseKey: EAR database key
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
     public static func backupLocalStorage(
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        encryptionKeys: EncryptionKeys? = nil,
+        databaseKey: VolatileData? = nil,
         completion: @escaping (Result<BackupInfo>) -> Void
-        ) {
-
+    ) {
         func fail(_ error: BackupError) {
             log.debug("error backing up local store: \(error)")
             DispatchQueue.main.async(group: dispatchGroup) {
@@ -129,10 +128,12 @@ extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                try prepareStoreForBackupExport(coordinator: coordinator,
-                                                location: backupLocation,
-                                                options: options,
-                                                encryptionKeys: encryptionKeys)
+                try prepareStoreForBackupExport(
+                    coordinator: coordinator,
+                    location: backupLocation,
+                    options: options,
+                    databaseKey: databaseKey
+                )
 
                 // Create & write metadata
                 let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
@@ -213,10 +214,12 @@ extension CoreDataStack {
         }
     }
 
-    private static func prepareStoreForBackupExport(coordinator: NSPersistentStoreCoordinator,
-                                                    location: URL,
-                                                    options: [String: Any],
-                                                    encryptionKeys: EncryptionKeys? = nil) throws {
+    private static func prepareStoreForBackupExport(
+        coordinator: NSPersistentStoreCoordinator,
+        location: URL,
+        options: [String: Any],
+        databaseKey: VolatileData? = nil
+    ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -224,8 +227,9 @@ extension CoreDataStack {
 
         try context.performGroupedAndWait { context in
             if context.encryptMessagesAtRest {
-                guard let encryptionKeys = encryptionKeys else { throw BackupError.missingEAREncryptionKey }
-                try context.disableEncryptionAtRest(encryptionKeys: encryptionKeys)
+                guard let databaseKey = databaseKey else { throw BackupError.missingEAREncryptionKey }
+                try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
+                context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()
                 try context.save()
             }

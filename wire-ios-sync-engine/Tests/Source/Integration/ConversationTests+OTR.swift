@@ -705,6 +705,54 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertEqual(newNumberOfMessages!, previousNumberOfMessages!)
     }
 
+    func testThatItNotifiesWhenInsertingCannotDecryptMessage() throws {
+        // GIVEN
+        XCTAssertTrue(login())
+        let conversation = conversation(for: selfToUser1Conversation)
+        establishSession(with: user1)
+
+        let expectation = XCTestExpectation(description: "It should call the observer")
+
+        var token: Any? = NotificationInContext.addObserver(
+            name: ZMConversation.failedToDecryptMessageNotificationName,
+            context: try XCTUnwrap(userSession?.managedObjectContext.notificationContext),
+            object: nil,
+            queue: nil,
+            using: { note in
+                let object = note.object as? ZMConversation
+                let cause = note.userInfo["cause"] as? Int
+
+                // THEN
+                XCTAssertEqual(conversation?.remoteIdentifier, object?.remoteIdentifier)
+                XCTAssertNotNil(cause)
+
+                if let cause = cause {
+                    XCTAssertEqual(ProteusError(rawValue: cause), ProteusError.decodeError)
+                }
+
+                expectation.fulfill()
+            }
+        )
+
+        // WHEN
+        performIgnoringZMLogError {
+            self.mockTransportSession.performRemoteChanges { _ in
+                self.selfToUser1Conversation.insertOTRMessage(
+                    from: self.user1.clients.anyObject() as! MockUserClient,
+                    to: self.selfUser.clients.anyObject() as! MockUserClient,
+                    data: "foo".data(using: .utf8)!
+                )
+            }
+
+            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        }
+
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // clean up
+        token = nil
+    }
+
     enum AssetMediumTestUseCase {
         case cacheCleared
         case decryptionCrash

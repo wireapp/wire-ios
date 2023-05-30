@@ -17,42 +17,33 @@
 //
 
 import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
 
 final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
+    // MARK: - Properties
+    typealias SketchColors = SemanticColors.DrawingColors
     var sut: SketchColorPickerController!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         sut = SketchColorPickerController()
 
-        sut.sketchColors = [.black,
-                            .white,
-                            SemanticColors.LegacyColors.strongBlue,
-                            SemanticColors.LegacyColors.strongLimeGreen,
-                            SemanticColors.LegacyColors.brightYellow,
-                            SemanticColors.LegacyColors.vividRed,
-                            SemanticColors.LegacyColors.brightOrange,
-                            SemanticColors.LegacyColors.softPink,
-                            SemanticColors.LegacyColors.violet,
-                            UIColor(red: 0.688, green: 0.342, blue: 0.002, alpha: 1),
-                            UIColor(red: 0.381, green: 0.192, blue: 0.006, alpha: 1),
-                            UIColor(red: 0.894, green: 0.735, blue: 0.274, alpha: 1),
-                            UIColor(red: 0.905, green: 0.317, blue: 0.466, alpha: 1),
-                            UIColor(red: 0.58, green: 0.088, blue: 0.318, alpha: 1),
-                            UIColor(red: 0.431, green: 0.65, blue: 0.749, alpha: 1),
-                            UIColor(red: 0.6, green: 0.588, blue: 0.278, alpha: 1),
-                            UIColor(red: 0.44, green: 0.44, blue: 0.44, alpha: 1)]
-
-        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
+        sut.sketchColors = SketchColor.getAllColors()
+        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 69)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Tests
 
     func testForInitState() {
         verify(matching: sut)

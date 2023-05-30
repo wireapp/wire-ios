@@ -77,10 +77,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         updateLayout(for: traitCollection)
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-
     // MARK: Interface
 
     func createViews() {
@@ -91,7 +87,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
             self?.delegate?.callQualityController(self!, didSelect: score)
         })
 
-        dimmingView.backgroundColor = UIColor.CallQuality.backgroundDim
+        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         dimmingView.alpha = 0
 
         let closeButtonTitle = QualitySurvey.skipButtonTitle

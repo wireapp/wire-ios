@@ -64,7 +64,7 @@ enum Payload {
 
     }
 
-    struct Location: Codable {
+    struct Location: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case longitude = "lon"
@@ -75,7 +75,7 @@ enum Payload {
         let latitide: Double
     }
 
-    struct UserClient: Codable {
+    struct UserClient: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case id
@@ -96,7 +96,7 @@ enum Payload {
         let deviceModel: String?
 
         init(id: String,
-             deviceClass: String,
+             deviceClass: String? = nil,
              type: String? = nil,
              creationDate: Date? = nil,
              label: String? = nil,
