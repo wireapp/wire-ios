@@ -22,7 +22,7 @@ import WireDataModel
 
 public struct Reaction {
 
-    let type: ReactionType
+    let type: MessageReaction
     let count: Int
     let isSelfUserReacting: Bool
     let performReaction: () -> Void
@@ -61,7 +61,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
 
         reactionView.reactions = message.usersReaction.compactMap { reaction, usersWhoReacted in
             guard
-                let reactionType = ReactionType(rawValue: reaction),
+                let reactionType = MessageReaction.messageReaction(from: reaction),
                 !usersWhoReacted.isEmpty
             else {
                 return nil
@@ -74,7 +74,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
                 performReaction: { [weak self] in
                     guard let `self` = self else { return }
                     self.delegate?.perform(
-                        action: .like,
+                        action: .react(reactionType),
                         for: message,
                         view: self
                     )
