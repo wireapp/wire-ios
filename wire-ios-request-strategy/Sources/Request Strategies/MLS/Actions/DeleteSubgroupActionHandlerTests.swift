@@ -29,7 +29,7 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
     override func setUp() {
         super.setUp()
         action = DeleteSubgroupAction(
-            conversationId: conversationID,
+            conversationID: conversationID,
             domain: domain,
             subgroupType: subgroupType
         )
@@ -85,7 +85,7 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
 
     func test_itDosentGenerateRequests_InvalidParameters_Domain() {
         action = DeleteSubgroupAction(
-            conversationId: conversationID,
+            conversationID: conversationID,
             domain: "",
             subgroupType: subgroupType
         )

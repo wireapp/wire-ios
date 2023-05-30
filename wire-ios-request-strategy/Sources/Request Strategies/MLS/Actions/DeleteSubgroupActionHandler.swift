@@ -35,7 +35,7 @@ final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
         }
 
         let domain = action.domain
-        let conversationID = action.conversationId.transportString()
+        let conversationID = action.conversationID.transportString()
         let subgroupType = action.subgroupType.rawValue
 
         guard
