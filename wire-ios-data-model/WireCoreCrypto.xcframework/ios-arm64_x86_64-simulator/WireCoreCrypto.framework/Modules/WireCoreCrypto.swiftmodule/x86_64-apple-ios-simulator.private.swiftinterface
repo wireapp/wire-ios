@@ -1,0 +1,667 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7.2 (swiftlang-5.7.2.135.5 clang-1400.0.29.51)
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name WireCoreCrypto
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import Foundation
+import Swift
+@_exported import WireCoreCrypto
+import _Concurrency
+import _StringProcessing
+public protocol CoreCryptoProtocol {
+  func mlsInit(clientId: WireCoreCrypto.ClientId, ciphersuites: [WireCoreCrypto.CiphersuiteName]) throws
+  func mlsGenerateKeypairs(ciphersuites: [WireCoreCrypto.CiphersuiteName]) throws -> [[Swift.UInt8]]
+  func mlsInitWithClientId(clientId: WireCoreCrypto.ClientId, signaturePublicKeys: [[Swift.UInt8]], ciphersuites: [WireCoreCrypto.CiphersuiteName]) throws
+  func restoreFromDisk() throws
+  func setCallbacks(callbacks: WireCoreCrypto.CoreCryptoCallbacks) throws
+  func clientPublicKey(ciphersuite: WireCoreCrypto.CiphersuiteName) throws -> [Swift.UInt8]
+  func clientKeypackages(ciphersuite: WireCoreCrypto.CiphersuiteName, amountRequested: Swift.UInt32) throws -> [[Swift.UInt8]]
+  func clientValidKeypackagesCount(ciphersuite: WireCoreCrypto.CiphersuiteName) throws -> Swift.UInt64
+  func createConversation(conversationId: WireCoreCrypto.ConversationId, config: WireCoreCrypto.ConversationConfiguration) throws
+  func conversationEpoch(conversationId: WireCoreCrypto.ConversationId) throws -> Swift.UInt64
+  func conversationExists(conversationId: WireCoreCrypto.ConversationId) -> Swift.Bool
+  func processWelcomeMessage(welcomeMessage: [Swift.UInt8], customConfiguration: WireCoreCrypto.CustomConfiguration) throws -> WireCoreCrypto.ConversationId
+  func addClientsToConversation(conversationId: WireCoreCrypto.ConversationId, clients: [WireCoreCrypto.Invitee]) throws -> WireCoreCrypto.MemberAddedMessages
+  func removeClientsFromConversation(conversationId: WireCoreCrypto.ConversationId, clients: [WireCoreCrypto.ClientId]) throws -> WireCoreCrypto.CommitBundle
+  func markConversationAsChildOf(childId: WireCoreCrypto.ConversationId, parentId: WireCoreCrypto.ConversationId) throws
+  func updateKeyingMaterial(conversationId: WireCoreCrypto.ConversationId) throws -> WireCoreCrypto.CommitBundle
+  func commitPendingProposals(conversationId: WireCoreCrypto.ConversationId) throws -> WireCoreCrypto.CommitBundle?
+  func wipeConversation(conversationId: WireCoreCrypto.ConversationId) throws
+  func decryptMessage(conversationId: WireCoreCrypto.ConversationId, payload: [Swift.UInt8]) throws -> WireCoreCrypto.DecryptedMessage
+  func encryptMessage(conversationId: WireCoreCrypto.ConversationId, message: [Swift.UInt8]) throws -> [Swift.UInt8]
+  func newAddProposal(conversationId: WireCoreCrypto.ConversationId, keyPackage: [Swift.UInt8]) throws -> WireCoreCrypto.ProposalBundle
+  func newUpdateProposal(conversationId: WireCoreCrypto.ConversationId) throws -> WireCoreCrypto.ProposalBundle
+  func newRemoveProposal(conversationId: WireCoreCrypto.ConversationId, clientId: WireCoreCrypto.ClientId) throws -> WireCoreCrypto.ProposalBundle
+  func newExternalAddProposal(conversationId: WireCoreCrypto.ConversationId, epoch: Swift.UInt64, ciphersuite: WireCoreCrypto.CiphersuiteName, credentialType: WireCoreCrypto.MlsCredentialType) throws -> [Swift.UInt8]
+  func newExternalRemoveProposal(conversationId: WireCoreCrypto.ConversationId, epoch: Swift.UInt64, keyPackageRef: [Swift.UInt8]) throws -> [Swift.UInt8]
+  func joinByExternalCommit(publicGroupState: [Swift.UInt8], customConfiguration: WireCoreCrypto.CustomConfiguration, credentialType: WireCoreCrypto.MlsCredentialType) throws -> WireCoreCrypto.ConversationInitBundle
+  func mergePendingGroupFromExternalCommit(conversationId: WireCoreCrypto.ConversationId) throws
+  func clearPendingGroupFromExternalCommit(conversationId: WireCoreCrypto.ConversationId) throws
+  func exportGroupState(conversationId: WireCoreCrypto.ConversationId) throws -> [Swift.UInt8]
+  func exportSecretKey(conversationId: WireCoreCrypto.ConversationId, keyLength: Swift.UInt32) throws -> [Swift.UInt8]
+  func getClientIds(conversationId: WireCoreCrypto.ConversationId) throws -> [WireCoreCrypto.ClientId]
+  func randomBytes(length: Swift.UInt32) throws -> [Swift.UInt8]
+  func reseedRng(seed: [Swift.UInt8]) throws
+  func commitAccepted(conversationId: WireCoreCrypto.ConversationId) throws
+  func clearPendingProposal(conversationId: WireCoreCrypto.ConversationId, proposalRef: [Swift.UInt8]) throws
+  func clearPendingCommit(conversationId: WireCoreCrypto.ConversationId) throws
+  func proteusInit() throws
+  func proteusSessionFromPrekey(sessionId: Swift.String, prekey: [Swift.UInt8]) throws
+  func proteusSessionFromMessage(sessionId: Swift.String, envelope: [Swift.UInt8]) throws -> [Swift.UInt8]
+  func proteusSessionSave(sessionId: Swift.String) throws
+  func proteusSessionDelete(sessionId: Swift.String) throws
+  func proteusSessionExists(sessionId: Swift.String) throws -> Swift.Bool
+  func proteusDecrypt(sessionId: Swift.String, ciphertext: [Swift.UInt8]) throws -> [Swift.UInt8]
+  func proteusEncrypt(sessionId: Swift.String, plaintext: [Swift.UInt8]) throws -> [Swift.UInt8]
+  func proteusEncryptBatched(sessionId: [Swift.String], plaintext: [Swift.UInt8]) throws -> [Swift.String : [Swift.UInt8]]
+  func proteusNewPrekey(prekeyId: Swift.UInt16) throws -> [Swift.UInt8]
+  func proteusNewPrekeyAuto() throws -> WireCoreCrypto.ProteusAutoPrekeyBundle
+  func proteusLastResortPrekey() throws -> [Swift.UInt8]
+  func proteusLastResortPrekeyId() throws -> Swift.UInt16
+  func proteusFingerprint() throws -> Swift.String
+  func proteusFingerprintLocal(sessionId: Swift.String) throws -> Swift.String
+  func proteusFingerprintRemote(sessionId: Swift.String) throws -> Swift.String
+  func proteusFingerprintPrekeybundle(prekey: [Swift.UInt8]) throws -> Swift.String
+  func proteusCryptoboxMigrate(path: Swift.String) throws
+  func proteusLastErrorCode() -> Swift.UInt32
+  func e2eiNewEnrollment(clientId: Swift.String, displayName: Swift.String, handle: Swift.String, expiryDays: Swift.UInt32, ciphersuite: WireCoreCrypto.CiphersuiteName) throws -> WireCoreCrypto.WireE2eIdentity
+  func e2eiMlsInit(enrollment: WireCoreCrypto.WireE2eIdentity, certificateChain: Swift.String) throws
+  func e2eiEnrollmentStash(enrollment: WireCoreCrypto.WireE2eIdentity) throws -> [Swift.UInt8]
+  func e2eiEnrollmentStashPop(handle: [Swift.UInt8]) throws -> WireCoreCrypto.WireE2eIdentity
+}
+@_hasMissingDesignatedInitializers public class CoreCrypto : WireCoreCrypto.CoreCryptoProtocol {
+  convenience public init(path: Swift.String, key: Swift.String, clientId: WireCoreCrypto.ClientId, ciphersuites: [WireCoreCrypto.CiphersuiteName], entropySeed: [Swift.UInt8]?) throws
+  @objc deinit
+  public static func deferredInit(path: Swift.String, key: Swift.String, ciphersuites: [WireCoreCrypto.CiphersuiteName], entropySeed: [Swift.UInt8]?) throws -> WireCoreCrypto.CoreCrypto
+  public func mlsInit(clientId: WireCoreCrypto.ClientId, ciphersuites: [WireCoreCrypto.CiphersuiteName]) throws
+  public func mlsGenerateKeypairs(ciphersuites: [WireCoreCrypto.CiphersuiteName]) throws -> [[Swift.UInt8]]
+  public func mlsInitWithClientId(clientId: WireCoreCrypto.ClientId, signaturePublicKeys: [[Swift.UInt8]], ciphersuites: [WireCoreCrypto.CiphersuiteName]) throws
+  public func restoreFromDisk() throws
+  public func setCallbacks(callbacks: WireCoreCrypto.CoreCryptoCallbacks) throws
+  public func clientPublicKey(ciphersuite: WireCoreCrypto.CiphersuiteName) throws -> [Swift.UInt8]
+  public func clientKeypackages(ciphersuite: WireCoreCrypto.CiphersuiteName, amountRequested: Swift.UInt32) throws -> [[Swift.UInt8]]
+  public func clientValidKeypackagesCount(ciphersuite: WireCoreCrypto.CiphersuiteName) throws -> Swift.UInt64
+  public func createConversation(conversationId: WireCoreCrypto.ConversationId, config: WireCoreCrypto.ConversationConfiguration) throws
+  public func conversationEpoch(conversationId: WireCoreCrypto.ConversationId) throws -> Swift.UInt64
+  public func conversationExists(conversationId: WireCoreCrypto.ConversationId) -> Swift.Bool
+  public func processWelcomeMessage(welcomeMessage: [Swift.UInt8], customConfiguration: WireCoreCrypto.CustomConfiguration) throws -> WireCoreCrypto.ConversationId
+  public func addClientsToConversation(conversationId: WireCoreCrypto.ConversationId, clients: [WireCoreCrypto.Invitee]) throws -> WireCoreCrypto.MemberAddedMessages
+  public func removeClientsFromConversation(conversationId: WireCoreCrypto.ConversationId, clients: [WireCoreCrypto.ClientId]) throws -> WireCoreCrypto.CommitBundle
+  public func markConversationAsChildOf(childId: WireCoreCrypto.ConversationId, parentId: WireCoreCrypto.ConversationId) throws
+  public func updateKeyingMaterial(conversationId: WireCoreCrypto.ConversationId) throws -> WireCoreCrypto.CommitBundle
+  public func commitPendingProposals(conversationId: WireCoreCrypto.ConversationId) throws -> WireCoreCrypto.CommitBundle?
+  public func wipeConversation(conversationId: WireCoreCrypto.ConversationId) throws
+  public func decryptMessage(conversationId: WireCoreCrypto.ConversationId, payload: [Swift.UInt8]) throws -> WireCoreCrypto.DecryptedMessage
+  public func encryptMessage(conversationId: WireCoreCrypto.ConversationId, message: [Swift.UInt8]) throws -> [Swift.UInt8]
+  public func newAddProposal(conversationId: WireCoreCrypto.ConversationId, keyPackage: [Swift.UInt8]) throws -> WireCoreCrypto.ProposalBundle
+  public func newUpdateProposal(conversationId: WireCoreCrypto.ConversationId) throws -> WireCoreCrypto.ProposalBundle
+  public func newRemoveProposal(conversationId: WireCoreCrypto.ConversationId, clientId: WireCoreCrypto.ClientId) throws -> WireCoreCrypto.ProposalBundle
+  public func newExternalAddProposal(conversationId: WireCoreCrypto.ConversationId, epoch: Swift.UInt64, ciphersuite: WireCoreCrypto.CiphersuiteName, credentialType: WireCoreCrypto.MlsCredentialType) throws -> [Swift.UInt8]
+  public func newExternalRemoveProposal(conversationId: WireCoreCrypto.ConversationId, epoch: Swift.UInt64, keyPackageRef: [Swift.UInt8]) throws -> [Swift.UInt8]
+  public func joinByExternalCommit(publicGroupState: [Swift.UInt8], customConfiguration: WireCoreCrypto.CustomConfiguration, credentialType: WireCoreCrypto.MlsCredentialType) throws -> WireCoreCrypto.ConversationInitBundle
+  public func mergePendingGroupFromExternalCommit(conversationId: WireCoreCrypto.ConversationId) throws
+  public func clearPendingGroupFromExternalCommit(conversationId: WireCoreCrypto.ConversationId) throws
+  public func exportGroupState(conversationId: WireCoreCrypto.ConversationId) throws -> [Swift.UInt8]
+  public func exportSecretKey(conversationId: WireCoreCrypto.ConversationId, keyLength: Swift.UInt32) throws -> [Swift.UInt8]
+  public func getClientIds(conversationId: WireCoreCrypto.ConversationId) throws -> [WireCoreCrypto.ClientId]
+  public func randomBytes(length: Swift.UInt32) throws -> [Swift.UInt8]
+  public func reseedRng(seed: [Swift.UInt8]) throws
+  public func commitAccepted(conversationId: WireCoreCrypto.ConversationId) throws
+  public func clearPendingProposal(conversationId: WireCoreCrypto.ConversationId, proposalRef: [Swift.UInt8]) throws
+  public func clearPendingCommit(conversationId: WireCoreCrypto.ConversationId) throws
+  public func proteusInit() throws
+  public func proteusSessionFromPrekey(sessionId: Swift.String, prekey: [Swift.UInt8]) throws
+  public func proteusSessionFromMessage(sessionId: Swift.String, envelope: [Swift.UInt8]) throws -> [Swift.UInt8]
+  public func proteusSessionSave(sessionId: Swift.String) throws
+  public func proteusSessionDelete(sessionId: Swift.String) throws
+  public func proteusSessionExists(sessionId: Swift.String) throws -> Swift.Bool
+  public func proteusDecrypt(sessionId: Swift.String, ciphertext: [Swift.UInt8]) throws -> [Swift.UInt8]
+  public func proteusEncrypt(sessionId: Swift.String, plaintext: [Swift.UInt8]) throws -> [Swift.UInt8]
+  public func proteusEncryptBatched(sessionId: [Swift.String], plaintext: [Swift.UInt8]) throws -> [Swift.String : [Swift.UInt8]]
+  public func proteusNewPrekey(prekeyId: Swift.UInt16) throws -> [Swift.UInt8]
+  public func proteusNewPrekeyAuto() throws -> WireCoreCrypto.ProteusAutoPrekeyBundle
+  public func proteusLastResortPrekey() throws -> [Swift.UInt8]
+  public func proteusLastResortPrekeyId() throws -> Swift.UInt16
+  public func proteusFingerprint() throws -> Swift.String
+  public func proteusFingerprintLocal(sessionId: Swift.String) throws -> Swift.String
+  public func proteusFingerprintRemote(sessionId: Swift.String) throws -> Swift.String
+  public func proteusFingerprintPrekeybundle(prekey: [Swift.UInt8]) throws -> Swift.String
+  public func proteusCryptoboxMigrate(path: Swift.String) throws
+  public func proteusLastErrorCode() -> Swift.UInt32
+  public func e2eiNewEnrollment(clientId: Swift.String, displayName: Swift.String, handle: Swift.String, expiryDays: Swift.UInt32, ciphersuite: WireCoreCrypto.CiphersuiteName) throws -> WireCoreCrypto.WireE2eIdentity
+  public func e2eiMlsInit(enrollment: WireCoreCrypto.WireE2eIdentity, certificateChain: Swift.String) throws
+  public func e2eiEnrollmentStash(enrollment: WireCoreCrypto.WireE2eIdentity) throws -> [Swift.UInt8]
+  public func e2eiEnrollmentStashPop(handle: [Swift.UInt8]) throws -> WireCoreCrypto.WireE2eIdentity
+}
+public struct FfiConverterTypeCoreCrypto {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.CoreCrypto
+  public static func write(_ value: WireCoreCrypto.CoreCrypto, into buf: inout [Swift.UInt8])
+  public static func lift(_ pointer: Swift.UnsafeMutableRawPointer) throws -> WireCoreCrypto.CoreCrypto
+  public static func lower(_ value: WireCoreCrypto.CoreCrypto) -> Swift.UnsafeMutableRawPointer
+}
+public protocol WireE2eIdentityProtocol {
+  func directoryResponse(directory: [Swift.UInt8]) throws -> WireCoreCrypto.AcmeDirectory
+  func newAccountRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func newAccountResponse(account: [Swift.UInt8]) throws
+  func newOrderRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func newOrderResponse(order: [Swift.UInt8]) throws -> WireCoreCrypto.NewAcmeOrder
+  func newAuthzRequest(url: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func newAuthzResponse(authz: [Swift.UInt8]) throws -> WireCoreCrypto.NewAcmeAuthz
+  func createDpopToken(expirySecs: Swift.UInt32, backendNonce: Swift.String) throws -> Swift.String
+  func newDpopChallengeRequest(accessToken: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func newOidcChallengeRequest(idToken: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func newChallengeResponse(challenge: [Swift.UInt8]) throws
+  func checkOrderRequest(orderUrl: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func checkOrderResponse(order: [Swift.UInt8]) throws -> Swift.String
+  func finalizeRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+  func finalizeResponse(finalize: [Swift.UInt8]) throws -> Swift.String
+  func certificateRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+}
+@_hasMissingDesignatedInitializers public class WireE2eIdentity : WireCoreCrypto.WireE2eIdentityProtocol {
+  @objc deinit
+  public func directoryResponse(directory: [Swift.UInt8]) throws -> WireCoreCrypto.AcmeDirectory
+  public func newAccountRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func newAccountResponse(account: [Swift.UInt8]) throws
+  public func newOrderRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func newOrderResponse(order: [Swift.UInt8]) throws -> WireCoreCrypto.NewAcmeOrder
+  public func newAuthzRequest(url: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func newAuthzResponse(authz: [Swift.UInt8]) throws -> WireCoreCrypto.NewAcmeAuthz
+  public func createDpopToken(expirySecs: Swift.UInt32, backendNonce: Swift.String) throws -> Swift.String
+  public func newDpopChallengeRequest(accessToken: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func newOidcChallengeRequest(idToken: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func newChallengeResponse(challenge: [Swift.UInt8]) throws
+  public func checkOrderRequest(orderUrl: Swift.String, previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func checkOrderResponse(order: [Swift.UInt8]) throws -> Swift.String
+  public func finalizeRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+  public func finalizeResponse(finalize: [Swift.UInt8]) throws -> Swift.String
+  public func certificateRequest(previousNonce: Swift.String) throws -> [Swift.UInt8]
+}
+public struct FfiConverterTypeWireE2eIdentity {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.WireE2eIdentity
+  public static func write(_ value: WireCoreCrypto.WireE2eIdentity, into buf: inout [Swift.UInt8])
+  public static func lift(_ pointer: Swift.UnsafeMutableRawPointer) throws -> WireCoreCrypto.WireE2eIdentity
+  public static func lower(_ value: WireCoreCrypto.WireE2eIdentity) -> Swift.UnsafeMutableRawPointer
+}
+public struct AcmeChallenge {
+  public var delegate: [Swift.UInt8]
+  public var url: Swift.String
+  public var target: Swift.String
+  public init(delegate: [Swift.UInt8], url: Swift.String, target: Swift.String)
+}
+extension WireCoreCrypto.AcmeChallenge : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.AcmeChallenge, rhs: WireCoreCrypto.AcmeChallenge) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeAcmeChallenge {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.AcmeChallenge
+  public static func write(_ value: WireCoreCrypto.AcmeChallenge, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeAcmeChallenge_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.AcmeChallenge
+public func FfiConverterTypeAcmeChallenge_lower(_ value: WireCoreCrypto.AcmeChallenge) -> WireCoreCrypto.RustBuffer
+public struct AcmeDirectory {
+  public var newNonce: Swift.String
+  public var newAccount: Swift.String
+  public var newOrder: Swift.String
+  public init(newNonce: Swift.String, newAccount: Swift.String, newOrder: Swift.String)
+}
+extension WireCoreCrypto.AcmeDirectory : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.AcmeDirectory, rhs: WireCoreCrypto.AcmeDirectory) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeAcmeDirectory {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.AcmeDirectory
+  public static func write(_ value: WireCoreCrypto.AcmeDirectory, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeAcmeDirectory_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.AcmeDirectory
+public func FfiConverterTypeAcmeDirectory_lower(_ value: WireCoreCrypto.AcmeDirectory) -> WireCoreCrypto.RustBuffer
+public struct CommitBundle {
+  public var welcome: [Swift.UInt8]?
+  public var commit: [Swift.UInt8]
+  public var publicGroupState: WireCoreCrypto.PublicGroupStateBundle
+  public init(welcome: [Swift.UInt8]?, commit: [Swift.UInt8], publicGroupState: WireCoreCrypto.PublicGroupStateBundle)
+}
+extension WireCoreCrypto.CommitBundle : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.CommitBundle, rhs: WireCoreCrypto.CommitBundle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeCommitBundle {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.CommitBundle
+  public static func write(_ value: WireCoreCrypto.CommitBundle, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeCommitBundle_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.CommitBundle
+public func FfiConverterTypeCommitBundle_lower(_ value: WireCoreCrypto.CommitBundle) -> WireCoreCrypto.RustBuffer
+public struct ConversationConfiguration {
+  public var ciphersuite: WireCoreCrypto.CiphersuiteName?
+  public var externalSenders: [[Swift.UInt8]]
+  public var custom: WireCoreCrypto.CustomConfiguration
+  public init(ciphersuite: WireCoreCrypto.CiphersuiteName?, externalSenders: [[Swift.UInt8]], custom: WireCoreCrypto.CustomConfiguration)
+}
+extension WireCoreCrypto.ConversationConfiguration : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.ConversationConfiguration, rhs: WireCoreCrypto.ConversationConfiguration) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeConversationConfiguration {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.ConversationConfiguration
+  public static func write(_ value: WireCoreCrypto.ConversationConfiguration, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeConversationConfiguration_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.ConversationConfiguration
+public func FfiConverterTypeConversationConfiguration_lower(_ value: WireCoreCrypto.ConversationConfiguration) -> WireCoreCrypto.RustBuffer
+public struct ConversationInitBundle {
+  public var conversationId: [Swift.UInt8]
+  public var commit: [Swift.UInt8]
+  public var publicGroupState: WireCoreCrypto.PublicGroupStateBundle
+  public init(conversationId: [Swift.UInt8], commit: [Swift.UInt8], publicGroupState: WireCoreCrypto.PublicGroupStateBundle)
+}
+extension WireCoreCrypto.ConversationInitBundle : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.ConversationInitBundle, rhs: WireCoreCrypto.ConversationInitBundle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeConversationInitBundle {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.ConversationInitBundle
+  public static func write(_ value: WireCoreCrypto.ConversationInitBundle, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeConversationInitBundle_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.ConversationInitBundle
+public func FfiConverterTypeConversationInitBundle_lower(_ value: WireCoreCrypto.ConversationInitBundle) -> WireCoreCrypto.RustBuffer
+public struct CustomConfiguration {
+  public var keyRotationSpan: Foundation.TimeInterval?
+  public var wirePolicy: WireCoreCrypto.MlsWirePolicy?
+  public init(keyRotationSpan: Foundation.TimeInterval?, wirePolicy: WireCoreCrypto.MlsWirePolicy?)
+}
+extension WireCoreCrypto.CustomConfiguration : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.CustomConfiguration, rhs: WireCoreCrypto.CustomConfiguration) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeCustomConfiguration {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.CustomConfiguration
+  public static func write(_ value: WireCoreCrypto.CustomConfiguration, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeCustomConfiguration_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.CustomConfiguration
+public func FfiConverterTypeCustomConfiguration_lower(_ value: WireCoreCrypto.CustomConfiguration) -> WireCoreCrypto.RustBuffer
+public struct DecryptedMessage {
+  public var message: [Swift.UInt8]?
+  public var proposals: [WireCoreCrypto.ProposalBundle]
+  public var isActive: Swift.Bool
+  public var commitDelay: Swift.UInt64?
+  public var senderClientId: WireCoreCrypto.ClientId?
+  public var hasEpochChanged: Swift.Bool
+  public var identity: WireCoreCrypto.WireIdentity?
+  public init(message: [Swift.UInt8]?, proposals: [WireCoreCrypto.ProposalBundle], isActive: Swift.Bool, commitDelay: Swift.UInt64?, senderClientId: WireCoreCrypto.ClientId?, hasEpochChanged: Swift.Bool, identity: WireCoreCrypto.WireIdentity?)
+}
+extension WireCoreCrypto.DecryptedMessage : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.DecryptedMessage, rhs: WireCoreCrypto.DecryptedMessage) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeDecryptedMessage {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.DecryptedMessage
+  public static func write(_ value: WireCoreCrypto.DecryptedMessage, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeDecryptedMessage_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.DecryptedMessage
+public func FfiConverterTypeDecryptedMessage_lower(_ value: WireCoreCrypto.DecryptedMessage) -> WireCoreCrypto.RustBuffer
+public struct Invitee {
+  public var id: WireCoreCrypto.ClientId
+  public var kp: [Swift.UInt8]
+  public init(id: WireCoreCrypto.ClientId, kp: [Swift.UInt8])
+}
+extension WireCoreCrypto.Invitee : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.Invitee, rhs: WireCoreCrypto.Invitee) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeInvitee {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.Invitee
+  public static func write(_ value: WireCoreCrypto.Invitee, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeInvitee_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.Invitee
+public func FfiConverterTypeInvitee_lower(_ value: WireCoreCrypto.Invitee) -> WireCoreCrypto.RustBuffer
+public struct MemberAddedMessages {
+  public var commit: [Swift.UInt8]
+  public var welcome: [Swift.UInt8]
+  public var publicGroupState: WireCoreCrypto.PublicGroupStateBundle
+  public init(commit: [Swift.UInt8], welcome: [Swift.UInt8], publicGroupState: WireCoreCrypto.PublicGroupStateBundle)
+}
+extension WireCoreCrypto.MemberAddedMessages : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.MemberAddedMessages, rhs: WireCoreCrypto.MemberAddedMessages) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeMemberAddedMessages {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.MemberAddedMessages
+  public static func write(_ value: WireCoreCrypto.MemberAddedMessages, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeMemberAddedMessages_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.MemberAddedMessages
+public func FfiConverterTypeMemberAddedMessages_lower(_ value: WireCoreCrypto.MemberAddedMessages) -> WireCoreCrypto.RustBuffer
+public struct NewAcmeAuthz {
+  public var identifier: Swift.String
+  public var wireDpopChallenge: WireCoreCrypto.AcmeChallenge?
+  public var wireOidcChallenge: WireCoreCrypto.AcmeChallenge?
+  public init(identifier: Swift.String, wireDpopChallenge: WireCoreCrypto.AcmeChallenge?, wireOidcChallenge: WireCoreCrypto.AcmeChallenge?)
+}
+extension WireCoreCrypto.NewAcmeAuthz : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.NewAcmeAuthz, rhs: WireCoreCrypto.NewAcmeAuthz) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeNewAcmeAuthz {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.NewAcmeAuthz
+  public static func write(_ value: WireCoreCrypto.NewAcmeAuthz, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeNewAcmeAuthz_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.NewAcmeAuthz
+public func FfiConverterTypeNewAcmeAuthz_lower(_ value: WireCoreCrypto.NewAcmeAuthz) -> WireCoreCrypto.RustBuffer
+public struct NewAcmeOrder {
+  public var delegate: [Swift.UInt8]
+  public var authorizations: [Swift.String]
+  public init(delegate: [Swift.UInt8], authorizations: [Swift.String])
+}
+extension WireCoreCrypto.NewAcmeOrder : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.NewAcmeOrder, rhs: WireCoreCrypto.NewAcmeOrder) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeNewAcmeOrder {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.NewAcmeOrder
+  public static func write(_ value: WireCoreCrypto.NewAcmeOrder, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeNewAcmeOrder_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.NewAcmeOrder
+public func FfiConverterTypeNewAcmeOrder_lower(_ value: WireCoreCrypto.NewAcmeOrder) -> WireCoreCrypto.RustBuffer
+public struct ProposalBundle {
+  public var proposal: [Swift.UInt8]
+  public var proposalRef: [Swift.UInt8]
+  public init(proposal: [Swift.UInt8], proposalRef: [Swift.UInt8])
+}
+extension WireCoreCrypto.ProposalBundle : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.ProposalBundle, rhs: WireCoreCrypto.ProposalBundle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeProposalBundle {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.ProposalBundle
+  public static func write(_ value: WireCoreCrypto.ProposalBundle, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeProposalBundle_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.ProposalBundle
+public func FfiConverterTypeProposalBundle_lower(_ value: WireCoreCrypto.ProposalBundle) -> WireCoreCrypto.RustBuffer
+public struct ProteusAutoPrekeyBundle {
+  public var id: Swift.UInt16
+  public var pkb: [Swift.UInt8]
+  public init(id: Swift.UInt16, pkb: [Swift.UInt8])
+}
+extension WireCoreCrypto.ProteusAutoPrekeyBundle : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.ProteusAutoPrekeyBundle, rhs: WireCoreCrypto.ProteusAutoPrekeyBundle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeProteusAutoPrekeyBundle {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.ProteusAutoPrekeyBundle
+  public static func write(_ value: WireCoreCrypto.ProteusAutoPrekeyBundle, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeProteusAutoPrekeyBundle_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.ProteusAutoPrekeyBundle
+public func FfiConverterTypeProteusAutoPrekeyBundle_lower(_ value: WireCoreCrypto.ProteusAutoPrekeyBundle) -> WireCoreCrypto.RustBuffer
+public struct PublicGroupStateBundle {
+  public var encryptionType: WireCoreCrypto.MlsPublicGroupStateEncryptionType
+  public var ratchetTreeType: WireCoreCrypto.MlsRatchetTreeType
+  public var payload: [Swift.UInt8]
+  public init(encryptionType: WireCoreCrypto.MlsPublicGroupStateEncryptionType, ratchetTreeType: WireCoreCrypto.MlsRatchetTreeType, payload: [Swift.UInt8])
+}
+extension WireCoreCrypto.PublicGroupStateBundle : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.PublicGroupStateBundle, rhs: WireCoreCrypto.PublicGroupStateBundle) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypePublicGroupStateBundle {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.PublicGroupStateBundle
+  public static func write(_ value: WireCoreCrypto.PublicGroupStateBundle, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypePublicGroupStateBundle_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.PublicGroupStateBundle
+public func FfiConverterTypePublicGroupStateBundle_lower(_ value: WireCoreCrypto.PublicGroupStateBundle) -> WireCoreCrypto.RustBuffer
+public struct WireIdentity {
+  public var clientId: Swift.String
+  public var handle: Swift.String
+  public var displayName: Swift.String
+  public var domain: Swift.String
+  public init(clientId: Swift.String, handle: Swift.String, displayName: Swift.String, domain: Swift.String)
+}
+extension WireCoreCrypto.WireIdentity : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: WireCoreCrypto.WireIdentity, rhs: WireCoreCrypto.WireIdentity) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FfiConverterTypeWireIdentity {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.WireIdentity
+  public static func write(_ value: WireCoreCrypto.WireIdentity, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeWireIdentity_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.WireIdentity
+public func FfiConverterTypeWireIdentity_lower(_ value: WireCoreCrypto.WireIdentity) -> WireCoreCrypto.RustBuffer
+public enum CiphersuiteName {
+  case mls128Dhkemx25519Aes128gcmSha256Ed25519
+  case mls128Dhkemp256Aes128gcmSha256P256
+  case mls128Dhkemx25519Chacha20poly1305Sha256Ed25519
+  case mls256Dhkemx448Aes256gcmSha512Ed448
+  case mls256Dhkemp521Aes256gcmSha512P521
+  case mls256Dhkemx448Chacha20poly1305Sha512Ed448
+  case mls256Dhkemp384Aes256gcmSha384P384
+}
+public struct FfiConverterTypeCiphersuiteName {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.CiphersuiteName
+  public static func write(_ value: WireCoreCrypto.CiphersuiteName, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeCiphersuiteName_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.CiphersuiteName
+public func FfiConverterTypeCiphersuiteName_lower(_ value: WireCoreCrypto.CiphersuiteName) -> WireCoreCrypto.RustBuffer
+extension WireCoreCrypto.CiphersuiteName : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.CiphersuiteName, b: WireCoreCrypto.CiphersuiteName) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MlsCredentialType {
+  case basic
+  case x509
+}
+public struct FfiConverterTypeMlsCredentialType {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.MlsCredentialType
+  public static func write(_ value: WireCoreCrypto.MlsCredentialType, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeMlsCredentialType_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.MlsCredentialType
+public func FfiConverterTypeMlsCredentialType_lower(_ value: WireCoreCrypto.MlsCredentialType) -> WireCoreCrypto.RustBuffer
+extension WireCoreCrypto.MlsCredentialType : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.MlsCredentialType, b: WireCoreCrypto.MlsCredentialType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MlsPublicGroupStateEncryptionType {
+  case plaintext
+  case jweEncrypted
+}
+public struct FfiConverterTypeMlsPublicGroupStateEncryptionType {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.MlsPublicGroupStateEncryptionType
+  public static func write(_ value: WireCoreCrypto.MlsPublicGroupStateEncryptionType, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeMlsPublicGroupStateEncryptionType_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.MlsPublicGroupStateEncryptionType
+public func FfiConverterTypeMlsPublicGroupStateEncryptionType_lower(_ value: WireCoreCrypto.MlsPublicGroupStateEncryptionType) -> WireCoreCrypto.RustBuffer
+extension WireCoreCrypto.MlsPublicGroupStateEncryptionType : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.MlsPublicGroupStateEncryptionType, b: WireCoreCrypto.MlsPublicGroupStateEncryptionType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MlsRatchetTreeType {
+  case full
+  case delta
+  case byRef
+}
+public struct FfiConverterTypeMlsRatchetTreeType {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.MlsRatchetTreeType
+  public static func write(_ value: WireCoreCrypto.MlsRatchetTreeType, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeMlsRatchetTreeType_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.MlsRatchetTreeType
+public func FfiConverterTypeMlsRatchetTreeType_lower(_ value: WireCoreCrypto.MlsRatchetTreeType) -> WireCoreCrypto.RustBuffer
+extension WireCoreCrypto.MlsRatchetTreeType : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.MlsRatchetTreeType, b: WireCoreCrypto.MlsRatchetTreeType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MlsWirePolicy {
+  case plaintext
+  case ciphertext
+}
+public struct FfiConverterTypeMlsWirePolicy {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.MlsWirePolicy
+  public static func write(_ value: WireCoreCrypto.MlsWirePolicy, into buf: inout [Swift.UInt8])
+}
+public func FfiConverterTypeMlsWirePolicy_lift(_ buf: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.MlsWirePolicy
+public func FfiConverterTypeMlsWirePolicy_lower(_ value: WireCoreCrypto.MlsWirePolicy) -> WireCoreCrypto.RustBuffer
+extension WireCoreCrypto.MlsWirePolicy : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.MlsWirePolicy, b: WireCoreCrypto.MlsWirePolicy) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum CryptoError {
+  case ConversationNotFound(message: Swift.String)
+  case ClientNotFound(message: Swift.String)
+  case PendingProposalNotFound(message: Swift.String)
+  case PendingCommitNotFound(message: Swift.String)
+  case MalformedIdentifier(message: Swift.String)
+  case ClientSignatureNotFound(message: Swift.String)
+  case ClientSignatureMismatch(message: Swift.String)
+  case LockPoisonError(message: Swift.String)
+  case ImplementationError(message: Swift.String)
+  case OutOfKeyPackage(message: Swift.String)
+  case MlsProviderError(message: Swift.String)
+  case KeyStoreError(message: Swift.String)
+  case MlsError(message: Swift.String)
+  case Utf8Error(message: Swift.String)
+  case StringUtf8Error(message: Swift.String)
+  case ParseIntError(message: Swift.String)
+  case ConvertIntError(message: Swift.String)
+  case InvalidByteArrayError(message: Swift.String)
+  case IoError(message: Swift.String)
+  case Unauthorized(message: Swift.String)
+  case CallbacksNotSet(message: Swift.String)
+  case UnauthorizedExternalAddProposal(message: Swift.String)
+  case UnauthorizedExternalCommit(message: Swift.String)
+  case InvalidHashReference(message: Swift.String)
+  case GenerationOutOfBound(message: Swift.String)
+  case WrongEpoch(message: Swift.String)
+  case DecryptionError(message: Swift.String)
+  case HexDecodeError(message: Swift.String)
+  case ProteusError(message: Swift.String)
+  case CryptoboxMigrationError(message: Swift.String)
+  case ProteusNotInitialized(message: Swift.String)
+  case ProteusSupportNotEnabled(message: Swift.String)
+  case MlsNotInitialized(message: Swift.String)
+  case InvalidKeyPackage(message: Swift.String)
+  case IdentityAlreadyPresent(message: Swift.String)
+  case NoProvisionalIdentityFound(message: Swift.String)
+  case TooManyIdentitiesPresent(message: Swift.String)
+  case ParentGroupNotFound(message: Swift.String)
+  case InvalidIdentity(message: Swift.String)
+}
+public struct FfiConverterTypeCryptoError {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.CryptoError
+  public static func write(_ value: WireCoreCrypto.CryptoError, into buf: inout [Swift.UInt8])
+}
+extension WireCoreCrypto.CryptoError : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.CryptoError, b: WireCoreCrypto.CryptoError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WireCoreCrypto.CryptoError : Swift.Error {
+}
+public enum E2eIdentityError {
+  case ImplementationError(message: Swift.String)
+  case NotYetSupported(message: Swift.String)
+  case E2eiInvalidDomain(message: Swift.String)
+  case CryptoError(message: Swift.String)
+  case IdentityError(message: Swift.String)
+  case UrlError(message: Swift.String)
+  case JsonError(message: Swift.String)
+  case Utf8Error(message: Swift.String)
+  case MlsError(message: Swift.String)
+  case LockPoisonError(message: Swift.String)
+}
+public struct FfiConverterTypeE2eIdentityError {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.E2eIdentityError
+  public static func write(_ value: WireCoreCrypto.E2eIdentityError, into buf: inout [Swift.UInt8])
+}
+extension WireCoreCrypto.E2eIdentityError : Swift.Equatable, Swift.Hashable {
+  public static func == (a: WireCoreCrypto.E2eIdentityError, b: WireCoreCrypto.E2eIdentityError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WireCoreCrypto.E2eIdentityError : Swift.Error {
+}
+public protocol CoreCryptoCallbacks : AnyObject {
+  func authorize(conversationId: WireCoreCrypto.ConversationId, clientId: WireCoreCrypto.ClientId) -> Swift.Bool
+  func userAuthorize(conversationId: WireCoreCrypto.ConversationId, externalClientId: WireCoreCrypto.ClientId, existingClients: [WireCoreCrypto.ClientId]) -> Swift.Bool
+  func clientIsExistingGroupUser(conversationId: WireCoreCrypto.ConversationId, clientId: WireCoreCrypto.ClientId, existingClients: [WireCoreCrypto.ClientId], parentConversationClients: [WireCoreCrypto.ClientId]?) -> Swift.Bool
+}
+public typealias ClientId = [Swift.UInt8]
+public struct FfiConverterTypeClientId {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.ClientId
+  public static func write(_ value: WireCoreCrypto.ClientId, into buf: inout [Swift.UInt8])
+  public static func lift(_ value: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.ClientId
+  public static func lower(_ value: WireCoreCrypto.ClientId) -> WireCoreCrypto.RustBuffer
+}
+public typealias ConversationId = [Swift.UInt8]
+public struct FfiConverterTypeConversationId {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.ConversationId
+  public static func write(_ value: WireCoreCrypto.ConversationId, into buf: inout [Swift.UInt8])
+  public static func lift(_ value: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.ConversationId
+  public static func lower(_ value: WireCoreCrypto.ConversationId) -> WireCoreCrypto.RustBuffer
+}
+public typealias MemberId = [Swift.UInt8]
+public struct FfiConverterTypeMemberId {
+  public static func read(from buf: inout (data: Foundation.Data, offset: Foundation.Data.Index)) throws -> WireCoreCrypto.MemberId
+  public static func write(_ value: WireCoreCrypto.MemberId, into buf: inout [Swift.UInt8])
+  public static func lift(_ value: WireCoreCrypto.RustBuffer) throws -> WireCoreCrypto.MemberId
+  public static func lower(_ value: WireCoreCrypto.MemberId) -> WireCoreCrypto.RustBuffer
+}
+public func version() -> Swift.String
+public enum CoreCryptoLifecycle {
+}
