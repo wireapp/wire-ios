@@ -245,7 +245,7 @@ extension SearchTask {
 
         if query.isHandleQuery {
             // if we are searching for a username only include conversations with matching displayName
-            conversations = conversations.filter { $0.displayName.contains(query.string) }
+            conversations = conversations.filter { ($0.meaningfulDisplayName ?? "").contains(query.string) }
         }
 
         let matchingPredicate = ZMConversation.userDefinedNamePredicate(forSearch: query.string)

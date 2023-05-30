@@ -25,7 +25,7 @@ extension ZMConversation: Conversation {
 
     private static let logger = ZMSLog(tag: "Message Processing")
 
-    public var name: String { return displayName }
+    public var name: String? { return meaningfulDisplayName }
 
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
         do {

@@ -30,6 +30,10 @@ extension ZMConversation: ShareDestination {
                 $0.isGuest(in: self) } != nil
     }
 
+    var displayName: String {
+        return meaningfulDisplayName ?? L10n.Localizable.Profile.Details.Title.unavailable
+    }
+
 }
 
 extension ShareDestination where Self: ConversationAvatarViewConversation {

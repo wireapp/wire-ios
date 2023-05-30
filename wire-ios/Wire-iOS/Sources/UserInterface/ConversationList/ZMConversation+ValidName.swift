@@ -37,6 +37,9 @@ extension ZMConversation {
     }
 
     var hasIncompleteMetadata: Bool {
+        guard !estimatedHasMessages else {
+            return false
+        }
         switch conversationType {
         case .group:
             return hasIncompleteMetadataForGroup
