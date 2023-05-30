@@ -307,6 +307,7 @@ public class ZMUserSession: NSObject {
         notifyUserAboutChangesInAvailabilityBehaviourIfNeeded()
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
+        configureRecurringActions()
     }
 
     private func configureTransportSession() {
@@ -595,7 +596,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
     public func didFinishQuickSync() {
         Self.logger.trace("did finish quick sync")
         processEvents()
-        configureRecurringActions()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()

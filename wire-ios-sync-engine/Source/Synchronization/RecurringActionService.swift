@@ -20,9 +20,12 @@ import Foundation
 
 public struct RecurringAction {
 
+    typealias Action = () -> Void
+
     let id: String
-    let perform: Void
     let interval: TimeInterval
+    let perform: Action
+
 }
 
 public protocol RecurringActionServiceInterface {
@@ -40,9 +43,13 @@ public final class RecurringActionService: NSObject, RecurringActionServiceInter
         let currentDate = Date()
 
         actions.compactMap({  $0 }).forEach { action in
-            if (lastActionDate(for: action.id) + action.interval) <= currentDate {
-                action.perform
-                userDefaults(for: action.id)?.lastRecurringActionDate = currentDate
+            guard let lastActionDate = lastActionDate(for: action.id) else {
+                persistLastActionDate(for: action.id, newDate: currentDate)
+                return
+            }
+            if (lastActionDate + action.interval) <= currentDate {
+                action.perform()
+                persistLastActionDate(for: action.id, newDate: currentDate)
             }
         }
     }
@@ -53,8 +60,12 @@ public final class RecurringActionService: NSObject, RecurringActionServiceInter
 
     // MARK: - Helpers
 
-    private func lastActionDate(for actionID: String) -> Date {
-        return userDefaults(for: actionID)?.lastRecurringActionDate ?? Date()
+    func lastActionDate(for actionID: String) -> Date? {
+        return userDefaults(for: actionID)?.lastRecurringActionDate
+    }
+
+    func persistLastActionDate(for actionID: String, newDate: Date) {
+        userDefaults(for: actionID)?.lastRecurringActionDate = newDate
     }
 
     private func userDefaults(for actionID: String) -> UserDefaults? {
