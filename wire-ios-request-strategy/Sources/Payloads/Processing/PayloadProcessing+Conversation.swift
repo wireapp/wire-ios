@@ -174,13 +174,10 @@ extension Payload.Conversation {
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
         if let failedToAddUsers = failedToAddUsers, !failedToAddUsers.isEmpty {
-            updateSystemMessage(for: conversation, messageType: .newConversation, context: context)
+            updateUsersInSystemMessage(with: failedToAddUsers, conversation: conversation, type: .newConversation, context: context)
+            let users: [ZMUser] = failedToAddUsers.map({ ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context) }).compactMap({ $0 })
+            conversation.appendFailedToAddUsersSystemMessage(users: Set(users), sender: conversation.creator, at: serverTimestamp)
         }
-        // update system message
-        /// find the system message
-        /// updateSystemMessage(for: conversation, type: .newConversation, context: context)
-        /// update failed users
-        /// update main users
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -194,18 +191,23 @@ extension Payload.Conversation {
         }
     }
 
-    func updateSystemMessage(for conversation: ZMConversation, messageType: ZMSystemMessageType, context: NSManagedObjectContext) {
+    func updateUsersInSystemMessage(with failedUsers: [QualifiedID],
+                                    conversation: ZMConversation,
+                                    type: ZMSystemMessageType,
+                                    context: NSManagedObjectContext) {
         let fetchRequest = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %d",
                                              ZMMessageConversationKey, conversation,
-                                             ZMMessageSystemMessageTypeKey, messageType.rawValue)
-        let mes = context.fetchOrAssert(request: fetchRequest) as [ZMSystemMessage]
-        guard let systemMessage = mes.first else {
+                                             ZMMessageSystemMessageTypeKey, type.rawValue)
+        let messages = context.fetchOrAssert(request: fetchRequest) as [ZMSystemMessage]
+        guard let systemMessage = messages.first else {
             return
         }
-        //systemMessage.userTypes -> remove users
-        //systemMessage.failedToAddUsers -> add users
-        print(mes.count)
+        for qualifiedID in failedUsers {
+            if let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context) {
+                systemMessage.users.remove(user)
+            }
+        }
     }
 
     func updateMetadata(for conversation: ZMConversation, context: NSManagedObjectContext) {

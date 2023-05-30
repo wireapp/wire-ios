@@ -898,6 +898,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
             case ZMSystemMessageTypeNewConversation:
             case ZMSystemMessageTypeParticipantsAdded:
             case ZMSystemMessageTypeParticipantsRemoved:
+            case ZMSystemMessageTypeFailedToAddParticipants:
             case ZMSystemMessageTypeMessageTimerUpdate:
                 return NO;
         }

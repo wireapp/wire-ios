@@ -64,6 +64,7 @@
 typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeInvalid = 0,
     ZMSystemMessageTypeParticipantsAdded,
+    ZMSystemMessageTypeFailedToAddParticipants,
     ZMSystemMessageTypeParticipantsRemoved,
     ZMSystemMessageTypeConversationNameChanged,
     ZMSystemMessageTypeConnectionRequest,
