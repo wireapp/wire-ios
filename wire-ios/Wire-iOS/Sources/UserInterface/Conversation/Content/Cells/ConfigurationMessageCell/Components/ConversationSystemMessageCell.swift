@@ -404,6 +404,13 @@ final class ConversationSystemMessageCellDescription {
 
             return cells
 
+        case .failedToAddParticipants:
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: Arra(systemMessageData.userTypes),
+                                                                                     buttonAction: { },
+                                                                                     isCollapsed: true)
+//            let encryptionInfoCell = ConversationEncryptionInfoDescription()
+//            return [AnyConversationMessageCellDescription(encryptionInfoCell)]
+            print("failedToAddParticipants")
         default:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
