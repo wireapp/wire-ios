@@ -130,7 +130,7 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
         super.viewWillTransition(to: size, with: coordinator)
         updateConstraints(forHeight: size.height)
     }
-    
+
     private func updateConstraints(forHeight height: CGFloat) {
         let isLandscape = UIDevice.current.twoDimensionOrientation.isLandscape
         // if landscape then bottom sheet should take whole screen (without headerBar)

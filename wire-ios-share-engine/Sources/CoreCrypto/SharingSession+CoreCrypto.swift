@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import CoreCryptoSwift
+import WireCoreCrypto
 import WireSystem
 
 private let logger = ZMSLog(tag: "mls")
@@ -52,8 +52,8 @@ extension SharingSession {
                     syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsController == nil {
-                    syncContext.mlsController = MLSEncryptionController(coreCrypto: safeCoreCrypto)
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsService == nil {
+                    syncContext.mlsService = MLSEncryptionService(coreCrypto: safeCoreCrypto)
                 }
 
                 WireLogger.coreCrypto.info("success: setup crypto stack")
@@ -65,14 +65,14 @@ extension SharingSession {
     }
 
     private var shouldSetupCryptoStack: Bool {
-        return shouldSetupProteusService || shouldSetupMLSController
+        return shouldSetupProteusService || shouldSetupMLSService
     }
 
     private var shouldSetupProteusService: Bool {
         return DeveloperFlag.proteusViaCoreCrypto.isOn
     }
 
-    private var shouldSetupMLSController: Bool {
+    private var shouldSetupMLSService: Bool {
         return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
     }
 
