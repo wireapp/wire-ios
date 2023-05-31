@@ -29,13 +29,15 @@ class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
+    private let selectedReaction: String?
     weak var delegate: ReactionPickerDelegate?
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init() {
+    init(selectedReaction: String?) {
+        self.selectedReaction = selectedReaction
         super.init(frame: .zero)
         setupViews()
     }
@@ -67,8 +69,13 @@ private extension BasicReactionPicker {
     func addButtons() {
         ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
             let button = UIButton()
+            button.layer.cornerRadius = 6.0
+            button.layer.masksToBounds = true
             button.titleLabel?.font = UIFont.systemFont(ofSize: 30)
             button.setTitle(emoji, for: .normal)
+            if emoji == selectedReaction {
+                button.backgroundColor = UIColor.gray.withAlphaComponent(0.4) //~!@#$%^&*
+            }
             button.addTarget(self, action: #selector(didTapEmoji(sender:)), for: .touchUpInside)
             horizontalStackView.addArrangedSubview(button)
         }

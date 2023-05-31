@@ -46,7 +46,7 @@ extension ZMConversationMessage {
         }
     }
 
-    var myReaction: MessageReaction? {
+    var selfUserReaction: MessageReaction? {
         let selfReaction = self.usersReaction.filter { (_, users) in
             return users.contains { $0.isSelfUser }
         }.first
@@ -77,7 +77,7 @@ extension ZMConversationMessage {
     }
 
     func addReaction(_ reaction: MessageReaction) {
-        if reaction == myReaction {
+        if reaction == selfUserReaction {
             ZMMessage.removeReaction(onMessage: self)
             return
         }

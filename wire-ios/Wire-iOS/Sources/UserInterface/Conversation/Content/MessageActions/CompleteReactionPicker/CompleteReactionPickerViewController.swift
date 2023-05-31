@@ -23,13 +23,15 @@ class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private  let sectionViewController = ReactionSectionViewController(types: EmojiSectionType.all)
+    private let sectionViewController = ReactionSectionViewController(types: EmojiSectionType.all)
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
+    private let selectedReaction: String?
 
     private var deleting = false
 
-    init() {
+    init(selectedReaction: String?) {
+        self.selectedReaction = selectedReaction
         super.init(nibName: nil, bundle: nil)
 
         emojiDataSource = EmojiDataSource(provider: cellForEmoji)
@@ -107,6 +109,11 @@ class CompleteReactionPickerViewController: UIViewController {
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji
+        if emoji == "🙂" {
+            print("q")
+        }
+        cell.backgroundColor = (emoji == selectedReaction) ? UIColor.gray.withAlphaComponent(0.4) : .clear
+//        cell.isSelected = (emoji == selectedReaction)
         return cell
     }
 

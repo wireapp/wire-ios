@@ -53,7 +53,7 @@ class MessageActionsViewController: UIAlertController {
     }
 
     private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
-        let reactionPicker = BasicReactionPicker()
+        let reactionPicker = BasicReactionPicker(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
         reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
 
@@ -96,7 +96,7 @@ extension MessageActionsViewController: ReactionPickerDelegate {
     }
 
     func didTapMoreEmojis() {
-        let pickerController = CompleteReactionPickerViewController()
+        let pickerController = CompleteReactionPickerViewController(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
         pickerController.delegate = self
         present(pickerController, animated: true)
     }
