@@ -27,6 +27,7 @@ final class AudioButtonOverlay: UIView {
     }
 
     typealias ButtonPressHandler = (AudioButtonOverlayButtonType) -> Void
+    typealias ViewColors = SemanticColors.View
 
     var recordingState: AudioRecordState = .recording {
         didSet { updateWithRecordingState(recordingState) }
@@ -41,11 +42,11 @@ final class AudioButtonOverlay: UIView {
     fileprivate lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 96)
     fileprivate lazy var widthConstraint: NSLayoutConstraint = widthAnchor.constraint(equalToConstant: initialViewWidth)
 
-    let darkColor = SemanticColors.Label.textDefault
-    let brightColor = SemanticColors.View.backgroundDefault
+    let darkColor = SemanticColors.Icon.foregroundAudio
+    let brightColor = ViewColors.backgroundAudioViewOverlay
     let greenColor = SemanticColors.Button.backgroundAudioMessageOverlay
-    let grayColor = SemanticColors.View.backgroundUserCell
-    let superviewColor = SemanticColors.View.backgroundDefault
+    let grayColor = ViewColors.backgroundAudioViewOverlayActive
+    let superviewColor = ViewColors.backgroundAudioViewOverlay
 
     let audioButton = IconButton()
     let playButton = IconButton()
