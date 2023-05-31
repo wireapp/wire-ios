@@ -34,7 +34,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var underlyingLastPrekeyID: UInt16!
 
-
     // MARK: - completeInitialization
 
     public var completeInitialization_Invocations: [Void] = []
