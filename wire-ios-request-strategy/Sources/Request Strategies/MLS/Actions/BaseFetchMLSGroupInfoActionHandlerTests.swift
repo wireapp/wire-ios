@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,52 +20,7 @@ import XCTest
 import WireDataModel
 @testable import WireRequestStrategy
 
-class FetchMLSConversationGroupInfoActionHandlerTests: FetchMLSGroupInfoActionHandlerTests<FetchMLSConversationGroupInfoAction, FetchMLSConversationGroupInfoActionHandler> {
-
-    override func setUp() {
-        super.setUp()
-        action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)
-    }
-
-    func test_itGeneratesARequest_APIV3() throws {
-        try test_itGeneratesARequest(
-            for: action,
-               expectedPath: "/v3/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
-               expectedMethod: .methodGET,
-               apiVersion: .v3
-        )
-    }
-}
-
-class FetchMLSSubconversationGroupInfoActionHandlerTests: FetchMLSGroupInfoActionHandlerTests<FetchMLSSubconversationGroupInfoAction, FetchMLSSubconversationGroupInfoActionHandler> {
-
-    let subgroupType: SubgroupType = .conference
-
-    override func setUp() {
-        super.setUp()
-        action = FetchMLSSubconversationGroupInfoAction(conversationId: conversationId, domain: domain, subgroupType: subgroupType)
-    }
-
-    func test_itGeneratesARequest_APIV4() throws {
-        try test_itGeneratesARequest(
-            for: action,
-               expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue)/groupinfo",
-               expectedMethod: .methodGET,
-               apiVersion: .v4
-        )
-    }
-
-    func test_itDoesntGenerateRequests_APIV3() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v3,
-            expectedError: .endpointUnavailable
-        )
-    }
-
-}
-
-class FetchMLSGroupInfoActionHandlerTests<
+class BaseFetchMLSGroupInfoActionHandlerTests<
     Action: BaseFetchMLSGroupInfoAction,
     Handler: BaseFetchMLSGroupInfoActionHandler<Action>
 >: ActionHandlerTestBase<Action, Handler> {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,50 +19,6 @@
 import Foundation
 import WireTransport
 import WireDataModel
-
-class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSConversationGroupInfoAction> {
-
-    override func request(for action: FetchMLSConversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
-        var action = action
-
-        guard
-            !action.domain.isEmpty,
-            !action.conversationId.uuidString.isEmpty
-        else {
-            action.fail(with: .emptyParameters)
-            return nil
-        }
-
-        return self.request(
-            for: action,
-            path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
-            apiVersion: apiVersion,
-            minRequiredAPIVersion: .v3
-        )
-    }
-}
-
-class FetchMLSSubconversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSSubconversationGroupInfoAction> {
-
-    override func request(for action: FetchMLSSubconversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
-        var action = action
-
-        guard
-            !action.domain.isEmpty,
-            !action.conversationId.uuidString.isEmpty
-        else {
-            action.fail(with: .emptyParameters)
-            return nil
-        }
-
-        return request(
-            for: action,
-            path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/subconversations/\(action.subgroupType)/groupinfo",
-            apiVersion: apiVersion,
-            minRequiredAPIVersion: .v4
-        )
-    }
-}
 
 class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: ActionHandler<T> {
 

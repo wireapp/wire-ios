@@ -1,4 +1,6 @@
-// Copyright (C) 2022 Wire Swiss GmbH
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,41 +17,6 @@
 //
 
 import Foundation
-
-public final class FetchMLSConversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
-
-    public var conversationId: UUID
-    public var domain: String
-
-    public init(
-        conversationId: UUID,
-        domain: String,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.conversationId = conversationId
-        self.domain = domain
-        super.init(resultHandler: resultHandler)
-    }
-}
-
-public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
-
-    public var conversationId: UUID
-    public var domain: String
-    public var subgroupType: SubgroupType
-
-    public init(
-        conversationId: UUID,
-        domain: String,
-        subgroupType: SubgroupType,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.conversationId = conversationId
-        self.domain = domain
-        self.subgroupType = subgroupType
-        super.init(resultHandler: resultHandler)
-    }
-}
 
 public class BaseFetchMLSGroupInfoAction: EntityAction {
 
@@ -93,7 +60,7 @@ public class BaseFetchMLSGroupInfoAction: EntityAction {
 
     public var resultHandler: ResultHandler?
 
-    fileprivate init(resultHandler: ResultHandler? = nil) {
+    init(resultHandler: ResultHandler? = nil) {
         self.resultHandler = resultHandler
     }
 
