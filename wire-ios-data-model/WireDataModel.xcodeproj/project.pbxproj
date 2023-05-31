@@ -567,7 +567,6 @@
 		EEBF69ED28A2724800195771 /* ZMConversationTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */; };
 		EEBFA2E829D1D94B0004E8B4 /* ProteusError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBFA2E729D1D94B0004E8B4 /* ProteusError.swift */; };
 		EEC3BC742888403000BFDC35 /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC3BC732888403000BFDC35 /* MockCoreCrypto.swift */; };
-		EEC3BC76288855C000BFDC35 /* MockMLSActionsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC3BC75288855C000BFDC35 /* MockMLSActionsProvider.swift */; };
 		EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */; };
 		EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC57C4929E407CC0068DFDA /* EARService.swift */; };
 		EEC8064E28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */; };
@@ -1452,7 +1451,6 @@
 		EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+MLS.swift"; sourceTree = "<group>"; };
 		EEBFA2E729D1D94B0004E8B4 /* ProteusError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusError.swift; sourceTree = "<group>"; };
 		EEC3BC732888403000BFDC35 /* MockCoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCrypto.swift; sourceTree = "<group>"; };
-		EEC3BC75288855C000BFDC35 /* MockMLSActionsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSActionsProvider.swift; sourceTree = "<group>"; };
 		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
 		EEC57C4929E407CC0068DFDA /* EARService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARService.swift; sourceTree = "<group>"; };
 		EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStaleMLSKeyDetector.swift; sourceTree = "<group>"; };
@@ -2241,7 +2239,6 @@
 				EEC3BC732888403000BFDC35 /* MockCoreCrypto.swift */,
 				01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */,
 				EE22185D2892C22C008EF6ED /* MockConversationEventProcessor.swift */,
-				EEC3BC75288855C000BFDC35 /* MockMLSActionsProvider.swift */,
 				EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */,
 				63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */,
 				6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */,
@@ -4167,7 +4164,6 @@
 				EEF0BC3128EEC02400ED16CA /* MockSyncStatus.swift in Sources */,
 				EE47346729A3784F00E6C04E /* AutoMockable.generated.swift in Sources */,
 				A93724A226983100005FD532 /* ZMMessageTests.swift in Sources */,
-				EEC3BC76288855C000BFDC35 /* MockMLSActionsProvider.swift in Sources */,
 				168FF330258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift in Sources */,
 				5473CC751E14268600814C03 /* NSManagedObjectContextDebuggingTests.swift in Sources */,
 				0651D00823FC4FDD00411A22 /* GenericMessageTests+LegalHoldStatus.swift in Sources */,

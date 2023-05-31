@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 protocol MLSActionsProviderProtocol {
 
     func fetchBackendPublicKeys(

@@ -28,7 +28,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSyncStatus: MockSyncStatus!
-    var mockActionsProvider: MockMLSActionsProvider!
+    var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockConversationEventProcessor: MockConversationEventProcessor!
     var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
     var userDefaultsTestSuite: UserDefaults!
@@ -41,7 +41,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockMLSActionExecutor = MockMLSActionExecutor()
         mockSyncStatus = MockSyncStatus()
-        mockActionsProvider = MockMLSActionsProvider()
+        mockActionsProvider = MockMLSActionsProviderProtocol()
         mockConversationEventProcessor = MockConversationEventProcessor()
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
@@ -49,6 +49,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             return 100
         }
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = []
 
         sut = MLSService(
             context: uiMOC,
@@ -131,10 +134,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // expectation
         let expectation = XCTestExpectation(description: "Fetch backend public keys")
 
-        mockActionsProvider.fetchBackendPublicKeysMocks.append({
+        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
             expectation.fulfill()
             return keys
-        })
+        }
 
         // When
         let sut = MLSService(
@@ -377,10 +380,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock claiming a key package.
         var keyPackage: KeyPackage!
-        mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { userID, _, _, _ in
             keyPackage = self.createKeyPackage(userID: userID, domain: domain)
             return [keyPackage]
-        })
+        }
 
         // Mock adding memebers to the conversation.
         var mockAddMembersArguments = [([Invitee], MLSGroupID)]()
@@ -437,10 +440,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock claiming a key package.
         var keyPackage: KeyPackage!
-        mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { userID, _, _, _ in
             keyPackage = self.createKeyPackage(userID: userID, domain: domain)
             return [keyPackage]
-        })
+        }
 
         // Mock adding memebers to the conversation.
         var mockAddMembersArguments = [([Invitee], MLSGroupID)]()
@@ -503,7 +506,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw MLSActionExecutor.Error.noPendingProposals
         }
 
-        // No mock for claiming key packages.
+        // Mock failure for claiming key packages.
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.missingDomain
 
         // Then
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages) {
@@ -526,11 +530,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock key package.
         var keyPackage: KeyPackage!
-
-        mockActionsProvider.claimKeyPackagesMocks.append({ userID, _, _ in
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { userID, _, _, _ in
             keyPackage = self.createKeyPackage(userID: userID, domain: domain)
             return [keyPackage]
-        })
+        }
 
         mockMLSActionExecutor.mockAddMembers = { _, _ in
             throw MLSActionExecutor.Error.failedToGenerateCommit
@@ -930,11 +933,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation = XCTestExpectation(description: "Send Message")
 
         // mock fetching group info
-        var fetchConversationGroupInfoArguments = [(identifier: UUID, domain: String)]()
-        mockActionsProvider.fetchConversationGroupInfoMock.append({
-            fetchConversationGroupInfoArguments.append(($0, $1))
-            return publicGroupState
-        })
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = publicGroupState
 
         // mock joining group
         var joinGroupArguments = [(groupID: MLSGroupID, groupState: Data)]()
@@ -957,9 +956,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         wait(for: [expectation], timeout: 0.5)
 
         // it fetches public group state
-        XCTAssertEqual(fetchConversationGroupInfoArguments.count, 1)
-        XCTAssertEqual(fetchConversationGroupInfoArguments.first?.identifier, conversationID)
-        XCTAssertEqual(fetchConversationGroupInfoArguments.first?.domain, domain)
+        let groupStateInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
+        XCTAssertEqual(groupStateInvocations.count, 1)
+        XCTAssertEqual(groupStateInvocations.first?.conversationId, conversationID)
+        XCTAssertEqual(groupStateInvocations.first?.domain, domain)
 
         // it asks executor to join group
         XCTAssertEqual(joinGroupArguments.count, 1)
@@ -1003,13 +1003,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         expectation.isInverted = !shouldRetry
 
         // mock fetching group info
-        var fetchGroupInfoCount = 0
-        let fetchGroupInfoMock: MockMLSActionsProvider.FetchConversationGroupInfoMock = { _, _ in
-            fetchGroupInfoCount += 1
-            return groupInfo
-        }
-        mockActionsProvider.fetchConversationGroupInfoMock.append(fetchGroupInfoMock)
-        mockActionsProvider.fetchConversationGroupInfoMock.append(fetchGroupInfoMock)
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = groupInfo
 
         // mock joining group
         var joinGroupCount = 0
@@ -1037,7 +1031,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         wait(for: [expectation], timeout: 0.5)
 
         // it fetches group info
-        XCTAssertEqual(fetchGroupInfoCount, shouldRetry ? 2 : 1)
+        let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
+        XCTAssertEqual(groupInfoInvocations.count, shouldRetry ? 2 : 1)
 
         // it asks executor to join group
         XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1)
@@ -1067,11 +1062,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         expectation.isInverted = true
 
         // mock fetching group info
-        var fetchGroupInfoCount = 0
-        mockActionsProvider.fetchConversationGroupInfoMock.append({ _, _ in
-            fetchGroupInfoCount += 1
-            return Data()
-        })
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
 
         // mock joining group
         mockMLSActionExecutor.mockJoinGroup = { _, _ in
@@ -1084,7 +1075,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(fetchGroupInfoCount, 0)
+
+        let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
+        XCTAssertEqual(groupInfoInvocations.count, 0)
     }
 
     // MARK: - Wipe Groups
@@ -1110,7 +1103,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_UploadKeyPackages_IsSuccessfull() {
         // Given
-        let clientID = self.createSelfClient(onMOC: uiMOC).remoteIdentifier
+        guard let clientID = self.createSelfClient(onMOC: uiMOC).remoteIdentifier else {
+            XCTFail("failed to get client id")
+            return
+        }
+
         let keyPackages: [Bytes] = [
             [1, 2, 3],
             [4, 5, 6]
@@ -1140,19 +1137,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // mock return value for unclaimed key packages count
-        mockActionsProvider.countUnclaimedKeyPackagesMocks.append { cid in
-            XCTAssertEqual(cid, clientID)
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
             countUnclaimedKeyPackages.fulfill()
-
             return unsufficientKeyPackagesAmount
         }
 
-        mockActionsProvider.uploadKeyPackagesMocks.append { cid, kp in
-            let keyPackages = keyPackages.map { $0.base64EncodedString }
-
-            XCTAssertEqual(cid, clientID)
-            XCTAssertEqual(kp, keyPackages)
-
+        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
             uploadKeyPackages.fulfill()
         }
 
@@ -1162,6 +1152,15 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(mockClientKeypackagesCount, 1)
+
+        let countUnclaimedKeypackagesInvocations = mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_Invocations
+        XCTAssertEqual(countUnclaimedKeypackagesInvocations.count, 1)
+        XCTAssertEqual(countUnclaimedKeypackagesInvocations.first?.clientID, clientID)
+
+        let uploadKeypackagesInvocations = mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations
+        XCTAssertEqual(uploadKeypackagesInvocations.count, 1)
+        XCTAssertEqual(uploadKeypackagesInvocations.first?.clientID, clientID)
+        XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.base64EncodedString })
     }
 
     func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() {
@@ -1180,7 +1179,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesMocks.append { _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
             countUnclaimedKeyPackages.fulfill()
             return 0
         }
@@ -1213,12 +1212,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // mock return value for unclaimed key packages count
-        mockActionsProvider.countUnclaimedKeyPackagesMocks.append { _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
             countUnclaimedKeyPackages.fulfill()
             return self.sut.targetUnclaimedKeyPackageCount
         }
 
-        mockActionsProvider.uploadKeyPackagesMocks.append { _, _ in
+        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
             uploadKeyPackages.fulfill()
         }
 
