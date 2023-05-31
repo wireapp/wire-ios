@@ -41,6 +41,7 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.feature(withUserClients: 6)
 
         mockClassificationProvider = MockClassificationProvider()
+        UserDefaults.applicationGroup.set(false, forKey: DeveloperFlag.deprecatedCallingUI.rawValue)
     }
 
     override func tearDown() {
