@@ -203,7 +203,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.confirmButton.setIcon(.checkmark, size: .tiny, for: [])
         self.confirmButton.setIconColor(.white, for: [])
         self.confirmButton.addTarget(self, action: #selector(confirmButtonPressed), for: .touchUpInside)
-        self.confirmButton.setBackgroundImageColor(SemanticColors.Icon.backgroundJoinCall, for: .normal)
+        self.confirmButton.setBackgroundImageColor(SemanticColors.Button.backgroundconfirmSendingAudioMessage, for: .normal)
         self.confirmButton.layer.masksToBounds = true
 
         self.redoButton.setIcon(.undo, size: .tiny, for: [])
