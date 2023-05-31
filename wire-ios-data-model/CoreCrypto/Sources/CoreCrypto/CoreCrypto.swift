@@ -651,7 +651,7 @@ public class CoreCryptoWrapper {
     /// - parameter conversationId: conversation identifier
     /// - returns: A ``CommitBundle`` byte array to fan out to the Delivery Service
     public func commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
-        try self.coreCrypto.commitPendingProposals(conversationId:conversationId)?.convertTo()
+        try self.coreCrypto.commitPendingProposals(conversationId: conversationId)?.convertTo()
     }
 
     /// Destroys a group locally
@@ -853,7 +853,7 @@ public class CoreCryptoWrapper {
     ///
     /// - parameter sessionId: ID of the Proteus session
     /// - parameter envelope: CBOR-encoded Proteus message
-    public func proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8]{
+    public func proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
         return try self.coreCrypto.proteusSessionFromMessage(sessionId: sessionId, envelope: envelope)
     }
 

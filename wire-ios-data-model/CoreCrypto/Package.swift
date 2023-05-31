@@ -13,7 +13,7 @@ let package = Package(
         .library(
             name: "LibCoreCrypto",
             targets: ["LibCoreCrypto"]
-        ),
+        )
     ],
     dependencies: [],
     targets: [
@@ -28,6 +28,6 @@ let package = Package(
         .target(
             name: "CoreCryptoSwift",
             dependencies: ["LibCoreCrypto"]
-        ),
+        )
     ]
 )

@@ -44,6 +44,16 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
         verify(matching: sut.layoutForTest())
     }
 
+
+    func testThatItRendersWithUnconnectedUser() {
+        let user = MockUserType.createUser(name: "Test")
+        user.isConnected = false
+        let sut = IncomingConnectionView(user: user)
+
+        sut.backgroundColor = .white
+        verify(matching: sut.layoutForTest())
+    }
+
     func testThatItRendersWithUserName_NoHandle() {
         let user = SwiftMockLoader.mockUsers().last! // The last user does not have a username
         let sut = IncomingConnectionView(user: user)
