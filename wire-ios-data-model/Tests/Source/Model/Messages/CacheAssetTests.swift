@@ -32,7 +32,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
+
     // MARK: - Fixtures
 
     func fileAsset() -> WireDataModel.CacheAsset {

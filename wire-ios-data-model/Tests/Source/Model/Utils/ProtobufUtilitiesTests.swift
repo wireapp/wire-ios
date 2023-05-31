@@ -34,7 +34,6 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
 
     func testThatItSetsAndReadsTheLoudness() {
 

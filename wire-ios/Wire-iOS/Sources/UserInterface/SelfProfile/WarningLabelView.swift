@@ -54,7 +54,7 @@ class WarningLabelView: UIView {
                                        withInsets: .zero)
         )
     }
-    
+
     func update(withUser user: UserType) {
         typealias profileDetails = L10n.Localizable.Profile.Details
         if user.isPendingApprovalBySelfUser {

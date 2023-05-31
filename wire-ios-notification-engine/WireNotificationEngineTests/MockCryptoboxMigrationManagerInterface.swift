@@ -25,7 +25,6 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     public init() {}
 
-
     // MARK: - isMigrationNeeded
 
     public var isMigrationNeededAccountDirectory_Invocations: [URL] = []

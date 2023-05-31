@@ -135,7 +135,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         directory.viewContext.encryptMessagesAtRest = true
-    
+
         directory.viewContext.databaseKey = validDatabaseKey
         directory.viewContext.saveOrRollback()
 
@@ -151,7 +151,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         // then
         switch result {
         case let .success(backup):
-      
+
             let model = CoreDataStack.loadMessagingModel()
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
             let storeFile = backup.appendingPathComponent("data").appendingStoreFile()

@@ -99,7 +99,7 @@ class MLSDecryptionService: MLSServiceInterface {
             conversation?.commitPendingProposalDate = commitDate
         }
     }
-    
+
     // MARK: - Unavailable methods
 
     func commitPendingProposals() async throws {

@@ -28,7 +28,7 @@ class WarningLabelViewTests: XCTestCase {
         selfUser.isConnected = false
         // when
         sut.update(withUser: selfUser)
-        //then
+        // then
         XCTAssertTrue(sut.isHidden)
     }
 
@@ -38,7 +38,7 @@ class WarningLabelViewTests: XCTestCase {
         testUser.isConnected = false
         // when
         sut.update(withUser: testUser)
-        //then
+        // then
         XCTAssertFalse(sut.isHidden)
     }
 
@@ -48,7 +48,7 @@ class WarningLabelViewTests: XCTestCase {
         testUser.isConnected = false
         // when
         sut.update(withUser: testUser)
-        //then
+        // then
         XCTAssertTrue(sut.isHidden)
     }
 
@@ -58,8 +58,8 @@ class WarningLabelViewTests: XCTestCase {
         testUser.isConnected = true
         // when
         sut.update(withUser: testUser)
-        //then
+        // then
         XCTAssertTrue(sut.isHidden)
     }
-        
+
 }

@@ -128,7 +128,7 @@ final class UserConnectionView: UIView, Copyable {
             labelContainer.topAnchor.constraint(equalTo: topAnchor, constant: 16.0),
             labelContainer.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor),
 
-            userImageView.topAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant:  30.0),
+            userImageView.topAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: 30.0),
             userImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             userImageView.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor, constant: 54),
             userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),

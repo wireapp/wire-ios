@@ -537,7 +537,7 @@ public final class MLSService: MLSServiceInterface {
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
-        return keyPackages.map { $0.base64EncodedString } 
+        return keyPackages.map { $0.base64EncodedString }
     }
 
     private func uploadKeyPackages(
@@ -565,7 +565,7 @@ public final class MLSService: MLSServiceInterface {
 
         case failedToConvertMessageToBytes
         case failedToProcessMessage
-        
+
     }
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
@@ -583,9 +583,9 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
-            let groupIDBytes = try coreCrypto.perform { 
+            let groupIDBytes = try coreCrypto.perform {
                 try $0.processWelcomeMessage(
-                    welcomeMessage: messageBytes, 
+                    welcomeMessage: messageBytes,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
              }
@@ -660,7 +660,7 @@ public final class MLSService: MLSServiceInterface {
                                               ciphersuite: defaultCipherSuite,
                                               credentialType: .basic)
             }
-            
+
             try await sendProposal(proposal, groupID: groupID)
             logger.info("success: requested to join group (\(groupID)")
         } catch {
@@ -732,7 +732,7 @@ public final class MLSService: MLSServiceInterface {
             context.performAndWait {
                 conversationInfo.conversation.mlsStatus = .ready
             }
-            
+
             conversationEventProcessor.processConversationEvents(updateEvents)
             logger.info("success: joined group (\(groupID)) with external commit")
 
@@ -785,7 +785,6 @@ public final class MLSService: MLSServiceInterface {
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }
     }
-
 
     // MARK: - Decrypting Message
 
@@ -1048,7 +1047,7 @@ public final class MLSService: MLSServiceInterface {
 
 }
 
-// MARK: -  Helper types
+// MARK: - Helper types
 
 public struct MLSUser: Equatable {
 
@@ -1089,7 +1088,7 @@ extension MLSUser: CustomStringConvertible {
 
 // MARK: - Helper Extensions
 
-private extension TimeInterval  {
+private extension TimeInterval {
 
     var nanoseconds: UInt64 {
         UInt64(self * 1_000_000_000)

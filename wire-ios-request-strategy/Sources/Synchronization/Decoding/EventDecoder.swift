@@ -155,7 +155,7 @@ extension EventDecoder {
         proteusService: ProteusServiceInterface
     ) -> [ZMUpdateEvent] {
         var decryptedEvents = [ZMUpdateEvent]()
-       
+
         decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
             switch event.type {
             case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
@@ -165,19 +165,19 @@ extension EventDecoder {
                         forSession: sessionID
                     )
                 }
-                
+
             case .conversationMLSMessageAdd:
                 return self.decryptMlsMessage(from: event, context: self.syncMOC)
-                
+
             default:
                 return event
             }
         }
-        
+
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
         self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
-        
+
         return decryptedEvents
     }
 
@@ -269,7 +269,6 @@ extension EventDecoder {
         process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
-
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
@@ -290,7 +289,7 @@ extension EventDecoder {
 
         return (storedEvents: storedEvents, updateEvents: updateEvents)
     }
-    
+
     /// Calls the `ComsumeBlock` and deletes the respective stored events subsequently.
 
     private func processBatch(

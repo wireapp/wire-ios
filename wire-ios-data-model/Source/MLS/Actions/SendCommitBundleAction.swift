@@ -24,7 +24,7 @@ public final class SendCommitBundleAction: EntityAction {
 
     public var resultHandler: ResultHandler?
     public var commitBundle: Data
-    
+
     public init(
         commitBundle: Data,
         resultHandler: ResultHandler? = nil

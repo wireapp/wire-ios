@@ -32,7 +32,6 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
 
     func testThatItDoesNotCreateTextMessagesFromUpdateEventIfThereIsAlreadyAClientMessageWithTheSameNonce() {
         // given

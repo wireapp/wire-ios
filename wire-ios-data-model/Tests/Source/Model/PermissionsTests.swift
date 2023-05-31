@@ -32,7 +32,7 @@ class PermissionsTests: BaseZMClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
+
     private let allPermissions: Permissions = [
         .createConversation,
         .deleteConversation,

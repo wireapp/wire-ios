@@ -47,7 +47,7 @@ final class EARKeyEncryptor: EARKeyEncryptorInterface {
         guard let encryptedDatabaseKey = SecKeyCreateEncryptedData(
             publicKey,
             databaseKeyAlgorithm,
-            databaseKey as CFData, 
+            databaseKey as CFData,
             &error
         ) else {
             let error = error!.takeRetainedValue() as Error
