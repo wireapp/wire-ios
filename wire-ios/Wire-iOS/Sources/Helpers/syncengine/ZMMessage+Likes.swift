@@ -46,6 +46,14 @@ extension ZMConversationMessage {
         }
     }
 
+    var myReaction: MessageReaction? {
+        let selfReaction = self.usersReaction.filter { (_, users) in
+            return users.contains { $0.isSelfUser }
+        }.first
+        guard let key = selfReaction?.key else { return  nil}
+        return MessageReaction.messageReaction(from: key)
+    }
+
     func hasReactions() -> Bool {
         return self.usersReaction.map { (_, users) in
             return users.count
@@ -69,6 +77,10 @@ extension ZMConversationMessage {
     }
 
     func addReaction(_ reaction: MessageReaction) {
+        if reaction == myReaction {
+            ZMMessage.removeReaction(onMessage: self)
+            return
+        }
         ZMMessage.addReaction(reaction, toMessage: self)
     }
 }
