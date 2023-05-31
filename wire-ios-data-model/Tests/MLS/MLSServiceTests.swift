@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-import CoreCryptoSwift
+import WireCoreCrypto
 @testable import WireDataModel
 
 class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {

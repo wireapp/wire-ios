@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import CoreCryptoSwift
+import WireCoreCrypto
 
 // MARK: - Protocols
 

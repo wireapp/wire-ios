@@ -19,7 +19,7 @@
 import Foundation
 import XCTest
 @testable import WireDataModel
-import CoreCryptoSwift
+import WireCoreCrypto
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 

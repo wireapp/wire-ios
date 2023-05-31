@@ -17,8 +17,7 @@
 //
 
 import Foundation
-import CoreCryptoSwift
-import CoreCrypto
+import WireCoreCrypto
 import WireSystem
 
 public struct CoreCryptoConfiguration {

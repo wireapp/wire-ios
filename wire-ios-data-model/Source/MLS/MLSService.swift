@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import CoreCryptoSwift
+import WireCoreCrypto
 
 public enum MLSDecryptResult: Equatable {
     case message(_ messageData: Data, _ senderClientID: String?)

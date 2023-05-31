@@ -22,7 +22,7 @@ import WireShareEngine
 import MobileCoreServices
 import WireDataModel
 import WireCommonComponents
-import CoreCrypto
+import WireCoreCrypto
 import WireLinkPreview
 import LocalAuthentication
 
