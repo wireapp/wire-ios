@@ -25,7 +25,7 @@ extension NSManagedObjectContext {
         LegacyPersistedDataPatch.applyAll(in: self)
 
         // TODO: uncomment when we add the first `PersistedDataPatch`
-        //PatchApplicator<PersistedDataPatch>(name: "PersistedDataPatch").applyPatches(in: self)
+        // PatchApplicator<PersistedDataPatch>(name: "PersistedDataPatch").applyPatches(in: self)
     }
 }
 
