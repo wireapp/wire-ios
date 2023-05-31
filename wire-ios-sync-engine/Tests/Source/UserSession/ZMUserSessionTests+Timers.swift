@@ -28,6 +28,4 @@ class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
             XCTAssertNotNil($0.zm_messageObfuscationTimer)
         }
     }
-
 }
-
