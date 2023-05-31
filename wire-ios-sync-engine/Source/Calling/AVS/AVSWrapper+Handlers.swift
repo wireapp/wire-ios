@@ -150,9 +150,10 @@ extension AVSWrapper {
         ///                            const uint8_t *data,
         ///                            size_t len,
         ///                            int transient /*bool*/,
+        ///                            int my_clients_only /*bool*/,
         ///                            void *arg);
 
-        typealias CallMessageSend = @convention(c) (VoidPtr, StringPtr, StringPtr, StringPtr, StringPtr, StringPtr, UnsafePointer<UInt8>?, Int, Int32, ContextRef) -> Int32
+        typealias CallMessageSend = @convention(c) (VoidPtr, StringPtr, StringPtr, StringPtr, StringPtr, StringPtr, UnsafePointer<UInt8>?, Int, Int32, Int32, ContextRef) -> Int32
 
         /// Callback used to inform the user when the list of participants in a call changes.
         ///

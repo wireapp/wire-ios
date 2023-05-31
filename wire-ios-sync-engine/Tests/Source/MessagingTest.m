@@ -123,7 +123,7 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)setUp;
 {
     [super setUp];
-    [self setDefaultAPIVersion];
+    [self setDefaults];
     BackgroundActivityFactory.sharedFactory.activityManager = UIApplication.sharedApplication;
     [BackgroundActivityFactory.sharedFactory resume];
     
@@ -174,6 +174,9 @@ static ZMReachability *sharedReachabilityMock = nil;
 
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+
+    self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
+                                                            sharedUserDefaults:self.sharedUserDefaults];
 }
 
 - (void)setupKeyStore
@@ -258,6 +261,9 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.sharedContainerURL = nil;
 
     [self unsetDefaultAPIVersion];
+
+    [self.lastEventIDRepository storeLastEventID:nil];
+
     [super tearDown];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }

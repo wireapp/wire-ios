@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCryptobox
+import WireDataModel
 
 enum UserClientRequestError: Error {
     case noPreKeys
@@ -32,14 +33,15 @@ public final class UserClientRequestFactory {
     // This is needed to save ~3 seconds for every unit test run
     // as generating 100 keys is an expensive operation
     static var _test_overrideNumberOfKeys: UInt16?
-
-    unowned var keyStore: UserClientKeysStore
     public let keyCount: UInt16
+    private let proteusProvider: ProteusProviding
 
-    public init(keysCount: UInt16 = 100,
-                keysStore: UserClientKeysStore) {
+    public init(
+        keysCount: UInt16 = 100,
+        proteusProvider: ProteusProviding
+    ) {
         self.keyCount = (UserClientRequestFactory._test_overrideNumberOfKeys ?? keysCount)
-        self.keyStore = keysStore
+        self.proteusProvider = proteusProvider
     }
 
     public func registerClientRequest(_ client: UserClient, credentials: ZMEmailCredentials?, cookieLabel: String, apiVersion: APIVersion) throws -> ZMUpstreamRequest {
@@ -110,13 +112,23 @@ public final class UserClientRequestFactory {
     internal func payloadForPreKeys(_ client: UserClient, startIndex: UInt16 = 0) throws -> (payload: [[String: Any]], maxRange: UInt16) {
         // we don't want to generate new prekeys if we already have them
         do {
-            let preKeys = try keyStore.generateMoreKeys(keyCount, start: startIndex)
+            let preKeys = try proteusProvider.perform(
+                withProteusService: { proteusService in
+                    return try proteusService.generatePrekeys(start: startIndex, count: keyCount)
+                },
+                withKeyStore: { keyStore in
+                    return try keyStore.generateMoreKeys(keyCount, start: startIndex)
+                }
+            )
+
             guard preKeys.count > 0 else {
                 throw UserClientRequestError.noPreKeys
             }
+
             let preKeysPayloadData: [[String: Any]] = preKeys.map {
                 ["key": $0.prekey, "id": NSNumber(value: $0.id)]
             }
+
             return (preKeysPayloadData, preKeys.last!.id)
         } catch {
             throw UserClientRequestError.noPreKeys
@@ -125,11 +137,25 @@ public final class UserClientRequestFactory {
 
     internal func payloadForLastPreKey(_ client: UserClient) throws -> [String: Any] {
         do {
-            let lastKey = try keyStore.lastPreKey()
-            let lastPreKeyString = lastKey
+
+            let lastKey = try proteusProvider.perform(
+                withProteusService: { proteusService in
+                    return (
+                        key: try proteusService.lastPrekey(),
+                        id: proteusService.lastPrekeyID
+                    )
+                },
+                withKeyStore: { keyStore in
+                    return (
+                        key: try keyStore.lastPreKey(),
+                        id: CBOX_LAST_PREKEY_ID
+                    )
+                }
+            )
+
             let lastPreKeyPayloadData: [String: Any] = [
-                "key": lastPreKeyString,
-                "id": NSNumber(value: CBOX_LAST_PREKEY_ID)
+                "key": lastKey.key,
+                "id": NSNumber(value: lastKey.id)
             ]
             return lastPreKeyPayloadData
         } catch {
@@ -175,6 +201,31 @@ public final class UserClientRequestFactory {
         throw UserClientRequestError.clientNotRegistered
     }
 
+    func updateClientMLSPublicKeysRequest(
+        _ client: UserClient,
+        apiVersion: APIVersion
+    ) throws -> ZMUpstreamRequest? {
+        guard let clientID = client.remoteIdentifier else {
+            throw UserClientRequestError.clientNotRegistered
+        }
+
+        let payload = MLSPublicKeyUploadPayload(keys: client.mlsPublicKeys)
+        let payloadData = try JSONEncoder().encode(payload)
+        let payloadDataString = String(data: payloadData, encoding: .utf8)!
+
+        let request = ZMTransportRequest(
+            path: "/clients/\(clientID)",
+            method: .methodPUT,
+            payload: payloadDataString as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
+
+        return ZMUpstreamRequest(
+            keys: Set([UserClient.needsToUploadMLSPublicKeysKey]),
+            transportRequest: request
+        )
+    }
+
     public func updateClientCapabilitiesRequest(_ client: UserClient, apiVersion: APIVersion) throws -> ZMUpstreamRequest? {
         guard let remoteIdentifier = client.remoteIdentifier else {
             throw UserClientRequestError.clientNotRegistered
@@ -212,5 +263,17 @@ public final class UserClientRequestFactory {
     public func fetchClientsRequest(apiVersion: APIVersion) -> ZMTransportRequest! {
         return ZMTransportRequest(getFromPath: "/clients", apiVersion: apiVersion.rawValue)
     }
+
+}
+
+private struct MLSPublicKeyUploadPayload: Encodable {
+
+    enum CodingKeys: String, CodingKey {
+
+        case keys = "mls_public_keys"
+
+    }
+
+    let keys: UserClient.MLSPublicKeys
 
 }
