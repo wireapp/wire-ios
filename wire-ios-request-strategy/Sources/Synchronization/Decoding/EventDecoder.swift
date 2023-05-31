@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
@@ -61,6 +62,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 }
 
 // MARK: - Process events
+
 extension EventDecoder {
 
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
@@ -68,6 +70,8 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
+    ///   - block: A block that receives the decrypted events for processing.
+
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil,
@@ -85,10 +89,24 @@ extension EventDecoder {
             lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
             guard let index = lastIndex else { return }
-            decryptedEvents = self.decryptAndStoreEvents(
-                filteredEvents,
-                startingAtIndex: index,
-                publicKeys: publicKeys
+
+            decryptedEvents = self.syncMOC.proteusProvider.perform(
+                withProteusService: { proteusService in
+                    return self.decryptAndStoreEvents(
+                        filteredEvents,
+                        startingAtIndex: index,
+                        publicKeys: publicKeys,
+                        proteusService: proteusService
+                    )
+                },
+                withKeyStore: { keyStore in
+                    return self.legacyDecryptAndStoreEvents(
+                        filteredEvents,
+                        startingAtIndex: index,
+                        publicKeys: publicKeys,
+                        keyStore: keyStore
+                    )
+                }
             )
         }
 
@@ -104,7 +122,7 @@ extension EventDecoder {
     /// can be recovered from the database.
     ///
     /// - Parameters:
-    ///   - encryptionKeys: Keys to be used to decrypt events.
+    ///   - privateKeys: Keys to be used to decrypt events.
     ///   - block: Event consume block which is called once for every stored event.
 
     public func processStoredEvents(
@@ -123,47 +141,109 @@ extension EventDecoder {
     /// Decrypts and stores the decrypted events as `StoreUpdateEvent` in the event database.
     /// The encryption context is only closed after the events have been stored, which ensures
     /// they can be decrypted again in case of a crash.
-    /// - parameter events The new events that should be decrypted and stored in the database.
-    /// - parameter startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
-    /// - Returns: Decrypted events
+    ///
+    /// - Parameters:
+    ///   - events The new events that should be decrypted and stored in the database.
+    ///   - startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
+    ///
+    /// - Returns: Decrypted events.
 
     private func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         startingAtIndex startIndex: Int64,
-        publicKeys: EARPublicKeys?
+        publicKeys: EARPublicKeys?,
+        proteusService: ProteusServiceInterface
+    ) -> [ZMUpdateEvent] {
+        var decryptedEvents = [ZMUpdateEvent]()
+       
+        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+            switch event.type {
+            case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    try proteusService.decrypt(
+                        data: encryptedData,
+                        forSession: sessionID
+                    )
+                }
+                
+            case .conversationMLSMessageAdd:
+                return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                
+            default:
+                return event
+            }
+        }
+        
+        // This call has to be synchronous to ensure that we close the
+        // encryption context only if we stored all events in the database.
+        self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+        
+        return decryptedEvents
+    }
+
+    private func legacyDecryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64,
+        publicKeys: EARPublicKeys?,
+        keyStore: UserClientKeysStore
     ) -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] (sessionsDirectory) -> Void in
+        keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
             guard let `self` = self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
-                if event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd {
-                    return sessionsDirectory.decryptAndAddClient(event, in: self.syncMOC)
-                } else {
+                switch event.type {
+                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
+                    return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                        try sessionsDirectory.decryptData(
+                            encryptedData,
+                            for: sessionID.mapToEncryptionSessionID()
+                        )
+                    }
+
+                case .conversationMLSMessageAdd:
+                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+
+                default:
                     return event
                 }
             }
 
             // This call has to be synchronous to ensure that we close the
-            // encryption context only if we stored all events in the database
-
-            // Insert the decrypted events in the event database using a `storeIndex`
-            // incrementing from the highest index currently stored in the database
-            // The encryptedPayload property is encrypted using the public key
-            for (idx, event) in decryptedEvents.enumerated() {
-                _ = StoredUpdateEvent.encryptAndCreate(
-                    event,
-                    context: self.eventMOC,
-                    index: Int64(idx) + startIndex + 1,
-                    publicKeys: publicKeys
-                )
-            }
-
-            self.eventMOC.saveOrRollback()
+            // encryption context only if we stored all events in the database.
+            storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
         }
 
         return decryptedEvents
+    }
+
+    // Insert the decrypted events in the event database using a `storeIndex`
+    // incrementing from the highest index currently stored in the database.
+    // The encryptedPayload property is encrypted using the public key.
+
+    private func storeUpdateEvents(
+        _ decryptedEvents: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64,
+        publicKeys: EARPublicKeys?
+    ) {
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+
+        let account = Account(
+            userName: "",
+            userIdentifier: selfUser.remoteIdentifier
+        )
+
+        for (idx, event) in decryptedEvents.enumerated() {
+            _ = StoredUpdateEvent.encryptAndCreate(
+                event,
+                context: eventMOC,
+                index: Int64(idx) + startIndex + 1,
+                publicKeys: publicKeys
+            )
+        }
+
+        self.eventMOC.saveOrRollback()
     }
 
     // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.
@@ -189,6 +269,7 @@ extension EventDecoder {
         process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
+
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
@@ -209,7 +290,7 @@ extension EventDecoder {
 
         return (storedEvents: storedEvents, updateEvents: updateEvents)
     }
-
+    
     /// Calls the `ComsumeBlock` and deletes the respective stored events subsequently.
 
     private func processBatch(

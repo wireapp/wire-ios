@@ -76,7 +76,10 @@ public class NotificationSession {
     /// - noAccount: Account doesn't exist
 
     public enum InitializationError: Error {
+
         case noAccount
+        case pendingCryptoboxMigration
+
     }
 
     // MARK: - Properties
@@ -118,7 +121,8 @@ public class NotificationSession {
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
-        analytics: AnalyticsType?
+        analytics: AnalyticsType?,
+        sharedUserDefaults: UserDefaults
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -160,7 +164,8 @@ public class NotificationSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
-            accountIdentifier: accountIdentifier
+            accountIdentifier: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 
@@ -170,11 +175,18 @@ public class NotificationSession {
         cachesDirectory: URL,
         accountContainer: URL,
         analytics: AnalyticsType?,
-        accountIdentifier: UUID
+        accountIdentifier: UUID,
+        sharedUserDefaults: UserDefaults
     ) throws {
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
+
         let applicationStatusDirectory = ApplicationStatusDirectory(
             syncContext: coreDataStack.syncContext,
-            transportSession: transportSession
+            transportSession: transportSession,
+            lastEventIDRepository: lastEventIDRepository
         )
 
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
@@ -183,7 +195,8 @@ public class NotificationSession {
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            notificationsTracker: notificationsTracker
+            notificationsTracker: notificationsTracker,
+            lastEventIDRepository: lastEventIDRepository
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
@@ -219,6 +232,7 @@ public class NotificationSession {
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
         earService: EARServiceInterface? = nil
     ) throws {
         self.coreDataStack = coreDataStack
@@ -235,6 +249,21 @@ public class NotificationSession {
         )
 
         pushNotificationStrategy.delegate = self
+
+        let accountDirectory = coreDataStack.accountContainer
+        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
+            throw InitializationError.pendingCryptoboxMigration
+        }
+
+        setUpCoreCryptoStack(
+            sharedContainerURL: coreDataStack.applicationContainer,
+            syncContext: coreDataStack.syncContext
+        )
+
+        coreDataStack.syncContext.performAndWait {
+            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+        }
+
     }
 
     deinit {
@@ -254,6 +283,7 @@ public class NotificationSession {
 
         coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
+                WireLogger.notifications.error("Not displaying notification because app is not authenticated")
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
             }

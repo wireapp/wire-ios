@@ -29,6 +29,8 @@ import XCTest
         isExpired = true
     }
 
+    let messageData: Data
+
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
     }
@@ -40,7 +42,8 @@ import XCTest
 
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
 
-    init(conversation: ZMConversation, context: NSManagedObjectContext) {
+    init(messageData: Data = Data(), conversation: ZMConversation?, context: NSManagedObjectContext) {
+        self.messageData = messageData
         self.conversation = conversation
         self.context = context
     }

@@ -19,6 +19,7 @@
 import XCTest
 import AVFoundation
 import Photos
+import WireCommonComponents
 @testable import Wire
 
 // MARK: - CameraKeyboardViewControllerDelegateMock
@@ -115,6 +116,7 @@ final class CameraKeyboardViewControllerTests: ZMSnapshotTestCase {
         mockImageManager = MockImageManager()
         splitView = SplitLayoutObservableMock()
         delegateMock = CameraKeyboardViewControllerDelegateMock()
+        FontScheme.configure(with: .large)
     }
 
     // MARK: - tearDown
