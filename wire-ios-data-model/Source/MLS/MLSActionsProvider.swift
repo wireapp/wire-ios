@@ -52,7 +52,7 @@ protocol MLSActionsProviderProtocol {
         in context: NotificationContext
     ) async throws -> [ZMUpdateEvent]
 
-    func fetchPublicGroupState(
+    func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
         context: NotificationContext
@@ -121,12 +121,12 @@ class MLSActionsProvider: MLSActionsProviderProtocol {
         return try await action.perform(in: context)
     }
 
-    func fetchPublicGroupState(
+    func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
         context: NotificationContext
     ) async throws -> Data {
-        var action = FetchPublicGroupStateAction(
+        var action = FetchMLSConversationGroupInfoAction(
             conversationId: conversationId,
             domain: domain
         )

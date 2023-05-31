@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,21 @@
 
 import Foundation
 
-public final class SendCommitBundleAction: EntityAction {
-    public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageAction.Failure
+public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
 
-    public var resultHandler: ResultHandler?
-    public var commitBundle: Data
+    public var conversationId: UUID
+    public var domain: String
+    public var subgroupType: SubgroupType
 
     public init(
-        commitBundle: Data,
+        conversationId: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
         resultHandler: ResultHandler? = nil
     ) {
-        self.commitBundle = commitBundle
-        self.resultHandler = resultHandler
+        self.conversationId = conversationId
+        self.domain = domain
+        self.subgroupType = subgroupType
+        super.init(resultHandler: resultHandler)
     }
 }

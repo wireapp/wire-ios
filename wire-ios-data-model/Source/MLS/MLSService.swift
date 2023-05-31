@@ -758,7 +758,7 @@ public final class MLSService: MLSServiceInterface {
                 throw MLSSendExternalCommitError.conversationNotFound
             }
 
-            let publicGroupState = try await actionsProvider.fetchPublicGroupState(
+            let publicGroupState = try await actionsProvider.fetchConversationGroupInfo(
                 conversationId: conversationInfo.identifier,
                 domain: conversationInfo.domain,
                 context: context.notificationContext
@@ -772,7 +772,7 @@ public final class MLSService: MLSServiceInterface {
             context.performAndWait {
                 conversationInfo.conversation.mlsStatus = .ready
             }
-            
+
             conversationEventProcessor.processConversationEvents(updateEvents)
             logger.info("success: joined group (\(groupID)) with external commit")
 
@@ -825,7 +825,6 @@ public final class MLSService: MLSServiceInterface {
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }
     }
-
 
     // MARK: - Decrypting Message
 
@@ -1062,33 +1061,9 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    // MARK: - Fetch Public Group State
-
-    enum MLSGroupStateError: Error, Equatable {
-        case failedToFetchGroupState
-    }
-
-    private func fetchPublicGroupState(
-        conversationID: UUID,
-        domain: String,
-        context: NotificationContext
-    ) async throws -> Data {
-        do {
-            return try await actionsProvider.fetchPublicGroupState(
-                conversationId: conversationID,
-                domain: domain,
-                context: context
-            )
-
-        } catch let error {
-            self.logger.warn("failed to fetch public group state with error: \(String(describing: error))")
-            throw MLSGroupStateError.failedToFetchGroupState
-        }
-    }
-
 }
 
-// MARK: -  Helper types
+// MARK: - Helper types
 
 public struct MLSUser: Equatable {
 
