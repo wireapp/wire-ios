@@ -63,7 +63,7 @@ final class RecordingDotView: UIView {
         delay(0.15) {
             UIView.animate(withDuration: 0.55, delay: 0, options: [.autoreverse, .repeat], animations: {
                 self.alpha = 1
-            }z)
+            })
         }
     }
 
