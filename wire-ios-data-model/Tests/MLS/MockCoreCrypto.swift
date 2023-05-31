@@ -26,7 +26,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockMlsInit: ((ClientId, [CiphersuiteName]) throws -> Void)?
 
-    func mlsInit(clientId: ClientId, ciphersuites: [CoreCryptoSwift.CiphersuiteName]) throws {
+    func mlsInit(clientId: ClientId, ciphersuites: [CiphersuiteName]) throws {
         guard let mock = mockMlsInit else {
             fatalError("no mock for `mlsInit`")
         }
@@ -69,7 +69,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockClientPublicKey: ((CiphersuiteName) throws -> [UInt8])?
 
-    func clientPublicKey(ciphersuite: CoreCryptoSwift.CiphersuiteName) throws -> [UInt8] {
+    func clientPublicKey(ciphersuite: CiphersuiteName) throws -> [UInt8] {
         guard let mock = mockClientPublicKey else {
             fatalError("no mock for `clientPublicKey`")
         }
@@ -273,7 +273,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockNewExternalAddProposal: ((ConversationId, UInt64, CiphersuiteName, MlsCredentialType) throws -> [UInt8])?
 
-    func newExternalAddProposal(conversationId: CoreCryptoSwift.ConversationId, epoch: UInt64, ciphersuite: CoreCryptoSwift.CiphersuiteName, credentialType: CoreCryptoSwift.MlsCredentialType) throws -> [UInt8] {
+    func newExternalAddProposal(conversationId: ConversationId, epoch: UInt64, ciphersuite: CiphersuiteName, credentialType: MlsCredentialType) throws -> [UInt8] {
 
         guard let mock = mockNewExternalAddProposal else {
             fatalError("no mock for `newExternalAddProposal`")
