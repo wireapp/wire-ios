@@ -99,16 +99,16 @@ class MockMLSActionsProvider: MLSActionsProviderProtocol {
         return try mock(bundle)
     }
 
-    typealias FetchPublicGroupStateMock = (UUID, String) -> Data
-    var fetchPublicGroupStateMock = [FetchPublicGroupStateMock]()
+    typealias FetchConversationGroupInfoMock = (UUID, String) -> Data
+    var fetchConversationGroupInfoMock = [FetchConversationGroupInfoMock]()
 
-    func fetchPublicGroupState(
+    func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
         context: NotificationContext
     ) async throws -> Data {
-        guard let mock = fetchPublicGroupStateMock.first else { throw MockError.unmockedMethodInvoked }
-        fetchPublicGroupStateMock.removeFirst()
+        guard let mock = fetchConversationGroupInfoMock.first else { throw MockError.unmockedMethodInvoked }
+        fetchConversationGroupInfoMock.removeFirst()
         return mock(conversationId, domain)
     }
 

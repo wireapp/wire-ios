@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,35 +20,25 @@ import Foundation
 import WireTransport
 import WireDataModel
 
-class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAction> {
+class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: ActionHandler<T> {
 
-    // MARK: - Methods
-
-    override func request(for action: FetchPublicGroupStateAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func request(for action: T, path: String, apiVersion: APIVersion, minRequiredAPIVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion > .v2 else {
+        guard apiVersion >= minRequiredAPIVersion else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
 
-        guard
-            !action.domain.isEmpty,
-            !action.conversationId.uuidString.isEmpty
-        else {
-            action.fail(with: .emptyParameters)
-            return nil
-        }
-
         return ZMTransportRequest(
-            path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
+            path: path,
             method: .methodGET,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )
     }
 
-    override func handleResponse(_ response: ZMTransportResponse, action: FetchPublicGroupStateAction) {
+    override func handleResponse(_ response: ZMTransportResponse, action: T) {
         var action = action
 
         switch (response.httpStatus, response.payloadLabel()) {
@@ -61,6 +51,10 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
                 return
             }
             action.succeed(with: payload.groupState)
+        case (400, "mls-not-enabled"):
+            action.fail(with: .mlsNotEnabled)
+        case (400, _):
+            action.fail(with: .invalidParameters)
         case (404, "mls-missing-group-info"):
             action.fail(with: .missingGroupInfo)
         case (404, "no-conversation"):
@@ -78,7 +72,7 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
     }
 }
 
-extension FetchPublicGroupStateActionHandler {
+extension BaseFetchMLSGroupInfoActionHandler {
 
     // MARK: - Payload
 

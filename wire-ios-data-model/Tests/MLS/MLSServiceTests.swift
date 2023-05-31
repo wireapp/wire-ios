@@ -929,10 +929,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // expectation
         let expectation = XCTestExpectation(description: "Send Message")
 
-        // mock fetching public group state
-        var fetchPublicGroupStateArguments = [(identifier: UUID, domain: String)]()
-        mockActionsProvider.fetchPublicGroupStateMock.append({
-            fetchPublicGroupStateArguments.append(($0, $1))
+        // mock fetching group info
+        var fetchConversationGroupInfoArguments = [(identifier: UUID, domain: String)]()
+        mockActionsProvider.fetchConversationGroupInfoMock.append({
+            fetchConversationGroupInfoArguments.append(($0, $1))
             return publicGroupState
         })
 
@@ -957,9 +957,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         wait(for: [expectation], timeout: 0.5)
 
         // it fetches public group state
-        XCTAssertEqual(fetchPublicGroupStateArguments.count, 1)
-        XCTAssertEqual(fetchPublicGroupStateArguments.first?.identifier, conversationID)
-        XCTAssertEqual(fetchPublicGroupStateArguments.first?.domain, domain)
+        XCTAssertEqual(fetchConversationGroupInfoArguments.count, 1)
+        XCTAssertEqual(fetchConversationGroupInfoArguments.first?.identifier, conversationID)
+        XCTAssertEqual(fetchConversationGroupInfoArguments.first?.domain, domain)
 
         // it asks executor to join group
         XCTAssertEqual(joinGroupArguments.count, 1)
@@ -988,7 +988,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID(.random())
         let conversationID = UUID.create()
         let domain = "example.domain.com"
-        let publicGroupState = Data()
+        let groupInfo = Data()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = conversationID
         conversation.domain = domain
@@ -1002,14 +1002,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation = XCTestExpectation(description: "Send Message")
         expectation.isInverted = !shouldRetry
 
-        // mock fetching public group state
-        var fetchPublicGroupStateCount = 0
-        let fetchPublicGroupStateMock: MockMLSActionsProvider.FetchPublicGroupStateMock = { _, _ in
-            fetchPublicGroupStateCount += 1
-            return publicGroupState
+        // mock fetching group info
+        var fetchGroupInfoCount = 0
+        let fetchGroupInfoMock: MockMLSActionsProvider.FetchConversationGroupInfoMock = { _, _ in
+            fetchGroupInfoCount += 1
+            return groupInfo
         }
-        mockActionsProvider.fetchPublicGroupStateMock.append(fetchPublicGroupStateMock)
-        mockActionsProvider.fetchPublicGroupStateMock.append(fetchPublicGroupStateMock)
+        mockActionsProvider.fetchConversationGroupInfoMock.append(fetchGroupInfoMock)
+        mockActionsProvider.fetchConversationGroupInfoMock.append(fetchGroupInfoMock)
 
         // mock joining group
         var joinGroupCount = 0
@@ -1036,8 +1036,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         wait(for: [expectation], timeout: 0.5)
 
-        // it fetches public group state
-        XCTAssertEqual(fetchPublicGroupStateCount, shouldRetry ? 2 : 1)
+        // it fetches group info
+        XCTAssertEqual(fetchGroupInfoCount, shouldRetry ? 2 : 1)
 
         // it asks executor to join group
         XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1)
@@ -1066,10 +1066,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation = XCTestExpectation(description: "Send Message")
         expectation.isInverted = true
 
-        // mock fetching public group state
-        var fetchPublicGroupStateCount = 0
-        mockActionsProvider.fetchPublicGroupStateMock.append({ _, _ in
-            fetchPublicGroupStateCount += 1
+        // mock fetching group info
+        var fetchGroupInfoCount = 0
+        mockActionsProvider.fetchConversationGroupInfoMock.append({ _, _ in
+            fetchGroupInfoCount += 1
             return Data()
         })
 
@@ -1084,7 +1084,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         wait(for: [expectation], timeout: 0.5)
-        XCTAssertEqual(fetchPublicGroupStateCount, 0)
+        XCTAssertEqual(fetchGroupInfoCount, 0)
     }
 
     // MARK: - Wipe Groups

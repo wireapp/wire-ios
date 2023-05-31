@@ -718,7 +718,7 @@ public final class MLSService: MLSServiceInterface {
                 throw MLSSendExternalCommitError.conversationNotFound
             }
 
-            let publicGroupState = try await actionsProvider.fetchPublicGroupState(
+            let publicGroupState = try await actionsProvider.fetchConversationGroupInfo(
                 conversationId: conversationInfo.identifier,
                 domain: conversationInfo.domain,
                 context: context.notificationContext
@@ -1018,30 +1018,6 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("failed to send external commit, giving up...")
             throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp)
 
-        }
-    }
-
-    // MARK: - Fetch Public Group State
-
-    enum MLSGroupStateError: Error, Equatable {
-        case failedToFetchGroupState
-    }
-
-    private func fetchPublicGroupState(
-        conversationID: UUID,
-        domain: String,
-        context: NotificationContext
-    ) async throws -> Data {
-        do {
-            return try await actionsProvider.fetchPublicGroupState(
-                conversationId: conversationID,
-                domain: domain,
-                context: context
-            )
-
-        } catch let error {
-            self.logger.warn("failed to fetch public group state with error: \(String(describing: error))")
-            throw MLSGroupStateError.failedToFetchGroupState
         }
     }
 
