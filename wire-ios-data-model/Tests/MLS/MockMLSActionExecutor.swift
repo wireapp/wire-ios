@@ -49,36 +49,42 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Update key material
 
     var mockUpdateKeyMaterial: ((MLSGroupID) async throws -> [ZMUpdateEvent])?
+    var updateKeyMaterialCount = 0
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockUpdateKeyMaterial else {
             fatalError("no mock for `updateKeyMaterial`")
         }
 
+        updateKeyMaterialCount += 1
         return try await mock(groupID)
     }
 
     // MARK: - Commit pending proposals
 
     var mockCommitPendingProposals: ((MLSGroupID) async throws -> [ZMUpdateEvent])?
+    var commitPendingProposalsCount = 0
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockCommitPendingProposals else {
             fatalError("no mock for `commitPendingProposals`")
         }
 
+        commitPendingProposalsCount += 1
         return try await mock(groupID)
     }
 
     // MARK: - Join group
 
     var mockJoinGroup: ((MLSGroupID, Data) async throws -> [ZMUpdateEvent])?
+    var mockJoinGroupCount = 0
 
     func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent] {
         guard let mock = mockJoinGroup else {
             fatalError("no mock for `joinGroup`")
         }
 
+        mockJoinGroupCount += 1
         return try await mock(groupID, publicGroupState)
     }
 }

@@ -159,7 +159,10 @@ class MockMLSService: MLSServiceInterface {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
 
-    func createOrJoinSubgroup(parentID: QualifiedID) async {
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async {
 
     }
 

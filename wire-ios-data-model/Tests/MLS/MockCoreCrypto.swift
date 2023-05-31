@@ -104,12 +104,14 @@ class MockCoreCrypto: CoreCryptoProtocol {
     // MARK: - createConversation
 
     var mockCreateConversation: ((ConversationId, ConversationConfiguration) throws -> Void)?
+    var mockCreateConversationCount = 0
 
     func createConversation(conversationId: ConversationId, config: ConversationConfiguration) throws {
         guard let mock = mockCreateConversation else {
             fatalError("no mock for `createConversation`")
         }
 
+        mockCreateConversationCount += 1
         return try mock(conversationId, config)
     }
 

@@ -54,7 +54,10 @@ public protocol MLSServiceInterface {
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
 
-    func createOrJoinSubgroup(parentID: QualifiedID) async
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -697,14 +700,29 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - External Commits
 
-    private func joinByExternalCommit(
-        groupID: MLSGroupID,
-        subgroupType: SubgroupType? = nil
+    private func joinByExternalCommit(groupID: MLSGroupID) async throws {
+        try await joinByExternalCommit(parentID: groupID)
+    }
+
+    private func joinSubgroupByExternalCommit(
+        parentID: MLSGroupID,
+        subgroupID: MLSGroupID,
+        subgroupType: SubgroupType
     ) async throws {
-        try await retryOnCommitFailure(for: groupID, operation: { [weak self] in
+        try await joinByExternalCommit(
+            parentID: parentID,
+            subgroupIDAndType: (subgroupID, subgroupType)
+        )
+    }
+
+    private func joinByExternalCommit(
+        parentID: MLSGroupID,
+        subgroupIDAndType: (MLSGroupID, SubgroupType)? = nil
+    ) async throws {
+        try await retryOnCommitFailure(for: parentID, operation: { [weak self] in
             try await self?.internalJoinByExternalCommit(
-                groupID: groupID,
-                subgroupType: subgroupType
+                parentID: parentID,
+                subgroupIDAndType: subgroupIDAndType
             )
         })
     }
@@ -714,42 +732,56 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func internalJoinByExternalCommit(
-        groupID: MLSGroupID,
-        subgroupType: SubgroupType?
+        parentID: MLSGroupID,
+        subgroupIDAndType: (MLSGroupID, SubgroupType)?
     ) async throws {
+        let subgroupID = subgroupIDAndType?.0
+        let subgroupType = subgroupIDAndType?.1
+
+        let logInfo = "parent: \(parentID), subgroup: \(String(describing: subgroupID)), subgroup type: \(String(describing: subgroupType))"
+
         do {
-            logger.info("sending external commit to join group (\(groupID)")
+            logger.info("sending external commit to join group (\(logInfo))")
 
             guard let context = context else { return }
 
-            guard let conversationInfo = fetchConversationInfo(
-                with: groupID,
+            guard let parentConversationInfo = fetchConversationInfo(
+                with: parentID,
                 in: context
             ) else {
                 throw MLSSendExternalCommitError.conversationNotFound
             }
 
             let publicGroupState = try await actionsProvider.fetchConversationGroupInfo(
-                conversationId: conversationInfo.identifier,
-                domain: conversationInfo.domain,
+                conversationId: parentConversationInfo.identifier,
+                domain: parentConversationInfo.domain,
                 subgroupType: subgroupType,
                 context: context.notificationContext
             )
 
-            let updateEvents = try await mlsActionExecutor.joinGroup(
-                groupID,
-                publicGroupState: publicGroupState
-            )
+            let updateEvents: [ZMUpdateEvent]
 
-            context.performAndWait {
-                conversationInfo.conversation.mlsStatus = .ready
+            if let subgroupID = subgroupID {
+                updateEvents = try await mlsActionExecutor.joinGroup(
+                    subgroupID,
+                    publicGroupState: publicGroupState
+                )
+            } else {
+                updateEvents = try await mlsActionExecutor.joinGroup(
+                    parentID,
+                    publicGroupState: publicGroupState
+                )
+
+                context.performAndWait {
+                    parentConversationInfo.conversation.mlsStatus = .ready
+                }
             }
 
             conversationEventProcessor.processConversationEvents(updateEvents)
-            logger.info("success: joined group (\(groupID)) with external commit")
+            logger.info("success: joined group with external commit (\(logInfo))")
 
         } catch {
-            logger.warn("failed to send external commit to join group (\(groupID)): \(String(describing: error))")
+            logger.warn("failed to send external commit to join group (\(logInfo)): \(String(describing: error))")
             throw error
         }
     }
@@ -1035,9 +1067,12 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Subgroup
 
-    public func createOrJoinSubgroup(parentID: QualifiedID) async {
+    public func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async {
         do {
-            logger.info("create or join subgroup in parent conversation (\(parentID))")
+            logger.info("create or join subgroup in parent conversation (\(parentQualifiedID))")
 
             guard let notificationContext = context?.notificationContext else {
                 logger.error("failed to create or join subgroup: missing notification context")
@@ -1045,7 +1080,7 @@ public final class MLSService: MLSServiceInterface {
             }
 
             let subgroup = try await fetchSubgroup(
-                parentID: parentID,
+                parentID: parentQualifiedID,
                 context: notificationContext
             )
 
@@ -1053,15 +1088,18 @@ public final class MLSService: MLSServiceInterface {
                 try await createSubgroup(with: subgroup.groupID)
             } else if subgroup.epochTimestamp.ageInDays >= 1 {
                 try await deleteSubgroup(
-                    parentID: parentID,
+                    parentID: parentQualifiedID,
                     context: notificationContext
                 )
                 try await createSubgroup(with: subgroup.groupID)
             } else {
-                try await joinSubgroup(with: subgroup.groupID)
+                try await joinSubgroup(
+                    parentID: parentID,
+                    subgroupID: subgroup.groupID
+                )
             }
         } catch {
-            logger.error("failed to create or join subgroup in parent conversation (\(parentID)): \(String(describing: error))")
+            logger.error("failed to create or join subgroup in parent conversation (\(parentQualifiedID)): \(String(describing: error))")
         }
     }
 
@@ -1112,15 +1150,19 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func joinSubgroup(with id: MLSGroupID) async throws {
+    private func joinSubgroup(
+        parentID: MLSGroupID,
+        subgroupID: MLSGroupID
+    ) async throws {
         do {
-            logger.info("joining subgroup with id (\(id))")
-            try await joinByExternalCommit(
-                groupID: id,
+            logger.info("joining subgroup (parent: \(parentID), subgroup: \(subgroupID))")
+            try await joinSubgroupByExternalCommit(
+                parentID: parentID,
+                subgroupID: subgroupID,
                 subgroupType: .conference
             )
         } catch {
-            logger.error("failed to join subgroup with id (\(id)): \(String(describing: error))")
+            logger.error("failed to join subgroup (parent: \(parentID), subgroup: \(subgroupID)): \(String(describing: error))")
             throw error
         }
     }

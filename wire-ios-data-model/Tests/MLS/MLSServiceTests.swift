@@ -1655,12 +1655,209 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [])
     }
 
+    // MARK: - Subgroups
+
+    func test_CreateOrJoinSubgroup_CreateNewGroup() async throws {
+        // Given
+        let parentQualifiedID = QualifiedID.random()
+        let parentID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+        let epoch = 0
+        let epochTimestamp = Date()
+
+        mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
+            return MLSSubgroup(
+                cipherSuite: 0,
+                epoch: epoch,
+                epochTimestamp: epochTimestamp,
+                groupID: subgroupID,
+                members: [],
+                parentQualifiedID: parentQualifiedID
+            )
+        }
+
+        mockCoreCrypto.mockCreateConversation = { groupID, _ in
+            XCTAssertEqual(groupID, subgroupID.bytes)
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { groupID in
+            XCTAssertEqual(groupID, subgroupID)
+            return []
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { groupID in
+            XCTAssertEqual(groupID, subgroupID)
+            return []
+        }
+
+        // When
+        await sut.createOrJoinSubgroup(
+            parentQualifiedID: parentQualifiedID,
+            parentID: parentID
+        )
+
+        // Then
+        XCTAssertEqual(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.count, 1)
+        let fetchSubroupInvocation = try XCTUnwrap(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.first)
+        XCTAssertEqual(fetchSubroupInvocation.conversationID, parentQualifiedID.uuid)
+        XCTAssertEqual(fetchSubroupInvocation.domain, parentQualifiedID.domain)
+        XCTAssertEqual(fetchSubroupInvocation.type, .conference)
+
+        XCTAssertEqual(mockCoreCrypto.mockCreateConversationCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
+    }
+
+    // if epoch is greater than 0, but older than one day, deletes, then creates
+    func test_CreateOrJoinSubgroup_DeleteOldGroupCreateNewGroup() async throws {
+        // Given
+        let parentQualifiedID = QualifiedID.random()
+        let parentID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+        let epoch = 1
+        let epochTimestamp = Date(timeIntervalSinceNow: -.oneDay)
+
+        mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod = { _, _, _, _ in
+            // no-op
+        }
+
+        mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
+            return MLSSubgroup(
+                cipherSuite: 0,
+                epoch: epoch,
+                epochTimestamp: epochTimestamp,
+                groupID: subgroupID,
+                members: [],
+                parentQualifiedID: parentQualifiedID
+            )
+        }
+
+        mockCoreCrypto.mockCreateConversation = { groupID, _ in
+            XCTAssertEqual(groupID, subgroupID.bytes)
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { groupID in
+            XCTAssertEqual(groupID, subgroupID)
+            return []
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { groupID in
+            XCTAssertEqual(groupID, subgroupID)
+            return []
+        }
+
+        // When
+        await sut.createOrJoinSubgroup(
+            parentQualifiedID: parentQualifiedID,
+            parentID: parentID
+        )
+
+        // Then
+        XCTAssertEqual(mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations.count, 1)
+        let deleteSubroupInvocation = try XCTUnwrap(mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations.first)
+        XCTAssertEqual(deleteSubroupInvocation.conversationID, parentQualifiedID.uuid)
+        XCTAssertEqual(deleteSubroupInvocation.domain, parentQualifiedID.domain)
+        XCTAssertEqual(deleteSubroupInvocation.subgroupType, .conference)
+
+        XCTAssertEqual(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.count, 1)
+        let fetchSubroupInvocation = try XCTUnwrap(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.first)
+        XCTAssertEqual(fetchSubroupInvocation.conversationID, parentQualifiedID.uuid)
+        XCTAssertEqual(fetchSubroupInvocation.domain, parentQualifiedID.domain)
+        XCTAssertEqual(fetchSubroupInvocation.type, .conference)
+
+        XCTAssertEqual(mockCoreCrypto.mockCreateConversationCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
+    }
+
+    func test_CreateOrJoinSubgroup_JoinExistingGroup() async throws {
+        // Given
+        let parentQualifiedID = QualifiedID.random()
+        let parentID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+        let epoch = 1
+        let epochTimestamp = Date()
+        let publicGroupState = Data.random()
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = parentQualifiedID.uuid
+        conversation.domain = parentQualifiedID.domain
+        conversation.mlsGroupID = parentID
+
+        mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
+            return MLSSubgroup(
+                cipherSuite: 0,
+                epoch: epoch,
+                epochTimestamp: epochTimestamp,
+                groupID: subgroupID,
+                members: [],
+                parentQualifiedID: parentQualifiedID
+            )
+        }
+
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = publicGroupState
+
+        mockMLSActionExecutor.mockJoinGroup = {
+            XCTAssertEqual($0, subgroupID)
+            XCTAssertEqual($1, publicGroupState)
+            return []
+        }
+
+        // When
+        await sut.createOrJoinSubgroup(
+            parentQualifiedID: parentQualifiedID,
+            parentID: parentID
+        )
+
+        // Then
+        XCTAssertEqual(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.count, 1)
+        let fetchSubroupInvocation = try XCTUnwrap(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.first)
+        XCTAssertEqual(fetchSubroupInvocation.conversationID, parentQualifiedID.uuid)
+        XCTAssertEqual(fetchSubroupInvocation.domain, parentQualifiedID.domain)
+        XCTAssertEqual(fetchSubroupInvocation.type, .conference)
+
+        XCTAssertEqual(mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.count, 1)
+        let fetchGroupInfoInvocation = try XCTUnwrap(mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.first)
+        XCTAssertEqual(fetchGroupInfoInvocation.conversationId, parentQualifiedID.uuid)
+        XCTAssertEqual(fetchGroupInfoInvocation.domain, parentQualifiedID.domain)
+        XCTAssertEqual(fetchGroupInfoInvocation.subgroupType, .conference)
+
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
 }
 
 extension MLSGroupID {
 
     static func random() -> MLSGroupID {
         return MLSGroupID(.random(length: 32))
+    }
+
+}
+
+extension QualifiedID {
+
+    static func random() -> QualifiedID {
+        return QualifiedID(
+            uuid: .create(),
+            domain: .randomDomain()
+        )
+    }
+
+}
+
+extension String {
+
+    static func randomDomain(hostLength: UInt = 5) -> String {
+        return "\(String.random(length: hostLength)).com"
+    }
+
+    static func random(length: UInt) -> String {
+        let randomChars = (0..<length).compactMap { _ in
+            "a...z".randomElement()
+        }
+
+        return String(randomChars)
     }
 
 }
