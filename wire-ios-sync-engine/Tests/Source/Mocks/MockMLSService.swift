@@ -78,4 +78,12 @@ class MockMLSService: MLSServiceInterface {
     func wipeGroup(_ groupID: MLSGroupID) {
         fatalError("not implemented")
     }
+
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async {
+        fatalError("not implemented")
+    }
+
 }
