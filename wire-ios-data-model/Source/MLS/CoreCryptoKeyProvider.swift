@@ -73,11 +73,11 @@ public class CoreCryptoKeyProvider {
 }
 
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
-    
+
     var id: String {
         "com.wire.mls.key"
     }
-    
+
     var tag: Data {
         id.data(using: .utf8)!
     }
@@ -107,7 +107,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
     var id: String {
         "com.wire.mls.key"
     }
-    
+
     var tag: Data {
         id.data(using: .utf8)!
     }

@@ -41,7 +41,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
+
     func testThatItOnlyReturnsResultFromTheCorrectConversationNotYetIndexed() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
