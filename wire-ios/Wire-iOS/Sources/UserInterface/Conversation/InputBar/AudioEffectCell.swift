@@ -53,7 +53,7 @@ final class AudioEffectCell: UICollectionViewCell {
         [iconView, borderRightView, borderBottomView].forEach(contentView.addSubview)
 
         [borderRightView, borderBottomView].forEach { v in
-            v.backgroundColor = UIColor(white: 1, alpha: 0.16)
+            v.backgroundColor = SemanticColors.Icon.foregroundDefaultBlack
         }
 
         [iconView, borderRightView, borderBottomView].prepareForLayout()
@@ -95,7 +95,7 @@ final class AudioEffectCell: UICollectionViewCell {
     }
 
     fileprivate func updateForSelectedState() {
-        let color: UIColor = isSelected ? UIColor.accent() : UIColor.white
+        let color: UIColor = isSelected ? UIColor.accent() : SemanticColors.Icon.foregroundDefaultBlack
         iconView.setIconColor(color, for: .normal)
     }
 
