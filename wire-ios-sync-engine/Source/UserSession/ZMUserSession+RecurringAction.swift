@@ -22,9 +22,9 @@ extension ZMUserSession {
 
     func refreshUsersMissingMetadata() -> RecurringAction {
         /// Performing actions every 3 hours.
-        let interval: TimeInterval = 3 * 60 * 60
+        let interval: TimeInterval = 3 * .hour
 
-        return RecurringAction(id: UUID().uuidString, interval: interval) {
+        return RecurringAction(id: "refreshUserMetadata", interval: interval) {
             self.perform {
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = self.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
@@ -37,9 +37,9 @@ extension ZMUserSession {
 
     func refreshConversationsMissingMetadata() -> RecurringAction {
         /// Performing actions every 3 hours.
-        let interval: TimeInterval = 3 * 60 * 60
+        let interval: TimeInterval = 3 * .hour
         
-        return RecurringAction(id: UUID().uuidString, interval: interval) {
+        return RecurringAction(id: "refreshConversationMetadata", interval: interval) {
             self.perform {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
@@ -52,5 +52,11 @@ extension ZMUserSession {
 
         }
     }
+
+}
+
+extension TimeInterval {
+
+    static let hour: Self = 60 * 60
 
 }
