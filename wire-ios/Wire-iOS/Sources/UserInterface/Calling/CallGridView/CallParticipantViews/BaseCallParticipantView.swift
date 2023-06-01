@@ -231,7 +231,6 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
 
     private func updateBorderStyle() {
         let showBorderForActiveSpeaker = shouldShowActiveSpeakerFrame && stream.isParticipantUnmutedAndSpeakingNow
-        let showBorderForAudioParticipant = shouldShowBorderWhenVideoIsStopped && !stream.isSharingVideo
 
         layer.borderWidth = showBorderForActiveSpeaker ? 2 : 0
         layer.borderColor = showBorderForActiveSpeaker ? UIColor.accent().cgColor : UIColor.clear.cgColor
