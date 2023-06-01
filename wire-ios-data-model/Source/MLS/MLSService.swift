@@ -58,6 +58,9 @@ public protocol MLSServiceInterface {
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async
+
+    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -189,7 +192,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(`ciphersuite`: defaultCipherSuite) }
+                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite) }
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
             }
@@ -216,6 +219,43 @@ public final class MLSService: MLSServiceInterface {
                 logger.warn("failed to fetch backend public keys: \(String(describing: error))")
             }
         }
+    }
+
+    // MARK: - Conference info for subconversations
+
+    /// Generate conference information for a given conference subconversation
+    /// - Parameter groupID: The group ID of the conference subconversation
+    /// - Returns: A `MLSConferenceInfo` object containing the subconversation epoch and the conference key and key size
+
+    public func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+        do {
+            logger.info("generating conference info")
+
+            let keyLength: UInt32 = 32
+
+            return try coreCrypto.perform {
+                let keyData = try $0.exportSecretKey(
+                    conversationId: groupID.bytes,
+                    keyLength: keyLength
+                )
+
+                let epoch = try $0.conversationEpoch(conversationId: groupID.bytes)
+
+                return MLSConferenceInfo(
+                    epoch: epoch,
+                    keyData: keyData,
+                    keySize: keyLength
+                )
+            }
+
+        } catch {
+            logger.warn("failed to generate conference info: \(String(describing: error))")
+            throw MLSConferenceInfoError.failedToGenerateConferenceInfo
+        }
+    }
+
+    public enum MLSConferenceInfoError: Error, Equatable {
+        case failedToGenerateConferenceInfo
     }
 
     // MARK: - Update key material

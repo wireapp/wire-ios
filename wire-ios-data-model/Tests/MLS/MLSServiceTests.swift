@@ -155,6 +155,63 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(sut.backendPublicKeys, keys)
     }
 
+    // MARK: - Conference info
+
+    func test_GenerateConferenceInfo_IsSuccessful() {
+
+        do {
+            // Given
+            let groupID = MLSGroupID([1, 1, 1])
+            let secretKey = Bytes.random()
+            let epoch: UInt64 = 1
+
+            var mockExportSecretKeyCount = 0
+            mockCoreCrypto.mockExportSecretKey = { _, _ in
+                mockExportSecretKeyCount += 1
+                return secretKey
+            }
+
+            var mockConversationEpochCount = 0
+            mockCoreCrypto.mockConversationEpoch = { _ in
+                mockConversationEpochCount += 1
+                return epoch
+            }
+
+            // When
+            let conferenceInfo = try sut.generateConferenceInfo(for: groupID)
+
+            // Then
+            XCTAssertEqual(mockExportSecretKeyCount, 1)
+            XCTAssertEqual(mockConversationEpochCount, 1)
+
+            let expectedConferenceInfo = MLSConferenceInfo(
+                epoch: epoch,
+                keyData: secretKey,
+                keySize: 32
+            )
+
+            XCTAssertEqual(conferenceInfo, expectedConferenceInfo)
+        } catch {
+            XCTFail("unexpected error: \(String(describing: error))")
+        }
+
+    }
+
+    func test_GenerateConferenceInfo_Fails() {
+        // Given
+        typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
+        let groupID = MLSGroupID([1, 1, 1])
+
+        mockCoreCrypto.mockExportSecretKey = { _, _ in
+            throw CryptoError.ConversationNotFound(message: "foo")
+        }
+
+        // When / Then
+        assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
+            _ = try sut.generateConferenceInfo(for: groupID)
+        }
+    }
+
     // MARK: - Message Encryption
 
     typealias EncryptionError = MLSService.MLSMessageEncryptionError
