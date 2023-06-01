@@ -18,10 +18,6 @@
 
 public extension ZMConversation {
 
-    @objc static private var emptyConversationEllipsis: String {
-        return "…"
-    }
-
     @objc static private var emptyGroupConversationName: String {
         return NSLocalizedString("conversation.displayname.emptygroup", comment: "")
     }
@@ -33,7 +29,7 @@ public extension ZMConversation {
     var displayName: String {
         let result = meaningfulDisplayName
         switch conversationType {
-        case .oneOnOne, .connection: return result ?? ZMConversation.emptyConversationEllipsis
+        case .oneOnOne, .connection: return result ?? ""
         case .group: return result ?? ZMConversation.emptyGroupConversationName
         case .self, .invalid: return result ?? ""
         }

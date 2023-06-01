@@ -95,6 +95,7 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
+static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
 
 @interface ZMBoxedSelfUser : NSObject
@@ -369,7 +370,8 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
                                            NeedsToRefetchLabelsKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
                                            DomainKey,
-                                           MessagesFailedToSendRecipientKey
+                                           MessagesFailedToSendRecipientKey,
+                                           IsPendingMetadataRefreshKey
                                            ]];
         keys = [ignoredKeys copy];
     });

@@ -4109,12 +4109,18 @@ internal enum L10n {
         internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.")
         /// Details
         internal static let title = L10n.tr("Localizable", "profile.details.title", fallback: "Details")
+        internal enum Title {
+          /// Name not available
+          internal static let unavailable = L10n.tr("Localizable", "profile.details.title.unavailable", fallback: "Name not available")
+        }
       }
       internal enum Devices {
         /// %@ is using an old version of Wire. No devices are shown here.
         internal static func fingerprintMessageUnencrypted(_ p1: Any) -> String {
           return L10n.tr("Localizable", "profile.devices.fingerprint_message_unencrypted", String(describing: p1), fallback: "%@ is using an old version of Wire. No devices are shown here.")
         }
+        /// No device data available.
+        internal static let noDeviceData = L10n.tr("Localizable", "profile.devices.no_device_data", fallback: "No device data available.")
         /// Devices
         internal static let title = L10n.tr("Localizable", "profile.devices.title", fallback: "Devices")
         internal enum Detail {

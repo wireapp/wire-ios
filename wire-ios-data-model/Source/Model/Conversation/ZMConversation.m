@@ -75,6 +75,7 @@ NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data"
 NSString *const SecurityLevelKey = @"securityLevel";
 NSString *const ZMConversationLabelsKey = @"labels";
 NSString *const ZMConversationDomainKey = @"domain";
+NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -350,7 +351,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationNeedsToDownloadRolesKey,
             @"isSelfAnActiveMember", // DEPRECATED
             @"lastServerSyncedActiveParticipants", // DEPRECATED
-            ZMConversationDomainKey
+            ZMConversationDomainKey,
+            ZMConversationIsPendingMetadataRefreshKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
