@@ -42,7 +42,7 @@ final class AudioEffectsPickerViewControllerTests: ZMSnapshotTestCase {
 
         let container = UIView()
         container.addSubview(self.sut.view)
-        container.backgroundColor = UIColor.from(scheme: .textForeground, variant: .light)
+        container.backgroundColor = SemanticColors.View.backgroundDefault
         container.translatesAutoresizingMaskIntoConstraints = false
         sut.view.translatesAutoresizingMaskIntoConstraints = false
 

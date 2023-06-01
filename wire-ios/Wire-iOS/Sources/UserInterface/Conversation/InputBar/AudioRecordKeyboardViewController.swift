@@ -116,9 +116,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - View Configuration
 
     func configureViews() {
-        let backgroundColor = UIColor.from(scheme: .textForeground, variant: .light)
-        let textColor = UIColor.from(scheme: .textForeground, variant: .dark)
-        let separatorColor = UIColor.from(scheme: .separator, variant: .light)
+        let backgroundColor = SemanticColors.View.backgroundDefault
+        let textColor = SemanticColors.Label.textDefault
+        let separatorColor = SemanticColors.View.backgroundSeparatorCell
 
         self.view.backgroundColor = backgroundColor
 
@@ -157,7 +157,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func createTipLabel() {
-        let color = UIColor.from(scheme: .textDimmed, variant: .light)
+        let color = SemanticColors.Label.textDefault
         let text = "conversation.input_bar.audio_message.keyboard.record_tip".localized(uppercased: true)
         let attrText = NSMutableAttributedString(string: text)
         let atRange = (text as NSString).range(of: "%@")
@@ -191,27 +191,27 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.recordButton.setIcon(.recordDot, size: .tiny, for: [])
         self.recordButton.setIconColor(.white, for: [])
         self.recordButton.addTarget(self, action: #selector(recordButtonPressed), for: .touchUpInside)
-        self.recordButton.setBackgroundImageColor(SemanticColors.LegacyColors.vividRed, for: .normal)
+        self.recordButton.setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
         self.recordButton.layer.masksToBounds = true
 
         self.stopRecordButton.setIcon(.stopRecording, size: .tiny, for: [])
         self.stopRecordButton.setIconColor(.white, for: [])
         self.stopRecordButton.addTarget(self, action: #selector(stopRecordButtonPressed), for: .touchUpInside)
-        self.stopRecordButton.setBackgroundImageColor(SemanticColors.LegacyColors.vividRed, for: .normal)
+        self.stopRecordButton.setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
         self.stopRecordButton.layer.masksToBounds = true
 
         self.confirmButton.setIcon(.checkmark, size: .tiny, for: [])
         self.confirmButton.setIconColor(.white, for: [])
         self.confirmButton.addTarget(self, action: #selector(confirmButtonPressed), for: .touchUpInside)
-        self.confirmButton.setBackgroundImageColor(SemanticColors.LegacyColors.strongLimeGreen, for: .normal)
+        self.confirmButton.setBackgroundImageColor(SemanticColors.Button.backgroundconfirmSendingAudioMessage, for: .normal)
         self.confirmButton.layer.masksToBounds = true
 
         self.redoButton.setIcon(.undo, size: .tiny, for: [])
-        self.redoButton.setIconColor(.white, for: [])
+        self.redoButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: [])
         self.redoButton.addTarget(self, action: #selector(redoButtonPressed), for: .touchUpInside)
 
         self.cancelButton.setIcon(.cross, size: .tiny, for: [])
-        self.cancelButton.setIconColor(.white, for: [])
+        self.cancelButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: [])
         self.cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
 
         setupAccessibility()
