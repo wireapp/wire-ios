@@ -38,20 +38,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
 
     var microphoneIconStyle: MicrophoneIconStyle = .hidden {
         didSet {
-            microphoneIconView.set(style: microphoneIconStyle)
-            makeMicrophone(hidden: true)
-            labelContainerView.backgroundColor = .black
-            nameLabel.textColor = .white
-
-            switch microphoneIconStyle {
-            case .unmutedPulsing:
-                labelContainerView.backgroundColor = UIColor.accent()
-                nameLabel.textColor = SemanticColors.Label.textDefaultWhite
-            case .muted:
-                makeMicrophone(hidden: false)
-            case .unmuted, .hidden:
-                break
-            }
+            updateMicrophoneView()
         }
     }
 
@@ -81,6 +68,23 @@ final class CallParticipantDetailsView: RoundedBlurView {
         blurView.alpha = 0
     }
 
+    private func updateMicrophoneView() {
+        microphoneIconView.set(style: microphoneIconStyle)
+        makeMicrophone(hidden: true)
+        labelContainerView.backgroundColor = .black
+        nameLabel.textColor = .white
+
+        switch microphoneIconStyle {
+        case .unmutedPulsing:
+            labelContainerView.backgroundColor = UIColor.accent()
+            nameLabel.textColor = SemanticColors.Label.textDefaultWhite
+        case .muted:
+            makeMicrophone(hidden: false)
+        case .unmuted, .hidden:
+            break
+        }
+    }
+
     override func createConstraints() {
         super.createConstraints()
 
@@ -101,6 +105,8 @@ final class CallParticipantDetailsView: RoundedBlurView {
                                        inContainer: labelContainerView,
                                        withInsets: UIEdgeInsets.init(top: 4, left: 4, bottom: 4, right: 4))
         )
+
+        updateMicrophoneView()
     }
 
     private func makeMicrophone(hidden: Bool) {
