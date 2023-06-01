@@ -220,7 +220,6 @@ final class CallTopOverlayController: UIViewController {
         callDurationTimer = nil
     }
 
-
     // MARK: - Actions
 
     @objc
