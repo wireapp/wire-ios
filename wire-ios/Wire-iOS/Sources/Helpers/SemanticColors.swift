@@ -30,13 +30,8 @@ public enum SemanticColors {
 
     public enum LegacyColors {
         // Legacy accent colors
-        static let strongBlue = UIColor(red: 0.141, green: 0.552, blue: 0.827, alpha: 1)
         static let strongLimeGreen = UIColor(red: 0, green: 0.784, blue: 0, alpha: 1)
-        static let brightYellow = UIColor(red: 0.996, green: 0.749, blue: 0.007, alpha: 1)
         static let vividRed = UIColor(red: 1, green: 0.152, blue: 0, alpha: 1)
-        static let brightOrange = UIColor(red: 1, green: 0.537, blue: 0, alpha: 1)
-        static let softPink = UIColor(red: 0.996, green: 0.368, blue: 0.741, alpha: 1)
-        static let violet = UIColor(red: 0.615, green: 0, blue: 1, alpha: 1)
     }
 
     public enum Switch {
@@ -98,6 +93,9 @@ public enum SemanticColors {
         static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+
+        // Audio Icon
+        static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
     }
 
     public enum View {
@@ -133,6 +131,10 @@ public enum SemanticColors {
         static let backgroundPurple = UIColor(light: Asset.Colors.purple100Light, dark: Asset.Colors.purple900Dark)
         static let backgroundTurqoise = UIColor(light: Asset.Colors.turquoise100Light, dark: Asset.Colors.turquoise900Dark)
         static let backgroundCallOverlay = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
+
+        // AudioView
+        static let backgroundAudioViewOverlay = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
+        static let backgroundAudioViewOverlayActive = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
     }
 
     public enum TabBar {
@@ -190,6 +192,11 @@ public enum SemanticColors {
 
         static let backgroundPickUp = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
+
+        /// Audio Buttons
+        static let backgroundAudioMessageOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        static let backgroundconfirmSendingAudioMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
     }
 
     public enum DrawingColors {

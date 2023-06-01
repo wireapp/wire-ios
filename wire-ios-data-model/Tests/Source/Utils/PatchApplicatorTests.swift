@@ -30,7 +30,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         patchCountByVersion = [:]
-        sut = PatchApplicator<TestPatch>(lastRunVersionKey: "testLastRunVersionKey")
+        sut = PatchApplicator<TestPatch>(name: "TestPatch")
         self.setCurrentVersion(.none)
     }
 
