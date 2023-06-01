@@ -27,7 +27,7 @@ extension ZMConversation: ObjectInSnapshot {
                     #keyPath(ZMConversation.conversationListIndicator),
                     #keyPath(ZMConversation.mutedStatus),
                     #keyPath(ZMConversation.securityLevel),
-                    #keyPath(ZMConversation.meaningfulDisplayName),
+                    #keyPath(ZMConversation.displayName),
                     #keyPath(ZMConversation.estimatedUnreadCount),
                     #keyPath(ZMConversation.clearedTimeStamp),
                     #keyPath(ZMConversation.localParticipantRoles),
@@ -85,7 +85,7 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     public var nameChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.meaningfulDisplayName),
+        return changedKeysContain(keys: #keyPath(ZMConversation.displayName),
                                         #keyPath(ZMConversation.userDefinedName)) || activeParticipantsChanged
     }
 

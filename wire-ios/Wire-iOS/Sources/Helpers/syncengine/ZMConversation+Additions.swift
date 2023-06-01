@@ -31,8 +31,8 @@ extension ZMConversation {
 
 extension ConversationLike {
 
-    var displayName: String {
-        return meaningfulDisplayName ?? L10n.Localizable.Profile.Details.Title.unavailable
+    var displayNameWithFallback: String {
+        return displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
 
 }

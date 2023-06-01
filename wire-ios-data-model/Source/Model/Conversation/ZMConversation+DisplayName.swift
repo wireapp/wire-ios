@@ -20,7 +20,7 @@ public extension ZMConversation {
 
     /// A meaningful display name is one that can be constructed from the conversation data
     @objc
-    var meaningfulDisplayName: String? {
+    var displayName: String? {
         switch conversationType {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()

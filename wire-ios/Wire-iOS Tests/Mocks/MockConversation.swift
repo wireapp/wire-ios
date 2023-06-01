@@ -43,7 +43,7 @@ class SwiftMockConversation: NSObject, Conversation {
         return mockLocalParticipantsContain
     }
 
-    var meaningfulDisplayName: String? = ""
+    var displayName: String? = ""
 
     var connectedUserType: UserType?
 

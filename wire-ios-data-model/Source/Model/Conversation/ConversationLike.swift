@@ -29,7 +29,7 @@ public protocol ConversationLike: NSObjectProtocol {
     func localParticipantsContain(user: UserType) -> Bool
     var localParticipantsCount: Int { get }
 
-    var meaningfulDisplayName: String? { get }
+    var displayName: String? { get }
     var connectedUserType: UserType? { get }
     var allowGuests: Bool { get }
     var allowServices: Bool { get }

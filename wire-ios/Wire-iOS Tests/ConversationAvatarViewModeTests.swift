@@ -34,7 +34,7 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
         otherUserConversation.conversationType = .oneOnOne
 
         // title
-        otherUserConversation.meaningfulDisplayName = otherUser.name!
+        otherUserConversation.displayName = otherUser.name!
 
         // subtitle
         otherUserConversation.connectedUserType = otherUser

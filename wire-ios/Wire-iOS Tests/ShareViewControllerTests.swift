@@ -46,12 +46,12 @@ final class ShareViewControllerTests: ZMSnapshotTestCase {
 
         groupConversation = MockShareViewControllerConversation()
         groupConversation.sortedOtherParticipants = [mockUser, MockUserType.createUser(name: "John Appleseed")]
-        groupConversation.meaningfulDisplayName = "Bruno, John Appleseed"
+        groupConversation.displayName = "Bruno, John Appleseed"
 
         oneToOneConversation = MockShareViewControllerConversation()
         oneToOneConversation.conversationType = .oneOnOne
         oneToOneConversation.sortedOtherParticipants = [mockUser]
-        oneToOneConversation.meaningfulDisplayName = "Bruno"
+        oneToOneConversation.displayName = "Bruno"
     }
 
     override func tearDown() {
