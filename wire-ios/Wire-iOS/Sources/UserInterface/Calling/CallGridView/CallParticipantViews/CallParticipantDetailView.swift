@@ -100,13 +100,15 @@ final class CallParticipantDetailsView: RoundedBlurView {
             microphoneImageView.heightAnchor.constraint(equalToConstant: 22),
             microphoneWidth!
         ])
+
+        updateMicrophoneView()
+
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(view: nameLabel,
                                        inContainer: labelContainerView,
                                        withInsets: UIEdgeInsets.init(top: 4, left: 4, bottom: 4, right: 4))
         )
 
-        updateMicrophoneView()
     }
 
     private func makeMicrophone(hidden: Bool) {
