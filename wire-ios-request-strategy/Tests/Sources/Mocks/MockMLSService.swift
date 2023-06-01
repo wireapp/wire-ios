@@ -112,4 +112,8 @@ class MockMLSService: MLSServiceInterface {
     ) async {
 
     }
+
+    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+        fatalError("not implemented")
+    }
 }

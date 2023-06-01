@@ -88,4 +88,8 @@ class MLSEncryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+        fatalError("not implemented")
+    }
+
 }
