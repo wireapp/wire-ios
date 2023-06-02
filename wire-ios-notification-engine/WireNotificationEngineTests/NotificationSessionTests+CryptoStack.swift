@@ -116,7 +116,6 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         XCTAssertNil(context.coreCrypto)
     }
 
-
     func test_CryptoStackSetup_OnInit_ProteusAndMLS() throws {
         // GIVEN
         proteusFlag.isOn = true

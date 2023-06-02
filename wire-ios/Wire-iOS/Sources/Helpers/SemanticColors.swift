@@ -95,6 +95,9 @@ public enum SemanticColors {
         static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+
+        // Audio Icon
+        static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
     }
 
     public enum View {
@@ -130,6 +133,10 @@ public enum SemanticColors {
         static let backgroundPurple = UIColor(light: Asset.Colors.purple100Light, dark: Asset.Colors.purple900Dark)
         static let backgroundTurqoise = UIColor(light: Asset.Colors.turquoise100Light, dark: Asset.Colors.turquoise900Dark)
         static let backgroundCallOverlay = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
+
+        // AudioView
+        static let backgroundAudioViewOverlay = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
+        static let backgroundAudioViewOverlayActive = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
     }
 
     public enum TabBar {
@@ -193,6 +200,10 @@ public enum SemanticColors {
         static let borderReactionNormal = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
         static let backgroundReactionSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue900Dark)
         static let borderReactionSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
+
+        /// Audio Buttons
+        static let backgroundAudioMessageOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+        static let backgroundconfirmSendingAudioMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
     }
 
     public enum DrawingColors {

@@ -125,7 +125,6 @@ final class AudioEffectsPickerViewController: UIViewController {
         super.viewDidLoad()
 
         createCollectionView()
-        progressView.barColor = UIColor.white
         progressView.translatesAutoresizingMaskIntoConstraints = false
 
         subtitleLabel.textAlignment = .center
@@ -232,13 +231,10 @@ final class AudioEffectsPickerViewController: UIViewController {
 
         self.state = state
 
-        let colorScheme = ColorScheme()
-        colorScheme.variant = .dark
-
         switch state {
         case .tip:
             subtitleLabel.text = "conversation.input_bar.audio_message.keyboard.filter_tip".localized(uppercased: true)
-            subtitleLabel.textColor = colorScheme.color(named: .textForeground)
+            subtitleLabel.textColor = SemanticColors.Label.textDefault
         case .time:
             let duration: Int
             if let player = audioPlayerController?.player {
@@ -250,7 +246,7 @@ final class AudioEffectsPickerViewController: UIViewController {
             let (seconds, minutes) = (duration % 60, duration / 60)
             subtitleLabel.text = String(format: "%d:%02d", minutes, seconds)
             subtitleLabel.accessibilityValue = subtitleLabel.text
-            subtitleLabel.textColor = colorScheme.color(named: .textForeground)
+            subtitleLabel.textColor = SemanticColors.Label.textDefault
         default:
             // no-op
             break
