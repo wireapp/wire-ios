@@ -30,7 +30,10 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
         sut.view.setNeedsLayout()
         sut.view.layoutIfNeeded()
     }
-
+override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
     func testReactionPicker() {
         verify(matching: sut)
     }
