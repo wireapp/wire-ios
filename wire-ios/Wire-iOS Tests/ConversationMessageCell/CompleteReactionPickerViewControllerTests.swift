@@ -45,7 +45,7 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
 
     func testReactionPicker_scrolledToBottom() {
-        // GIVEN WHEN
+        // GIVEN & WHEN
         scrollToSection(7)
         // THEN
         verify(matching: sut)
