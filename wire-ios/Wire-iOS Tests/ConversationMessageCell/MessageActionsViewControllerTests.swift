@@ -44,12 +44,29 @@ final class MessageActionsViewControllerTests: XCTestCase {
 }
 
 final class BasicReactionPickerTests: ZMSnapshotTestCase {
-    var sut = BasicReactionPicker()
 
     func test_BasicReactionPicker() {
-        sut.sizeToFit()
-        sut.backgroundColor = .white
-        sut.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))
+        // GIVEN WHEN
+        let sut = pickerWithReaction(nil)
+
+        // THEN
         verify(matching: sut)
+    }
+
+    func test_BasicReactionPicker_withSelectedReaction() {
+        // GIVEN WHEN
+        let sut = pickerWithReaction("👍")
+
+        // THEN
+        verify(matching: sut)
+    }
+
+    private func pickerWithReaction(_ reaction: String?) -> BasicReactionPicker {
+        var picker = BasicReactionPicker(selectedReaction: reaction)
+        picker.sizeToFit()
+        picker.backgroundColor = .white
+        picker.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))
+
+        return picker
     }
 }

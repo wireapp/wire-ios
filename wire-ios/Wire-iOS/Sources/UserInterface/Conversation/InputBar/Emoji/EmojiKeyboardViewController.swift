@@ -97,11 +97,9 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func updateSectionSelection() {
-        DispatchQueue.main.async {
-            let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
-            guard let section = minSection  else { return }
-            self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
-        }
+        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
+        guard let section = minSection  else { return }
+        self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
     }
 
     @objc func backspaceTapped(_ sender: IconButton) {
@@ -129,7 +127,7 @@ final class EmojiKeyboardViewController: UIViewController {
 
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
 
-    func sectionViewController(_ viewController: UIViewController, didSelect type: EmojiSectionType, scrolling: Bool) {
+    func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
         collectionView.scrollToItem(at: indexPath, at: .left, animated: !scrolling)
@@ -186,12 +184,28 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
             }
         }
     }
+    
+    var isCurrent: Bool = false {
+        didSet {
+            guard isCurrent else {
+                layer.borderColor = UIColor.clear.cgColor
+                backgroundColor = .clear
+
+                return
+            }
+            backgroundColor = SemanticColors.Button.reactionBackgroundSelected
+            layer.borderColor = SemanticColors.Button.reactionBorderSelected.cgColor
+        }
+    }
+
 
     func setupViews() {
         titleLabel.textAlignment = .center
         let fontSize: CGFloat =  UIDevice.current.userInterfaceIdiom == .pad ? 40 : 28
         titleLabel.font = .systemFont(ofSize: fontSize)
         titleLabel.adjustsFontSizeToFitWidth = true
+        layer.borderWidth = 1.0
+        layer.cornerRadius = 12.0
         addSubview(titleLabel)
     }
 

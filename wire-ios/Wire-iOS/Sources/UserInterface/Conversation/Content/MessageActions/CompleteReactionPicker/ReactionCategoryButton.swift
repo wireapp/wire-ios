@@ -18,7 +18,7 @@
 
 import UIKit
 
-class ReactionCategoryButton: UIButton {
+final class ReactionCategoryButton: UIButton {
     private var selectionIndicator = UIView()
     private let selectedTintColor = SemanticColors.Icon.emojiCategorySelected
     private let defaultTintColor = SemanticColors.Icon.emojiCategoryDefault

@@ -168,6 +168,8 @@ public enum SemanticColors {
         static let borderInputBarItemHighlighted = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
         static let textInputBarItemEnabled = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textInputBarItemHighlighted = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.white)
+        static let reactionBorderSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
+        static let reactionBackgroundSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue800Dark)
 
         /// Calling buttons
         static let backgroundCallingNormal = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)

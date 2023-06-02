@@ -29,13 +29,13 @@ final class ReactionsCollectionView: UICollectionView {
         EmojiCollectionViewCell.register(in: self)
         setupLayout()
         contentInset = UIEdgeInsets(top: 10, left: 30, bottom: 10, right: 30)
-        layout.itemSize = CGSize(width: 31.0, height: 31.0)
+        layout.itemSize = CGSize(width: 40.0, height: 40.0)
     }
 
     func setupLayout() {
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 8
-        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 4
+        layout.minimumInteritemSpacing = 4
 
     }
 

@@ -18,7 +18,7 @@
 
 import UIKit
 
-class CompleteReactionPickerViewController: UIViewController {
+final class CompleteReactionPickerViewController: UIViewController {
 
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
@@ -109,26 +109,20 @@ class CompleteReactionPickerViewController: UIViewController {
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji
-        if emoji == "🙂" {
-            print("q")
-        }
-        cell.backgroundColor = (emoji == selectedReaction) ? UIColor.gray.withAlphaComponent(0.4) : .clear
-//        cell.isSelected = (emoji == selectedReaction)
+        cell.isCurrent = (emoji == selectedReaction)
         return cell
     }
 
     func updateSectionSelection() {
-        DispatchQueue.main.async {
-            let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
-            guard let section = minSection  else { return }
-            self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
-        }
+        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
+        guard let section = minSection  else { return }
+        self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
     }
 }
 
 extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelegate {
 
-    func sectionViewController(_ viewController: UIViewController, didSelect type: EmojiSectionType, scrolling: Bool) {
+    func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
         collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)

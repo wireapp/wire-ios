@@ -84,7 +84,7 @@ final class ReactionSectionViewController: UIViewController {
 
     @objc private func didTappButton(_ sender: ReactionCategoryButton) {
         guard let type = typesByButton[sender] else { return }
-        sectionDelegate?.sectionViewController(self, didSelect: type, scrolling: false)
+        sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: false)
     }
 
     @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
@@ -95,25 +95,16 @@ final class ReactionSectionViewController: UIViewController {
             fallthrough
         case .changed:
             let location = recognizer.location(in: view)
-            guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first else { return }
-            guard let type = typesByButton[button] else { return }
-            sectionDelegate?.sectionViewController(self, didSelect: type, scrolling: true)
+            guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first,
+                  let type = typesByButton[button]
+            else { return }
+            sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
         case .ended, .failed, .cancelled:
             ignoreSelectionUpdates = false
         @unknown default:
             break
         }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        sectionButtons.forEach {
-            $0.removeFromSuperview()
-            view.addSubview($0)
-        }
-
-        createConstraints()
     }
 
     private func createConstraints() {

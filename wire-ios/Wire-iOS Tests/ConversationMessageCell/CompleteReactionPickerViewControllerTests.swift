@@ -26,7 +26,7 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = CompleteReactionPickerViewController()
+        sut = CompleteReactionPickerViewController(selectedReaction: "😀")
         sut.view.setNeedsLayout()
         sut.view.layoutIfNeeded()
     }
@@ -37,13 +37,7 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     func testReactionPicker_scrolledToMiddle() {
         // GIVEN WHEN
-        sut.view.subviews.forEach {
-            if let collectionView = $0 as? UICollectionView {
-                collectionView.scrollToItem(at: IndexPath(item: 0, section: 4),
-                                            at: .top,
-                                            animated: false)
-            }
-        }
+        scrollToSection(4)
 
         // THEN
         verify(matching: sut)
@@ -52,16 +46,19 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     func testReactionPicker_scrolledToBottom() {
         // GIVEN WHEN
+        scrollToSection(7)
+        // THEN
+        verify(matching: sut)
+    }
+
+    private func scrollToSection(_ section: Int) {
         sut.view.subviews.forEach {
             if let collectionView = $0 as? UICollectionView {
-                collectionView.scrollToItem(at: IndexPath(item: 0, section: 7),
+                collectionView.scrollToItem(at: IndexPath(item: 0, section: section),
                                             at: .top,
                                             animated: false)
             }
         }
-
-        // THEN
-        verify(matching: sut)
     }
 
 }
