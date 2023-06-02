@@ -37,21 +37,22 @@ protocol RecurringActionServiceInterface {
 
 class RecurringActionService: RecurringActionServiceInterface {
 
+    var userDefaultsName = "com.wire.recurringAction."
+    
     private var actions = [RecurringAction]()
 
     public func performActionsIfNeeded() {
-        let currentDate = Date()
 
         actions.forEach { action in
 
             guard let lastActionDate = lastActionDate(for: action.id) else {
-                persistLastActionDate(for: action.id, newDate: currentDate)
+                persistLastActionDate(for: action.id)
                 return
             }
 
-            if (lastActionDate + action.interval) <= currentDate {
+            if (lastActionDate + action.interval) <= Date() {
                 action.perform()
-                persistLastActionDate(for: action.id, newDate: currentDate)
+                persistLastActionDate(for: action.id)
             }
 
         }
@@ -67,12 +68,12 @@ class RecurringActionService: RecurringActionServiceInterface {
         return userDefaults(for: actionID)?.lastRecurringActionDate
     }
 
-    func persistLastActionDate(for actionID: String, newDate: Date) {
-        userDefaults(for: actionID)?.lastRecurringActionDate = newDate
+    func persistLastActionDate(for actionID: String) {
+        userDefaults(for: actionID)?.lastRecurringActionDate = Date()
     }
 
     private func userDefaults(for actionID: String) -> UserDefaults? {
-        return UserDefaults(suiteName: "com.wire.recurringAction.\(actionID)")
+        return UserDefaults(suiteName: userDefaultsName + actionID)
     }
 
 }
