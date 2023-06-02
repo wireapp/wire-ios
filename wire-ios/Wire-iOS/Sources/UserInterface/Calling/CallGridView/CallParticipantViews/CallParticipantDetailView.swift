@@ -22,8 +22,12 @@ import WireCommonComponents
 import WireUtilities
 
 final class CallParticipantDetailsView: RoundedBlurView {
-    private let nameLabel: UILabel
 
+    // MARK: - Properties
+
+    typealias IconColors = SemanticColors.Icon
+
+    private let nameLabel: UILabel
     private let microphoneIconView = PulsingIconImageView()
 
     var name: String? {
@@ -42,11 +46,16 @@ final class CallParticipantDetailsView: RoundedBlurView {
         }
     }
 
+    // MARK: - Init
+
     override init() {
         nameLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textWhite)
         super.init()
     }
+
+
+    // MARK: - Setup Views
 
     override func setupViews() {
         super.setupViews()
@@ -60,13 +69,42 @@ final class CallParticipantDetailsView: RoundedBlurView {
         labelContainerView.layer.cornerRadius = 3.0
         labelContainerView.layer.masksToBounds = true
         microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
-                                                                         color: SemanticColors.Icon.foregroundMicrophone)
-        microphoneImageView.backgroundColor = SemanticColors.Icon.foregroundDefaultWhite
+                                                                         color: IconColors.foregroundMicrophone)
+        microphoneImageView.backgroundColor = IconColors.foregroundDefaultWhite
         microphoneImageView.contentMode = .center
         microphoneImageView.layer.cornerRadius = 3.0
         microphoneImageView.layer.masksToBounds = true
         blurView.alpha = 0
     }
+
+
+    override func createConstraints() {
+        super.createConstraints()
+
+        labelContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        microphoneWidth = microphoneImageView.widthAnchor.constraint(equalToConstant: 22)
+        NSLayoutConstraint.activate([
+            labelContainerView.centerXAnchor.constraint(equalTo: centerXAnchor).withPriority(.defaultLow),
+            labelContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            labelContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: microphoneImageView.trailingAnchor, constant: 2.0),
+            labelContainerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            microphoneImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            microphoneImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            microphoneImageView.heightAnchor.constraint(equalToConstant: 22),
+            microphoneWidth!
+        ])
+
+        NSLayoutConstraint.activate(
+            NSLayoutConstraint.forView(view: nameLabel,
+                                       inContainer: labelContainerView,
+                                       withInsets: UIEdgeInsets.init(top: 4, left: 4, bottom: 4, right: 4))
+        )
+
+        updateMicrophoneView()
+
+    }
+
+    // MARK: - Methods to update the state of the microphone view
 
     private func updateMicrophoneView() {
         microphoneIconView.set(style: microphoneIconStyle)
@@ -85,32 +123,6 @@ final class CallParticipantDetailsView: RoundedBlurView {
         }
     }
 
-    override func createConstraints() {
-        super.createConstraints()
-
-        labelContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
-        microphoneWidth = microphoneImageView.widthAnchor.constraint(equalToConstant: 22)
-        NSLayoutConstraint.activate([
-            labelContainerView.centerXAnchor.constraint(equalTo: centerXAnchor).withPriority(.defaultLow),
-            labelContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: microphoneImageView.trailingAnchor, constant: 2.0),
-            labelContainerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            microphoneImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            microphoneImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            microphoneImageView.heightAnchor.constraint(equalToConstant: 22),
-            microphoneWidth!
-        ])
-
-        updateMicrophoneView()
-
-        NSLayoutConstraint.activate(
-            NSLayoutConstraint.forView(view: nameLabel,
-                                       inContainer: labelContainerView,
-                                       withInsets: UIEdgeInsets.init(top: 4, left: 4, bottom: 4, right: 4))
-        )
-
-    }
-
     private func makeMicrophone(hidden: Bool) {
         self.microphoneWidth?.constant = hidden ? 0 : 22
         self.microphoneImageView.isHidden = hidden
@@ -121,6 +133,6 @@ final class CallParticipantDetailsView: RoundedBlurView {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
         microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
-                                                                         color: SemanticColors.Icon.foregroundMicrophone)
+                                                                         color: IconColors.foregroundMicrophone)
     }
 }
