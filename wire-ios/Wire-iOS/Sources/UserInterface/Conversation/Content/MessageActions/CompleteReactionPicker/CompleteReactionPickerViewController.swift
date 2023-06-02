@@ -98,7 +98,6 @@ final class CompleteReactionPickerViewController: UIViewController {
             sectionViewControllerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -10.0),
             sectionViewControllerView.heightAnchor.constraint(equalToConstant: 44.0),
 
-
             collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeBottomAnchor, constant: 18.0),
             collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
