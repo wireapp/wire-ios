@@ -77,7 +77,6 @@ final class CallParticipantDetailsView: RoundedBlurView {
         blurView.alpha = 0
     }
 
-
     override func createConstraints() {
         super.createConstraints()
 
