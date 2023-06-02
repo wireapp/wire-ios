@@ -36,7 +36,7 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testReactionPicker_scrolledToMiddle() {
-        // GIVEN WHEN
+        // GIVEN & WHEN
         scrollToSection(4)
 
         // THEN
