@@ -2406,7 +2406,6 @@
 		635BAFE5262DB34400B986A4 /* Array+CallParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+CallParticipant.swift"; sourceTree = "<group>"; };
 		6363EC9A23D7622F00E74F67 /* NSMutableAttributedString+CompanyLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+CompanyLogin.swift"; sourceTree = "<group>"; };
 		63654F7F25B8CD260015344C /* RoundedSegmentedViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedSegmentedViewTests.swift; sourceTree = "<group>"; };
-		63688B57291D0F4E00F630F2 /* libcore_crypto_ffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcore_crypto_ffi.a; path = CoreCrypto/lib/libcore_crypto_ffi.a; sourceTree = "<group>"; };
 		636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityStringBuilderTests.swift; sourceTree = "<group>"; };
 		6370DA202577934C00B5C8F1 /* PulsingIconImageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsingIconImageViewTests.swift; sourceTree = "<group>"; };
 		6372A0F125C8438A000CCB2D /* SelfCallParticipantViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfCallParticipantViewTests.swift; sourceTree = "<group>"; };
@@ -5020,7 +5019,6 @@
 				EE33C48F2964860000C058D1 /* WireNotificationEngine.framework */,
 				EE33C48C296485FA00C058D1 /* WireShareEngine.framework */,
 				EE33C489296485F400C058D1 /* WireSyncEngine.framework */,
-				63688B57291D0F4E00F630F2 /* libcore_crypto_ffi.a */,
 				A9C4B410266A550700C88BEB /* ios-arm64_x86_64-simulator */,
 				87AAE4281E43682E00E1D13A /* LocalAuthentication.framework */,
 				CE8E4FAF1DF0668A0009F437 /* ImageIO.framework */,
@@ -10392,10 +10390,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CoreCrypto/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
@@ -10410,10 +10405,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CoreCrypto/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = Release;
@@ -10463,10 +10455,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CoreCrypto/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				VALIDATE_WORKSPACE = YES;
@@ -10481,10 +10470,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CoreCrypto/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				VALIDATE_WORKSPACE = NO;
