@@ -1464,7 +1464,7 @@
     [self.uiMOC saveOrRollback];
     
     // then
-    XCTAssertEqualObjects(conversation.displayName, @"…");
+    XCTAssertEqualObjects(conversation.displayName, @"");
 }
 
 - (void)testThatTheDisplayNameForGroupConversationWithoutParticipantsIsTheEmptyGroupConversationName;
@@ -1517,7 +1517,7 @@
     
     // then
     XCTAssertNotNil(conversation);
-    XCTAssertEqualObjects(conversation.displayName, @"…");
+    XCTAssertEqualObjects(conversation.displayName, @"");
 }
 
 - (void)testThatTheDisplayNameIsAlwaysTheOtherparticipantsNameInOneOnOneConversations

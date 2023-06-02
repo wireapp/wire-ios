@@ -847,6 +847,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetchOrCreate(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            conversation.isPendingMetadataRefresh = true
             conversation.needsToBeUpdatedFromBackend = true
         }
     }

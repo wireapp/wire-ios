@@ -27,6 +27,8 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
     private var selfUser: MockUser!
     private var teamIdentifier: UUID!
     private var mockClassificationProvider: MockClassificationProvider!
+    private var callingUIFlag: DeveloperFlag!
+    private var deprecatedUIFlagStateBackup: Bool!
 
     override func setUp() {
         super.setUp()
@@ -41,6 +43,9 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.feature(withUserClients: 6)
 
         mockClassificationProvider = MockClassificationProvider()
+        callingUIFlag = DeveloperFlag.deprecatedCallingUI
+        deprecatedUIFlagStateBackup = callingUIFlag.isOn
+        callingUIFlag.isOn = false
     }
 
     override func tearDown() {
@@ -49,7 +54,9 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         selfUser = nil
         teamIdentifier = nil
         mockClassificationProvider = nil
-
+        callingUIFlag.isOn = deprecatedUIFlagStateBackup
+        callingUIFlag = nil
+        
         super.tearDown()
     }
 
@@ -147,6 +154,25 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
 
         // WHEN
         sut = ProfileViewController(user: selfUser,
+                                    viewer: selfUser,
+                                    context: .profileViewer)
+        let navWrapperController = sut.wrapInNavigationController()
+        sut.viewDidAppear(false)
+
+        // THEN
+        verify(matching: navWrapperController)
+    }
+
+    func testForContextProfileViewer_ForUserWithoutName() {
+        // GIVEN
+        selfUser.teamRole = .member
+        mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
+        mockUser.name = nil
+        mockUser.domain = "foma.wire.link"
+        mockUser.initials = ""
+
+        // WHEN
+        sut = ProfileViewController(user: mockUser,
                                     viewer: selfUser,
                                     context: .profileViewer)
         let navWrapperController = sut.wrapInNavigationController()

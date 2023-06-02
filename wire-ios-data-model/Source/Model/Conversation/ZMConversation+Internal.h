@@ -85,6 +85,7 @@ extern NSString *const ZMConversationLabelsKey;
 extern NSString *const ZMConversationDomainKey;
 extern NSString *const TeamKey;
 extern NSString *const AccessRoleStringsKeyV2;
+extern NSString *const ZMConversationIsPendingMetadataRefreshKey;
 
 NS_ASSUME_NONNULL_END
 
