@@ -24,10 +24,10 @@ extension ZMUserSession {
         /// Performing actions every 3 hours.
         let interval: TimeInterval = 3 * .hour
 
-        return RecurringAction(id: "refreshUserMetadata", interval: interval) {
-            self.perform {
+        return RecurringAction(id: "refreshUserMetadata", interval: interval) { [weak self] in
+            self?.perform {
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
-                guard let users = self.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+                guard let users = self?.managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
                 }
                 users.forEach { $0.refreshData() }
@@ -39,12 +39,12 @@ extension ZMUserSession {
         /// Performing actions every 3 hours.
         let interval: TimeInterval = 3 * .hour
         
-        return RecurringAction(id: "refreshConversationMetadata", interval: interval) {
-            self.perform {
+        return RecurringAction(id: "refreshConversationMetadata", interval: interval) { [weak self] in
+            self?.perform {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-                guard let conversations = self.managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                guard let conversations = self?.managedObjectContext.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
                     return
                 }
                 conversations.forEach { $0.needsToBeUpdatedFromBackend = true }
