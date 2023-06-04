@@ -406,13 +406,12 @@ final class ConversationSystemMessageCellDescription {
 
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType] {
+                // modify view and add tests
                 let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: users,
                                                                                          buttonAction: { },
                                                                                          isCollapsed: false)
-                //            let encryptionInfoCell = ConversationEncryptionInfoDescription()
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
-            print("failedToAddParticipants")
         default:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]

@@ -92,7 +92,7 @@ extension Payload {
     }
 
     struct Conversation: DecodableAPIVersionAware, EventData {
-
+// add tests
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"
             case failedToAddUsers = "failed_to_add"
