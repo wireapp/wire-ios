@@ -12,8 +12,8 @@ task:
     APPCENTER_API_TOKEN: ENCRYPTED[!fc7df3411be07fe076cffe5b05c44705922b1fa22a6929843e02e23163470b240b0ebfc1acf2162b394c522771d8da48!]
     APPCENTER_OWNER_NAME: ENCRYPTED[!a140f95b6fa0793a8a36e4816af3b08ad90aea96e3691ef7f0b83e271684ef87f2a97e389a15a4fc6e64577a0881d288!]
     S3_BUCKET: ENCRYPTED[!32dab388fb0d9053a83bbe525afff7b45d98b5be18a1d20bfa103c239b34776f6bf7bdc114a7429f5bb2d9f0c2eb9b09!]
-    AWS_ACCESS_KEY_ID: ENCRYPTED[!d50256597be42f029587414a092a1d2ff1933ecf678cc65a07c60c66c12020986114819694bc01fffa34831a412e1233!]
-    AWS_SECRET_ACCESS_KEY: ENCRYPTED[!251149139a9599c05539fb9de06fb76f80c5c5bbd08749d478df39ed26d6cdd7655df2808ab770e6d8825652a423a09e!]
+    AWS_ACCESS_KEY_ID: ENCRYPTED[!1f3053db6008e7154576c32190f1abf91cd33349127a7257c766176090c600ee064d27d55798ab116f1a71e3e9472c94!]
+    AWS_SECRET_ACCESS_KEY: ENCRYPTED[!c219935c884288954c8c75de9f41dec0cfe6e6e5fceb543d832598ef0a9fe3dd97ea08b81e60ad9af3e68b6e20a9b44d!]
 
   script:
   - brew install carthage
@@ -22,8 +22,9 @@ task:
   - sudo installer -pkg AWSCLIV2.pkg -target /
   - sh ./setup.sh
   - bundle exec fastlane ios prepare_for_release build_type:"AppStore" build_number:1234
-  # - bundle exec fastlane security_plans build_type:"AppStore" build_number:1234
   - bundle exec fastlane ios build_for_release build_type:"AppStore" build_number:1234
-  # - bundle exec fastlane upload_app_center build_number:1234 build_type:"Playground"
   - bundle exec fastlane upload_app_store build_number:1234 build_type:"AppStore"
+    # - bundle exec fastlane security_plans build_type:"AppStore" build_number:1234
+  # - bundle exec fastlane upload_app_center build_number:1234 build_type:"Playground"
+  
   # - bundle exec fastlane upload_s3 build_number:1234 build_type:"Playground"
