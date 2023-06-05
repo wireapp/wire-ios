@@ -341,7 +341,7 @@ platform :ios do
     desc "Submit for review with release note. Usage: Create release_note.txt in fastlane/metadata/en-US & de-DE folders. Then call $fastlane submit_review app_version:X.XX"
     lane :submit_review do |options|
         deliver(
-            api_key: @api_key,
+            api_key_path: appstoreconnect_api_key_file_path,
             app_version: options[:app_version],
             submit_for_review: true,
             automatic_release: false,
