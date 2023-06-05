@@ -60,4 +60,67 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         // then
         XCTAssertEqual(mockRecurringActionService.actions.count, 1)
     }
+
+    func testThatItUpdatesUsersMissingMetadata() {
+        // given
+        let otherUser = createUser(moc: syncMOC, domain: UUID().uuidString)
+        syncMOC.saveOrRollback()
+
+        let recurringActionService = RecurringActionService()
+        sut.recurringActionService = recurringActionService
+
+        recurringActionService.persistLastActionDate(for: "refreshUserMetadata")
+        recurringActionService.registerAction(sut.refreshUsersMissingMetadata(interval: 1))
+
+        // when
+        XCTAssertFalse(otherUser.needsToBeUpdatedFromBackend)
+        Thread.sleep(forTimeInterval: 3)
+        recurringActionService.performActionsIfNeeded()
+
+        // then
+        XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+    }
+
+    func testThatItUpdatesConversationsMissingMetadata() {
+        // given
+        let conversation = createConversation(moc: syncMOC, domain: UUID().uuidString)
+        syncMOC.saveOrRollback()
+
+        let recurringActionService = RecurringActionService()
+        sut.recurringActionService = recurringActionService
+
+        recurringActionService.persistLastActionDate(for: "refreshConversationMetadata")
+        recurringActionService.registerAction(sut.refreshConversationsMissingMetadata(interval: 1))
+
+        // when
+        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
+        Thread.sleep(forTimeInterval: 3)
+        recurringActionService.performActionsIfNeeded()
+
+        // then
+        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+    }
+
+    private func createUser(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
+        let user = ZMUser(context: moc)
+        user.remoteIdentifier = UUID()
+        user.domain = domain
+        user.needsToBeUpdatedFromBackend = false
+        user.isPendingMetadataRefresh = true
+
+        return user
+
+    }
+
+    private func createConversation(moc: NSManagedObjectContext, domain: String?) -> ZMConversation {
+        let conversation = ZMConversation(context: moc)
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = domain
+        conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = true
+
+        return conversation
+
+    }
+
 }

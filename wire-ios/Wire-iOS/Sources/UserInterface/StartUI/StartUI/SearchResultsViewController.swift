@@ -241,7 +241,7 @@ final class SearchResultsViewController: UIViewController {
         updateVisibleSections()
 
         searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
-        updateIncompleteMetadataIfNeeded()
+        searchDirectory?.updateIncompleteMetadataIfNeeded()
     }
 
     @objc
@@ -265,11 +265,6 @@ final class SearchResultsViewController: UIViewController {
 
             pendingSearchTask = task
         }
-    }
-
-    private func updateIncompleteMetadataIfNeeded() {
-        searchDirectory?.refetchIncompleteUserMetadata?()
-        searchDirectory?.refetchIncompleteConversationMetadata?()
     }
 
     func searchForUsers(withQuery query: String) {

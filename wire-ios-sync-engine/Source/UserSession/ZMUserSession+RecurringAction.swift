@@ -20,9 +20,7 @@ import Foundation
 
 extension ZMUserSession {
 
-    func refreshUsersMissingMetadata() -> RecurringAction {
-        /// Performing actions every 3 hours.
-        let interval: TimeInterval = 3 * .hour
+    func refreshUsersMissingMetadata(interval: TimeInterval = 3 * .hour) -> RecurringAction {
 
         return RecurringAction(id: "refreshUserMetadata", interval: interval) { [weak self] in
             self?.perform {
@@ -33,11 +31,10 @@ extension ZMUserSession {
                 users.forEach { $0.refreshData() }
             }
         }
+
     }
 
-    func refreshConversationsMissingMetadata() -> RecurringAction {
-        /// Performing actions every 3 hours.
-        let interval: TimeInterval = 3 * .hour
+    func refreshConversationsMissingMetadata(interval: TimeInterval = 3 * .hour) -> RecurringAction {
         
         return RecurringAction(id: "refreshConversationMetadata", interval: interval) { [weak self] in
             self?.perform {
@@ -51,6 +48,7 @@ extension ZMUserSession {
             }
 
         }
+
     }
 
 }

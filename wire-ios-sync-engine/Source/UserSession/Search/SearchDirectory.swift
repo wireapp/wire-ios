@@ -25,8 +25,8 @@ import Foundation
     let transportSession: TransportSessionType
     var isTornDown = false
 
-    public var refetchIncompleteUserMetadata: (() -> Void)?
-    public var refetchIncompleteConversationMetadata: (() -> Void)?
+    private var refetchIncompleteUserMetadata: RecurringAction?
+    private var refetchIncompleteConversationMetadata: RecurringAction?
 
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
@@ -35,8 +35,8 @@ import Foundation
     public convenience init(userSession: ZMUserSession) {
         self.init(searchContext: userSession.searchManagedObjectContext, contextProvider: userSession, transportSession: userSession.transportSession)
 
-        self.refetchIncompleteUserMetadata = userSession.refreshUsersMissingMetadata().perform
-        self.refetchIncompleteConversationMetadata = userSession.refreshConversationsMissingMetadata().perform
+        self.refetchIncompleteUserMetadata = userSession.refreshUsersMissingMetadata()
+        self.refetchIncompleteConversationMetadata = userSession.refreshConversationsMissingMetadata()
     }
 
     init(searchContext: NSManagedObjectContext, contextProvider: ContextProvider, transportSession: TransportSessionType) {
@@ -76,6 +76,11 @@ import Foundation
         let searchUserObserverCenter = contextProvider.viewContext.searchUserObserverCenter
         result.directory.forEach(searchUserObserverCenter.addSearchUser)
         result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
+    }
+
+    public func updateIncompleteMetadataIfNeeded() {
+        refetchIncompleteUserMetadata?.perform()
+        refetchIncompleteConversationMetadata?.perform()
     }
 
 }
