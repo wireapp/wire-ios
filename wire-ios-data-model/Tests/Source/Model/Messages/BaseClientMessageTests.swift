@@ -59,7 +59,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
         flag.isOn = false
 
         super.setUp()
-        
+
         self.syncMOC.performGroupedBlockAndWait {
             self.syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
 

@@ -733,7 +733,6 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
             self.assertFeatureDoesNotExist(name: .mls)
             self.assertFeatureDoesNotExist(name: .selfDeletingMessages)
 
-
             // When
             sut.createDefaultConfigsIfNeeded()
 

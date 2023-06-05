@@ -701,12 +701,12 @@ extension EncryptionSessionsDirectory {
 }
 
 // MARK: - Session identifier
-public struct EncryptionSessionIdentifier : Hashable, Equatable {
-    
+public struct EncryptionSessionIdentifier: Hashable, Equatable {
+
     public let userId: String
     public let clientId: String
     public let domain: String
-    
+
     public var rawValue: String {
         guard !userId.isEmpty else {
             return clientId

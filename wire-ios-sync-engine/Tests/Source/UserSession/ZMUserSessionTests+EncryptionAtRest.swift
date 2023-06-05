@@ -280,7 +280,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
         // when
         let context = LAContext()
-        
+
         try sut.unlockDatabase(with: context)
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

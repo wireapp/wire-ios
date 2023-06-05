@@ -17,7 +17,7 @@
 //
 
 import WireProtos
-import CoreCryptoSwift
+import WireCoreCrypto
 
 extension CommitBundle {
     func protobufData() throws -> Data {

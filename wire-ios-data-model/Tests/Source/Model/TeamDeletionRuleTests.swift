@@ -32,7 +32,7 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
+
     func testThatItDoesntDeleteConversationsWhichArePartOfATeamWhenTeamGetsDeleted() {
         // given
         let team = Team.insertNewObject(in: uiMOC)

@@ -33,7 +33,10 @@ protocol AudioRecordBaseViewController: AnyObject {
 protocol AudioRecordViewControllerDelegate: AnyObject {
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController)
     func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController)
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType)
+    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController,
+                                                   recordingURL: URL,
+                                                   duration: TimeInterval,
+                                                   filter: AVSAudioEffectType)
 }
 
 enum AudioRecordState {
@@ -55,6 +58,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     let recordingDotView = RecordingDotView()
     var recordingDotViewVisible: [NSLayoutConstraint] = []
     var recordingDotViewHidden: [NSLayoutConstraint] = []
+    let separatorBackgroundColor = SemanticColors.View.backgroundSeparatorCell
+    let backgroundViewColor = SemanticColors.View.backgroundDefault
     public let recorder: AudioRecorderType
     weak public var delegate: AudioRecordViewControllerDelegate?
 
@@ -62,7 +67,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         didSet { updateRecordingState(recordingState) }
     }
 
-    fileprivate let localizationBasePath = "conversation.input_bar.audio_message"
+    typealias ConversationInputBarAudio  = L10n.Localizable.Conversation.InputBar.AudioMessage
 
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -71,7 +76,9 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     init(audioRecorder: AudioRecorderType? = nil) {
         let maxAudioLength = ZMUserSession.shared()?.maxAudioLength
         let maxUploadSize = ZMUserSession.shared()?.maxUploadFileSize
-        self.recorder = audioRecorder ?? AudioRecorder(format: .wav, maxRecordingDuration: maxAudioLength, maxFileSize: maxUploadSize)
+        self.recorder = audioRecorder ?? AudioRecorder(format: .wav,
+                                                       maxRecordingDuration: maxAudioLength,
+                                                       maxFileSize: maxUploadSize)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -141,11 +148,11 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             }
         }
 
-        topContainerView.backgroundColor = UIColor.from(scheme: .background)
-        bottomContainerView.backgroundColor = UIColor.from(scheme: .background)
+        topContainerView.backgroundColor = backgroundViewColor
+        bottomContainerView.backgroundColor = backgroundViewColor
 
-        topSeparator.backgroundColor = UIColor.from(scheme: .separator)
-        rightSeparator.backgroundColor = UIColor.from(scheme: .separator)
+        topSeparator.backgroundColor = separatorBackgroundColor
+        rightSeparator.backgroundColor = separatorBackgroundColor
 
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(topContainerTapped))
         topContainerView.addGestureRecognizer(tapRecognizer)
@@ -156,15 +163,15 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         timeLabel.accessibilityLabel = "audioRecorderTimeLabel"
         timeLabel.font = FontSpec(.small, .none).font!
-        timeLabel.textColor = UIColor.from(scheme: .textForeground)
+        timeLabel.textColor = SemanticColors.Label.textDefault
 
-        topTooltipLabel.text = "conversation.input_bar.audio_message.tooltip.pull_send".localized(uppercased: true)
+        topTooltipLabel.text = ConversationInputBarAudio.Tooltip.pullSend
         topTooltipLabel.accessibilityLabel = "audioRecorderTopTooltipLabel"
         topTooltipLabel.font = FontSpec(.small, .none).font!
-        topTooltipLabel.textColor = UIColor.from(scheme: .textDimmed)
+        topTooltipLabel.textColor = SemanticColors.Label.textDefault
 
         cancelButton.setIcon(.cross, size: .tiny, for: [])
-        cancelButton.setIconColor(UIColor.from(scheme: .textForeground), for: .normal)
+        cancelButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonPressed(_:)), for: .touchUpInside)
         cancelButton.accessibilityLabel = "audioRecorderCancel"
 
@@ -316,8 +323,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         self.recordingDotView.animating = !finished
 
-        let pathComponent = finished ? "tooltip.tap_send" : "tooltip.pull_send"
-        topTooltipLabel.text = "\(localizationBasePath).\(pathComponent)".localized(uppercased: true)
+        let textForTopToolTip = finished ? ConversationInputBarAudio.Tooltip.tapSend : ConversationInputBarAudio.Tooltip.pullSend
+        topTooltipLabel.text = textForTopToolTip
 
         if recordingState == .recording {
             NSLayoutConstraint.deactivate(recordingDotViewHidden)
@@ -398,7 +405,10 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                 effectPath.deleteFileAtPath()
 
                 if success {
-                    self.delegate?.audioRecordViewControllerWantsToSendAudio(self, recordingURL: NSURL(fileURLWithPath: convertedPath) as URL, duration: self.recorder.currentDuration, filter: .none)
+                    self.delegate?.audioRecordViewControllerWantsToSendAudio(self,
+                                                                             recordingURL: NSURL(fileURLWithPath: convertedPath) as URL,
+                                                                             duration: self.recorder.currentDuration,
+                                                                             filter: .none)
                 }
             }
         }

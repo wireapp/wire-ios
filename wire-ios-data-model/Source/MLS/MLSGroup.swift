@@ -56,7 +56,6 @@ public class MLSGroup: ZMManagedObject {
         }
     }
 
-    @objc
     static let idKey = "id"
 
     @NSManaged
@@ -92,7 +91,7 @@ public class MLSGroup: ZMManagedObject {
 
     class func fetch(id: MLSGroupID, in context: NSManagedObjectContext) -> MLSGroup? {
         let request = NSFetchRequest<MLSGroup>(entityName: entityName())
-        request.predicate = NSPredicate(format: "\(idKey) == %@", argumentArray:  [id.data])
+        request.predicate = NSPredicate(format: "\(idKey) == %@", argumentArray: [id.data])
         request.fetchLimit = 2
 
         let result = context.fetchOrAssert(request: request)

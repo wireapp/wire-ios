@@ -35,7 +35,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
+
     func createConversation(on moc: NSManagedObjectContext? = nil) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc ?? uiMOC)
         conversation.remoteIdentifier = UUID()

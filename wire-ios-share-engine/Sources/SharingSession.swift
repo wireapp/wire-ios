@@ -268,7 +268,6 @@ public class SharingSession {
         )
     }
 
-
     init(
         accountIdentifier: UUID,
         coreDataStack: CoreDataStack,

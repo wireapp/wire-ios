@@ -33,7 +33,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-    
+
     func testThatItDoesNotRemoveValidClients() throws {
         // Given
         let user = ZMUser.insertNewObject(in: self.moc)

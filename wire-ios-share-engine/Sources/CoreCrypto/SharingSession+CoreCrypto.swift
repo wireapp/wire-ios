@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import CoreCryptoSwift
+import WireCoreCrypto
 import WireSystem
 
 private let logger = ZMSLog(tag: "mls")

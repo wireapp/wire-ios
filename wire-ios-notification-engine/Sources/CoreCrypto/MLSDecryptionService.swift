@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import CoreData
-import CoreCryptoSwift
+import WireCoreCrypto
 
 class MLSDecryptionService: MLSServiceInterface {
 
@@ -99,7 +99,7 @@ class MLSDecryptionService: MLSServiceInterface {
             conversation?.commitPendingProposalDate = commitDate
         }
     }
-    
+
     // MARK: - Unavailable methods
 
     func commitPendingProposals() async throws {

@@ -26,7 +26,7 @@ final class AVURLAsset_conversionTests: XCTestCase {
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
-    
+
     override class func tearDown() {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard

@@ -48,8 +48,8 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
 
     override func setUp() {
         super.setUp()
-
         sut = ConversationInputBarViewController(conversation: otherUserConversation)
+        sut.overrideUserInterfaceStyle = .light
         sut.loadViewIfNeeded()
 
         mockLongPressGestureRecognizer = MockLongPressGestureRecognizer(location: .zero, state: .began)
@@ -73,9 +73,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
     }
 
     func testAudioRecorderTouchBegan() {
-        // GIVEN
-
-        // THEN
+        // GIVEN & THEN
         verifyInAllPhoneWidths(view: sut.view,
                                configuration: { _ in
                                 // WHEN
@@ -86,9 +84,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
     }
 
     func testAudioRecorderTouchChanged() {
-        // GIVEN
-
-        // THEN
+        // GIVEN & THEN
         verifyInAllPhoneWidths(view: sut.view,
                                configuration: { _ in
                                 // WHEN
@@ -99,9 +95,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
     }
 
     func testAudioRecorderTouchEnded() {
-        // GIVEN
-
-        // THEN
+        // GIVEN & THEN
         verifyInAllPhoneWidths(view: sut.view,
                                configuration: { _ in
                                 // WHEN

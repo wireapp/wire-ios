@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 import WireDataModel
 import WireTesting
-import CoreCryptoSwift
+import WireCoreCrypto
 @testable import WireNotificationEngine
 
 class MLSDecryptionServiceTests: BaseTest {

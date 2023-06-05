@@ -73,7 +73,7 @@ final class SwitchBackendViewModel: ObservableObject {
         var selectedItem = items.first { item in
             item.value == selectedType
         }
-        
+
         if selectedItem == nil {
             selectedItem = Item(title: "custom", value: selectedType)
             items.append(selectedItem!)

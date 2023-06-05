@@ -941,7 +941,6 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)
     }
 
-
     // MARK: - Rejecting Calls
 
     func test_itProcessesCallEventsBeforeRejectingCall() {

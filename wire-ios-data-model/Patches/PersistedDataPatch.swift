@@ -21,7 +21,7 @@ import Foundation
 // When we need to add the first patch, uncomment this type and add it as
 // a case.
 
-//enum PersistedDataPatch: Int, DataPatchInterface {
+// enum PersistedDataPatch: Int, DataPatchInterface {
 //
 //
 //
@@ -33,4 +33,4 @@ import Foundation
 //
 //    }
 //
-//}
+// }

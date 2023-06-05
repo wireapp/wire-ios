@@ -73,17 +73,17 @@ final class ProfileHeaderViewController: UIViewController {
 
             if groupRoleIndicator.isHidden {
                 UIView.animate(withDuration: 0.80) { [unowned self] in
-                       self.groupRoleIndicator.isHidden = true
-                       self.groupRoleIndicator.alpha = 0
-                   }
+                    self.groupRoleIndicator.isHidden = true
+                    self.groupRoleIndicator.alpha = 0
+                }
             } else {
                 UIView.animate(withDuration: 0.80) { [unowned self] in
-                self.groupRoleIndicator.isHidden =  false
-                self.groupRoleIndicator.alpha = 1
+                    self.groupRoleIndicator.isHidden =  false
+                    self.groupRoleIndicator.alpha = 1
                 }
             }
 
-           animateUserImageView()
+            animateUserImageView()
         }
     }
 
@@ -147,6 +147,7 @@ final class ProfileHeaderViewController: UIViewController {
         self.conversation = conversation
         self.options = options
         self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint])
+
         super.init(nibName: nil, bundle: nil)
     }
 

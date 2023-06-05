@@ -210,7 +210,6 @@ extension UNNotificationContent {
         return Self()
     }
 
-
     var accountID: UUID? {
         guard
             let data = userInfo["data"] as? [String: Any],
