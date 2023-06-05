@@ -307,7 +307,7 @@ class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Conversat
 
 final class ConversationSystemMessageCellDescription {
 
-    static func cells(for message: ZMConversationMessage) -> [AnyConversationMessageCellDescription] {
+    static func cells(for message: ZMConversationMessage, isCollapsed: Bool, compl: Completion? = nil) -> [AnyConversationMessageCellDescription] {
         guard let systemMessageData = message.systemMessageData,
             let sender = message.senderUser,
             let conversation = message.conversationLike else {
@@ -407,9 +407,14 @@ final class ConversationSystemMessageCellDescription {
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType] {
                 // modify view and add tests
-                let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: users,
-                                                                                         buttonAction: { },
-                                                                                         isCollapsed: false)
+//                let buttonAction = {
+//                    self.isCollapsed = !self.isCollapsed
+//                   // self.cellDelegate?.conversationMessageShouldUpdate()
+//                }
+                let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(failedUsers: users,
+                                                                                                      isCollapsed: isCollapsed,
+                                                                                                      buttonAction: compl ?? {})
+                //cellDescription.delegate = cellDelegate
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
         default:
@@ -1082,5 +1087,60 @@ class ConversationEncryptionInfoDescription: ConversationMessageCellDescription 
                                            bottomText: connectionView.sensitiveInformationWarning)
         accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
         actionController = nil
+    }
+}
+
+final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
+
+    typealias FailedtoaddParticipants = L10n.Localizable.Content.System.FailedtoaddParticipants
+
+    typealias View = FailedRecipientsMessageCell1 // another message cell
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 26.0
+
+    let isFullWidth: Bool = true
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String? = nil
+
+    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
+        configuration = View.Configuration(title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
+                                           content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
+                                           isCollapsed: isCollapsed,
+                                           hasMultipleUsers: (failedUsers.count > 0),
+                                           buttonAction: buttonAction)
+    }
+
+    private static func configureTitle(for failedUsers: [UserType]) -> String {
+        guard failedUsers.count > 1 else {
+            return ""
+        }
+
+        return FailedtoaddParticipants.count(failedUsers.count)
+    }
+
+    private static func configureContent(for failedUsers: [UserType]) -> String {
+
+        typealias FailedParticipants = L10n.Localizable.Content.System.FailedParticipants
+
+        let groupedUsers: [String? : [UserType]] = Dictionary(grouping: failedUsers, by: \.domain)
+
+        var content: String = ""
+        for (domain, users) in groupedUsers {
+            let userNames = users.compactMap { $0.name }.joined(separator: ", ")
+            content.append(FailedtoaddParticipants.couldNotBeAdded(userNames, domain ?? ""))
+            content.append("\n")
+        }
+
+        return FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
+
     }
 }

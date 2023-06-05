@@ -1940,6 +1940,22 @@ internal enum L10n {
             }
           }
         }
+        internal enum FailedParticipants {
+          /// %@ [Learn more](%@)
+          internal static func learnMore(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failed_participants.learn_more", String(describing: p1), String(describing: p2), fallback: "%@ [Learn more](%@)")
+          }
+        }
+        internal enum FailedtoaddParticipants {
+          /// **%@** could not be added to the group as the backend of **%@** could not be reached.
+          internal static func couldNotBeAdded(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", String(describing: p1), String(describing: p2), fallback: "**%@** could not be added to the group as the backend of **%@** could not be reached.")
+          }
+          /// **%@ participants** could not be added to the group.
+          internal static func count(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.count", String(describing: p1), fallback: "**%@ participants** could not be added to the group.")
+          }
+        }
         internal enum FailedtosendMessage {
           /// Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)
           internal static func federationRemoteErrorReason(_ p1: Any, _ p2: Any) -> String {
@@ -1957,10 +1973,6 @@ internal enum L10n {
           }
           /// Hide Details
           internal static let hideDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.hide_details", fallback: "Hide Details")
-          /// %@ [Learn more](%@)
-          internal static func learnMore(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.learn_more", String(describing: p1), String(describing: p2), fallback: "%@ [Learn more](%@)")
-          }
           /// Show Details
           internal static let showDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.show_details", fallback: "Show Details")
           /// **%@** will get your message later.

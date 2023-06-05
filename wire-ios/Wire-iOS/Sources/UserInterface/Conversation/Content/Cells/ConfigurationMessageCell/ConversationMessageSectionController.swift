@@ -147,7 +147,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isFile {
             contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
-            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message)
+            let buttonAction = {
+                self.isCollapsed = !self.isCollapsed
+                self.cellDelegate?.conversationMessageShouldUpdate()
+            }
+            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message, isCollapsed: isCollapsed, compl: buttonAction)
         } else {
             contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
