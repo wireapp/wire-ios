@@ -133,7 +133,7 @@ final class SearchResultsViewController: UIViewController {
         return view
     }()
 
-    private lazy var searchDirectory: SearchDirectory! = {
+    private lazy var searchDirectory: SearchDirectory? = {
         guard let session = ZMUserSession.shared() else {
             return nil
         }
@@ -268,8 +268,8 @@ final class SearchResultsViewController: UIViewController {
     }
 
     private func updateIncompleteMetadataIfNeeded() {
-        searchDirectory.refetchIncompleteUserMetadata?()
-        searchDirectory.refetchIncompleteConversationMetadata?()
+        searchDirectory?.refetchIncompleteUserMetadata?()
+        searchDirectory?.refetchIncompleteConversationMetadata?()
     }
 
     func searchForUsers(withQuery query: String) {
