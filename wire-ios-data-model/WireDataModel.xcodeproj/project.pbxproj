@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
+		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		0191513A29ACB3CA00920D04 /* SpyUserClientKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */; };
 		0191513C29ACB46000920D04 /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513B29ACB46000920D04 /* MockProteusProvider.swift */; };
@@ -289,9 +290,6 @@
 		63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */; };
 		6354BDF32746C30900880D50 /* ZMConversation+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */; };
 		6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */; };
-		63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63709F642993E7A600577D4B /* libcore_crypto_ffi.a */; };
-		63709F6B2994108700577D4B /* CoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6A2994108700577D4B /* CoreCrypto */; };
-		63709F6D2994108700577D4B /* LibCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 63709F6C2994108700577D4B /* LibCoreCrypto */; };
 		6374562229C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */; };
 		6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */; };
 		638805652410FE920043B641 /* ButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638805642410FE920043B641 /* ButtonState.swift */; };
@@ -304,7 +302,7 @@
 		63B1335929A503D100009D84 /* MLSGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333D29A503D000009D84 /* MLSGroupID.swift */; };
 		63B1335A29A503D100009D84 /* MLSActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333E29A503D000009D84 /* MLSActionExecutor.swift */; };
 		63B1335B29A503D100009D84 /* MLSQualifiedClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333F29A503D000009D84 /* MLSQualifiedClientID.swift */; };
-		63B1335C29A503D100009D84 /* MLSController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334029A503D000009D84 /* MLSController.swift */; };
+		63B1335C29A503D100009D84 /* MLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334029A503D000009D84 /* MLSService.swift */; };
 		63B1335D29A503D100009D84 /* CommitBundle+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */; };
 		63B1335E29A503D100009D84 /* BackendMLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */; };
 		63B1335F29A503D100009D84 /* MessageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334329A503D000009D84 /* MessageProtocol.swift */; };
@@ -335,7 +333,7 @@
 		63D41E6F24573F420076826F /* ZMConversationTests+SelfConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E6E24573F420076826F /* ZMConversationTests+SelfConversation.swift */; };
 		63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D41E7024597E420076826F /* GenericMessage+Flags.swift */; };
 		63D9A19E282AA0050074C20C /* NSManagedObjectContext+Federation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D9A19D282AA0050074C20C /* NSManagedObjectContext+Federation.swift */; };
-		63DA335E286C9CF000818C3C /* NSManagedObjectContext+MLSController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSController.swift */; };
+		63DA335E286C9CF000818C3C /* NSManagedObjectContext+MLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSService.swift */; };
 		63DA3373286CA43300818C3C /* ZMConversation+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA3372286CA43300818C3C /* ZMConversation+MLS.swift */; };
 		63DA33AF28746CCF00818C3C /* store2-103-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 63DA33AE28746CC100818C3C /* store2-103-0.wiredatabase */; };
 		63E21AE2291E92780084A942 /* FetchUserClientsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E21AE1291E92770084A942 /* FetchUserClientsAction.swift */; };
@@ -475,11 +473,11 @@
 		E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */; };
 		E97A542827B122D80009DCCF /* AccessRoleMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97A542727B122D80009DCCF /* AccessRoleMigrationTests.swift */; };
 		E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */; };
+		EE002F222878345C0027D63A /* store2-104-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE002F212878345C0027D63A /* store2-104-0.wiredatabase */; };
 		EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */; };
 		EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */; };
 		EE032B3629A62CD600E1DDF3 /* ProteusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */; };
 		EE04084E28CA85B2009E4B8D /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */; };
-		EE002F222878345C0027D63A /* store2-104-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE002F212878345C0027D63A /* store2-104-0.wiredatabase */; };
 		EE09EEB1255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */; };
 		EE128A66286DE31200558550 /* UserClient+MLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */; };
 		EE128A68286DE35F00558550 /* CodableHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A67286DE35F00558550 /* CodableHelpers.swift */; };
@@ -538,8 +536,8 @@
 		EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */; };
 		EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96F2954A03E00F58B79 /* WireImages.framework */; };
 		EE980FB22834EB3A00CC6B9F /* store2-100-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE980FB12834EB3A00CC6B9F /* store2-100-0.wiredatabase */; };
-		EE98878E28882BFF002340D2 /* MLSControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98878D28882BFF002340D2 /* MLSControllerTests.swift */; };
-		EE98879228882C8F002340D2 /* MockMLSController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98879128882C8F002340D2 /* MockMLSController.swift */; };
+		EE98878E28882BFF002340D2 /* MLSServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98878D28882BFF002340D2 /* MLSServiceTests.swift */; };
+		EE98879228882C8F002340D2 /* MockMLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98879128882C8F002340D2 /* MockMLSService.swift */; };
 		EE997A1425062295008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A1325062295008336D2 /* Logging.swift */; };
 		EE997A16250629DC008336D2 /* ZMMessage+ProcessingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A15250629DC008336D2 /* ZMMessage+ProcessingError.swift */; };
 		EE9AD9162696F01700DD5F51 /* FeatureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9AD9152696F01700DD5F51 /* FeatureService.swift */; };
@@ -825,6 +823,7 @@
 /* Begin PBXFileReference section */
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
+		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
 		0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpyUserClientKeyStore.swift; path = Tests/Source/Helper/SpyUserClientKeyStore.swift; sourceTree = SOURCE_ROOT; };
 		0191513B29ACB46000920D04 /* MockProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
@@ -1143,8 +1142,6 @@
 		63495E1A23FED9A9002A7C59 /* ZMUser+Protobuf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Protobuf.swift"; sourceTree = "<group>"; };
 		6354BDF22746C30900880D50 /* ZMConversation+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Federation.swift"; sourceTree = "<group>"; };
 		6354BDF42747BD9600880D50 /* ZMConversationTests+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Federation.swift"; sourceTree = "<group>"; };
-		63709F632993E70B00577D4B /* CoreCrypto */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CoreCrypto; sourceTree = "<group>"; };
-		63709F642993E7A600577D4B /* libcore_crypto_ffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcore_crypto_ffi.a; path = CoreCrypto/lib/libcore_crypto_ffi.a; sourceTree = "<group>"; };
 		6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoKeyProviderTests.swift; sourceTree = "<group>"; };
 		63880548240EA8950043B641 /* ZMClientMessageTests+Composite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Composite.swift"; sourceTree = "<group>"; };
 		63880556240FFE7A0043B641 /* zmessaging2.80.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.80.0.xcdatamodel; sourceTree = "<group>"; };
@@ -1158,7 +1155,7 @@
 		63B1333D29A503D000009D84 /* MLSGroupID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSGroupID.swift; sourceTree = "<group>"; };
 		63B1333E29A503D000009D84 /* MLSActionExecutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSActionExecutor.swift; sourceTree = "<group>"; };
 		63B1333F29A503D000009D84 /* MLSQualifiedClientID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSQualifiedClientID.swift; sourceTree = "<group>"; };
-		63B1334029A503D000009D84 /* MLSController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSController.swift; sourceTree = "<group>"; };
+		63B1334029A503D000009D84 /* MLSService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSService.swift; sourceTree = "<group>"; };
 		63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommitBundle+Protobuf.swift"; sourceTree = "<group>"; };
 		63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendMLSPublicKeys.swift; sourceTree = "<group>"; };
 		63B1334329A503D000009D84 /* MessageProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageProtocol.swift; sourceTree = "<group>"; };
@@ -1190,7 +1187,7 @@
 		63D41E7024597E420076826F /* GenericMessage+Flags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Flags.swift"; sourceTree = "<group>"; };
 		63D5654528B4C45100BDFB49 /* zmessaging2.105.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.105.0.xcdatamodel; sourceTree = "<group>"; };
 		63D9A19D282AA0050074C20C /* NSManagedObjectContext+Federation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Federation.swift"; sourceTree = "<group>"; };
-		63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+MLSController.swift"; sourceTree = "<group>"; };
+		63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+MLSService.swift"; sourceTree = "<group>"; };
 		63DA3372286CA43300818C3C /* ZMConversation+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+MLS.swift"; sourceTree = "<group>"; };
 		63DA33AD28746BD200818C3C /* zmessaging2.103.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.103.0.xcdatamodel; sourceTree = "<group>"; };
 		63DA33AE28746CC100818C3C /* store2-103-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-103-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1415,8 +1412,8 @@
 		EE8DA96F2954A03E00F58B79 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE980FB02834EA3200CC6B9F /* zmessaging2.100.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.100.0.xcdatamodel; sourceTree = "<group>"; };
 		EE980FB12834EB3A00CC6B9F /* store2-100-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-100-0.wiredatabase"; sourceTree = "<group>"; };
-		EE98878D28882BFF002340D2 /* MLSControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSControllerTests.swift; sourceTree = "<group>"; };
-		EE98879128882C8F002340D2 /* MockMLSController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSController.swift; sourceTree = "<group>"; };
+		EE98878D28882BFF002340D2 /* MLSServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSServiceTests.swift; sourceTree = "<group>"; };
+		EE98879128882C8F002340D2 /* MockMLSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSService.swift; sourceTree = "<group>"; };
 		EE997A1325062295008336D2 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		EE997A15250629DC008336D2 /* ZMMessage+ProcessingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ProcessingError.swift"; sourceTree = "<group>"; };
 		EE9AD9152696F01700DD5F51 /* FeatureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureService.swift; sourceTree = "<group>"; };
@@ -1747,10 +1744,8 @@
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
 				EE67F6C3296F05FD001D7C88 /* PINCache.xcframework in Frameworks */,
-				63709F652993E7A600577D4B /* libcore_crypto_ffi.a in Frameworks */,
-				63709F6B2994108700577D4B /* CoreCrypto in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
-				63709F6D2994108700577D4B /* LibCoreCrypto in Frameworks */,
+				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1990,7 +1985,6 @@
 		63709F622993E70A00577D4B /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				63709F632993E70B00577D4B /* CoreCrypto */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -2028,7 +2022,7 @@
 				63B1333D29A503D000009D84 /* MLSGroupID.swift */,
 				63B1333E29A503D000009D84 /* MLSActionExecutor.swift */,
 				63B1333F29A503D000009D84 /* MLSQualifiedClientID.swift */,
-				63B1334029A503D000009D84 /* MLSController.swift */,
+				63B1334029A503D000009D84 /* MLSService.swift */,
 				63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */,
 				63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */,
 				63B1334329A503D000009D84 /* MessageProtocol.swift */,
@@ -2214,14 +2208,14 @@
 		EE98879028882C6D002340D2 /* MLS */ = {
 			isa = PBXGroup;
 			children = (
-				EE98878D28882BFF002340D2 /* MLSControllerTests.swift */,
+				EE98878D28882BFF002340D2 /* MLSServiceTests.swift */,
 				EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */,
 				63123BCB291BBB79009A5179 /* MLSQualifiedClientIdTests.swift */,
 				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
 				EEDE7DB628EC1618007DC6A3 /* MockMLSActionExecutor.swift */,
 				EEF6E3C928D89251001C1799 /* StaleMLSKeyDetectorTests.swift */,
 				EEFAAC3328DDE27F009940E7 /* CoreCryptoCallbacksTests.swift */,
-				EE98879128882C8F002340D2 /* MockMLSController.swift */,
+				EE98879128882C8F002340D2 /* MockMLSService.swift */,
 				EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */,
 				EEC3BC732888403000BFDC35 /* MockCoreCrypto.swift */,
 				01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */,
@@ -2351,7 +2345,7 @@
 				0630E4B5257F888600C75BFB /* NSManagedObjectContext+AppLock.swift */,
 				16AD86B91F75426C00E4C797 /* NSManagedObjectContext+NotificationContext.swift */,
 				163C92A92630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift */,
-				63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSController.swift */,
+				63DA335D286C9CF000818C3C /* NSManagedObjectContext+MLSService.swift */,
 				EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */,
 				EEC80B3529B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift */,
 				EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */,
@@ -3078,6 +3072,7 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */,
 				EE67F727296F0C6A001D7C88 /* WireTesting.framework */,
 				EE67F6C2296F05FD001D7C88 /* PINCache.xcframework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
@@ -3086,7 +3081,6 @@
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA9622954A02400F58B79 /* WireProtos.framework */,
 				F9C9A66E1CAD77930039E10C /* CoreData.framework */,
-				63709F642993E7A600577D4B /* libcore_crypto_ffi.a */,
 				F9C9A66C1CAD778C0039E10C /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -3355,8 +3349,6 @@
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
-				63709F6A2994108700577D4B /* CoreCrypto */,
-				63709F6C2994108700577D4B /* LibCoreCrypto */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3629,7 +3621,7 @@
 				63B1335829A503D100009D84 /* Bytes+Random.swift in Sources */,
 				16460A46206544B00096B616 /* PersistentMetadataKeys.swift in Sources */,
 				5E67168E2174B9AF00522E61 /* LoginCredentials.swift in Sources */,
-				63DA335E286C9CF000818C3C /* NSManagedObjectContext+MLSController.swift in Sources */,
+				63DA335E286C9CF000818C3C /* NSManagedObjectContext+MLSService.swift in Sources */,
 				CE4EDC0B1D6DC2D2002A20AA /* ConversationMessage+Reaction.swift in Sources */,
 				63B1336529A503D100009D84 /* SendMLSMessageAction.swift in Sources */,
 				EEAAD75A252C6D2700E6A44E /* UnreadMessages.swift in Sources */,
@@ -3953,7 +3945,7 @@
 				EEAAD75C252C6DAE00E6A44E /* ModifiedObjects.swift in Sources */,
 				EE5E2C1526DFC31900C3928A /* MessageDestructionTimeoutType.swift in Sources */,
 				F991CE1B1CB561B0004D8465 /* ZMAddressBookContact.m in Sources */,
-				63B1335C29A503D100009D84 /* MLSController.swift in Sources */,
+				63B1335C29A503D100009D84 /* MLSService.swift in Sources */,
 				2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */,
 				87EFA3AC210F52C6004DFA53 /* ZMConversation+LastMessages.swift in Sources */,
 				F9C877091E000C9D00792613 /* AssetCollection.swift in Sources */,
@@ -4124,7 +4116,7 @@
 				F14FA377221DB05B005E7EF5 /* MockBackgroundActivityManager.swift in Sources */,
 				544034341D6DFE8500860F2D /* ZMAddressBookContactTests.swift in Sources */,
 				F920AE3B1E3B844E001BC14F /* SearchUserObserverCenterTests.swift in Sources */,
-				EE98879228882C8F002340D2 /* MockMLSController.swift in Sources */,
+				EE98879228882C8F002340D2 /* MockMLSService.swift in Sources */,
 				F9B71FA81CB2BF37001DB03F /* ZMConversationTests+Validation.m in Sources */,
 				F9B71FA11CB2BF37001DB03F /* ZMConversation+Testing.m in Sources */,
 				1600D944267BC5A100970F99 /* ZMManagedObjectFetchingTests.swift in Sources */,
@@ -4224,7 +4216,7 @@
 				EEB121AE2A175C9500E74D39 /* LastEventIDRepositoryTests.swift in Sources */,
 				EE2BA00925CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift in Sources */,
 				63123BCC291BBB7A009A5179 /* MLSQualifiedClientIdTests.swift in Sources */,
-				EE98878E28882BFF002340D2 /* MLSControllerTests.swift in Sources */,
+				EE98878E28882BFF002340D2 /* MLSServiceTests.swift in Sources */,
 				BFE3A96E1ED301020024A05B /* ZMConversationListTests+Teams.swift in Sources */,
 				16C391E2214BD438003AB3AD /* MentionTests.swift in Sources */,
 				F991CE191CB55E95004D8465 /* ZMSearchUserTests.m in Sources */,
@@ -4435,17 +4427,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		63709F6A2994108700577D4B /* CoreCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CoreCrypto;
-		};
-		63709F6C2994108700577D4B /* LibCoreCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LibCoreCrypto;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		167BCC182609E92300E9D7E3 /* ZMEventModel.xcdatamodeld */ = {

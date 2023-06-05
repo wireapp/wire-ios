@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 import avs
-import CoreCrypto
+import WireCoreCrypto
 
 enum ApplicationLaunchType {
     case unknown

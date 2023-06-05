@@ -638,9 +638,9 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func test_RemoveUser_FromMLSConversation() {
         syncMOC.performAndWait {
             // GIVEN
-            // set mock MLSController
-            let mockMLSController = MockMLSController()
-            syncMOC.mlsController = mockMLSController
+            // set mock mlsService
+            let mockMLSService = MockMLSService()
+            syncMOC.mlsService = mockMLSService
 
             // create conversation
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -680,7 +680,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
             XCTAssertEqual(expectedClientIDs.count, 2)
 
-            mockMLSController.removeMembersMock = { clientIDs, groupID in
+            mockMLSService.removeMembersMock = { clientIDs, groupID in
                 XCTAssertEqual(groupID, expectedGroupID)
                 XCTAssertEqual(clientIDs, expectedClientIDs)
                 removeMemberExpectation.fulfill()
@@ -697,9 +697,9 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     func test_RemoveSelfUser_FromMLSConversation() {
         syncMOC.performAndWait {
             // GIVEN
-            // set mock MLSController
-            let mockMLSController = MockMLSController()
-            syncMOC.mlsController = mockMLSController
+            // set mock mlsService
+            let mockMLSService = MockMLSService()
+            syncMOC.mlsService = mockMLSService
 
             // mock action handler
             let mockActionHandler = MockActionHandler<RemoveParticipantAction>(
@@ -726,11 +726,11 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
                 return []
             }
 
-            // expect that we dont call MLSController
+            // expect that we dont call mlsService
             let removeMembersExpectation = XCTestExpectation(description: "Remove Members Not Called")
             removeMembersExpectation.isInverted = true
 
-            mockMLSController.removeMembersMock = { _, _ in
+            mockMLSService.removeMembersMock = { _, _ in
                 removeMembersExpectation.fulfill()
             }
 

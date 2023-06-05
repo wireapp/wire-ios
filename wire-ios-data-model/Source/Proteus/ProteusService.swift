@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import CoreCryptoSwift
+import WireCoreCrypto
 
 /// A service that provides support for messaging via the Proteus
 /// end-to-end-encryption protocol.
@@ -358,7 +358,7 @@ public final class ProteusService: ProteusServiceInterface {
 private extension CoreCryptoProtocol {
 
     var lastProteusError: ProteusError {
-        return ProteusError(proteusCode:  proteusLastErrorCode())
+        return ProteusError(proteusCode: proteusLastErrorCode())
     }
 
 }

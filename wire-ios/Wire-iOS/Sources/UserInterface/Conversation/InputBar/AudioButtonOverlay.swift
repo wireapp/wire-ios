@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import UIKit
@@ -22,11 +22,16 @@ import WireCommonComponents
 
 final class AudioButtonOverlay: UIView {
 
+    // MARK: - AudioButtonOverlayButtonType
+
     enum AudioButtonOverlayButtonType {
         case play, send, stop
     }
 
+    // MARK: - Properties
+
     typealias ButtonPressHandler = (AudioButtonOverlayButtonType) -> Void
+    typealias ViewColors = SemanticColors.View
 
     var recordingState: AudioRecordState = .recording {
         didSet { updateWithRecordingState(recordingState) }
@@ -41,17 +46,19 @@ final class AudioButtonOverlay: UIView {
     fileprivate lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 96)
     fileprivate lazy var widthConstraint: NSLayoutConstraint = widthAnchor.constraint(equalToConstant: initialViewWidth)
 
-    let darkColor = UIColor.from(scheme: .textForeground)
-    let brightColor = UIColor.from(scheme: .textBackground)
-    let greenColor = SemanticColors.LegacyColors.strongLimeGreen
-    let grayColor = UIColor.from(scheme: .audioButtonOverlay)
-    let superviewColor = UIColor.from(scheme: .background)
+    let darkColor = SemanticColors.Icon.foregroundAudio
+    let brightColor = ViewColors.backgroundAudioViewOverlay
+    let greenColor = SemanticColors.Button.backgroundAudioMessageOverlay
+    let grayColor = ViewColors.backgroundAudioViewOverlayActive
+    let superviewColor = ViewColors.backgroundAudioViewOverlay
 
     let audioButton = IconButton()
     let playButton = IconButton()
     let sendButton = IconButton()
     let backgroundView = UIView()
     var buttonHandler: ButtonPressHandler?
+
+    // MARK: - Init
 
     init() {
         super.init(frame: .zero)
@@ -65,10 +72,14 @@ final class AudioButtonOverlay: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Override Methods
+
     override func layoutSubviews() {
         super.layoutSubviews()
         backgroundView.layer.cornerRadius = bounds.width / 2
     }
+
+    // MARK: - Setup UI and Constraints
 
     func configureViews() {
         translatesAutoresizingMaskIntoConstraints = false
@@ -92,23 +103,25 @@ final class AudioButtonOverlay: UIView {
     private func createConstraints() {
         [audioButton, playButton, sendButton, backgroundView].prepareForLayout()
         NSLayoutConstraint.activate([
-          audioButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
-          audioButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            audioButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
+            audioButton.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-          playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-          playButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
+            playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            playButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),
 
-          sendButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-          sendButton.centerYAnchor.constraint(equalTo: topAnchor, constant: initialViewWidth / 2),
+            sendButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            sendButton.centerYAnchor.constraint(equalTo: topAnchor, constant: initialViewWidth / 2),
 
-          widthConstraint,
-          heightConstraint,
-          backgroundView.topAnchor.constraint(equalTo: topAnchor),
-          backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
-          backgroundView.leftAnchor.constraint(equalTo: leftAnchor),
-          backgroundView.rightAnchor.constraint(equalTo: rightAnchor)
+            widthConstraint,
+            heightConstraint,
+            backgroundView.topAnchor.constraint(equalTo: topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            backgroundView.leftAnchor.constraint(equalTo: leftAnchor),
+            backgroundView.rightAnchor.constraint(equalTo: rightAnchor)
         ])
     }
+
+    // MARK: - Methods
 
     func setOverlayState(_ state: AudioButtonOverlayState) {
         defer { layoutIfNeeded() }
@@ -135,6 +148,8 @@ final class AudioButtonOverlay: UIView {
         playButton.setIcon(icon, size: .tiny, for: [])
         playButton.accessibilityValue = state.description
     }
+
+    // MARK: - Actions
 
     @objc func buttonPressed(_ sender: IconButton) {
         let type: AudioButtonOverlayButtonType

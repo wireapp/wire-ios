@@ -26,9 +26,9 @@ extension EventDecoder {
     ) -> ZMUpdateEvent? {
         Logging.mls.info("decrypting mls message")
 
-        guard let mlsController = context.mlsController else {
-            Logging.mls.warn("failed to decrypt mls message: MLSController is missing")
-            fatalError("failed to decrypt mls message: MLSController is missing")
+        guard let mlsService = context.mlsService else {
+            Logging.mls.warn("failed to decrypt mls message: mlsService is missing")
+            fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
         guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
@@ -53,7 +53,7 @@ extension EventDecoder {
 
         do {
             guard
-                let result = try mlsController.decrypt(message: payload.data,
+                let result = try mlsService.decrypt(message: payload.data,
                                                        for: groupID)
             else {
                 Logging.mls.info("successfully decrypted mls message but no result was returned")
@@ -65,12 +65,12 @@ extension EventDecoder {
                 return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
             case .proposal(let commitDelay):
                 let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
-                mlsController.scheduleCommitPendingProposals(groupID: groupID, at: scheduledDate)
+                mlsService.scheduleCommitPendingProposals(groupID: groupID, at: scheduledDate)
 
                 if updateEvent.source == .webSocket {
                     Task {
                         do {
-                            try await mlsController.commitPendingProposals()
+                            try await mlsService.commitPendingProposals()
                         } catch {
                             Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
                         }
