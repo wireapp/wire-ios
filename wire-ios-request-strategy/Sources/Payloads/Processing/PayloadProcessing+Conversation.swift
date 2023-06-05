@@ -153,14 +153,36 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .`self`
-        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
+        updateAttributes(for: conversation, context: context)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        
+        if conversation.mlsGroupID != nil {
+            createOrJoinSelfConversation(from: conversation, context: context)
+        }
     }
 
+    func createOrJoinSelfConversation(from conversation: ZMConversation, context: NSManagedObjectContext) {
+        guard let groupId = conversation.mlsGroupID,
+                let mlsService = conversation.managedObjectContext?.mlsService else {
+            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+            return
+        }
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); members: \(String(describing: members))")
+
+        if conversation.epoch <= 0 {
+            do {
+                try mlsService.createSelfGroup(for: groupId)
+            } catch {
+                WireLogger.mls.error("error creating self group for \(groupId)")
+            }
+        } else {
+            mlsService.joinSelfGroup(with: groupId)
+        }
+    }
+    
     func updateOrCreateGroupConversation(in context: NSManagedObjectContext,
                                          serverTimestamp: Date,
                                          source: Source) {
@@ -176,10 +198,8 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .group
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
-        conversation.epoch = UInt64(epoch ?? 0)
+
+        updateAttributes(for: conversation, context: context)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -200,6 +220,14 @@ extension Payload.Conversation {
         }
     }
 
+    private func updateAttributes(for conversation: ZMConversation, context: NSManagedObjectContext) {
+        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
+        conversation.needsToBeUpdatedFromBackend = false
+        conversation.epoch = UInt64(epoch ?? 0)
+
+        conversation.mlsGroupID = self.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
+    }
+    
     // There is a bug in the backend where the conversation type is not correct for
     // connection requests across federated backends. Instead of returning `.connection` type,
     // it returns `oneOnOne.

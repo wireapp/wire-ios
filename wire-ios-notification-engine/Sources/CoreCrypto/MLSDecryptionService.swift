@@ -23,6 +23,8 @@ import WireCoreCrypto
 
 class MLSDecryptionService: MLSServiceInterface {
 
+    
+
     // MARK: - Properties
 
     private let coreCrypto: SafeCoreCryptoProtocol
@@ -149,5 +151,13 @@ class MLSDecryptionService: MLSServiceInterface {
     func wipeGroup(_ groupID: MLSGroupID) {
         fatalError("not implemented")
     }
-
+    
+    func createSelfGroup(for groupID: WireDataModel.MLSGroupID) {
+        fatalError("not implemented")
+    }
+    
+    func joinSelfGroup(with groupID: WireDataModel.MLSGroupID) {
+        fatalError("not implemented")
+        
+    }
 }
