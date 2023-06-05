@@ -28,6 +28,10 @@ public protocol MLSServiceInterface {
 
     func uploadKeyPackagesIfNeeded()
 
+    func createSelfGroup(for groupID: MLSGroupID)
+    
+    func joinSelfGroup(with groupID: MLSGroupID)
+    
     func createGroup(for groupID: MLSGroupID) throws
 
     func conversationExists(groupID: MLSGroupID) -> Bool
@@ -184,7 +188,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(`ciphersuite`: defaultCipherSuite) }
+                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite) }
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
             }
@@ -304,11 +308,33 @@ public final class MLSService: MLSServiceInterface {
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
     }
 
+    public func createSelfGroup(for groupID: MLSGroupID) {
+        guard let context = context else {
+            return
+        }
+        do {
+            try createConversation(for: groupID)
+            
+            let selfUser = ZMUser.selfUser(in: context)
+            let mlsSelfUser = MLSUser(from: selfUser)
+            Task {
+                do {
+                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
+                } catch MLSAddMembersError.noInviteesToAdd {
+                    try await updateKeyMaterial(for: groupID)
+                }
+            }
+        } catch {
+            WireLogger.mls.error("create group for self conversation failed: \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: - Add member
 
     enum MLSAddMembersError: Error {
 
         case noMembersToAdd
+        case noInviteesToAdd
         case failedToClaimKeyPackages
 
     }
@@ -335,6 +361,11 @@ public final class MLSService: MLSServiceInterface {
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
             let invitees = keyPackages.map(Invitee.init(from:))
+
+            guard invitees.count > 0 else {
+                throw MLSAddMembersError.noInviteesToAdd
+            }
+
             let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
@@ -601,6 +632,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Joining conversations
+
+    public func joinSelfGroup(with groupID: MLSGroupID) {
+        registerPendingJoin(groupID)
+        performPendingJoins()
+    }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
@@ -1042,6 +1078,28 @@ public final class MLSService: MLSServiceInterface {
         } catch let error {
             self.logger.warn("failed to fetch public group state with error: \(String(describing: error))")
             throw MLSGroupStateError.failedToFetchGroupState
+        }
+    }
+
+    // MARK: - Create Conversation
+
+    enum MLSConversationError: Error, Equatable {
+        case failedToCreateConversation
+    }
+
+    func createConversation(for groupID: MLSGroupID) throws {
+
+        let config = ConversationConfiguration(
+            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            externalSenders: backendPublicKeys.ed25519Keys,
+            custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+        )
+
+        do {
+            try coreCrypto.perform { try $0.createConversation(conversationId: groupID.bytes, config: config) }
+        } catch {
+            logger.error("failed to createConversation: \(String(describing: error))")
+            throw MLSConversationError.failedToCreateConversation
         }
     }
 
