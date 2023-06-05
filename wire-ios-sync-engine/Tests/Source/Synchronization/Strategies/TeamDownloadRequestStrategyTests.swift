@@ -31,7 +31,11 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockSyncStateDelegate = MockSyncStateDelegate()
-        mockSyncStatus = MockSyncStatus(managedObjectContext: syncMOC, syncStateDelegate: mockSyncStateDelegate)
+        mockSyncStatus = MockSyncStatus(
+            managedObjectContext: syncMOC,
+            syncStateDelegate: mockSyncStateDelegate,
+            lastEventIDRepository: lastEventIDRepository
+        )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
         syncMOC.performGroupedBlockAndWait {
@@ -355,7 +359,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v4)
     }
 
-    func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion){
+    func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion) {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing

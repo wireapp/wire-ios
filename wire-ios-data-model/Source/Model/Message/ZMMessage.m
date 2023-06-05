@@ -497,6 +497,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         (type == ZMUpdateEventTypeConversationClientMessageAdd) ||
         (type == ZMUpdateEventTypeConversationOtrMessageAdd) ||
         (type == ZMUpdateEventTypeConversationOtrAssetAdd) ||
+        (type == ZMUpdateEventTypeConversationMLSMessageAdd) ||
         (type == ZMUpdateEventTypeConversationKnock) ||
         [ZMSystemMessage doesEventTypeGenerateSystemMessage:type];
 }

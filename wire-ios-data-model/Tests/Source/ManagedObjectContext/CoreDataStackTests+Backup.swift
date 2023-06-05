@@ -135,7 +135,9 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         directory.viewContext.encryptMessagesAtRest = true
+
         directory.viewContext.databaseKey = validDatabaseKey
+        directory.viewContext.saveOrRollback()
 
         // when
         guard let result = createBackup(
@@ -149,9 +151,11 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         // then
         switch result {
         case let .success(backup):
+
             let model = CoreDataStack.loadMessagingModel()
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
             let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
+            let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeFile, options: [:])
             XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
             let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             context.persistentStoreCoordinator = coordinator
