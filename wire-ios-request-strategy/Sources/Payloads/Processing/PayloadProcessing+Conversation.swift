@@ -198,12 +198,7 @@ extension Payload.Conversation {
                                     conversation: ZMConversation,
                                     type: ZMSystemMessageType,
                                     context: NSManagedObjectContext) {
-        let fetchRequest = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %d",
-                                             ZMMessageConversationKey, conversation,
-                                             ZMMessageSystemMessageTypeKey, type.rawValue)
-        let messages = context.fetchOrAssert(request: fetchRequest) as [ZMSystemMessage]
-        guard let systemMessage = messages.first else {
+        guard let systemMessage = conversation.firstSystemMessage(for: type, in: context) else {
             return
         }
         for qualifiedID in failedUsers {
@@ -522,6 +517,20 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         // TODO jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+    }
+
+}
+
+private extension ZMConversation {
+
+    func firstSystemMessage(for systemMessageType: ZMSystemMessageType, in context: NSManagedObjectContext) -> ZMSystemMessage? {
+        let fetchRequest = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
+        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %d",
+                                             ZMMessageConversationKey, self,
+                                             ZMMessageSystemMessageTypeKey, systemMessageType.rawValue)
+        let messages = context.fetchOrAssert(request: fetchRequest) as [ZMSystemMessage]
+
+        return messages.first
     }
 
 }

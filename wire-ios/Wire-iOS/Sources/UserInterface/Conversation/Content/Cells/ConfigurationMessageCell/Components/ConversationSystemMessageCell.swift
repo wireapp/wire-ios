@@ -307,10 +307,13 @@ class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Conversat
 
 final class ConversationSystemMessageCellDescription {
 
-    static func cells(for message: ZMConversationMessage, isCollapsed: Bool, compl: Completion? = nil) -> [AnyConversationMessageCellDescription] {
+    static func cells(for message: ZMConversationMessage,
+                      isCollapsed: Bool = true,
+                      buttonAction: Completion? = nil) -> [AnyConversationMessageCellDescription] {
         guard let systemMessageData = message.systemMessageData,
-            let sender = message.senderUser,
-            let conversation = message.conversationLike else {
+              let sender = message.senderUser,
+              let conversation = message.conversationLike
+        else {
             preconditionFailure("Invalid system message")
         }
 
@@ -403,18 +406,12 @@ final class ConversationSystemMessageCellDescription {
             }
 
             return cells
-
+            // add tests
         case .failedToAddParticipants:
-            if let users = Array(systemMessageData.userTypes) as? [UserType] {
-                // modify view and add tests
-//                let buttonAction = {
-//                    self.isCollapsed = !self.isCollapsed
-//                   // self.cellDelegate?.conversationMessageShouldUpdate()
-//                }
+            if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction = buttonAction {
                 let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(failedUsers: users,
                                                                                                       isCollapsed: isCollapsed,
-                                                                                                      buttonAction: compl ?? {})
-                //cellDescription.delegate = cellDelegate
+                                                                                                      buttonAction: buttonAction)
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
         default:
@@ -1092,9 +1089,9 @@ class ConversationEncryptionInfoDescription: ConversationMessageCellDescription 
 
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias FailedtoaddParticipants = L10n.Localizable.Content.System.FailedtoaddParticipants
+    typealias SystemContent = L10n.Localizable.Content.System
+    typealias View = FailedUsersSystemMessageCell
 
-    typealias View = FailedRecipientsMessageCell1 // another message cell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -1116,6 +1113,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
                                            content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
                                            isCollapsed: isCollapsed,
                                            hasMultipleUsers: (failedUsers.count > 0),
+                                           infoImage: Asset.Images.attention.image.withTintColor(SemanticColors.Label.textErrorDefault),
                                            buttonAction: buttonAction)
     }
 
@@ -1124,23 +1122,19 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
             return ""
         }
 
-        return FailedtoaddParticipants.count(failedUsers.count)
+        return SystemContent.FailedtoaddParticipants.count(failedUsers.count)
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> String {
-
-        typealias FailedParticipants = L10n.Localizable.Content.System.FailedParticipants
-
         let groupedUsers: [String? : [UserType]] = Dictionary(grouping: failedUsers, by: \.domain)
 
         var content: String = ""
         for (domain, users) in groupedUsers {
             let userNames = users.compactMap { $0.name }.joined(separator: ", ")
-            content.append(FailedtoaddParticipants.couldNotBeAdded(userNames, domain ?? ""))
+            content.append(SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames, domain ?? ""))
             content.append("\n")
         }
 
-        return FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
-
+        return SystemContent.FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
     }
 }
