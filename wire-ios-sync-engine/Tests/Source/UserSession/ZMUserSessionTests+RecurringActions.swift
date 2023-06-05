@@ -63,7 +63,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
     func testThatItUpdatesUsersMissingMetadata() {
         // given
-        let otherUser = createUser(moc: syncMOC, domain: UUID().uuidString)
+        let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
         syncMOC.saveOrRollback()
 
         let recurringActionService = RecurringActionService()
@@ -83,7 +83,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
     func testThatItUpdatesConversationsMissingMetadata() {
         // given
-        let conversation = createConversation(moc: syncMOC, domain: UUID().uuidString)
+        let conversation = createConversationIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)
         syncMOC.saveOrRollback()
 
         let recurringActionService = RecurringActionService()
@@ -101,7 +101,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
     }
 
-    private func createUser(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
+    private func createUserIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
         let user = ZMUser(context: moc)
         user.remoteIdentifier = UUID()
         user.domain = domain
@@ -112,7 +112,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
     }
 
-    private func createConversation(moc: NSManagedObjectContext, domain: String?) -> ZMConversation {
+    private func createConversationIsPendingMetadataRefresh(moc: NSManagedObjectContext, domain: String?) -> ZMConversation {
         let conversation = ZMConversation(context: moc)
         conversation.remoteIdentifier = UUID()
         conversation.domain = domain
