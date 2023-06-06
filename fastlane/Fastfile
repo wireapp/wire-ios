@@ -220,6 +220,17 @@ platform :ios do
         upload_s3(options)
     end
 
+    desc "Build & Upload AppStore build"
+    lane :appstore_public do |options|
+        options[:build_type] = "AppStore"
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        build_for_release(options)
+        upload_app_store(options)
+        upload_app_center_appstore(options)
+        upload_s3(options)
+    end
+
     # "Upload to AppStore"
     def upload_app_store(options)
         build = Build.new(options: options)
@@ -361,6 +372,24 @@ platform :ios do
             dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
         )
     end
+
+    # "Upload dSYMs for AppStore crash tracking"
+    def upload_app_center_appstore(options)
+        build = Build.new(options: options)
+
+        if !build.appstore_build
+            UI.user_error! "This step is only relevant for AppStore builds"
+        end
+
+        appcenter_upload(
+          api_token: ENV["APPCENTER_API_TOKEN"],
+          owner_name: ENV["APPCENTER_OWNER_NAME"],
+          app_name: build.app_name,
+          dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip",
+          upload_dsym_only: true,
+          notify_testers: true
+        )
+    end
     
     desc "Build for testing"
     lane :build do |options|
@@ -491,24 +520,6 @@ platform :ios do
                 add_id_info_serves_ads: false,
                 add_id_info_uses_idfa: false
             }
-        )
-    end
-
-    desc "Upload dSYMs for AppStore crash tracking"
-    lane :upload_app_center_appstore do |options|
-        build = Build.new(options: options)
-
-        if !build.appstore_build
-            UI.user_error! "This step is only relevant for AppStore builds"
-        end
-
-        appcenter_upload(
-          api_token: ENV["APPCENTER_API_TOKEN"],
-          owner_name: ENV["APPCENTER_OWNER_NAME"],
-          app_name: build.app_name,
-          dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip",
-          upload_dsym_only: true,
-          notify_testers: true
         )
     end
 

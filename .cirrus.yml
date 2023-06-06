@@ -34,6 +34,12 @@ task:
   script:
     - bundle exec fastlane playground
 
+task:
+  name: Build & Upload AppStore Build
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane appstore_public
 
 # task:
 #   name: Build & Upload AppStore Build
