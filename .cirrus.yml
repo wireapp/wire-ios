@@ -21,7 +21,7 @@ carthage_cache_template: &CARTHAGE_CACHE_TEMPLATE
     folder: Carthage/Build
     fingerprint_script: cat Cartfile.resolved
     populate_script: 
-      - carthage bootstrap --cache-builds --platform ios --use-xcframeworks
+      - carthage bootstrap --platform ios --use-xcframeworks
 
 task:
   name: Build & Upload Playground Build
