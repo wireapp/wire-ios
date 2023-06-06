@@ -48,18 +48,6 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertTrue(mockRecurringActionService.performActionsIsCalled)
     }
 
-    func testThatItAddsActions() {
-        // given
-        let action = RecurringAction(id: "11", interval: 5, perform: {})
-
-        // when
-        XCTAssertEqual(mockRecurringActionService.actions.count, 0)
-        mockRecurringActionService.registerAction(action)
-
-        // then
-        XCTAssertEqual(mockRecurringActionService.actions.count, 1)
-    }
-
     func testThatItUpdatesUsersMissingMetadata() {
         // given
         let otherUser = createUserIsPendingMetadataRefresh(moc: syncMOC, domain: UUID().uuidString)

@@ -41,6 +41,18 @@ class RecurringActionServiceTests: ZMTBaseTest {
         super.tearDown()
     }
 
+    func testThatItAddsActions() {
+        // given
+        let action = RecurringAction(id: actionID, interval: 5, perform: {})
+
+        // when
+        XCTAssertEqual(sut.actions.count, 0)
+        sut.registerAction(action)
+
+        // then
+        XCTAssertEqual(sut.actions.count, 1)
+    }
+
     func testThatItPerformsAction() {
         // given
         sut.persistLastCheckDate(for:actionID)

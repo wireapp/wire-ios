@@ -37,9 +37,9 @@ protocol RecurringActionServiceInterface {
 
 class RecurringActionService: RecurringActionServiceInterface {
 
-    private var actions = [RecurringAction]()
+    var actions = [RecurringAction]()
 
-    public var storage: UserDefaults = .standard
+    var storage: UserDefaults = .standard
 
     public func performActionsIfNeeded() {
 
