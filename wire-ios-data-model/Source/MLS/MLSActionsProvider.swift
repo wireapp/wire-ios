@@ -76,7 +76,7 @@ protocol MLSActionsProviderProtocol {
 
 }
 
-class MLSActionsProvider: MLSActionsProviderProtocol {
+final class MLSActionsProvider: MLSActionsProviderProtocol {
 
     func fetchBackendPublicKeys(
         in context: NotificationContext
