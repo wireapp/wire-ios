@@ -21,10 +21,9 @@ task:
   - curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
   - sudo installer -pkg AWSCLIV2.pkg -target /
   - sh ./setup.sh
-  - bundle exec fastlane ios prepare_for_release build_type:"AppStore" build_number:1234
-  - bundle exec fastlane ios build_for_release build_type:"AppStore" build_number:1234
-  - bundle exec fastlane upload_app_store build_number:1234 build_type:"AppStore"
+  - bundle exec fastlane ios prepare_for_release build_type:"Playground" build_number:1234
+  - bundle exec fastlane ios build_for_release build_type:"Playground" build_number:1234
+  - bundle exec fastlane upload_app_center build_number:1234 build_type:"Playground"
+  - bundle exec fastlane upload_s3 build_number:1234 build_type:"Playground"
+    # - bundle exec fastlane upload_app_store build_number:1234 build_type:"AppStore"
     # - bundle exec fastlane security_plans build_type:"AppStore" build_number:1234
-  # - bundle exec fastlane upload_app_center build_number:1234 build_type:"Playground"
-  
-  # - bundle exec fastlane upload_s3 build_number:1234 build_type:"Playground"
