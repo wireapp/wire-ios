@@ -296,7 +296,7 @@ platform :ios do
         sh "cp ../wire-ios/Configuration/Appfile ."
 
         deliver(
-            api_key: @api_key,
+            api_key_path: appstoreconnect_api_key_file_path,
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             submit_for_review: false,
             automatic_release: false,
