@@ -81,6 +81,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
                 }
             )
         }
+
     }
 
     override init(frame: CGRect) {
@@ -101,7 +102,11 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     private func configureConstraints() {
         reactionView.translatesAutoresizingMaskIntoConstraints = false
         self.translatesAutoresizingMaskIntoConstraints = false
-        reactionView.fitIn(view: self)
+
+        reactionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        reactionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40).isActive = true
+        reactionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        reactionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
 
 }
