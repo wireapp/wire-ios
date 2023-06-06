@@ -94,6 +94,8 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
+    var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+
     public lazy var featureService = FeatureService(context: syncContext)
 
     let earService: EARServiceInterface
@@ -306,6 +308,7 @@ public class ZMUserSession: NSObject {
         notifyUserAboutChangesInAvailabilityBehaviourIfNeeded()
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
+        configureRecurringActions()
     }
 
     private func configureTransportSession() {
@@ -398,6 +401,11 @@ public class ZMUserSession: NSObject {
                                applicationStatusDirectory: applicationStatusDirectory!,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
+    }
+
+    private func configureRecurringActions() {
+        recurringActionService.registerAction(refreshUsersMissingMetadata())
+        recurringActionService.registerAction(refreshConversationsMissingMetadata())
     }
 
     func startRequestLoopTracker() {
@@ -593,6 +601,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         fetchFeatureConfigs()
+        recurringActionService.performActionsIfNeeded()
     }
 
     func processEvents() {
