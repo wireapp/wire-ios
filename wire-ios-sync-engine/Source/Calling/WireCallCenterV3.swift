@@ -478,17 +478,17 @@ extension WireCallCenterV3 {
         // Make sure we don't have an old state for this conversation.
         clearSnapshot(conversationId: conversationId)
 
-        let conversationType: AVSConversationType = conversation.conversationType == .group ? .conference : .oneToOne
-
-        let isConference = conversationType == .conference
+        guard let conversationType = conversation.avsConversationType else {
+            return false
+        }
 
         let callType = self.callType(
             for: conversation,
             startedWithVideo: isVideo,
-            isConferenceCall: isConference
+            isConferenceCall: conversationType.isConference
         )
 
-        if isConference && !canStartConferenceCalls {
+        if conversationType.isConference && !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
             }
@@ -516,7 +516,7 @@ extension WireCallCenterV3 {
             callStarter: selfUserId,
             video: isVideo,
             for: conversationId,
-            isConferenceCall: isConference
+            isConferenceCall: conversationType.isConference
         )
 
         if let context = uiMOC {
@@ -806,7 +806,7 @@ extension WireCallCenterV3 {
 
 }
 
-extension ZMConversation {
+private extension ZMConversation {
 
     var avsConversationType: AVSConversationType? {
         switch (conversationType, messageProtocol) {
@@ -821,6 +821,20 @@ extension ZMConversation {
 
         default:
             return nil
+        }
+    }
+
+}
+
+private extension AVSConversationType {
+
+    var isConference: Bool {
+        switch self {
+        case .conference, .mlsConference:
+            return true
+
+        default:
+            return false
         }
     }
 
