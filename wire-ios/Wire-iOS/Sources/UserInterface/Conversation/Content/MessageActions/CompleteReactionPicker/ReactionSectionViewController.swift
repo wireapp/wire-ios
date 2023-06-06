@@ -20,14 +20,10 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-protocol EmojiSectionViewControllerDelegate: AnyObject {
-    func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool)
-}
+final class ReactionSectionViewController: UIViewController {
 
-final class EmojiSectionViewController: UIViewController {
-
-    private var typesByButton = [IconButton: EmojiSectionType]()
-    private var sectionButtons = [IconButton]()
+    private var typesByButton = [ReactionCategoryButton: EmojiSectionType]()
+    private var sectionButtons = [ReactionCategoryButton]()
     private let iconSize = StyleKitIcon.Size.tiny.rawValue
     private var ignoreSelectionUpdates = false
 
@@ -68,19 +64,11 @@ final class EmojiSectionViewController: UIViewController {
         sectionButtons.forEach(view.addSubview)
     }
 
-    private func createSectionButton(for type: EmojiSectionType) -> IconButton {
-
-        let button: IconButton = {
-            let button = IconButton(style: .default)
-            button.setIconColor(UIColor.from(scheme: .textDimmed, variant: .dark), for: .normal)
-            button.setIconColor(.from(scheme: .textForeground, variant: .dark), for: .selected)
-            button.setIconColor(.from(scheme: .iconHighlighted, variant: .dark), for: .highlighted)
-            button.setBackgroundImageColor(.clear, for: .selected)
-            button.setBorderColor(.clear, for: .normal)
-            button.circular = false
-            button.borderWidth = 0
-
-            button.setIcon(type.icon, size: .tiny, for: .normal)
+    private func createSectionButton(for type: EmojiSectionType) -> ReactionCategoryButton {
+        let button: ReactionCategoryButton = {
+            let button = ReactionCategoryButton()
+            let image = type.imageAsset.image
+            button.setImage(image, for: .normal)
 
             return button
         }()
@@ -94,9 +82,9 @@ final class EmojiSectionViewController: UIViewController {
         selectedType = type
     }
 
-    @objc private func didTappButton(_ sender: IconButton) {
+    @objc private func didTappButton(_ sender: ReactionCategoryButton) {
         guard let type = typesByButton[sender] else { return }
-        sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
+        sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: false)
     }
 
     @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
@@ -107,27 +95,15 @@ final class EmojiSectionViewController: UIViewController {
             fallthrough
         case .changed:
             let location = recognizer.location(in: view)
-            guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first else { return }
-            guard let type = typesByButton[button] else { return }
+            guard let button = sectionButtons.filter({ $0.frame.contains(location) }).first,
+                  let type = typesByButton[button]
+            else { return }
             sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
             selectedType = type
         case .ended, .failed, .cancelled:
             ignoreSelectionUpdates = false
         @unknown default:
             break
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        sectionButtons.forEach {
-            $0.removeFromSuperview()
-            view.addSubview($0)
-        }
-
-        createConstraints()
-        sectionButtons.forEach {
-            $0.hitAreaPadding = CGSize(width: 5, height: view.bounds.height / 2)
         }
     }
 
@@ -147,13 +123,14 @@ final class EmojiSectionViewController: UIViewController {
             switch idx {
             case 0:
                 constraints.append(button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset))
-                constraints.append(view.heightAnchor.constraint(equalToConstant: iconSize + inset))
             default:
                 let previous = sectionButtons[idx - 1]
                 constraints.append(button.centerXAnchor.constraint(equalTo: previous.centerXAnchor, constant: padding))
             }
 
             constraints.append(button.topAnchor.constraint(equalTo: view.topAnchor))
+            constraints.append(button.bottomAnchor.constraint(equalTo: view.bottomAnchor))
+            constraints.append(button.widthAnchor.constraint(equalToConstant: padding - 8.0))
         }
 
         NSLayoutConstraint.activate(constraints)

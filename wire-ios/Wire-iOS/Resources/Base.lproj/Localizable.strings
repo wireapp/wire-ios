@@ -601,6 +601,11 @@
 "content.reactions_list.likers" = "Liked by";
 
 "content.file.too_big" = "You can send files up to %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ pinged";
 "content.ping.text-you" = "%@ pinged";

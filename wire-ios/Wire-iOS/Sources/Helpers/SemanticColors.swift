@@ -93,6 +93,8 @@ public enum SemanticColors {
         static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let emojiCategoryDefault = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray60)
+        static let emojiCategorySelected = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
         // Audio Icon
         static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
@@ -173,6 +175,8 @@ public enum SemanticColors {
         static let borderInputBarItemHighlighted = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
         static let textInputBarItemEnabled = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
         static let textInputBarItemHighlighted = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.white)
+        static let reactionBorderSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
+        static let reactionBackgroundSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue800Dark)
 
         /// Calling buttons
         static let backgroundCallingNormal = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)

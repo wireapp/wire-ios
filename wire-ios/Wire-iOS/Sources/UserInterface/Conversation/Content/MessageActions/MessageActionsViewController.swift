@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 
 class MessageActionsViewController: UIAlertController {
+
     // We're using custom marker to add space for custom view in UIAlertController. Solution explained in https://stackoverflow.com/a/47925120
     private static let MessageLabelMarker = "__CUSTOM_CONTENT_MARKER__"
 
@@ -52,7 +53,7 @@ class MessageActionsViewController: UIAlertController {
     }
 
     private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
-        let reactionPicker = BasicReactionPicker()
+        let reactionPicker = BasicReactionPicker(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
         reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
 
@@ -93,6 +94,26 @@ extension MessageActionsViewController: ReactionPickerDelegate {
     func didPickReaction(reaction: WireDataModel.MessageReaction) {
         actionController?.perform(action: .react(reaction))
     }
+
+    func didTapMoreEmojis() {
+        let pickerController = CompleteReactionPickerViewController(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
+        pickerController.delegate = self
+        present(pickerController, animated: true)
+    }
+}
+
+extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
+    func emojiPickerDidSelectEmoji(_ emoji: String) {
+        guard let reaction = MessageReaction.messageReaction(from: emoji) else {
+            dismiss(animated: true)
+            return
+        }
+        actionController?.perform(action: .react(reaction))
+        dismiss(animated: true)
+        return
+    }
+
+    func emojiPickerDeleteTapped() {}
 }
 
 
