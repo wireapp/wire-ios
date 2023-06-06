@@ -227,8 +227,9 @@ platform :ios do
         prepare_for_release(options)
         build_for_release(options)
         upload_app_store(options)
-        upload_app_center_appstore(options)
         upload_s3(options)
+        upload_dsyms_to_app_center_for_appstore_build(options)
+        upload_dsyms_to_datadog(options)
     end
 
     # "Upload to AppStore"
@@ -374,7 +375,7 @@ platform :ios do
     end
 
     # "Upload dSYMs for AppStore crash tracking"
-    def upload_app_center_appstore(options)
+    def upload_dsyms_to_app_center_for_appstore_build(options)
         build = Build.new(options: options)
 
         if !build.appstore_build
@@ -388,6 +389,20 @@ platform :ios do
           dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip",
           upload_dsym_only: true,
           notify_testers: true
+        )
+    end
+
+
+    # "Upload dsyms to Datadog"
+    def upload_dsyms_to_datadog(options)
+        build = Build.new(options: options)
+        
+        upload_symbols_to_datadog(
+            api_key: ENV["DATADOG_API_KEY"],
+            dsym_paths: [
+                "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
+            ],
+            site: "datadoghq.eu"
         )
     end
     
@@ -520,19 +535,6 @@ platform :ios do
                 add_id_info_serves_ads: false,
                 add_id_info_uses_idfa: false
             }
-        )
-    end
-
-    desc "Upload dsyms to Datadog"
-    lane :upload_dsyms_datadog do |options|
-        build = Build.new(options: options)
-        
-        upload_symbols_to_datadog(
-            api_key: ENV["DATADOG_API_KEY"],
-            dsym_paths: [
-            "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
-            ],
-            site: "datadoghq.eu"
         )
     end
 
