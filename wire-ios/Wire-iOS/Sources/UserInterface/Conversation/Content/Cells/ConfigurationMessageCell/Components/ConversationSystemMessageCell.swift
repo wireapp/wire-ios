@@ -406,12 +406,12 @@ final class ConversationSystemMessageCellDescription {
             }
 
             return cells
-            // add tests
+
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction = buttonAction {
-                let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(failedUsers: users,
-                                                                                                      isCollapsed: isCollapsed,
-                                                                                                      buttonAction: buttonAction)
+                let cellDescription = ConversationFailedToAddParticipantsCellDescription(failedUsers: users,
+                                                                                         isCollapsed: isCollapsed,
+                                                                                         buttonAction: buttonAction)
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
         default:
@@ -1087,7 +1087,7 @@ class ConversationEncryptionInfoDescription: ConversationMessageCellDescription 
     }
 }
 
-final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationFailedToAddParticipantsCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell
@@ -1109,10 +1109,10 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     let accessibilityLabel: String? = nil
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
-                                           content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
+        configuration = View.Configuration(title: ConversationFailedToAddParticipantsCellDescription.configureTitle(for: failedUsers),
+                                           content: ConversationFailedToAddParticipantsCellDescription.configureContent(for: failedUsers),
                                            isCollapsed: isCollapsed,
-                                           hasMultipleUsers: (failedUsers.count > 0),
+                                           hasMultipleUsers: (failedUsers.count > 1),
                                            infoImage: Asset.Images.attention.image.withTintColor(SemanticColors.Label.textErrorDefault),
                                            buttonAction: buttonAction)
     }

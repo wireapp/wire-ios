@@ -177,8 +177,14 @@ extension Payload.Conversation {
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
         if let failedToAddUsers = failedToAddUsers, !failedToAddUsers.isEmpty {
-            updateUsersInSystemMessage(with: failedToAddUsers, conversation: conversation, type: .newConversation, context: context)
-            let users: [ZMUser] = failedToAddUsers.map({ ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context) }).compactMap({ $0 })
+            /// We need to remove failed users from the initial system message
+            updateUsersInSystemMessage(with: failedToAddUsers,
+                                       conversation: conversation,
+                                       type: .newConversation,
+                                       context: context)
+
+            let users = failedToAddUsers.map({ ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context) })
+                                        .compactMap({ $0 })
             conversation.appendFailedToAddUsersSystemMessage(users: Set(users), sender: conversation.creator, at: serverTimestamp)
         }
 

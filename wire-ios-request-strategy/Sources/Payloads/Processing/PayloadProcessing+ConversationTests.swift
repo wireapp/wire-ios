@@ -106,6 +106,23 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_Group_AddSystemMessageWhenFailedToAddUsers() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           failedToAddUsers: [self.otherUser.qualifiedID!],
+                                                           type: BackendConversationType.group.rawValue)
+
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
+            XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .failedToAddParticipants)
+        }
+    }
+
     func testUpdateOrCreateConversation_Group_UpdatesLastServerTimestamp() throws {
         syncMOC.performGroupedBlockAndWait {
             // given

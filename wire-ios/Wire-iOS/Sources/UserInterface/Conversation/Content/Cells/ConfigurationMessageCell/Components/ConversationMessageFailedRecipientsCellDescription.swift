@@ -46,7 +46,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
         configuration = View.Configuration(title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
                                            content: ConversationMessageFailedRecipientsCellDescription.configureContent(for: failedUsers),
                                            isCollapsed: isCollapsed,
-                                           hasMultipleUsers: (failedUsers.count > 0),
+                                           hasMultipleUsers: (failedUsers.count > 1),
                                            infoImage: nil,
                                            buttonAction: buttonAction)
     }
