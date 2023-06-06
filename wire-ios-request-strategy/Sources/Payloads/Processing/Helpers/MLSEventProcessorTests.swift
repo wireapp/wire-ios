@@ -138,7 +138,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     func test_itWipesGroup() {
         syncMOC.performAndWait {
             // Given
-            let groupID = MLSGroupID(.random())
+            let groupID = MLSGroupID(Data.random())
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
 
@@ -158,7 +158,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         syncMOC.performAndWait {
             // Given
             conversation.messageProtocol = .proteus
-            conversation.mlsGroupID = MLSGroupID(.random())
+            conversation.mlsGroupID = MLSGroupID(Data.random())
 
             // When
             MLSEventProcessor.shared.wipeMLSGroup(

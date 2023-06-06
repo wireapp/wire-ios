@@ -17,27 +17,41 @@
 //
 
 import Foundation
+import WireUtilities
+@testable import WireDataModel
 
-extension Data {
+extension MLSGroupID {
 
-    public static func random(byteCount: UInt = 8) -> Data {
-        return Data(Bytes.random(length: byteCount))
+    static func random() -> MLSGroupID {
+        return MLSGroupID(Data.random(byteCount: 32))
     }
 
 }
 
-public typealias Bytes = [UInt8]
+extension QualifiedID {
 
-extension Bytes {
+    static func random() -> QualifiedID {
+        return QualifiedID(
+            uuid: .create(),
+            domain: .randomDomain()
+        )
+    }
 
-    public static func random(length: UInt = 8) -> Self {
-        var bytes = Bytes()
+}
 
-        for _ in 1...length {
-            bytes.append(UInt8.random(in: (.min)...(.max)))
+extension String {
+
+    static func randomDomain(hostLength: UInt = 5) -> String {
+        return "\(String.random(length: hostLength)).com"
+    }
+
+    static func random(length: UInt) -> String {
+        let randomChars = (0..<length).compactMap { _ in
+            "a...z".randomElement()
         }
 
-        return bytes
+        return String(randomChars)
     }
 
 }
+

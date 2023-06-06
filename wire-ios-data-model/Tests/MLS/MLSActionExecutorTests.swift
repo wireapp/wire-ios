@@ -67,7 +67,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_AddMembers() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let invitees = [Invitee(id: .random(), kp: .random())]
 
         let mockCommit = Bytes.random()
@@ -132,7 +132,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_RemoveClients() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let mlsClientID = MLSClientID(
             userID: UUID.create().uuidString,
             clientID: UUID.create().uuidString,
@@ -196,7 +196,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_UpdateKeyMaterial() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
 
         let mockCommit = Bytes.random()
         let mockPublicGroupState = PublicGroupStateBundle(
@@ -251,7 +251,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_CommitPendingProposals() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
 
         let mockCommit = Bytes.random()
         let mockWelcome = Bytes.random()
@@ -312,7 +312,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_JoinGroup() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let mockCommit = Bytes.random()
         let mockPublicGroupState = Bytes.random().data
         let mockPublicGroupStateBundle = PublicGroupStateBundle(
@@ -384,7 +384,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_JoinGroup_ThrowsErrorWithGiveUpRecoveryStrategy() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let error = SendCommitBundleAction.Failure.unknown(
             status: 999,
             label: "unknown",
@@ -409,7 +409,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     ) -> Void
 
     private func test_JoinGroupThrowsErrorWithRecoveryStrategy(
-        groupID: MLSGroupID = MLSGroupID(.random()),
+        groupID: MLSGroupID = .random(),
         sendCommitBundleError: Error,
         assertRecovery: AssertRecoveryBlock
     ) async throws {

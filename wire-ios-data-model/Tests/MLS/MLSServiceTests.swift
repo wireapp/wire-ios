@@ -471,7 +471,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
         let futureCommitDate = Date().addingTimeInterval(2)
 
@@ -647,7 +647,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_BeforeRemoveMembersFromConversation_IsSuccessful() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
         let futureCommitDate = Date().addingTimeInterval(2)
 
@@ -769,7 +769,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_CommitPendingProposals_NoProposalsExist() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
         uiMOC.performAndWait {
@@ -796,7 +796,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_CommitPendingProposals_OneOverdueCommit() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
         uiMOC.performAndWait {
@@ -970,7 +970,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_PerformPendingJoins_IsSuccessful() {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
         let domain = "example.domain.com"
         let publicGroupState = Data()
@@ -1042,7 +1042,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     private func test_PerformPendingJoinsRecovery(_ recovery: MLSActionExecutor.ExternalCommitErrorRecovery) {
         // Given
         let shouldRetry = recovery == .retry
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
         let domain = "example.domain.com"
         let groupInfo = Data()
@@ -1103,7 +1103,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.mlsGroupID = groupID
@@ -1141,7 +1141,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_WipeGroup_IsSuccessfull() {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
 
         var count = 0
         mockCoreCrypto.mockWipeConversation = { (id: ConversationId) in
@@ -1294,7 +1294,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_ProcessWelcomeMessage_Sucess() throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let message = Bytes.random().base64EncodedString
 
         // Mock
@@ -1320,8 +1320,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_UpdateKeyMaterial_WhenInitializing() throws {
         // Given
-        let group1 = MLSGroupID(.random())
-        let group2 = MLSGroupID(.random())
+        let group1 = MLSGroupID.random()
+        let group2 = MLSGroupID.random()
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
@@ -1397,7 +1397,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_SendPendingProposal_BeforeUpdatingKeyMaterial_WhenInitializing() throws {
         // Given
         let futureCommitDate = Date().addingTimeInterval(2)
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
         uiMOC.performAndWait {
@@ -1880,41 +1880,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(fetchGroupInfoInvocation.subgroupType, .conference)
 
         XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
-    }
-
-}
-
-extension MLSGroupID {
-
-    static func random() -> MLSGroupID {
-        return MLSGroupID(.random(length: 32))
-    }
-
-}
-
-extension QualifiedID {
-
-    static func random() -> QualifiedID {
-        return QualifiedID(
-            uuid: .create(),
-            domain: .randomDomain()
-        )
-    }
-
-}
-
-extension String {
-
-    static func randomDomain(hostLength: UInt = 5) -> String {
-        return "\(String.random(length: hostLength)).com"
-    }
-
-    static func random(length: UInt) -> String {
-        let randomChars = (0..<length).compactMap { _ in
-            "a...z".randomElement()
-        }
-
-        return String(randomChars)
     }
 
 }
