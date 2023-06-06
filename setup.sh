@@ -57,7 +57,7 @@ echo "ℹ️  Installing ImageMagick..."
 if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
     echo "Skipping ImageMagick install because not running on Cirrus-CI"
 else
-    which identify || install ImageMagick
+    which identify || brew install ImageMagick
 fi 
 echo ""
 
