@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:
-      wire-ios: ${{ steps.filter.outputs.wire-ios || steps.filter.outputs.carthage }}
+      wire-ios: ${{ steps.filter.outputs.wire-ios }}
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
@@ -66,8 +66,6 @@ jobs:
               - 'wire-ios-testing/**'
             wire-ios-system:
               - 'wire-ios-system/**'  
-            carthage:
-              - 'Cartfile.resolved'
             
   run-tests:
     needs: detect-changes
