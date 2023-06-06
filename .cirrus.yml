@@ -24,7 +24,7 @@ carthage_cache_template: &CARTHAGE_CACHE_TEMPLATE
       - carthage bootstrap --platform ios --use-xcframeworks
 
 run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
-  run_setup:
+  ci_script:
       - sh ./setup.sh
 
 task:
