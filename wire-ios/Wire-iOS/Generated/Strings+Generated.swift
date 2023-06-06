@@ -1609,6 +1609,12 @@ internal enum L10n {
         /// UNABLE TO PLAY TRACK
         internal static let unableToPlay = L10n.tr("Localizable", "content.player.unable_to_play", fallback: "UNABLE TO PLAY TRACK")
       }
+      internal enum Reactions {
+        /// Search for Emoji
+        internal static let search = L10n.tr("Localizable", "content.reactions.search", fallback: "Search for Emoji")
+        /// Select Reaction
+        internal static let title = L10n.tr("Localizable", "content.reactions.title", fallback: "Select Reaction")
+      }
       internal enum ReactionsList {
         /// Liked by
         internal static let likers = L10n.tr("Localizable", "content.reactions_list.likers", fallback: "Liked by")

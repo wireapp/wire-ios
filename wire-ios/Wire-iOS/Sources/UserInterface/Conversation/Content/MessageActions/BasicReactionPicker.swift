@@ -22,19 +22,22 @@ import WireCommonComponents
 
 protocol ReactionPickerDelegate: AnyObject {
     func didPickReaction(reaction: MessageReaction)
+    func didTapMoreEmojis()
 }
 
 class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
+    private let selectedReaction: String?
     weak var delegate: ReactionPickerDelegate?
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init() {
+    init(selectedReaction: String?) {
+        self.selectedReaction = selectedReaction
         super.init(frame: .zero)
         setupViews()
     }
@@ -53,34 +56,47 @@ private extension BasicReactionPicker {
         horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizontalStackView)
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8.0),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             horizontalStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8.0),
-            horizontalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8.0),
+            horizontalStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             horizontalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
-            horizontalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 16.0)
+            horizontalStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         addButtons()
     }
 
     func addButtons() {
+        var constraints = [NSLayoutConstraint]()
         ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
             let button = UIButton()
             button.titleLabel?.font = UIFont.systemFont(ofSize: 30)
             button.setTitle(emoji, for: .normal)
+            if emoji == selectedReaction {
+                button.layer.cornerRadius = 12.0
+                button.layer.masksToBounds = true
+                button.backgroundColor = SemanticColors.Button.reactionBackgroundSelected
+                button.layer.borderColor = SemanticColors.Button.reactionBorderSelected.cgColor
+                button.layer.borderWidth = 1.0
+            }
             button.addTarget(self, action: #selector(didTapEmoji(sender:)), for: .touchUpInside)
             horizontalStackView.addArrangedSubview(button)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            constraints.append(button.heightAnchor.constraint(equalTo: button.widthAnchor))
         }
 
         let button = UIButton()
         let image = Asset.Images.addEmojis.image
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         horizontalStackView.addArrangedSubview(button)
+        constraints.append(button.heightAnchor.constraint(equalTo: button.widthAnchor))
+        NSLayoutConstraint.activate(constraints)
     }
 
     @objc func didTapMoreEmojis() {
-
+        delegate?.didTapMoreEmojis()
     }
 
     @objc func didTapEmoji(sender: UIButton) {

@@ -1110,6 +1110,11 @@
 		D36E027829374EEA006C3E5A /* NSLayoutConstraint+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */; };
 		D36E027A293758DD006C3E5A /* CallHeaderBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E0279293758DD006C3E5A /* CallHeaderBar.swift */; };
 		D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
+		D39210A12A1C9C8700FA616A /* ReactionSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39210A02A1C9C8700FA616A /* ReactionSectionViewController.swift */; };
+		D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39210A22A1CC1C100FA616A /* ReactionCategoryButton.swift */; };
+		D39210A62A1D5D3700FA616A /* CompleteReactionPickerViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39210A42A1D5CEE00FA616A /* CompleteReactionPickerViewControllerTests.swift */; };
+		D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */; };
+		D398BB202A14ED0900B6EEB8 /* ReactionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */; };
 		D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */; };
 		D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DC6294CAFEF00DD272F /* AccessibilityActionView.swift */; };
 		D3BF754B29B093FD008459B5 /* WarningLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BF754A29B093FD008459B5 /* WarningLabelView.swift */; };
@@ -1215,6 +1220,8 @@
 		E9B8EB7D2A0CEBEC0056E417 /* ReactionCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7C2A0CEBEC0056E417 /* ReactionCollectionView.swift */; };
 		E9B8EB802A0CEE160056E417 /* ReactionToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggleButton.swift */; };
 		E9B8EB822A0D12E00056E417 /* ReactionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB812A0D12E00056E417 /* ReactionCollectionViewCell.swift */; };
+		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
+		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
 		E9D25C8727D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */; };
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
@@ -1835,6 +1842,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				EE67F6D0296F067F001D7C88 /* Countly.xcframework in Embed Frameworks */,
+				E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */,
 				EE33C48B296485F400C058D1 /* WireSyncEngine.framework in Embed Frameworks */,
 				EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */,
 				EE67F6D6296F06A3001D7C88 /* Down.xcframework in Embed Frameworks */,
@@ -3119,6 +3127,11 @@
 		D364822B299630CD009EEE4D /* UIDevice+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Orientation.swift"; sourceTree = "<group>"; };
 		D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Helper.swift"; sourceTree = "<group>"; };
 		D36E0279293758DD006C3E5A /* CallHeaderBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallHeaderBar.swift; sourceTree = "<group>"; };
+		D39210A02A1C9C8700FA616A /* ReactionSectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionSectionViewController.swift; sourceTree = "<group>"; };
+		D39210A22A1CC1C100FA616A /* ReactionCategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCategoryButton.swift; sourceTree = "<group>"; };
+		D39210A42A1D5CEE00FA616A /* CompleteReactionPickerViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReactionPickerViewControllerTests.swift; sourceTree = "<group>"; };
+		D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReactionPickerViewController.swift; sourceTree = "<group>"; };
+		D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsCollectionView.swift; sourceTree = "<group>"; };
 		D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstablishingCallStatusView.swift; sourceTree = "<group>"; };
 		D3A74DC6294CAFEF00DD272F /* AccessibilityActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityActionView.swift; sourceTree = "<group>"; };
 		D3BF754A29B093FD008459B5 /* WarningLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelView.swift; sourceTree = "<group>"; };
@@ -3222,6 +3235,7 @@
 		E9B8EB7C2A0CEBEC0056E417 /* ReactionCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCollectionView.swift; sourceTree = "<group>"; };
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggleButton.swift; sourceTree = "<group>"; };
 		E9B8EB812A0D12E00056E417 /* ReactionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCollectionViewCell.swift; sourceTree = "<group>"; };
+		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
@@ -3787,6 +3801,7 @@
 				EE82970D29719F6C00F12CAA /* PINCache.xcframework in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */,
+				E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */,
 				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
 				0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */,
@@ -4424,6 +4439,7 @@
 				1661C74221A83B25003DCE1C /* ConversationAudioMessageCellTests.swift */,
 				16030DAC21A846A200F8032E /* ConversationVideoMessageCellTests.swift */,
 				D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */,
+				D39210A42A1D5CEE00FA616A /* CompleteReactionPickerViewControllerTests.swift */,
 				5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */,
 				06A5CFB52632A4D4006D2891 /* ConversationMessageSenderSnapshotTests.swift */,
 			);
@@ -4985,6 +5001,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */,
 				EE9A8581298B068A00064A9C /* WireNotificationEngine.framework */,
 				EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */,
@@ -7068,6 +7085,7 @@
 		D311F87C29EE9F5000D9CF7E /* MessageActions */ = {
 			isa = PBXGroup;
 			children = (
+				D398BB1A2A14BB4D00B6EEB8 /* CompleteReactionPicker */,
 				D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */,
 				D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */,
 			);
@@ -7081,6 +7099,17 @@
 				D35EEDCA28C7E95F00949F02 /* CookieProvider.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		D398BB1A2A14BB4D00B6EEB8 /* CompleteReactionPicker */ = {
+			isa = PBXGroup;
+			children = (
+				D398BB1B2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift */,
+				D398BB1F2A14ED0900B6EEB8 /* ReactionsCollectionView.swift */,
+				D39210A02A1C9C8700FA616A /* ReactionSectionViewController.swift */,
+				D39210A22A1CC1C100FA616A /* ReactionCategoryButton.swift */,
+			);
+			path = CompleteReactionPicker;
 			sourceTree = "<group>";
 		};
 		D3C34E6328C0C710004A1AF1 /* SimpleNotificationServiceExtension */ = {
@@ -8165,9 +8194,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				168A16AF1D9597C2005CFA6C /* MainInterface.storyboard in Resources */,
 				017ABBBB299542BA0004C243 /* Images.xcassets in Resources */,
 				017ABBBA299541F50004C243 /* Colors.xcassets in Resources */,
+				168A16AF1D9597C2005CFA6C /* MainInterface.storyboard in Resources */,
 				EFFE707222F2DB38007CEA38 /* session_manager.json in Resources */,
 				BF2ADF461E27C3DB00E81B1E /* Localizable.strings in Resources */,
 			);
@@ -8494,6 +8523,7 @@
 				551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */,
 				876B94821D7D8C870063AE89 /* UIView+SlideInState.swift in Sources */,
 				5E35F736217F417200D3F4FE /* BurstTimestampTableViewCell.swift in Sources */,
+				D398BB202A14ED0900B6EEB8 /* ReactionsCollectionView.swift in Sources */,
 				E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */,
 				EE742AB8284DE66400A6B5F3 /* DeveloperToolsViewModel.swift in Sources */,
 				BFAF4CAD1CEB670F00780537 /* AudioRecordViewController.swift in Sources */,
@@ -8935,6 +8965,7 @@
 				BF4D99CD1E79AAD400A7B08F /* ParticipantsCellViewModel.swift in Sources */,
 				16A94AF8209B5334008A5718 /* CallGridViewController.swift in Sources */,
 				7C440E7A23472E9900D91B5F /* FolderCreationNameCell.swift in Sources */,
+				D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */,
 				16719A101D99647D00AA6B63 /* GiphySearchViewController.swift in Sources */,
 				EF2E2F6E223BAF410038D7D9 /* MediaBar.swift in Sources */,
 				EF7F8FC121B5761C00D7723C /* ConversationReadReceiptSettingChangedCellDescription.swift in Sources */,
@@ -9059,6 +9090,7 @@
 				BF808B571DE71F3000718076 /* UserNameTakeOverViewController.swift in Sources */,
 				D56A2D44207DFC9E00DB59F5 /* UIAlertController+Restore.swift in Sources */,
 				D51894792050490E00C095C1 /* ActionCell.swift in Sources */,
+				D39210A12A1C9C8700FA616A /* ReactionSectionViewController.swift in Sources */,
 				87DCF4941D34E9BA00BB420F /* ZMAddressBookContact+LocalInvitation.swift in Sources */,
 				EF7E96F0214BFBE100475C63 /* ContactsViewController+UITableViewDelegate.swift in Sources */,
 				87AAE4231E43234A00E1D13A /* MessagePresenter+ConversationImages.swift in Sources */,
@@ -9540,6 +9572,7 @@
 				BF0555BD1E6D785C00D3E9D4 /* CallCellViewModel.swift in Sources */,
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
+				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,
 				EF68E71B20BD5B5A003F3594 /* IPadPopoverConstants.swift in Sources */,
 				A9681D8123883877004FE917 /* IconToggleSubtitleCell.swift in Sources */,
@@ -9957,6 +9990,7 @@
 				16C02A12204EE5EC00811912 /* GroupConversationCellTests.swift in Sources */,
 				A9EDC143252225B2009DB9E1 /* AnalyticsCallingTrackerTests.swift in Sources */,
 				D35EEDC228C2004000949F02 /* Logger.swift in Sources */,
+				D39210A62A1D5D3700FA616A /* CompleteReactionPickerViewControllerTests.swift in Sources */,
 				EFDBA23F229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift in Sources */,
 				5E33F0D520ADA94B00414EA6 /* MockCallPermissions.swift in Sources */,
 				BFAF4CAF1CEB791B00780537 /* AudioRecordViewControllerTests.swift in Sources */,

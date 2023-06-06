@@ -49,7 +49,7 @@ void ZMAssertionDump(const char * const assertion, const char * const filename, 
     [[output dataUsingEncoding:NSUTF8StringEncoding] writeToURL:dumpFile atomically:YES];
 }
 
-NSURL* ZMLastAssertionFile() {
+NSURL* ZMLastAssertionFile(void) {
     
     NSURL* appSupportDir = [[NSFileManager defaultManager]
                             URLForDirectory:NSApplicationSupportDirectory
