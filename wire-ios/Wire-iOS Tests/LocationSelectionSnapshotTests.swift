@@ -26,8 +26,8 @@ final class LocationSelectionSnapshotTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        isRecording = true
         sut = LocationSelectionViewController()
+        sut.title = "Test case"
     }
 
     override func tearDown() {

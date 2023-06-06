@@ -92,7 +92,7 @@ final class LocationSelectionViewController: UIViewController {
 
         mapView.isRotateEnabled = false
         mapView.isPitchEnabled = false
-        toolBar.configure(title: title!, subtitle: nil, topAnchor: safeTopAnchor)
+        toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: safeTopAnchor)
         pointAnnotation.coordinate = mapView.centerCoordinate
 
         mapView.addSubview(annotationView)
