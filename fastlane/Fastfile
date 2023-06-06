@@ -112,16 +112,6 @@ platform :ios do
         build_number
     end
 
-    desc "Build & Upload Playground build"
-    lane :playground do |options|
-        options[:build_type] = "Playground"
-        options[:build_number] = generate_build_number
-        prepare_for_release(options)
-        build_for_release(options)
-        upload_app_center(options)
-        upload_s3(options)
-    end
-
     # "Fetch dependencies and prepare for building a release"
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
@@ -180,6 +170,198 @@ platform :ios do
         end
     end
 
+    # "Build for release to AppStore or App Center/S3"
+    def build_for_release(options)
+        xcode_version = options[:xcode_version]
+
+        if !xcode_version.nil? 
+            xcversion(version: xcode_version)
+        end
+
+        build = Build.new(options: options)
+        export_method = options[:export_method] || build.export_method
+
+        if build.for_simulator
+            Dir.chdir("..") do
+                # Build the app for simulator
+                sh "xcodebuild -scheme 'Wire-iOS' -configuration 'Debug' -sdk 'iphonesimulator' -derivedDataPath DerivedData -quiet build BUILD_NUMBER=#{build.build_number}"
+
+                # make a "fake" .ipa package that QA will use for installing to simulator
+                sh "mkdir -p debug/Payload"
+                sh "mkdir -p #{build.artifact_path(with_filename: false)}"
+                sh "cp -r DerivedData/Build/Products/Debug-iphonesimulator/*.app debug/Payload/"
+                sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
+            end
+        else
+            build_app(
+                scheme: "Wire-iOS",
+                configuration: build.configuration,
+                export_method: export_method,
+                export_options: {"iCloudContainerEnvironment": "Production"},
+                derived_data_path: "DerivedData",
+                archive_path: build.archive_path(with_filename: true),
+                buildlog_path: build.build_path,
+                output_directory: build.artifact_path(with_filename: false),
+                output_name: build.filename,
+                include_bitcode: false,
+                include_symbols: true,
+                xcargs: "BUILD_NUMBER=#{build.build_number}"
+            )
+        end
+    end
+
+    desc "Build & Upload Playground build"
+    lane :playground do |options|
+        options[:build_type] = "Playground"
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        build_for_release(options)
+        upload_app_center(options)
+        upload_s3(options)
+    end
+
+    # "Upload to AppStore"
+    def upload_app_store(options)
+        build = Build.new(options: options)
+        sh "cp ../wire-ios/Configuration/Appfile ."
+
+        deliver(
+            api_key_path: appstoreconnect_api_key_file_path,
+            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
+            submit_for_review: false,
+            automatic_release: false,
+            force: true, # Skip HTML report verification
+            skip_binary_upload: false,
+            run_precheck_before_submit: false,
+            precheck_include_in_app_purchases: false,
+            skip_app_version_update: true,
+            skip_metadata: true,
+            skip_screenshots: true
+        )
+    end
+
+       # "Upload to S3 (Automation builds)"
+       def upload_s3(options)
+        build = Build.new(options: options)
+        s3_subfolder = options[:s3_subfolder]
+
+        if s3_subfolder.nil? 
+            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/"
+            sh "echo upload to s3 default folder "
+        else 
+            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/#{s3_subfolder}/"
+            sh "echo upload to s3 subfolder: #{s3_subfolder}"
+        end
+
+
+
+        if build.appstore_build
+            sh "cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive"
+        end
+        
+        sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
+    end
+
+    # "Upload for internal use"
+    def upload_app_center (options)
+        build = Build.new(options: options)
+        changelog = ""
+
+        if build.playground_build
+            changelog = "Playground build for #{build.git_branch}"
+        elsif build.avs_build
+            changelog = "AVS #{build.avs_version}"
+        elsif build.last_commit.nil? || build.last_commit.empty? 
+            changelog = "No changelog available"
+        else
+            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
+                between: [build.last_commit, "HEAD"],
+                pretty: "* [%an] %s",
+            )
+        end
+
+        app_name = options[:app_name]
+        if app_name.nil? 
+            app_name = build.app_name
+        end
+
+        
+        sh "echo SHA of IPA is:"
+        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
+
+        appcenter_upload(
+          api_token: ENV["APPCENTER_API_TOKEN"],
+          owner_name: ENV["APPCENTER_OWNER_NAME"],
+          app_name: app_name,
+          file: "#{build.artifact_path(with_filename: true)}.ipa",
+          release_notes: changelog,
+          notify_testers: true,
+          mandatory_update: false,
+          dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
+        )
+    end
+
+    # "Upload to S3 (Automation builds)"
+    def upload_s3(options)
+        build = Build.new(options: options)
+        s3_subfolder = options[:s3_subfolder]
+
+        if s3_subfolder.nil? 
+            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/"
+            sh "echo upload to s3 default folder "
+        else 
+            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/#{s3_subfolder}/"
+            sh "echo upload to s3 subfolder: #{s3_subfolder}"
+        end
+
+
+
+        if build.appstore_build
+            sh "cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive"
+        end
+        
+        sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
+    end
+
+    # "Upload for internal use"
+    def upload_app_center (options)
+        build = Build.new(options: options)
+        changelog = ""
+
+        if build.playground_build
+            changelog = "Playground build for #{build.git_branch}"
+        elsif build.avs_build
+            changelog = "AVS #{build.avs_version}"
+        elsif build.last_commit.nil? || build.last_commit.empty? 
+            changelog = "No changelog available"
+        else
+            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
+                between: [build.last_commit, "HEAD"],
+                pretty: "* [%an] %s",
+            )
+        end
+
+        app_name = options[:app_name]
+        if app_name.nil? 
+            app_name = build.app_name
+        end
+
+        
+        sh "echo SHA of IPA is:"
+        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
+
+        appcenter_upload(
+            api_token: ENV["APPCENTER_API_TOKEN"],
+            owner_name: ENV["APPCENTER_OWNER_NAME"],
+            app_name: app_name,
+            file: "#{build.artifact_path(with_filename: true)}.ipa",
+            release_notes: changelog,
+            notify_testers: true,
+            mandatory_update: false,
+            dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
+        )
+    end
+    
     desc "Build for testing"
     lane :build do |options|
         xcode_version = options[:xcode_version]
@@ -238,46 +420,6 @@ platform :ios do
         )
     end
 
-    # "Build for release to AppStore or App Center/S3"
-    def build_for_release(options)
-        xcode_version = options[:xcode_version]
-
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-        end
-
-        build = Build.new(options: options)
-        export_method = options[:export_method] || build.export_method
-
-        if build.for_simulator
-            Dir.chdir("..") do
-                # Build the app for simulator
-                sh "xcodebuild -scheme 'Wire-iOS' -configuration 'Debug' -sdk 'iphonesimulator' -derivedDataPath DerivedData -quiet build BUILD_NUMBER=#{build.build_number}"
-
-                # make a "fake" .ipa package that QA will use for installing to simulator
-                sh "mkdir -p debug/Payload"
-                sh "mkdir -p #{build.artifact_path(with_filename: false)}"
-                sh "cp -r DerivedData/Build/Products/Debug-iphonesimulator/*.app debug/Payload/"
-                sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
-            end
-        else
-            build_app(
-                scheme: "Wire-iOS",
-                configuration: build.configuration,
-                export_method: export_method,
-                export_options: {"iCloudContainerEnvironment": "Production"},
-                derived_data_path: "DerivedData",
-                archive_path: build.archive_path(with_filename: true),
-                buildlog_path: build.build_path,
-                output_directory: build.artifact_path(with_filename: false),
-                output_name: build.filename,
-                include_bitcode: false,
-                include_symbols: true,
-                xcargs: "BUILD_NUMBER=#{build.build_number}"
-            )
-        end
-    end
-
     desc "Build for release to AppStore without symbols"
     lane :build_for_release_without_symbols do |options|
         xcode_version = options[:xcode_version]
@@ -302,26 +444,6 @@ platform :ios do
             include_bitcode: false,
             include_symbols: false,
             xcargs: "BUILD_NUMBER=#{build.build_number}"
-        )
-    end
-
-    # "Upload to AppStore"
-    def upload_app_store(options)
-        build = Build.new(options: options)
-        sh "cp ../wire-ios/Configuration/Appfile ."
-
-        deliver(
-            api_key_path: appstoreconnect_api_key_file_path,
-            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-            submit_for_review: false,
-            automatic_release: false,
-            force: true, # Skip HTML report verification
-            skip_binary_upload: false,
-            run_precheck_before_submit: false,
-            precheck_include_in_app_purchases: false,
-            skip_app_version_update: true,
-            skip_metadata: true,
-            skip_screenshots: true
         )
     end
 
@@ -369,67 +491,6 @@ platform :ios do
                 add_id_info_serves_ads: false,
                 add_id_info_uses_idfa: false
             }
-        )
-    end
-
-    # "Upload to S3 (Automation builds)"
-    def upload_s3(options)
-        build = Build.new(options: options)
-        s3_subfolder = options[:s3_subfolder]
-
-        if s3_subfolder.nil? 
-            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/"
-            sh "echo upload to s3 default folder "
-        else 
-            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/#{s3_subfolder}/"
-            sh "echo upload to s3 subfolder: #{s3_subfolder}"
-        end
-
-
-
-        if build.appstore_build
-            sh "cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive"
-        end
-        
-        sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
-    end
-
-    # "Upload for internal use"
-    def upload_app_center (options)
-        build = Build.new(options: options)
-        changelog = ""
-
-        if build.playground_build
-            changelog = "Playground build for #{build.git_branch}"
-        elsif build.avs_build
-            changelog = "AVS #{build.avs_version}"
-        elsif build.last_commit.nil? || build.last_commit.empty? 
-            changelog = "No changelog available"
-        else
-            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
-                between: [build.last_commit, "HEAD"],
-                pretty: "* [%an] %s",
-            )
-        end
-
-        app_name = options[:app_name]
-        if app_name.nil? 
-            app_name = build.app_name
-        end
-
-        
-        sh "echo SHA of IPA is:"
-        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
-
-        appcenter_upload(
-          api_token: ENV["APPCENTER_API_TOKEN"],
-          owner_name: ENV["APPCENTER_OWNER_NAME"],
-          app_name: app_name,
-          file: "#{build.artifact_path(with_filename: true)}.ipa",
-          release_notes: changelog,
-          notify_testers: true,
-          mandatory_update: false,
-          dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
         )
     end
 

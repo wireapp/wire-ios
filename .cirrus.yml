@@ -32,7 +32,7 @@ task:
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
   script:
-  - bundle exec fastlane playground
+    - bundle exec fastlane playground
 
 
 # task:
