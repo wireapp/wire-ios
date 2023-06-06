@@ -79,6 +79,29 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.methodGET)
     }
 
+    func testThatItLookupReturnsNoAPiVersionError() {
+        // given
+        setCurrentAPIVersion(nil)
+        let domain = "example com"
+
+        let expectation = self.expectation(description: "should get an error")
+        var gettingExpectedError = false
+        // when
+        sut.lookup(domain: domain) { result in
+            switch result {
+            case .failure(DomainLookupError.noApiVersion):
+                gettingExpectedError = true
+            default:
+                gettingExpectedError = false
+            }
+            expectation.fulfill()
+        }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
+        XCTAssertTrue(gettingExpectedError)
+    }
+    
     // MARK: Response handling
 
     func testThat404ResponseWithNoMatchingLabelIsError() {
