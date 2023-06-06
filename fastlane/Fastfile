@@ -33,11 +33,11 @@ platform :ios do
     end
 
     after_all do |lane|
-        # begin
-        #     delete_keychain if is_running_on_ci
-        # rescue
-        #     puts "No keychain found, skipping deletion..."
-        # end
+        begin
+            delete_keychain if is_running_on_ci
+        rescue
+            puts "No keychain found, skipping deletion..."
+        end
     end
 
     desc "Prepare for development"
@@ -107,8 +107,23 @@ platform :ios do
         )
     end
 
-    desc "Fetch dependencies and prepare for building a release"
-    lane :prepare_for_release do |options|
+    def generate_build_number
+        build_number = curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/ORUHILeMbXB4D5Z5conFzYoYpQPjVnyUA4pu56X2MHVJSFxM/increment"
+        build_number
+    end
+
+    desc "Build & Upload Playground build"
+    lane :playground do |options|
+        options[:build_type] = "Playground"
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        build_for_release(options)
+        upload_app_center(options)
+        upload_s3(options)
+    end
+
+    # "Fetch dependencies and prepare for building a release"
+    def prepare_for_release(options)
         xcode_version = options[:xcode_version]
         # Saving `Carthage bootstrap` running time by reusing the Cathage artifacts.
         # When the Cathage framworks is not pre-built(e.g. in feature branch), this option can save the time of building.
@@ -223,8 +238,8 @@ platform :ios do
         )
     end
 
-    desc "Build for release to AppStore or App Center/S3"
-    lane :build_for_release do |options|
+    # "Build for release to AppStore or App Center/S3"
+    def build_for_release(options)
         xcode_version = options[:xcode_version]
 
         if !xcode_version.nil? 
@@ -290,8 +305,8 @@ platform :ios do
         )
     end
 
-    desc "Upload to AppStore"
-    lane :upload_app_store do |options|
+    # "Upload to AppStore"
+    def upload_app_store(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
 
@@ -357,8 +372,8 @@ platform :ios do
         )
     end
 
-    desc "Upload to S3 (Automation builds)"
-    lane :upload_s3 do |options|
+    # "Upload to S3 (Automation builds)"
+    def upload_s3(options)
         build = Build.new(options: options)
         s3_subfolder = options[:s3_subfolder]
 
@@ -379,8 +394,8 @@ platform :ios do
         sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
     end
 
-    desc "Upload for internal use"
-    lane :upload_app_center do |options|
+    # "Upload for internal use"
+    def upload_app_center (options)
         build = Build.new(options: options)
         changelog = ""
 
