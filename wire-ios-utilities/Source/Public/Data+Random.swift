@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,23 @@
 
 import Foundation
 
+extension Data {
+
+    public static func random(byteCount: UInt = 8) -> Data {
+        return Data(Bytes.random(length: byteCount))
+    }
+
+}
+
+public typealias Bytes = [UInt8]
+
 extension Bytes {
 
-    public static func random(in range: ClosedRange<UInt8> = 1...10, length: Int = 3) -> Self {
+    public static func random(length: UInt = 8) -> Self {
         var bytes = Bytes()
 
         for _ in 1...length {
-            bytes.append(UInt8.random(in: range))
+            bytes.append(UInt8.random(in: (.min)...(.max)))
         }
 
         return bytes

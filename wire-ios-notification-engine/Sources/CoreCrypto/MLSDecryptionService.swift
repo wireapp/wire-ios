@@ -150,4 +150,12 @@ class MLSDecryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    func createOrJoinSubgroup(parentQualifiedID: QualifiedID, parentID: MLSGroupID) async {
+        fatalError("not implemented")
+    }
+
+    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+        fatalError("not implemented")
+    }
+
 }

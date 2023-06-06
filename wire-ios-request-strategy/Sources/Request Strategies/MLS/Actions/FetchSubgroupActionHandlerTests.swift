@@ -89,7 +89,7 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
             cipherSuite: 123,
             epoch: 1,
             epochTimestamp: Date(),
-            groupID: UUID().transportString(),
+            groupID: Data.secureRandomData(length: 8).base64String(),
             members: [.init(
                 userID: UUID(),
                 clientID: UUID().transportString(),
@@ -104,6 +104,39 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
 
         // Then
         XCTAssertEqual(mlsSubgroup, payload.mlsSubgroup)
+    }
+
+    func test_itHandlesSuccess_MalformedResponse() {
+        // Given
+        let payload = ResponsePayload(
+            cipherSuite: 123,
+            epoch: 1,
+            epochTimestamp: Date(),
+            groupID: "not base 64 encoded string",
+            members: [.init(
+                userID: UUID(),
+                clientID: UUID().transportString(),
+                domain: "domain.com"
+            )],
+            parentQualifiedID: .init(id: UUID(), domain: "domain.com"),
+            subconvID: UUID().transportString()
+        )
+
+        // When
+        test_itHandlesResponse(
+            status: 200,
+            payload: transportData(for: payload)
+        ) { result in
+            // Then
+            switch result {
+            case .failure(.malformedResponse):
+                return true
+
+            default:
+                XCTFail("expected malformed response, got: \(String(describing: result))")
+                return false
+            }
+        }
     }
 
     func test_itHandlesFailures() {

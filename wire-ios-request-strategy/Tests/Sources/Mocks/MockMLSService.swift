@@ -105,4 +105,15 @@ class MockMLSService: MLSServiceInterface {
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
+
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async {
+
+    }
+
+    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+        fatalError("not implemented")
+    }
 }

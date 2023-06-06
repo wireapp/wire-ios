@@ -18,8 +18,6 @@
 
 import Foundation
 
-public typealias Bytes = [UInt8]
-
 public extension Bytes {
 
     var data: Data {

@@ -265,19 +265,3 @@ private extension ProteusSessionID {
     }
 
 }
-
-private extension String {
-
-    static func randomDomain() -> Self {
-        return "\(Self.random(length: 6))@\(random(length: 6)).com"
-    }
-
-    static func random(length: UInt = 8) -> Self {
-        let aToZ = "abcdefghijklmnopqrstuvwxyz"
-
-        return (0..<length)
-            .map { _ in String(aToZ.randomElement()!) }
-            .joined()
-    }
-
-}

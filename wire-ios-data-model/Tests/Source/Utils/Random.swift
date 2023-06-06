@@ -17,30 +17,41 @@
 //
 
 import Foundation
+import WireUtilities
+@testable import WireDataModel
 
-public struct MLSSubgroup: Equatable {
+extension MLSGroupID {
 
-    public let cipherSuite: Int
-    public let epoch: Int
-    public let epochTimestamp: Date
-    public let groupID: MLSGroupID
-    public let members: [MLSClientID]
-    public let parentQualifiedID: QualifiedID
-
-    public init(
-        cipherSuite: Int,
-        epoch: Int,
-        epochTimestamp: Date,
-        groupID: MLSGroupID,
-        members: [MLSClientID],
-        parentQualifiedID: QualifiedID
-    ) {
-        self.cipherSuite = cipherSuite
-        self.epoch = epoch
-        self.epochTimestamp = epochTimestamp
-        self.groupID = groupID
-        self.members = members
-        self.parentQualifiedID = parentQualifiedID
+    static func random() -> MLSGroupID {
+        return MLSGroupID(Data.random(byteCount: 32))
     }
 
 }
+
+extension QualifiedID {
+
+    static func random() -> QualifiedID {
+        return QualifiedID(
+            uuid: .create(),
+            domain: .randomDomain()
+        )
+    }
+
+}
+
+extension String {
+
+    static func randomDomain(hostLength: UInt = 5) -> String {
+        return "\(String.random(length: hostLength)).com"
+    }
+
+    static func random(length: UInt) -> String {
+        let randomChars = (0..<length).compactMap { _ in
+            "a...z".randomElement()
+        }
+
+        return String(randomChars)
+    }
+
+}
+
