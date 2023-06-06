@@ -34,6 +34,7 @@ override func tearDown() {
         sut = nil
         super.tearDown()
     }
+    
     func testReactionPicker() {
         verify(matching: sut)
     }
