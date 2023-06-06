@@ -460,17 +460,28 @@ extension WireCallCenterV3 {
         return answered
     }
 
-    /**
-     * Starts a call in the given conversation.
-     * - parameter conversation: The conversation to start the call.
-     * - parameter video: Whether to start the call as a video call.
-     */
+    public enum Failure: Error {
 
-    public func startCall(in conversation: ZMConversation, isVideo: Bool) -> Bool {
+        case missingAVSIdentifier
+        case missingAVSConversationType
+        case missingConferencingPermission
+        case unknown
+
+    }
+
+    /// Starts a call in the given conversation.
+    ///
+    /// - Parameters:
+    ///   - conversation: The conversation to start the call.
+    ///   - isVideo: Whether to start the call as a video call.
+    ///
+    /// - Throws: WireCallCenterV3.Failure
+
+    public func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
         Self.logger.info("starting call")
 
         guard let conversationId = conversation.avsIdentifier else {
-            return false
+            throw Failure.missingAVSIdentifier
         }
 
         endAllCalls(exluding: conversationId)
@@ -479,7 +490,7 @@ extension WireCallCenterV3 {
         clearSnapshot(conversationId: conversationId)
 
         guard let conversationType = conversation.avsConversationType else {
-            return false
+            throw Failure.missingAVSConversationType
         }
 
         let callType = self.callType(
@@ -493,7 +504,7 @@ extension WireCallCenterV3 {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
             }
 
-            return false
+            throw Failure.missingConferencingPermission
         }
 
         let started = avsWrapper.startCall(
@@ -504,7 +515,7 @@ extension WireCallCenterV3 {
         )
 
         guard started else {
-            return false
+            throw Failure.unknown
         }
 
         let callState: CallState = .outgoing(degraded: isDegraded(conversationId: conversationId))
@@ -529,8 +540,6 @@ extension WireCallCenterV3 {
                 previousCallState: previousCallState
             ).post(in: context.notificationContext)
         }
-
-        return true
     }
 
     private var canStartConferenceCalls: Bool {
