@@ -241,7 +241,7 @@ extension VoiceChannelV3: CallActionsInternal {
         case .incoming:
             joined = callCenter?.answerCall(conversation: conversation, video: video) ?? false
         default:
-            joined = callCenter?.startCall(conversation: conversation, video: video) ?? false
+            joined = callCenter?.startCall(in: conversation, isVideo: video) ?? false
         }
 
         return joined

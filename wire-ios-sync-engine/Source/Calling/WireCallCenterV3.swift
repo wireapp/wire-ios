@@ -466,20 +466,29 @@ extension WireCallCenterV3 {
      * - parameter video: Whether to start the call as a video call.
      */
 
-    public func startCall(conversation: ZMConversation, video: Bool) -> Bool {
+    public func startCall(in conversation: ZMConversation, isVideo: Bool) -> Bool {
         Self.logger.info("starting call")
-        guard let conversationId = conversation.avsIdentifier else { return false }
+
+        guard let conversationId = conversation.avsIdentifier else {
+            return false
+        }
 
         endAllCalls(exluding: conversationId)
-        clearSnapshot(conversationId: conversationId) // make sure we don't have an old state for this conversation
+
+        // Make sure we don't have an old state for this conversation.
+        clearSnapshot(conversationId: conversationId)
 
         let conversationType: AVSConversationType = conversation.conversationType == .group ? .conference : .oneToOne
 
-        let callType = self.callType(for: conversation,
-                                     startedWithVideo: video,
-                                     isConferenceCall: conversationType == .conference)
+        let isConference = conversationType == .conference
 
-        if conversationType == .conference && !canStartConferenceCalls {
+        let callType = self.callType(
+            for: conversation,
+            startedWithVideo: isVideo,
+            isConferenceCall: isConference
+        )
+
+        if isConference && !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
             }
@@ -487,25 +496,38 @@ extension WireCallCenterV3 {
             return false
         }
 
-        let started = avsWrapper.startCall(conversationId: conversationId,
-                                           callType: callType,
-                                           conversationType: conversationType,
-                                           useCBR: useConstantBitRateAudio)
+        let started = avsWrapper.startCall(
+            conversationId: conversationId,
+            callType: callType,
+            conversationType: conversationType,
+            useCBR: useConstantBitRateAudio
+        )
 
-        guard started else { return false }
+        guard started else {
+            return false
+        }
 
         let callState: CallState = .outgoing(degraded: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
-        createSnapshot(callState: callState, members: [], callStarter: selfUserId, video: video, for: conversationId, isConferenceCall: conversationType == .conference)
+        createSnapshot(
+            callState: callState,
+            members: [],
+            callStarter: selfUserId,
+            video: isVideo,
+            for: conversationId,
+            isConferenceCall: isConference
+        )
 
         if let context = uiMOC {
-            WireCallCenterCallStateNotification(context: context,
-                                                callState: callState,
-                                                conversationId: conversationId,
-                                                callerId: selfUserId,
-                                                messageTime: nil,
-                                                previousCallState: previousCallState).post(in: context.notificationContext)
+            WireCallCenterCallStateNotification(
+                context: context,
+                callState: callState,
+                conversationId: conversationId,
+                callerId: selfUserId,
+                messageTime: nil,
+                previousCallState: previousCallState
+            ).post(in: context.notificationContext)
         }
 
         return true
