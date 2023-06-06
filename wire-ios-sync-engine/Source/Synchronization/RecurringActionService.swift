@@ -37,22 +37,22 @@ protocol RecurringActionServiceInterface {
 
 class RecurringActionService: RecurringActionServiceInterface {
 
-    var userDefaultsName = "com.wire.recurringAction."
-    
     private var actions = [RecurringAction]()
+
+    public var storage: UserDefaults = .standard
 
     public func performActionsIfNeeded() {
 
         actions.forEach { action in
 
-            guard let lastActionDate = lastActionDate(for: action.id) else {
-                persistLastActionDate(for: action.id)
+            guard let lastActionDate = lastCheckDate(for: action.id) else {
+                persistLastCheckDate(for: action.id)
                 return
             }
 
             if (lastActionDate + action.interval) <= Date() {
                 action.perform()
-                persistLastActionDate(for: action.id)
+                persistLastCheckDate(for: action.id)
             }
 
         }
@@ -64,33 +64,16 @@ class RecurringActionService: RecurringActionServiceInterface {
 
     // MARK: - Helpers
 
-    func lastActionDate(for actionID: String) -> Date? {
-        return userDefaults(for: actionID)?.lastRecurringActionDate
+    private func key(for actionID: String) -> String {
+        return "lastCheckDate_\(actionID)"
     }
 
-    func persistLastActionDate(for actionID: String) {
-        userDefaults(for: actionID)?.lastRecurringActionDate = Date()
+    func lastCheckDate(for actionID: String) -> Date? {
+        return storage.object(forKey: key(for: actionID)) as? Date
     }
 
-    private func userDefaults(for actionID: String) -> UserDefaults? {
-        return UserDefaults(suiteName: userDefaultsName + actionID)
-    }
-
-}
-
-private extension UserDefaults {
-
-    private var lastRecurringActionDateKey: String { "LastRecurringActionDateKey" }
-
-    var lastRecurringActionDate: Date? {
-
-        get {
-            return object(forKey: lastRecurringActionDateKey) as? Date
-        }
-
-        set {
-            set(newValue, forKey: lastRecurringActionDateKey)
-        }
+    func persistLastCheckDate(for actionID: String) {
+        storage.set(Date(), forKey: key(for: actionID))
     }
 
 }

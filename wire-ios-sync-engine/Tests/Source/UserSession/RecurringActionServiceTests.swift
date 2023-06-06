@@ -25,25 +25,25 @@ class RecurringActionServiceTests: ZMTBaseTest {
     var sut: RecurringActionService!
     let actionID = "11"
     var actionPerformed = false
-    let mockUserDefaultsName = "mock"
 
     override func setUp() {
         super.setUp()
 
         sut = RecurringActionService()
-        sut.userDefaultsName = mockUserDefaultsName
+        sut.storage = UserDefaults(suiteName: "RecurringActionServiceTests")!
     }
 
     override func tearDown() {
-        sut = nil
         actionPerformed = false
+        sut.storage.removePersistentDomain(forName: actionID)
+        sut = nil
 
         super.tearDown()
     }
 
     func testThatItPerformsAction() {
         // given
-        sut.persistLastActionDate(for:actionID)
+        sut.persistLastCheckDate(for:actionID)
         let action = RecurringAction(id: actionID, interval: 1, perform: { self.actionPerformed = true })
         sut.registerAction(action)
 
@@ -53,16 +53,13 @@ class RecurringActionServiceTests: ZMTBaseTest {
 
         // then
         XCTAssertTrue(actionPerformed)
-
-        // tearDown
-        UserDefaults.standard.removePersistentDomain(forName: mockUserDefaultsName + actionID)
     }
 
     func testThatItDoesNotPerformAction_TimeHasNotExpired() {
         // given
         let action = RecurringAction(id: actionID, interval: 4, perform: { self.actionPerformed = true })
         sut.registerAction(action)
-        sut.persistLastActionDate(for: actionID)
+        sut.persistLastCheckDate(for: actionID)
 
         // when
         Thread.sleep(forTimeInterval: 2)
@@ -70,9 +67,6 @@ class RecurringActionServiceTests: ZMTBaseTest {
 
         // then
         XCTAssertFalse(actionPerformed)
-
-        // tearDown
-        UserDefaults.standard.removePersistentDomain(forName: mockUserDefaultsName + actionID)
     }
 
 }

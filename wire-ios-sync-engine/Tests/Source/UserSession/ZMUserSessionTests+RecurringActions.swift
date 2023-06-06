@@ -51,11 +51,10 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     func testThatItAddsActions() {
         // given
         let action = RecurringAction(id: "11", interval: 5, perform: {})
-        sut.recurringActionService = mockRecurringActionService
 
         // when
         XCTAssertEqual(mockRecurringActionService.actions.count, 0)
-        sut.recurringActionService.registerAction(action)
+        mockRecurringActionService.registerAction(action)
 
         // then
         XCTAssertEqual(mockRecurringActionService.actions.count, 1)
@@ -69,7 +68,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         let recurringActionService = RecurringActionService()
         sut.recurringActionService = recurringActionService
 
-        recurringActionService.persistLastActionDate(for: "refreshUserMetadata")
+        recurringActionService.persistLastCheckDate(for: "refreshUserMetadata")
         recurringActionService.registerAction(sut.refreshUsersMissingMetadata(interval: 1))
 
         // when
@@ -89,7 +88,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         let recurringActionService = RecurringActionService()
         sut.recurringActionService = recurringActionService
 
-        recurringActionService.persistLastActionDate(for: "refreshConversationMetadata")
+        recurringActionService.persistLastCheckDate(for: "refreshConversationMetadata")
         recurringActionService.registerAction(sut.refreshConversationsMissingMetadata(interval: 1))
 
         // when
