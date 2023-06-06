@@ -46,7 +46,9 @@ XCODE_VERSION=( ${version//./ } )
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️  Carthage bootstrap. This might take a while..."
-carthage bootstrap --cache-builds --platform ios --use-xcframeworks
+if [[ -n "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
+    carthage bootstrap --cache-builds --platform ios --use-xcframeworks
+fi 
 echo ""
 
 echo "ℹ️  Installing bundler and Ruby dependencies..."
