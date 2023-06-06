@@ -14,17 +14,19 @@ environment:
   AWS_ACCESS_KEY_ID: ENCRYPTED[!1f3053db6008e7154576c32190f1abf91cd33349127a7257c766176090c600ee064d27d55798ab116f1a71e3e9472c94!]
   AWS_SECRET_ACCESS_KEY: ENCRYPTED[!c219935c884288954c8c75de9f41dec0cfe6e6e5fceb543d832598ef0a9fe3dd97ea08b81e60ad9af3e68b6e20a9b44d!]
 
-task:
-  carthage_cache:
+carthage_cache_template: &CARTHAGE_CACHE_TEMPLATE
+  install_carthage:
+    - which carthage || brew install carthage
+  restore_carthage_cache:
     folder: Carthage/Build
     fingerprint_script: cat Cartfile.resolved
     populate_script: 
       - carthage bootstrap --cache-builds --platform ios --use-xcframeworks
+
+task:
+  name: Build & Upload Playground Build
+  << : *CARTHAGE_CACHE_TEMPLATE
   script:
-  - brew install carthage
-  - brew install ImageMagick
-  - curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-  - sudo installer -pkg AWSCLIV2.pkg -target /
   - sh ./setup.sh
   - ls -la Carthage/Build/
   - ls -la Carthage/Build/iOS
