@@ -68,7 +68,7 @@ class RecurringActionService: RecurringActionServiceInterface {
         return "lastCheckDate_\(actionID)"
     }
 
-    func lastCheckDate(for actionID: String) -> Date? {
+    private func lastCheckDate(for actionID: String) -> Date? {
         return storage.object(forKey: key(for: actionID)) as? Date
     }
 
