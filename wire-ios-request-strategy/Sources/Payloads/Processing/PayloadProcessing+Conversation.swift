@@ -201,10 +201,11 @@ extension Payload.Conversation {
         }
     }
 
-    func updateUsersInSystemMessage(with failedUsers: [QualifiedID],
-                                    conversation: ZMConversation,
-                                    type: ZMSystemMessageType,
-                                    context: NSManagedObjectContext) {
+    func updateSystemMessage(
+        havingType systemMessageType: ZMSystemMessageType,
+        withFailedUsers failedUsers: [ZMUser],
+        in conversation: ZMConversation
+    ) {
         guard let systemMessage = conversation.firstSystemMessage(for: type, in: context) else {
             return
         }
