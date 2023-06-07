@@ -64,7 +64,8 @@ final class SwitchBackendViewModel: ObservableObject {
             Item(title: "Staging", value: .staging),
             Item(title: "Anta", value: .anta),
             Item(title: "Bella", value: .bella),
-            Item(title: "Chala", value: .chala)
+            Item(title: "Chala", value: .chala),
+            Item(title: "Foma", value: .foma)
         ]
 
         let selectedType = BackendEnvironment.shared.environmentType.value
