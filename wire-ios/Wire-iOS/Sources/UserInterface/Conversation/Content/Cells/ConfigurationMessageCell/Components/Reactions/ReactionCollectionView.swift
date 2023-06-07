@@ -19,7 +19,11 @@
 import Foundation
 import UIKit
 
+// MARK: - ReactionCollectionView
+
 final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+
+    // MARK: - Properties
 
     lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 40)
     let flowLayout = UICollectionViewFlowLayout()
@@ -37,6 +41,8 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     var contentHeight: CGFloat {
         return collectionView.contentSize.height
     }
+
+    // MARK: - Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,6 +75,8 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
             self.collectionViewHeightConstraint.isActive = true
         })
     }
+
+    // MARK: - UICollectionView Delegates
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return reactions.count
