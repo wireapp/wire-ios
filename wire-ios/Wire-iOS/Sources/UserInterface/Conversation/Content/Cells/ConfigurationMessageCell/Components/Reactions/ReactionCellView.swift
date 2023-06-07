@@ -29,13 +29,6 @@ public struct Reaction {
 
 }
 
-enum ReactionType: String {
-    case like = "❤️"
-    case laugh = "🤣"
-    case anger = "😡"
-
-}
-
 final class ReactionsCellView: UIView, ConversationMessageCell {
 
     typealias Configuration = Void
