@@ -57,7 +57,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         collectionView.register(ReactionCollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = SemanticColors.View.backgroundConversationView
+        collectionView.backgroundColor = .clear
         self.addSubview(collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
