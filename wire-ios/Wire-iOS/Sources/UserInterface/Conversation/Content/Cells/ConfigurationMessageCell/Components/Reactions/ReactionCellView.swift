@@ -20,16 +20,22 @@ import Foundation
 import UIKit
 import WireDataModel
 
+// MARK: - Reaction
+
 public struct Reaction {
 
     let type: MessageReaction
     let count: Int
     let isSelfUserReacting: Bool
     let performReaction: () -> Void
-
+    
 }
 
+// MARK: - ReactionsCellView
+
 final class ReactionsCellView: UIView, ConversationMessageCell {
+
+    // MARK: - Properties
 
     typealias Configuration = Void
 
@@ -38,10 +44,41 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     var arrayReactions: [Reaction] = []
 
     var isSelected: Bool  = false
-
+    
     var message: WireDataModel.ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
+
+    // MARK: - Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureSubviews()
+        configureConstraints()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
+    // MARK: - configure Views and constraints
+
+    private func configureSubviews() {
+        addSubview(reactionView)
+    }
+
+    private func configureConstraints() {
+        reactionView.translatesAutoresizingMaskIntoConstraints = false
+        self.translatesAutoresizingMaskIntoConstraints = false
+
+        reactionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        reactionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40).isActive = true
+        reactionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        reactionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+    }
+
+    // MARK: - configure method
 
     func configure(
         with object: Configuration,
@@ -75,31 +112,6 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
             )
         }
 
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    private func configureSubviews() {
-        addSubview(reactionView)
-    }
-
-    private func configureConstraints() {
-        reactionView.translatesAutoresizingMaskIntoConstraints = false
-        self.translatesAutoresizingMaskIntoConstraints = false
-
-        reactionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        reactionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40).isActive = true
-        reactionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        reactionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
 
 }
