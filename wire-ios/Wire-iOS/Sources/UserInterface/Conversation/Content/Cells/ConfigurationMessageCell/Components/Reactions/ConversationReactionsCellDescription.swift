@@ -20,7 +20,11 @@ import Foundation
 import UIKit
 import WireDataModel
 
+// MARK: - ReactionMessageCellDescription
+
 final class ReactionMessageCellDescription: ConversationMessageCellDescription {
+
+    // MARK: - Properties
 
     typealias View = ReactionsCellView
     typealias Configuration = Void
