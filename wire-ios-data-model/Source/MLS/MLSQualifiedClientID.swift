@@ -18,28 +18,46 @@
 
 import Foundation
 
-/// MLS qualified client identifier for initialising Corecrypto
+/// A qualified id for MLS clients.
+
 public struct MLSQualifiedClientID {
 
     // MARK: - Properties
 
-    private let user: ZMUser
+    public let rawValue: String
 
-    public var qualifiedClientId: String? {
+    // MARK: - Life cycle
+
+    init?(user: ZMUser) {
         guard
-            let clientId = user.selfClient()?.remoteIdentifier,
-            let userId = user.remoteIdentifier,
+            let userID = user.remoteIdentifier,
+            let clientID = user.selfClient()?.remoteIdentifier,
             let domain = user.domain?.selfOrNilIfEmpty ?? BackendInfo.domain
         else {
             return nil
         }
 
-        return "\(userId.transportString()):\(clientId)@\(domain)".lowercased()
+        self.init(
+            userID: userID.transportString(),
+            clientID: clientID,
+            domain: domain
+        )
     }
 
-    // MARK: - Methods
+    init?(
+        userID: String,
+        clientID: String,
+        domain: String
+    ) {
+        guard
+            userID.isNonEmpty,
+            clientID.isNonEmpty,
+            domain.isNonEmpty
+        else {
+            return nil
+        }
 
-    public init(user: ZMUser) {
-        self.user = user
+        rawValue = "\(userID):\(clientID)@\(domain)".lowercased()
     }
+
 }
