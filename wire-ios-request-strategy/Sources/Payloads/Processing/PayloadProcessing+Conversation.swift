@@ -176,12 +176,12 @@ extension Payload.Conversation {
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
-        if let failedToAddUsers = failedToAddUsers, !failedToAddUsers.isEmpty {
-            /// We need to remove failed users from the initial system message
-            let failedUsers = failedToAddUsers.compactMap {
+        if let failedQualifiedIDs = failedToAddUsers, !failedQualifiedIDs.isEmpty {
+            let failedUsers = failedQualifiedIDs.compactMap {
                 ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
             }
 
+            /// We need to remove failed users from the initial system message
             updateSystemMessage(havingType: .newConversation,
                                 withFailedUsers: failedUsers,
                                 in: conversation)
@@ -206,13 +206,9 @@ extension Payload.Conversation {
         withFailedUsers failedUsers: [ZMUser],
         in conversation: ZMConversation
     ) {
-        guard let systemMessage = conversation.systemMessage(for: systemMessageType) else {
-            return
-        }
+        guard let systemMessage = conversation.systemMessage(for: systemMessageType) else { return }
 
-        failedUsers.forEach { user in
-            systemMessage.users.remove(user)
-        }
+        failedUsers.forEach { systemMessage.users.remove($0) }
     }
 
     func updateMetadata(for conversation: ZMConversation, context: NSManagedObjectContext) {
