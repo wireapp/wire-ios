@@ -25,7 +25,6 @@ final class ReactionMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ReactionsCellView
     typealias Configuration = Void
 
-
     init(message: ZMConversationMessage) {
         self.message = message
     }
@@ -48,7 +47,7 @@ final class ReactionMessageCellDescription: ConversationMessageCellDescription {
 
     weak var actionController: ConversationMessageActionController?
 
-    var accessibilityIdentifier: String? = "color cell"
+    var accessibilityIdentifier: String? = "reaction message cell"
 
-    var accessibilityLabel: String? = "color cell"
+    var accessibilityLabel: String? = "reaction message cell"
 }
