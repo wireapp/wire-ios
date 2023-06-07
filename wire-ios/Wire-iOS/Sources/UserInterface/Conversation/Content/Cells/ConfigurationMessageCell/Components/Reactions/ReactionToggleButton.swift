@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 
+// MARK: - ReactionToggleButton
+
 class ReactionToggleButton: UIControl {
 
     // MARK: - Properties
@@ -26,9 +28,9 @@ class ReactionToggleButton: UIControl {
     typealias ButtonColors = SemanticColors.Button
 
     private let emojiLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                      color: SemanticColors.Label.textDefault)
+                                              color: SemanticColors.Label.textDefault)
     private let counterLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
-                                        color: SemanticColors.Label.textDefault)
+                                                color: SemanticColors.Label.textDefault)
 
     private var onToggle: (() -> Void)?
 
@@ -38,6 +40,8 @@ class ReactionToggleButton: UIControl {
             updateAppearance()
         }
     }
+
+    // MARK: - Lifecycle
 
     init(isToggled: Bool = false) {
         self.isToggled = isToggled
@@ -63,11 +67,11 @@ class ReactionToggleButton: UIControl {
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-        stackView.topAnchor.constraint(equalTo: topAnchor),
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    ])
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
 
         updateAppearance()
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
@@ -76,6 +80,8 @@ class ReactionToggleButton: UIControl {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Methods
 
     public func configureData(
         type: String,
@@ -102,6 +108,8 @@ class ReactionToggleButton: UIControl {
         ? SemanticColors.Label.textReactionCounterSelected :
         SemanticColors.Label.textDefault
     }
+
+    // MARK: - Actions
 
     @objc
     private func didToggle() {
