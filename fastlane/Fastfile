@@ -215,14 +215,55 @@ platform :ios do
         options[:build_type] = "Playground"
         options[:build_number] = generate_build_number
         prepare_for_release(options)
+        security_plans(options)
         build_for_release(options)
         upload_app_center(options)
         upload_s3(options)
     end
 
-    desc "Build & Upload AppStore build"
+    desc "Build & Upload Public AppStore build"
     lane :appstore_public do |options|
         options[:build_type] = "AppStore"
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 1 Restricted AppStore build"
+    lane :appstore_col_1_restricted do |options|
+        options[:build_type] = "RC"
+        options[:override_folder] = "BK-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/column1"
+        options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 3 Restricted AppStore build"
+    lane :appstore_col_3_restricted do |options|
+        options[:build_type] = "RC"
+        options[:override_folder] = "COLUMN3-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/column3"
+        options[:app_center_app_name] = "Wire-by-Bund-Column3"
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 1 Production AppStore build"
+    lane :appstore_col_1_prod do |options|
+        options[:build_type] = "AppStore"
+        options[:override_folder] = "BK-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/c1-appstore"
+        options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 3 Production AppStore build"
+    lane :appstore_col_3_prod do |options|
+        options[:build_type] = "AppStore"
+        options[:override_folder] = "COLUMN3-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/c3-appstore"
+        options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
+        build_and_upload_app_store(options)
+    end
+
+    def build_and_upload_app_store(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         build_for_release(options)
@@ -230,6 +271,45 @@ platform :ios do
         upload_s3(options)
         upload_dsyms_to_app_center_for_appstore_build(options)
         upload_dsyms_to_datadog(options)
+    end
+
+    # "Run security plans"
+    def security_plans(options)
+        build = Build.new(options: options)
+
+        xcode_version = options[:xcode_version]
+
+        ios_version = "16.2"
+        if !xcode_version.nil? 
+            xcversion(version: xcode_version)
+
+			if xcode_version == "14.2"
+                ios_version = "16.2"
+            elsif xcode_version == "13.2.1"
+                ios_version = "15.2"
+            elsif xcode_version == "13.1"
+                 ios_version = "15.0"
+            elsif xcode_version == "12.4"
+                ios_version = "14.4"
+            end
+        end
+
+        for scheme in ["Wire-iOS", "WireDataModel", "WireSyncEngine"] do
+            run_tests(
+                testplan: "SecurityTests",
+                scheme: scheme,
+                skip_detect_devices: true,
+                configuration: "Debug",
+                # test_without_building: true,
+                sdk:"iphonesimulator",
+                destination: "platform=iOS Simulator,name=iPhone 14,OS=#{ios_version}",
+                # code_coverage: true,
+                derived_data_path: "DerivedData",
+                buildlog_path: build.build_path,
+                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+                output_types: "junit"
+            )    
+        end
     end
 
     # "Upload to AppStore"
@@ -252,28 +332,6 @@ platform :ios do
         )
     end
 
-       # "Upload to S3 (Automation builds)"
-       def upload_s3(options)
-        build = Build.new(options: options)
-        s3_subfolder = options[:s3_subfolder]
-
-        if s3_subfolder.nil? 
-            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/"
-            sh "echo upload to s3 default folder "
-        else 
-            s3_path = "s3://#{ENV['S3_BUCKET']}/ios/#{s3_subfolder}/"
-            sh "echo upload to s3 subfolder: #{s3_subfolder}"
-        end
-
-
-
-        if build.appstore_build
-            sh "cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive"
-        end
-        
-        sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
-    end
-
     # "Upload for internal use"
     def upload_app_center (options)
         build = Build.new(options: options)
@@ -292,9 +350,9 @@ platform :ios do
             )
         end
 
-        app_name = options[:app_name]
+        app_name = options[:app_center_app_name]
         if app_name.nil? 
-            app_name = build.app_name
+            app_name = build.app_center_app_name
         end
 
         
@@ -353,9 +411,9 @@ platform :ios do
             )
         end
 
-        app_name = options[:app_name]
+        app_name = options[:app_center_app_name]
         if app_name.nil? 
-            app_name = build.app_name
+            app_name = build.app_center_app_name
         end
 
         
@@ -385,7 +443,7 @@ platform :ios do
         appcenter_upload(
           api_token: ENV["APPCENTER_API_TOKEN"],
           owner_name: ENV["APPCENTER_OWNER_NAME"],
-          app_name: build.app_name,
+          app_name: build.app_center_app_name,
           dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip",
           upload_dsym_only: true,
           notify_testers: true
@@ -464,6 +522,8 @@ platform :ios do
         )
     end
 
+    
+
     desc "Build for release to AppStore without symbols"
     lane :build_for_release_without_symbols do |options|
         xcode_version = options[:xcode_version]
@@ -537,46 +597,6 @@ platform :ios do
             }
         )
     end
-
-    desc "Run security plans"
-    lane :security_plans do |options|
-        build = Build.new(options: options)
-
-        xcode_version = options[:xcode_version]
-
-        ios_version = "16.2"
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-
-			if xcode_version == "14.2"
-                ios_version = "16.2"
-            elsif xcode_version == "13.2.1"
-                ios_version = "15.2"
-            elsif xcode_version == "13.1"
-                 ios_version = "15.0"
-            elsif xcode_version == "12.4"
-                ios_version = "14.4"
-            end
-        end
-
-        for scheme in ["Wire-iOS", "WireDataModel", "WireSyncEngine"] do
-            run_tests(
-                testplan: "SecurityTests",
-                scheme: scheme,
-                skip_detect_devices: true,
-                configuration: "Debug",
-                # test_without_building: true,
-                sdk:"iphonesimulator",
-                destination: "platform=iOS Simulator,name=iPhone 14,OS=#{ios_version}",
-                # code_coverage: true,
-                derived_data_path: "DerivedData",
-                buildlog_path: build.build_path,
-                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-                output_types: "junit"
-            )    
-        end
-    end
-
 
     desc "Run post-test tasks"
     lane :post_test do
@@ -814,7 +834,7 @@ class Build
         end
     end
 
-    def app_name
+    def app_center_app_name
         if playground_build
             "Wire-iOS-Playground"
         elsif avs_build
