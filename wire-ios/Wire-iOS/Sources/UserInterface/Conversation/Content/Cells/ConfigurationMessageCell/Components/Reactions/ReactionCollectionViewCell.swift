@@ -18,9 +18,15 @@
 
 import UIKit
 
+// MARK: - ReactionCollectionViewCell
+
 class ReactionCollectionViewCell: UICollectionViewCell {
 
+    // MARK: - Properties
+
     private var reactionToggleButton = ReactionToggleButton()
+
+    // MARK: - Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,6 +37,8 @@ class ReactionCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Methods
 
     public func configureData(
         type: String,
