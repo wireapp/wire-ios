@@ -18,27 +18,9 @@
 
 public extension ZMConversation {
 
-    @objc static private var emptyGroupConversationName: String {
-        return NSLocalizedString("conversation.displayname.emptygroup", comment: "")
-    }
-
-    /// This is equal to the meaningful display name, if it exists, otherwise a
-    /// fallback placeholder name is used.
-    ///
+    /// A meaningful display name is one that can be constructed from the conversation data
     @objc
-    var displayName: String {
-        let result = meaningfulDisplayName
-        switch conversationType {
-        case .oneOnOne, .connection: return result ?? ""
-        case .group: return result ?? ZMConversation.emptyGroupConversationName
-        case .self, .invalid: return result ?? ""
-        }
-    }
-
-    /// A meaningful display name is one that can be constructed from the conversation
-    /// data, rather than relying on a fallback placeholder name, such as "…" or "Empty conversation".
-    ///
-    @objc var meaningfulDisplayName: String? {
+    var displayName: String? {
         switch conversationType {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()
