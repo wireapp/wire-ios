@@ -29,7 +29,7 @@ run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
       - sh ./setup.sh
 
 task:
-  name: Build & Upload Playground Build
+  name: Playground
   trigger_type: manual
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
@@ -37,9 +37,41 @@ task:
     - bundle exec fastlane playground
 
 task:
-  name: Build & Upload AppStore Build
+  name: AppStore Public Production
   trigger_type: manual
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
   script:
     - bundle exec fastlane appstore_public
+
+task:
+  name: AppStore C1 Restricted
+  trigger_type: manual
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane appstore_col_1_restricted
+
+task:
+  name: AppStore C3 Restricted
+  trigger_type: manual
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane appstore_col_3_restricted
+
+task:
+  name: AppStore C1 Production
+  trigger_type: manual
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane appstore_col_1_prod
+
+task:
+  name: AppStore C3 Production
+  trigger_type: manual
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane appstore_col_3_prod
