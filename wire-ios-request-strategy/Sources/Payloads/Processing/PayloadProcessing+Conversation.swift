@@ -178,15 +178,15 @@ extension Payload.Conversation {
         updateConversationStatus(for: conversation)
         if let failedToAddUsers = failedToAddUsers, !failedToAddUsers.isEmpty {
             /// We need to remove failed users from the initial system message
-            updateUsersInSystemMessage(with: failedToAddUsers,
-                                       conversation: conversation,
-                                       type: .newConversation,
-                                       context: context)
-
-            let users = failedToAddUsers.compactMap { 
+            let failedUsers = failedToAddUsers.compactMap {
                 ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
             }
-            conversation.appendFailedToAddUsersSystemMessage(users: Set(users), sender: conversation.creator, at: serverTimestamp)
+
+            updateSystemMessage(havingType: .newConversation,
+                                withFailedUsers: failedUsers,
+                                in: conversation)
+
+            conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
         }
 
         if created {
@@ -206,13 +206,12 @@ extension Payload.Conversation {
         withFailedUsers failedUsers: [ZMUser],
         in conversation: ZMConversation
     ) {
-        guard let systemMessage = conversation.firstSystemMessage(for: type, in: context) else {
+        guard let systemMessage = conversation.systemMessage(for: systemMessageType) else {
             return
         }
-        for qualifiedID in failedUsers {
-            if let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context) {
-                systemMessage.users.remove(user)
-            }
+
+        failedUsers.forEach { user in
+            systemMessage.users.remove(user)
         }
     }
 
@@ -531,14 +530,12 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
 
 private extension ZMConversation {
 
-    func firstSystemMessage(for systemMessageType: ZMSystemMessageType, in context: NSManagedObjectContext) -> ZMSystemMessage? {
-        let fetchRequest = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %d",
-                                             ZMMessageConversationKey, self,
-                                             ZMMessageSystemMessageTypeKey, systemMessageType.rawValue)
-        let messages = context.fetchOrAssert(request: fetchRequest) as [ZMSystemMessage]
+    func systemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
 
-        return messages.first
+        return allMessages
+            .compactMap { $0 as? ZMSystemMessage }
+            .first(where: { $0.systemMessageType == systemMessageType })
+
     }
 
 }

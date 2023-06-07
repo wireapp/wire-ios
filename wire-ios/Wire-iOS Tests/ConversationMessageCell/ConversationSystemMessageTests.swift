@@ -37,8 +37,8 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
-    func testFailedToAddParticipants() {
-        let message = MockMessageFactory.systemMessage(with: .failedToAddParticipants, users: 1)!
+    func testFailedToAddParticipants() throws {
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .failedToAddParticipants, users: 1))
 
         verify(message: message)
     }

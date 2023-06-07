@@ -109,9 +109,14 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_AddSystemMessageWhenFailedToAddUsers() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
+            var failedQualifiedIDs: [QualifiedID] = []
+            if let qualifiedIDs = self.otherUser.qualifiedID {
+                failedQualifiedIDs = [qualifiedIDs]
+            }
+
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
-                                                           failedToAddUsers: [self.otherUser.qualifiedID!],
+                                                           failedToAddUsers: failedQualifiedIDs,
                                                            type: BackendConversationType.group.rawValue)
 
             // when
