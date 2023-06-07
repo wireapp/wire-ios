@@ -179,6 +179,11 @@ extension ZMConversation {
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
          return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
+
+    public static func predicateForConversationsArePendingToRefreshMetadata() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
+    }
+
 }
 
 extension String {
