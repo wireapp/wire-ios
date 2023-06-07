@@ -183,8 +183,9 @@ extension Payload.Conversation {
                                        type: .newConversation,
                                        context: context)
 
-            let users = failedToAddUsers.map({ ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context) })
-                                        .compactMap({ $0 })
+            let users = failedToAddUsers.compactMap { 
+                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
+            }
             conversation.appendFailedToAddUsersSystemMessage(users: Set(users), sender: conversation.creator, at: serverTimestamp)
         }
 
