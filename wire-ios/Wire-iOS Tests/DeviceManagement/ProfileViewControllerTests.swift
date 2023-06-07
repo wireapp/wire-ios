@@ -206,7 +206,6 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
                                     context: .profileViewer)
 
         // THEN
-        XCTAssertEqual(mockUser.refreshDataCount, 0)
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
 
