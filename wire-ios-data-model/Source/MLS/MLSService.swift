@@ -59,7 +59,10 @@ public protocol MLSServiceInterface {
         parentID: MLSGroupID
     ) async
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo
 
 }
 
@@ -223,31 +226,54 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Conference info for subconversations
 
-    /// Generate conference information for a given conference subconversation
-    /// - Parameter groupID: The group ID of the conference subconversation
-    /// - Returns: A `MLSConferenceInfo` object containing the subconversation epoch and the conference key and key size
+    /// Generate conference information for a given conference subconversation.
+    ///
+    /// - Parameters:
+    ///   - parentGroupID: The group ID of the parent conversation.
+    ///   - subconversationGroupID: The group ID of the subconversation in which the conference takes place.
+    ///
+    /// - Returns: An `MLSConferenceInfo` object.
+    /// - Throws: `MLSConferenceInfoError`
 
-    public func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+    public func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
         do {
             logger.info("generating conference info")
 
             let keyLength: UInt32 = 32
 
             return try coreCrypto.perform {
+                let epoch = try $0.conversationEpoch(conversationId: subconversationGroupID.bytes)
+
                 let keyData = try $0.exportSecretKey(
-                    conversationId: groupID.bytes,
+                    conversationId: subconversationGroupID.bytes,
                     keyLength: keyLength
                 )
 
-                let epoch = try $0.conversationEpoch(conversationId: groupID.bytes)
+                let conversationMembers = try $0.getClientIds(conversationId: parentGroupID.bytes)
+                    .compactMap { Data(base64Encoded: $0.data) }
+                    .compactMap { MLSClientID(data: $0) }
+
+                let subconversationMembers = try $0.getClientIds(conversationId: subconversationGroupID.bytes)
+                    .compactMap { Data(base64Encoded: $0.data) }
+                    .compactMap { MLSClientID(data: $0) }
+
+                let members = conversationMembers.map {
+                    MLSConferenceInfo.Member(
+                        id: $0,
+                        isInSubconversation: subconversationMembers.contains($0)
+                    )
+                }
 
                 return MLSConferenceInfo(
                     epoch: epoch,
                     keyData: keyData,
-                    keySize: keyLength
+                    keySize: keyLength,
+                    members: members
                 )
             }
-
         } catch {
             logger.warn("failed to generate conference info: \(String(describing: error))")
             throw MLSConferenceInfoError.failedToGenerateConferenceInfo

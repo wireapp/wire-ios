@@ -154,7 +154,10 @@ class MLSDecryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
         fatalError("not implemented")
     }
 

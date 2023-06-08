@@ -19,13 +19,28 @@
 import Foundation
 
 public struct MLSConferenceInfo: Equatable {
+
+    public struct Member: Equatable {
+
+        let id: MLSClientID
+        let isInSubconversation: Bool
+
+    }
+
     public let epoch: UInt64
     public let keyData: [Byte]
     public let keySize: UInt32
+    public let members: [Member]
 
-    public init(epoch: UInt64, keyData: Bytes, keySize: UInt32) {
+    public init(
+        epoch: UInt64,
+        keyData: [Byte],
+        keySize: UInt32,
+        members: [Member]
+    ) {
         self.epoch = epoch
         self.keyData = keyData
         self.keySize = keySize
+        self.members = members
     }
 }

@@ -158,12 +158,16 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     // MARK: - Conference info
 
     func test_GenerateConferenceInfo_IsSuccessful() {
-
         do {
             // Given
-            let groupID = MLSGroupID([1, 1, 1])
-            let secretKey = Bytes.random()
+            let parentGroupID = MLSGroupID.random()
+            let subconversationGroupID = MLSGroupID.random()
+            let secretKey = [Byte].random()
             let epoch: UInt64 = 1
+
+            let member1 = MLSClientID.random()
+            let member2 = MLSClientID.random()
+            let member3 = MLSClientID.random()
 
             var mockExportSecretKeyCount = 0
             mockCoreCrypto.mockExportSecretKey = { _, _ in
@@ -177,30 +181,65 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 return epoch
             }
 
+            var mockGetClientIDsCount = 0
+            mockCoreCrypto.mockGetClientIds = { groupID in
+                mockGetClientIDsCount += 1
+
+                switch groupID {
+                case parentGroupID.bytes:
+                    return [member1, member2, member3].compactMap {
+                        $0.rawValue.base64EncodedBytes
+                    }
+
+                case subconversationGroupID.bytes:
+                    return [member1, member2].compactMap {
+                        $0.rawValue.base64EncodedBytes
+                    }
+
+                default:
+                    return []
+                }
+            }
+
             // When
-            let conferenceInfo = try sut.generateConferenceInfo(for: groupID)
+            let conferenceInfo = try sut.generateConferenceInfo(
+                parentGroupID: parentGroupID,
+                subconversationGroupID: subconversationGroupID
+            )
 
             // Then
             XCTAssertEqual(mockExportSecretKeyCount, 1)
             XCTAssertEqual(mockConversationEpochCount, 1)
+            XCTAssertEqual(mockGetClientIDsCount, 2)
 
             let expectedConferenceInfo = MLSConferenceInfo(
                 epoch: epoch,
                 keyData: secretKey,
-                keySize: 32
+                keySize: 32,
+                members: [
+                    MLSConferenceInfo.Member(id: member1, isInSubconversation: true),
+                    MLSConferenceInfo.Member(id: member2, isInSubconversation: true),
+                    MLSConferenceInfo.Member(id: member3, isInSubconversation: false)
+                ]
             )
 
             XCTAssertEqual(conferenceInfo, expectedConferenceInfo)
         } catch {
             XCTFail("unexpected error: \(String(describing: error))")
         }
-
     }
 
     func test_GenerateConferenceInfo_Fails() {
         // Given
         typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
-        let groupID = MLSGroupID([1, 1, 1])
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        var mockConversationEpochCount = 0
+        mockCoreCrypto.mockConversationEpoch = { _ in
+            mockConversationEpochCount += 1
+            return 0
+        }
 
         mockCoreCrypto.mockExportSecretKey = { _, _ in
             throw CryptoError.ConversationNotFound(message: "foo")
@@ -208,7 +247,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // When / Then
         assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
-            _ = try sut.generateConferenceInfo(for: groupID)
+            _ = try sut.generateConferenceInfo(
+                parentGroupID: parentGroupID,
+                subconversationGroupID: subconversationGroupID
+            )
         }
     }
 

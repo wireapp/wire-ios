@@ -45,7 +45,7 @@ class MockMLSService: MLSServiceInterface {
         var registerPendingJoin = [MLSGroupID]()
         var performPendingJoins: [Void] = []
         var wipeGroup = [MLSGroupID]()
-        var generateConferenceInfo = [MLSGroupID]()
+        var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
 
     }
 
@@ -55,14 +55,17 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Conference info
 
-    typealias GenerateConferenceInfoMock = (MLSGroupID) throws -> MLSConferenceInfo
+    typealias GenerateConferenceInfoMock = (MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo
 
     var generateConferenceInfoMock: GenerateConferenceInfoMock?
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
-        calls.generateConferenceInfo.append(groupID)
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
+        calls.generateConferenceInfo.append((parentGroupID, subconversationGroupID))
         guard let mock = generateConferenceInfoMock else { throw MockError.unmockedMethodCalled }
-        return try mock(groupID)
+        return try mock(parentGroupID, subconversationGroupID)
     }
 
     // MARK: - Key packages
