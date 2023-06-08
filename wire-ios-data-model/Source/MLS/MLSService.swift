@@ -1207,6 +1207,18 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    private func getMembers(for groupID: MLSGroupID) throws -> [MLSClientID] {
+        do {
+            logger.info("getting members for group (\(groupID))")
+            return try coreCrypto
+                .perform { try $0.getClientIds(conversationId: groupID.bytes) }
+                .compactMap { MLSClientID(data: Data($0)) }
+        } catch {
+            logger.error("failed to get members for group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
+    }
+
 }
 
 // MARK: - Helper types
