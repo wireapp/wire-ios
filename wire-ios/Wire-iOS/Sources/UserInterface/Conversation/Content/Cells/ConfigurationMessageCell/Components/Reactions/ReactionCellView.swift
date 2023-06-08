@@ -28,7 +28,7 @@ public struct Reaction {
     let count: Int
     let isSelfUserReacting: Bool
     let performReaction: () -> Void
-    
+
 }
 
 // MARK: - ReactionsCellView
@@ -50,7 +50,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     var arrayReactions: [Reaction] = []
 
     var isSelected: Bool  = false
-    
+
     var message: WireDataModel.ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
