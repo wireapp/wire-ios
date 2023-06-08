@@ -207,7 +207,7 @@ extension Payload.Conversation {
         in conversation: ZMConversation
     ) {
         guard let systemMessage = conversation.systemMessage(for: systemMessageType) else { return }
-// 112
+
         failedUsers.forEach { systemMessage.users.remove($0) }
     }
 
