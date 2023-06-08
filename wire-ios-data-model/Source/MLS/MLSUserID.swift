@@ -29,7 +29,10 @@ struct MLSUserID {
     // MARK: - Life cycle
 
     init?(rawValue: String) {
-        let components = rawValue.split(separator: "@")
+        let components = rawValue.split(
+            separator: "@",
+            omittingEmptySubsequences: false
+        )
 
         guard
             components.count == 2,
@@ -56,7 +59,7 @@ struct MLSUserID {
             return nil
         }
 
-        rawValue = "\(userID)@\(domain)"
+        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
     }
 
 }
