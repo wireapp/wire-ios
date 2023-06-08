@@ -176,6 +176,18 @@ extension Payload.Conversation {
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
+        if let failedQualifiedIDs = failedToAddUsers, !failedQualifiedIDs.isEmpty {
+            let failedUsers = failedQualifiedIDs.compactMap {
+                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
+            }
+
+            /// We need to remove failed users from the initial system message
+            updateSystemMessage(havingType: .newConversation,
+                                withFailedUsers: failedUsers,
+                                in: conversation)
+
+            conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
+        }
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -187,6 +199,16 @@ extension Payload.Conversation {
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
         }
+    }
+
+    func updateSystemMessage(
+        havingType systemMessageType: ZMSystemMessageType,
+        withFailedUsers failedUsers: [ZMUser],
+        in conversation: ZMConversation
+    ) {
+        guard let systemMessage = conversation.firstSystemMessage(for: systemMessageType) else { return }
+
+        failedUsers.forEach { systemMessage.users.remove($0) }
     }
 
     func updateMetadata(for conversation: ZMConversation, context: NSManagedObjectContext) {
@@ -498,6 +520,18 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         // TODO jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+    }
+
+}
+
+private extension ZMConversation {
+
+    func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
+
+        return allMessages
+            .compactMap { $0 as? ZMSystemMessage }
+            .first(where: { $0.systemMessageType == systemMessageType })
+
     }
 
 }

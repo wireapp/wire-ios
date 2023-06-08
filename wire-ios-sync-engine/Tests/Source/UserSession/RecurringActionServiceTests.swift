@@ -55,7 +55,7 @@ class RecurringActionServiceTests: ZMTBaseTest {
 
     func testThatItPerformsAction() {
         // given
-        sut.persistLastCheckDate(for:actionID)
+        sut.persistLastCheckDate(for: actionID)
         let action = RecurringAction(id: actionID, interval: 1, perform: { self.actionPerformed = true })
         sut.registerAction(action)
 

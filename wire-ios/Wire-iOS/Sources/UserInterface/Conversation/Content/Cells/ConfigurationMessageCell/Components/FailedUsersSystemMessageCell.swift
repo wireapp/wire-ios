@@ -20,14 +20,17 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
+final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {
-        let users: [UserType]
-        let buttonAction: Completion
+        let title: String
+        let content: String
         let isCollapsed: Bool
+        let hasMultipleUsers: Bool
+        let infoImage: UIImage?
+        let buttonAction: Completion
     }
 
     // MARK: - Properties
@@ -43,6 +46,8 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     private let stackView = UIStackView(axis: .vertical)
     private let totalCountView = WebLinkTextView()
     private let usersView = WebLinkTextView()
+    private let imageContainer = UIView()
+    private var imageView = UIImageView()
     private let button = InviteButton(fontSpec: FontSpec.buttonSmallSemibold,
                                       insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
@@ -78,31 +83,21 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
 
         isCollapsed = config.isCollapsed
         buttonAction = config.buttonAction
-        let content = configureContent(for: config.users)
+        imageView.image = config.infoImage
 
-        guard config.users.count > 1 else {
-            usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+        guard config.hasMultipleUsers else {
+            usersView.attributedText = .markdown(from: config.content, style: .errorLabelStyle)
             [totalCountView, button].forEach { $0.isHidden = true }
             return
         }
 
         [totalCountView, button].forEach { $0.isHidden = false }
         usersView.isHidden = isCollapsed
-        totalCountView.attributedText = .markdown(from: content.count, style: .errorLabelStyle)
-        usersView.attributedText = .markdown(from: content.details, style: .errorLabelStyle)
+        totalCountView.attributedText = .markdown(from: config.title, style: .errorLabelStyle)
+        usersView.attributedText = .markdown(from: config.content, style: .errorLabelStyle)
         setupButtonTitle()
 
         layoutIfNeeded()
-    }
-
-    private func configureContent(for users: [UserType]) -> (count: String, details: String) {
-        let totalCountText = FailedtosendParticipants.count(users.count)
-
-        let userNames = users.compactMap { $0.name }.joined(separator: ", ")
-        let detailsText = FailedtosendParticipants.willGetLater(userNames)
-        let detailsWithLinkText = FailedtosendParticipants.learnMore(detailsText, URL.wr_backendOfflineLearnMore.absoluteString)
-
-        return (totalCountText, detailsWithLinkText)
     }
 
     private func setupButtonTitle() {
@@ -125,6 +120,9 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
         button.setTitle(FailedtosendParticipants.showDetails, for: .normal)
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
 
+        imageContainer.addSubview(imageView)
+        addSubview(imageContainer)
+
         createConstraints()
         setupAccessibility()
     }
@@ -132,6 +130,8 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     private func createConstraints() {
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        imageContainer.translatesAutoresizingMaskIntoConstraints = false
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         totalCountView.translatesAutoresizingMaskIntoConstraints = false
         usersView.translatesAutoresizingMaskIntoConstraints = false
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -139,7 +139,16 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            imageContainer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
+            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageContainer.topAnchor.constraint(equalTo: stackView.topAnchor),
+            imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
+
+            // imageView
+            imageView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor)
         ])
     }
 
@@ -154,38 +163,6 @@ final class FailedRecipientsMessageCell: UIView, ConversationMessageCell {
     @objc
     func buttonTapped(_ sender: UIButton) {
         buttonAction?()
-    }
-
-}
-
-class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
-
-    typealias View = FailedRecipientsMessageCell
-    let configuration: View.Configuration
-
-    weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
-    weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 5
-
-    var isFullWidth: Bool = true
-    var supportsActions: Bool = false
-    var containsHighlightableContent: Bool = false
-
-    var accessibilityIdentifier: String? = nil
-    var accessibilityLabel: String? = nil
-
-    init(failedRecipients: [UserType], buttonAction: @escaping Completion, isCollapsed: Bool) {
-        configuration = View.Configuration(users: failedRecipients,
-                                           buttonAction: buttonAction,
-                                           isCollapsed: isCollapsed)
-    }
-
-    init(configuration: View.Configuration) {
-        self.configuration = configuration
     }
 
 }

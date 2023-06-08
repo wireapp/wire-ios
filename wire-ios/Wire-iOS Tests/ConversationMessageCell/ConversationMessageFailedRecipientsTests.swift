@@ -28,7 +28,6 @@ final class ConversationMessageFailedRecipientsTests: CoreDataSnapshotTestCase {
         message.failedToSendUsers = [otherUser]
         message.conversation?.domain = "anta.wire.link"
 
-
         // THEN
         verify(message: message, allWidths: false)
     }

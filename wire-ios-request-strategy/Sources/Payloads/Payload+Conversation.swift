@@ -92,9 +92,9 @@ extension Payload {
     }
 
     struct Conversation: DecodableAPIVersionAware, EventData {
-
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"
+            case failedToAddUsers = "failed_to_add"
             case id
             case type
             case creator
@@ -115,6 +115,7 @@ extension Payload {
         }
 
         let qualifiedID: QualifiedID?
+        let failedToAddUsers: [QualifiedID]?
         let id: UUID?
         let type: Int?
         let creator: UUID?
@@ -130,6 +131,7 @@ extension Payload {
         let readReceiptMode: Int?
 
         init(qualifiedID: QualifiedID? = nil,
+             failedToAddUsers: [QualifiedID]? = nil,
              id: UUID?  = nil,
              type: Int? = nil,
              creator: UUID? = nil,
@@ -145,6 +147,7 @@ extension Payload {
              readReceiptMode: Int? = nil) {
 
             self.qualifiedID = qualifiedID
+            self.failedToAddUsers = failedToAddUsers
             self.id = id
             self.type = type
             self.creator = creator
@@ -164,6 +167,7 @@ extension Payload {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
+            failedToAddUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .failedToAddUsers)
             id = try container.decodeIfPresent(UUID.self, forKey: .id)
             type = try container.decodeIfPresent(Int.self, forKey: .type)
             creator = try container.decodeIfPresent(UUID.self, forKey: .creator)

@@ -37,6 +37,12 @@ final class ConversationSystemMessageTests: XCTestCase {
         verify(message: message)
     }
 
+    func testFailedToAddParticipants() throws {
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .failedToAddParticipants, users: 1))
+
+        verify(message: message)
+    }
+
     func testRenameConversation() {
         let message = MockMessageFactory.systemMessage(with: .conversationNameChanged, users: 0, clients: 0)!
         message.backingSystemMessageData.text = "Blue room"

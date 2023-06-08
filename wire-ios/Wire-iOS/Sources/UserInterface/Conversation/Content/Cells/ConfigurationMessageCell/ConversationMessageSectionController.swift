@@ -147,7 +147,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isFile {
             contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
-            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message)
+            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message,
+                                                                                     isCollapsed: isCollapsed,
+                                                                                     buttonAction: buttonAction)
         } else {
             contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
@@ -161,6 +163,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         cellDescriptions.append(contentsOf: contentCellDescriptions)
+    }
+
+    private func buttonAction() {
+        self.isCollapsed = !self.isCollapsed
+        self.cellDelegate?.conversationMessageShouldUpdate()
     }
 
     // MARK: - Content Cells
@@ -247,13 +254,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if isFailedRecipientsVisible(in: context) {
-            let buttonAction = {
-                self.isCollapsed = !self.isCollapsed
-                self.cellDelegate?.conversationMessageShouldUpdate()
-            }
-            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedRecipients: message.failedToSendUsers,
-                                                                                     buttonAction: { buttonAction() },
-                                                                                     isCollapsed: isCollapsed)
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedUsers: message.failedToSendUsers,
+                                                                                     isCollapsed: isCollapsed,
+                                                                                     buttonAction: { self.buttonAction() })
             add(description: cellDescription)
         }
 
