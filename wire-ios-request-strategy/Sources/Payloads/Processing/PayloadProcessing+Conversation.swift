@@ -206,7 +206,7 @@ extension Payload.Conversation {
         withFailedUsers failedUsers: [ZMUser],
         in conversation: ZMConversation
     ) {
-        guard let systemMessage = conversation.systemMessage(for: systemMessageType) else { return }
+        guard let systemMessage = conversation.firstSystemMessage(for: systemMessageType) else { return }
 
         failedUsers.forEach { systemMessage.users.remove($0) }
     }
@@ -526,7 +526,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationConnect
 
 private extension ZMConversation {
 
-    func systemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
+    func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
 
         return allMessages
             .compactMap { $0 as? ZMSystemMessage }
