@@ -35,7 +35,7 @@ class MockMLSService: MLSServiceInterface {
         var createGroup = [MLSGroupID]()
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
-        var enccrypt = [(Bytes, MLSGroupID)]()
+        var enccrypt = [([Byte], MLSGroupID)]()
         var decrypt = [(String, MLSGroupID)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
@@ -102,11 +102,10 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Encrypt
 
-    typealias EncryptMock = (Bytes, MLSGroupID) throws -> Bytes
-
+    typealias EncryptMock = ([Byte], MLSGroupID) throws -> [Byte]
     var encryptMock: EncryptMock?
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         calls.enccrypt.append((message, groupID))
         guard let mock = encryptMock else { throw MockError.unmockedMethodCalled }
         return try mock(message, groupID)

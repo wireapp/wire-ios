@@ -57,7 +57,7 @@ class CoreCryptoCallbacksTests: XCTestCase {
 
         // When
         let result = sut.clientIsExistingGroupUser(
-            conversationId: Bytes(),
+            conversationId: [Byte](),
             clientId: clientID,
             existingClients: otherClients,
             parentConversationClients: nil
@@ -103,7 +103,7 @@ class CoreCryptoCallbacksTests: XCTestCase {
 
         // When
         let result = sut.clientIsExistingGroupUser(
-            conversationId: Bytes(),
+            conversationId: [Byte](),
             clientId: clientID,
             existingClients: otherClients,
             parentConversationClients: nil

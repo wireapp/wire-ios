@@ -20,7 +20,7 @@ import Foundation
 
 public struct MLSConferenceInfo: Equatable {
     public let epoch: UInt64
-    public let keyData: Bytes
+    public let keyData: [Byte]
     public let keySize: UInt32
 
     public init(epoch: UInt64, keyData: Bytes, keySize: UInt32) {

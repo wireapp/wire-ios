@@ -32,7 +32,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.mlsServiceMock = MockMLSService()
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64EncodedBytes!)
+            self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
             self.conversation.domain = self.domain
             self.conversation.messageProtocol = .mls
         }
@@ -78,7 +78,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.conversation.mlsGroupID?.bytes, self.groupIdString.base64EncodedBytes)
+            XCTAssertEqual(self.conversation.mlsGroupID?.bytes, self.groupIdString.base64DecodedBytes)
         }
     }
 

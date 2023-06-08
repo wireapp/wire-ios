@@ -87,7 +87,7 @@ class MLSDecryptionServiceTests: BaseTest {
     func test_Decrypt_ReturnsNil_WhenCoreCryptoReturnsNil() {
         syncMOC.performAndWait {
             // Given
-            let messageBytes: Bytes = [1, 2, 3]
+            let messageBytes: [Byte] = [1, 2, 3]
             self.mockCoreCrypto.mockDecryptMessage = { _, _ in
                 DecryptedMessage(
                     message: nil,
@@ -116,7 +116,7 @@ class MLSDecryptionServiceTests: BaseTest {
     func test_Decrypt_IsSuccessful() {
         syncMOC.performAndWait {
             // Given
-            let messageBytes: Bytes = [1, 2, 3]
+            let messageBytes: [Byte] = [1, 2, 3]
             let sender = MLSClientID(
                 userID: UUID.create().transportString(),
                 clientID: "client",
@@ -135,7 +135,7 @@ class MLSDecryptionServiceTests: BaseTest {
                     proposals: [],
                     isActive: false,
                     commitDelay: nil,
-                    senderClientId: sender.string.data(using: .utf8)!.bytes,
+                    senderClientId: sender.rawValue.utf8Data!.bytes,
                     hasEpochChanged: false,
                     identity: nil
                 )

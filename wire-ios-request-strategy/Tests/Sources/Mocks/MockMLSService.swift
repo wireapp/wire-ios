@@ -76,7 +76,7 @@ class MockMLSService: MLSServiceInterface {
 
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> [Byte] {
         return message + [000]
     }
 

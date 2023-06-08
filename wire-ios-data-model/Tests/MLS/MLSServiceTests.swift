@@ -99,10 +99,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func createKeyPackage(userID: UUID, domain: String) -> KeyPackage {
         return KeyPackage(
-            client: Bytes.random(length: 32).base64EncodedString,
+            client: Data.random(byteCount: 32).base64EncodedString(),
             domain: domain,
-            keyPackage: Bytes.random(length: 32).base64EncodedString,
-            keyPackageRef: Bytes.random(length: 32).base64EncodedString,
+            keyPackage: Data.random(byteCount: 32).base64EncodedString(),
+            keyPackageRef: Data.random(byteCount: 32).base64EncodedString(),
             userID: userID
         )
     }
@@ -220,8 +220,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             // Given
             let groupID = MLSGroupID([1, 1, 1])
-            let unencryptedMessage: Bytes = [2, 2, 2]
-            let encryptedMessage: Bytes = [3, 3, 3]
+            let unencryptedMessage: [Byte] = [2, 2, 2]
+            let encryptedMessage: [Byte] = [3, 3, 3]
 
             // Mock
             var mockEncryptMessageCount = 0
@@ -247,7 +247,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Encrypt_Fails() {
         // Given
         let groupID = MLSGroupID([1, 1, 1])
-        let unencryptedMessage: Bytes = [2, 2, 2]
+        let unencryptedMessage: [Byte] = [2, 2, 2]
 
         // Mock
         mockCoreCrypto.mockEncryptMessage = { (_, _) in
@@ -294,7 +294,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Decrypt_ReturnsNil_WhenCoreCryptoReturnsNil() {
         syncMOC.performAndWait {
             // Given
-            let messageBytes: Bytes = [1, 2, 3]
+            let messageBytes: [Byte] = [1, 2, 3]
             self.mockCoreCrypto.mockDecryptMessage = { _, _ in
                 DecryptedMessage(
                     message: nil,
@@ -323,7 +323,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Decrypt_IsSuccessful() {
         syncMOC.performAndWait {
             // Given
-            let messageBytes: Bytes = [1, 2, 3]
+            let messageBytes: [Byte] = [1, 2, 3]
             let sender = MLSClientID(
                 userID: UUID.create().transportString(),
                 clientID: "client",
@@ -1165,7 +1165,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
-        let keyPackages: [Bytes] = [
+        let keyPackages: [[Byte]] = [
             [1, 2, 3],
             [4, 5, 6]
         ]
@@ -1217,7 +1217,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let uploadKeypackagesInvocations = mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_Invocations
         XCTAssertEqual(uploadKeypackagesInvocations.count, 1)
         XCTAssertEqual(uploadKeypackagesInvocations.first?.clientID, clientID)
-        XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.base64EncodedString })
+        XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.data.base64EncodedString() })
     }
 
     func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() {
@@ -1295,7 +1295,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_ProcessWelcomeMessage_Sucess() throws {
         // Given
         let groupID = MLSGroupID.random()
-        let message = Bytes.random().base64EncodedString
+        let message = Data.random().base64EncodedString()
 
         // Mock
         mockCoreCrypto.mockProcessWelcomeMessage = { _, _ in

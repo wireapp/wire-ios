@@ -34,7 +34,7 @@ public protocol MLSServiceInterface {
 
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte]
 
     func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult?
 
@@ -567,7 +567,7 @@ public final class MLSService: MLSServiceInterface {
     private func generateKeyPackages(amountRequested: UInt32) throws -> [String] {
         logger.info("generating \(amountRequested) key packages")
 
-        var keyPackages = [Bytes]()
+        var keyPackages = [[Byte]]()
 
         do {
             keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite, amountRequested: amountRequested) }
@@ -582,7 +582,7 @@ public final class MLSService: MLSServiceInterface {
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
-        return keyPackages.map { $0.base64EncodedString }
+        return keyPackages.map { $0.data.base64EncodedString() }
     }
 
     private func uploadKeyPackages(
@@ -622,7 +622,7 @@ public final class MLSService: MLSServiceInterface {
     public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
         logger.info("processing welcome message")
 
-        guard let messageBytes = welcomeMessage.base64EncodedBytes else {
+        guard let messageBytes = welcomeMessage.base64DecodedBytes else {
             logger.error("failed to convert welcome message to bytes")
             throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
         }
@@ -719,7 +719,7 @@ public final class MLSService: MLSServiceInterface {
         case failedToSendProposal
     }
 
-    private func sendProposal(_ bytes: Bytes, groupID: MLSGroupID) async throws {
+    private func sendProposal(_ bytes: [Byte], groupID: MLSGroupID) async throws {
         do {
             logger.info("sending proposal in group (\(groupID))")
 
@@ -860,7 +860,8 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+
         do {
             logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
             return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
@@ -894,7 +895,7 @@ public final class MLSService: MLSServiceInterface {
     public func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
         logger.info("decrypting message for group (\(groupID))")
 
-        guard let messageBytes = message.base64EncodedBytes else {
+        guard let messageBytes = message.base64DecodedBytes else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
@@ -1274,18 +1275,6 @@ private extension Date {
 
     var isInThePast: Bool {
         return compare(Date()) != .orderedDescending
-    }
-
-}
-
-extension String {
-
-    var utf8Data: Data? {
-        return data(using: .utf8)
-    }
-
-    var base64DecodedData: Data? {
-        return Data(base64Encoded: self)
     }
 
 }

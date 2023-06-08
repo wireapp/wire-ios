@@ -41,7 +41,7 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return message
     }
 

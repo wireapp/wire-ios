@@ -18,26 +18,38 @@
 
 import Foundation
 
-extension Data {
+public typealias Byte = UInt8
 
-    public static func random(byteCount: UInt = 8) -> Data {
-        return Data(Bytes.random(length: byteCount))
+public extension Data {
+
+    var bytes: [Byte] {
+        return [Byte](self)
+    }
+
+    static func random(byteCount: UInt = 8) -> Data {
+        return Data([Byte].random(length: byteCount))
     }
 
 }
 
-public typealias Bytes = [UInt8]
+public extension [Byte] {
 
-extension Bytes {
+    var data: Data {
+        return Data(self)
+    }
 
-    public static func random(length: UInt = 8) -> Self {
-        var bytes = Bytes()
-
-        for _ in 1...length {
-            bytes.append(UInt8.random(in: (.min)...(.max)))
+    static func random(length: UInt = 8) -> [Byte] {
+        return (0..<length).map { _ in
+            Byte.random()
         }
+    }
 
-        return bytes
+}
+
+public extension Byte {
+
+    static func random() -> Byte {
+        return random(in: (.min)...(.max))
     }
 
 }

@@ -49,7 +49,7 @@ class MLSDecryptionService: MLSServiceInterface {
     func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
         WireLogger.mls.info("decrypting message for group (\(groupID))")
 
-        guard let messageBytes = message.base64EncodedBytes else {
+        guard let messageBytes = message.base64DecodedBytes else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
@@ -126,7 +126,7 @@ class MLSDecryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         fatalError("not implemented")
     }
 
