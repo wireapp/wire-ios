@@ -360,7 +360,9 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 companyLoginController?.updateBackendEnvironment(with: url)
 
             case .startCompanyLogin(let code):
-                startCompanyLoginFlowIfPossible(linkCode: code)
+                activateNetworkSessions { [weak self] _ in
+                    self?.startCompanyLoginFlowIfPossible(linkCode: code)
+                }
             case .startSSOFlow:
                 startAutomaticSSOFlow()
 
