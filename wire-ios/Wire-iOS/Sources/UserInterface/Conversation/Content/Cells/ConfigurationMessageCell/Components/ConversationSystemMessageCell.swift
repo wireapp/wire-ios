@@ -1126,7 +1126,7 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> String {
-        let groupedUsers: [String? : [UserType]] = Dictionary(grouping: failedUsers, by: \.domain)
+        let groupedUsers: [String?: [UserType]] = Dictionary(grouping: failedUsers, by: \.domain)
 
         var content: String = ""
         for (domain, users) in groupedUsers {

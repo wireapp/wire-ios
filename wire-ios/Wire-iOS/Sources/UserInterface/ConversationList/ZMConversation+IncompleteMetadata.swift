@@ -29,7 +29,7 @@ extension ZMConversation {
     }
 
     private var hasIncompleteMetadataForOneToOne: Bool {
-        if let _ = participants.first (where: { $0.hasEmptyName }) {
+        if let _ = participants.first(where: { $0.hasEmptyName }) {
             return true
         } else {
             return false

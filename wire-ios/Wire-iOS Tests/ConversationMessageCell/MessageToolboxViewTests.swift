@@ -59,7 +59,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.conversationLike = otherUserConversation
         message.failedToSendReason = .federationRemoteError
         message.conversation?.domain = "anta.wire.link"
-    
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)

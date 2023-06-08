@@ -35,7 +35,7 @@ extension ZMUserSession {
     }
 
     func refreshConversationsMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
-        
+
         return RecurringAction(id: "refreshConversationMetadata", interval: interval) { [weak self] in
             self?.perform {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())

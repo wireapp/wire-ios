@@ -475,5 +475,4 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
         }
     }
 
-
 }
