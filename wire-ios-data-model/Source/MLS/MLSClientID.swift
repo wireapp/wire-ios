@@ -51,7 +51,7 @@ public struct MLSClientID: Equatable {
         )
     }
 
-    public init(qualifiedClientID: QualifiedClientID) {
+    public init?(qualifiedClientID: QualifiedClientID) {
         self.init(
             userID: qualifiedClientID.userID.transportString(),
             clientID: qualifiedClientID.clientID,
@@ -82,11 +82,19 @@ public struct MLSClientID: Equatable {
         )
     }
 
-    public init(
+    public init?(
         userID: String,
         clientID: String,
         domain: String
     ) {
+        guard
+            userID.isNonEmpty,
+            clientID.isNonEmpty,
+            domain.isNonEmpty
+        else {
+            return nil
+        }
+
         self.userID = userID.lowercased()
         self.clientID = clientID.lowercased()
         self.domain = domain.lowercased()

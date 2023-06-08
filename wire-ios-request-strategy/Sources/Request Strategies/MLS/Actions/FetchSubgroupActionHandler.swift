@@ -141,7 +141,7 @@ extension FetchSubgroupActionHandler.Subgroup {
             epoch: epoch,
             epochTimestamp: epochTimestamp,
             groupID: groupID,
-            members: members.map(\.mlsClientID),
+            members: members.compactMap(\.mlsClientID),
             parentQualifiedID: parentQualifiedID.qualifiedID
         )
     }
@@ -154,7 +154,7 @@ extension FetchSubgroupActionHandler.SubgroupParent {
 }
 
 extension FetchSubgroupActionHandler.SubgroupMember {
-    var mlsClientID: MLSClientID {
+    var mlsClientID: MLSClientID? {
         MLSClientID(qualifiedClientID: qualifiedClientID)
     }
 
