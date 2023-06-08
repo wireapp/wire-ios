@@ -139,7 +139,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             domain: "example.com"
         )
 
-        let clientIds =  [mlsClientID].compactMap { $0.string.utf8Data?.bytes }
+        let clientIds =  [mlsClientID].compactMap { $0.rawValue.utf8Data?.bytes }
 
         let mockCommit = Bytes.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()

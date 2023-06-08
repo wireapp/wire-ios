@@ -449,7 +449,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("removing members from group (\(groupID)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
-            let clientIds = clientIds.compactMap { $0.string.utf8Data?.bytes }
+            let clientIds = clientIds.compactMap { $0.rawValue.utf8Data?.bytes }
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
@@ -1288,7 +1288,7 @@ extension Invitee {
         )
 
         guard
-            let idData = id.string.utf8Data,
+            let idData = id?.rawValue.utf8Data,
             let keyPackageData = Data(base64Encoded: keyPackage.keyPackage)
         else {
             fatalError("Couldn't create Invitee from key package: \(keyPackage)")

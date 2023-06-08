@@ -50,9 +50,9 @@ class CoreCryptoCallbacksTests: XCTestCase {
             )
         ]
 
-        let clientID = try XCTUnwrap(mlsClientID.string.data(using: .utf8)?.bytes)
+        let clientID = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
         let otherClients = otherMLSClientIDs.compactMap {
-            $0.string.data(using: .utf8)?.bytes
+            $0.rawValue.data(using: .utf8)?.bytes
         }
 
         // When
@@ -96,9 +96,9 @@ class CoreCryptoCallbacksTests: XCTestCase {
             )
         ]
 
-        let clientID = try XCTUnwrap(mlsClientID.string.data(using: .utf8)?.bytes)
+        let clientID = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
         let otherClients = otherMLSClientIDs.compactMap {
-            $0.string.data(using: .utf8)?.bytes
+            $0.rawValue.data(using: .utf8)?.bytes
         }
 
         // When
