@@ -44,6 +44,34 @@ public struct MLSQualifiedClientID {
         )
     }
 
+    init?(rawValue: String) {
+        var components = rawValue.split(separator: ":")
+
+        guard
+            components.count == 2,
+            let userID = components.element(atIndex: 0),
+            let rest = components.element(atIndex: 1)
+        else {
+            return nil
+        }
+
+        components = rest.split(separator: "@")
+
+        guard
+            components.count == 2,
+            let clientID = components.element(atIndex: 0),
+            let domain = components.element(atIndex: 1)
+        else {
+            return nil
+        }
+
+        self.init(
+            userID: String(userID),
+            clientID: String(clientID),
+            domain: String(domain)
+        )
+    }
+
     init?(
         userID: String,
         clientID: String,
