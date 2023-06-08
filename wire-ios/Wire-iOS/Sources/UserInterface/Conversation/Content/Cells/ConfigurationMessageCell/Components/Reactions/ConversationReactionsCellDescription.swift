@@ -27,13 +27,12 @@ final class ReactionMessageCellDescription: ConversationMessageCellDescription {
     // MARK: - Properties
 
     typealias View = ReactionsCellView
-    typealias Configuration = Void
+    let configuration: View.Configuration
 
     init(message: ZMConversationMessage) {
         self.message = message
+        self.configuration = View.Configuration(message: message)
     }
-
-    let configuration: Void
 
     var topMargin: Float = 0
 

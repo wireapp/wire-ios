@@ -37,7 +37,13 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
 
     // MARK: - Properties
 
-    typealias Configuration = Void
+    struct Configuration: Equatable {
+        let message: ZMConversationMessage
+
+        static func == (lhs: ReactionsCellView.Configuration, rhs: ReactionsCellView.Configuration) -> Bool {
+            lhs.message == rhs.message
+        }
+    }
 
     let reactionView = ReactionCollectionView()
 
@@ -84,12 +90,8 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
-        guard let message = message
-        else {
-            return
-        }
 
-        reactionView.reactions = message.usersReaction.compactMap { reaction, usersWhoReacted in
+        reactionView.reactions = object.message.usersReaction.compactMap { reaction, usersWhoReacted in
             guard
                 let reactionType = MessageReaction.messageReaction(from: reaction),
                 !usersWhoReacted.isEmpty
@@ -105,7 +107,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
                     guard let `self` = self else { return }
                     self.delegate?.perform(
                         action: .react(reactionType),
-                        for: message,
+                        for: object.message,
                         view: self
                     )
                 }
