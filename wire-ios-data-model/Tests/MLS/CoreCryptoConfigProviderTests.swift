@@ -104,7 +104,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             // THEN
             XCTAssertEqual(configuration.key, key.base64EncodedString())
             XCTAssertEqual(configuration.path, self.expectedPath(selfUser))
-            XCTAssertEqual(configuration.clientID, self.expectedClientID(selfUser))
+            XCTAssertEqual(configuration.clientID, try self.expectedClientID(selfUser))
         }
     }
 
@@ -166,7 +166,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             let id = try self.sut.clientID(of: selfUser)
 
             // THEN
-            XCTAssertEqual(id, MLSQualifiedClientID(user: selfUser).qualifiedClientId)
+            XCTAssertEqual(id, try self.expectedClientID(selfUser))
         }
     }
 
@@ -188,8 +188,8 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     // MARK: - Helpers
 
-    private func expectedClientID(_ selfUser: ZMUser) -> String {
-        return MLSQualifiedClientID(user: selfUser).qualifiedClientId!
+    private func expectedClientID(_ selfUser: ZMUser) throws -> String {
+        return try XCTUnwrap(MLSClientID(user: selfUser)).rawValue
     }
 
     private func expectedPath(_ selfUser: ZMUser) -> String {

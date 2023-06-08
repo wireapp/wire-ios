@@ -342,7 +342,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                     proposals: [],
                     isActive: false,
                     commitDelay: nil,
-                    senderClientId: sender.string.data(using: .utf8)!.bytes,
+                    senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
                     hasEpochChanged: false,
                     identity: nil
                 )
@@ -635,7 +635,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then we removed the clients.
-        let clientIDBytes = try XCTUnwrap(mlsClientID.string.data(using: .utf8)?.bytes)
+        let clientIDBytes = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
         XCTAssertEqual(mockRemoveClientsArguments.count, 1)
         XCTAssertEqual(mockRemoveClientsArguments.first?.0, [clientIDBytes])
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, mlsGroupID)
@@ -697,7 +697,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then we removed the clients.
-        let clientIDBytes = try XCTUnwrap(mlsClientID.string.data(using: .utf8)?.bytes)
+        let clientIDBytes = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
         XCTAssertEqual(mockRemoveClientsArguments.count, 1)
         XCTAssertEqual(mockRemoveClientsArguments.first?.0, [clientIDBytes])
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, groupID)

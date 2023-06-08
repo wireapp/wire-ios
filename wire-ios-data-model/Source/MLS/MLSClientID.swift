@@ -35,6 +35,11 @@ public struct MLSClientID: Equatable {
 
     // MARK: - Life cycle
 
+    public init?(user: ZMUser) {
+        guard let selfClient = user.selfClient() else { return nil }
+        self.init(userClient: selfClient)
+    }
+
     public init?(userClient: UserClient) {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),

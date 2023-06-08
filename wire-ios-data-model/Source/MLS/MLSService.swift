@@ -1288,7 +1288,7 @@ extension Invitee {
         )
 
         guard
-            let idData = id?.rawValue.utf8Data,
+            let idData = id.rawValue.utf8Data,
             let keyPackageData = Data(base64Encoded: keyPackage.keyPackage)
         else {
             fatalError("Couldn't create Invitee from key package: \(keyPackage)")
