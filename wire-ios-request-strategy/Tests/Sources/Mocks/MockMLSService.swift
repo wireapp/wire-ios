@@ -109,8 +109,8 @@ class MockMLSService: MLSServiceInterface {
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
-    ) async {
-
+    ) async throws -> MLSGroupID {
+        fatalError("not implemented")
     }
 
     func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {

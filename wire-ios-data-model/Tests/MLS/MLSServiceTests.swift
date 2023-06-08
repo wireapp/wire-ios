@@ -1790,12 +1790,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        await sut.createOrJoinSubgroup(
+        let result = try await sut.createOrJoinSubgroup(
             parentQualifiedID: parentQualifiedID,
             parentID: parentID
         )
 
         // Then
+        XCTAssertEqual(result, subgroupID)
+
         XCTAssertEqual(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.count, 1)
         let fetchSubroupInvocation = try XCTUnwrap(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.first)
         XCTAssertEqual(fetchSubroupInvocation.conversationID, parentQualifiedID.uuid)
@@ -1846,12 +1848,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        await sut.createOrJoinSubgroup(
+        let result = try await sut.createOrJoinSubgroup(
             parentQualifiedID: parentQualifiedID,
             parentID: parentID
         )
 
         // Then
+        XCTAssertEqual(result, subgroupID)
+
         XCTAssertEqual(mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations.count, 1)
         let deleteSubroupInvocation = try XCTUnwrap(mockActionsProvider.deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations.first)
         XCTAssertEqual(deleteSubroupInvocation.conversationID, parentQualifiedID.uuid)
@@ -1903,12 +1907,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        await sut.createOrJoinSubgroup(
+        let result = try await sut.createOrJoinSubgroup(
             parentQualifiedID: parentQualifiedID,
             parentID: parentID
         )
 
         // Then
+        XCTAssertEqual(result, subgroupID)
+
         XCTAssertEqual(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.count, 1)
         let fetchSubroupInvocation = try XCTUnwrap(mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_Invocations.first)
         XCTAssertEqual(fetchSubroupInvocation.conversationID, parentQualifiedID.uuid)

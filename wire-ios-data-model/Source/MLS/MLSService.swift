@@ -57,7 +57,7 @@ public protocol MLSServiceInterface {
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
-    ) async
+    ) async throws -> MLSGroupID
 
     func generateConferenceInfo(
         parentGroupID: MLSGroupID,
@@ -1134,16 +1134,25 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Subgroup
 
+    public enum SubgroupFailure: Error {
+
+        case failedToFetchSubgroup
+        case failedToCreateSubgroup
+        case failedToDeleteSubgroup
+        case failedToJoinSubgroup
+
+    }
+
     public func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
-    ) async {
+    ) async throws -> MLSGroupID {
         do {
             logger.info("create or join subgroup in parent conversation (\(parentQualifiedID))")
 
             guard let notificationContext = context?.notificationContext else {
                 logger.error("failed to create or join subgroup: missing notification context")
-                return
+                throw SubgroupFailure.failedToFetchSubgroup
             }
 
             let subgroup = try await fetchSubgroup(
@@ -1165,8 +1174,11 @@ public final class MLSService: MLSServiceInterface {
                     subgroupID: subgroup.groupID
                 )
             }
+
+            return subgroup.groupID
         } catch {
             logger.error("failed to create or join subgroup in parent conversation (\(parentQualifiedID)): \(String(describing: error))")
+            throw error
         }
     }
 
@@ -1184,7 +1196,7 @@ public final class MLSService: MLSServiceInterface {
             )
         } catch {
             logger.error("failed to fetch subgroup with parent id (\(parentID)): \(String(describing: error))")
-            throw error
+            throw SubgroupFailure.failedToFetchSubgroup
         }
     }
 
@@ -1195,7 +1207,7 @@ public final class MLSService: MLSServiceInterface {
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id)): \(String(describing: error))")
-            throw error
+            throw SubgroupFailure.failedToCreateSubgroup
         }
     }
 
@@ -1213,7 +1225,7 @@ public final class MLSService: MLSServiceInterface {
             )
         } catch {
             logger.error("failed to delete subgroup with parent id (\(parentID)): \(String(describing: error))")
-            throw error
+            throw SubgroupFailure.failedToDeleteSubgroup
         }
     }
 
@@ -1230,7 +1242,7 @@ public final class MLSService: MLSServiceInterface {
             )
         } catch {
             logger.error("failed to join subgroup (parent: \(parentID), subgroup: \(subgroupID)): \(String(describing: error))")
-            throw error
+            throw SubgroupFailure.failedToJoinSubgroup
         }
     }
 

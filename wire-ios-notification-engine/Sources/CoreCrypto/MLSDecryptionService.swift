@@ -150,7 +150,10 @@ class MLSDecryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func createOrJoinSubgroup(parentQualifiedID: QualifiedID, parentID: MLSGroupID) async {
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
         fatalError("not implemented")
     }
 
