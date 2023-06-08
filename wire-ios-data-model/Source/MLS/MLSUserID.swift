@@ -20,7 +20,7 @@ import Foundation
 
 /// A qualified id for MLS users.
 
-struct MLSQualifiedUserID {
+struct MLSUserID {
 
     // MARK: - Properties
 
