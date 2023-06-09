@@ -64,10 +64,20 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let usersWhoReactionWithBeamingFace = MockUser.mockUsers().filter { !$0.isSelfUser }
+        recordMode = true
+        let users = MockUser.mockUsers().filter { !$0.isSelfUser }
         let configuration = MessageReactionsCell.Configuration(message: message)
 
-        message.backingUsersReaction = [MessageReaction.beamingFace.unicodeValue: usersWhoReactionWithBeamingFace]
+        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 90)
+
+        message.backingUsersReaction = [
+            MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4)),
+            MessageReaction.beamingFace.unicodeValue: Array(users.prefix(upTo: 2)),
+            MessageReaction.thumbsUp.unicodeValue: Array(users.prefix(upTo: 1)),
+            MessageReaction.thumbsDown.unicodeValue: Array(users.prefix(upTo: 6)),
+            MessageReaction.slightlySmiling.unicodeValue: Array(users.prefix(upTo: 8)),
+            MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 10))
+        ]
 
         // WHEN
         sut.configure(with: configuration, animated: false)
