@@ -242,7 +242,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
-        if !message.isSystem {
+        if !message.isSystem, !message.isEphemeral, message.hasReactions() {
             add(description: ReactionMessageCellDescription(message: message))
         }
 
