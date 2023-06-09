@@ -33,13 +33,32 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Types
 
-    enum Action {
+    enum Action: CustomDebugStringConvertible {
 
         case addMembers([Invitee])
         case removeClients([ClientId])
         case updateKeyMaterial
         case proposal
         case joinGroup(Data)
+
+        var debugDescription: String {
+            switch self {
+            case .addMembers:
+                return "addMembers"
+
+            case .removeClients:
+                return "removeClients"
+
+            case .updateKeyMaterial:
+                return "updateKeyMaterial"
+
+            case .proposal:
+                return "proposal"
+
+            case .joinGroup:
+                return "joinGroup"
+            }
+        }
 
     }
 
