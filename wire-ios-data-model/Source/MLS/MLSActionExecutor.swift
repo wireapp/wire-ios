@@ -205,6 +205,8 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             let result = try await sendCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: committing pending proposals for group (\(groupID))")
             return result
+        } catch Error.noPendingProposals {
+            throw Error.noPendingProposals
         } catch {
             WireLogger.mls.info("error: committing pending proposals for group (\(groupID)): \(String(describing: error))")
             throw error
