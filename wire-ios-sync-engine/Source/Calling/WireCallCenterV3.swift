@@ -547,9 +547,14 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
+            var mlsService: MLSServiceInterface?
+
+            uiMOC?.zm_sync.performAndWait {
+                mlsService = uiMOC?.zm_sync.mlsService
+            }
+
             guard
-                let syncContext = uiMOC?.zm_sync,
-                let mlsService = syncContext.mlsService,
+                let mlsService = mlsService,
                 let parentQualifiedID = conversation.qualifiedID,
                 let parentGroupID = conversation.mlsGroupID
             else {
