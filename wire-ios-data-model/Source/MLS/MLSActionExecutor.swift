@@ -288,7 +288,9 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func sendCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
+            WireLogger.mls.info("sending commit bundle for group (\(groupID))")
             let events = try await sendCommitBundle(bundle)
+            WireLogger.mls.info("merging commit for group (\(groupID))")
             try mergeCommit(in: groupID)
             return events
         } catch let error as SendCommitBundleAction.Failure {
@@ -336,38 +338,46 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func mergeCommit(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("merging commit for group (\(groupID))")
             try coreCrypto.perform { try $0.commitAccepted(conversationId: groupID.bytes) }
         } catch {
+            WireLogger.mls.error("failed to merge commit for group (\(groupID))")
             throw Error.failedToMergeCommit
         }
     }
 
     private func discardPendingCommit(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("discarding pending commit for group (\(groupID))")
             try coreCrypto.perform { try $0.clearPendingCommit(conversationId: groupID.bytes) }
         } catch {
+            WireLogger.mls.error("failed to discard pending commit for group (\(groupID))")
             throw Error.failedToClearCommit
         }
     }
 
     private func mergePendingGroup(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("merging pending group (\(groupID))")
             try coreCrypto.perform {
                 try $0.mergePendingGroupFromExternalCommit(
                     conversationId: groupID.bytes
                 )
             }
         } catch {
+            WireLogger.mls.error("failed to merge pending group (\(groupID))")
             throw Error.failedToMergePendingGroup
         }
     }
 
     private func clearPendingGroup(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("clearing pending group (\(groupID))")
             try coreCrypto.perform {
                 try $0.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
             }
         } catch {
+            WireLogger.mls.error("failed to clear pending group (\(groupID))")
             throw Error.failedToClearPendingGroup
         }
     }
