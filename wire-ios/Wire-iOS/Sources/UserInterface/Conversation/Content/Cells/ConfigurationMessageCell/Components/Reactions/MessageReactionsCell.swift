@@ -31,16 +31,16 @@ public struct MessageReactionMetadata {
 
 }
 
-// MARK: - ReactionsCellView
+// MARK: - MessageReactionsCell
 
-final class ReactionsCellView: UIView, ConversationMessageCell {
+final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - Properties
 
     struct Configuration: Equatable {
         let message: ZMConversationMessage
 
-        static func == (lhs: ReactionsCellView.Configuration, rhs: ReactionsCellView.Configuration) -> Bool {
+        static func == (lhs: MessageReactionsCell.Configuration, rhs: MessageReactionsCell.Configuration) -> Bool {
             lhs.message == rhs.message
         }
     }

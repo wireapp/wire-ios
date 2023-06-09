@@ -1216,7 +1216,7 @@
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
 		E9B580CC27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */; };
 		E9B8EB792A0CEB690056E417 /* MessageReactionsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */; };
-		E9B8EB7B2A0CEB980056E417 /* ReactionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* ReactionCellView.swift */; };
+		E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */; };
 		E9B8EB7D2A0CEBEC0056E417 /* ReactionCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7C2A0CEBEC0056E417 /* ReactionCollectionView.swift */; };
 		E9B8EB802A0CEE160056E417 /* ReactionToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggleButton.swift */; };
 		E9B8EB822A0D12E00056E417 /* ReactionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB812A0D12E00056E417 /* ReactionCollectionViewCell.swift */; };
@@ -3231,7 +3231,7 @@
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
 		E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCellDescription.swift; sourceTree = "<group>"; };
-		E9B8EB7A2A0CEB980056E417 /* ReactionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCellView.swift; sourceTree = "<group>"; };
+		E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCell.swift; sourceTree = "<group>"; };
 		E9B8EB7C2A0CEBEC0056E417 /* ReactionCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCollectionView.swift; sourceTree = "<group>"; };
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggleButton.swift; sourceTree = "<group>"; };
 		E9B8EB812A0D12E00056E417 /* ReactionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -7268,7 +7268,7 @@
 			isa = PBXGroup;
 			children = (
 				E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */,
-				E9B8EB7A2A0CEB980056E417 /* ReactionCellView.swift */,
+				E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */,
 				E9B8EB7C2A0CEBEC0056E417 /* ReactionCollectionView.swift */,
 				E9B8EB7F2A0CEE160056E417 /* ReactionToggleButton.swift */,
 				E9B8EB812A0D12E00056E417 /* ReactionCollectionViewCell.swift */,
@@ -8919,7 +8919,7 @@
 				EF2C59ED20DBF1BB00C5664F /* ConversationInputBarViewController+SendButton.swift in Sources */,
 				8742C2EA1E5309FC00329FB6 /* NSAttributedString+Highlight.swift in Sources */,
 				876113E41DD1DD6B007F5969 /* SketchToolbar.swift in Sources */,
-				E9B8EB7B2A0CEB980056E417 /* ReactionCellView.swift in Sources */,
+				E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */,
 				EFA145F4231EA4980073BA5E /* ConversationListViewController.swift in Sources */,
 				D5173573201764DD00B473CE /* UIAlertAction+Convenience.swift in Sources */,
 				EFC6F8A0213FCDE200B92D51 /* MenuConfigurationProperties.swift in Sources */,
