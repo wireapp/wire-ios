@@ -22,6 +22,18 @@ import WireTesting
 
 class InvalidClientsRemovalTests: DiskDatabaseTest {
 
+    override class func setUp() {
+        super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+
     func testThatItDoesNotRemoveValidClients() throws {
         // Given
         let user = ZMUser.insertNewObject(in: self.moc)
@@ -74,7 +86,8 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             // given
             let selfClient = self.createSelfClient(in: syncMOC)
             var preKeys: [(id: UInt16, prekey: String)] = []
-            selfClient.keysStore.encryptionContext.perform {
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform {
+            // TODO: [John] use flag here
                 preKeys = try! $0.generatePrekeys(0 ..< 2)
             }
 
@@ -99,7 +112,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             WireDataModel.InvalidClientsRemoval.removeInvalid(in: syncMOC)
 
             // then
-            selfClient.keysStore.encryptionContext.perform {
+            syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 XCTAssertTrue($0.hasSession(for: clientId))
             }
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)

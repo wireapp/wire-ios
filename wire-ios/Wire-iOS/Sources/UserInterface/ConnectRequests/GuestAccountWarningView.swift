@@ -64,7 +64,7 @@ class GuestAccountWarningView: UIView {
             imageView.widthAnchor.constraint(equalToConstant: 16.0),
             imageView.heightAnchor.constraint(equalToConstant: 16.0),
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.topAnchor.constraint(equalTo: sensitiveInfoLabel.topAnchor),
+            imageView.topAnchor.constraint(equalTo: sensitiveInfoLabel.topAnchor)
         ])
     }
 }

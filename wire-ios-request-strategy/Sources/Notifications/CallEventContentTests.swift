@@ -35,6 +35,7 @@ class CallEventContentTests: XCTestCase {
     ) -> Data {
         var json: [String: Any] = [
             "type": type,
+            "src_clientid": "clientid",
             "resp": resp,
             "props": ["videosend": "\(isVideo)"]
         ]
