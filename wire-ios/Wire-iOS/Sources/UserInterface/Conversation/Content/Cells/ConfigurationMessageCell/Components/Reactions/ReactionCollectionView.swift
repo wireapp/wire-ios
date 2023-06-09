@@ -32,7 +32,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
     }()
 
-    var reactions = [Reaction]() {
+    var reactions = [MessageReactionMetadata]() {
         didSet {
             collectionView.reloadData()
         }
@@ -87,7 +87,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         let reaction = reactions[indexPath.row]
         cell.configureData(
             type: reaction.type.unicodeValue,
-            count: reaction.count,
+            count: Int(reaction.count),
             isToggled: reaction.isSelfUserReacting,
             onToggle: reaction.performReaction
 

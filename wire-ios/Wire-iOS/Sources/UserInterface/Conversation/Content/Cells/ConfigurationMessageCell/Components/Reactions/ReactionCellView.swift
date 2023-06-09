@@ -22,7 +22,7 @@ import WireDataModel
 
 // MARK: - Reaction
 
-public struct Reaction {
+public struct MessageReactionMetadata {
 
     let type: MessageReaction
     let count: Int
@@ -45,9 +45,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         }
     }
 
-    let reactionView = ReactionCollectionView()
-
-    var arrayReactions: [Reaction] = []
+    let reactionCollectionView = ReactionCollectionView()
 
     var isSelected: Bool  = false
 
@@ -71,18 +69,18 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
-        addSubview(reactionView)
+        addSubview(reactionCollectionView)
     }
 
     private func configureConstraints() {
-        reactionView.translatesAutoresizingMaskIntoConstraints = false
+        reactionCollectionView.translatesAutoresizingMaskIntoConstraints = false
         self.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            reactionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            reactionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40),
-            reactionView.topAnchor.constraint(equalTo: self.topAnchor),
-            reactionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            reactionCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40),
+            reactionCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
+            reactionCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
 
@@ -93,7 +91,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         animated: Bool
     ) {
 
-        reactionView.reactions = object.message.usersReaction.compactMap { reaction, usersWhoReacted in
+        reactionCollectionView.reactions = object.message.usersReaction.compactMap { reaction, usersWhoReacted in
             guard
                 let reactionType = MessageReaction.messageReaction(from: reaction),
                 !usersWhoReacted.isEmpty
@@ -101,7 +99,7 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
                 return nil
             }
 
-            return Reaction(
+            return MessageReactionMetadata(
                 type: reactionType,
                 count: usersWhoReacted.count,
                 isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
