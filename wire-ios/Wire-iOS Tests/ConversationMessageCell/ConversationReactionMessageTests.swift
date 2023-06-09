@@ -64,7 +64,6 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        recordMode = true
         let users = MockUser.mockUsers().filter { !$0.isSelfUser }
         let configuration = MessageReactionsCell.Configuration(message: message)
 
