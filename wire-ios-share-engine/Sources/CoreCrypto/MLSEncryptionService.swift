@@ -28,7 +28,7 @@ class MLSEncryptionService: MLSServiceInterface {
         self.coreCrypto = coreCrypto
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> WireDataModel.Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
     }
 
