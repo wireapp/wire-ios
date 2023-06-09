@@ -465,6 +465,7 @@ extension WireCallCenterV3 {
         case missingAVSIdentifier
         case missingAVSConversationType
         case missingConferencingPermission
+        case failedToSetupMLSConference
         case unknown
 
     }
@@ -541,13 +542,20 @@ extension WireCallCenterV3 {
             ).post(in: context.notificationContext)
         }
 
-        if
-            conversation.messageProtocol == .mls,
-            let syncContext = uiMOC?.zm_sync,
-            let mlsService = syncContext.mlsService,
-            let parentQualifiedID = conversation.qualifiedID,
-            let parentGroupID = conversation.mlsGroupID
-        {
+        switch conversation.messageProtocol {
+        case .proteus:
+            break
+
+        case .mls:
+            guard
+                let syncContext = uiMOC?.zm_sync,
+                let mlsService = syncContext.mlsService,
+                let parentQualifiedID = conversation.qualifiedID,
+                let parentGroupID = conversation.mlsGroupID
+            else {
+                throw Failure.failedToSetupMLSConference
+            }
+
             Task {
                 do {
                     let subgroupID = try await mlsService.createOrJoinSubgroup(
