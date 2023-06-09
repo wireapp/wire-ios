@@ -52,7 +52,6 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
     // MARK: - Snapshot Tests
 
     func testThatItConfiguresWithSelfReaction() {
-        recordMode = true
         // GIVEN
         let configuration = MessageReactionsCell.Configuration(message: message)
         message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
@@ -65,7 +64,6 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        recordMode = true
         let usersWhoReactionWithBeamingFace = MockUser.mockUsers().filter { !$0.isSelfUser }
         let configuration = MessageReactionsCell.Configuration(message: message)
 
