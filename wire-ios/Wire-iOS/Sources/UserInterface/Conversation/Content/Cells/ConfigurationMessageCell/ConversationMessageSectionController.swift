@@ -243,7 +243,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-            add(description: ReactionMessageCellDescription(message: message))
+            add(description: MessageReactionsCellDescription(message: message))
         }
 
         if let topCelldescription = cellDescriptions.first {

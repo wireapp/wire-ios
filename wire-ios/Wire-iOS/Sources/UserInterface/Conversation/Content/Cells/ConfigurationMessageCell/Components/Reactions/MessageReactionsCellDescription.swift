@@ -20,9 +20,9 @@ import Foundation
 import UIKit
 import WireDataModel
 
-// MARK: - ReactionMessageCellDescription
+// MARK: - MessageReactionsCellDescription
 
-final class ReactionMessageCellDescription: ConversationMessageCellDescription {
+final class MessageReactionsCellDescription: ConversationMessageCellDescription {
 
     // MARK: - Properties
 
