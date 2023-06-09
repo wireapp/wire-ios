@@ -24,7 +24,7 @@ class ReactionCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Properties
 
-    private var reactionToggleButton = ReactionToggleButton()
+    private var reactionToggleButton = ReactionToggle()
 
     // MARK: - Lifecycle
 

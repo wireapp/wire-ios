@@ -19,9 +19,9 @@
 import UIKit
 import WireCommonComponents
 
-// MARK: - ReactionToggleButton
+// MARK: - ReactionToggle
 
-class ReactionToggleButton: UIControl {
+class ReactionToggle: UIControl {
 
     // MARK: - Properties
 
