@@ -22,8 +22,8 @@ public struct MLSConferenceInfo: Equatable {
 
     public struct Member: Equatable {
 
-        let id: MLSClientID
-        let isInSubconversation: Bool
+        public let id: MLSClientID
+        public let isInSubconversation: Bool
 
     }
 

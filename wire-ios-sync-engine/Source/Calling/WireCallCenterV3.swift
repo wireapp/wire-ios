@@ -540,6 +540,37 @@ extension WireCallCenterV3 {
                 previousCallState: previousCallState
             ).post(in: context.notificationContext)
         }
+
+        if
+            conversation.messageProtocol == .mls,
+            let syncContext = uiMOC?.zm_sync,
+            let mlsService = syncContext.mlsService,
+            let parentQualifiedID = conversation.qualifiedID,
+            let parentGroupID = conversation.mlsGroupID
+        {
+            Task {
+                do {
+                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                        parentQualifiedID: parentQualifiedID,
+                        parentID: parentGroupID
+                    )
+
+                    let conferenceInfo = try mlsService.generateConferenceInfo(
+                        parentGroupID: parentGroupID,
+                        subconversationGroupID: subgroupID
+                    )
+
+                    Self.logger.debug("passing MLS conference info to AVS")
+
+                    avsWrapper.setMLSConferenceInfo(
+                        conversationId: conversationId,
+                        info: conferenceInfo
+                    )
+                } catch {
+                    Self.logger.error("failed to start MLS conference: \(String(describing: error))")
+                }
+            }
+        }
     }
 
     private var canStartConferenceCalls: Bool {
