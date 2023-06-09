@@ -111,7 +111,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
+        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
         verify(view: sut)
