@@ -78,10 +78,12 @@ final class ReactionsCellView: UIView, ConversationMessageCell {
         reactionView.translatesAutoresizingMaskIntoConstraints = false
         self.translatesAutoresizingMaskIntoConstraints = false
 
-        reactionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        reactionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40).isActive = true
-        reactionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        reactionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            reactionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            reactionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40),
+            reactionView.topAnchor.constraint(equalTo: self.topAnchor),
+            reactionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
     }
 
     // MARK: - configure method
