@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import CoreData
-import CoreCryptoSwift
+import WireCoreCrypto
 
 class MLSDecryptionService: MLSServiceInterface {
 

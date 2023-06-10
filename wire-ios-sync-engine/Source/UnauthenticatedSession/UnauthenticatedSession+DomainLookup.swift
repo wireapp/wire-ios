@@ -22,6 +22,7 @@ public enum DomainLookupError: Error, Equatable {
     case networkFailure
     case malformedData
     case notFound
+    case noApiVersion
     case unknown
 }
 
@@ -63,7 +64,7 @@ extension UnauthenticatedSession {
 
     public func lookup(domain: String, completion: @escaping (Result<DomainInfo>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
-            return completion(.failure(DomainLookupError.unknown))
+            return completion(.failure(DomainLookupError.noApiVersion))
         }
 
         let path = "/custom-backend/by-domain/\(domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)"
