@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import CoreCryptoSwift
+import WireCoreCrypto
 
 public enum MLSDecryptResult: Equatable {
     case message(_ messageData: Data, _ senderClientID: String?)
@@ -83,7 +83,7 @@ public final class MLSService: MLSServiceInterface {
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: UserDefaults
-    private let logger = Logging.mls
+    private let logger = WireLogger.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
 
     private let syncStatus: SyncStatusProtocol
