@@ -38,7 +38,9 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             ClaimMLSKeyPackageActionHandler(context: managedObjectContext),
             FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext),
+            FetchMLSSubconversationGroupInfoActionHandler(context: managedObjectContext),
             FetchMLSConversationGroupInfoActionHandler(context: managedObjectContext),
+            FetchSubgroupActionHandler(context: managedObjectContext),
             DeleteSubgroupActionHandler(context: managedObjectContext)
         ])
 
