@@ -41,6 +41,7 @@ enum DebugActions {
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
     static func findUnreadConversationContributingToBadgeCount(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
+        // developer tool
         let predicate = ZMConversation.predicateForConversationConsideredUnread()!
 
         let uiMOC = userSession.managedObjectContext
@@ -76,6 +77,7 @@ enum DebugActions {
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
     static func findUnreadConversationContributingToBackArrowDot(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
+        // debug action
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()!
 
         if let convo = (ZMConversationList.conversations(inUserSession: userSession) as! [ZMConversation])

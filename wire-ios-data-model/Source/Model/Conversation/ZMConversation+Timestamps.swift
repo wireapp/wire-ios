@@ -335,6 +335,7 @@ extension ZMConversation {
 
         updateLastUnreadKnock(lastKnockDate)
         updateLastUnreadMissedCall(lastMissedCallDate)
+        // wrong internalEstimatedUnreadCount
         internalEstimatedUnreadCount = unreadCount
         internalEstimatedUnreadSelfMentionCount = unreadSelfMentionCount
         internalEstimatedUnreadSelfReplyCount = unreadSelfReplyCount
@@ -378,8 +379,12 @@ extension ZMConversation {
         return unreadMessagesIncludingInvisible(until: timestamp).filter(ZMMessage.isVisible)
     }
 
+    //
     internal func unreadMessagesIncludingInvisible(until timestamp: Date = .distantFuture) -> [ZMMessage] {
         let range = (lastReadServerTimeStamp ?? .distantPast)...timestamp
+        print("Kate: \(lastReadServerTimeStamp)")
+        print("Kate: \(timestamp)")
+        print("Kate: \(unreadMessagesIncludingInvisible(in: range).count)")
         return unreadMessagesIncludingInvisible(in: range)
     }
 
