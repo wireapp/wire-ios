@@ -28,6 +28,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
+    private var header = SectionHeader(frame: .zero)
+
     /// The type of the displayed content.
     enum ContentType {
         case reactions, receipts(enabled: Bool)
@@ -119,6 +121,8 @@ final class MessageDetailsContentViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         UserCell.register(in: collectionView)
+
+        collectionView?.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
         view.addSubview(collectionView)
 
         subtitleLabel.numberOfLines = 0
@@ -247,6 +251,16 @@ final class MessageDetailsContentViewController: UIViewController {
         self.updateFooterPosition(for: collectionView)
     }
 
+    func setNumberOfSections() -> Int {
+        switch contentType {
+        case .reactions:
+            return 1
+        case .receipts:
+            return 0
+        }
+
+    }
+
 }
 
 // MARK: - UICollectionViewDataSource
@@ -255,6 +269,22 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return cells.count
+    }
+
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return setNumberOfSections()
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        header.titleLabel.text = "headerText"
+        header.size(fittingWidth: collectionView.bounds.width)
+        return header.bounds.size
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
+        (view as? SectionHeader)?.titleLabel.text = "headerText"
+        return view
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
