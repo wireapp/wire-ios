@@ -68,7 +68,7 @@ platform :ios do
 
     desc "Build & Upload Testflight Beta build"
     lane :testflight_beta do |options|
-        options[:build_type] = "RC"
+        options[:build_type] = "Beta"
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         build_for_release(options)
@@ -83,7 +83,6 @@ platform :ios do
         options[:override_folder] = "BK-CI-configuration"
         options[:s3_subfolder] = "custom/bund/column1"
         options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
-        options[:upload_to_datadog] = false
         build_and_upload_app_store(options)
     end
 
@@ -93,7 +92,6 @@ platform :ios do
         options[:override_folder] = "COLUMN3-CI-configuration"
         options[:s3_subfolder] = "custom/bund/column3"
         options[:app_center_app_name] = "Wire-by-Bund-Column3"
-        options[:upload_to_datadog] = false
         build_and_upload_app_store(options)
     end
 
@@ -103,7 +101,6 @@ platform :ios do
         options[:override_folder] = "BK-CI-configuration"
         options[:s3_subfolder] = "custom/bund/c1-appstore"
         options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
-        options[:upload_to_datadog] = false
         build_and_upload_app_store(options)
     end
 
@@ -113,7 +110,6 @@ platform :ios do
         options[:override_folder] = "COLUMN3-CI-configuration"
         options[:s3_subfolder] = "custom/bund/c3-appstore"
         options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
-        options[:upload_to_datadog] = false
         build_and_upload_app_store(options)
     end
 
@@ -124,9 +120,6 @@ platform :ios do
         upload_app_store(options)
         upload_s3(options)
         upload_dsyms_to_app_center_for_appstore_build(options)
-        if options[:upload_to_datadog]
-             upload_dsyms_to_datadog(options)
-        end
     end
 
     def fetch_latest_configuration_repo 
@@ -169,7 +162,7 @@ platform :ios do
             name: 'WIRE_BUNDLE_ID'
         )
         puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
-        should_sigh_adhoc = !build.appstore_build && !build.rc_build
+        should_sigh_adhoc = !build.appstore_build && !build.rc_build && !build.beta_build
         sigh(
             adhoc: should_sigh_adhoc,
             readonly: true,
