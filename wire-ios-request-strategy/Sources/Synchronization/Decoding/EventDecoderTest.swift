@@ -630,11 +630,11 @@ extension EventDecoderTest {
     }
 
     var randomData: Data {
-        Data(Bytes.random())
+        return .random()
     }
 
     var randomGroupID: MLSGroupID {
-        MLSGroupID(Bytes.random())
+        return MLSGroupID(randomData.bytes)
     }
 }
 
