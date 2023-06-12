@@ -124,7 +124,7 @@ platform :ios do
         upload_app_store(options)
         upload_s3(options)
         upload_dsyms_to_app_center_for_appstore_build(options)
-        if options.upload_to_datadog
+        if options[:upload_to_datadog]
              upload_dsyms_to_datadog(options)
         end
     end
@@ -514,7 +514,7 @@ platform :ios do
             output_types: "junit"
         )
     end
-
+w   
     desc "Build for release to AppStore without symbols"
     lane :build_for_release_without_symbols do |options|
         xcode_version = options[:xcode_version]
