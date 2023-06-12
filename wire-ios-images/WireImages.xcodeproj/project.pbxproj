@@ -660,8 +660,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0927584A1B70C23B00AD5A78 /* WireImages.xcconfig */;
 			buildSettings = {
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 				VALIDATE_WORKSPACE = YES;

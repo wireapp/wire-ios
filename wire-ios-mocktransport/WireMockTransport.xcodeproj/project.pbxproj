@@ -1026,9 +1026,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */;
 			buildSettings = {
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
