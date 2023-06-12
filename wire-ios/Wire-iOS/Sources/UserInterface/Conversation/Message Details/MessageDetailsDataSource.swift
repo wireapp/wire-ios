@@ -119,11 +119,12 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             return
         }
 
-        let sentString = "message_details.subtitle_send_date".localized(args: sentDate)
+        let sentString = MessageDetails.subtitleSendDate(sentDate)
+
         var subtitle = sentString
 
         if let editedDate = message.formattedEditedDate() {
-            let editedString = "message_details.subtitle_edit_date".localized(args: editedDate)
+            let editedString = MessageDetails.subtitleEditDate(editedDate)
             subtitle += "\n" + editedString
         }
 
