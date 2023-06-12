@@ -1162,7 +1162,7 @@ public final class MLSService: MLSServiceInterface {
 
             if subgroup.epoch <= 0 {
                 try await createSubgroup(with: subgroup.groupID)
-            } else if subgroup.epochTimestamp.ageInDays >= 1 {
+            } else if let epochAge = subgroup.epochTimestamp?.ageInDays, epochAge >= 1 {
                 try await deleteSubgroup(
                     parentID: parentQualifiedID,
                     context: notificationContext
