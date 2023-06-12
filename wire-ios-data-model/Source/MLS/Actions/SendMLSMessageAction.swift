@@ -140,7 +140,6 @@ public final class SendMLSMessageAction: EntityAction {
     public var message: Data
     public var resultHandler: ResultHandler?
 
-
     // MARK: - Life cycle
 
     public init(
