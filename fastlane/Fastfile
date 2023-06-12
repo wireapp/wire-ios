@@ -622,7 +622,7 @@ class Build
     def export_method
         if debug_build
             "development"
-        elsif appstore_build || beta_build
+        elsif appstore_build || beta_build || rc_build
             "app-store"
         else 
             "ad-hoc"

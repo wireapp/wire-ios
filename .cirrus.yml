@@ -25,6 +25,16 @@ carthage_cache_template: &CARTHAGE_CACHE_TEMPLATE
     populate_script: 
       - carthage bootstrap --platform ios --use-xcframeworks
 
+aws_cli_cache_template: &AWS_CLI_CACHE_TEMPLATE
+  install_aws_cli:
+    - which aws || brew install carthage
+  aws_cli_cache:
+    folder: Carthage/Build
+    fingerprint_script: cat Cartfile.resolved
+    populate_script: 
+      - carthage bootstrap --platform ios --use-xcframeworks
+
+
 run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
   bootstrap_ci_machine_script:
       - sh ./setup.sh
