@@ -45,6 +45,14 @@ task:
     - bundle exec fastlane appstore_public
 
 task:
+  name: Testflight Beta
+  trigger_type: manual
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane testflight_beta
+
+task:
   name: AppStore C1 Restricted
   trigger_type: manual
   << : *CARTHAGE_CACHE_TEMPLATE

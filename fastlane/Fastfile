@@ -229,6 +229,17 @@ platform :ios do
         build_and_upload_app_store(options)
     end
 
+    desc "Build & Upload Testflight Beta build"
+    lane :testflight_beta do |options|
+        options[:build_type] = "RC"
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        build_for_release(options)
+        upload_testflight(options)
+        upload_s3(options)
+        upload_dsyms_to_datadog(options)
+    end
+
     desc "Build & Upload Col 1 Restricted AppStore build"
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
@@ -340,6 +351,19 @@ platform :ios do
         )
     end
 
+    # "Upload to TestFlight"
+    def upload_testflight(options)
+        build = Build.new(options: options)
+        sh "cp ../wire-ios/Configuration/Appfile ."
+
+
+        upload_to_testflight(
+            api_key_path: appstoreconnect_api_key_file_path,
+            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
+            skip_waiting_for_build_processing: true
+        )
+    end
+
     # "Upload for internal use"
     def upload_app_center (options)
         build = Build.new(options: options)
@@ -399,45 +423,6 @@ platform :ios do
         end
         
         sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
-    end
-
-    # "Upload for internal use"
-    def upload_app_center (options)
-        build = Build.new(options: options)
-        changelog = ""
-
-        if build.playground_build
-            changelog = "Playground build for #{build.git_branch}"
-        elsif build.avs_build
-            changelog = "AVS #{build.avs_version}"
-        elsif build.last_commit.nil? || build.last_commit.empty? 
-            changelog = "No changelog available"
-        else
-            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
-                between: [build.last_commit, "HEAD"],
-                pretty: "* [%an] %s",
-            )
-        end
-
-        app_name = options[:app_center_app_name]
-        if app_name.nil? 
-            app_name = build.app_center_app_name
-        end
-
-        
-        sh "echo SHA of IPA is:"
-        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
-
-        appcenter_upload(
-            api_token: ENV["APPCENTER_API_TOKEN"],
-            owner_name: ENV["APPCENTER_OWNER_NAME"],
-            app_name: app_name,
-            file: "#{build.artifact_path(with_filename: true)}.ipa",
-            release_notes: changelog,
-            notify_testers: true,
-            mandatory_update: false,
-            dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
-        )
     end
 
     # "Upload dSYMs for AppStore crash tracking"
@@ -556,19 +541,6 @@ platform :ios do
             include_bitcode: false,
             include_symbols: false,
             xcargs: "BUILD_NUMBER=#{build.build_number}"
-        )
-    end
-
-    desc "Upload to TestFlight"
-    lane :upload_testflight do |options|
-        build = Build.new(options: options)
-        sh "cp ../wire-ios/Configuration/Appfile ."
-
-
-        upload_to_testflight(
-            api_key: @api_key,
-            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-            skip_waiting_for_build_processing: true
         )
     end
 
