@@ -46,6 +46,89 @@ platform :ios do
         sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
     end
 
+
+    desc "Build & Upload Playground build"
+    lane :playground do |options|
+        options[:build_type] = "Playground"
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        security_plans(options)
+        build_for_release(options)
+        upload_app_center(options)
+        upload_dsyms_to_datadog(options)
+        upload_s3(options)
+    end
+
+    desc "Build & Upload Public AppStore build"
+    lane :appstore_public do |options|
+        options[:build_type] = "AppStore"
+        options[:upload_to_datadog] = false
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Testflight Beta build"
+    lane :testflight_beta do |options|
+        options[:build_type] = "RC"
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        build_for_release(options)
+        upload_testflight(options)
+        upload_s3(options)
+        upload_dsyms_to_datadog(options)
+    end
+
+    desc "Build & Upload Col 1 Restricted AppStore build"
+    lane :appstore_col_1_restricted do |options|
+        options[:build_type] = "RC"
+        options[:override_folder] = "BK-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/column1"
+        options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
+        options[:upload_to_datadog] = false
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 3 Restricted AppStore build"
+    lane :appstore_col_3_restricted do |options|
+        options[:build_type] = "RC"
+        options[:override_folder] = "COLUMN3-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/column3"
+        options[:app_center_app_name] = "Wire-by-Bund-Column3"
+        options[:upload_to_datadog] = false
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 1 Production AppStore build"
+    lane :appstore_col_1_prod do |options|
+        options[:build_type] = "AppStore"
+        options[:override_folder] = "BK-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/c1-appstore"
+        options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
+        options[:upload_to_datadog] = false
+        build_and_upload_app_store(options)
+    end
+
+    desc "Build & Upload Col 3 Production AppStore build"
+    lane :appstore_col_3_prod do |options|
+        options[:build_type] = "AppStore"
+        options[:override_folder] = "COLUMN3-CI-configuration"
+        options[:s3_subfolder] = "custom/bund/c3-appstore"
+        options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
+        options[:upload_to_datadog] = false
+        build_and_upload_app_store(options)
+    end
+
+    def build_and_upload_app_store(options)
+        options[:build_number] = generate_build_number
+        prepare_for_release(options)
+        build_for_release(options)
+        upload_app_store(options)
+        upload_s3(options)
+        upload_dsyms_to_app_center_for_appstore_build(options)
+        if options.upload_to_datadog
+             upload_dsyms_to_datadog(options)
+        end
+    end
+
     def fetch_latest_configuration_repo 
         path = '../wire-ios-build-assets'
         `rm -rf #{path}`
@@ -210,88 +293,6 @@ platform :ios do
         end
     end
 
-    desc "Build & Upload Playground build"
-    lane :playground do |options|
-        options[:build_type] = "Playground"
-        options[:build_number] = generate_build_number
-        prepare_for_release(options)
-        security_plans(options)
-        build_for_release(options)
-        upload_app_center(options)
-        upload_dsyms_to_datadog(options)
-        upload_s3(options)
-    end
-
-    desc "Build & Upload Public AppStore build"
-    lane :appstore_public do |options|
-        options[:build_type] = "AppStore"
-        options[:upload_to_datadog] = false
-        build_and_upload_app_store(options)
-    end
-
-    desc "Build & Upload Testflight Beta build"
-    lane :testflight_beta do |options|
-        options[:build_type] = "RC"
-        options[:build_number] = generate_build_number
-        prepare_for_release(options)
-        build_for_release(options)
-        upload_testflight(options)
-        upload_s3(options)
-        upload_dsyms_to_datadog(options)
-    end
-
-    desc "Build & Upload Col 1 Restricted AppStore build"
-    lane :appstore_col_1_restricted do |options|
-        options[:build_type] = "RC"
-        options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column1"
-        options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
-        options[:upload_to_datadog] = false
-        build_and_upload_app_store(options)
-    end
-
-    desc "Build & Upload Col 3 Restricted AppStore build"
-    lane :appstore_col_3_restricted do |options|
-        options[:build_type] = "RC"
-        options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column3"
-        options[:app_center_app_name] = "Wire-by-Bund-Column3"
-        options[:upload_to_datadog] = false
-        build_and_upload_app_store(options)
-    end
-
-    desc "Build & Upload Col 1 Production AppStore build"
-    lane :appstore_col_1_prod do |options|
-        options[:build_type] = "AppStore"
-        options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c1-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
-        options[:upload_to_datadog] = false
-        build_and_upload_app_store(options)
-    end
-
-    desc "Build & Upload Col 3 Production AppStore build"
-    lane :appstore_col_3_prod do |options|
-        options[:build_type] = "AppStore"
-        options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c3-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
-        options[:upload_to_datadog] = false
-        build_and_upload_app_store(options)
-    end
-
-    def build_and_upload_app_store(options)
-        options[:build_number] = generate_build_number
-        prepare_for_release(options)
-        build_for_release(options)
-        upload_app_store(options)
-        upload_s3(options)
-        upload_dsyms_to_app_center_for_appstore_build(options)
-        if options.upload_to_datadog
-             upload_dsyms_to_datadog(options)
-        end
-    end
-
     # "Run security plans"
     def security_plans(options)
         build = Build.new(options: options)
@@ -443,7 +444,6 @@ platform :ios do
         )
     end
 
-
     # "Upload dsyms to Datadog"
     def upload_dsyms_to_datadog(options)
         build = Build.new(options: options)
@@ -514,8 +514,6 @@ platform :ios do
             output_types: "junit"
         )
     end
-
-    
 
     desc "Build for release to AppStore without symbols"
     lane :build_for_release_without_symbols do |options|
