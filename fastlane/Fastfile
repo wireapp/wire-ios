@@ -169,7 +169,7 @@ platform :ios do
             name: 'WIRE_BUNDLE_ID'
         )
         puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
-        should_sigh_adhoc = !build.appstore_build
+        should_sigh_adhoc = !build.appstore_build && !build.rc_build
         sigh(
             adhoc: should_sigh_adhoc,
             readonly: true,
@@ -512,67 +512,6 @@ platform :ios do
             buildlog_path: "test",
             output_directory: "test",
             output_types: "junit"
-        )
-    end
-w   
-    desc "Build for release to AppStore without symbols"
-    lane :build_for_release_without_symbols do |options|
-        xcode_version = options[:xcode_version]
-
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-        end
-
-        build = Build.new(options: options)
-        export_method = options[:export_method] || build.export_method
-
-        build_app(
-            scheme: "Wire-iOS",
-            configuration: build.configuration,
-            export_method: export_method,
-            export_options: {"iCloudContainerEnvironment": "Production"},
-            derived_data_path: "DerivedData",
-            archive_path: build.archive_path(with_filename: true),
-            buildlog_path: build.build_path,
-            output_directory: build.artifact_path(with_filename: false),
-            output_name: build.filename,
-            include_bitcode: false,
-            include_symbols: false,
-            xcargs: "BUILD_NUMBER=#{build.build_number}"
-        )
-    end
-
-    desc "Create a new version but not submit for review. Usage: Create release_note.txt in fastlane/metadata/en-US & de-DE folders. Then call $fastlane create_version app_version:X.XX"
-    lane :create_version do |options|
-        deliver(
-            api_key: @api_key,
-            app_version: options[:app_version],
-            submit_for_review: false,
-            automatic_release: false,
-            skip_metadata: false,
-            skip_screenshots: true,
-            skip_binary_upload: true,
-            skip_app_version_update: false,
-            force: true
-        )
-    end
-
-    desc "Submit for review with release note. Usage: Create release_note.txt in fastlane/metadata/en-US & de-DE folders. Then call $fastlane submit_review app_version:X.XX"
-    lane :submit_review do |options|
-        deliver(
-            api_key_path: appstoreconnect_api_key_file_path,
-            app_version: options[:app_version],
-            submit_for_review: true,
-            automatic_release: false,
-            skip_metadata: false,
-            skip_screenshots: true,
-            skip_binary_upload: true,
-            skip_app_version_update: false,
-            force: true,
-            submission_information: {
-                add_id_info_serves_ads: false,
-                add_id_info_uses_idfa: false
-            }
         )
     end
 
