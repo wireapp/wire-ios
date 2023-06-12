@@ -31,7 +31,25 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     init(message: ZMConversationMessage) {
         self.message = message
-        self.configuration = View.Configuration(message: message)
+
+        let reactions: [MessageReactionMetadata] = message.usersReaction.compactMap { reaction, usersWhoReacted in
+            guard
+                let reactionType = MessageReaction.messageReaction(from: reaction),
+                !usersWhoReacted.isEmpty
+            else {
+                return nil
+            }
+
+            return MessageReactionMetadata(
+                type: reactionType,
+                count: UInt(usersWhoReacted.count),
+                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
+                performReaction: nil
+            )
+        }
+
+        self.configuration = View.Configuration(reactions: reactions)
+
     }
 
     var topMargin: Float = 0

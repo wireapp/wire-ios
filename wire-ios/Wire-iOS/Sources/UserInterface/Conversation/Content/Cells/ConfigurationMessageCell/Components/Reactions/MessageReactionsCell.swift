@@ -25,9 +25,9 @@ import WireDataModel
 public struct MessageReactionMetadata {
 
     let type: MessageReaction
-    let count: Int
+    let count: UInt
     let isSelfUserReacting: Bool
-    let performReaction: () -> Void
+    var performReaction: (() -> Void)?
 
 }
 
@@ -37,12 +37,10 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - Properties
 
-    struct Configuration: Equatable {
-        let message: ZMConversationMessage
+    struct Configuration {
 
-        static func == (lhs: MessageReactionsCell.Configuration, rhs: MessageReactionsCell.Configuration) -> Bool {
-            lhs.message == rhs.message
-        }
+        let reactions: [MessageReactionMetadata]
+
     }
 
     let reactionCollectionView = ReactionCollectionView()
@@ -90,28 +88,25 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
+        reactionCollectionView.reactions = object.reactions.map {
+            var reaction = $0
 
-        reactionCollectionView.reactions = object.message.usersReaction.compactMap { reaction, usersWhoReacted in
-            guard
-                let reactionType = MessageReaction.messageReaction(from: reaction),
-                !usersWhoReacted.isEmpty
-            else {
-                return nil
+            reaction.performReaction = { [weak self] in
+                guard
+                    let `self` = self,
+                    let message = self.message
+                else {
+                    return
+                }
+
+                self.delegate?.perform(
+                    action: .react(reaction.type),
+                    for: message,
+                    view: self
+                )
             }
 
-            return MessageReactionMetadata(
-                type: reactionType,
-                count: usersWhoReacted.count,
-                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
-                performReaction: { [weak self] in
-                    guard let `self` = self else { return }
-                    self.delegate?.perform(
-                        action: .react(reactionType),
-                        for: object.message,
-                        view: self
-                    )
-                }
-            )
+            return reaction
         }
 
     }

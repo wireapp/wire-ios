@@ -89,7 +89,9 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
             type: reaction.type.unicodeValue,
             count: Int(reaction.count),
             isToggled: reaction.isSelfUserReacting,
-            onToggle: reaction.performReaction
+            onToggle: {
+                reaction.performReaction?()
+            }
 
         )
         return cell
