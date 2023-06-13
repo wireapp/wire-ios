@@ -19,7 +19,6 @@
 import Foundation
 import WireCoreCrypto
 
-
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionSerivceInterface {
 
     func uploadKeyPackagesIfNeeded()
@@ -43,8 +42,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func commitPendingProposals() async throws
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
-
-    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date)
 
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
@@ -913,24 +910,6 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Pending proposals
-
-    /// Schedule a date to commit all pending proposals for a group.
-    ///
-    /// - Parameters:
-    ///   - groupID: The group in which the propsal(s) should be commited.
-    ///   - commitDate: The date at which to commit the pending proposals.
-
-    public func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
-        guard let context = context else {
-            return
-        }
-
-        context.performAndWait {
-            logger.info("schedule to commit pending proposals in \(groupID) at \(commitDate)")
-            let conversation = ZMConversation.fetch(with: groupID, in: context)
-            conversation?.commitPendingProposalDate = commitDate
-        }
-    }
 
     enum MLSCommitPendingProposalsError: Error {
 

@@ -857,24 +857,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Pending proposals
 
-    func test_SchedulePendingProposalCommit() throws {
-        // Given
-        let conversationID = UUID.create()
-        let groupID = MLSGroupID([1, 2, 3])
-
-        let conversation = self.createConversation(in: uiMOC)
-        conversation.remoteIdentifier = conversationID
-        conversation.mlsGroupID = groupID
-
-        let commitDate = Date().addingTimeInterval(2)
-
-        // When
-        sut.scheduleCommitPendingProposals(groupID: groupID, at: commitDate)
-
-        // Then
-        conversation.commitPendingProposalDate = commitDate
-    }
-
     func test_CommitPendingProposals_NoProposalsExist() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
