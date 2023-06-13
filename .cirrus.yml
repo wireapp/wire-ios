@@ -25,22 +25,23 @@ carthage_cache_template: &CARTHAGE_CACHE_TEMPLATE
     populate_script: 
       - carthage bootstrap --platform ios --use-xcframeworks
 
+bundler_cache_template: &BUNDLER_CACHE_TEMPLATE
+  install_bundler:
+    - which bundle || gem install bundler
+  bundler_cache:
+    folder: vendor/bundle
+    fingerprint_script: cat Gemfile.lock
+    populate_script: 
+      - bundle check || bundle install
+
 run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
   bootstrap_ci_machine_script:
       - sh ./setup.sh
 
-security_tests_task:
-  name: Security Tests
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
-  script:
-    - bundle exec fastlane security_tests
-
 publishing_binary_task_template: &PUBLISHING_BINARY_TASK_TEMPLATE
-  depends_on:
-    - "Security Tests"
   trigger_type: manual
   << : *CARTHAGE_CACHE_TEMPLATE
+  << : *BUNDLER_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
 
 task:
@@ -61,26 +62,39 @@ task:
   script:
     - bundle exec fastlane testflight_beta
 
+security_tests_task:
+  name: Security Tests
+  trigger: manual
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane security_tests
+
+publishing_bund_binary_task_template: &PUBLISHING_BUND_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  depends_on:
+    - "Security Tests"
+
 task:
   name: AppStore C1 Restricted
-  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_1_restricted
 
 task:
   name: AppStore C3 Restricted
-  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_3_restricted
 
 task:
   name: AppStore C1 Production
-  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_1_prod
 
 task:
   name: AppStore C3 Production
-  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_3_prod
