@@ -49,6 +49,7 @@ platform :ios do
     desc "Run security tests for Playground configuration"
     lane :security_tests do |options|
         options[:build_type] = "Playground"
+        options[:build_number] = "1234"
         prepare_for_release(options)
         security_plans(options)
     end
