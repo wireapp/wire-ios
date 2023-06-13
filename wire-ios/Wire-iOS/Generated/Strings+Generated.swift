@@ -3545,7 +3545,7 @@ internal enum L10n {
       /// No one has read this message yet.
       internal static let emptyReadReceipts = L10n.tr("Localizable", "message_details.empty_read_receipts", fallback: "No one has read this message yet.")
       /// Reactions
-      internal static let likesTitle = L10n.tr("Localizable", "message_details.likes_title", fallback: "Reactions")
+      internal static let reactionsTitle = L10n.tr("Localizable", "message_details.reactions_title", fallback: "Reactions")
       /// Read receipts were not on when this message was sent.
       internal static let readReceiptsDisabled = L10n.tr("Localizable", "message_details.read_receipts_disabled", fallback: "Read receipts were not on when this message was sent.")
       /// Read
@@ -3566,8 +3566,8 @@ internal enum L10n {
       internal static let userReadTimestampSubtitleLabel = L10n.tr("Localizable", "message_details.user_read_timestamp_subtitle_label", fallback: "Read at")
       internal enum Tabs {
         /// Reactions (%d)
-        internal static func likes(_ p1: Int) -> String {
-          return L10n.tr("Localizable", "message_details.tabs.likes", p1, fallback: "Reactions (%d)")
+        internal static func reactions(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message_details.tabs.reactions", p1, fallback: "Reactions (%d)")
         }
         /// Read (%d)
         internal static func seen(_ p1: Int) -> String {

@@ -103,16 +103,16 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         // Setup the appropriate view controllers
         switch dataSource.displayMode {
         case .combined:
-            let readReceiptsViewController = MessageDetailsContentViewController(contentType: .receipts(enabled: dataSource.supportsReadReceipts), conversation: dataSource.conversation)
-            let reactionsViewController = MessageDetailsContentViewController(contentType: .reactions, conversation: dataSource.conversation)
+            let readReceiptsViewController = MessageDetailsContentViewController(contentType: .receipts(enabled: dataSource.supportsReadReceipts), conversation: dataSource.conversation, messageReactions: message.messageReactions)
+            let reactionsViewController = MessageDetailsContentViewController(contentType: .reactions, conversation: dataSource.conversation, messageReactions: message.messageReactions)
             viewControllers = .combinedView(readReceipts: readReceiptsViewController, reactions: reactionsViewController)
 
         case .reactions:
-            let reactionsViewController = MessageDetailsContentViewController(contentType: .reactions, conversation: dataSource.conversation)
+            let reactionsViewController = MessageDetailsContentViewController(contentType: .reactions, conversation: dataSource.conversation, messageReactions: message.messageReactions)
             viewControllers = .singleView(reactionsViewController)
 
         case .receipts:
-            let readReceiptsViewController = MessageDetailsContentViewController(contentType: .receipts(enabled: dataSource.supportsReadReceipts), conversation: dataSource.conversation)
+            let readReceiptsViewController = MessageDetailsContentViewController(contentType: .receipts(enabled: dataSource.supportsReadReceipts), conversation: dataSource.conversation, messageReactions: message.messageReactions)
             viewControllers = .singleView(readReceiptsViewController)
         }
 
