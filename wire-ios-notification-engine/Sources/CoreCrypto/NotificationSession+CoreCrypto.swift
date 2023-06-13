@@ -49,7 +49,7 @@ extension NotificationSession {
                     syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsService == nil {
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsDecryptionService == nil {
                     syncContext.mlsDecryptionService = MLSDecryptionService(
                         context: syncContext,
                         coreCrypto: safeCoreCrypto
