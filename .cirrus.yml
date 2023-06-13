@@ -29,7 +29,7 @@ run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
   bootstrap_ci_machine_script:
       - sh ./setup.sh
 
-security_tests_task:
+run_security_tests_task:
   name: Security Tests
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
@@ -38,7 +38,7 @@ security_tests_task:
 
 publishing_binary_task_template: &PUBLISHING_BINARY_TASK_TEMPLATE
   depends_on:
-    - security_tests
+    - run_security_tests
   trigger_type: manual
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
