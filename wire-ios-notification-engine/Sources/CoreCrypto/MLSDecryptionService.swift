@@ -23,8 +23,6 @@ import WireCoreCrypto
 
 class MLSDecryptionService: MLSServiceInterface {
 
-    
-
     // MARK: - Properties
 
     private let coreCrypto: SafeCoreCryptoProtocol
