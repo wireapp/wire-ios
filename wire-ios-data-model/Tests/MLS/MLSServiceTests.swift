@@ -27,7 +27,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockEncryptionService: MockMLSEncryptionServiceInterface!
-    var mockDecryptionService: MockMLSDecryptionSerivceInterface!
+    var mockDecryptionService: MockMLSDecryptionServiceInterface!
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSyncStatus: MockSyncStatus!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
@@ -43,7 +43,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockEncryptionService = MockMLSEncryptionServiceInterface()
-        mockDecryptionService = MockMLSDecryptionSerivceInterface()
+        mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
         mockSyncStatus = MockSyncStatus()
         mockActionsProvider = MockMLSActionsProviderProtocol()

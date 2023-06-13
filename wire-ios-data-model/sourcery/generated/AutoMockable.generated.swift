@@ -749,7 +749,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
     }
 
 }
-public class MockMLSDecryptionSerivceInterface: MLSDecryptionSerivceInterface {
+public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
 

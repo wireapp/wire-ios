@@ -37,10 +37,10 @@ extension NSManagedObjectContext {
 
     private static let mlsDecryptionServiceUserInfoKey = "MLSDecryptionServiceUserInfoKey"
 
-    public var mlsDecryptionService: MLSDecryptionSerivceInterface? {
+    public var mlsDecryptionService: MLSDecryptionServiceInterface? {
         get {
             precondition(zm_isSyncContext, "MLDecryptionSService should only be accessed on the sync context")
-            return mlsService ?? userInfo[Self.mlsDecryptionServiceUserInfoKey] as? MLSDecryptionSerivceInterface
+            return mlsService ?? userInfo[Self.mlsDecryptionServiceUserInfoKey] as? MLSDecryptionServiceInterface
         }
 
         set {

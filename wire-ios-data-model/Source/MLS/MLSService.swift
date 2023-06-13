@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionSerivceInterface {
+public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
     func uploadKeyPackagesIfNeeded()
 
@@ -70,7 +70,7 @@ public final class MLSService: MLSServiceInterface {
     private let coreCrypto: SafeCoreCryptoProtocol
 
     private let encryptionService: MLSEncryptionServiceInterface
-    private let decryptionService: MLSDecryptionSerivceInterface
+    private let decryptionService: MLSDecryptionServiceInterface
 
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
@@ -137,7 +137,7 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext,
         coreCrypto: SafeCoreCryptoProtocol,
         encryptionService: MLSEncryptionServiceInterface? = nil,
-        decryptionService: MLSDecryptionSerivceInterface? = nil,
+        decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,

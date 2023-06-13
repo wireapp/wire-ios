@@ -20,7 +20,7 @@ import Foundation
 import WireCoreCrypto
 
 // sourcery: AutoMockable
-public protocol MLSDecryptionSerivceInterface {
+public protocol MLSDecryptionServiceInterface {
 
     func decrypt(
         message: String,
@@ -37,7 +37,7 @@ public enum MLSDecryptResult: Equatable {
 
 }
 
-public final class MLSDecryptionService: MLSDecryptionSerivceInterface {
+public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
 
