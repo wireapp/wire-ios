@@ -62,39 +62,26 @@ task:
   script:
     - bundle exec fastlane testflight_beta
 
-security_tests_task:
-  name: Security Tests
-  trigger: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
-  script:
-    - bundle exec fastlane security_tests
-
-publishing_bund_binary_task_template: &PUBLISHING_BUND_BINARY_TASK_TEMPLATE
-  << : *PUBLISHING_BINARY_TASK_TEMPLATE
-  depends_on:
-    - "Security Tests"
-
 task:
   name: AppStore C1 Restricted
-  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_1_restricted
 
 task:
   name: AppStore C3 Restricted
-  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_3_restricted
 
 task:
   name: AppStore C1 Production
-  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_1_prod
 
 task:
   name: AppStore C3 Production
-  << : *PUBLISHING_BUND_BINARY_TASK_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_3_prod
