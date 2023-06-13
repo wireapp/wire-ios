@@ -92,8 +92,14 @@ public class MockAVSWrapper: AVSWrapperType {
         requestVideoStreamsArguments = (conversationId, videoStreams)
     }
 
+    var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
+
     public func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo) {
-        // do nothing
+        guard let mock = mockSetMLSConferenceInfo else {
+            fatalError("not implemented")
+        }
+
+        mock(conversationId, info)
     }
 
 }

@@ -635,6 +635,70 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
+    func testThatItStartsACall_conference_mls() throws {
+        // given
+        let parentGroupID = MLSGroupID(Data.random())
+        let subconversationGroupID = MLSGroupID(Data.random())
+        let conferenceInfo = MLSConferenceInfo(
+            epoch: 42,
+            keyData: .random(length: 8),
+            keySize: 8,
+            members: [
+                MLSConferenceInfo.Member(
+                    id: MLSClientID(
+                        userID: UUID.create().transportString(),
+                        clientID: "abcdefg",
+                        domain: "foo.com"
+                    ),
+                    isInSubconversation: true
+                )
+            ]
+        )
+
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = parentGroupID
+
+        let mlsService = MockMLSService()
+
+        let didJoinSubgroup = expectation(description: "didJoinSubgroup")
+        mlsService.mockCreateOrJoinSubgroup = {
+            defer { didJoinSubgroup.fulfill() }
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, parentGroupID)
+            return subconversationGroupID
+        }
+
+        let didGenerateConferenceInfo = expectation(description: "didGenerateConferenceInfo")
+        mlsService.mockGenerateConferinceInfo = {
+            defer { didGenerateConferenceInfo.fulfill() }
+            XCTAssertEqual($0, parentGroupID)
+            XCTAssertEqual($1, subconversationGroupID)
+            return conferenceInfo
+        }
+
+        let didSetConferenceInfo = expectation(description: "didSetConferenceInfo")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            XCTAssertEqual($0, self.groupConversation.avsIdentifier)
+            XCTAssertEqual($1, conferenceInfo)
+            didSetConferenceInfo.fulfill()
+        }
+
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        try checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: groupConversationID) {
+            // when
+            try sut.startCall(in: groupConversation, isVideo: false)
+
+            // then
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.mlsConference)
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
+        }
+
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
     func testThatItDoesNotStartAConferenceCall_IfConferenceCallingFeatureStatusIsDisabled() throws {
         // given
         conferenceCalling.status = .disabled

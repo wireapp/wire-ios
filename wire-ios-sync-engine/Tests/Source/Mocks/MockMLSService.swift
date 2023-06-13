@@ -79,18 +79,30 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    var mockCreateOrJoinSubgroup: ((QualifiedID, MLSGroupID) -> MLSGroupID)?
+
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async throws -> MLSGroupID {
-        fatalError("not implemented")
+        guard let mock = mockCreateOrJoinSubgroup else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentQualifiedID, parentID)
     }
+
+    var mockGenerateConferinceInfo: ((MLSGroupID, MLSGroupID) -> MLSConferenceInfo)?
 
     func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
     ) throws -> MLSConferenceInfo {
-        fatalError("not implemented")
+        guard let mock = mockGenerateConferinceInfo else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentGroupID, subconversationGroupID)
     }
 
 }

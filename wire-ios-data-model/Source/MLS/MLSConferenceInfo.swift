@@ -25,6 +25,14 @@ public struct MLSConferenceInfo: Equatable {
         public let id: MLSClientID
         public let isInSubconversation: Bool
 
+        public init(
+            id: MLSClientID,
+            isInSubconversation: Bool
+        ) {
+            self.id = id
+            self.isInSubconversation = isInSubconversation
+        }
+
     }
 
     public let epoch: UInt64
