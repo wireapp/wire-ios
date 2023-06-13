@@ -152,9 +152,9 @@ final class MessageDetailsContentViewController: UIViewController {
 
         case .reactions:
             if cells.isEmpty {
-                title = MessageDetails.likesTitle.capitalized
+                title = MessageDetails.reactionsTitle.capitalized
             } else {
-                title = MessageDetails.Tabs.likes(cells.count).capitalized
+                title = MessageDetails.Tabs.reactions(cells.count).capitalized
             }
         }
     }

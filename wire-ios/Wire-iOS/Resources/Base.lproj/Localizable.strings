@@ -1837,10 +1837,10 @@
 "message_details.empty_read_receipts" = "No one has read this message yet.";
 "message_details.read_receipts_disabled" = "Read receipts were not on when this message was sent.";
 "message_details.combined_title" = "Message Details";
-"message_details.likes_title" = "Reactions";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Read";
 "message_details.tabs.seen" = "Read (%d)";
-"message_details.tabs.likes" = "Reactions (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Sent: %@";
 "message_details.subtitle_edit_date" = "Edited: %@";
 "message_details.subtitle_label_voiceOver" = "Message Details";
