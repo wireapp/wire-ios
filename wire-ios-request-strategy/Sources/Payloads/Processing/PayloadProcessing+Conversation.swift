@@ -170,14 +170,10 @@ extension Payload.Conversation {
             WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
             return
         }
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); members: \(String(describing: members))")
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); conv payload: \(String(describing: self))")
 
         if conversation.epoch <= 0 {
-            do {
-                try mlsService.createSelfGroup(for: groupId)
-            } catch {
-                WireLogger.mls.error("error creating self group for \(groupId)")
-            }
+            mlsService.createSelfGroup(for: groupId)
         } else {
             mlsService.joinSelfGroup(with: groupId)
         }
@@ -227,7 +223,7 @@ extension Payload.Conversation {
 
         conversation.mlsGroupID = self.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
     }
-    
+
     // There is a bug in the backend where the conversation type is not correct for
     // connection requests across federated backends. Instead of returning `.connection` type,
     // it returns `oneOnOne.
