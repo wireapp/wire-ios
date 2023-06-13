@@ -163,7 +163,7 @@ public final class MLSService: MLSServiceInterface {
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
-        self.decryptionService = decryptionService ?? MLSDecryptionSerivce(
+        self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
             coreCrypto: coreCrypto
         )

@@ -307,7 +307,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Message Decryption
 
-    typealias DecryptionError = MLSDecryptionSerivce.MLSMessageDecryptionError
+    typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
     func test_Decrypt_ThrowsFailedToConvertMessageToBytes() {
         syncMOC.performAndWait {

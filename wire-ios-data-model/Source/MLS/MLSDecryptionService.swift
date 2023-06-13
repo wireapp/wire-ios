@@ -36,7 +36,7 @@ public enum MLSDecryptResult: Equatable {
 
 }
 
-public final class MLSDecryptionSerivce: MLSDecryptionSerivceInterface {
+public final class MLSDecryptionService: MLSDecryptionSerivceInterface {
 
     // MARK: - Properties
 
