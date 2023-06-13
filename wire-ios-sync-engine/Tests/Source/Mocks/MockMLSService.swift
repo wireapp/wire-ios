@@ -21,8 +21,16 @@ import WireDataModel
 
 // Temporary Mock until we find a way to use a single mocked `mlsServiceProcotol` accross frameworks
 class MockMLSService: MLSServiceInterface {
-
-    func commitPendingProposals(in groupID: WireDataModel.MLSGroupID) async throws {
+    func createSelfGroup(for groupID: MLSGroupID) {
+        fatalError("not implemented")
+    }
+    
+    func joinSelfGroup(with groupID: MLSGroupID) {
+        fatalError("not implemented")
+    }
+    
+    func commitPendingProposals(in groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
     }
 
     func uploadKeyPackagesIfNeeded() {
