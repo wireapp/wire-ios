@@ -88,7 +88,7 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
         let payload = ResponsePayload(
             cipherSuite: 123,
             epoch: 1,
-            epochTimestamp: Date(),
+            epochTimestamp: Date.distantPast,
             groupID: Data.secureRandomData(length: 8).base64String(),
             members: [.init(
                 userID: UUID(),

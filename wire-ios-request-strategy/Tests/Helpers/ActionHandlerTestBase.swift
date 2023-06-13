@@ -250,7 +250,7 @@ extension ActionHandlerTestBase {
     // MARK: Payload Encoding
 
     func transportData<Payload: Encodable>(for payload: Payload?) -> ZMTransportData? {
-        let data = try! JSONEncoder().encode(payload)
+        let data = try! JSONEncoder.defaultEncoder.encode(payload)
         return String(bytes: data, encoding: .utf8) as ZMTransportData?
     }
 }
