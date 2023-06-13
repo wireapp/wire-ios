@@ -1071,18 +1071,19 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
 }
-class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
+public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - storeSubconversationGroupID
 
-    var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID, type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID, SubgroupType, MLSGroupID) -> Void)?
+    public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID, type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID, SubgroupType, MLSGroupID) -> Void)?
 
-    func storeSubconversationGroupID(_ groupID: MLSGroupID, forType type: SubgroupType, parentGroupID: MLSGroupID) {
+    public func storeSubconversationGroupID(_ groupID: MLSGroupID, forType type: SubgroupType, parentGroupID: MLSGroupID) {
         storeSubconversationGroupIDForTypeParentGroupID_Invocations.append((groupID: groupID, type: type, parentGroupID: parentGroupID))
 
         guard let mock = storeSubconversationGroupIDForTypeParentGroupID_MockMethod else {
@@ -1094,11 +1095,11 @@ class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepos
 
     // MARK: - fetchSubconversationGroupID
 
-    var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
-    var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
+    public var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
 
-    func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
+    public func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
         fetchSubconversationGroupIDForTypeParentGroupID_Invocations.append((type: type, parentGroupID: parentGroupID))
 
         if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockMethod {

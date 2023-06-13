@@ -565,6 +565,8 @@
 		EEC3BC742888403000BFDC35 /* MockCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC3BC732888403000BFDC35 /* MockCoreCrypto.swift */; };
 		EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */; };
 		EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC57C4929E407CC0068DFDA /* EARService.swift */; };
+		EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */; };
+		EEC794F62A384464008E1A3B /* MLSEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */; };
 		EEC8064E28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */; };
 		EEC80B3629B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B3529B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift */; };
 		EEC80B5C29B611CA00099727 /* PersistedDataPatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B5B29B611CA00099727 /* PersistedDataPatch.swift */; };
@@ -1449,6 +1451,8 @@
 		EEC3BC732888403000BFDC35 /* MockCoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCrypto.swift; sourceTree = "<group>"; };
 		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
 		EEC57C4929E407CC0068DFDA /* EARService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARService.swift; sourceTree = "<group>"; };
+		EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionService.swift; sourceTree = "<group>"; };
+		EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionService.swift; sourceTree = "<group>"; };
 		EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStaleMLSKeyDetector.swift; sourceTree = "<group>"; };
 		EEC80B3529B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+ProteusProvider.swift"; sourceTree = "<group>"; };
 		EEC80B5B29B611CA00099727 /* PersistedDataPatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedDataPatch.swift; sourceTree = "<group>"; };
@@ -2033,6 +2037,8 @@
 				63B1333E29A503D000009D84 /* MLSActionExecutor.swift */,
 				EED6C7132A30B94100CB8B60 /* MLSUserID.swift */,
 				63B1334029A503D000009D84 /* MLSService.swift */,
+				EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */,
+				EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */,
 				EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */,
 				63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */,
 				63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */,
@@ -3901,6 +3907,7 @@
 				70E77B7D273188150021EE70 /* ZMConversation+Role.swift in Sources */,
 				63370CC9242E3B990072C37F /* ZMMessage+Conversation.swift in Sources */,
 				63B1335729A503D100009D84 /* MLSActionsProvider.swift in Sources */,
+				EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */,
 				163D01E02472DE6200984999 /* InvalidConnectionRemoval.swift in Sources */,
 				547E66491F7503A5008CB1FA /* ZMConversation+Notifications.swift in Sources */,
 				EF18C7E61F9E4F8A0085A832 /* ZMUser+Filename.swift in Sources */,
@@ -3910,6 +3917,7 @@
 				F943BC2D1E88FEC80048A768 /* ChangedIndexes.swift in Sources */,
 				7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */,
 				63BEF5872A2636BC00F482E8 /* MLSConferenceInfo.swift in Sources */,
+				EEC794F62A384464008E1A3B /* MLSEncryptionService.swift in Sources */,
 				F9A706A31CAEE01D00C2F5FE /* ConversationListChangeInfo.swift in Sources */,
 				873B88FC204044AC00FBE254 /* ConversationCreationOptions.swift in Sources */,
 				87E9508B2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift in Sources */,

@@ -19,12 +19,8 @@
 import Foundation
 import WireCoreCrypto
 
-public enum MLSDecryptResult: Equatable {
-    case message(_ messageData: Data, _ senderClientID: String?)
-    case proposal(_ commitDelay: UInt64)
-}
 
-public protocol MLSServiceInterface {
+public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionSerivceInterface {
 
     func uploadKeyPackagesIfNeeded()
 
@@ -33,14 +29,6 @@ public protocol MLSServiceInterface {
     func conversationExists(groupID: MLSGroupID) -> Bool
 
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
-
-    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte]
-
-    func decrypt(
-        message: String,
-        for groupID: MLSGroupID,
-        subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult?
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -83,6 +71,10 @@ public final class MLSService: MLSServiceInterface {
 
     private weak var context: NSManagedObjectContext?
     private let coreCrypto: SafeCoreCryptoProtocol
+
+    private let encryptionService: MLSEncryptionServiceInterface
+    private let decryptionService: MLSDecryptionSerivceInterface
+
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
@@ -147,6 +139,8 @@ public final class MLSService: MLSServiceInterface {
     init(
         context: NSManagedObjectContext,
         coreCrypto: SafeCoreCryptoProtocol,
+        encryptionService: MLSEncryptionServiceInterface? = nil,
+        decryptionService: MLSDecryptionSerivceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
@@ -154,7 +148,7 @@ public final class MLSService: MLSServiceInterface {
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepsository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
@@ -170,6 +164,12 @@ public final class MLSService: MLSServiceInterface {
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
+
+        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
+        self.decryptionService = decryptionService ?? MLSDecryptionSerivce(
+            context: context,
+            coreCrypto: coreCrypto
+        )
 
         do {
             try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
@@ -888,97 +888,28 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Encrypt message
 
-    public enum MLSMessageEncryptionError: Error {
-
-        case failedToEncryptMessage
-
-    }
-
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
-
-        do {
-            logger.info("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
-        } catch let error {
-            logger.warn("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
-            throw MLSMessageEncryptionError.failedToEncryptMessage
-        }
+    public func encrypt(
+        message: [Byte],
+        for groupID: MLSGroupID
+    ) throws -> [Byte] {
+        return try encryptionService.encrypt(
+            message: message,
+            for: groupID
+        )
     }
 
     // MARK: - Decrypting Message
-
-    public enum MLSMessageDecryptionError: Error {
-
-        case failedToConvertMessageToBytes
-        case failedToDecryptMessage
-
-    }
-
-    /// Decrypts an MLS message for the given group
-    ///
-    /// - Parameters:
-    ///   - message: a base64 encoded encrypted message
-    ///   - groupID: the id of the MLS group
-    ///
-    /// - Returns:
-    ///   The data representing the decrypted message bytes.
-    ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
-    ///
-    /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted
 
     public func decrypt(
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) throws -> MLSDecryptResult? {
-        logger.info("decrypting message for group (\(groupID))")
-
-        guard let messageBytes = message.base64DecodedBytes else {
-            throw MLSMessageDecryptionError.failedToConvertMessageToBytes
-        }
-
-        var groupID = groupID
-
-        if
-            let type = subconversationType,
-            let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
-                forType: type,
-                parentGroupID: groupID
-            )
-        {
-            groupID = subconversationGroupID
-        }
-
-        do {
-            let decryptedMessage = try coreCrypto.perform { try $0.decryptMessage(
-                conversationId: groupID.bytes,
-                payload: messageBytes
-            ) }
-
-            if let commitDelay = decryptedMessage.commitDelay {
-                return MLSDecryptResult.proposal(commitDelay)
-            }
-
-            if let message = decryptedMessage.message {
-                return MLSDecryptResult.message(
-                    message.data,
-                    senderClientId(from: decryptedMessage)
-                )
-            }
-
-            return nil
-        } catch {
-            logger.warn("failed to decrypt message for group (\(groupID)): \(String(describing: error))")
-            throw MLSMessageDecryptionError.failedToDecryptMessage
-        }
-    }
-
-    private func senderClientId(from message: DecryptedMessage) -> String? {
-        guard let senderClientID = message.senderClientId else {
-            return nil
-        }
-
-        return MLSClientID(data: senderClientID.data)?.clientID
+        return try decryptionService.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: subconversationType
+        )
     }
 
     // MARK: - Pending proposals

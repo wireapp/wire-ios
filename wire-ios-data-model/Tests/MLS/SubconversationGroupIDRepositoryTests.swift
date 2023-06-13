@@ -24,7 +24,7 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
 
     func test_StoreAndFetchGroupID() throws {
         // Given
-        let sut = SubconversationGroupIDRepsository()
+        let sut = SubconversationGroupIDRepository()
         let subconversationGroupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
         let parentGroupID = MLSGroupID.random()
