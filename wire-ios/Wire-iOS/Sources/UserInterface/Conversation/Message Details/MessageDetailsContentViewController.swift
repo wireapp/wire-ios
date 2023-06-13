@@ -30,6 +30,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     private var header = SectionHeader(frame: .zero)
 
+    var messageReactions: Int = 0
+
     /// The type of the displayed content.
     enum ContentType {
         case reactions, receipts(enabled: Bool)
@@ -80,9 +82,10 @@ final class MessageDetailsContentViewController: UIViewController {
      * Creates a view controller to display message details of a certain type.
      */
 
-    init(contentType: ContentType, conversation: ZMConversation) {
+    init(contentType: ContentType, conversation: ZMConversation, messageReactions: Int) {
         self.contentType = contentType
         self.conversation = conversation
+        self.messageReactions = messageReactions
         super.init(nibName: nil, bundle: nil)
         updateTitle()
     }
@@ -251,10 +254,10 @@ final class MessageDetailsContentViewController: UIViewController {
         self.updateFooterPosition(for: collectionView)
     }
 
-    func setNumberOfSections() -> Int {
+    func setNumberOfSections(messageReactions: Int) -> Int {
         switch contentType {
         case .reactions:
-            return 1
+            return messageReactions
         case .receipts:
             return 0
         }
@@ -272,7 +275,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return setNumberOfSections()
+        return setNumberOfSections(messageReactions: messageReactions)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

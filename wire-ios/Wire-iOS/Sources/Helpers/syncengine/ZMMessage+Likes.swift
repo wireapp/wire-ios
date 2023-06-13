@@ -50,8 +50,17 @@ extension ZMConversationMessage {
         let selfReaction = self.usersReaction.filter { (_, users) in
             return users.contains { $0.isSelfUser }
         }.first
-        guard let key = selfReaction?.key else { return  nil}
+        guard let key = selfReaction?.key else { return  nil }
         return MessageReaction.messageReaction(from: key)
+    }
+
+    var messageReactions: Int {
+        let messageReactions = self.usersReaction.map { (reaction, _) in
+            return reaction.count
+        }
+        print("AGIS \(messageReactions.count)")
+        return messageReactions.count
+
     }
 
     func hasReactions() -> Bool {
