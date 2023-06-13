@@ -749,6 +749,37 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
     }
 
 }
+public class MockMLSDecryptionSerivceInterface: MLSDecryptionSerivceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - decrypt
+
+    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
+    public var decryptMessageForSubconversationType_MockError: Error?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
+
+        if let error = decryptMessageForSubconversationType_MockError {
+            throw error
+        }
+
+        if let mock = decryptMessageForSubconversationType_MockMethod {
+            return try mock(message, groupID, subconversationType)
+        } else if let mock = decryptMessageForSubconversationType_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle

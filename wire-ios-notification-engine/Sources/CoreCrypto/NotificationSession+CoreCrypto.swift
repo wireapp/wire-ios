@@ -50,7 +50,7 @@ extension NotificationSession {
                 }
 
                 if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsService == nil {
-                    syncContext.mlsService = MLSDecryptionService(
+                    syncContext.mlsDecryptionService = MLSDecryptionService(
                         context: syncContext,
                         coreCrypto: safeCoreCrypto
                     )
