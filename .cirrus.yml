@@ -29,58 +29,58 @@ run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
   bootstrap_ci_machine_script:
       - sh ./setup.sh
 
-task:
-  name: Playground
+security_tests_task:
+  name: Security Tests
+  << : *CARTHAGE_CACHE_TEMPLATE
+  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  script:
+    - bundle exec fastlane security_tests
+
+publishing_binary_task_template: &PUBLISHING_BINARY_TASK_TEMPLATE
+  depends_on:
+    - security_tests
   trigger_type: manual
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
+
+task:
+  name: Playground
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane playground
 
 task:
   name: AppStore Public Production
-  trigger_type: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_public
 
 task:
   name: Testflight Beta
-  trigger_type: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane testflight_beta
 
 task:
   name: AppStore C1 Restricted
-  trigger_type: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_1_restricted
 
 task:
   name: AppStore C3 Restricted
-  trigger_type: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_3_restricted
 
 task:
   name: AppStore C1 Production
-  trigger_type: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_1_prod
 
 task:
   name: AppStore C3 Production
-  trigger_type: manual
-  << : *CARTHAGE_CACHE_TEMPLATE
-  << : *RUN_SETUP_SCRIPT_TEMPLATE
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_col_3_prod

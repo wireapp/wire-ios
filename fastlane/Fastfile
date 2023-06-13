@@ -46,13 +46,18 @@ platform :ios do
         sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
     end
 
+    desc "Run security tests for Playground configuration"
+    lane :security_tests do |options|
+        options[:build_type] = "Playground"
+        prepare_for_release(options)
+        security_plans(options)
+    end
 
     desc "Build & Upload Playground build"
     lane :playground do |options|
         options[:build_type] = "Playground"
         options[:build_number] = generate_build_number
         prepare_for_release(options)
-        security_plans(options)
         build_for_release(options)
         upload_app_center(options)
         upload_dsyms_to_datadog(options)
