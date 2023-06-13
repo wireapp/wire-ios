@@ -20,22 +20,16 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
+final class ConversationReactionMessageTests: ZMSnapshotTestCase {
 
     // MARK: - Properties
 
-    var message: MockMessage!
     var sut: MessageReactionsCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        SelfUser.setupMockSelfUser()
-
-        message = MockMessageFactory.textMessage(withText: "Hello, it's me!")
-        message.deliveryState = .sent
-        message.conversation = otherUserConversation
 
         sut = MessageReactionsCell()
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 70)
@@ -44,7 +38,6 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
-        message = nil
         sut = nil
         super.tearDown()
     }
@@ -53,8 +46,8 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
 
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
-        let configuration = MessageReactionsCell.Configuration(message: message)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
+        let reaction = MessageReactionMetadata(type: .like, count: 1, isSelfUserReacting: true)
+        let configuration = MessageReactionsCell.Configuration(reactions: [reaction])
 
         sut.configure(with: configuration, animated: false)
 
@@ -64,19 +57,22 @@ final class ConversationReactionMessageTests: CoreDataSnapshotTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let users = MockUser.mockUsers().filter { !$0.isSelfUser }
-        let configuration = MessageReactionsCell.Configuration(message: message)
+        let likeReaction = MessageReactionMetadata(type: .like, count: 4, isSelfUserReacting: false)
+        let beamingReaction = MessageReactionMetadata(type: .beamingFace, count: 2, isSelfUserReacting: false)
+        let thumbsUpReaction = MessageReactionMetadata(type: .thumbsUp, count: 1, isSelfUserReacting: false)
+        let thumbsDownReaction = MessageReactionMetadata(type: .thumbsDown, count: 6, isSelfUserReacting: false)
+        let slightlySmilingReaction = MessageReactionMetadata(type: .slightlySmiling, count: 8, isSelfUserReacting: false)
+        let frowningFaceReaction = MessageReactionMetadata(type: .frowningFace, count: 10, isSelfUserReacting: false)
+
+        let configuration = MessageReactionsCell.Configuration(reactions: [likeReaction,
+                                                                           beamingReaction,
+                                                                           thumbsUpReaction,
+                                                                           thumbsDownReaction,
+                                                                           slightlySmilingReaction,
+                                                                           frowningFaceReaction
+                                                                          ])
 
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 90)
-
-        message.backingUsersReaction = [
-            MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4)),
-            MessageReaction.beamingFace.unicodeValue: Array(users.prefix(upTo: 2)),
-            MessageReaction.thumbsUp.unicodeValue: Array(users.prefix(upTo: 1)),
-            MessageReaction.thumbsDown.unicodeValue: Array(users.prefix(upTo: 6)),
-            MessageReaction.slightlySmiling.unicodeValue: Array(users.prefix(upTo: 8)),
-            MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 10))
-        ]
 
         // WHEN
         sut.configure(with: configuration, animated: false)
