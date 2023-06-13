@@ -780,6 +780,37 @@ public class MockMLSDecryptionSerivceInterface: MLSDecryptionSerivceInterface {
     }
 
 }
+public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - encrypt
+
+    public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
+    public var encryptMessageFor_MockError: Error?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockValue: [Byte]?
+
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+        encryptMessageFor_Invocations.append((message: message, groupID: groupID))
+
+        if let error = encryptMessageFor_MockError {
+            throw error
+        }
+
+        if let mock = encryptMessageFor_MockMethod {
+            return try mock(message, groupID)
+        } else if let mock = encryptMessageFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptMessageFor`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle

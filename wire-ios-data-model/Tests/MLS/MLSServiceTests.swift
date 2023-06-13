@@ -26,6 +26,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var sut: MLSService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockEncryptionService: MockMLSEncryptionServiceInterface!
     var mockDecryptionService: MockMLSDecryptionSerivceInterface!
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSyncStatus: MockSyncStatus!
@@ -41,6 +42,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionSerivceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
         mockSyncStatus = MockSyncStatus()
@@ -60,6 +62,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
+            encryptionService: mockEncryptionService,
             decryptionService: mockDecryptionService,
             mlsActionExecutor: mockMLSActionExecutor,
             conversationEventProcessor: mockConversationEventProcessor,
@@ -76,6 +79,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     override func tearDown() {
         sut = nil
         mockCoreCrypto = nil
+        mockSafeCoreCrypto = nil
+        mockEncryptionService = nil
         mockDecryptionService = nil
         mockMLSActionExecutor = nil
         mockSyncStatus = nil
@@ -264,55 +269,34 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Message Encryption
 
-    typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
-
-    func test_Encrypt_IsSuccessful() {
-        do {
-            // Given
-            let groupID = MLSGroupID([1, 1, 1])
-            let unencryptedMessage: [Byte] = [2, 2, 2]
-            let encryptedMessage: [Byte] = [3, 3, 3]
-
-            // Mock
-            var mockEncryptMessageCount = 0
-            mockCoreCrypto.mockEncryptMessage = {
-                mockEncryptMessageCount += 1
-                XCTAssertEqual($0, groupID.bytes)
-                XCTAssertEqual($1, unencryptedMessage)
-                return encryptedMessage
-            }
-
-            // When
-            let result = try sut.encrypt(message: unencryptedMessage, for: groupID)
-
-            // Then
-            XCTAssertEqual(mockEncryptMessageCount, 1)
-            XCTAssertEqual(result, encryptedMessage)
-
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
-    }
-
-    func test_Encrypt_Fails() {
+    func test_Encrypt_UsesEncyptionService() throws {
         // Given
-        let groupID = MLSGroupID([1, 1, 1])
-        let unencryptedMessage: [Byte] = [2, 2, 2]
+        let message = "foo"
+        let groupID = MLSGroupID.random()
+        let subconversationType = SubgroupType.conference
 
-        // Mock
-        mockCoreCrypto.mockEncryptMessage = { (_, _) in
-            throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
-        }
+        let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
 
-        // When / Then
-        assertItThrows(error: EncryptionError.failedToEncryptMessage) {
-            _ = try sut.encrypt(message: unencryptedMessage, for: groupID)
-        }
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+
+        // When
+        let result = try sut.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: subconversationType
+        )
+
+        // Then
+        XCTAssertEqual(mockDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
+        let invocation = mockDecryptionService.decryptMessageForSubconversationType_Invocations.element(atIndex: 0)
+        XCTAssertEqual(invocation?.message, message)
+        XCTAssertEqual(invocation?.groupID, groupID)
+        XCTAssertEqual(invocation?.subconversationType, subconversationType)
+        XCTAssertEqual(result, mockResult)
     }
+
 
     // MARK: - Message Decryption
-
-    // TODO: test we use the decryption service
 
     func test_Decrypt_UsesDecyptionService() throws {
         // Given

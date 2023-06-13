@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
+// sourcery: AutoMockable
 public protocol MLSEncryptionServiceInterface {
 
     func encrypt(

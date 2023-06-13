@@ -568,6 +568,7 @@
 		EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */; };
 		EEC794F62A384464008E1A3B /* MLSEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */; };
 		EEC794F82A385359008E1A3B /* MLSDecryptionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */; };
+		EEC794FA2A38963F008E1A3B /* MLSEncryptionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F92A38963F008E1A3B /* MLSEncryptionServiceTests.swift */; };
 		EEC8064E28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */; };
 		EEC80B3629B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B3529B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift */; };
 		EEC80B5C29B611CA00099727 /* PersistedDataPatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC80B5B29B611CA00099727 /* PersistedDataPatch.swift */; };
@@ -1455,6 +1456,7 @@
 		EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionService.swift; sourceTree = "<group>"; };
 		EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionService.swift; sourceTree = "<group>"; };
 		EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionServiceTests.swift; sourceTree = "<group>"; };
+		EEC794F92A38963F008E1A3B /* MLSEncryptionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionServiceTests.swift; sourceTree = "<group>"; };
 		EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStaleMLSKeyDetector.swift; sourceTree = "<group>"; };
 		EEC80B3529B0AD8100099727 /* NSManagedObjectContext+ProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+ProteusProvider.swift"; sourceTree = "<group>"; };
 		EEC80B5B29B611CA00099727 /* PersistedDataPatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedDataPatch.swift; sourceTree = "<group>"; };
@@ -2233,6 +2235,7 @@
 			isa = PBXGroup;
 			children = (
 				EE98878D28882BFF002340D2 /* MLSServiceTests.swift */,
+				EEC794F92A38963F008E1A3B /* MLSEncryptionServiceTests.swift */,
 				EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */,
 				EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */,
 				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
@@ -4138,6 +4141,7 @@
 				BFB3BA731E28D38F0032A84F /* SharedObjectStoreTests.swift in Sources */,
 				BF7D9C491D90286700949267 /* MessagingTest+UUID.swift in Sources */,
 				1645ECC4243B69A1007A82D6 /* UserTypeTests+Materialize.swift in Sources */,
+				EEC794FA2A38963F008E1A3B /* MLSEncryptionServiceTests.swift in Sources */,
 				2BB20771292B791400FB6468 /* PatchApplicatorTests.swift in Sources */,
 				16F7341224F9567000AB93B1 /* ZMConversationTests+DraftMessage.swift in Sources */,
 				EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */,
