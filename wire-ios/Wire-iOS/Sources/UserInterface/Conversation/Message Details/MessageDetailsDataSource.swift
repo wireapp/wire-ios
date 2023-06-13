@@ -101,7 +101,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             self.title = MessageDetails.receiptsTitle.capitalized
         case (true, false):
             self.displayMode = .reactions
-            self.title = MessageDetails.likesTitle.capitalized
+            self.title = MessageDetails.reactionsTitle.capitalized
         default:
             fatal("Trying to display a message that does not support reactions or receipts.")
         }

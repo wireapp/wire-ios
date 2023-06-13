@@ -30,7 +30,7 @@ final class MessageDetailsContentViewController: UIViewController {
 
     private var header = SectionHeader(frame: .zero)
 
-    var messageReactions: Int = 0
+    private var messageReactions: Int = 0
 
     /// The type of the displayed content.
     enum ContentType {
