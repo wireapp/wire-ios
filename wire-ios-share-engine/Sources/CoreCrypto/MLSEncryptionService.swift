@@ -86,11 +86,9 @@ class MLSEncryptionService: MLSServiceInterface {
 
     func createSelfGroup(for groupID: WireDataModel.MLSGroupID) {
         fatalError("not implemented")
-
     }
     
     func joinSelfGroup(with groupID: WireDataModel.MLSGroupID) {
         fatalError("not implemented")
-
     }
 }
