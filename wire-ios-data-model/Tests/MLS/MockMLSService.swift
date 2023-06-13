@@ -36,7 +36,7 @@ class MockMLSService: MLSServiceInterface {
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
         var enccrypt = [([Byte], MLSGroupID)]()
-        var decrypt = [(String, MLSGroupID)]()
+        var decrypt = [(String, MLSGroupID, SubgroupType?)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
         var commitPendingProposals: [Void] = []
@@ -116,14 +116,14 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Decrypt
 
-    typealias DecryptMock = (String, MLSGroupID) throws -> MLSDecryptResult?
+    typealias DecryptMock = (String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?
 
     var decryptMock: DecryptMock?
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        calls.decrypt.append((message, groupID))
+    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID, subconversationType))
         guard let mock = decryptMock else { throw MockError.unmockedMethodCalled }
-        return try mock(message, groupID)
+        return try mock(message, groupID, subconversationType)
     }
 
     // MARK: - Add members

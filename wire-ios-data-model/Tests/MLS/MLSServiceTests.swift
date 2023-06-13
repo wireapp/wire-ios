@@ -423,6 +423,54 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
     }
 
+    func test_Decrypt_ForSubconversation_IsSuccessful() {
+        syncMOC.performAndWait {
+            // Given
+            let messageBytes = Data.random().bytes
+            let sender = MLSClientID.random()
+            let parentGroupID = MLSGroupID.random()
+            let subconversationGroupID = MLSGroupID.random()
+
+            mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+
+            var mockDecryptMessageCount = 0
+            self.mockCoreCrypto.mockDecryptMessage = {
+                mockDecryptMessageCount += 1
+
+                XCTAssertEqual($0, subconversationGroupID.bytes)
+                XCTAssertEqual($1, messageBytes)
+
+                return DecryptedMessage(
+                    message: messageBytes,
+                    proposals: [],
+                    isActive: false,
+                    commitDelay: nil,
+                    senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                    hasEpochChanged: false,
+                    identity: nil
+                )
+            }
+
+            // When
+            var result: MLSDecryptResult?
+            do {
+                result = try sut.decrypt(
+                    message: messageBytes.data.base64EncodedString(),
+                    for: parentGroupID,
+                    subconversationType: .conference
+                )
+            } catch {
+                XCTFail("Unexpected error: \(String(describing: error))")
+            }
+
+            // Then
+            XCTAssertEqual(mockDecryptMessageCount, 1)
+            XCTAssertEqual(result, MLSDecryptResult.message(messageBytes.data, sender.clientID))
+
+            XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
+        }
+    }
+
     // MARK: - Create group
 
     func test_CreateGroup_IsSuccessful() throws {

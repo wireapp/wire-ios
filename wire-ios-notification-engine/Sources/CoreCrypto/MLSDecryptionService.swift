@@ -46,7 +46,11 @@ class MLSDecryptionService: MLSServiceInterface {
 
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
         WireLogger.mls.info("decrypting message for group (\(groupID))")
 
         guard let messageBytes = message.base64DecodedBytes else {

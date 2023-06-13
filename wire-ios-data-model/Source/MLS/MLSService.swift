@@ -36,7 +36,11 @@ public protocol MLSServiceInterface {
 
     func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte]
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult?
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult?
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -922,11 +926,27 @@ public final class MLSService: MLSServiceInterface {
     ///
     /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted
 
-    public func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    public func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
         logger.info("decrypting message for group (\(groupID))")
 
         guard let messageBytes = message.base64DecodedBytes else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
+        }
+
+        var groupID = groupID
+
+        if
+            let type = subconversationType,
+            let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+                forType: type,
+                parentGroupID: groupID
+            )
+        {
+            groupID = subconversationGroupID
         }
 
         do {

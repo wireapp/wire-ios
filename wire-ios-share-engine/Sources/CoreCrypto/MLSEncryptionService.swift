@@ -52,7 +52,11 @@ class MLSEncryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
         fatalError("not implemented")
     }
 
