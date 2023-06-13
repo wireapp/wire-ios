@@ -26,15 +26,19 @@ class MockMLSService: MLSServiceInterface {
     var calls = Calls()
 
     struct Calls {
-        var decrypt: [(String, MLSGroupID)] = []
+        var decrypt: [(String, MLSGroupID, SubgroupType?)] = []
         var commitPendingProposals: [Void] = []
         var commitPendingProposalsInGroup: [MLSGroupID] = []
         var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var wipeGroup = [MLSGroupID]()
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        calls.decrypt.append((message, groupID))
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID, subconversationType))
 
         if let error = mockDecryptionError {
             throw error

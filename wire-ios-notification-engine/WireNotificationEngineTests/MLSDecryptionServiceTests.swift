@@ -64,7 +64,11 @@ class MLSDecryptionServiceTests: BaseTest {
 
             // When / Then
             assertItThrows(error: DecryptionError.failedToConvertMessageToBytes) {
-                try _ = sut.decrypt(message: invalidBase64String, for: groupID)
+                try _ = sut.decrypt(
+                    message: invalidBase64String,
+                    for: groupID,
+                    subconversationType: nil
+                )
             }
         }
     }
@@ -79,7 +83,11 @@ class MLSDecryptionServiceTests: BaseTest {
 
             // When / Then
             assertItThrows(error: DecryptionError.failedToDecryptMessage) {
-                try _ = sut.decrypt(message: message, for: groupID)
+                try _ = sut.decrypt(
+                    message: message,
+                    for: groupID,
+                    subconversationType: nil
+                )
             }
         }
     }
@@ -103,7 +111,11 @@ class MLSDecryptionServiceTests: BaseTest {
             // When
             var result: MLSDecryptResult?
             do {
-                result = try sut.decrypt(message: messageBytes.data.base64EncodedString(), for: groupID)
+                result = try sut.decrypt(
+                    message: messageBytes.data.base64EncodedString(),
+                    for: groupID,
+                    subconversationType: nil
+                )
             } catch {
                 XCTFail("Unexpected error: \(String(describing: error))")
             }
@@ -144,7 +156,11 @@ class MLSDecryptionServiceTests: BaseTest {
             // When
             var result: MLSDecryptResult?
             do {
-                result = try sut.decrypt(message: messageBytes.data.base64EncodedString(), for: groupID)
+                result = try sut.decrypt(
+                    message: messageBytes.data.base64EncodedString(),
+                    for: groupID,
+                    subconversationType: nil
+                )
             } catch {
                 XCTFail("Unexpected error: \(String(describing: error))")
             }

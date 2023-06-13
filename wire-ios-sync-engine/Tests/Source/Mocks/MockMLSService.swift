@@ -45,7 +45,7 @@ class MockMLSService: MLSServiceInterface {
         return message
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
         fatalError("not implemented")
     }
 
