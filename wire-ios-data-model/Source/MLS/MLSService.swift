@@ -321,6 +321,7 @@ public final class MLSService: MLSServiceInterface {
                 do {
                     try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
                 } catch MLSAddMembersError.noInviteesToAdd {
+                    WireLogger.mls.debug("createConversation noInviteesToAdd, updateKeyMaterial")
                     try await updateKeyMaterial(for: groupID)
                 }
             }
