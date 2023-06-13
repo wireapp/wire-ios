@@ -94,6 +94,8 @@ public final class MLSService: MLSServiceInterface {
     let targetUnclaimedKeyPackageCount = 100
     let actionsProvider: MLSActionsProviderProtocol
 
+    private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
 
@@ -147,7 +149,8 @@ public final class MLSService: MLSServiceInterface {
         userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
-        syncStatus: SyncStatusProtocol
+        syncStatus: SyncStatusProtocol,
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepsository()
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
@@ -162,6 +165,7 @@ public final class MLSService: MLSServiceInterface {
         self.userDefaults = userDefaults
         self.delegate = delegate
         self.syncStatus = syncStatus
+        self.subconverationGroupIDRepository = subconversationGroupIDRepository
 
         do {
             try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
@@ -1174,6 +1178,12 @@ public final class MLSService: MLSServiceInterface {
                     subgroupID: subgroup.groupID
                 )
             }
+
+            subconverationGroupIDRepository.storeSubconversationGroupID(
+                subgroup.groupID,
+                forType: .conference,
+                parentGroupID: parentID
+            )
 
             return subgroup.groupID
         } catch {
