@@ -219,8 +219,8 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-BackendEnvironmentTypeOverrideKey anta"
-            isEnabled = "YES">
+            argument = "-BackendEnvironmentTypeOverrideKey staging"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--persist-backend-type"

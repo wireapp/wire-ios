@@ -1255,8 +1255,8 @@
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};

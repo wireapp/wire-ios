@@ -3638,7 +3638,6 @@
 			baseConfigurationReference = 0994E1DE1B835C4900A51721 /* ios-test-target.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/UnitTests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.IntegrationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
