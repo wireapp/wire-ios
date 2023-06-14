@@ -1071,3 +1071,43 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
 }
+class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - storeSubconversationGroupID
+
+    var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID, type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID, SubgroupType, MLSGroupID) -> Void)?
+
+    func storeSubconversationGroupID(_ groupID: MLSGroupID, forType type: SubgroupType, parentGroupID: MLSGroupID) {
+        storeSubconversationGroupIDForTypeParentGroupID_Invocations.append((groupID: groupID, type: type, parentGroupID: parentGroupID))
+
+        guard let mock = storeSubconversationGroupIDForTypeParentGroupID_MockMethod else {
+            fatalError("no mock for `storeSubconversationGroupIDForTypeParentGroupID`")
+        }
+
+        mock(groupID, type, parentGroupID)            
+    }
+
+    // MARK: - fetchSubconversationGroupID
+
+    var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
+    var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
+
+    func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
+        fetchSubconversationGroupIDForTypeParentGroupID_Invocations.append((type: type, parentGroupID: parentGroupID))
+
+        if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockMethod {
+            return mock(type, parentGroupID)
+        } else if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSubconversationGroupIDForTypeParentGroupID`")
+        }
+    }
+
+}

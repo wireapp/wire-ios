@@ -28,6 +28,18 @@ extension MLSGroupID {
 
 }
 
+extension MLSClientID {
+
+    static func random() -> MLSClientID {
+        return MLSClientID(
+            userID: UUID.create().transportString(),
+            clientID: .random(length: 8),
+            domain: .randomDomain()
+        )
+    }
+
+}
+
 extension QualifiedID {
 
     static func random() -> QualifiedID {

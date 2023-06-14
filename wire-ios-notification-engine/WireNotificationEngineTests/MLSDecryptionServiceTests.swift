@@ -64,7 +64,11 @@ class MLSDecryptionServiceTests: BaseTest {
 
             // When / Then
             assertItThrows(error: DecryptionError.failedToConvertMessageToBytes) {
-                try _ = sut.decrypt(message: invalidBase64String, for: groupID)
+                try _ = sut.decrypt(
+                    message: invalidBase64String,
+                    for: groupID,
+                    subconversationType: nil
+                )
             }
         }
     }
@@ -79,7 +83,11 @@ class MLSDecryptionServiceTests: BaseTest {
 
             // When / Then
             assertItThrows(error: DecryptionError.failedToDecryptMessage) {
-                try _ = sut.decrypt(message: message, for: groupID)
+                try _ = sut.decrypt(
+                    message: message,
+                    for: groupID,
+                    subconversationType: nil
+                )
             }
         }
     }
@@ -87,7 +95,7 @@ class MLSDecryptionServiceTests: BaseTest {
     func test_Decrypt_ReturnsNil_WhenCoreCryptoReturnsNil() {
         syncMOC.performAndWait {
             // Given
-            let messageBytes: Bytes = [1, 2, 3]
+            let messageBytes: [Byte] = [1, 2, 3]
             self.mockCoreCrypto.mockDecryptMessage = { _, _ in
                 DecryptedMessage(
                     message: nil,
@@ -103,7 +111,11 @@ class MLSDecryptionServiceTests: BaseTest {
             // When
             var result: MLSDecryptResult?
             do {
-                result = try sut.decrypt(message: messageBytes.data.base64EncodedString(), for: groupID)
+                result = try sut.decrypt(
+                    message: messageBytes.data.base64EncodedString(),
+                    for: groupID,
+                    subconversationType: nil
+                )
             } catch {
                 XCTFail("Unexpected error: \(String(describing: error))")
             }
@@ -116,7 +128,7 @@ class MLSDecryptionServiceTests: BaseTest {
     func test_Decrypt_IsSuccessful() {
         syncMOC.performAndWait {
             // Given
-            let messageBytes: Bytes = [1, 2, 3]
+            let messageBytes: [Byte] = [1, 2, 3]
             let sender = MLSClientID(
                 userID: UUID.create().transportString(),
                 clientID: "client",
@@ -135,7 +147,7 @@ class MLSDecryptionServiceTests: BaseTest {
                     proposals: [],
                     isActive: false,
                     commitDelay: nil,
-                    senderClientId: sender.string.data(using: .utf8)!.bytes,
+                    senderClientId: sender.rawValue.utf8Data!.bytes,
                     hasEpochChanged: false,
                     identity: nil
                 )
@@ -144,7 +156,11 @@ class MLSDecryptionServiceTests: BaseTest {
             // When
             var result: MLSDecryptResult?
             do {
-                result = try sut.decrypt(message: messageBytes.data.base64EncodedString(), for: groupID)
+                result = try sut.decrypt(
+                    message: messageBytes.data.base64EncodedString(),
+                    for: groupID,
+                    subconversationType: nil
+                )
             } catch {
                 XCTFail("Unexpected error: \(String(describing: error))")
             }

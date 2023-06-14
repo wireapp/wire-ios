@@ -35,8 +35,8 @@ class MockMLSService: MLSServiceInterface {
         var createGroup = [MLSGroupID]()
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
-        var enccrypt = [(Bytes, MLSGroupID)]()
-        var decrypt = [(String, MLSGroupID)]()
+        var enccrypt = [([Byte], MLSGroupID)]()
+        var decrypt = [(String, MLSGroupID, SubgroupType?)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
         var commitPendingProposals: [Void] = []
@@ -45,7 +45,7 @@ class MockMLSService: MLSServiceInterface {
         var registerPendingJoin = [MLSGroupID]()
         var performPendingJoins: [Void] = []
         var wipeGroup = [MLSGroupID]()
-        var generateConferenceInfo = [MLSGroupID]()
+        var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
 
     }
 
@@ -55,14 +55,17 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Conference info
 
-    typealias GenerateConferenceInfoMock = (MLSGroupID) throws -> MLSConferenceInfo
+    typealias GenerateConferenceInfoMock = (MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo
 
     var generateConferenceInfoMock: GenerateConferenceInfoMock?
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
-        calls.generateConferenceInfo.append(groupID)
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
+        calls.generateConferenceInfo.append((parentGroupID, subconversationGroupID))
         guard let mock = generateConferenceInfoMock else { throw MockError.unmockedMethodCalled }
-        return try mock(groupID)
+        return try mock(parentGroupID, subconversationGroupID)
     }
 
     // MARK: - Key packages
@@ -102,11 +105,10 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Encrypt
 
-    typealias EncryptMock = (Bytes, MLSGroupID) throws -> Bytes
-
+    typealias EncryptMock = ([Byte], MLSGroupID) throws -> [Byte]
     var encryptMock: EncryptMock?
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         calls.enccrypt.append((message, groupID))
         guard let mock = encryptMock else { throw MockError.unmockedMethodCalled }
         return try mock(message, groupID)
@@ -114,14 +116,14 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Decrypt
 
-    typealias DecryptMock = (String, MLSGroupID) throws -> MLSDecryptResult?
+    typealias DecryptMock = (String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?
 
     var decryptMock: DecryptMock?
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        calls.decrypt.append((message, groupID))
+    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID, subconversationType))
         guard let mock = decryptMock else { throw MockError.unmockedMethodCalled }
-        return try mock(message, groupID)
+        return try mock(message, groupID, subconversationType)
     }
 
     // MARK: - Add members
@@ -175,8 +177,8 @@ class MockMLSService: MLSServiceInterface {
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
-    ) async {
-
+    ) async throws -> MLSGroupID {
+        fatalError("not implemented")
     }
 
 }

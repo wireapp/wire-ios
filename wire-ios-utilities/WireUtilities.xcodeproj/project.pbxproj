@@ -162,10 +162,12 @@
 		EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		EE98A0AE296EFBE60055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		EE98A0AF296EFBE60055E981 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */; };
+		EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */; };
 		EEB121AC2A1759F300E74D39 /* PrivateUserDefaultsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */; };
 		EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */; };
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
-		EED6C70E2A2623EE00CB8B60 /* Data+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED6C70D2A2623EE00CB8B60 /* Data+Random.swift */; };
+		EED6C7122A30B6B800CB8B60 /* Collection+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED6C7112A30B6B800CB8B60 /* Collection+Helpers.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
 		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
 		EF2AFC9D228176C3008C921A /* UUID+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2AFC9C228176C3008C921A /* UUID+Data.swift */; };
@@ -401,10 +403,12 @@
 		EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaults.swift; sourceTree = "<group>"; };
 		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
+		EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Base64.swift"; sourceTree = "<group>"; };
 		EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaultsTests.swift; sourceTree = "<group>"; };
 		EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthInteger_RandomTests.swift; sourceTree = "<group>"; };
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
-		EED6C70D2A2623EE00CB8B60 /* Data+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Random.swift"; sourceTree = "<group>"; };
+		EED6C7112A30B6B800CB8B60 /* Collection+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Helpers.swift"; sourceTree = "<group>"; };
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
 		EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FilenameTests.swift"; sourceTree = "<group>"; };
 		EF2AFC9C228176C3008C921A /* UUID+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Data.swift"; sourceTree = "<group>"; };
@@ -692,7 +696,6 @@
 				5E4BC1C5218C830500A8682E /* String+Spaces.swift */,
 				F19E554C22AFDC8D005C792D /* String+ReadableHash.swift */,
 				A94DA30726BC239400CC626C /* Data+Image.swift */,
-				EED6C70D2A2623EE00CB8B60 /* Data+Random.swift */,
 				F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
 				877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */,
@@ -704,6 +707,9 @@
 				EF2AFC9C228176C3008C921A /* UUID+Data.swift */,
 				067BB07025068D6500946EC8 /* String+HexDecodedData.swift */,
 				EE5316432A13B61200A9E0B1 /* PrivateUserDefaults.swift */,
+				EED6C7112A30B6B800CB8B60 /* Collection+Helpers.swift */,
+				EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */,
+				EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1025,6 +1031,7 @@
 				54CA31551B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m in Sources */,
 				EE162710250BA12900D35062 /* VolatileData.swift in Sources */,
 				7C8BFFE122FC612900B3C8A5 /* ZMPropertyValidator.swift in Sources */,
+				EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */,
 				3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */,
 				54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */,
 				EF2AFC9D228176C3008C921A /* UUID+Data.swift in Sources */,
@@ -1037,8 +1044,8 @@
 				3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */,
 				5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */,
 				7C8BFFE722FD612900B3C8A5 /* ZMPhoneNumberValidator.swift in Sources */,
+				EED6C7122A30B6B800CB8B60 /* Collection+Helpers.swift in Sources */,
 				54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */,
-				EED6C70E2A2623EE00CB8B60 /* Data+Random.swift in Sources */,
 				63DFEAD129A3845600FCA830 /* DeveloperFlag.swift in Sources */,
 				D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */,
 				A9CDCDC4237D9A14008A9BC6 /* UIColor+Mixing.swift in Sources */,
@@ -1077,6 +1084,7 @@
 				3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */,
 				3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
+				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
 				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,

@@ -41,11 +41,11 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return message
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
         fatalError("not implemented")
     }
 
@@ -79,15 +79,30 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    var mockCreateOrJoinSubgroup: ((QualifiedID, MLSGroupID) -> MLSGroupID)?
+
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
-    ) async {
-        fatalError("not implemented")
+    ) async throws -> MLSGroupID {
+        guard let mock = mockCreateOrJoinSubgroup else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentQualifiedID, parentID)
     }
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
-        fatalError("not implemented")
+    var mockGenerateConferinceInfo: ((MLSGroupID, MLSGroupID) -> MLSConferenceInfo)?
+
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
+        guard let mock = mockGenerateConferinceInfo else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentGroupID, subconversationGroupID)
     }
 
 }

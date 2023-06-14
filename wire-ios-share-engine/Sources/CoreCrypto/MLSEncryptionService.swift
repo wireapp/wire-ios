@@ -28,7 +28,7 @@ class MLSEncryptionService: MLSServiceInterface {
         self.coreCrypto = coreCrypto
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> WireDataModel.Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return try coreCrypto.perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
     }
 
@@ -52,7 +52,11 @@ class MLSEncryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
         fatalError("not implemented")
     }
 
@@ -84,11 +88,17 @@ class MLSEncryptionService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func createOrJoinSubgroup(parentQualifiedID: QualifiedID, parentID: MLSGroupID) async {
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
         fatalError("not implemented")
     }
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
         fatalError("not implemented")
     }
 

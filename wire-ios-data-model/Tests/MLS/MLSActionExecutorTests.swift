@@ -70,8 +70,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let groupID = MLSGroupID.random()
         let invitees = [Invitee(id: .random(), kp: .random())]
 
-        let mockCommit = Bytes.random()
-        let mockWelcome = Bytes.random()
+        let mockCommit = Data.random().bytes
+        let mockWelcome = Data.random().bytes
         let mockUpdateEvent = mockMemberJoinUpdateEvent()
         let mockPublicGroupState = PublicGroupStateBundle(
             encryptionType: .plaintext,
@@ -85,7 +85,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock add clients.
-        var mockAddClientsArguments = [(Bytes, [Invitee])]()
+        var mockAddClientsArguments = [([Byte], [Invitee])]()
         mockCoreCrypto.mockAddClientsToConversation = {
             mockAddClientsArguments.append(($0, $1))
             return mockMemberAddedMessages
@@ -97,7 +97,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -139,9 +139,9 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             domain: "example.com"
         )
 
-        let clientIds =  [mlsClientID].compactMap { $0.string.utf8Data?.bytes }
+        let clientIds =  [mlsClientID].compactMap { $0.rawValue.utf8Data?.bytes }
 
-        let mockCommit = Bytes.random()
+        let mockCommit = Data.random().bytes
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
         let mockPublicGroupState = PublicGroupStateBundle(
             encryptionType: .plaintext,
@@ -155,7 +155,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock remove clients.
-        var mockRemoveClientsArguments = [(Bytes, [ClientId])]()
+        var mockRemoveClientsArguments = [([Byte], [ClientId])]()
         mockCoreCrypto.mockRemoveClientsFromConversation = {
             mockRemoveClientsArguments.append(($0, $1))
             return mockCommitBundle
@@ -167,7 +167,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -198,7 +198,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Given
         let groupID = MLSGroupID.random()
 
-        let mockCommit = Bytes.random()
+        let mockCommit = Data.random().bytes
         let mockPublicGroupState = PublicGroupStateBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
@@ -211,7 +211,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock Update key material.
-        var mockUpdateKeyMaterialArguments = [Bytes]()
+        var mockUpdateKeyMaterialArguments = [[Byte]]()
         mockCoreCrypto.mockUpdateKeyingMaterial = {
             mockUpdateKeyMaterialArguments.append($0)
             return mockCommitBundle
@@ -223,7 +223,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -253,8 +253,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Given
         let groupID = MLSGroupID.random()
 
-        let mockCommit = Bytes.random()
-        let mockWelcome = Bytes.random()
+        let mockCommit = Data.random().bytes
+        let mockWelcome = Data.random().bytes
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
         let mockPublicGroupState = PublicGroupStateBundle(
             encryptionType: .plaintext,
@@ -268,7 +268,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock Commit pending proposals.
-        var mockCommitPendingProposals = [Bytes]()
+        var mockCommitPendingProposals = [[Byte]]()
         mockCoreCrypto.mockCommitPendingProposals = {
             mockCommitPendingProposals.append($0)
             return CommitBundle(
@@ -284,7 +284,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -313,8 +313,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_JoinGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let mockCommit = Bytes.random()
-        let mockPublicGroupState = Bytes.random().data
+        let mockCommit = Data.random().bytes
+        let mockPublicGroupState = Data.random()
         let mockPublicGroupStateBundle = PublicGroupStateBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
@@ -329,7 +329,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // Mock join by external commit
-        var mockJoinByExternalCommitArguments = [Bytes]()
+        var mockJoinByExternalCommitArguments = [[Byte]]()
 
         mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
@@ -346,7 +346,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock merge pending group
-        var mockMergePendingGroupArguments = [Bytes]()
+        var mockMergePendingGroupArguments = [[Byte]]()
         mockCoreCrypto.mockMergePendingGroupFromExternalCommit = { conversationId in
             mockMergePendingGroupArguments.append(conversationId)
         }
@@ -405,7 +405,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     private typealias AssertRecoveryBlock = (
         _ recovery: MLSActionExecutor.ExternalCommitErrorRecovery,
-        _ clearPendingGroupArguments: [Bytes]
+        _ clearPendingGroupArguments: [[Byte]]
     ) -> Void
 
     private func test_JoinGroupThrowsErrorWithRecoveryStrategy(
@@ -414,7 +414,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         assertRecovery: AssertRecoveryBlock
     ) async throws {
         // Given
-        let mockCommit = Bytes.random()
+        let mockCommit = Data.random().bytes
         let mockPublicGroupStateBundle = PublicGroupStateBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
@@ -422,7 +422,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         // Mock join by external commit
-        var mockJoinByExternalCommitArguments = [Bytes]()
+        var mockJoinByExternalCommitArguments = [[Byte]]()
         mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
@@ -436,7 +436,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockActionsProvider.sendCommitBundleIn_MockError = sendCommitBundleError
 
         // Mock clear pending group
-        var mockClearPendingGroupArguments = [Bytes]()
+        var mockClearPendingGroupArguments = [[Byte]]()
         mockCoreCrypto.mockClearPendingGroupFromExternalCommit = {
             mockClearPendingGroupArguments.append($0)
         }

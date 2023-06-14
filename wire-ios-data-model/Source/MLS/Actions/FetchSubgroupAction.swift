@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum SubgroupType: String {
+public enum SubgroupType: String, Hashable, Equatable, Codable {
     case conference
 }
 

@@ -54,7 +54,7 @@ class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
         case (200, _):
             guard
                 let data = response.rawData,
-                let payload = try? JSONDecoder().decode(Subgroup.self, from: data),
+                let payload = Subgroup(data),
                 let mlsSubgroup = payload.mlsSubgroup
             else {
                 action.fail(with: .malformedResponse)
@@ -99,7 +99,7 @@ extension FetchSubgroupActionHandler {
 
         let cipherSuite: Int
         let epoch: Int
-        let epochTimestamp: Date
+        let epochTimestamp: Date?
         let groupID: String
         let members: [SubgroupMember]
         let parentQualifiedID: SubgroupParent

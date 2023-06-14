@@ -18,26 +18,10 @@
 
 import Foundation
 
-extension Data {
+public extension Collection {
 
-    public static func random(byteCount: UInt = 8) -> Data {
-        return Data(Bytes.random(length: byteCount))
-    }
-
-}
-
-public typealias Bytes = [UInt8]
-
-extension Bytes {
-
-    public static func random(length: UInt = 8) -> Self {
-        var bytes = Bytes()
-
-        for _ in 1...length {
-            bytes.append(UInt8.random(in: (.min)...(.max)))
-        }
-
-        return bytes
+    var isNonEmpty: Bool {
+        return !isEmpty
     }
 
 }

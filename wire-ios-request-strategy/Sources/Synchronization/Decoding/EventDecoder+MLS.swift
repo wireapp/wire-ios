@@ -53,8 +53,11 @@ extension EventDecoder {
 
         do {
             guard
-                let result = try mlsService.decrypt(message: payload.data,
-                                                       for: groupID)
+                let result = try mlsService.decrypt(
+                    message: payload.data,
+                    for: groupID,
+                    subconversationType: payload.subconversationType
+                )
             else {
                 Logging.mls.info("successfully decrypted mls message but no result was returned")
                 return nil

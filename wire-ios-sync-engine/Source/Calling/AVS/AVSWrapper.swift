@@ -39,6 +39,7 @@ public protocol AVSWrapperType {
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
     func update(callConfig: String?, httpStatusCode: Int)
     func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier)
+    func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var muted: Bool { get set }
 }
 
@@ -197,6 +198,40 @@ public class AVSWrapper: AVSWrapperType {
     ///   - conversationId: The conversation identifier linked to the call
     public func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier) {
         wcall_request_video_streams(handle, conversationId.serialized, 0, videoStreams.jsonString(encoder))
+    }
+
+    /// Set the MLS conference info for a given conversation.
+    ///
+    /// - Parameters:
+    ///   - conversationId: The conversation hosting the MLS conference.
+    ///   - info: The MLS conference info.
+
+    public func setMLSConferenceInfo(
+        conversationId: AVSIdentifier,
+        info: MLSConferenceInfo
+    ) {
+        let clients = info.members.compactMap(AVSClient.init)
+        let clientList = AVSClientList(clients: clients)
+
+        guard let clientListJSON = clientList.jsonString() else {
+            return
+        }
+
+        var keyData = info.keyData
+        keyData.withUnsafeMutableBytes { pointer in
+            guard let keyDataPointer = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                return
+            }
+
+            wcall_set_epoch_info(
+                handle,
+                conversationId.serialized,
+                UInt32(info.epoch),
+                clientListJSON,
+                keyDataPointer,
+                info.keySize
+            )
+        }
     }
 
     // MARK: - C Callback Handlers

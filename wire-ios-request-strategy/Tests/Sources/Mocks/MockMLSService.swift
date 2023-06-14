@@ -26,15 +26,19 @@ class MockMLSService: MLSServiceInterface {
     var calls = Calls()
 
     struct Calls {
-        var decrypt: [(String, MLSGroupID)] = []
+        var decrypt: [(String, MLSGroupID, SubgroupType?)] = []
         var commitPendingProposals: [Void] = []
         var commitPendingProposalsInGroup: [MLSGroupID] = []
         var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var wipeGroup = [MLSGroupID]()
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        calls.decrypt.append((message, groupID))
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID, subconversationType))
 
         if let error = mockDecryptionError {
             throw error
@@ -76,7 +80,7 @@ class MockMLSService: MLSServiceInterface {
 
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return message + [000]
     }
 
@@ -109,11 +113,14 @@ class MockMLSService: MLSServiceInterface {
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
-    ) async {
-
+    ) async throws -> MLSGroupID {
+        fatalError("not implemented")
     }
 
-    func generateConferenceInfo(for groupID: MLSGroupID) throws -> MLSConferenceInfo {
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
         fatalError("not implemented")
     }
 }
