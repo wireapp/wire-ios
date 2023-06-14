@@ -105,4 +105,12 @@ class MockMLSService: MLSServiceInterface {
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
+
+    func createSelfGroup(for groupID: MLSGroupID) {
+        fatalError("not implemented")
+    }
+
+    func joinSelfGroup(with groupID: MLSGroupID) {
+        fatalError("not implemented")
+    }
 }
