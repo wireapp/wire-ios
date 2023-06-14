@@ -3,7 +3,7 @@ name: Trigger Playground Release tasks from CirrusCI
 on:  workflow_dispatch
 
 permissions: 
-  checks: wirte
+  checks: write
 
 jobs:
   playground:

@@ -2,7 +2,7 @@ name: Trigger Public Release tasks from CirrusCI
 
 on: workflow_dispatch
 permissions: 
-  checks: wirte
+  checks: write
 
 jobs:
   appstore_public:

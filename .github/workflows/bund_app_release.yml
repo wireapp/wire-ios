@@ -10,7 +10,7 @@ on:
           type: boolean
 
 permissions: 
-  checks: wirte
+  checks: write
 
 jobs:
   column_1_restricted:
