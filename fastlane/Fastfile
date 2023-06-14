@@ -83,7 +83,7 @@ platform :ios do
         options[:s3_subfolder] = "custom/bund/column1"
         options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
         options[:upload_dsyms_to_app_center] = false
-        options[:run_security_tests] = true
+        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         build_and_upload_app_store(options)
     end
 
@@ -94,7 +94,7 @@ platform :ios do
         options[:s3_subfolder] = "custom/bund/column3"
         options[:app_center_app_name] = "Wire-by-Bund-Column3"
         options[:upload_dsyms_to_app_center] = false
-        options[:run_security_tests] = true
+        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         build_and_upload_app_store(options)
     end
 
@@ -105,7 +105,7 @@ platform :ios do
         options[:s3_subfolder] = "custom/bund/c1-appstore"
         options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
         options[:upload_dsyms_to_app_center] = false
-        options[:run_security_tests] = true
+        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         build_and_upload_app_store(options)
     end
 
@@ -116,7 +116,7 @@ platform :ios do
         options[:s3_subfolder] = "custom/bund/c3-appstore"
         options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
         options[:upload_dsyms_to_app_center] = false
-        options[:run_security_tests] = true
+        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         build_and_upload_app_store(options)
     end
 
