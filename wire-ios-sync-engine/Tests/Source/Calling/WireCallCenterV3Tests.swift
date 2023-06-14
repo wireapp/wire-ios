@@ -707,7 +707,10 @@ class WireCallCenterV3Tests: MessagingTest {
         expectation(forNotification: WireCallCenterConferenceCallingUnavailableNotification.notificationName, object: nil)
 
         // when
-        try sut.startCall(in: groupConversation, isVideo: false)
+        assertItThrows(error: WireCallCenterV3.Failure.missingConferencingPermission) {
+            try sut.startCall(in: groupConversation, isVideo: false)
+        }
+
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // then
