@@ -29,7 +29,6 @@ class MockMLSService: MLSServiceInterface {
         var decrypt: [(String, MLSGroupID, SubgroupType?)] = []
         var commitPendingProposals: [Void] = []
         var commitPendingProposalsInGroup: [MLSGroupID] = []
-        var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var wipeGroup = [MLSGroupID]()
     }
 
@@ -104,10 +103,6 @@ class MockMLSService: MLSServiceInterface {
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws {
         calls.commitPendingProposalsInGroup.append(groupID)
-    }
-
-    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
-        calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
 
     func createOrJoinSubgroup(
