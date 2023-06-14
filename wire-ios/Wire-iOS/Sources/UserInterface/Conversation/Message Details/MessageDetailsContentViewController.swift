@@ -325,7 +325,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
     /// When the user selects a cell, show the details for this user.
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-        var user = sections[indexPath.section].items[indexPath.item].user
+        let user = sections[indexPath.section].items[indexPath.item].user
 
         let cell = collectionView.cellForItem(at: indexPath) as! UserCell
 
