@@ -30,7 +30,6 @@ class MockMLSService: MLSServiceInterface {
     }
     
     func commitPendingProposals(in groupID: MLSGroupID) async throws {
-        fatalError("not implemented")
     }
 
     func uploadKeyPackagesIfNeeded() {
