@@ -54,19 +54,10 @@ extension ZMConversationMessage {
         return MessageReaction.messageReaction(from: key)
     }
 
-    var messageReactions: Int {
-        let messageReactions = self.usersReaction.map { (reaction, _) in
-            return reaction.count
-        }
-        print("AGIS \(messageReactions.count)")
-        return messageReactions.count
-
-    }
-
     func hasReactions() -> Bool {
         return self.usersReaction.map { (_, users) in
             return users.count
-            }.reduce(0, +) > 0
+        }.reduce(0, +) > 0
     }
 
     var usersByReaction: [MessageReaction: [UserType]] {
@@ -78,9 +69,9 @@ extension ZMConversationMessage {
     var likers: [UserType] {
         return usersReaction.filter { (reaction, _) -> Bool in
             reaction == MessageReaction.like.unicodeValue
-            }.map { (_, users) in
-                return users
-            }.first ?? []
+        }.map { (_, users) in
+            return users
+        }.first ?? []
     }
 
     var sortedLikers: [UserType] {

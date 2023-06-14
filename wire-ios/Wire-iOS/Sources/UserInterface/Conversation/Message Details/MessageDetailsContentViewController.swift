@@ -20,14 +20,6 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-extension UILabel{
-func setCharacterSpacing(_ spacing: CGFloat){
-    let attributedStr = NSMutableAttributedString(string: self.text ?? "")
-    attributedStr.addAttribute(NSAttributedString.Key.kern, value: spacing, range: NSMakeRange(0, attributedStr.length))
-    self.attributedText = attributedStr
- }
-}
-
 struct MessageDetailsSectionDescription {
 
     let headerText: String?
@@ -48,6 +40,8 @@ struct MessageDetailsSectionDescription {
  */
 
 final class MessageDetailsContentViewController: UIViewController {
+
+    var test: Int = 0
 
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
@@ -167,19 +161,22 @@ final class MessageDetailsContentViewController: UIViewController {
     }
 
     private func updateTitle() {
+        let count = sections.flatMap(\.items).count
         switch contentType {
         case .receipts:
             if sections.isEmpty {
                 title = MessageDetails.receiptsTitle.capitalized
             } else {
-                title = MessageDetails.Tabs.seen(sections.count).capitalized
+                let count = sections.flatMap(\.items).count
+                title = MessageDetails.Tabs.seen(count).capitalized
+
             }
 
         case .reactions:
             if sections.isEmpty {
                 title = MessageDetails.reactionsTitle.capitalized
             } else {
-                title = MessageDetails.Tabs.reactions(sections.count).capitalized
+                title = MessageDetails.Tabs.reactions(count).capitalized
             }
         }
     }
@@ -300,7 +297,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
         let section = sections[indexPath.section]
         (view as? SectionHeader)?.titleLabel.text = section.headerText
-        (view as? SectionHeader)?.titleLabel.setCharacterSpacing(3)
         (view as? SectionHeader)?.titleLabel.font = FontSpec.headerRegularFont.font!
 
         return view
