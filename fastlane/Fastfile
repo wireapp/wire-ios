@@ -5,6 +5,10 @@ opt_out_usage
 default_platform(:ios)
 
 platform :ios do
+    def iPhoneNameForTesting
+        "iPhone 14"
+    end
+
     def appstoreconnect_api_key_file_path 
         './fastlane/appstoreconnect_api_key.json'
     end
@@ -174,21 +178,20 @@ platform :ios do
             name: 'WIRE_BUNDLE_ID'
         )
         puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
-        should_sigh_adhoc = !build.appstore_build && !build.rc_build && !build.beta_build
         sigh(
-            adhoc: should_sigh_adhoc,
+            adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: app_bundle_id
         )
         sigh(
-            adhoc: should_sigh_adhoc,
+            adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-share"
         )
         sigh(
-            adhoc: should_sigh_adhoc,
+            adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-notification"
@@ -203,13 +206,6 @@ platform :ios do
     # "Fetch dependencies and prepare for building a release"
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
-        # Saving `Carthage bootstrap` running time by reusing the Cathage artifacts.
-        # When the Cathage framworks is not pre-built(e.g. in feature branch), this option can save the time of building.
-        # When cache_carthage = YES, 
-        # copy Carthage folder form ~/tmp/cache/Carthage before running setup.sh and 
-        # copy it back after at the end of this lane
-        cache_carthage = options[:cache_carthage]
-
         fetch_latest_configuration_repo
 
         if !xcode_version.nil? 
@@ -241,18 +237,9 @@ platform :ios do
             # We need to update the AVS version before running setup script
             build.update_avs_version()
 
-            if cache_carthage == "Yes"
-                sh "cd .. && cp -R ~/tmp/cache/Carthage ./Carthage || echo ⚠️ Carthage cache not exist, skip copying"
-            end
-
             sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
-
-            if cache_carthage == "Yes"
-                sh "rm -rf ~/tmp/cache/Carthage"
-                sh "cd .. && cp -R ./Carthage ~/tmp/cache/Carthage"
-            end
 
             download_distribution_certificate_and_profiles(build)
         end
@@ -307,7 +294,6 @@ platform :ios do
         ios_version = "16.2"
         if !xcode_version.nil? 
             xcversion(version: xcode_version)
-
 			if xcode_version == "14.2"
                 ios_version = "16.2"
             elsif xcode_version == "13.2.1"
@@ -327,7 +313,7 @@ platform :ios do
                 configuration: "Debug",
                 # test_without_building: true,
                 sdk:"iphonesimulator",
-                destination: "platform=iOS Simulator,name=iPhone 14,OS=#{ios_version}",
+                destination: "platform=iOS Simulator,name=#{iPhoneNameForTesting},OS=#{ios_version}",
                 # code_coverage: true,
                 derived_data_path: "DerivedData",
                 buildlog_path: build.build_path,
@@ -461,87 +447,6 @@ platform :ios do
             site: "datadoghq.eu"
         )
     end
-    
-    desc "Build for testing"
-    lane :build do |options|
-        xcode_version = options[:xcode_version]
-
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-        end
-
-        build = Build.new(options: options)
-
-        run_tests(
-            scheme: "Wire-iOS",
-            skip_detect_devices: true,
-            configuration: "Debug",
-            build_for_testing: true,
-            sdk:"iphonesimulator",
-            derived_data_path: "DerivedData",
-            buildlog_path: "build",
-            output_directory: "build",
-            output_types: "junit",
-            xcargs: "BUILD_NUMBER=#{build.build_number}"
-        )
-    end
-
-    desc "Test without building"
-    lane :test do |options|
-        xcode_version = options[:xcode_version]
-
-        ios_version = "16.2"
-        if !xcode_version.nil?
-            xcversion(version: xcode_version)
-
-            if xcode_version == "14.2"
-                ios_version = "16.2"
-            elsif xcode_version == "13.2.1"
-                ios_version = "15.2"
-            elsif xcode_version == "13.1"
-                 ios_version = "15.0"
-            elsif xcode_version == "12.4"
-                ios_version = "14.4"
-            end
-        end
-
-        run_tests(
-            scheme: "Wire-iOS",
-            skip_detect_devices: true,
-            configuration: "Debug",
-            test_without_building: true,
-            sdk:"iphonesimulator",
-            destination: "platform=iOS Simulator,name=iPhone 8,OS=#{ios_version}",
-            code_coverage: true,
-            derived_data_path: "DerivedData",
-            buildlog_path: "test",
-            output_directory: "test",
-            output_types: "junit"
-        )
-    end
-
-    desc "Run post-test tasks"
-    lane :post_test do
-        sh "curl -s https://codecov.io/bash > codecov"
-        sh "chmod +x codecov"
-        codecov = "./codecov -J '^Wire$' -D ../DerivedData"
-
-        if ENV["BUILD_REASON"] == "PullRequest"
-            if ENV["CODECOV_TOKEN"].nil?
-                UI.user_error! "codecov.io token missing for current repository. Set it in CODECOV_TOKEN environment variable"
-            end
-
-            if ENV["BUILD_SOURCEBRANCH"].nil?
-                UI.user_error! "Source branch env variable missing. Set BUILD_SOURCEBRANCH to fix it"
-            end
-
-            pull_request_number = ENV["BUILD_SOURCEBRANCH"].split("/")[2] # For PRs the branch is in format "refs/pull/1/merge"
-
-            codecov << " -t #{ENV["CODECOV_TOKEN"]} -P #{pull_request_number}"
-        end
-
-        sh codecov
-    end
 end
 
 class Build
@@ -639,6 +544,10 @@ class Build
         else 
             "ad-hoc"
         end
+    end
+
+    def should_sigh_adhoc
+        !appstore_build && !rc_build && !beta_build
     end
 
     # Paths
