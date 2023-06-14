@@ -9,6 +9,9 @@ on:
           default: false
           type: boolean
 
+permissions: 
+  checks: wirte
+
 jobs:
   column_1_restricted:
     runs-on: ubuntu-latest
