@@ -11,6 +11,7 @@ import AppKit
 #endif
 
 import LocalAuthentication
+import Combine
 
 @testable import WireDataModel
 
@@ -755,6 +756,24 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     public init() {}
 
+
+    // MARK: - onEpochChanged
+
+    public var onEpochChanged_Invocations: [Void] = []
+    public var onEpochChanged_MockMethod: (() -> AnyPublisher<MLSGroupID, Never>)?
+    public var onEpochChanged_MockValue: AnyPublisher<MLSGroupID, Never>?
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChanged_Invocations.append(())
+
+        if let mock = onEpochChanged_MockMethod {
+            return mock()
+        } else if let mock = onEpochChanged_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+    }
 
     // MARK: - decrypt
 

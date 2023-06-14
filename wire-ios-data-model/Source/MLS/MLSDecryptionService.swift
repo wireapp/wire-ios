@@ -18,9 +18,12 @@
 
 import Foundation
 import WireCoreCrypto
+import Combine
 
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
 
     func decrypt(
         message: String,
@@ -44,6 +47,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private let coreCrypto: SafeCoreCryptoProtocol
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+
+    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        return onEpochChangedSubject.eraseToAnyPublisher()
+    }
 
     // MARK: - Life cycle
 
@@ -107,6 +116,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 conversationId: groupID.bytes,
                 payload: messageBytes
             ) }
+
+            if decryptedMessage.hasEpochChanged {
+                onEpochChangedSubject.send(groupID)
+            }
 
             if let commitDelay = decryptedMessage.commitDelay {
                 return MLSDecryptResult.proposal(commitDelay)
