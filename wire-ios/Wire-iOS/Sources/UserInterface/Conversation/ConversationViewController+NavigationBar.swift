@@ -113,7 +113,7 @@ extension ConversationViewController {
     var backButton: UIBarButtonItem {
         //
         let hasUnreadInOtherConversations = self.conversation.hasUnreadMessagesInOtherConversations
-        print("hasUnreadInOtherConversations: \(hasUnreadInOtherConversations)")
+//        print("hasUnreadInOtherConversations: \(hasUnreadInOtherConversations)")
         let arrowIcon: StyleKitIcon = view.isRightToLeft
         ? (hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow)
         : (hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow)

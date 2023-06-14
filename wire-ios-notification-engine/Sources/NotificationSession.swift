@@ -538,6 +538,7 @@ extension NotificationSession {
         }
 
         note?.increaseEstimatedUnreadCount(on: conversation)
+        context.saveOrRollback()
         return note
     }
 

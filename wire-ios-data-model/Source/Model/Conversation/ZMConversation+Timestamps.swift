@@ -382,9 +382,9 @@ extension ZMConversation {
     //
     internal func unreadMessagesIncludingInvisible(until timestamp: Date = .distantFuture) -> [ZMMessage] {
         let range = (lastReadServerTimeStamp ?? .distantPast)...timestamp
-        print("Kate: \(lastReadServerTimeStamp)")
-        print("Kate: \(timestamp)")
-        print("Kate: \(unreadMessagesIncludingInvisible(in: range).count)")
+//        print("Kate: \(lastReadServerTimeStamp)")
+//        print("Kate: \(timestamp)")
+//        print("Kate: \(unreadMessagesIncludingInvisible(in: range).count)")
         return unreadMessagesIncludingInvisible(in: range)
     }
 
