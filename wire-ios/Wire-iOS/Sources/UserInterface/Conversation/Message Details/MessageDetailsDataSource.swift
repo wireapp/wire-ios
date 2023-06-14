@@ -67,10 +67,10 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     private(set) var accessibilitySubtitle: String!
 
     /// The list of likes.
-    private(set) var reactions: [MessageDetailsCellDescription]
+    private(set) var reactions: [MessageDetailsSectionDescription]
 
     /// The list of read receipts with the associated date.
-    private(set) var readReceipts: [MessageDetailsCellDescription]
+    private(set) var readReceipts: [MessageDetailsSectionDescription]
 
     /// The object that receives information when the message details changes.
     weak var observer: MessageDetailsDataSourceObserver?
@@ -84,8 +84,20 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         self.conversation = message.conversation!
 
         // Assign the initial data
-        self.reactions = MessageDetailsCellDescription.makeReactionCells(message.sortedLikers)
-        self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
+        self.reactions = message.usersByReaction.map { reaction, users in
+            MessageDetailsSectionDescription(
+                headerText: reaction.unicodeValue,
+                items: MessageDetailsCellDescription.makeReactionCells(users)
+            )
+        }.filter {
+            !$0.items.isEmpty
+        }
+
+        self.readReceipts = [
+            MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+        ].filter {
+            !$0.items.isEmpty
+        }
 
         // Compute the title and display mode
         let showLikesTab = message.canAddReaction
@@ -139,14 +151,25 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         // Detect changes in likes
         if changeInfo.reactionsChanged {
             performChanges {
-                self.reactions = MessageDetailsCellDescription.makeReactionCells(message.sortedLikers)
+                self.reactions = message.usersByReaction.map { reaction, users in
+                    MessageDetailsSectionDescription(
+                        headerText: reaction.unicodeValue,
+                        items: MessageDetailsCellDescription.makeReactionCells(users)
+                    )
+                }.filter {
+                    !$0.items.isEmpty
+                }
             }
         }
 
         // Detect changes in read receipts
         if changeInfo.confirmationsChanged {
             performChanges {
-                self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
+                self.readReceipts = [
+                    MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+                ].filter {
+                    !$0.items.isEmpty
+                }
             }
         }
 
@@ -158,8 +181,18 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         performChanges {
-            self.reactions = MessageDetailsCellDescription.makeReactionCells(message.sortedLikers)
-            self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
+            self.reactions = message.usersByReaction.map { reaction, users in
+                MessageDetailsSectionDescription(
+                    headerText: reaction.unicodeValue,
+                    items: MessageDetailsCellDescription.makeReactionCells(users)
+                )
+            }.filter {
+                !$0.items.isEmpty
+            }
+
+            self.readReceipts = [
+                MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+            ]
         }
     }
 

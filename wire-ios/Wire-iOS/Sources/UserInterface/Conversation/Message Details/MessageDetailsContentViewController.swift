@@ -20,6 +20,21 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
+struct MessageDetailsSectionDescription {
+
+    let headerText: String?
+    let items: [MessageDetailsCellDescription]
+
+    init(
+        headerText: String? = nil,
+        items: [MessageDetailsCellDescription]
+    ) {
+        self.headerText = headerText
+        self.items = items
+    }
+
+}
+
 /**
  * Displays the list of users for a specified message detail content type.
  */
@@ -67,7 +82,7 @@ final class MessageDetailsContentViewController: UIViewController {
     }
 
     /// The displayed cells.
-    fileprivate(set) var cells: [MessageDetailsCellDescription] = []
+    private(set) var sections = [MessageDetailsSectionDescription]()
 
     // MARK: - UI Elements
 
@@ -82,10 +97,9 @@ final class MessageDetailsContentViewController: UIViewController {
      * Creates a view controller to display message details of a certain type.
      */
 
-    init(contentType: ContentType, conversation: ZMConversation, messageReactions: Int) {
+    init(contentType: ContentType, conversation: ZMConversation) {
         self.contentType = contentType
         self.conversation = conversation
-        self.messageReactions = messageReactions
         super.init(nibName: nil, bundle: nil)
         updateTitle()
     }
@@ -139,7 +153,7 @@ final class MessageDetailsContentViewController: UIViewController {
         noResultsView.isHidden = true
         configureForContentType()
         view.addSubview(noResultsView)
-        updateData(cells)
+        updateData(sections)
         configureConstraints()
         updateFooterPosition(for: collectionView)
     }
@@ -147,17 +161,17 @@ final class MessageDetailsContentViewController: UIViewController {
     private func updateTitle() {
         switch contentType {
         case .receipts:
-            if cells.isEmpty {
+            if sections.isEmpty {
                 title = MessageDetails.receiptsTitle.capitalized
             } else {
-                title = MessageDetails.Tabs.seen(cells.count).capitalized
+                title = MessageDetails.Tabs.seen(sections.count).capitalized
             }
 
         case .reactions:
-            if cells.isEmpty {
+            if sections.isEmpty {
                 title = MessageDetails.reactionsTitle.capitalized
             } else {
-                title = MessageDetails.Tabs.reactions(cells.count).capitalized
+                title = MessageDetails.Tabs.reactions(sections.count).capitalized
             }
         }
     }
@@ -167,7 +181,7 @@ final class MessageDetailsContentViewController: UIViewController {
         let footerHeight = subtitleLabel.frame.height.rounded(.up)
         let footerRegionHeight = 28 + footerHeight + padding
 
-        guard !cells.isEmpty else {
+        guard !sections.isEmpty else {
             subtitleBottom?.constant = -padding
             return
         }
@@ -241,9 +255,9 @@ final class MessageDetailsContentViewController: UIViewController {
      * - parameter cells: The new list of cells to display.
      */
 
-    func updateData(_ cells: [MessageDetailsCellDescription]) {
-        noResultsView.isHidden = !cells.isEmpty
-        self.cells = cells
+    func updateData(_ sections: [MessageDetailsSectionDescription]) {
+        noResultsView.isHidden = !sections.isEmpty
+        self.sections = sections
         self.updateTitle()
 
         guard let collectionView = self.collectionView else {
@@ -254,16 +268,6 @@ final class MessageDetailsContentViewController: UIViewController {
         self.updateFooterPosition(for: collectionView)
     }
 
-    func setNumberOfSections(messageReactions: Int) -> Int {
-        switch contentType {
-        case .reactions:
-            return messageReactions
-        case .receipts:
-            return 0
-        }
-
-    }
-
 }
 
 // MARK: - UICollectionViewDataSource
@@ -271,11 +275,11 @@ final class MessageDetailsContentViewController: UIViewController {
 extension MessageDetailsContentViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return cells.count
+        return sections[section].items.count
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return setNumberOfSections(messageReactions: messageReactions)
+        return sections.count
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -286,16 +290,17 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
-        (view as? SectionHeader)?.titleLabel.text = "headerText"
+        let section = sections[indexPath.section]
+        (view as? SectionHeader)?.titleLabel.text = section.headerText
         return view
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let description = cells[indexPath.item]
+        let description = sections[indexPath.section].items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
 
         cell.configure(with: description.user, selfUser: SelfUser.current, subtitle: description.attributedSubtitle, conversation: conversation)
-        cell.showSeparator = indexPath.item != (cells.endIndex - 1)
+        cell.showSeparator = indexPath.item != (sections.endIndex - 1)
         cell.subtitleLabel.accessibilityLabel = description.accessibleSubtitleLabel
         cell.subtitleLabel.accessibilityValue = description.accessibleSubtitleValue
 
@@ -308,7 +313,9 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
     /// When the user selects a cell, show the details for this user.
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let user = cells[indexPath.item].user
+
+        var user = sections[indexPath.section].items[indexPath.item].user
+
         let cell = collectionView.cellForItem(at: indexPath) as! UserCell
 
         let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation)

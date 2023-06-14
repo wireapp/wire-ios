@@ -69,6 +69,12 @@ extension ZMConversationMessage {
             }.reduce(0, +) > 0
     }
 
+    var usersByReaction: [MessageReaction: [UserType]] {
+        return usersReaction.mapKeys { reactionString in
+            MessageReaction.messageReaction(from: reactionString)!
+        }
+    }
+
     var likers: [UserType] {
         return usersReaction.filter { (reaction, _) -> Bool in
             reaction == MessageReaction.like.unicodeValue
