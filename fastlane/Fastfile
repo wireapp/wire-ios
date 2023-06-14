@@ -64,11 +64,8 @@ platform :ios do
     desc "Build & Upload Testflight Beta build"
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
-        options[:build_number] = generate_build_number
-        prepare_for_release(options)
-        build_for_release(options)
-        upload_testflight(options)
-        upload_s3(options)
+        options[:upload_testflight] = true
+        build_and_upload_app_store(options)
         upload_dsyms_to_datadog(options)
     end
 
@@ -76,7 +73,11 @@ platform :ios do
     lane :appstore_public do |options|
         options[:build_type] = "AppStore"
         options[:upload_dsyms_to_app_center] = true
-        options[:run_security_tests] = false
+        build_and_upload_app_store(options)
+
+        rc_options = options
+        options[:build_type] = "RC"
+        options[:upload_dsyms_to_app_center] = false
         build_and_upload_app_store(options)
     end
 
@@ -86,8 +87,8 @@ platform :ios do
         options[:override_folder] = "BK-CI-configuration"
         options[:s3_subfolder] = "custom/bund/column1"
         options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
-        options[:upload_dsyms_to_app_center] = false
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
+        options[:upload_app_store] = true
         build_and_upload_app_store(options)
     end
 
@@ -97,8 +98,8 @@ platform :ios do
         options[:override_folder] = "COLUMN3-CI-configuration"
         options[:s3_subfolder] = "custom/bund/column3"
         options[:app_center_app_name] = "Wire-by-Bund-Column3"
-        options[:upload_dsyms_to_app_center] = false
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
+        options[:upload_app_store] = true
         build_and_upload_app_store(options)
     end
 
@@ -108,8 +109,8 @@ platform :ios do
         options[:override_folder] = "BK-CI-configuration"
         options[:s3_subfolder] = "custom/bund/c1-appstore"
         options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
-        options[:upload_dsyms_to_app_center] = false
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
+        options[:upload_app_store] = true
         build_and_upload_app_store(options)
     end
 
@@ -119,21 +120,29 @@ platform :ios do
         options[:override_folder] = "COLUMN3-CI-configuration"
         options[:s3_subfolder] = "custom/bund/c3-appstore"
         options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
-        options[:upload_dsyms_to_app_center] = false
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
+        options[:upload_app_store] = true
         build_and_upload_app_store(options)
     end
 
     def build_and_upload_app_store(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
-        if options[:run_security_tests]
+        if options[:run_security_tests] || false
             security_plans(options)
         end
+        build_for_release(options.merge({:build_type => "Debug"}))
+        build_for_release(options.merge({:build_type => "Debug", :for_simulator => true}))
         build_for_release(options)
-        upload_app_store(options)
+        if options[:upload_app_store] || false
+            upload_app_store(options)
+        end
+        if options[:upload_testflight] || false
+            upload_testflight(options)
+        end
+        upload_app_center(options)
         upload_s3(options)
-        if options[:upload_dsyms_to_app_center]
+        if options[:upload_dsyms_to_app_center] || false
             upload_dsyms_to_app_center_for_appstore_build(options)
         end
     end
