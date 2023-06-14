@@ -22,7 +22,7 @@ import WireDataModel
 class MockMLSService: MLSServiceInterface {
 
     var mockDecryptResult: MLSDecryptResult?
-    var mockDecryptionError: MLSService.MLSMessageDecryptionError?
+    var mockDecryptionError: MLSDecryptionService.MLSMessageDecryptionError?
     var calls = Calls()
 
     struct Calls {
