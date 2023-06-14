@@ -20,6 +20,14 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
+extension UILabel{
+func setCharacterSpacing(_ spacing: CGFloat){
+    let attributedStr = NSMutableAttributedString(string: self.text ?? "")
+    attributedStr.addAttribute(NSAttributedString.Key.kern, value: spacing, range: NSMakeRange(0, attributedStr.length))
+    self.attributedText = attributedStr
+ }
+}
+
 struct MessageDetailsSectionDescription {
 
     let headerText: String?
@@ -292,6 +300,9 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
         let section = sections[indexPath.section]
         (view as? SectionHeader)?.titleLabel.text = section.headerText
+        (view as? SectionHeader)?.titleLabel.setCharacterSpacing(3)
+        (view as? SectionHeader)?.titleLabel.font = FontSpec.headerRegularFont.font!
+
         return view
     }
 

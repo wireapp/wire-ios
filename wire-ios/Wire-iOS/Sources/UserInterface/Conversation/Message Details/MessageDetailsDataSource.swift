@@ -86,7 +86,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         // Assign the initial data
         self.reactions = message.usersByReaction.map { reaction, users in
             MessageDetailsSectionDescription(
-                headerText: reaction.unicodeValue,
+                headerText: reaction.unicodeValue + reaction.displayValue + "(\(users.count))",
                 items: MessageDetailsCellDescription.makeReactionCells(users)
             )
         }.filter {
