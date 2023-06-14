@@ -749,6 +749,68 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
     }
 
 }
+public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - decrypt
+
+    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
+    public var decryptMessageForSubconversationType_MockError: Error?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
+
+        if let error = decryptMessageForSubconversationType_MockError {
+            throw error
+        }
+
+        if let mock = decryptMessageForSubconversationType_MockMethod {
+            return try mock(message, groupID, subconversationType)
+        } else if let mock = decryptMessageForSubconversationType_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+}
+public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - encrypt
+
+    public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
+    public var encryptMessageFor_MockError: Error?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockValue: [Byte]?
+
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+        encryptMessageFor_Invocations.append((message: message, groupID: groupID))
+
+        if let error = encryptMessageFor_MockError {
+            throw error
+        }
+
+        if let mock = encryptMessageFor_MockMethod {
+            return try mock(message, groupID)
+        } else if let mock = encryptMessageFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptMessageFor`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -1071,18 +1133,19 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
 }
-class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
+public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - storeSubconversationGroupID
 
-    var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID, type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID, SubgroupType, MLSGroupID) -> Void)?
+    public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID, type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID, SubgroupType, MLSGroupID) -> Void)?
 
-    func storeSubconversationGroupID(_ groupID: MLSGroupID, forType type: SubgroupType, parentGroupID: MLSGroupID) {
+    public func storeSubconversationGroupID(_ groupID: MLSGroupID, forType type: SubgroupType, parentGroupID: MLSGroupID) {
         storeSubconversationGroupIDForTypeParentGroupID_Invocations.append((groupID: groupID, type: type, parentGroupID: parentGroupID))
 
         guard let mock = storeSubconversationGroupIDForTypeParentGroupID_MockMethod else {
@@ -1094,11 +1157,11 @@ class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepos
 
     // MARK: - fetchSubconversationGroupID
 
-    var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
-    var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
+    public var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
 
-    func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
+    public func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
         fetchSubconversationGroupIDForTypeParentGroupID_Invocations.append((type: type, parentGroupID: parentGroupID))
 
         if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockMethod {

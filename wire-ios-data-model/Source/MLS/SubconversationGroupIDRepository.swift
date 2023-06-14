@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol SubconversationGroupIDRepositoryInterface {
+public protocol SubconversationGroupIDRepositoryInterface {
 
     func storeSubconversationGroupID(
         _ groupID: MLSGroupID,
@@ -34,11 +34,21 @@ protocol SubconversationGroupIDRepositoryInterface {
 
 }
 
-final class SubconversationGroupIDRepsository: SubconversationGroupIDRepositoryInterface {
+public final class SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
+
+    // MARK: - Properties
 
     private var storage = [MLSGroupID: [SubgroupType: MLSGroupID]]()
 
-    func storeSubconversationGroupID(
+    // MARK: - Life cycle
+
+    public init() {
+
+    }
+
+    // MARK: - Store
+
+    public func storeSubconversationGroupID(
         _ groupID: MLSGroupID,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
@@ -46,7 +56,9 @@ final class SubconversationGroupIDRepsository: SubconversationGroupIDRepositoryI
         storage[parentGroupID, default: [:]][type] = groupID
     }
 
-    func fetchSubconversationGroupID(
+    // MARK: - Fetch
+
+    public func fetchSubconversationGroupID(
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
     ) -> MLSGroupID? {
