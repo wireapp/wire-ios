@@ -1,4 +1,4 @@
-name: Trigger release tasks from CirrusCI
+name: Trigger Bund Release tasks from CirrusCI
 
 on: 
   workflow_dispatch:

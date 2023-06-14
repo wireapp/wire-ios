@@ -1,0 +1,17 @@
+name: Trigger Playground Release tasks from CirrusCI
+
+on:  workflow_dispatch
+
+permissions: 
+  checks: wirte
+
+jobs:
+  playground:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: cirruslabs/cirrus-action@latest
+        with:
+          args: 'Playground'
