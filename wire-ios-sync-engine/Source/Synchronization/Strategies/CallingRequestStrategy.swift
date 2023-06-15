@@ -322,7 +322,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         let callingContent = Calling(content: dataString)
         let genericMessage = GenericMessage(content: callingContent)
 
-        
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
@@ -336,22 +335,17 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
             self.zmLog.debug("schedule calling message")
 
-            
             let recipients = targets.map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
 
-            
-            
             let message: GenericMessageEntity
-            
-            
+
             if callingContent.isRejected {
                 guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext) else {
                     WireLogger.mls.error("missing self conversation for rejected call")
                     completionHandler(500)
                     return
                 }
-                
-                
+
                 message = GenericMessageEntity(conversation: selfConversation,
                                                message: genericMessage,
                                                targetRecipients: recipients,
@@ -364,7 +358,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                     completionHandler: nil
                 )
             }
-            
+
             switch (conversation.messageProtocol, recipients) {
             case (.proteus, _), (.mls, .conversationParticipants):
                 message.send(with: self.messageSync, completion: completionHandler)
@@ -628,16 +622,16 @@ private extension GenericMessageEntity {
             message.hasCalling else {
             return false
         }
-            
+
         return message.calling.isConferenceKey
     }
-    
+
     var isRejected: Bool {
         guard
             message.hasCalling else {
             return false
         }
-            
+
         return message.calling.isRejected
     }
 
@@ -651,9 +645,8 @@ private extension GenericMessageEntity {
 
 }
 
-
 private extension Calling {
-    
+
     var isConferenceKey: Bool {
         guard
             let payload = content.data(using: .utf8, allowLossyConversion: false),
@@ -664,8 +657,7 @@ private extension Calling {
 
         return callContent.isConferenceKey
     }
-    
-    
+
     var isRejected: Bool {
         guard
             let payload = content.data(using: .utf8, allowLossyConversion: false),
