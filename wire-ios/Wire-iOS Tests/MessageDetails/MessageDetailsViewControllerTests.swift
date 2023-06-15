@@ -21,9 +21,13 @@ import XCTest
 
 final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
+    // MARK: - Properties
+
     var conversation: SwiftMockConversation!
     var mockSelfUser: MockUserType!
     var otherUser: MockUserType!
+
+    // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
@@ -33,6 +37,8 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
     }
 
+    // MARK: - tearDown method
+
     override func tearDown() {
         SelfUser.provider = nil
         conversation = nil
@@ -40,15 +46,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
-        let receipts: [MockReadReceipt] = users.map({ user in
-            let receipt = MockReadReceipt(user: ZMUser())
-            receipt.userType = user
-            return receipt
-        })
-
-        return receipts
-    }
+    // MARK: - Snapshot Tests
 
     // MARK: - Seen
     func testThatItShowsReceipts_ShortList_11() {
@@ -76,14 +74,6 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         snapshot(detailsViewController)
     }
 
-    private func createGroupConversation() -> SwiftMockConversation {
-        let conversation = SwiftMockConversation()
-        conversation.teamRemoteIdentifier = UUID()
-        conversation.mockLocalParticipantsContain = true
-
-        return conversation
-    }
-
     func testThatItShowsReceipts_ShortList_Edited_11() {
         // GIVEN
         conversation = createGroupConversation()
@@ -94,7 +84,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.updatedAt = Date(timeIntervalSince1970: 69)
         message.deliveryState = .read
         message.needsReadConfirmation = true
-
+        
         let users = MockUserType.usernames.prefix(upTo: 5).map({
             MockUserType.createUser(name: $0)
         })
@@ -367,6 +357,24 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
     }
 
     // MARK: - Helpers
+
+    private func createGroupConversation() -> SwiftMockConversation {
+        let conversation = SwiftMockConversation()
+        conversation.teamRemoteIdentifier = UUID()
+        conversation.mockLocalParticipantsContain = true
+
+        return conversation
+    }
+
+    private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
+        let receipts: [MockReadReceipt] = users.map({ user in
+            let receipt = MockReadReceipt(user: ZMUser())
+            receipt.userType = user
+            return receipt
+        })
+
+        return receipts
+    }
 
     private func snapshot(_ detailsViewController: MessageDetailsViewController,
                           configuration: ((MessageDetailsViewController) -> Void)? = nil,
