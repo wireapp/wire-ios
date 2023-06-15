@@ -37,7 +37,7 @@ extension UICollectionView {
         bounces = true
         alwaysBounceVertical = true
         if usedInMessageDetailsVC {
-            contentInset = UIEdgeInsets(top: 22, left: 0, bottom: 32, right: 0)
+            contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 32, right: 0)
         } else {
             contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 32, right: 0)
         }
