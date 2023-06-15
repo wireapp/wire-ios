@@ -1728,7 +1728,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
     }
-    
+
     func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
 
         // Given a group.
@@ -1737,8 +1737,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto.mockCreateConversation = { _, _ in
             expectation1.fulfill()
         }
-        
-        let keyPackagesMock: MockMLSActionsProvider.ClaimKeyPackagesMock = { _, _ ,_ in
+
+        let keyPackagesMock: MockMLSActionsProvider.ClaimKeyPackagesMock = { _, _, _ in
             [KeyPackage.init(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
         }
         mockActionsProvider.claimKeyPackagesMocks = [keyPackagesMock]
@@ -1746,7 +1746,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             expectation2.fulfill()
             return [ZMUpdateEvent()]
         }
-        
+
         mockMLSActionExecutor.mockAddMembers = { _, _ in
             return [ZMUpdateEvent()]
         }
