@@ -30,7 +30,6 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-
         sut = MessageReactionsCell()
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 70)
     }
