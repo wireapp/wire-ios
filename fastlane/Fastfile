@@ -131,7 +131,7 @@ platform :ios do
         if options[:run_security_tests] || false
             security_plans(options)
         end
-        build_for_release(options.merge({:configuration => "Debug"}))
+        # build_for_release(options.merge({:configuration => "Debug"}))
         build_for_release(options.merge({:configuration => "Debug", :for_simulator => true}))
         build_for_release(options)
         if options[:upload_app_store] || false
