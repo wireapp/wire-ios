@@ -164,6 +164,36 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         snapshot(detailsViewController)
     }
 
+    func testThatItShowsDifferentReactions() {
+        // GIVEN
+        conversation = createGroupConversation()
+
+        let message = MockMessageFactory.textMessage(withText: "Message")
+        message.senderUser = SelfUser.current
+        message.conversationLike = conversation
+        message.deliveryState = .read
+        message.needsReadConfirmation = true
+
+        let users: [UserType] = MockUserType.usernames.prefix(upTo: 22).map({
+            let user = MockUserType.createUser(name: $0)
+            user.handle = nil
+            return user
+        })
+
+        message.readReceipts = createReceipts(users: users)
+        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4)),
+                                        MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 1)),
+                                        MessageReaction.thumbsUp.unicodeValue: Array(users.prefix(upTo: 6))
+        ]
+
+        // WHEN
+        let detailsViewController = MessageDetailsViewController(message: message)
+        detailsViewController.container.selectIndex(1, animated: false)
+
+        // THEN
+        snapshot(detailsViewController)
+    }
+
     // MARK: - Empty State
 
     func testThatItShowsNoLikesEmptyState_14() {
@@ -338,7 +368,8 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
     // MARK: - Helpers
 
-    private func snapshot(_ detailsViewController: MessageDetailsViewController, configuration: ((MessageDetailsViewController) -> Void)? = nil,
+    private func snapshot(_ detailsViewController: MessageDetailsViewController,
+                          configuration: ((MessageDetailsViewController) -> Void)? = nil,
                           file: StaticString = #file,
                           testName: String = #function,
                           line: UInt = #line) {
