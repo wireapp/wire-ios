@@ -18,6 +18,7 @@
 
 import Foundation
 import avs
+import Combine
 @testable import WireSyncEngine
 
 class WireCallCenterTransportMock: WireCallCenterTransport {
@@ -639,21 +640,8 @@ class WireCallCenterV3Tests: MessagingTest {
         // given
         let parentGroupID = MLSGroupID(Data.random())
         let subconversationGroupID = MLSGroupID(Data.random())
-        let conferenceInfo = MLSConferenceInfo(
-            epoch: 42,
-            keyData: .random(length: 8),
-            keySize: 8,
-            members: [
-                MLSConferenceInfo.Member(
-                    id: MLSClientID(
-                        userID: UUID.create().transportString(),
-                        clientID: "abcdefg",
-                        domain: "foo.com"
-                    ),
-                    isInSubconversation: true
-                )
-            ]
-        )
+        let conferenceInfo1 = MLSConferenceInfo.random()
+        let conferenceInfo2 = MLSConferenceInfo.random()
 
         groupConversation.messageProtocol = .mls
         groupConversation.mlsGroupID = parentGroupID
@@ -668,26 +656,36 @@ class WireCallCenterV3Tests: MessagingTest {
             return subconversationGroupID
         }
 
-        let didGenerateConferenceInfo = expectation(description: "didGenerateConferenceInfo")
-        mlsService.mockGenerateConferinceInfo = {
-            defer { didGenerateConferenceInfo.fulfill() }
+        let didGenerateConferenceInfo1 = expectation(description: "didGenerateConferenceInfo1")
+        mlsService.mockGenerateConferenceInfo = {
             XCTAssertEqual($0, parentGroupID)
             XCTAssertEqual($1, subconversationGroupID)
-            return conferenceInfo
+            defer { didGenerateConferenceInfo1.fulfill() }
+            return conferenceInfo1
         }
 
-        let didSetConferenceInfo = expectation(description: "didSetConferenceInfo")
+        let didSetConferenceInfo1 = expectation(description: "didSetConferenceInfo1")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
             XCTAssertEqual($0, self.groupConversation.avsIdentifier)
-            XCTAssertEqual($1, conferenceInfo)
-            didSetConferenceInfo.fulfill()
+            XCTAssertEqual($1, conferenceInfo1)
+            didSetConferenceInfo1.fulfill()
         }
 
         syncMOC.performAndWait {
             syncMOC.mlsService = mlsService
         }
 
-        try checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: groupConversationID) {
+        // So we can inform of new conference infos
+        let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
+        mlsService.mockOnConferenceInfoChange = { _, _ in
+            return conferenceInfoChangeSubject.eraseToAnyPublisher()
+        }
+
+        try checkThatItPostsNotification(
+            expectedCallState: .outgoing(degraded: false),
+            expectedCallerId: selfUserID,
+            expectedConversationId: groupConversationID
+        ) {
             // when
             try sut.startCall(in: groupConversation, isVideo: false)
 
@@ -696,6 +694,17 @@ class WireCallCenterV3Tests: MessagingTest {
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
         }
 
+        let didSetConferenceInfo2 = expectation(description: "didSetConferenceInfo2")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            XCTAssertEqual($0, self.groupConversation.avsIdentifier)
+            XCTAssertEqual($1, conferenceInfo2)
+            didSetConferenceInfo2.fulfill()
+        }
+
+        // and when the conference info changes
+        conferenceInfoChangeSubject.send(conferenceInfo2)
+
+        // then we set conference info 2 to avs (see expectations)
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 

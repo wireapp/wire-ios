@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import Combine
 
 /**
  * The snapshot of the state of a call.
@@ -36,6 +37,7 @@ struct CallSnapshot {
     let activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
+    var onConferenceInfoChangedToken: AnyCancellable?
 
     var isDegradedCall: Bool {
         return degradedUser != nil
