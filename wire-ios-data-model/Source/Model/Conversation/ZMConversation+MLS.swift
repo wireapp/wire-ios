@@ -167,7 +167,7 @@ public extension ZMConversation {
         request.fetchLimit = 2
 
         request.predicate = NSPredicate(
-            format: "%K == %@ && %K != nil",
+            format: "%K == %i && %K != nil",
             argumentArray: [Self.messageProtocolKey, MessageProtocol.mls.rawValue,
                             Self.mlsGroupIdKey]
         )
