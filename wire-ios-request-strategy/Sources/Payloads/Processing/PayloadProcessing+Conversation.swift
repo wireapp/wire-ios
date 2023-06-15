@@ -158,6 +158,7 @@ extension Payload.Conversation {
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateMessageProtocol(for: conversation)
 
         if conversation.mlsGroupID != nil {
             createOrJoinSelfConversation(from: conversation, context: context)
