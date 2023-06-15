@@ -29,9 +29,9 @@ public protocol MLSServiceInterface {
     func uploadKeyPackagesIfNeeded()
 
     func createSelfGroup(for groupID: MLSGroupID)
-    
+
     func joinSelfGroup(with groupID: MLSGroupID)
-    
+
     func createGroup(for groupID: MLSGroupID) throws
 
     func conversationExists(groupID: MLSGroupID) -> Bool
@@ -314,7 +314,7 @@ public final class MLSService: MLSServiceInterface {
         }
         do {
             try createConversation(for: groupID)
-            
+
             let selfUser = ZMUser.selfUser(in: context)
             let mlsSelfUser = MLSUser(from: selfUser)
             Task {
@@ -329,7 +329,7 @@ public final class MLSService: MLSServiceInterface {
             WireLogger.mls.error("create group for self conversation failed: \(error.localizedDescription)")
         }
     }
-    
+
     // MARK: - Add member
 
     enum MLSAddMembersError: Error {

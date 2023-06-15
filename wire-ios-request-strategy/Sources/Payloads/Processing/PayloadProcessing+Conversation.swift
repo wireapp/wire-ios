@@ -99,7 +99,7 @@ extension Payload.Conversation {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return
         }
-        
+
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
 
         guard
