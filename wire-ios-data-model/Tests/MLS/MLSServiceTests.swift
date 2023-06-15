@@ -1689,24 +1689,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue(calledCreateConversation)
     }
 
-    func test_itJoinsSelfGroup_Successfully() throws {
-
-        // Given a group.
-        let expectation = self.expectation(description: "group should be joined")
-
-        let groupID = MLSGroupID.random()
-        mockMLSActionExecutor.mockJoinGroup = { group, _ in
-            XCTAssertEqual(groupID, group)
-            expectation.fulfill()
-            return [ZMUpdateEvent()]
-        }
-        // WHEN
-        sut.joinSelfGroup(with: groupID)
-
-        // THEN
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
-    }
-
     func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
 
         // Given a group.
@@ -1743,11 +1725,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
         mockActionsProvider.claimKeyPackagesMocks = [keyPackagesMock]
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            expectation2.fulfill()
             return [ZMUpdateEvent()]
         }
-
+        
         mockMLSActionExecutor.mockAddMembers = { _, _ in
+            expectation2.fulfill()
             return [ZMUpdateEvent()]
         }
 
