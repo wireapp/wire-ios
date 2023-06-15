@@ -84,7 +84,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.updatedAt = Date(timeIntervalSince1970: 69)
         message.deliveryState = .read
         message.needsReadConfirmation = true
-        
+
         let users = MockUserType.usernames.prefix(upTo: 5).map({
             MockUserType.createUser(name: $0)
         })

@@ -191,7 +191,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     func messageActionsMenuController() -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
         let actionsMenuController = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
-        
+
         return actionsMenuController
     }
 
@@ -210,7 +210,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }
-
 
     // MARK: - SelectableView
 

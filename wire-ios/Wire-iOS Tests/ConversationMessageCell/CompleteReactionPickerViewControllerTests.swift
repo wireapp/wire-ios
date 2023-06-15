@@ -19,7 +19,6 @@
 @testable import Wire
 import XCTest
 
-
 final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     var sut: CompleteReactionPickerViewController!
@@ -46,7 +45,6 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
         // THEN
         verify(matching: sut)
     }
-
 
     func testReactionPicker_scrolledToBottom() {
         // GIVEN & WHEN
