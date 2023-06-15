@@ -41,13 +41,9 @@ struct MessageDetailsSectionDescription {
 
 final class MessageDetailsContentViewController: UIViewController {
 
-    var test: Int = 0
-
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
     private var header = SectionHeader(frame: .zero)
-
-    private var messageReactions: Int = 0
 
     /// The type of the displayed content.
     enum ContentType {
