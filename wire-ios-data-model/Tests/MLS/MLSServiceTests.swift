@@ -1688,12 +1688,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try sut.createConversation(for: groupID)
         XCTAssertTrue(calledCreateConversation)
     }
-    
+
     func test_itJoinsSelfGroup_Successfully() throws {
-        
+
         // Given a group.
         let expectation = self.expectation(description: "group should be joined")
-    
+
         let groupID = MLSGroupID.random()
         mockMLSActionExecutor.mockJoinGroup = { group, _ in
             XCTAssertEqual(groupID, group)
@@ -1702,13 +1702,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
         // WHEN
         sut.joinSelfGroup(with: groupID)
-        
+
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
     }
-    
+
     func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
-        
+
         // Given a group.
         let expectation1 = self.expectation(description: "CreateConversation should be called")
         let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
@@ -1719,12 +1719,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             expectation2.fulfill()
             return [ZMUpdateEvent()]
         }
-        
+
         let groupID = MLSGroupID.random()
 
         // WHEN
         sut.createSelfGroup(for: groupID)
-        
+
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
     }
