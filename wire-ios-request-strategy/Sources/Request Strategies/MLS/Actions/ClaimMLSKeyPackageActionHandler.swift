@@ -24,7 +24,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 
     override func request(for action: ClaimMLSKeyPackageAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
-        WireLogger.mls.debug("sending key package - ClaimMLSKeyPackageActionHandler")
+
         guard apiVersion > .v0 else {
             action.fail(with: .endpointUnavailable)
             return nil
@@ -52,7 +52,6 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 
     override func handleResponse(_ response: ZMTransportResponse, action: ClaimMLSKeyPackageAction) {
         var action = action
-        WireLogger.mls.debug("sending key package - ClaimMLSKeyPackageActionHandler - response: \(response.httpStatus)")
 
         switch response.httpStatus {
         case 200:
