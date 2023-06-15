@@ -20,6 +20,8 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
+// MARK: - MessageDetailsSectionDescription
+
 struct MessageDetailsSectionDescription {
 
     let headerText: String?
@@ -79,7 +81,7 @@ final class MessageDetailsContentViewController: UIViewController {
         }
     }
 
-    /// The displayed cells.
+    /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
 
     // MARK: - UI Elements
@@ -107,6 +109,8 @@ final class MessageDetailsContentViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Override Methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSubviews()
@@ -117,11 +121,16 @@ final class MessageDetailsContentViewController: UIViewController {
         collectionView.map(updateFooterPosition)
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(
+        to size: CGSize,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
         coordinator.animate(alongsideTransition: { _ in
             self.collectionView.collectionViewLayout.invalidateLayout()
         })
     }
+
+    // MARK: - Configure Views and set constraints
 
     private func configureSubviews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -137,7 +146,11 @@ final class MessageDetailsContentViewController: UIViewController {
         collectionView.delegate = self
         UserCell.register(in: collectionView)
 
-        collectionView?.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
+        collectionView?.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
         view.addSubview(collectionView)
 
         subtitleLabel.numberOfLines = 0
@@ -156,6 +169,32 @@ final class MessageDetailsContentViewController: UIViewController {
         updateFooterPosition(for: collectionView)
     }
 
+    private func configureConstraints() {
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        noResultsView.translatesAutoresizingMaskIntoConstraints = false
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        collectionView.fitIn(view: view)
+        subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: safeBottomAnchor)
+        subtitleBottom!.priority = .defaultHigh
+
+        NSLayoutConstraint.activate([
+            // noResultsView
+            noResultsView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 12),
+            noResultsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noResultsView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -44),
+            noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -12),
+            noResultsView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 24),
+            noResultsView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -24),
+
+            // subtitleLabel
+            subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            subtitleBottom!
+        ])
+    }
+
+    // MARK: - Update and Configuration
+
     private func updateTitle() {
         let count = sections.flatMap(\.items).count
         switch contentType {
@@ -163,7 +202,6 @@ final class MessageDetailsContentViewController: UIViewController {
             if sections.isEmpty {
                 title = MessageDetails.receiptsTitle.capitalized
             } else {
-                let count = sections.flatMap(\.items).count
                 title = MessageDetails.Tabs.seen(count).capitalized
 
             }
@@ -210,50 +248,26 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .reactions:
             noResultsView.label.accessibilityIdentifier = "placeholder.no_likes"
-            noResultsView.placeholderText = MessageDetails.emptyLikes.capitalized
+            noResultsView.placeholderText = MessageDetails.emptyLikes.capitalizingFirstCharacterOnly
             noResultsView.icon = .like
 
         case .receipts(enabled: true):
             noResultsView.label.accessibilityIdentifier = "placeholder.no_read_receipts"
-            noResultsView.placeholderText = MessageDetails.emptyReadReceipts.capitalized
+            noResultsView.placeholderText = MessageDetails.emptyReadReceipts.capitalizingFirstCharacterOnly
             noResultsView.icon = .eye
 
         case .receipts(enabled: false):
             noResultsView.label.accessibilityIdentifier = "placeholder.read_receipts_disabled"
-            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled.capitalized
+            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled.capitalizingFirstCharacterOnly
             noResultsView.icon = .eye
         }
-    }
-
-    private func configureConstraints() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        noResultsView.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        collectionView.fitIn(view: view)
-        subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: safeBottomAnchor)
-        subtitleBottom!.priority = .defaultHigh
-
-        NSLayoutConstraint.activate([
-            // noResultsView
-            noResultsView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 12),
-            noResultsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            noResultsView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -44),
-            noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -12),
-            noResultsView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 24),
-            noResultsView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -24),
-
-            // subtitleLabel
-            subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            subtitleBottom!
-        ])
     }
 
     // MARK: - Updating the Data
 
     /**
      * Updates the list of users for the details.
-     * - parameter cells: The new list of cells to display.
+     * - parameter sections: The new list of sections to display.
      */
 
     func updateData(_ sections: [MessageDetailsSectionDescription]) {
@@ -283,14 +297,26 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         return sections.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         header.titleLabel.text = "headerText"
         header.size(fittingWidth: collectionView.bounds.width)
         return header.bounds.size
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader",
+            for: indexPath
+        )
         let section = sections[indexPath.section]
         (view as? SectionHeader)?.titleLabel.text = section.headerText
         (view as? SectionHeader)?.titleLabel.font = FontSpec.headerRegularFont.font!
@@ -298,11 +324,19 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         return view
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let description = sections[indexPath.section].items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
 
-        cell.configure(with: description.user, selfUser: SelfUser.current, subtitle: description.attributedSubtitle, conversation: conversation)
+        cell.configure(
+            with: description.user,
+            selfUser: SelfUser.current,
+            subtitle: description.attributedSubtitle,
+            conversation: conversation
+        )
         cell.showSeparator = indexPath.item != (sections.endIndex - 1)
         cell.subtitleLabel.accessibilityLabel = description.accessibleSubtitleLabel
         cell.subtitleLabel.accessibilityValue = description.accessibleSubtitleValue
@@ -310,7 +344,11 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         return CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
@@ -334,6 +372,8 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
 }
 
+// MARK: - ViewControllerDismisser
+
 extension MessageDetailsContentViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         viewController.dismiss(animated: true, completion: nil)
@@ -343,13 +383,20 @@ extension MessageDetailsContentViewController: ViewControllerDismisser {
 // MARK: - ProfileViewControllerDelegate
 
 extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
+    func profileViewController(
+        _ controller: ProfileViewController?,
+        wantsToNavigateTo conversation: ZMConversation
+    ) {
         dismiss(animated: true) {
             ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
         }
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
+    func profileViewController(
+        _ controller: ProfileViewController?,
+        wantsToCreateConversationWithName name: String?,
+        users: UserSet
+    ) {
         // no-op
     }
 }
