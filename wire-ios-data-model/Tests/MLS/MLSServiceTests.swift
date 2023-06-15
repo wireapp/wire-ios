@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 import WireCoreCrypto
+import Combine
 @testable import WireDataModel
 
 class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
@@ -1869,6 +1870,129 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subconversationGroupID.groupID, subgroupID)
         XCTAssertEqual(subconversationGroupID.type, .conference)
         XCTAssertEqual(subconversationGroupID.parentGroupID, parentID)
+    }
+
+    // MARK: - On conference info changed
+
+    func test_OnEpochChanged_InterleavesSources() throws {
+        // Given
+        let groupID1 = MLSGroupID.random()
+        let groupID2 = MLSGroupID.random()
+        let groupID3 = MLSGroupID.random()
+
+        // Mock epoch changes
+        let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
+        mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
+
+        let epochChangedFromActionExecutor = PassthroughSubject<MLSGroupID, Never>()
+        mockMLSActionExecutor.mockOnEpochChanged = epochChangedFromActionExecutor.eraseToAnyPublisher
+
+        // Colect ids for groups with changed epochs
+        var receivedGroupIDs = [MLSGroupID]()
+        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+        let cancellable = sut.onEpochChanged().collect(3).sink {
+            receivedGroupIDs = $0
+            didReceiveGroupIDs.fulfill()
+        }
+
+        // When
+        epochChangedFromDecryptionSerivce.send(groupID1)
+        epochChangedFromActionExecutor.send(groupID2)
+        epochChangedFromDecryptionSerivce.send(groupID3)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        cancellable.cancel()
+        XCTAssertEqual(receivedGroupIDs, [groupID1, groupID2, groupID3])
+    }
+
+    func test_OnConferenceInfoChanged_WhenEpochChangesForParentConversation() throws {
+        // Given
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        // When then
+        try assertConferenceInfoIsReceivedWhenEpochChanges(
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID,
+            epochChangeSequence: .random(), .random(), parentGroupID
+        )
+    }
+
+    func test_OnConferenceInfoChanged_WhenEpochChangesForSubconversation() throws {
+        // Given
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        // When then
+        try assertConferenceInfoIsReceivedWhenEpochChanges(
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID,
+            epochChangeSequence: .random(), .random(), subconversationGroupID
+        )
+    }
+
+    private func assertConferenceInfoIsReceivedWhenEpochChanges(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID,
+        epochChangeSequence: MLSGroupID...
+    ) throws {
+        // Mock epoch changes
+        let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
+        mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
+
+        let epochChangedFromActionExecutor = PassthroughSubject<MLSGroupID, Never>()
+        mockMLSActionExecutor.mockOnEpochChanged = epochChangedFromActionExecutor.eraseToAnyPublisher
+
+        // Mock conference info
+        let epoch: UInt64 = 42
+        let key = Data.random(byteCount: 32).bytes
+        let clientID = MLSClientID.random()
+        let clientIDBytes = try XCTUnwrap(clientID.rawValue.base64EncodedBytes)
+
+        mockCoreCrypto.mockConversationEpoch = { groupID in
+            XCTAssertEqual(groupID, subconversationGroupID.bytes)
+            return epoch
+        }
+
+        mockCoreCrypto.mockExportSecretKey = { groupID, _ in
+            XCTAssertEqual(groupID, subconversationGroupID.bytes)
+            return key
+        }
+
+        mockCoreCrypto.mockGetClientIds = { groupID in
+            XCTAssertTrue(groupID.isOne(of: parentGroupID.bytes, subconversationGroupID.bytes))
+            return [clientIDBytes]
+        }
+
+        // Collect the received conference infos
+        var receivedConferenceInfos = [MLSConferenceInfo]()
+        let didReceiveConferenceInfos = expectation(description: "didReceiveConferenceInfos")
+        let cancellable = sut.onConferenceInfoChange(
+            parentGroupID: parentGroupID,
+            subConversationGroupID: subconversationGroupID
+        ).collect(1).sink {
+            receivedConferenceInfos = $0
+            didReceiveConferenceInfos.fulfill()
+        }
+
+        // When
+        for groupID in epochChangeSequence {
+            epochChangedFromDecryptionSerivce.send(groupID)
+        }
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        cancellable.cancel()
+
+        let expectedConferenceInfo = MLSConferenceInfo(
+            epoch: epoch,
+            keyData: key,
+            keySize: 32,
+            members: [.init(id: clientID, isInSubconversation: true)]
+        )
+
+        XCTAssertEqual(receivedConferenceInfos, [expectedConferenceInfo])
     }
 
 }

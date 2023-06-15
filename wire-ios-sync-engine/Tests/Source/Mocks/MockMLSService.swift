@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import Combine
 
 // Temporary Mock until we find a way to use a single mocked `mlsServiceProcotol` accross frameworks
 class MockMLSService: MLSServiceInterface {
@@ -103,6 +104,14 @@ class MockMLSService: MLSServiceInterface {
         }
 
         return mock(parentGroupID, subconversationGroupID)
+    }
+
+    func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+        fatalError("not implemented")
+    }
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        fatalError("not implemented")
     }
 
 }

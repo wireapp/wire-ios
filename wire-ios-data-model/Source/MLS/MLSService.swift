@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import Combine
 
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
@@ -52,6 +53,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
     ) throws -> MLSConferenceInfo
+
+    func onConferenceInfoChange(
+        parentGroupID: MLSGroupID,
+        subConversationGroupID: MLSGroupID
+    ) -> AnyPublisher<MLSConferenceInfo, Never>
 
 }
 
@@ -287,6 +293,20 @@ public final class MLSService: MLSServiceInterface {
 
     public enum MLSConferenceInfoError: Error, Equatable {
         case failedToGenerateConferenceInfo
+    }
+
+    public func onConferenceInfoChange(
+        parentGroupID: MLSGroupID,
+        subConversationGroupID: MLSGroupID
+    ) -> AnyPublisher<MLSConferenceInfo, Never> {
+        return onEpochChanged().filter {
+            $0.isOne(of: parentGroupID, subConversationGroupID)
+        }.compactMap { [weak self] _ in
+            try? self?.generateConferenceInfo(
+                parentGroupID: parentGroupID,
+                subconversationGroupID: subConversationGroupID
+            )
+        }.eraseToAnyPublisher()
     }
 
     // MARK: - Update key material
@@ -1196,6 +1216,14 @@ public final class MLSService: MLSServiceInterface {
             logger.error("failed to get members for group (\(groupID)): \(String(describing: error))")
             throw error
         }
+    }
+
+    // MARK: - Epoch
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        return decryptionService.onEpochChanged()
+            .merge(with: mlsActionExecutor.onEpochChanged())
+            .eraseToAnyPublisher()
     }
 
 }
