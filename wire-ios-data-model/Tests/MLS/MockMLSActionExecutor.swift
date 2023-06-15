@@ -19,6 +19,7 @@
 import Foundation
 @testable import WireDataModel
 import WireCoreCrypto
+import Combine
 
 class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
@@ -86,5 +87,19 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
         mockJoinGroupCount += 1
         return try await mock(groupID, publicGroupState)
+    }
+
+    // MARK: - On epoch changed
+
+    var mockOnEpochChanged: (() -> AnyPublisher<MLSGroupID, Never>)?
+    var mockOnEpochChangedCount = 0
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        guard let mock = mockOnEpochChanged else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+
+        mockOnEpochChangedCount += 1
+        return mock()
     }
 }
