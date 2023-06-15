@@ -17,41 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
-@testable import WireDataModel
 
-extension MLSGroupID {
-
-    static func random() -> MLSGroupID {
-        return MLSGroupID(Data.random(byteCount: 32))
-    }
-
-}
-
-extension MLSClientID {
-
-    static func random() -> MLSClientID {
-        return MLSClientID(
-            userID: UUID.create().transportString(),
-            clientID: .random(length: 8),
-            domain: .randomDomain()
-        )
-    }
-
-}
-
-extension QualifiedID {
-
-    static func random() -> QualifiedID {
-        return QualifiedID(
-            uuid: .create(),
-            domain: .randomDomain()
-        )
-    }
-
-}
-
-extension String {
+public extension String {
 
     static func randomDomain(hostLength: UInt = 5) -> String {
         return "\(String.random(length: hostLength)).com"
@@ -66,4 +33,3 @@ extension String {
     }
 
 }
-
