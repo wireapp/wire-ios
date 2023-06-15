@@ -63,7 +63,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return false
 
         case .showCreateMLSGroupToggle:
-            return false
+            return true
 
         case .proteusViaCoreCrypto:
             return false
