@@ -55,6 +55,8 @@ task:
   << : *PUBLISHING_BINARY_TASK_TEMPLATE
   script:
     - bundle exec fastlane appstore_public
+    - rm -rf artifacts/
+    - bundle exec fastlane appstore_public_rc
 
 task:
   name: Testflight Beta

@@ -65,6 +65,7 @@ platform :ios do
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
         options[:upload_testflight] = true
+        options[:skip_app_center_upload] = true
         build_and_upload_app_store(options)
         upload_dsyms_to_datadog(options)
     end
@@ -73,9 +74,12 @@ platform :ios do
     lane :appstore_public do |options|
         options[:build_type] = "AppStore"
         options[:upload_dsyms_to_app_center] = true
+        options[:skip_debug_builds] = true
         build_and_upload_app_store(options)
-
-        rc_options = options
+    end
+    
+    desc "Build & Upload Public AppStore RC build"
+    lane :appstore_public_rc do |options|
         options[:build_type] = "RC"
         options[:upload_dsyms_to_app_center] = false
         build_and_upload_app_store(options)
@@ -131,8 +135,10 @@ platform :ios do
         if options[:run_security_tests] || false
             security_plans(options)
         end
-        # build_for_release(options.merge({:configuration => "Debug"}))
-        build_for_release(options.merge({:configuration => "Debug", :for_simulator => true}))
+        if !options[:skip_debug_builds] || true
+            build_for_release(options.merge({:configuration => "Debug"}))
+            build_for_release(options.merge({:configuration => "Debug", :for_simulator => true}))
+        end
         build_for_release(options)
         if options[:upload_app_store] || false
             upload_app_store(options)
@@ -140,7 +146,9 @@ platform :ios do
         if options[:upload_testflight] || false
             upload_testflight(options)
         end
-        upload_app_center(options)
+        if !options[:skip_app_center_upload] || true
+            upload_app_center(options)
+        end
         upload_s3(options)
         if options[:upload_dsyms_to_app_center] || false
             upload_dsyms_to_app_center_for_appstore_build(options)
