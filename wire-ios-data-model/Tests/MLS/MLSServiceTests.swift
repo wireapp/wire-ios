@@ -1706,6 +1706,28 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
     }
+    
+    func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
+        
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _ in
+            expectation1.fulfill()
+        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+        
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+        
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+    }
 }
 
 extension MLSGroupID {
