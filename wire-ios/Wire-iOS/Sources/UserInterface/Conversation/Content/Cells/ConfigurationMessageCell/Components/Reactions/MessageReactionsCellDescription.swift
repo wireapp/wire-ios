@@ -68,7 +68,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     weak var actionController: ConversationMessageActionController?
 
-    var accessibilityIdentifier: String? = "reaction message cell"
+    var accessibilityIdentifier: String? = "reactionMessageCell"
 
     var accessibilityLabel: String? = "reaction message cell"
 }
