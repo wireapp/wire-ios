@@ -200,17 +200,17 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .receipts:
             if sections.isEmpty {
-                title = MessageDetails.receiptsTitle.capitalized
+                title = MessageDetails.receiptsTitle.capitalizingFirstCharacterOnly
             } else {
-                title = MessageDetails.Tabs.seen(count).capitalized
+                title = MessageDetails.Tabs.seen(count).capitalizingFirstCharacterOnly
 
             }
 
         case .reactions:
             if sections.isEmpty {
-                title = MessageDetails.reactionsTitle.capitalized
+                title = MessageDetails.reactionsTitle.capitalizingFirstCharacterOnly
             } else {
-                title = MessageDetails.Tabs.reactions(count).capitalized
+                title = MessageDetails.Tabs.reactions(count).capitalizingFirstCharacterOnly
             }
         }
     }
