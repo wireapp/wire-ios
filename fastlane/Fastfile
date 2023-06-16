@@ -83,6 +83,7 @@ platform :ios do
         options[:upload_dsyms_to_app_center] = false
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
+        options[:force_adhoc_signing] = true
         build_and_upload_app_store(options)
     end
 
@@ -178,7 +179,7 @@ platform :ios do
 
     end
 
-    def download_distribution_certificate_and_profiles(build)
+    def download_distribution_certificate_and_profiles(build, options)
         if is_running_on_ci 
             match(
                 git_url: "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-certificates.git",
@@ -201,20 +202,21 @@ platform :ios do
             name: 'WIRE_BUNDLE_ID'
         )
         puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
+        should_sigh_adhoc = options[:force_adhoc_signing] || build.should_sigh_adhoc
         sigh(
-            adhoc: build.should_sigh_adhoc,
+            adhoc: should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: app_bundle_id
         )
         sigh(
-            adhoc: build.should_sigh_adhoc,
+            adhoc: should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-share"
         )
         sigh(
-            adhoc: build.should_sigh_adhoc,
+            adhoc: should_sigh_adhoc
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-notification"
@@ -264,7 +266,7 @@ platform :ios do
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
-            download_distribution_certificate_and_profiles(build)
+            download_distribution_certificate_and_profiles(build, options)
         end
     end
 
