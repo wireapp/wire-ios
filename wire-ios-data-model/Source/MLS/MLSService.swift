@@ -1081,29 +1081,6 @@ public final class MLSService: MLSServiceInterface {
             throw MLSGroupStateError.failedToFetchGroupState
         }
     }
-
-    // MARK: - Create Conversation
-
-    enum MLSConversationError: Error, Equatable {
-        case failedToCreateConversation
-    }
-
-    func createConversation(for groupID: MLSGroupID) throws {
-
-        let config = ConversationConfiguration(
-            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
-            externalSenders: backendPublicKeys.ed25519Keys,
-            custom: .init(keyRotationSpan: nil, wirePolicy: nil)
-        )
-
-        do {
-            try coreCrypto.perform { try $0.createConversation(conversationId: groupID.bytes, config: config) }
-        } catch {
-            logger.error("failed to createConversation: \(String(describing: error))")
-            throw MLSConversationError.failedToCreateConversation
-        }
-    }
-
 }
 
 // MARK: - Helper types

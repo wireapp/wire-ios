@@ -1656,39 +1656,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [])
     }
 
-    func test_itCreateConversationThrowsAnError() throws {
-        // Given a group.
-        let groupID = MLSGroupID.random()
-
-        var calledCreateConversation = false
-        mockCoreCrypto.mockCreateConversation = { _, _ in
-            calledCreateConversation = true
-            throw MLSService.MLSConversationError.failedToCreateConversation
-        }
-
-        // Then
-        assertItThrows(error: MLSService.MLSConversationError.failedToCreateConversation) {
-            // When
-            try sut.createConversation(for: groupID)
-        }
-
-        XCTAssertTrue(calledCreateConversation)
-    }
-
-    func test_itCreateConversation_Successfully() throws {
-        // Given a group.
-        let groupID = MLSGroupID.random()
-
-        var calledCreateConversation = false
-        mockCoreCrypto.mockCreateConversation = { _, _ in
-            calledCreateConversation = true
-        }
-
-        // When
-        try sut.createConversation(for: groupID)
-        XCTAssertTrue(calledCreateConversation)
-    }
-
     func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
 
         // Given a group.
