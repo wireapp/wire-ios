@@ -216,7 +216,7 @@ platform :ios do
             app_identifier: "#{app_bundle_id}.extension-share"
         )
         sigh(
-            adhoc: should_sigh_adhoc
+            adhoc: should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-notification"
