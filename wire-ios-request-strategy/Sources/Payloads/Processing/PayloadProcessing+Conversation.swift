@@ -161,20 +161,22 @@ extension Payload.Conversation {
         updateMessageProtocol(for: conversation)
 
         if conversation.mlsGroupID != nil {
-            createOrJoinSelfConversation(from: conversation, context: context)
+            createOrJoinSelfConversation(from: conversation)
         }
     }
 
-    func createOrJoinSelfConversation(from conversation: ZMConversation, context: NSManagedObjectContext) {
+    func createOrJoinSelfConversation(from conversation: ZMConversation) {
         guard let groupId = conversation.mlsGroupID,
-              let mlsService = conversation.managedObjectContext?.mlsService else {
+              let context = conversation.managedObjectContext,
+              let mlsService = context.mlsService else {
             WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
             return
         }
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); conv payload: \(String(describing: self))")
-
+        
         if conversation.epoch <= 0 {
-            mlsService.createSelfGroup(for: groupId)
+            let selfUser = ZMUser.selfUser(in: context)
+            mlsService.createSelfGroup(for: groupId, selfUser: selfUser)
         } else {
             mlsService.joinSelfGroup(with: groupId)
         }

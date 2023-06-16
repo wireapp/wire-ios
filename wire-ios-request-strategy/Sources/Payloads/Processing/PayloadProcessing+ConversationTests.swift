@@ -841,6 +841,63 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
         }
     }
+    
+    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceJoinGroup() {
+        let mockMLS = MockMLSService()
+        
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLS
+            // given
+            MLSEventProcessor.setMock(MockMLSEventProcessor())
+            let domain = "example.com"
+            
+            let id = QualifiedID(uuid: UUID(), domain: domain)
+            let conversation = Payload.Conversation(
+                qualifiedID: id,
+                type: BackendConversationType.`self`.rawValue,
+                messageProtocol: "mls",
+                mlsGroupID: "test",
+                epoch: 0
+            )
+
+            // when
+            conversation.updateOrCreate(in: syncMOC)
+        }
+        waitForCustomExpectations(withTimeout: 2)
+        // then
+        mockMLS.createSelfGroup(for: <#T##MLSGroupID#>, selfUser: <#T##ZMUser#>)
+//        XCTAssertEqual(mockMLS.mockUpdateKeyMaterialForGroupId, MLSGroupID.init(from: "test"))
+//        XCTAssertTrue(mockMLS.mockAddMembersToConversationCalled)
+//        XCTAssertFalse(mockMLS.mockPerformPendingJoinsCalled)
+    }
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
+        let mockMLS = MockMLSService()
+        syncMOC.mlsService = mockMLS
+        
+        syncMOC.performAndWait {
+            // given
+            MLSEventProcessor.setMock(MockMLSEventProcessor())
+            let domain = "example.com"
+            
+            let id = QualifiedID(uuid: UUID(), domain: domain)
+            let conversation = Payload.Conversation(
+                qualifiedID: id,
+                type: BackendConversationType.group.rawValue,
+                messageProtocol: "mls",
+                mlsGroupID: "test",
+                epoch: 1
+            )
+
+            // when
+            conversation.updateOrCreate(in: syncMOC)
+        }
+      
+        // then
+        XCTAssertFalse(mockMLS.mockAddMembersToConversationCalled)
+        XCTAssertTrue(mockMLS.mockPerformPendingJoinsCalled)
+    }
+
 
     // MARK: - Helpers
 
@@ -864,7 +921,6 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             data: payload
         )
     }
-
 }
 
 extension Payload.Conversation {
@@ -908,5 +964,4 @@ extension Payload.Conversation {
         )
 
     }
-
 }
