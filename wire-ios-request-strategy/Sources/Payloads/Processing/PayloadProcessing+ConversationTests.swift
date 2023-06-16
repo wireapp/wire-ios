@@ -843,61 +843,42 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     }
     
     func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceJoinGroup() {
+        let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        // then
+        XCTAssertTrue(!mockMLS.calls.createSelfGroup.isEmpty)
+    }
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
+        let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
+      
+        // then
+        XCTAssertTrue(!mockMLS.calls.joinSelfGroup.isEmpty)
+    }
+
+    func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) -> MockMLSService {
         let mockMLS = MockMLSService()
         
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLS
-            // given
+            
             MLSEventProcessor.setMock(MockMLSEventProcessor())
             let domain = "example.com"
             
             let id = QualifiedID(uuid: UUID(), domain: domain)
+            // given
             let conversation = Payload.Conversation(
                 qualifiedID: id,
                 type: BackendConversationType.`self`.rawValue,
                 messageProtocol: "mls",
                 mlsGroupID: "test",
-                epoch: 0
+                epoch: epoch
             )
 
             // when
             conversation.updateOrCreate(in: syncMOC)
         }
-        waitForCustomExpectations(withTimeout: 2)
-        // then
-        mockMLS.createSelfGroup(for: <#T##MLSGroupID#>, selfUser: <#T##ZMUser#>)
-//        XCTAssertEqual(mockMLS.mockUpdateKeyMaterialForGroupId, MLSGroupID.init(from: "test"))
-//        XCTAssertTrue(mockMLS.mockAddMembersToConversationCalled)
-//        XCTAssertFalse(mockMLS.mockPerformPendingJoinsCalled)
+        return mockMLS
     }
-
-    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
-        let mockMLS = MockMLSService()
-        syncMOC.mlsService = mockMLS
-        
-        syncMOC.performAndWait {
-            // given
-            MLSEventProcessor.setMock(MockMLSEventProcessor())
-            let domain = "example.com"
-            
-            let id = QualifiedID(uuid: UUID(), domain: domain)
-            let conversation = Payload.Conversation(
-                qualifiedID: id,
-                type: BackendConversationType.group.rawValue,
-                messageProtocol: "mls",
-                mlsGroupID: "test",
-                epoch: 1
-            )
-
-            // when
-            conversation.updateOrCreate(in: syncMOC)
-        }
-      
-        // then
-        XCTAssertFalse(mockMLS.mockAddMembersToConversationCalled)
-        XCTAssertTrue(mockMLS.mockPerformPendingJoinsCalled)
-    }
-
 
     // MARK: - Helpers
 
