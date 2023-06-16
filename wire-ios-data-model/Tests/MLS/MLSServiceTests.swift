@@ -1672,8 +1672,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
 
         // WHEN
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        sut.createSelfGroup(for: groupID, selfUser: selfUser)
+        sut.createSelfGroup(for: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
@@ -1704,18 +1703,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
 
         // WHEN
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        sut.createSelfGroup(for: groupID, selfUser: selfUser)
+        sut.createSelfGroup(for: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
-    }
-    
-    func test_itCreateOrJoinSelfConversation_shouldCreateIfEpoch0() {
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        
-        // WHEN
-        sut.createSelfGroup(for: groupID, selfUser: selfUser)
     }
 }
 

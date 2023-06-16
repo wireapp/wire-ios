@@ -28,10 +28,12 @@ public protocol MLSServiceInterface {
 
     func uploadKeyPackagesIfNeeded()
 
+    func createSelfGroup(for groupID: MLSGroupID)
+
+    func joinSelfGroup(with groupID: MLSGroupID)
+
     func createGroup(for groupID: MLSGroupID) throws
 
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws
-    
     func conversationExists(groupID: MLSGroupID) -> Bool
 
     func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
@@ -249,7 +251,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func updateKeyMaterial(for groupID: MLSGroupID) async throws {
+    func updateKeyMaterial(for groupID: MLSGroupID) async throws {
         try await commitPendingProposals(in: groupID)
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalUpdateKeyMaterial(for: groupID)
@@ -304,6 +306,28 @@ public final class MLSService: MLSServiceInterface {
         }
 
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+    }
+
+    public func createSelfGroup(for groupID: MLSGroupID) {
+        guard let context = context else {
+            return
+        }
+        do {
+            try createConversation(for: groupID)
+
+            let selfUser = ZMUser.selfUser(in: context)
+            let mlsSelfUser = MLSUser(from: selfUser)
+            Task {
+                do {
+                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
+                } catch MLSAddMembersError.noInviteesToAdd {
+                    WireLogger.mls.debug("createConversation noInviteesToAdd, updateKeyMaterial")
+                    try await updateKeyMaterial(for: groupID)
+                }
+            }
+        } catch {
+            WireLogger.mls.error("create group for self conversation failed: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Add member
@@ -609,6 +633,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Joining conversations
+
+    public func joinSelfGroup(with groupID: MLSGroupID) {
+        registerPendingJoin(groupID)
+        performPendingJoins()
+    }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
@@ -1182,31 +1211,5 @@ private extension UserDefaults {
 extension UserDefaults {
     func test_setLastKeyPackageCountDate(_ date: Date) {
         lastKeyPackageCountDate = date
-    }
-}
-
-public extension MLSService {
-
-    func createSelfGroup(for groupID: MLSGroupID, selfUser: ZMUser) {
-        do {
-            try createGroup(for: groupID)
-
-            let mlsSelfUser = MLSUser(from: selfUser)
-            Task {
-                do {
-                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
-                } catch MLSService.MLSAddMembersError.noInviteesToAdd {
-                    WireLogger.mls.debug("createConversation noInviteesToAdd, updateKeyMaterial")
-                    try await updateKeyMaterial(for: groupID)
-                }
-            }
-        } catch {
-            WireLogger.mls.error("create group for self conversation failed: \(error.localizedDescription)")
-        }
-    }
-
-    func joinSelfGroup(with groupID: MLSGroupID) {
-        registerPendingJoin(groupID)
-        performPendingJoins()
     }
 }
