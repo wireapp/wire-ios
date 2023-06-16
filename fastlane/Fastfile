@@ -53,40 +53,30 @@ platform :ios do
     desc "Build & Upload Playground build"
     lane :playground do |options|
         options[:build_type] = "Playground"
-        options[:build_number] = generate_build_number
-        prepare_for_release(options)
-        build_for_release(options)
-        upload_app_center(options)
-        upload_dsyms_to_datadog(options)
-        upload_s3(options)
+        options[:upload_app_center] = true
+        options[:upload_dsyms_to_datadog] = true
+        options[:produce_debug_builds] = true
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Testflight Beta build"
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
         options[:upload_testflight] = true
-        build_and_upload_app_store(options)
-        upload_dsyms_to_datadog(options)
+        options[:upload_dsyms_to_datadog] = true
+        options[:produce_debug_builds] = true
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Public AppStore build"
     lane :appstore_public do |options|
         options[:build_type] = "AppStore"
         options[:upload_dsyms_to_app_center] = true
+        options[:upload_app_store] = true
         options[:upload_app_center] = true
-        build_and_upload_app_store(options)
+        build_and_upload_app(options)
     end
     
-    desc "Build & Upload Public AppStore RC build"
-    lane :appstore_public_rc do |options|
-        options[:build_type] = "RC"
-        options[:upload_dsyms_to_app_center] = false
-        options[:upload_app_center] = true
-        options[:produce_debug_builds] = true
-        options[:force_adhoc_signing] = true
-        build_and_upload_app_store(options)
-    end
-
     desc "Build & Upload Col 1 Restricted AppStore build"
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
@@ -97,7 +87,7 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
-        build_and_upload_app_store(options)
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Col 3 Restricted AppStore build"
@@ -110,7 +100,7 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
-        build_and_upload_app_store(options)
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Col 1 Production AppStore build"
@@ -122,7 +112,7 @@ platform :ios do
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
-        build_and_upload_app_store(options)
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Col 3 Production AppStore build"
@@ -134,10 +124,10 @@ platform :ios do
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
-        build_and_upload_app_store(options)
+        build_and_upload_app(options)
     end
 
-    def build_and_upload_app_store(options)
+    def build_and_upload_app(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         if options[:run_security_tests] || false
@@ -159,6 +149,9 @@ platform :ios do
         upload_s3(options)
         if options[:upload_dsyms_to_app_center] || false
             upload_dsyms_to_app_center_for_appstore_build(options)
+        end
+        if options[:upload_dsyms_to_datadog] || false
+            upload_dsyms_to_datadog(options)
         end
     end
 
@@ -202,21 +195,20 @@ platform :ios do
             name: 'WIRE_BUNDLE_ID'
         )
         puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
-        should_sigh_adhoc = options[:force_adhoc_signing] || build.should_sigh_adhoc
         sigh(
-            adhoc: should_sigh_adhoc,
+            adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: app_bundle_id
         )
         sigh(
-            adhoc: should_sigh_adhoc,
+            adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-share"
         )
         sigh(
-            adhoc: should_sigh_adhoc,
+            adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-notification"
