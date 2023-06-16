@@ -143,7 +143,7 @@ platform :ios do
             security_plans(options)
         end
         if options[:produce_debug_builds] || false
-            build_for_release(options.merge({:configuration => "Debug"}))
+            # build_for_release(options.merge({:configuration => "Debug"}))
             build_for_release(options.merge({:configuration => "Debug", :for_simulator => true}))
         end
         build_for_release(options)
