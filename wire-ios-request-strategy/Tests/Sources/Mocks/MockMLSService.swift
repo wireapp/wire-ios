@@ -67,11 +67,9 @@ class MockMLSService: MLSServiceInterface {
     func createGroup(for groupID: MLSGroupID) throws {
         createGroupCalls.append(groupID)
     }
-    
-    
-    var mockAddMembersToConversationCalled: Bool = false
+
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
-        mockAddMembersToConversationCalled = true
+
     }
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws {
@@ -88,9 +86,8 @@ class MockMLSService: MLSServiceInterface {
         groupsPendingJoin.append(group)
     }
 
-    var mockPerformPendingJoinsCalled: Bool = false
     func performPendingJoins() {
-        mockPerformPendingJoinsCalled = true
+
     }
 
     func wipeGroup(_ groupID: MLSGroupID) {
@@ -108,9 +105,12 @@ class MockMLSService: MLSServiceInterface {
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
-    
-    var mockUpdateKeyMaterialForGroupId: MLSGroupID?
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws {
-        mockUpdateKeyMaterialForGroupId = groupID
+
+    func createSelfGroup(for groupID: MLSGroupID) {
+        fatalError("not implemented")
+    }
+
+    func joinSelfGroup(with groupID: MLSGroupID) {
+        fatalError("not implemented")
     }
 }
