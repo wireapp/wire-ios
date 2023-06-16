@@ -313,7 +313,7 @@ public final class MLSService: MLSServiceInterface {
             return
         }
         do {
-            try createConversation(for: groupID)
+            try createGroup(for: groupID)
 
             let selfUser = ZMUser.selfUser(in: context)
             let mlsSelfUser = MLSUser(from: selfUser)
