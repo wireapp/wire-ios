@@ -43,19 +43,16 @@ public struct MLSConferenceInfo: Equatable {
     }
 
     public let epoch: UInt64
-    public let keyData: [Byte]
-    public let keySize: UInt32
+    public let keyData: Data
     public let members: [Member]
 
     public init(
         epoch: UInt64,
-        keyData: [Byte],
-        keySize: UInt32,
+        keyData: Data,
         members: [Member]
     ) {
         self.epoch = epoch
         self.keyData = keyData
-        self.keySize = keySize
         self.members = members
     }
 }
@@ -65,8 +62,7 @@ public extension MLSConferenceInfo {
     static func random() -> Self {
         return MLSConferenceInfo(
             epoch: .random(in: (.min)...(.max)),
-            keyData: Data.random(byteCount: 8).bytes,
-            keySize: 8,
+            keyData: Data.random(byteCount: 8),
             members: [.random()])
     }
 

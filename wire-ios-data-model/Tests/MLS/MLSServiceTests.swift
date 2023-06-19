@@ -176,7 +176,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // Given
             let parentGroupID = MLSGroupID.random()
             let subconversationGroupID = MLSGroupID.random()
-            let secretKey = [Byte].random()
+            let secretKey = Data.random()
             let epoch: UInt64 = 1
 
             let member1 = MLSClientID.random()
@@ -186,7 +186,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             var mockExportSecretKeyCount = 0
             mockCoreCrypto.mockExportSecretKey = { _, _ in
                 mockExportSecretKeyCount += 1
-                return secretKey
+                return secretKey.bytes
             }
 
             var mockConversationEpochCount = 0
@@ -229,7 +229,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             let expectedConferenceInfo = MLSConferenceInfo(
                 epoch: epoch,
                 keyData: secretKey,
-                keySize: 32,
                 members: [
                     MLSConferenceInfo.Member(id: member1, isInSubconversation: true),
                     MLSConferenceInfo.Member(id: member2, isInSubconversation: true),
@@ -1946,7 +1945,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock conference info
         let epoch: UInt64 = 42
-        let key = Data.random(byteCount: 32).bytes
+        let key = Data.random(byteCount: 32)
         let clientID = MLSClientID.random()
         let clientIDBytes = try XCTUnwrap(clientID.rawValue.base64EncodedBytes)
 
@@ -1957,7 +1956,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockCoreCrypto.mockExportSecretKey = { groupID, _ in
             XCTAssertEqual(groupID, subconversationGroupID.bytes)
-            return key
+            return key.bytes
         }
 
         mockCoreCrypto.mockGetClientIds = { groupID in
@@ -1988,7 +1987,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectedConferenceInfo = MLSConferenceInfo(
             epoch: epoch,
             keyData: key,
-            keySize: 32,
             members: [.init(id: clientID, isInSubconversation: true)]
         )
 

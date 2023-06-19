@@ -217,21 +217,13 @@ public class AVSWrapper: AVSWrapperType {
             return
         }
 
-        var keyData = info.keyData
-        keyData.withUnsafeMutableBytes { pointer in
-            guard let keyDataPointer = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
-                return
-            }
-
-            wcall_set_epoch_info(
-                handle,
-                conversationId.serialized,
-                UInt32(info.epoch),
-                clientListJSON,
-                keyDataPointer,
-                info.keySize
-            )
-        }
+        wcall_set_epoch_info(
+            handle,
+            conversationId.serialized,
+            UInt32(info.epoch),
+            clientListJSON,
+            info.keyData.base64EncodedString()
+        )
     }
 
     // MARK: - C Callback Handlers

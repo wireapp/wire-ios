@@ -261,7 +261,7 @@ public final class MLSService: MLSServiceInterface {
                 let keyData = try $0.exportSecretKey(
                     conversationId: subconversationGroupID.bytes,
                     keyLength: keyLength
-                )
+                ).data
 
                 let conversationMembers = try $0.getClientIds(conversationId: parentGroupID.bytes)
                     .compactMap { Data(base64Encoded: $0.data) }
@@ -281,7 +281,6 @@ public final class MLSService: MLSServiceInterface {
                 return MLSConferenceInfo(
                     epoch: epoch,
                     keyData: keyData,
-                    keySize: keyLength,
                     members: members
                 )
             }
