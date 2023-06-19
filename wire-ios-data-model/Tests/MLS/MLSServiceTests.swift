@@ -1284,8 +1284,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectation
-        let expectation = XCTestExpectation(description: "did update all keys")
-        keyMaterialUpdatedExpectation = expectation
+        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
+
 
         // When
         let sut = MLSService(
@@ -1301,7 +1301,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        wait(for: [expectation], timeout: 5)
+        waitForCustomExpectations(withTimeout: 5)
 
         // Then we updated the key material.
         XCTAssertEqual(
