@@ -22,6 +22,19 @@ import Foundation
 
 class GenericMessageTests_NativePush: BaseZMMessageTests {
 
+    override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
+        super.setUp()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+
     func testThatItSetsNativePushToFalseWhenSendingAConfirmationMessage() {
         let confirmation = Confirmation.with {
             $0.firstMessageID = UUID.create().transportString()

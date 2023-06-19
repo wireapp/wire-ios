@@ -34,7 +34,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     let searchResultsController: ZiphySearchResultsController
     let searchBar: TextSearchInputView = TextSearchInputView()
-    let noResultsLabel = DynamicFontLabel(text: Giphy.Error.noResult.capitalized,
+    let noResultsLabel = DynamicFontLabel(text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
                                           fontSpec: .normalRegularFont,
                                           color: SemanticColors.Label.textSettingsPasswordPlaceholder)
     let conversation: ZMConversation
@@ -117,7 +117,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     private func setupNavigationItem() {
         searchBar.searchInput.text = searchTerm
-        searchBar.placeholderString = Giphy.searchPlaceholder.capitalized
+        searchBar.placeholderString = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
         searchBar.delegate = self
         let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: .black)
         let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(onDismiss))

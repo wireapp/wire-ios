@@ -54,6 +54,10 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
     var expectedRecipients: [String: [String]]!
 
     override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
         super.setUp()
 
         self.syncMOC.performGroupedBlockAndWait {
@@ -166,6 +170,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
 
         self.expectedRecipients = nil
         super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
     }
 
     func assertRecipients(_ recipients: [Proteus_UserEntry], file: StaticString = #file, line: UInt = #line) {

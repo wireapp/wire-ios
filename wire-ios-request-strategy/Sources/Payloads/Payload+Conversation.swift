@@ -37,6 +37,8 @@ extension Payload {
             case messageTimer = "message_timer"
             case readReceiptMode = "receipt_mode"
             case conversationRole = "conversation_role"
+            case creatorClient = "creator_client"
+            case messageProtocol = "protocol"
         }
 
         let users: [UUID]?
@@ -50,13 +52,29 @@ extension Payload {
         let readReceiptMode: Int?
         let conversationRole: String?
 
-        init(_ conversation: ZMConversation) {
-            if let qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs {
-                self.qualifiedUsers = qualifiedUsers
-                self.users = nil
-            } else {
+        // API V2 only
+        let creatorClient: String?
+        let messageProtocol: String?
+
+        init(_ conversation: ZMConversation, selfClientID: String) {
+            switch conversation.messageProtocol {
+            case .mls:
+                messageProtocol = "mls"
+                creatorClient = selfClientID
                 qualifiedUsers = nil
-                users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
+                users = nil
+
+            case .proteus:
+                messageProtocol = "proteus"
+                creatorClient = nil
+
+                if let qualifiedUsers = conversation.localParticipantsExcludingSelf.qualifiedUserIDs {
+                    self.qualifiedUsers = qualifiedUsers
+                    self.users = nil
+                } else {
+                    qualifiedUsers = nil
+                    users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
+                }
             }
 
             name = conversation.userDefinedName
@@ -80,6 +98,8 @@ extension Payload {
             try container.encodeIfPresent(messageTimer, forKey: .messageTimer)
             try container.encodeIfPresent(readReceiptMode, forKey: .readReceiptMode)
             try container.encodeIfPresent(conversationRole, forKey: .conversationRole)
+            try container.encodeIfPresent(messageProtocol, forKey: .messageProtocol)
+            try container.encodeIfPresent(creatorClient, forKey: .creatorClient)
 
             switch apiVersion {
             case .v0, .v1, .v2:
@@ -108,6 +128,10 @@ extension Payload {
             case teamID = "team"
             case messageTimer = "message_timer"
             case readReceiptMode = "receipt_mode"
+            case messageProtocol = "protocol"
+            case mlsGroupID = "group_id"
+            case epoch
+
         }
 
         static var eventType: ZMUpdateEventType {
@@ -129,6 +153,9 @@ extension Payload {
         let teamID: UUID?
         let messageTimer: TimeInterval?
         let readReceiptMode: Int?
+        let messageProtocol: String?
+        let mlsGroupID: String?
+        let epoch: UInt?
 
         init(qualifiedID: QualifiedID? = nil,
              failedToAddUsers: [QualifiedID]? = nil,
@@ -144,8 +171,11 @@ extension Payload {
              lastEventTime: String? = nil,
              teamID: UUID? = nil,
              messageTimer: TimeInterval? = nil,
-             readReceiptMode: Int? = nil) {
-
+             readReceiptMode: Int? = nil,
+             messageProtocol: String? = nil,
+             mlsGroupID: String? = nil,
+             epoch: UInt? = nil
+        ) {
             self.qualifiedID = qualifiedID
             self.failedToAddUsers = failedToAddUsers
             self.id = id
@@ -161,6 +191,9 @@ extension Payload {
             self.teamID = teamID
             self.messageTimer = messageTimer
             self.readReceiptMode = readReceiptMode
+            self.messageProtocol = messageProtocol
+            self.mlsGroupID = mlsGroupID
+            self.epoch = epoch
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -179,6 +212,9 @@ extension Payload {
             teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
             messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
             readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+            messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+            mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
+            epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
 
             switch apiVersion {
             case .v0, .v1, .v2:
@@ -466,6 +502,7 @@ extension Payload {
 
         let userIDs: [UUID]?
         let users: [ConversationMember]?
+
     }
 
     struct UpdateConversationConnectionRequest: CodableEventData {
@@ -549,6 +586,49 @@ extension Payload {
         }
     }
 
+    struct UpdateConversationMLSWelcome: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case id = "conversation"
+            case qualifiedID = "qualified_conversation"
+            case from
+            case qualifiedFrom = "qualified_from"
+            case timestamp = "time"
+            case type
+            case data
+        }
+
+        // This is currently the id of the self conversation.
+        let id: UUID
+
+        let qualifiedID: QualifiedID?
+        let from: UUID
+        let qualifiedFrom: QualifiedID?
+        let timestamp: Date
+        let type: String
+        let data: String
+    }
+
+    struct UpdateConversationMLSMessageAdd: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case id = "conversation"
+            case qualifiedID = "qualified_conversation"
+            case from
+            case qualifiedFrom = "qualified_from"
+            case timestamp = "time"
+            case type
+            case data
+        }
+
+        let id: UUID
+        let qualifiedID: QualifiedID?
+        let from: UUID
+        let qualifiedFrom: QualifiedID?
+        let timestamp: Date
+        let type: String
+        let data: String
+    }
 }
 
 // MARK: - Tests
@@ -567,6 +647,8 @@ extension Payload.NewConversation: DecodableAPIVersionAware {
         messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
         readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
         conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
+        creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
+        messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
 
         switch apiVersion {
         case .v0, .v1, .v2:
@@ -587,7 +669,9 @@ extension Payload.NewConversation: DecodableAPIVersionAware {
          team: Payload.ConversationTeamInfo? = nil,
          messageTimer: TimeInterval? = nil,
          readReceiptMode: Int? = nil,
-         conversationRole: String? = nil
+         conversationRole: String? = nil,
+         creatorClient: String? = nil,
+         messageProtocol: String? = nil
     ) {
         self.users = users
         self.qualifiedUsers = qualifiedUsers
@@ -599,6 +683,8 @@ extension Payload.NewConversation: DecodableAPIVersionAware {
         self.messageTimer = messageTimer
         self.readReceiptMode = readReceiptMode
         self.conversationRole = conversationRole
+        self.creatorClient = creatorClient
+        self.messageProtocol = messageProtocol
     }
 
 }
@@ -620,6 +706,9 @@ extension Payload.Conversation: EncodableAPIVersionAware {
         try container.encodeIfPresent(teamID, forKey: .teamID)
         try container.encodeIfPresent(messageTimer, forKey: .messageTimer)
         try container.encodeIfPresent(readReceiptMode, forKey: .readReceiptMode)
+        try container.encodeIfPresent(messageProtocol, forKey: .messageProtocol)
+        try container.encodeIfPresent(epoch, forKey: .epoch)
+        try container.encodeIfPresent(mlsGroupID, forKey: .mlsGroupID)
 
         switch apiVersion {
         case .v0, .v1, .v2:
