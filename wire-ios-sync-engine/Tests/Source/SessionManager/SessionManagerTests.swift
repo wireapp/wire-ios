@@ -424,6 +424,7 @@ final class SessionManagerTests: IntegrationTest {
 
         // THEN
         XCTAssertEqual(fileCount, 0)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: self.tmpDirectoryPath().path))
     }
 }
 
