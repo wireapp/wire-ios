@@ -1,0 +1,34 @@
+name: Trigger Bund Restricted Release tasks from CirrusCI
+
+on: 
+  workflow_dispatch:
+    inputs:
+        skip_security_tests:
+          description: 'Do you want to skip running security tests?'
+          required: false
+          default: false
+          type: boolean
+
+permissions: 
+  checks: write
+
+jobs:
+  column_1_restricted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: cirruslabs/cirrus-action@latest
+        with:
+          args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C1 Restricted'
+
+  column_3_restricted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: cirruslabs/cirrus-action@latest
+        with:
+          args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C3 Restricted'
