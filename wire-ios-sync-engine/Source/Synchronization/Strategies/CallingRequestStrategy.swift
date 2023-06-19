@@ -311,6 +311,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         data: Data,
         conversationId: AVSIdentifier,
         targets: [AVSClient]?,
+        overMLSSelfConversation: Bool,
         completionHandler: @escaping ((Int) -> Void)
     ) {
         guard let dataString = String(data: data, encoding: .utf8) else {
@@ -339,9 +340,9 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
             let message: GenericMessageEntity
 
-            if callingContent.isRejected {
+            if overMLSSelfConversation, conversation.messageProtocol == .mls {
                 guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext) else {
-                    WireLogger.mls.error("missing self conversation for rejected call")
+                    WireLogger.mls.error("missing self conversation for sending message to own clients")
                     completionHandler(500)
                     return
                 }
@@ -364,7 +365,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 message.send(with: self.messageSync, completion: completionHandler)
 
             case (.mls, _):
-                if message.isConferenceKey || message.isRejected {
+                if overMLSSelfConversation {
                     message.send(with: self.messageSync, completion: completionHandler)
                 } else {
                     Logging.mls.info("ignoring targeted outgoing calling message b/c its not CONFKEY")

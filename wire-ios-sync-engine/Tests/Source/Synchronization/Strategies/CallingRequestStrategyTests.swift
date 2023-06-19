@@ -456,7 +456,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the targeted message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: targets) { _ in }
+            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: targets, overMLSSelfConversation: false) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -525,7 +525,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the message with no targets
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: nil) { _ in }
+            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: false) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -621,7 +621,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the message with no targets
         syncMOC.performGroupedBlock {
-            self.sut.send(data: self.callMessage(withType: "CONFSTART"), conversationId: conversation.avsIdentifier!, targets: nil) { _ in }
+            self.sut.send(data: self.callMessage(withType: "CONFSTART"), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: false) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -689,7 +689,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: self.callMessage(withType: "CONFKEY"), conversationId: conversation.avsIdentifier!, targets: targets) { _ in
+            self.sut.send(data: self.callMessage(withType: "CONFKEY"), conversationId: conversation.avsIdentifier!, targets: targets, overMLSSelfConversation: false) { _ in
                 didEnqueueMessage.fulfill()
             }
         }
@@ -708,62 +708,6 @@ class CallingRequestStrategyTests: MessagingTest {
         // Then it's an mls request
         XCTAssertEqual(request.path, "/v2/mls/messages")
         XCTAssertEqual(request.method, .methodPOST)
-    }
-
-    // Note: when we implement subgroups, we'll be able to target reject messages, and
-    // then we'll replace this test.
-
-    func test_ThatItIgnoresMLSRejectMessage() {
-        // Given
-        let selfClient = createSelfClient()
-
-        let user1 = ZMUser.insertNewObject(in: syncMOC)
-        user1.remoteIdentifier = .create()
-        let client1 = createClient(for: user1, connectedTo: selfClient)
-
-        let user2 = ZMUser.insertNewObject(in: syncMOC)
-        user2.remoteIdentifier = .create()
-        _ = createClient(for: user2, connectedTo: selfClient)
-
-        // An MLS conversation with both users and self
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = .create()
-        conversation.mlsGroupID = MLSGroupID(Data([1, 2, 3]))
-        conversation.messageProtocol = .mls
-        conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
-        conversation.needsToBeUpdatedFromBackend = false
-
-        syncMOC.saveOrRollback()
-
-        let mockMLSService = MockMLSService()
-
-        syncMOC.performGroupedBlock {
-            self.syncMOC.mlsService = mockMLSService
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        var nextRequest: ZMTransportRequest?
-
-        // Targeting one client
-        let avsClient1 = AVSClient(userId: user1.avsIdentifier, clientId: client1.remoteIdentifier!)
-        let targets = [avsClient1]
-
-        // When we schedule the message
-        syncMOC.performGroupedBlock {
-            self.sut.send(data: self.callMessage(withType: "REJECT"), conversationId: conversation.avsIdentifier!, targets: targets) { _ in }
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        syncMOC.performGroupedBlock {
-            nextRequest = self.sut.nextRequest(for: .v2)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then no request is made
-        XCTAssertNil(nextRequest)
     }
 
     private func callMessage(withType type: String) -> Data {
@@ -810,7 +754,100 @@ class CallingRequestStrategyTests: MessagingTest {
         // THEN
         XCTAssertTrue(sut.callCenter?.muted ?? false)
     }
+//
+//    func testItSendsCallEventToMLSSelfConversationIfMyClientsOnlyIsTrue() {
+//        // Given
+//        let selfClient = createSelfClient()
+//
+//        // One user with two clients connected to self
+//        let user1 = ZMUser.insertNewObject(in: syncMOC)
+//        user1.remoteIdentifier = .create()
+//
+//        let client1 = createClient(for: user1, connectedTo: selfClient)
+//        let client2 = createClient(for: user1, connectedTo: selfClient)
+//
+//        // Another user with two clients connected to self
+//        let user2 = ZMUser.insertNewObject(in: syncMOC)
+//        user2.remoteIdentifier = .create()
+//
+//        let client3 = createClient(for: user2, connectedTo: selfClient)
+//        let client4 = createClient(for: user2, connectedTo: selfClient)
+//
+//        // A conversation with both users and self
+//        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+//        conversation.messageProtocol = .mls
+//        conversation.remoteIdentifier = .create()
+//        conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+//        conversation.needsToBeUpdatedFromBackend = false
+//
+//        syncMOC.saveOrRollback()
+//
+//        var httpStatus: Int?
+//
+//
+//        // When we schedule the message with no targets
+//        syncMOC.performGroupedBlock {
+//            self.sut.send(data: Data(), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: true) { result in
+//                httpStatus = result
+//            }
+//        }
+//
+//        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+//
+//        XCTAssertEqual(httpStatus, 200)
+//    }
 
+    func test_ThatItHandlesMLSRejectMessage() {
+        // Given
+        let selfClient = createSelfClient()
+
+        let user1 = ZMUser.insertNewObject(in: syncMOC)
+        user1.remoteIdentifier = .create()
+        let client1 = createClient(for: user1, connectedTo: selfClient)
+
+        let user2 = ZMUser.insertNewObject(in: syncMOC)
+        user2.remoteIdentifier = .create()
+        _ = createClient(for: user2, connectedTo: selfClient)
+
+        // An MLS conversation with both users and self
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.mlsGroupID = MLSGroupID(Data([1, 2, 3]))
+        conversation.messageProtocol = .mls
+        conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+        conversation.needsToBeUpdatedFromBackend = false
+
+        syncMOC.saveOrRollback()
+
+        let mockMLSService = MockMLSService()
+
+        syncMOC.performGroupedBlock {
+            self.syncMOC.mlsService = mockMLSService
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        var nextRequest: ZMTransportRequest?
+
+        // Targeting one client
+        let avsClient1 = AVSClient(userId: user1.avsIdentifier, clientId: client1.remoteIdentifier!)
+        let targets = [avsClient1]
+
+        // When we schedule the message
+        syncMOC.performGroupedBlock {
+            self.sut.send(data: self.callMessage(withType: "REJECT"), conversationId: conversation.avsIdentifier!, targets: targets, overMLSSelfConversation: true) { _ in }
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlock {
+            nextRequest = self.sut.nextRequest(for: .v4)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        XCTAssertNil(nextRequest)
+    }
 }
 
 class MockFetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
