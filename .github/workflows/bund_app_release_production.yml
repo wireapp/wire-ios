@@ -1,4 +1,4 @@
-name: Trigger Bund Production Release tasks from CirrusCI
+name: (CirrusCI) Bund Production
 
 on: 
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@latest
+      - uses: cirruslabs/cirrus-action@v2
         with:
           args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C1 Production'
 
@@ -29,6 +29,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@latest
+      - uses: cirruslabs/cirrus-action@v2
         with:
           args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C3 Production'
