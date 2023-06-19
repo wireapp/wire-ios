@@ -23,6 +23,14 @@ extension ZMConversation {
     /// Fetch all conversation that are marked as needsToCalculateUnreadMessages and calculate unread messages for them
     public static func calculateLastUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
         let fetchRequest = sortedFetchRequest(with: predicateForConversationsNeedingToBeCalculatedUnreadMessages())
+        let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation]
+
+        conversations?.forEach { $0.calculateLastUnreadMessages() }
+    }
+
+    ///
+    public static func calculateLastUnreadMessages1(in managedObjectContext: NSManagedObjectContext) {
+        let fetchRequest = sortedFetchRequest(with: predicateForConversationConsideredUnread())
 
         let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation]
         conversations?.forEach { $0.calculateLastUnreadMessages() }
