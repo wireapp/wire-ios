@@ -88,3 +88,8 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# CI-level files
+wire-ios-build-assets/
+fastlane/appstoreconnect_api_key.json
+vendor/*
