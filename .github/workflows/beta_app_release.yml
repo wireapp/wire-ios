@@ -1,11 +1,11 @@
-name: Trigger Public Release tasks from CirrusCI
+name: Trigger Beta Release tasks from CirrusCI
 
 on: workflow_dispatch
 permissions: 
   checks: write
 
 jobs:
-  appstore_public:
+  testflight_beta:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,4 +13,4 @@ jobs:
           fetch-depth: 0
       - uses: cirruslabs/cirrus-action@latest
         with:
-          args: 'AppStore Public Production'
+          args: 'Testflight Beta'

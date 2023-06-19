@@ -1,4 +1,4 @@
-name: Trigger Bund Release tasks from CirrusCI
+name: Trigger Bund Restricted Release tasks from CirrusCI
 
 on: 
   workflow_dispatch:
@@ -23,16 +23,6 @@ jobs:
         with:
           args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C1 Restricted'
 
-  column_1_production:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@latest
-        with:
-          args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C1 Production'
-
   column_3_restricted:
     runs-on: ubuntu-latest
     steps:
@@ -42,13 +32,3 @@ jobs:
       - uses: cirruslabs/cirrus-action@latest
         with:
           args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C3 Restricted'
-
-  column_3_production:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@latest
-        with:
-          args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C3 Production'
