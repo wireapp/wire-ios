@@ -1657,7 +1657,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
-
+        BackendInfo.domain = "example.com"
+        
         // Given a group.
         let expectation1 = self.expectation(description: "CreateConversation should be called")
         let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
@@ -1679,7 +1680,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
-
+        BackendInfo.domain = "example.com"
+        
         // Given a group.
         let expectation1 = self.expectation(description: "CreateConversation should be called")
         let expectation2 = self.expectation(description: "AddMembers should be called")
