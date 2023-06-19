@@ -25,7 +25,7 @@ protocol MLSActionExecutorProtocol {
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent]
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
 
 }
 
@@ -213,10 +213,10 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
     }
 
-    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent] {
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         do {
             WireLogger.mls.info("joining group (\(groupID)) via external commit")
-            let bundle = try commitBundle(for: .joinGroup(publicGroupState), in: groupID)
+            let bundle = try commitBundle(for: .joinGroup(groupInfo), in: groupID)
             let result = try await sendExternalCommitBundle(bundle, for: groupID)
             WireLogger.mls.info("success: joining group (\(groupID)) via external commit")
             return result
@@ -241,7 +241,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return CommitBundle(
                     welcome: memberAddMessages.welcome,
                     commit: memberAddMessages.commit,
-                    publicGroupState: memberAddMessages.publicGroupState
+                    groupInfo: memberAddMessages.groupInfo
                 )
 
             case .removeClients(let clients):
@@ -266,14 +266,14 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
                 return bundle
 
-            case .joinGroup(let publicGroupState):
-                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(publicGroupState: publicGroupState.bytes,
+            case .joinGroup(let groupInfo):
+                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(groupInfo: groupInfo.bytes,
                                                                                                   customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil), credentialType: .basic) }
 
                 return CommitBundle(
                     welcome: nil,
                     commit: conversationInitBundle.commit,
-                    publicGroupState: conversationInitBundle.publicGroupState
+                    groupInfo: conversationInitBundle.groupInfo
                 )
             }
         } catch Error.noPendingProposals {

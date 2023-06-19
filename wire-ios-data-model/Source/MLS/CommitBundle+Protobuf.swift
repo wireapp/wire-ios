@@ -30,7 +30,7 @@ extension Mls_CommitBundle {
         self = Mls_CommitBundle.with {
             $0.commit = commitBundle.commit.data
             $0.groupInfoBundle = Mls_GroupInfoBundle(
-                publicGroupState: commitBundle.publicGroupState
+                groupInfoBundle: commitBundle.groupInfo
             )
 
             if let welcome = commitBundle.welcome {
@@ -41,17 +41,17 @@ extension Mls_CommitBundle {
 }
 
 extension Mls_GroupInfoBundle {
-    init(publicGroupState: PublicGroupStateBundle) {
+    init(groupInfoBundle: GroupInfoBundle) {
         self = Mls_GroupInfoBundle.with {
-            $0.groupInfo = publicGroupState.payload.data
-            $0.groupInfoType = Mls_GroupInfoType(encryptionType: publicGroupState.encryptionType)
-            $0.ratchetTreeType = Mls_RatchetTreeType(ratchetTreeType: publicGroupState.ratchetTreeType)
+            $0.groupInfo = groupInfoBundle.payload.data
+            $0.groupInfoType = Mls_GroupInfoType(encryptionType: groupInfoBundle.encryptionType)
+            $0.ratchetTreeType = Mls_RatchetTreeType(ratchetTreeType: groupInfoBundle.ratchetTreeType)
         }
     }
 }
 
 extension Mls_GroupInfoType {
-    init(encryptionType: MlsPublicGroupStateEncryptionType) {
+    init(encryptionType: MlsGroupInfoEncryptionType) {
         switch encryptionType {
         case .plaintext:
             self = .publicGroupState

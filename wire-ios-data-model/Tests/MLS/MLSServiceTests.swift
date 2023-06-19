@@ -318,8 +318,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCreateConversationCount += 1
 
             XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, ConversationConfiguration(
-                ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            XCTAssertEqual($1, .basic)
+            XCTAssertEqual($2, ConversationConfiguration(
+                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: [removalKey.bytes],
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             ))
@@ -337,7 +338,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let config = ConversationConfiguration(
-            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
             externalSenders: [],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
@@ -347,7 +348,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCreateConversationCount += 1
 
             XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, config)
+            XCTAssertEqual($1, .basic)
+            XCTAssertEqual($2, config)
 
             throw CryptoError.MalformedIdentifier(message: "bad id")
         }
