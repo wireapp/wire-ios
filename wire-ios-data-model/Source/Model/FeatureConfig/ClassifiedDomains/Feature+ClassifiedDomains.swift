@@ -44,7 +44,7 @@ public extension Feature {
         // WARNING: This config is encoded and stored in the database, so any changes
         // to it will require some migration code.
 
-        public struct Config: Codable {
+        public struct Config: Codable, Equatable {
 
             /// The list of domains that are trusted by the self backend and are considered
             /// to be safe for classified communication.

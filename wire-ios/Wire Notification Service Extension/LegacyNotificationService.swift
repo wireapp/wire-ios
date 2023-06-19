@@ -172,17 +172,18 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
         session = nil
     }
 
-    private func createSession(accountID: UUID) throws -> NotificationSession {
-        let session = try NotificationSession(
-            applicationGroupIdentifier: appGroupID,
-            accountIdentifier: accountID,
-            environment: BackendEnvironment.shared,
-            analytics: nil
-        )
+   private func createSession(accountID: UUID) throws -> NotificationSession {
+      let session = try NotificationSession(
+          applicationGroupIdentifier: appGroupID,
+          accountIdentifier: accountID,
+          environment: BackendEnvironment.shared,
+          analytics: nil,
+          sharedUserDefaults: .applicationGroup
+      )
 
-        session.delegate = self
-        return session
-    }
+      session.delegate = self
+      return session
+  }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
         guard let session = session else {
@@ -208,7 +209,6 @@ extension UNNotificationContent {
     static var empty: Self {
         return Self()
     }
-
 
     var accountID: UUID? {
         guard

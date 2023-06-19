@@ -100,9 +100,9 @@ public class DatadogWrapper {
         Global.rum = RUMMonitor.initialize()
         Global.sharedTracer = Tracer.initialize(
             configuration: Tracer.Configuration(
-              sendNetworkInfo: true
+                sendNetworkInfo: true
             )
-          )
+        )
         Datadog.setUserInfo(id: datadogUserId)
         RemoteMonitoring.remoteLogger = self
 
@@ -226,7 +226,6 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
-
     public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
     }
@@ -250,5 +249,4 @@ extension DatadogWrapper: WireSystem.LoggerProtocol {
     public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .critical, message: message.logDescription, attributes: attributes)
     }
-
 }
