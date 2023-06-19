@@ -171,7 +171,8 @@ public final class MLSService: MLSServiceInterface {
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
-            coreCrypto: coreCrypto
+            coreCrypto: coreCrypto,
+            subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
         do {
