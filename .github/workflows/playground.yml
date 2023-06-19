@@ -1,0 +1,17 @@
+name: (CirrusCI) Playground
+
+on:  workflow_dispatch
+
+permissions: 
+  checks: write
+
+jobs:
+  playground:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: cirruslabs/cirrus-action@v2
+        with:
+          args: 'Playground'
