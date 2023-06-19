@@ -21,47 +21,13 @@ import AudioToolbox
 
 public enum ZMSound: String, CustomStringConvertible {
     case None       = "silence"
-    case Bell       = "bell"
-    case Calipso    = "calipso"
-    case Chime      = "chime"
-    case Circles    = "circles"
-    case Glass      = "glass"
-    case Hello      = "hello"
-    case Input      = "input"
-    case Keys       = "keys"
-    case Note       = "note"
-    case Popcorn    = "popcorn"
-    case Synth      = "synth"
-    case Telegraph  = "telegraph"
-    case TriTone    = "tri-tone"
-    case Harp       = "harp"
-    case Marimba    = "marimba"
-    case OldPhone   = "old-phone"
-    case Opening    = "opening"
     case WireCall   = "ringing_from_them"
     case WirePing   = "ping_from_them"
     case WireText   = "new_message"
 
-    public static let soundEffects = [
-        Bell,
-        Calipso,
-        Chime,
-        Circles,
-        Glass,
-        Hello,
-        Input,
-        Keys,
-        Note,
-        Popcorn,
-        Synth,
-        Telegraph,
-        TriTone]
+    public static let soundEffects = [ZMSound]()
 
-    public static let ringtones = [
-        Harp,
-        Marimba,
-        OldPhone,
-        Opening]
+    public static let ringtones = [ZMSound]()
 
     public func isRingtone() -> Bool {
         return type(of: self).ringtones.contains(self)

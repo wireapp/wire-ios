@@ -60,7 +60,8 @@
     
     // when
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
-    NSUUID *lastNotificationId = self.userSession.syncManagedObjectContext.zm_lastNotificationID;
+
+    NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
 
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@", lastNotificationId.transportString ,selfUser.selfClient.remoteIdentifier];
@@ -79,7 +80,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqualObjects(self.userSession.managedObjectContext.zm_lastNotificationID, notificationID);
+    XCTAssertEqualObjects([self.lastEventIDRepository fetchLastEventID], notificationID);
 }
 
 - (void)testThatItFetchesTheNotificationStreamWhenReceivingNotificationOfTypeNotice_TriesAgainWhenReceiving_401
@@ -115,7 +116,8 @@
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
     
     __block NSUInteger requestCount = 0;
-    NSUUID *lastNotificationId = self.userSession.syncManagedObjectContext.zm_lastNotificationID;
+
+    NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@", lastNotificationId.transportString, selfUser.selfClient.remoteIdentifier];
         if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
@@ -137,7 +139,7 @@
     
     // then
     XCTAssertEqual(requestCount, 2lu);
-    XCTAssertEqualObjects(self.userSession.managedObjectContext.zm_lastNotificationID, notificationID);
+    XCTAssertEqualObjects([self.lastEventIDRepository fetchLastEventID], notificationID);
 }
 
 #pragma mark - Helper

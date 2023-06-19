@@ -40,6 +40,10 @@ extension MockUser: SelfLegalHoldSubject {
         }
     }
 
+    public var fingerprint: String? {
+        return "test"
+    }
+
     public func acknowledgeLegalHoldStatus() {
         legalHoldDataSource.needsToAcknowledgeLegalHoldStatus = false
     }

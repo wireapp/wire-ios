@@ -828,7 +828,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayName.capitalized)
+        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayName)
 
         parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
     }
@@ -918,9 +918,10 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         inputBar.rightAccessoryStackView.addArrangedSubview(sendButton)
         inputBar.leftAccessoryView.addSubview(markdownButton)
         inputBar.rightAccessoryStackView.insertArrangedSubview(ephemeralIndicatorButton, at: 0)
-        inputBar.addSubview(typingIndicatorView)
 
         view.addSubview(securityLevelView)
+        view.addSubview(typingIndicatorView)
+        view.backgroundColor = SemanticColors.View.backgroundConversationView
 
         createConstraints()
     }
@@ -977,8 +978,13 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         let widthOfSendButton: CGFloat = 42
         let heightOfSendButton: CGFloat = 32
 
+        NSLayoutConstraint.activate(
+            securityLevelView.isHidden
+            ? [securityLevelView.topAnchor.constraint(equalTo: view.topAnchor)]
+            : [securityLevelView.topAnchor.constraint(equalTo: typingIndicatorView.bottomAnchor, constant: 5)]
+        )
+
         NSLayoutConstraint.activate([
-            securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.heightAnchor.constraint(equalToConstant: securityBannerHeight),
@@ -1000,10 +1006,10 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
             markdownButton.widthAnchor.constraint(equalToConstant: widthOfSendButton),
             markdownButton.heightAnchor.constraint(equalToConstant: heightOfSendButton),
 
-            typingIndicatorView.centerYAnchor.constraint(equalTo: inputBar.topAnchor),
-            typingIndicatorView.centerXAnchor.constraint(equalTo: typingIndicatorView.superview!.centerXAnchor),
-            typingIndicatorView.leftAnchor.constraint(greaterThanOrEqualTo: typingIndicatorView.superview!.leftAnchor, constant: 48),
-            typingIndicatorView.rightAnchor.constraint(lessThanOrEqualTo: typingIndicatorView.superview!.rightAnchor, constant: 48)
+            typingIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            typingIndicatorView.centerYAnchor.constraint(equalTo: view.topAnchor),
+            typingIndicatorView.leftAnchor.constraint(greaterThanOrEqualTo: view.leftAnchor, constant: 48),
+            typingIndicatorView.rightAnchor.constraint(lessThanOrEqualTo: view.rightAnchor, constant: 48)
         ])
     }
 }

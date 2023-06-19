@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:
-      wire-ios: ${{ steps.filter.outputs.wire-ios }}
+      wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
@@ -29,7 +29,7 @@ jobs:
       wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
       wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
-      any: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.wire-ios-sync-engine == 'true' || steps.filter.outputs.wire-ios-data-model == 'true' || steps.filter.outputs.wire-ios-system == 'true' || steps.filter.outputs.wire-ios-request-strategy == 'true' || steps.filter.outputs.wire-ios-transport == 'true' || steps.filter.outputs.wire-ios-share-engine == 'true' || steps.filter.outputs.wire-ios-cryptobox == 'true' || steps.filter.outputs.wire-ios-mocktransport == 'true' || steps.filter.outputs.wire-ios-notification-engine == 'true' || steps.filter.outputs.wire-ios-protos == 'true' || steps.filter.outputs.wire-ios-images == 'true' || steps.filter.outputs.wire-ios-link-preview == 'true' || steps.filter.outputs.wire-ios-utilities == 'true' || steps.filter.outputs.wire-ios-testing == 'true' }}
+      any: ${{ steps.filter.outputs.carthage == 'true' || steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.wire-ios-sync-engine == 'true' || steps.filter.outputs.wire-ios-data-model == 'true' || steps.filter.outputs.wire-ios-system == 'true' || steps.filter.outputs.wire-ios-request-strategy == 'true' || steps.filter.outputs.wire-ios-transport == 'true' || steps.filter.outputs.wire-ios-share-engine == 'true' || steps.filter.outputs.wire-ios-cryptobox == 'true' || steps.filter.outputs.wire-ios-mocktransport == 'true' || steps.filter.outputs.wire-ios-notification-engine == 'true' || steps.filter.outputs.wire-ios-protos == 'true' || steps.filter.outputs.wire-ios-images == 'true' || steps.filter.outputs.wire-ios-link-preview == 'true' || steps.filter.outputs.wire-ios-utilities == 'true' || steps.filter.outputs.wire-ios-testing == 'true' }}
       
     steps:
       - uses: dorny/paths-filter@v2
@@ -66,6 +66,8 @@ jobs:
               - 'wire-ios-testing/**'
             wire-ios-system:
               - 'wire-ios-system/**'  
+            carthage:
+              - 'Cartfile.resolved'
             
   run-tests:
     needs: detect-changes
@@ -73,6 +75,9 @@ jobs:
     runs-on: macOS-latest
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      GITHUB_AVS_ACCESS_TOKEN: ${{ secrets.ZENKINS_WORKFLOW_PAT }}
+      AVS_REPO: ${{ secrets.AVS_REPO }}
       
     steps:
       - uses: actions/checkout@v3

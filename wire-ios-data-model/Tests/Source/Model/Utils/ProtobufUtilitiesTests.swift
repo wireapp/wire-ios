@@ -23,6 +23,18 @@ import WireTesting
 
 class ProtobufUtilitiesTests: BaseZMClientMessageTests {
 
+    override class func setUp() {
+        super.setUp()
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+
     func testThatItSetsAndReadsTheLoudness() {
 
         // given
