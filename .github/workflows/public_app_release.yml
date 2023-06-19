@@ -1,4 +1,4 @@
-name: Trigger Public Release tasks from CirrusCI
+name: (CirrusCI) Public AppStore
 
 on: workflow_dispatch
 permissions: 
@@ -11,6 +11,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@latest
+      - uses: cirruslabs/cirrus-action@v2
         with:
           args: 'AppStore Public Production'
