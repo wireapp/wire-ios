@@ -195,7 +195,7 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .group
-
+        
         updateAttributes(for: conversation, context: context)
 
         updateMetadata(for: conversation, context: context)
