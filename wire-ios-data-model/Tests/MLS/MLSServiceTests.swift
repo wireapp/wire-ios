@@ -1947,7 +1947,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let epoch: UInt64 = 42
         let key = Data.random(byteCount: 32)
         let clientID = MLSClientID.random()
-        let clientIDBytes = try XCTUnwrap(clientID.rawValue.base64EncodedBytes)
+        let clientIDBytes = try XCTUnwrap(clientID.rawValue.utf8Data?.bytes)
 
         mockCoreCrypto.mockConversationEpoch = { groupID in
             XCTAssertEqual(groupID, subconversationGroupID.bytes)
