@@ -41,7 +41,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
         if let skipOwn = action.excludedSelfClientId, !skipOwn.isEmpty {
             payload = ["skip_own": skipOwn] as ZMTransportData
         }
-
+        
         return ZMTransportRequest(
             path: path,
             method: .methodPOST,
@@ -81,7 +81,9 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             action.fail(with: .unknown(status: response.httpStatus))
         }
     }
+    
 }
+
 
 extension ClaimMLSKeyPackageActionHandler {
 

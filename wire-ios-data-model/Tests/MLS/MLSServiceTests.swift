@@ -1656,6 +1656,60 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [])
     }
 
+    func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
+        BackendInfo.domain = "example.com"
+        
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _ in
+            expectation1.fulfill()
+        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+    }
+
+    func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
+        BackendInfo.domain = "example.com"
+        
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "AddMembers should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _ in
+            expectation1.fulfill()
+        }
+
+        let keyPackagesMock: MockMLSActionsProvider.ClaimKeyPackagesMock = { _, _, _ in
+            [KeyPackage.init(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
+        }
+        mockActionsProvider.claimKeyPackagesMocks = [keyPackagesMock]
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            return [ZMUpdateEvent()]
+        }
+        
+        mockMLSActionExecutor.mockAddMembers = { _, _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+    }
 }
 
 extension MLSGroupID {
