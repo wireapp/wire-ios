@@ -10209,7 +10209,6 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -10298,7 +10297,6 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -10342,7 +10340,6 @@
 					x86_64,
 					arm64,
 				);
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -10358,7 +10355,6 @@
 					x86_64,
 					arm64,
 				);
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -10392,7 +10388,6 @@
 					x86_64,
 					arm64,
 				);
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -10415,7 +10410,6 @@
 					x86_64,
 					arm64,
 				);
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10434,7 +10428,6 @@
 					x86_64,
 					arm64,
 				);
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build",
@@ -10457,7 +10450,6 @@
 					x86_64,
 					arm64,
 				);
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build",
@@ -10484,7 +10476,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -10504,7 +10495,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = i386;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
