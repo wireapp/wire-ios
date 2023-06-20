@@ -153,12 +153,31 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .`self`
-        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
+        updateAttributes(for: conversation, context: context)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateMessageProtocol(for: conversation)
+
+        if conversation.mlsGroupID != nil {
+            createOrJoinSelfConversation(from: conversation)
+        }
+    }
+
+    func createOrJoinSelfConversation(from conversation: ZMConversation) {
+        guard let groupId = conversation.mlsGroupID,
+              let mlsService = conversation.managedObjectContext?.mlsService else {
+            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+            return
+        }
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); conv payload: \(String(describing: self))")
+        
+        if conversation.epoch <= 0 {
+            mlsService.createSelfGroup(for: groupId)
+        } else {
+            mlsService.joinSelfGroup(with: groupId)
+        }
     }
 
     func updateOrCreateGroupConversation(in context: NSManagedObjectContext,
@@ -176,10 +195,8 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .group
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
-        conversation.epoch = UInt64(epoch ?? 0)
+        
+        updateAttributes(for: conversation, context: context)
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -198,6 +215,14 @@ extension Payload.Conversation {
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
         }
+    }
+
+    private func updateAttributes(for conversation: ZMConversation, context: NSManagedObjectContext) {
+        conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
+        conversation.needsToBeUpdatedFromBackend = false
+        conversation.epoch = UInt64(epoch ?? 0)
+
+        conversation.mlsGroupID = self.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
     }
 
     // There is a bug in the backend where the conversation type is not correct for
@@ -261,7 +286,7 @@ extension Payload.Conversation {
             if let accessRoles = accessRoles {
                 conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles)
             } else if let accessRole = legacyAccessRole,
-            let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+                      let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
                 let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
                 conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles.map(\.rawValue))
             }
