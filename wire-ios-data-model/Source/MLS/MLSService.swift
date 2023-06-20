@@ -265,12 +265,10 @@ public final class MLSService: MLSServiceInterface {
                 ).data
 
                 let conversationMembers = try $0.getClientIds(conversationId: parentGroupID.bytes)
-                    .compactMap { Data(base64Encoded: $0.data) }
-                    .compactMap { MLSClientID(data: $0) }
+                    .compactMap { MLSClientID(data: $0.data) }
 
                 let subconversationMembers = try $0.getClientIds(conversationId: subconversationGroupID.bytes)
-                    .compactMap { Data(base64Encoded: $0.data) }
-                    .compactMap { MLSClientID(data: $0) }
+                    .compactMap { MLSClientID(data: $0.data) }
 
                 let members = conversationMembers.map {
                     MLSConferenceInfo.Member(
