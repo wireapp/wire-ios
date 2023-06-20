@@ -488,7 +488,7 @@
 					arm64,
 				);
 				INFOPLIST_FILE = Sources/Info.plist;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
 			};
