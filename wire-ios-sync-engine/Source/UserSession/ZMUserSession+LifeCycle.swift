@@ -41,6 +41,7 @@ extension ZMUserSession {
         notifyThirdPartyServices()
         stopEphemeralTimers()
         lockDatabase()
+        recalculateUnreadConversations()
     }
 
     @objc
@@ -91,6 +92,16 @@ extension ZMUserSession {
         }
 
         self.managedObjectContext.saveOrRollback()
+    }
+
+    // move out
+    private func recalculateUnreadConversations() {
+        WireLogger.badgeCount.info("recalculate unread conversations")
+        syncManagedObjectContext.performGroupedBlock {
+            ZMConversation.calculateLastUnreadMessages1(in: self.syncManagedObjectContext)
+            self.syncManagedObjectContext.saveOrRollback()
+            NotificationInContext(name: .calculateBadgeCount, context: self.syncManagedObjectContext.notificationContext).post()
+        }
     }
 
 }
