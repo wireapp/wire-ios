@@ -842,17 +842,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
     
-    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceJoinGroup() {
+    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
         let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
         // then
-        XCTAssertTrue(!mockMLS.calls.createSelfGroup.isEmpty)
+        XCTAssertFalse(mockMLS.calls.createSelfGroup.isEmpty)
     }
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
         let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
       
         // then
-        XCTAssertTrue(!mockMLS.calls.joinSelfGroup.isEmpty)
+        XCTAssertFalse(mockMLS.calls.joinSelfGroup.isEmpty)
     }
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) -> MockMLSService {
