@@ -565,6 +565,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
@@ -580,6 +584,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
@@ -594,6 +602,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54FB26811D4669D0005574BF /* ios-test-target.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -608,6 +620,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54FB26811D4669D0005574BF /* ios-test-target.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				INFOPLIST_FILE = ziphyTests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wearezeta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";

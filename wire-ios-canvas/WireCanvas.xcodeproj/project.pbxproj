@@ -483,6 +483,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
@@ -494,6 +498,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
@@ -504,6 +512,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.CanvasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -516,6 +528,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A3B1DBA73B900B5BC47 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.CanvasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -528,6 +544,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -611,6 +631,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
