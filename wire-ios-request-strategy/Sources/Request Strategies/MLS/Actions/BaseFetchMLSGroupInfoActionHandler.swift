@@ -33,7 +33,11 @@ class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: Action
         return ZMTransportRequest(
             path: path,
             method: .methodGET,
-            payload: nil,
+            binaryData: nil,
+            type: nil,
+            acceptHeaderType: .messageMLS,
+            contentDisposition: nil,
+            shouldCompress: false,
             apiVersion: apiVersion.rawValue
         )
     }
@@ -43,14 +47,12 @@ class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: Action
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _):
-            guard
-                let data = response.rawData,
-                let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
-            else {
+            guard let data = response.rawData else {
                 action.fail(with: .malformedResponse)
                 return
             }
-            action.succeed(with: payload.groupState)
+
+            action.succeed(with: data)
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)
         case (400, _):
@@ -69,14 +71,5 @@ class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: Action
                 message: errorInfo.message
             ))
         }
-    }
-}
-
-extension BaseFetchMLSGroupInfoActionHandler {
-
-    // MARK: - Payload
-
-    struct ResponsePayload: Codable {
-        let groupState: Data
     }
 }

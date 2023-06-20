@@ -37,7 +37,7 @@ final class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoAct
             for: action,
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
             apiVersion: apiVersion,
-            minRequiredAPIVersion: .v3
+            minRequiredAPIVersion: .v4
         )
     }
 }

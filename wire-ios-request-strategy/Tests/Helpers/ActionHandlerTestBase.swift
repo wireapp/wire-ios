@@ -40,6 +40,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedPath: String,
         expectedPayload: Payload?,
         expectedMethod: ZMTransportRequestMethod,
+        expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws {
         // Given
@@ -52,6 +53,10 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, expectedMethod)
         XCTAssertEqual(request.payload as? Payload, expectedPayload)
+
+        if let expectedAcceptType = expectedAcceptType {
+            XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType)
+        }
     }
 
     func test_itGeneratesARequest(
@@ -142,6 +147,7 @@ extension ActionHandlerTestBase {
         for action: Action,
         expectedPath: String,
         expectedMethod: ZMTransportRequestMethod,
+        expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws {
         try test_itGeneratesARequest(
@@ -149,6 +155,7 @@ extension ActionHandlerTestBase {
             expectedPath: expectedPath,
             expectedPayload: DefaultEquatable?.none,
             expectedMethod: expectedMethod,
+            expectedAcceptType: expectedAcceptType,
             apiVersion: apiVersion
         )
     }
