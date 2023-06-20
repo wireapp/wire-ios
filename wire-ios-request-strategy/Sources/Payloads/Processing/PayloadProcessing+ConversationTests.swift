@@ -841,6 +841,44 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
         }
     }
+    
+    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
+        let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        // then
+        XCTAssertFalse(mockMLS.calls.createSelfGroup.isEmpty)
+    }
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
+        let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
+      
+        // then
+        XCTAssertFalse(mockMLS.calls.joinSelfGroup.isEmpty)
+    }
+
+    func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) -> MockMLSService {
+        let mockMLS = MockMLSService()
+        
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLS
+            
+            MLSEventProcessor.setMock(MockMLSEventProcessor())
+            let domain = "example.com"
+            
+            let id = QualifiedID(uuid: UUID(), domain: domain)
+            // given
+            let conversation = Payload.Conversation(
+                qualifiedID: id,
+                type: BackendConversationType.`self`.rawValue,
+                messageProtocol: "mls",
+                mlsGroupID: "test",
+                epoch: epoch
+            )
+
+            // when
+            conversation.updateOrCreate(in: syncMOC)
+        }
+        return mockMLS
+    }
 
     // MARK: - Helpers
 
@@ -864,7 +902,6 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             data: payload
         )
     }
-
 }
 
 extension Payload.Conversation {
@@ -908,5 +945,4 @@ extension Payload.Conversation {
         )
 
     }
-
 }
