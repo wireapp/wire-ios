@@ -1,5 +1,7 @@
 require 'git'
 require 'base64'
+require 'httparty'
+require 'json'
 
 opt_out_usage
 default_platform(:ios)
@@ -23,7 +25,7 @@ platform :ios do
             unlock: true,
             timeout: 3600,
             lock_when_sleeps: true
-        )
+        ) if is_running_on_ci
     end
 
     before_all do |lane|
@@ -125,6 +127,31 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+    end
+
+    lane :trigger_api_build_cirrus_ci do |options|
+        authorization_header = { "Authorization" => "Bearer #{ENV['CIRRUS_CI_API_TOKEN']}" }
+        uri = 'https://api.cirrus-ci.com/graphql'
+        create_build = HTTParty.post(
+            uri,
+            body: "{ \"query\": \"mutation CreateBuildMutation($input: RepositoryCreateBuildInput!) { createBuild(input: $input) { build { id } } }\", \"variables\": { \"input\": {\"repositoryId\": \"4507403593449472\", \"branch\": \"#{ENV['GITHUB_REF_NAME']}\", \"clientMutationId\": \"trigger-build-on-cirrus\"}} }",
+            headers: authorization_header
+        )
+        created_build_id =  JSON.parse(create_build.body, symbolize_names: true)[:data][:createBuild][:build][:id]
+        `sleep 7`
+        build_info = HTTParty.post(
+            uri,
+            body: "{ \"query\": \"query GetBuildQuery($id: ID!) { build(id: $id) { tasks { id name } } }\", \"variables\": { \"id\": #{created_build_id} } }",
+            authorization_header
+        )
+        cirrus_ci_tasks = JSON.parse(build_info.body, symbolize_names: true)[:data][:build][:tasks]
+        task_to_trigger = cirrus_ci_tasks.select { |task|  task[:name] == options[:task] }.first
+        triggered_task = HTTParty.post(
+            uri,
+            body: "{ \"query\": \"mutation TriggerTask($input: TaskTriggerInput!) { trigger(input: $input) { task { id } } }\", \"variables\": { \"input\": { \"taskId\": #{task_to_trigger[:id]}, \"clientMutationId\": \"trigger-task-#{task_to_trigger[:id]}\" }} }",
+            authorization_header
+        )
+        puts triggered_task
     end
 
     def build_and_upload_app(options)
