@@ -426,38 +426,60 @@ extension WireCallCenterV3 {
 
 extension WireCallCenterV3 {
 
-    /**
-     * Answers an incoming call in the given conversation.
-     * - parameter conversation: The conversation hosting the incoming call.
-     * - parameter video: Whether to join the call with video.
-     */
+    /// Answers an incoming call in the given conversation.
+    ///
+    /// - Parameters:
+    ///  - conversation: The conversation hosting the incoming call.
+    ///  - video: Whether to join the call with video.
+    ///
+    /// - Throws: WireCallCenterV3.Failure
 
-    public func answerCall(conversation: ZMConversation, video: Bool) -> Bool {
+    public func answerCall(
+        conversation: ZMConversation,
+        video: Bool
+    ) throws {
         Self.logger.info("answering call")
-        guard let conversationId = conversation.avsIdentifier else { return false }
+
+        guard let conversationId = conversation.avsIdentifier else {
+            throw Failure.missingAVSIdentifier
+        }
 
         endAllCalls(exluding: conversationId)
 
-        let callType = self.callType(for: conversation,
-                                     startedWithVideo: video,
-                                     isConferenceCall: isConferenceCall(conversationId: conversationId))
+        let callType = self.callType(
+            for: conversation,
+            startedWithVideo: video,
+            isConferenceCall: isConferenceCall(conversationId: conversationId)
+        )
 
-        let answered = avsWrapper.answerCall(conversationId: conversationId, callType: callType, useCBR: useConstantBitRateAudio)
-        if answered {
-            let callState: CallState = .answered(degraded: isDegraded(conversationId: conversationId))
+        let answered = avsWrapper.answerCall(
+            conversationId: conversationId,
+            callType: callType,
+            useCBR: useConstantBitRateAudio
+        )
 
-            let previousSnapshot = callSnapshots[conversationId]
-
-            if previousSnapshot != nil {
-                callSnapshots[conversationId] = previousSnapshot!.update(with: callState)
-            }
-
-            if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-                WireCallCenterCallStateNotification(context: context, callState: callState, conversationId: conversationId, callerId: callerId, messageTime: nil, previousCallState: previousSnapshot?.callState).post(in: context.notificationContext)
-            }
+        guard answered else {
+            throw Failure.unknown
         }
 
-        return answered
+        let callState: CallState = .answered(degraded: isDegraded(conversationId: conversationId))
+
+        let previousSnapshot = callSnapshots[conversationId]
+
+        if previousSnapshot != nil {
+            callSnapshots[conversationId] = previousSnapshot!.update(with: callState)
+        }
+
+        if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
+            WireCallCenterCallStateNotification(
+                context: context,
+                callState: callState,
+                conversationId: conversationId,
+                callerId: callerId,
+                messageTime: nil,
+                previousCallState: previousSnapshot?.callState
+            ).post(in: context.notificationContext)
+        }
     }
 
     public enum Failure: Error {
