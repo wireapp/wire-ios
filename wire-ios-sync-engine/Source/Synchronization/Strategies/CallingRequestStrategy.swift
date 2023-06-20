@@ -365,7 +365,9 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 message.send(with: self.messageSync, completion: completionHandler)
 
             case (.mls, _):
-                if overMLSSelfConversation {
+                // TODO: review the `isConferenceKey` case once subconversations are available
+                // to target all conference members
+                if message.isConferenceKey || overMLSSelfConversation {
                     message.send(with: self.messageSync, completion: completionHandler)
                 } else {
                     Logging.mls.info("ignoring targeted outgoing calling message b/c its not CONFKEY")
