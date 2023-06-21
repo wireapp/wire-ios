@@ -22,21 +22,21 @@
 ///  "<screen>.<component>.<usage>"
 
 
-"conversation.backButton.description" = "Go back to conversation list";
-"conversation.searchButton.description" = "Open search";
+"conversation.backButton.description" = "Revenir aux conversations";
+"conversation.searchButton.description" = "Ouvrir la recherche";
 "conversation.profileImage.description" = "Photo de profil";
-"conversation.profileImage.hint" = "Double tap to open profile";
-"conversation.titleViewForGroup.hint" = "Double tap to open conversation details";
-"conversation.titleViewForOneToOne.hint" = "Double tap to open profile";
-"conversation.legalHoldIcon.description" = "Legal hold";
+"conversation.profileImage.hint" = "Appuyer deux fois pour ouvrir le profile";
+"conversation.titleViewForGroup.hint" = "Touchez deux fois pour ouvrir les détails de la conversation";
+"conversation.titleViewForOneToOne.hint" = "Appuyer deux fois pour ouvrir le profile";
+"conversation.legalHoldIcon.description" = "Conservation à des fins juridiques";
 "conversation.verifiedIcon.description" = "Vérifié";
 
-"conversation.sendButton.description" = "Send this message";
-"conversation.openFormattingButton.description" = "Open formatting options";
-"conversation.hideFormattingButton.description" = "Hide formatting options";
-"conversation.timerButton.description" = "Set a timer for self-deleting messages";
-"conversation.mentionButton.description" = "Mention someone";
-"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.sendButton.description" = "Envoyer ce message";
+"conversation.openFormattingButton.description" = "Ouvrir les options de formatage";
+"conversation.hideFormattingButton.description" = "Masquer les options de formatage";
+"conversation.timerButton.description" = "Définir une minuterie pour les messages auto-supprimés";
+"conversation.mentionButton.description" = "Mentionner quelqu'un";
+"conversation.cameraButton.description" = "Prendre ou choisir une photo";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";
@@ -45,7 +45,7 @@
 "conversation.locationButton.description" = "Share your location";
 "conversation.videoButton.description" = "Enregistrer une vidéo";
 "conversation.moreButton.description" = "Open more messaging options";
-"conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
+"conversation.emphemeralButton.description" = "Définir une minuterie pour les messages auto-supprimés";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ seconds";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutes";
 "conversation.timerForSelfDeletingMessagesHour.value" = "%@ hour";
@@ -84,7 +84,7 @@
 "conversationSearch.itemPlay.hint" = "Double tap to play";
 
 "audioRecord.stopButton.description" = "Stop recording";
-"audioRecord.startButton.description" = "Start recording";
+"audioRecord.startButton.description" = "Commencer l'enregistrement";
 "audioRecord.startButton.hint" = "Double tap to record";
 "audioRecord.sendButton.description" = "Envoyer";
 "audioRecord.cancelButton.description" = "Delete audio recording";
@@ -135,7 +135,7 @@
 "conversationDetails.closeButton.description" = "Close conversation details";
 "conversationDetails.moreButton.description" = "Open conversation options";
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
-"conversationDetails.participantCell.hint" = "Double tap to open profile";
+"conversationDetails.participantCell.hint" = "Appuyer deux fois pour ouvrir le profile";
 
 "createConversation.backButton.description" = "Go back to contact list";
 "createConversation.hideSettings.hint" = "Double tap to hide settings";
@@ -146,46 +146,46 @@
 
 "settings.deviceCount.hint" = "%@ devices in use";
 "settings.closeButton.description" = "Close settings";
-"settings.backButton.description" = "Go back to Settings";
+"settings.backButton.description" = "Retourner dans 'Réglages'";
 
 "accountSettings.backButton.description" = "Go back to Account";
 
-"optionsSettings.backButton.description" = "Go back to Options";
+"optionsSettings.backButton.description" = "Revenir aux options";
 
-"advancedSettings.backButton.description" = "Go back to Advanced";
+"advancedSettings.backButton.description" = "Revenir à 'Avancé'";
 
-"supportSettings.backButton.description" = "Go back to Support";
+"supportSettings.backButton.description" = "Revenir à 'Support'";
 
-"aboutSettings.backButton.description" = "Go back to About";
-"licenseInformationSettings.backButton.description" = "Go back to License information";
-"licenseDetailsSettings.backButton.description" = "Go back to License details";
+"aboutSettings.backButton.description" = "Retourner à 'À propos'";
+"licenseInformationSettings.backButton.description" = "Revenir aux informations de la licence";
+"licenseDetailsSettings.backButton.description" = "Revenir aux informations de la licence";
 
-"developerOptionsSettings.backButton.description" = "Go back to Developer options";
+"developerOptionsSettings.backButton.description" = "Revenir aux options du développeur";
 
-"clientsList.deviceDetails.hint" = "Double tap to open device details";
-"clientsList.deviceId.description" = "Device ID";
-"clientsList.deviceName.description" = "Device name";
-"clientsList.keyFingerprint.description" = "Key fingerprint";
+"clientsList.deviceDetails.hint" = "Touchez deux fois pour ouvrir les détails de l'appareil";
+"clientsList.deviceId.description" = "Identifiant de l'appareil";
+"clientsList.deviceName.description" = "Nom de l’appareil";
+"clientsList.keyFingerprint.description" = "Empreinte numérique";
 "clientsList.deviceVerified.description" = "Vérifié";
 "clientsList.deviceNotVerified.description" = "Non vérifié";
-"clientsList.backButton.description" = "Go back to device list";
+"clientsList.backButton.description" = "Retour à la liste des appareils";
 
-"deviceDetails.whyVerifyFingerprint.hint" = "Double tap to learn more about verifications";
-"deviceDetails.howToVerifyFingerprint.hint" = "Learn more about fingerprint verification";
-"deviceDetails.verified.description" = "Device verified";
-"deviceDetails.backButton.description" = "Go back to device overview";
+"deviceDetails.whyVerifyFingerprint.hint" = "Touchez deux fois pour en savoir plus sur les vérifications";
+"deviceDetails.howToVerifyFingerprint.hint" = "En savoir plus sur la vérification des empreintes digitales";
+"deviceDetails.verified.description" = "Appareil vérifié";
+"deviceDetails.backButton.description" = "Retour à la vue d'ensemble de l'appareil";
 
-"profile.backButton.description" = "Go back to conversation details";
-"profile.closeButton.description" = "Close profile";
+"profile.backButton.description" = "Revenir aux informations de la conversation";
+"profile.closeButton.description" = "Fermer le profil";
 
-"accountPage.availabilityStatus.description" = "Status";
-"accountPage.availabilityStatus.hint" = "Double tap to change status";
+"accountPage.availabilityStatus.description" = "Statut";
+"accountPage.availabilityStatus.hint" = "Touchez deux fois pour changer de contexte";
 "accountPage.handle.description" = "Nom d'utilisateur";
-"accountPage.name.description" = "Profile name";
-"accountPage.teamName.description" = "Team name";
+"accountPage.name.description" = "Nom du profil";
+"accountPage.teamName.description" = "Nom de l’équipe";
 "accountPage.profilePicture.description" = "Photo de profil";
-"accountPage.profilePicture.hint" = "Double tap to change your picture";
-"accountPage.closeButton.description" = "Close account overview";
+"accountPage.profilePicture.hint" = "Cliquez deux fois pour changer votre photo";
+"accountPage.closeButton.description" = "Fermer la vue d'ensemble du compte";
 "accountPage.backButton.description" = "Go back to account overview";
 
 "contactsList.guestIcon.description" = "Contact externe";
@@ -193,7 +193,7 @@
 "contactsList.federatedIcon.description" = "Fédéré";
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
-"contactsList.pendingConnection.hint" = "Double tap to open profile";
+"contactsList.pendingConnection.hint" = "Appuyer deux fois pour ouvrir le profile";
 "contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
@@ -215,7 +215,7 @@
 "conversationsList.joinButton.description" = "Rejoindre";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
-"conversationsList.connectionRequest.hint" = "Double tap to open profile";
+"conversationsList.connectionRequest.hint" = "Appuyer deux fois pour ouvrir le profile";
 
 "conversationAnnouncement.text.description" = "Text message received from %@";
 "conversationAnnouncement.picture.description" = "Picture received from %@";
@@ -224,7 +224,7 @@
 "conversationAnnouncement.location.description" = "%@ shared location";
 "conversationAnnouncement.ping.description" = "%@ a fait un signe";
 "conversationAnnouncement.file.description" = "File %@ received from %@";
-"conversationAnnouncement.deletedMessage.description" = "%@ deleted a message";
+"conversationAnnouncement.deletedMessage.description" = "%@ a supprimé un message";
 "conversationAnnouncement.editedMessage.description" = "%@ edited a message";
 
 "calling.flipCameraBackButton.description" = "Flip to back camera";
@@ -260,10 +260,10 @@
 "tabBar.item.value" = "Selected";
 
 "landing.loginEnterpriseButton.description" = "Se connecter via SSO";
-"tabBar.email.description" = "Log in via email";
-"tabBar.phone.description" = "Log in via phone number";
-"authentication.forgotPasswordButton.description" = "Change your password";
-"authentication.backButton.description" = "Go back to start screen";
+"tabBar.email.description" = "Se connecter via e-mail";
+"tabBar.phone.description" = "Se connecter avec un numéro de téléphone";
+"authentication.forgotPasswordButton.description" = "Modifier votre mot de passe";
+"authentication.backButton.description" = "Retour à l'accueil";
 
-"connection.archiveButton.description" = "Archive connection";
-"connection.cancelButton.description" = "Cancel connection";
+"connection.archiveButton.description" = "Archiver la connexion";
+"connection.cancelButton.description" = "Annuler la connexion";
