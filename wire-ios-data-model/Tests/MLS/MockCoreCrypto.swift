@@ -754,5 +754,4 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
         return try mock(handle)
     }
-
 }

@@ -24,6 +24,10 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded()
 
+    func createSelfGroup(for groupID: MLSGroupID)
+
+    func joinSelfGroup(with groupID: MLSGroupID)
+
     func createGroup(for groupID: MLSGroupID) throws
 
     func conversationExists(groupID: MLSGroupID) -> Bool
@@ -398,11 +402,34 @@ public final class MLSService: MLSServiceInterface {
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
     }
 
+    public func createSelfGroup(for groupID: MLSGroupID) {
+        guard let context = context else {
+            return
+        }
+        do {
+            try createGroup(for: groupID)
+
+            let selfUser = ZMUser.selfUser(in: context)
+            let mlsSelfUser = MLSUser(from: selfUser)
+            Task {
+                do {
+                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
+                } catch MLSAddMembersError.noInviteesToAdd {
+                    WireLogger.mls.debug("createConversation noInviteesToAdd, updateKeyMaterial")
+                    try await updateKeyMaterial(for: groupID)
+                }
+            }
+        } catch {
+            WireLogger.mls.error("create group for self conversation failed: \(error.localizedDescription)")
+        }
+    }
+
     // MARK: - Add member
 
     enum MLSAddMembersError: Error {
 
         case noMembersToAdd
+        case noInviteesToAdd
         case failedToClaimKeyPackages
 
     }
@@ -429,6 +456,11 @@ public final class MLSService: MLSServiceInterface {
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
             let invitees = keyPackages.map(Invitee.init(from:))
+
+            guard invitees.count > 0 else {
+                throw MLSAddMembersError.noInviteesToAdd
+            }
+
             let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
@@ -695,6 +727,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Joining conversations
+
+    public func joinSelfGroup(with groupID: MLSGroupID) {
+        registerPendingJoin(groupID)
+        performPendingJoins()
+    }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 

@@ -31,6 +31,8 @@ class MockMLSService: MLSServiceInterface {
         var commitPendingProposals: [Void] = []
         var commitPendingProposalsInGroup: [MLSGroupID] = []
         var wipeGroup = [MLSGroupID]()
+        var createSelfGroup = [MLSGroupID]()
+        var joinSelfGroup = [MLSGroupID]()
     }
 
     func decrypt(
@@ -126,6 +128,14 @@ class MockMLSService: MLSServiceInterface {
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         fatalError("not implemented")
+    }
+
+    func createSelfGroup(for groupID: MLSGroupID) {
+        calls.createSelfGroup.append(groupID)
+    }
+
+    func joinSelfGroup(with groupID: MLSGroupID) {
+        calls.joinSelfGroup.append(groupID)
     }
 
 }
