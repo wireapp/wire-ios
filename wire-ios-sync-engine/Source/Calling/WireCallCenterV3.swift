@@ -568,17 +568,28 @@ extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    let conferenceInfo = try mlsService.generateConferenceInfo(
+                    let initialConferenceInfo = try mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
                     )
 
-                    Self.logger.debug("passing MLS conference info to AVS")
+                    let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
+                        parentGroupID: parentGroupID,
+                        subConversationGroupID: subgroupID
+                    ).prepend(initialConferenceInfo)
 
-                    avsWrapper.setMLSConferenceInfo(
-                        conversationId: conversationId,
-                        info: conferenceInfo
-                    )
+                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
+                        Self.logger.debug("passing MLS conference info to AVS")
+                        self?.avsWrapper.setMLSConferenceInfo(
+                            conversationId: conversationId,
+                            info: newConferenceInfo
+                        )
+                    }
+
+                    if var snapshot = callSnapshots[conversationId] {
+                        snapshot.onConferenceInfoChangedToken = token
+                        callSnapshots[conversationId] = snapshot
+                    }
                 } catch {
                     Self.logger.error("failed to start MLS conference: \(String(describing: error))")
                 }

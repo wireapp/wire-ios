@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import Combine
 
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
@@ -52,6 +53,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
     ) throws -> MLSConferenceInfo
+
+    func onConferenceInfoChange(
+        parentGroupID: MLSGroupID,
+        subConversationGroupID: MLSGroupID
+    ) -> AnyPublisher<MLSConferenceInfo, Never>
 
 }
 
@@ -165,7 +171,8 @@ public final class MLSService: MLSServiceInterface {
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
-            coreCrypto: coreCrypto
+            coreCrypto: coreCrypto,
+            subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
         do {
@@ -255,15 +262,13 @@ public final class MLSService: MLSServiceInterface {
                 let keyData = try $0.exportSecretKey(
                     conversationId: subconversationGroupID.bytes,
                     keyLength: keyLength
-                )
+                ).data
 
                 let conversationMembers = try $0.getClientIds(conversationId: parentGroupID.bytes)
-                    .compactMap { Data(base64Encoded: $0.data) }
-                    .compactMap { MLSClientID(data: $0) }
+                    .compactMap { MLSClientID(data: $0.data) }
 
                 let subconversationMembers = try $0.getClientIds(conversationId: subconversationGroupID.bytes)
-                    .compactMap { Data(base64Encoded: $0.data) }
-                    .compactMap { MLSClientID(data: $0) }
+                    .compactMap { MLSClientID(data: $0.data) }
 
                 let members = conversationMembers.map {
                     MLSConferenceInfo.Member(
@@ -275,7 +280,6 @@ public final class MLSService: MLSServiceInterface {
                 return MLSConferenceInfo(
                     epoch: epoch,
                     keyData: keyData,
-                    keySize: keyLength,
                     members: members
                 )
             }
@@ -287,6 +291,20 @@ public final class MLSService: MLSServiceInterface {
 
     public enum MLSConferenceInfoError: Error, Equatable {
         case failedToGenerateConferenceInfo
+    }
+
+    public func onConferenceInfoChange(
+        parentGroupID: MLSGroupID,
+        subConversationGroupID: MLSGroupID
+    ) -> AnyPublisher<MLSConferenceInfo, Never> {
+        return onEpochChanged().filter {
+            $0.isOne(of: parentGroupID, subConversationGroupID)
+        }.compactMap { [weak self] _ in
+            try? self?.generateConferenceInfo(
+                parentGroupID: parentGroupID,
+                subconversationGroupID: subConversationGroupID
+            )
+        }.eraseToAnyPublisher()
     }
 
     // MARK: - Update key material
@@ -1196,6 +1214,14 @@ public final class MLSService: MLSServiceInterface {
             logger.error("failed to get members for group (\(groupID)): \(String(describing: error))")
             throw error
         }
+    }
+
+    // MARK: - Epoch
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        return decryptionService.onEpochChanged()
+            .merge(with: mlsActionExecutor.onEpochChanged())
+            .eraseToAnyPublisher()
     }
 
 }

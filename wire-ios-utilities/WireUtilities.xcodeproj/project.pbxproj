@@ -165,6 +165,7 @@
 		EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */; };
 		EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */; };
 		EEB121AC2A1759F300E74D39 /* PrivateUserDefaultsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */; };
+		EEBFE03E2A3AE58E001F1060 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBFE03D2A3AE58E001F1060 /* String+Random.swift */; };
 		EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */; };
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
 		EED6C7122A30B6B800CB8B60 /* Collection+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED6C7112A30B6B800CB8B60 /* Collection+Helpers.swift */; };
@@ -406,6 +407,7 @@
 		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
 		EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Base64.swift"; sourceTree = "<group>"; };
 		EEB121AB2A1759F300E74D39 /* PrivateUserDefaultsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUserDefaultsTests.swift; sourceTree = "<group>"; };
+		EEBFE03D2A3AE58E001F1060 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthInteger_RandomTests.swift; sourceTree = "<group>"; };
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
 		EED6C7112A30B6B800CB8B60 /* Collection+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Helpers.swift"; sourceTree = "<group>"; };
@@ -710,6 +712,7 @@
 				EED6C7112A30B6B800CB8B60 /* Collection+Helpers.swift */,
 				EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */,
 				EEAB73852A31F50F00EAB4E5 /* String+Base64.swift */,
+				EEBFE03D2A3AE58E001F1060 /* String+Random.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -1033,6 +1036,7 @@
 				7C8BFFE122FC612900B3C8A5 /* ZMPropertyValidator.swift in Sources */,
 				EEAB73842A31CE4100EAB4E5 /* Data+Bytes.swift in Sources */,
 				3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */,
+				EEBFE03E2A3AE58E001F1060 /* String+Random.swift in Sources */,
 				54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */,
 				EF2AFC9D228176C3008C921A /* UUID+Data.swift in Sources */,
 				BFA2F03620C9480A00EBE97C /* FunctionOperators.swift in Sources */,

@@ -62,7 +62,7 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
     ) -> MLSGroupID? {
-        return storage[parentGroupID, default: [:]][type]
+        return storage[parentGroupID]?[type]
     }
 
 }

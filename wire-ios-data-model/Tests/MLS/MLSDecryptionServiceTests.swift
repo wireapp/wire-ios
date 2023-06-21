@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import Combine
 import WireCoreCrypto
 @testable import WireDataModel
 
@@ -221,5 +222,54 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
         }
     }
-    
+
+    func test_Decrypt_ReportsEpochChanged() {
+        syncMOC.performAndWait {
+            // Given
+            let groupID = MLSGroupID.random()
+            let messageBytes = Data.random().bytes
+            let hasEpochChanged = true
+            let sender = MLSClientID(
+                userID: UUID.create().transportString(),
+                clientID: "client",
+                domain: "example.com"
+            )
+
+            var receivedGroupIDs = [MLSGroupID]()
+            let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+            let cancellable = sut.onEpochChanged().collect(1).sink {
+                receivedGroupIDs = $0
+                didReceiveGroupIDs.fulfill()
+            }
+
+            mockCoreCrypto.mockDecryptMessage = { _, _ in
+                return DecryptedMessage(
+                    message: messageBytes,
+                    proposals: [],
+                    isActive: false,
+                    commitDelay: nil,
+                    senderClientId: sender.rawValue.data(using: .utf8)!.bytes,
+                    hasEpochChanged: hasEpochChanged,
+                    identity: nil
+                )
+            }
+
+            // When
+            do {
+                _ = try sut.decrypt(
+                    message: messageBytes.data.base64EncodedString(),
+                    for: groupID,
+                    subconversationType: nil
+                )
+            } catch {
+                XCTFail("Unexpected error: \(String(describing: error))")
+            }
+
+            // Then
+            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+            cancellable.cancel()
+            XCTAssertEqual(receivedGroupIDs, [groupID])
+        }
+    }
+
 }

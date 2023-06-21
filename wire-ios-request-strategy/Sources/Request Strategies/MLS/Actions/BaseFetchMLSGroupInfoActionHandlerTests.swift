@@ -61,21 +61,20 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
 
     // MARK: - Response handling
 
-    func test_itHandlesSuccess() {
+    func test_itHandlesSuccess() throws {
         // Given
         let groupState = Data([1, 2, 3])
-        let payload = Handler.ResponsePayload(groupState: groupState)
+        let payload = try XCTUnwrap(String(data: groupState, encoding: .utf8)) as ZMTransportData
 
         // When
-        let receivedGroupState = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
+        let receivedGroupState = test_itHandlesSuccess(status: 200, payload: payload)
 
         // Then
-        XCTAssertEqual(receivedGroupState, payload.groupState)
+        XCTAssertEqual(receivedGroupState, groupState)
     }
 
     func test_itHandlesFailures() {
         test_itHandlesFailures([
-            .failure(status: 200, error: .malformedResponse),
             .failure(status: 400, error: .invalidParameters),
             .failure(status: 400, error: .mlsNotEnabled, label: "mls-not-enabled"),
             .failure(status: 404, error: .conversationIdOrDomainNotFound),

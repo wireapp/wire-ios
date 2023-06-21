@@ -34,6 +34,7 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoA
             for: action,
             expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue)/groupinfo",
             expectedMethod: .methodGET,
+            expectedAcceptType: .messageMLS,
             apiVersion: .v4
         )
     }

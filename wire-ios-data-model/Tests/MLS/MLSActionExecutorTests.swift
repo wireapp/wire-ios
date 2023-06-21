@@ -20,6 +20,7 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 import WireCoreCrypto
+import Combine
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
@@ -362,7 +363,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.count, 1)
         XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.first?.bundle, try mockCommitBundle.protobufData())
 
-
         // Then pending group is merged
         XCTAssertEqual(mockMergePendingGroupArguments.count, 1)
         XCTAssertEqual(mockMergePendingGroupArguments.first, groupID.bytes)
@@ -451,4 +451,42 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             XCTFail("wrong error")
         }
     }
+
+    // MARK: - Epoch change
+
+    func test_OnEpochChanged() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+
+        var receivedGroupIDs = [MLSGroupID]()
+        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+        let cancellable = sut.onEpochChanged().collect(1).sink {
+            receivedGroupIDs = $0
+            didReceiveGroupIDs.fulfill()
+        }
+
+        let mockCommit = Data.random().bytes
+        let mockPublicGroupState = PublicGroupStateBundle(
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
+            payload: .random()
+        )
+        let mockCommitBundle = CommitBundle(
+            welcome: nil,
+            commit: mockCommit,
+            publicGroupState: mockPublicGroupState
+        )
+
+        // When we make a commit
+        mockCoreCrypto.mockUpdateKeyingMaterial = { _ in return mockCommitBundle }
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in return [] }
+        mockCoreCrypto.mockCommitAccepted = { _ in }
+        _ = try await sut.updateKeyMaterial(for: groupID)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        cancellable.cancel()
+        XCTAssertEqual(receivedGroupIDs, [groupID])
+    }
+
 }

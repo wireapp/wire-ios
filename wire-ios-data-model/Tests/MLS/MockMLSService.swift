@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import Combine
 
 class MockMLSService: MLSServiceInterface {
 
@@ -178,6 +179,14 @@ class MockMLSService: MLSServiceInterface {
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async throws -> MLSGroupID {
+        fatalError("not implemented")
+    }
+
+    func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+        fatalError("not implemented")
+    }
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         fatalError("not implemented")
     }
 

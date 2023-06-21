@@ -65,3 +65,11 @@ extension MLSGroupID: CustomStringConvertible {
     }
 
 }
+
+public extension MLSGroupID {
+
+    static func random() -> MLSGroupID {
+        return MLSGroupID(Data.random(byteCount: 32))
+    }
+
+}
