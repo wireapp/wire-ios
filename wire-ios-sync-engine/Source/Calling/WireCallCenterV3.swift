@@ -592,53 +592,56 @@ extension WireCallCenterV3 {
     }
 
     private func setUpMLSConference(in conversation: ZMConversation) throws {
-        var mlsService: MLSServiceInterface?
-
-        uiMOC?.zm_sync.performAndWait {
-            mlsService = uiMOC?.zm_sync.mlsService
-        }
-
         guard
             let conversationID = conversation.avsIdentifier,
-            let mlsService = mlsService,
             let parentQualifiedID = conversation.qualifiedID,
-            let parentGroupID = conversation.mlsGroupID
+            let parentGroupID = conversation.mlsGroupID,
+            let syncContext = conversation.managedObjectContext?.zm_sync
         else {
             throw Failure.failedToSetupMLSConference
         }
 
-        Task {
-            do {
-                let subgroupID = try await mlsService.createOrJoinSubgroup(
-                    parentQualifiedID: parentQualifiedID,
-                    parentID: parentGroupID
-                )
+        syncContext.perform { [weak self] in
+            guard
+                let self = self,
+                let mlsService = syncContext.mlsService
+            else {
+                return
+            }
 
-                let initialConferenceInfo = try mlsService.generateConferenceInfo(
-                    parentGroupID: parentGroupID,
-                    subconversationGroupID: subgroupID
-                )
-
-                let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
-                    parentGroupID: parentGroupID,
-                    subConversationGroupID: subgroupID
-                ).prepend(initialConferenceInfo)
-
-                let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
-                    Self.logger.debug("passing MLS conference info to AVS")
-                    self?.avsWrapper.setMLSConferenceInfo(
-                        conversationId: conversationID,
-                        info: newConferenceInfo
+            Task {
+                do {
+                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                        parentQualifiedID: parentQualifiedID,
+                        parentID: parentGroupID
                     )
-                }
 
-                if var snapshot = callSnapshots[conversationID] {
-                    snapshot.onConferenceInfoChangedToken = token
-                    callSnapshots[conversationID] = snapshot
+                    let initialConferenceInfo = try mlsService.generateConferenceInfo(
+                        parentGroupID: parentGroupID,
+                        subconversationGroupID: subgroupID
+                    )
+
+                    let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
+                        parentGroupID: parentGroupID,
+                        subConversationGroupID: subgroupID
+                    ).prepend(initialConferenceInfo)
+
+                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
+                        Self.logger.debug("passing MLS conference info to AVS")
+                        self?.avsWrapper.setMLSConferenceInfo(
+                            conversationId: conversationID,
+                            info: newConferenceInfo
+                        )
+                    }
+
+                    if var snapshot = self.callSnapshots[conversationID] {
+                        snapshot.onConferenceInfoChangedToken = token
+                        self.callSnapshots[conversationID] = snapshot
+                    }
+                } catch {
+                    Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
+                    throw error
                 }
-            } catch {
-                Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
-                throw error
             }
         }
     }
