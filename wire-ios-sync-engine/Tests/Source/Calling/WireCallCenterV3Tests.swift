@@ -26,7 +26,6 @@ class WireCallCenterTransportMock: WireCallCenterTransport {
     var mockClientsRequestResponse: [AVSClient]?
 
     func send(data: Data, conversationId: WireSyncEngine.AVSIdentifier, targets: [WireSyncEngine.AVSClient]?, overMLSSelfConversation: Bool, completionHandler: @escaping ((Int) -> Void)) {
-        
     }
 
     func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data>) -> Void)) {
