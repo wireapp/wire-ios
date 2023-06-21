@@ -1724,7 +1724,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subconversationGroupID.parentGroupID, parentID)
     }
 
-    // if epoch is greater than 0, but older than one day, deletes, then creates
     func test_CreateOrJoinSubgroup_DeleteOldGroupCreateNewGroup() async throws {
         // Given
         let parentQualifiedID = QualifiedID.random()
@@ -1991,6 +1990,63 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         XCTAssertEqual(receivedConferenceInfos, [expectedConferenceInfo])
+    }
+
+    // MARK: - Self group
+
+    func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
+        BackendInfo.domain = "example.com"
+
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _ in
+            expectation1.fulfill()
+        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+    }
+
+    func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
+        BackendInfo.domain = "example.com"
+
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "AddMembers should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _ in
+            expectation1.fulfill()
+        }
+
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { _, _, _, _ in
+            return [KeyPackage.init(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            return [ZMUpdateEvent()]
+        }
+
+        mockMLSActionExecutor.mockAddMembers = { _, _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
     }
 
 }
