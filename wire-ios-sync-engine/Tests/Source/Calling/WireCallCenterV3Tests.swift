@@ -477,8 +477,9 @@ class WireCallCenterV3Tests: MessagingTest {
         }
 
         let didLeaveSubconversation = expectation(description: "didLeaveSubconversation")
-        mlsService.mockLeaveSubconversation = { parentID, subconversationType in
+        mlsService.mockLeaveSubconversation = { parentID, parentGroupID, subconversationType in
             XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
+            XCTAssertEqual(parentGroupID, self.groupConversation.mlsGroupID)
             XCTAssertEqual(subconversationType, .conference)
             didLeaveSubconversation.fulfill()
         }

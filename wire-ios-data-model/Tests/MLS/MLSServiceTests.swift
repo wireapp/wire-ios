@@ -1873,25 +1873,37 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_LeaveSubconversation() async throws {
         // Given
         let parentID = QualifiedID.random()
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
         let subconversationType = SubgroupType.conference
 
         mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod = { _, _, _, _ in
             // no op
         }
 
+        var mockWipeConversationArguments = [[Byte]]()
+        mockCoreCrypto.mockWipeConversation = {
+            mockWipeConversationArguments.append($0)
+        }
+
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+
         // When
         try await sut.leaveSubconversation(
             parentQualifiedID: parentID,
+            parentGroupID: parentGroupID,
             subconversationType: subconversationType
         )
 
         // Then
         let invocations = mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations
         XCTAssertEqual(invocations.count, 1)
-        let invocation = try XCTUnwrap(invocations.element(atIndex:0))
+        let invocation = try XCTUnwrap(invocations.element(atIndex: 0))
         XCTAssertEqual(invocation.conversationID, parentID.uuid)
         XCTAssertEqual(invocation.domain, parentID.domain)
         XCTAssertEqual(invocation.subconversationType, subconversationType)
+
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
     }
 
     // MARK: - On conference info changed

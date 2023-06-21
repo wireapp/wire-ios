@@ -678,7 +678,8 @@ extension WireCallCenterV3 {
                 domain: domain,
                 in: context
             ),
-            conversation.messageProtocol == .mls
+            conversation.messageProtocol == .mls,
+            let parentGroupID = conversation.mlsGroupID
         else {
             return
         }
@@ -692,6 +693,7 @@ extension WireCallCenterV3 {
             Task {
                 try await mlsService.leaveSubconversation(
                     parentQualifiedID: QualifiedID(uuid: id.identifier, domain: domain),
+                    parentGroupID: parentGroupID,
                     subconversationType: .conference
                 )
             }

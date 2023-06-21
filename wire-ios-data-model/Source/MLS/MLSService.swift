@@ -65,6 +65,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func leaveSubconversation(
         parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws
 
@@ -1135,6 +1136,7 @@ public final class MLSService: MLSServiceInterface {
         case failedToCreateSubgroup
         case failedToDeleteSubgroup
         case failedToJoinSubgroup
+        case missingSubgroupID
 
     }
 
@@ -1261,6 +1263,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func leaveSubconversation(
         parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
         do {
@@ -1270,12 +1273,23 @@ public final class MLSService: MLSServiceInterface {
                 throw SubgroupFailure.missingNotificationContext
             }
 
+            guard let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+                forType: subconversationType,
+                parentGroupID: parentGroupID
+            ) else {
+                throw SubgroupFailure.missingSubgroupID
+            }
+
             try await actionsProvider.leaveSubconversation(
                 conversationID: parentQualifiedID.uuid,
                 domain: parentQualifiedID.domain,
                 subconversationType: subconversationType,
                 context: context
             )
+
+            try coreCrypto.perform {
+                try $0.wipeConversation(conversationId: subconversationGroupID.bytes)
+            }
         } catch {
             logger.error("failed to leave subconversation (\(subconversationType) with parent (\(parentQualifiedID)): \(String(describing: error))")
             throw error

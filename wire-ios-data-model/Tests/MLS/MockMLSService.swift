@@ -202,6 +202,7 @@ class MockMLSService: MLSServiceInterface {
 
     func leaveSubconversation(
         parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
         fatalError("not implemented")
