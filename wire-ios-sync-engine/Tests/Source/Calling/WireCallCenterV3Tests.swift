@@ -21,7 +21,6 @@ import avs
 @testable import WireSyncEngine
 
 class WireCallCenterTransportMock: WireCallCenterTransport {
-    
     var mockCallConfigResponse: (String, Int)?
     var mockClientsRequestResponse: [AVSClient]?
 
