@@ -133,4 +133,16 @@ class MockMLSService: MLSServiceInterface {
         return mock()
     }
 
+    var mockLeaveSubconversation: ((QualifiedID, SubgroupType) throws -> Void)?
+
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        subconversationType: SubgroupType
+    ) async throws {
+        guard let mock = mockLeaveSubconversation else {
+            fatalError("not implemented")
+        }
+
+        try mock(parentQualifiedID, subconversationType)
+    }
 }

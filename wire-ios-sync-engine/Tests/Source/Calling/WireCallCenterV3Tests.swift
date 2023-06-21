@@ -68,14 +68,16 @@ class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.domain = "wire.com"
+
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
-        selfUser.domain = "wire.com"
+        selfUser.domain = BackendInfo.domain
         selfUserID = selfUser.avsIdentifier
 
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser.remoteIdentifier = UUID()
-        otherUser.domain = "wire.com"
+        otherUser.domain = BackendInfo.domain
         self.otherUser = otherUser
         otherUserID = otherUser.avsIdentifier
 
@@ -461,6 +463,31 @@ class WireCallCenterV3Tests: MessagingTest {
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
+    }
+
+    func testThatLeavingAnMLSConferenceLeavesTheSubconversation() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversation = expectation(description: "didLeaveSubconversation")
+        mlsService.mockLeaveSubconversation = { parentID, subconversationType in
+            XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
+            XCTAssertEqual(subconversationType, .conference)
+            didLeaveSubconversation.fulfill()
+        }
+
+        // When
+        sut.closeCall(conversationId: conversationID)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItAnswersACall_oneToOne_normal() throws {

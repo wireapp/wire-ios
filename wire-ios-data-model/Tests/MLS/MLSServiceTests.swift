@@ -1870,6 +1870,30 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subconversationGroupID.parentGroupID, parentID)
     }
 
+    func test_LeaveSubconversation() async throws {
+        // Given
+        let parentID = QualifiedID.random()
+        let subconversationType = SubgroupType.conference
+
+        mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            // no op
+        }
+
+        // When
+        try await sut.leaveSubconversation(
+            parentQualifiedID: parentID,
+            subconversationType: subconversationType
+        )
+
+        // Then
+        let invocations = mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        let invocation = try XCTUnwrap(invocations.element(atIndex:0))
+        XCTAssertEqual(invocation.conversationID, parentID.uuid)
+        XCTAssertEqual(invocation.domain, parentID.domain)
+        XCTAssertEqual(invocation.subconversationType, subconversationType)
+    }
+
     // MARK: - On conference info changed
 
     func test_OnEpochChanged_InterleavesSources() throws {

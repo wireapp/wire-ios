@@ -749,6 +749,26 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         try await mock(conversationID, domain, subgroupType, context)            
     }
 
+    // MARK: - leaveSubconversation
+
+    var leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations: [(conversationID: UUID, domain: String, subconversationType: SubgroupType, context: NotificationContext)] = []
+    var leaveSubconversationConversationIDDomainSubconversationTypeContext_MockError: Error?
+    var leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod: ((UUID, String, SubgroupType, NotificationContext) async throws -> Void)?
+
+    func leaveSubconversation(conversationID: UUID, domain: String, subconversationType: SubgroupType, context: NotificationContext) async throws {
+        leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations.append((conversationID: conversationID, domain: domain, subconversationType: subconversationType, context: context))
+
+        if let error = leaveSubconversationConversationIDDomainSubconversationTypeContext_MockError {
+            throw error
+        }
+
+        guard let mock = leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod else {
+            fatalError("no mock for `leaveSubconversationConversationIDDomainSubconversationTypeContext`")
+        }
+
+        try await mock(conversationID, domain, subconversationType, context)            
+    }
+
 }
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 

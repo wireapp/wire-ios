@@ -63,6 +63,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subConversationGroupID: MLSGroupID
     ) -> AnyPublisher<MLSConferenceInfo, Never>
 
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        subconversationType: SubgroupType
+    ) async throws
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -1125,6 +1130,7 @@ public final class MLSService: MLSServiceInterface {
 
     public enum SubgroupFailure: Error {
 
+        case missingNotificationContext
         case failedToFetchSubgroup
         case failedToCreateSubgroup
         case failedToDeleteSubgroup
@@ -1141,7 +1147,7 @@ public final class MLSService: MLSServiceInterface {
 
             guard let notificationContext = context?.notificationContext else {
                 logger.error("failed to create or join subgroup: missing notification context")
-                throw SubgroupFailure.failedToFetchSubgroup
+                throw SubgroupFailure.missingNotificationContext
             }
 
             let subgroup = try await fetchSubgroup(
@@ -1249,6 +1255,29 @@ public final class MLSService: MLSServiceInterface {
                 .compactMap { MLSClientID(data: Data($0)) }
         } catch {
             logger.error("failed to get members for group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
+    }
+
+    public func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        subconversationType: SubgroupType
+    ) async throws {
+        do {
+            logger.info("leaving subconversation (\(subconversationType) with parent (\(parentQualifiedID))")
+
+            guard let context = context?.notificationContext else {
+                throw SubgroupFailure.missingNotificationContext
+            }
+
+            try await actionsProvider.leaveSubconversation(
+                conversationID: parentQualifiedID.uuid,
+                domain: parentQualifiedID.domain,
+                subconversationType: subconversationType,
+                context: context
+            )
+        } catch {
+            logger.error("failed to leave subconversation (\(subconversationType) with parent (\(parentQualifiedID)): \(String(describing: error))")
             throw error
         }
     }

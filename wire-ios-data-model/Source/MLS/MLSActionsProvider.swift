@@ -74,6 +74,13 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws
 
+    func leaveSubconversation(
+        conversationID: UUID,
+        domain: String,
+        subconversationType: SubgroupType,
+        context: NotificationContext
+    ) async throws
+
 }
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -187,6 +194,21 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             conversationID: conversationID,
             domain: domain,
             subgroupType: subgroupType
+        )
+
+        try await action.perform(in: context)
+    }
+
+    func leaveSubconversation(
+        conversationID: UUID,
+        domain: String,
+        subconversationType: SubgroupType,
+        context: NotificationContext
+    ) async throws {
+        var action = LeaveSubconversationAction(
+            conversationID: conversationID,
+            domain: domain,
+            subconversationType: subconversationType
         )
 
         try await action.perform(in: context)

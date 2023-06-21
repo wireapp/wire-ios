@@ -138,4 +138,11 @@ class MockMLSService: MLSServiceInterface {
         calls.joinSelfGroup.append(groupID)
     }
 
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        subconversationType: SubgroupType
+    ) async throws {
+        fatalError("not implemented")
+    }
+
 }
