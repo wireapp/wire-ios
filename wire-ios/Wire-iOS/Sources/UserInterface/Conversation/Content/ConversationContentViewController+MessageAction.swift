@@ -141,7 +141,7 @@ extension ConversationContentViewController {
         case .react(let reaction):
             Analytics.shared.tagReacted(in: conversation)
             session.perform {
-                message.addReaction(reaction)
+                message.react(reaction)
             }
         }
     }

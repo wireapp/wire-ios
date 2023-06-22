@@ -21,7 +21,7 @@ import WireDataModel
 import WireCommonComponents
 
 protocol ReactionPickerDelegate: AnyObject {
-    func didPickReaction(reaction: MessageReaction)
+    func didPickReaction(reaction: Emoji)
     func didTapMoreEmojis()
 }
 
@@ -29,15 +29,15 @@ class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
-    private let selectedReaction: String?
+    private let selectedReactions: Set<Emoji>
     weak var delegate: ReactionPickerDelegate?
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(selectedReaction: String?) {
-        self.selectedReaction = selectedReaction
+    init(selectedReactions: Set<Emoji>) {
+        self.selectedReactions = selectedReactions
         super.init(frame: .zero)
         setupViews()
     }
@@ -68,11 +68,11 @@ private extension BasicReactionPicker {
 
     func addButtons() {
         var constraints = [NSLayoutConstraint]()
-        ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
+        [Emoji.thumbsUp, .smile, .like, .frown, .thumbsDown].forEach { emoji in
             let button = UIButton()
             button.titleLabel?.font = UIFont.systemFont(ofSize: 30)
-            button.setTitle(emoji, for: .normal)
-            if emoji == selectedReaction {
+            button.setTitle(emoji.value, for: .normal)
+            if selectedReactions.contains(emoji) {
                 button.layer.cornerRadius = 12.0
                 button.layer.masksToBounds = true
                 button.backgroundColor = SemanticColors.Button.reactionBackgroundSelected
@@ -100,7 +100,7 @@ private extension BasicReactionPicker {
     }
 
     @objc func didTapEmoji(sender: UIButton) {
-        guard let reaction = MessageReaction.messageReaction(from: sender.titleLabel?.text ?? "") else { return }
-        delegate?.didPickReaction(reaction: reaction)
+        guard let value = sender.titleLabel?.text else { return }
+        delegate?.didPickReaction(reaction: Emoji(value: value))
     }
 }

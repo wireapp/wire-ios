@@ -58,29 +58,9 @@ public let ZMReactionUsersValueKey      = "users"
         return ZMReactionUnicodeValueKey
     }
 
-    public static func transportReaction(from unicode: String) -> TransportReaction {
-        switch unicode {
-        case MessageReaction.like.unicodeValue:
-            return .heart
-        case MessageReaction.thumbsUp.unicodeValue:
-            return .thumbsUp
-        case MessageReaction.thumbsDown.unicodeValue:
-            return .thumbsDown
-        case MessageReaction.slightlySmiling.unicodeValue:
-            return .slightlySmiling
-        case MessageReaction.beamingFace.unicodeValue:
-            return .beamingFace
-        case MessageReaction.frowningFace.unicodeValue:
-            return .frowningFace
-        default:
-            return .none
-        }
-
-    }
-
     public static func validate(unicode: String) -> Bool {
         let isDelete = unicode.count == 0
-        let isValidReaction = Reaction.transportReaction(from: unicode) != .none
+        let isValidReaction = true
         return isDelete || isValidReaction
     }
 }

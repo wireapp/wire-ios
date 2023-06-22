@@ -206,7 +206,7 @@ import Foundation
         }
 
         enqueue {
-            guard let reaction = ZMMessage.addReaction(.like, toMessage: message) else { return }
+            guard let reaction = ZMMessage.addReaction("❤️", toMessage: message) else { return }
             self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
             self.likeMesssageObserver = ManagedObjectContextChangeObserver(context: self.managedObjectContext, callback: { [weak self] in
                 self?.updateBackgroundTask(with: reaction)

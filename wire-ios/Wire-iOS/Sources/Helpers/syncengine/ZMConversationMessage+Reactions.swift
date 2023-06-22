@@ -39,33 +39,35 @@ extension ZMConversationMessage {
 
         set {
             if newValue {
-                ZMMessage.addReaction(.like, toMessage: self)
+                ZMMessage.addReaction(
+                    Emoji.like.value,
+                    toMessage: self
+                )
             } else {
-                ZMMessage.removeReaction(onMessage: self)
+                ZMMessage.removeReaction(
+                    Emoji.like.value,
+                    onMessage: self
+                )
             }
         }
     }
 
-    var selfUserReaction: MessageReaction? {
-        let selfReaction = self.usersReaction.filter { (_, users) in
-            return users.contains { $0.isSelfUser }
-        }.first
-        guard let key = selfReaction?.key else { return  nil}
-        return MessageReaction.messageReaction(from: key)
+    func selfUserReactions() -> Set<Emoji> {
+        let result = usersReaction
+            .filter { _, users in users.contains(where: \.isSelfUser) }
+            .map { Emoji(value: $0.key) }
+
+        return Set(result)
     }
 
     func hasReactions() -> Bool {
-        return self.usersReaction.map { (_, users) in
-            return users.count
-            }.reduce(0, +) > 0
+        return usersReaction.contains { _, users in
+            !users.isEmpty
+        }
     }
 
     var likers: [UserType] {
-        return usersReaction.filter { (reaction, _) -> Bool in
-            reaction == MessageReaction.like.unicodeValue
-            }.map { (_, users) in
-                return users
-            }.first ?? []
+        return usersReaction[Emoji.like.value] ?? []
     }
 
     var sortedLikers: [UserType] {
@@ -76,12 +78,18 @@ extension ZMConversationMessage {
         return readReceipts.sorted { $0.userType.name < $1.userType.name }
     }
 
-    func addReaction(_ reaction: MessageReaction) {
-        if reaction == selfUserReaction {
-            ZMMessage.removeReaction(onMessage: self)
-            return
+    func react(_ reaction: Emoji) {
+        if selfUserReactions().contains(reaction) {
+            ZMMessage.removeReaction(
+                reaction.value,
+                onMessage: self
+            )
+        } else {
+            ZMMessage.addReaction(
+                reaction.value,
+                toMessage: self
+            )
         }
-        ZMMessage.addReaction(reaction, toMessage: self)
     }
 }
 

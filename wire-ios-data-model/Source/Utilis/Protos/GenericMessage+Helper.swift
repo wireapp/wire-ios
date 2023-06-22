@@ -466,19 +466,43 @@ extension Text {
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
-    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
-        return WireProtos.Reaction.with({
-            $0.emoji = emoji
+
+    public static func createReaction(
+        emojis: Set<String>,
+        messageID: UUID
+    ) -> WireProtos.Reaction {
+        let transportString = emojis
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .joined(separator: ",")
+
+        return WireProtos.Reaction.with {
+            $0.emoji = transportString
             $0.messageID = messageID.transportString()
-        })
+        }
     }
+
+    func toSet() -> Set<String> {
+        let result = emoji
+            .components(separatedBy: ",")
+            .map { String($0) }
+
+        return Set(result)
+    }
+
 }
 
 public enum ProtosReactionFactory {
-    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
-        return WireProtos.Reaction.createReaction(emoji: emoji,
-                                                  messageID: messageID)
+
+    public static func createReaction(
+        emojis: Set<String>,
+        messageID: UUID
+    ) -> WireProtos.Reaction {
+        return WireProtos.Reaction.createReaction(
+            emojis: emojis,
+            messageID: messageID
+        )
     }
+
 }
 
 // MARK: - LastRead

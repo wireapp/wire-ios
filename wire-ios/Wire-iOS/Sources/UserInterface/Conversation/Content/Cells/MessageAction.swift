@@ -59,7 +59,7 @@ enum MessageAction: CaseIterable, Equatable {
     present,
     openQuote,
     resetSession,
-    react(MessageReaction)
+    react(Emoji)
 
     var title: String? {
         let key: String?

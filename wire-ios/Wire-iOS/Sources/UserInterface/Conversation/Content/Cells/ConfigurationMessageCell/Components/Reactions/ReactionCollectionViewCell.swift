@@ -41,13 +41,13 @@ class ReactionCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
 
     public func configureData(
-        type: String,
+        emoji: String,
         count: Int,
         isToggled: Bool,
         onToggle: @escaping () -> Void
     ) {
         reactionToggleButton.configureData(
-            type: type,
+            emoji: emoji,
             count: count,
             isToggled: isToggled,
             onToggle: onToggle
