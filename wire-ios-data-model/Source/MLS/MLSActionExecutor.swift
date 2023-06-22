@@ -328,8 +328,17 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     }
 
     private func sendCommitBundle(_ bundle: CommitBundle) async throws -> [ZMUpdateEvent] {
+        var data = Data()
+        data.append(Data(bundle.commit))
+
+        if let welcome = bundle.welcome {
+            data.append(Data(welcome))
+        }
+
+        data.append(Data(bundle.groupInfo.payload))
+
         return try await actionsProvider.sendCommitBundle(
-            try bundle.protobufData(),
+            data,
             in: context.notificationContext
         )
     }

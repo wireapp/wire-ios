@@ -43,7 +43,11 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
         return ZMTransportRequest(
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
             method: .methodGET,
-            payload: nil,
+            binaryData: nil,
+            type: nil,
+            acceptHeaderType: .anything,
+            contentDisposition: nil,
+            shouldCompress: false,
             apiVersion: apiVersion.rawValue
         )
     }
@@ -53,14 +57,11 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _):
-            guard
-                let data = response.rawData,
-                let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
-            else {
+            guard let data = response.rawData else {
                 action.fail(with: .malformedResponse)
                 return
             }
-            action.succeed(with: payload.groupState)
+            action.succeed(with: data)
         case (404, "mls-missing-group-info"):
             action.fail(with: .missingGroupInfo)
         case (404, "no-conversation"):
