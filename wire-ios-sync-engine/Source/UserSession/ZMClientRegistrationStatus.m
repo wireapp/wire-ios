@@ -32,7 +32,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 
 @interface ZMClientRegistrationStatus ()
 
-@property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
 @property (nonatomic) BOOL isWaitingForCredentials;
 @property (nonatomic) BOOL needsToVerifySelfClient;
 
@@ -211,71 +210,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
            !selfUser.usesCompanyLogin;
 }
 
-- (void)prepareForClientRegistration
-{
-    if (!self.needsToRegisterClient) {
-        return;
-    }
-    
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    if (selfUser.remoteIdentifier == nil) {
-        return;
-    }
-    
-    if ([self needsToCreateNewClientForSelfUser:selfUser]) {
-        ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-        [self insertNewClientForSelfUser:selfUser];
-    }
-    else {
-        // there is already an unregistered client in the store
-        // since there is no change in the managedObject, it will not trigger [ZMRequestAvailableNotification notifyNewRequestsAvailable:] automatically
-        // therefore we need to call it here
-        [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
-    }
-}
-
-- (BOOL)needsToCreateNewClientForSelfUser:(ZMUser *)selfUser
-{
-    if (selfUser.selfClient != nil && !selfUser.selfClient.isZombieObject) {
-        return NO;
-    }
-    UserClient *notYetRegisteredClient = [selfUser.clients.allObjects firstObjectMatchingWithBlock:^BOOL(UserClient *client) {
-        return client.remoteIdentifier == nil;
-    }];
-    return (notYetRegisteredClient == nil);
-}
-
-- (void)insertNewClientForSelfUser:(ZMUser *)selfUser
-{
-    [UserClient insertNewSelfClientInManagedObjectContext:self.managedObjectContext
-                                                 selfUser:selfUser
-                                                    model:[[UIDevice currentDevice] zm_model]
-                                                    label:[[UIDevice currentDevice] name]];
-    
-    [self.managedObjectContext saveOrRollback];
-}
-
-
-- (void)didFetchSelfUser;
-{
-    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    if (self.needsToRegisterClient) {
-        
-        if (self.isAddingEmailNecessary) {
-            [self notifyEmailIsNecessary];
-        }
-        
-        [self prepareForClientRegistration];
-    }
-    else {
-        if (!self.needsToVerifySelfClient) {
-            self.emailCredentials = nil;
-        }
-    }
-    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
-}
-
-
 - (void)didRegisterClient:(UserClient *)client
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
@@ -299,14 +233,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
         [currentSelfClient missesClients:allClientsExceptCurrent];
         [currentSelfClient setLocallyModifiedKeys:[NSSet setWithObject:@"missingClients"]];
     }
-}
-
-- (void)notifyEmailIsNecessary
-{
-    NSError *emailMissingError = [[NSError alloc] initWithDomain:NSError.ZMUserSessionErrorDomain
-                                                            code:ZMUserSessionNeedsToRegisterEmailToRegisterClient
-                                                        userInfo:nil];
-    [self.registrationStatusDelegate didFailToRegisterSelfUserClient:emailMissingError];
 }
 
 - (void)didFetchClients:(NSArray<NSManagedObjectID *> *)clientIDs;
@@ -375,14 +301,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     [selfClient resetLocallyModifiedKeys:selfClient.keysThatHaveLocalModifications];
     [self.managedObjectContext setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
     [self.managedObjectContext saveOrRollback];
-}
-
-- (void)didDeleteClient
-{
-    if (self.isWaitingForClientsToBeDeleted) {
-        self.isWaitingForClientsToBeDeleted = NO;
-        [self prepareForClientRegistration];
-    }
 }
 
 - (void)failedDeletingClient:(NSError *)error

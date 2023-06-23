@@ -212,6 +212,8 @@ public class UserClient: ZMManagedObject, UserClientType {
     @discardableResult
     @objc(insertNewSelfClientInManagedObjectContext:selfUser:model:label:)
     public static func insertNewSelfClient(in managedObjectContext: NSManagedObjectContext, selfUser: ZMUser, model: String, label: String) -> UserClient {
+        WireLogger.userClient.debug("inserting new self client in context \(managedObjectContext)")
+
         let userClient = UserClient.insertNewObject(in: managedObjectContext)
         userClient.user = selfUser
         userClient.model = model
@@ -404,7 +406,11 @@ public extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc static func createOrUpdateSelfUserClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
+    @objc static func createOrUpdateSelfUserClient(
+        _ payloadData: [String: AnyObject],
+        context: NSManagedObjectContext
+    ) -> UserClient? {
+        WireLogger.userClient.info("create or update self user client")
 
         guard let id = payloadData["id"] as? String,
               let type = payloadData["type"] as? String
@@ -422,10 +428,9 @@ public extension UserClient {
         let latitude = (locationCoordinates?["lat"] as NSNumber?) ?? 0
         let longitude = (locationCoordinates?["lon"] as NSNumber?) ?? 0
 
-        // TODO: could optimize: look into self user relationship before executing a fetch request
-        let fetchedClient = fetchExistingUserClient(with: id, in: context)
-        let client = fetchedClient ?? UserClient.insertNewObject(in: context)
-        let isNewClient = fetchedClient == nil
+        let result = fetchOrCreateUserClient(with: id, in: context)
+        let client = result.client
+        let isNewClient = result.isNewClient
 
         client.label = label
         client.type = DeviceType(rawValue: type)
@@ -469,6 +474,29 @@ public extension UserClient {
 
         return client
 
+    }
+
+    private func fetchOrCreateUserClient(
+        with id: UUID,
+        in context: NSManagedObjectContext
+    ) -> (client: UserClient, isNewClient: Bool) {
+        var client: UserClient
+        var isNewClient: Bool
+
+        WireLogger.userClient.info("trying to fetch client with id (\(id))")
+
+        // TODO: could optimize: look into self user relationship before executing a fetch request
+        if let fetchedClient = fetchExistingUserClient(with: id, in: context) {
+            WireLogger.userClient.info("fetched existing user client in context \(context)")
+            client = fetchedClient
+            isNewClient = false
+        } else {
+            WireLogger.userClient.info("no fetched client. inserting new user client in context \(context)")
+            client = UserClient.insertNewObject(in: context)
+            isNewClient = true
+        }
+
+        return (client, isNewClient)
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)

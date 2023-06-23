@@ -380,6 +380,8 @@ public class ZMUserSession: NSObject {
     }
 
     private func createApplicationStatusDirectory() -> ApplicationStatusDirectory {
+        WireLogger.userClient.info("creating application status directory")
+
         let applicationStatusDirectory = ApplicationStatusDirectory(
             withManagedObjectContext: self.syncManagedObjectContext,
             cookieStorage: transportSession.cookieStorage,
