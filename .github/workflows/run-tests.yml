@@ -86,6 +86,18 @@ jobs:
         run: |
           sudo xcode-select -switch /Applications/Xcode_14.2.app
           /usr/bin/xcodebuild -version
+      
+      - uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-carthage-
+      
+      - name: Run carthage
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: carthage build --platform iOS --use-xcframeworks
 
       - name: Setup workspace
         run: |

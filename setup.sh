@@ -46,11 +46,11 @@ XCODE_VERSION=( ${version//./ } )
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️  Carthage bootstrap. This might take a while..."
-if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
-    carthage bootstrap --cache-builds --platform ios --use-xcframeworks
+if [[ -n "${CI}" || -n "${CIRRUS_BUILD_ID}" ]]; then
+    echo "Skipping Carthage bootstrap from setup.sh script since CI or CIRRUS_BUILD_ID is defined"
 else 
-    echo "Skipping Carthage bootstrap from setup.sh script since it's running on Cirrus-CI"
-fi 
+    carthage bootstrap --cache-builds --platform ios --use-xcframeworks
+fi
 echo ""
 
 echo "ℹ️  Installing ImageMagick..."
