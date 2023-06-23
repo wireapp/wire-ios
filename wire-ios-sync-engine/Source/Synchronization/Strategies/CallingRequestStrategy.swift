@@ -370,7 +370,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 if message.isConferenceKey || overMLSSelfConversation {
                     message.send(with: self.messageSync, completion: completionHandler)
                 } else {
-                    Logging.mls.info("ignoring message using mls")
+                    Logging.mls.info("ignoring targeted outgoing calling message b/c it's not CONFKEY nor sent over self conversation")
                 }
             }
         }
