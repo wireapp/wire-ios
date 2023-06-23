@@ -240,17 +240,18 @@ extension VoiceChannelV3: CallActionsInternal {
             return false
         }
 
-        switch state {
-        case .incoming:
-            return callCenter.answerCall(conversation: conversation, video: video)
+        do {
+            switch state {
+            case .incoming:
+                try callCenter.answerCall(conversation: conversation, video: video)
+                return true
 
-        default:
-            do {
+            default:
                 try callCenter.startCall(in: conversation, isVideo: video)
                 return true
-            } catch {
-                return false
             }
+        } catch {
+            return false
         }
     }
 
