@@ -119,7 +119,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             groupInfo: mockPublicGroupState
         )
         XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try expectedCommitBundle.protobufData())
+        XCTAssertEqual(mockSendCommitBundleArguments.first, expectedCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -185,7 +185,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then the commit bundle was sent.
         XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockSendCommitBundleArguments.first, mockCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -242,7 +242,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then the commit bundle was sent.
         XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockSendCommitBundleArguments.first, mockCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -305,7 +305,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then the commit bundle was sent.
         XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockSendCommitBundleArguments.first, mockCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -369,7 +369,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then commit bundle was sent
         XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockSendCommitBundleArguments.first, mockCommitBundle.transportData())
 
         // Then pending group is merged
         XCTAssertEqual(mockMergePendingGroupArguments.count, 1)

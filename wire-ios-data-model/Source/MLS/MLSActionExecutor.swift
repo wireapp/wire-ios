@@ -329,7 +329,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func sendCommitBundle(_ bundle: CommitBundle) async throws -> [ZMUpdateEvent] {
         return try await actionsProvider.sendCommitBundle(
-            try bundle.protobufData(),
+            bundle.transportData(),
             in: context.notificationContext
         )
     }
@@ -406,6 +406,18 @@ extension SendCommitBundleAction.Failure {
         default:
             return .giveUp
         }
+    }
+
+}
+
+extension CommitBundle {
+
+    func transportData() -> Data {
+        var data = Data()
+        data.append(Data(commit))
+        data.append(Data(welcome ?? []))
+        data.append(Data(groupInfo.payload))
+        return data
     }
 
 }

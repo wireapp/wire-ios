@@ -19,58 +19,58 @@
 import WireProtos
 import WireCoreCrypto
 
-extension CommitBundle {
-    func protobufData() throws -> Data {
-        return try Mls_CommitBundle(commitBundle: self).serializedData()
-    }
-}
-
-extension Mls_CommitBundle {
-    init(commitBundle: CommitBundle) {
-        self = Mls_CommitBundle.with {
-            $0.commit = commitBundle.commit.data
-            $0.groupInfoBundle = Mls_GroupInfoBundle(
-                groupInfoBundle: commitBundle.groupInfo
-            )
-
-            if let welcome = commitBundle.welcome {
-                $0.welcome = welcome.data
-            }
-        }
-    }
-}
-
-extension Mls_GroupInfoBundle {
-    init(groupInfoBundle: GroupInfoBundle) {
-        self = Mls_GroupInfoBundle.with {
-            $0.groupInfo = groupInfoBundle.payload.data
-            $0.groupInfoType = Mls_GroupInfoType(encryptionType: groupInfoBundle.encryptionType)
-            $0.ratchetTreeType = Mls_RatchetTreeType(ratchetTreeType: groupInfoBundle.ratchetTreeType)
-        }
-    }
-}
-
-extension Mls_GroupInfoType {
-    init(encryptionType: MlsGroupInfoEncryptionType) {
-        switch encryptionType {
-        case .plaintext:
-            self = .publicGroupState
-        case .jweEncrypted:
-            assertionFailure("JweEncrypted is not supported yet")
-            self = .publicGroupState
-        }
-    }
-}
-
-extension Mls_RatchetTreeType {
-    init(ratchetTreeType: MlsRatchetTreeType) {
-        switch ratchetTreeType {
-        case .full:
-            self = .full
-        case .delta:
-            self = .delta
-        case .byRef:
-            self = .reference
-        }
-    }
-}
+//extension CommitBundle {
+//    func protobufData() throws -> Data {
+//        return try Mls_CommitBundle(commitBundle: self).serializedData()
+//    }
+//}
+//
+//extension Mls_CommitBundle {
+//    init(commitBundle: CommitBundle) {
+//        self = Mls_CommitBundle.with {
+//            $0.commit = commitBundle.commit.data
+//            $0.groupInfoBundle = Mls_GroupInfoBundle(
+//                groupInfoBundle: commitBundle.groupInfo
+//            )
+//
+//            if let welcome = commitBundle.welcome {
+//                $0.welcome = welcome.data
+//            }
+//        }
+//    }
+//}
+//
+//extension Mls_GroupInfoBundle {
+//    init(groupInfoBundle: GroupInfoBundle) {
+//        self = Mls_GroupInfoBundle.with {
+//            $0.groupInfo = groupInfoBundle.payload.data
+//            $0.groupInfoType = Mls_GroupInfoType(encryptionType: groupInfoBundle.encryptionType)
+//            $0.ratchetTreeType = Mls_RatchetTreeType(ratchetTreeType: groupInfoBundle.ratchetTreeType)
+//        }
+//    }
+//}
+//
+//extension Mls_GroupInfoType {
+//    init(encryptionType: MlsGroupInfoEncryptionType) {
+//        switch encryptionType {
+//        case .plaintext:
+//            self = .publicGroupState
+//        case .jweEncrypted:
+//            assertionFailure("JweEncrypted is not supported yet")
+//            self = .publicGroupState
+//        }
+//    }
+//}
+//
+//extension Mls_RatchetTreeType {
+//    init(ratchetTreeType: MlsRatchetTreeType) {
+//        switch ratchetTreeType {
+//        case .full:
+//            self = .full
+//        case .delta:
+//            self = .delta
+//        case .byRef:
+//            self = .reference
+//        }
+//    }
+//}
