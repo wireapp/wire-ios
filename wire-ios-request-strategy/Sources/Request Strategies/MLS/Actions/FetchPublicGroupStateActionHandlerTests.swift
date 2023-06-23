@@ -42,6 +42,7 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
             for: action,
             expectedPath: "/v3/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
             expectedMethod: .methodGET,
+            expectedAcceptType: .messageMLS,
             apiVersion: .v3
         )
     }
@@ -72,23 +73,20 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
 
     // MARK: - Response handling
 
-    private typealias ResponsePayload = FetchPublicGroupStateActionHandler.ResponsePayload
-
-    func test_itHandlesSuccess() {
+    func test_itHandlesSuccess() throws {
         // Given
         let groupState = Data([1, 2, 3])
-        let payload = ResponsePayload(groupState: groupState)
+        let payload = try XCTUnwrap(String(data: groupState, encoding: .utf8)) as ZMTransportData
 
         // When
-        let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
+        let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: payload)
 
         // Then
-        XCTAssertEqual(receivedKeyPackagesCount, payload.groupState)
+        XCTAssertEqual(receivedKeyPackagesCount, groupState)
     }
 
     func test_itHandlesFailures() {
         test_itHandlesFailures([
-            .failure(status: 200, error: .malformedResponse),
             .failure(status: 404, error: .conversationIdOrDomainNotFound),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
             .failure(status: 404, error: .missingGroupInfo, label: "mls-missing-group-info"),
