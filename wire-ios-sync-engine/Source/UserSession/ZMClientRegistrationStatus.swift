@@ -146,7 +146,7 @@ extension ZMClientRegistrationStatus {
     private func notifyEmailIsNecessary() {
         let error = NSError(
             domain: NSError.ZMUserSessionErrorDomain,
-            code: ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient
+            code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
         )
 
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)

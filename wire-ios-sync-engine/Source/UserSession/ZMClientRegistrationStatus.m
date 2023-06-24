@@ -33,7 +33,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 @interface ZMClientRegistrationStatus ()
 
 @property (nonatomic) BOOL isWaitingForCredentials;
-@property (nonatomic) BOOL needsToVerifySelfClient;
 
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 

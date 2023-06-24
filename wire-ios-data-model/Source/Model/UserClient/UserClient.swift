@@ -476,8 +476,8 @@ public extension UserClient {
 
     }
 
-    private func fetchOrCreateUserClient(
-        with id: UUID,
+    private static func fetchOrCreateUserClient(
+        with id: String,
         in context: NSManagedObjectContext
     ) -> (client: UserClient, isNewClient: Bool) {
         var client: UserClient
