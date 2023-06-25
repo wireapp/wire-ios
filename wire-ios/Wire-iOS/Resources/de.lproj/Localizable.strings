@@ -290,11 +290,12 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "Zum Aufnehmen tippen\nSie können es danach %@";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Wählen Sie einen Filter aus";
 
-"conversation.call.many_participants_confirmation.title" = "Anruf bestätigen";
-"conversation.call.many_participants_confirmation.message" = "Sie werden %d Personen anrufen";
+"conversation.call.many_participants_confirmation.title" = "Sind Sie sicher, dass Sie %d Personen anrufen möchten?";
 "conversation.call.many_participants_confirmation.call" = "Anruf";
 
 "conversation.connection_view.in_address_book" = "in Kontakte";
+"conversation.connection_view.encryption_info" = "Kommunikation in Wire ist immer Ende-zu-Ende verschlüsselt. Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.";
+"conversation.connection_view.sensitive_information_warning" = "Bitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
 
 "conversation.input_bar.shortcut.send" = "Nachricht senden";
 "conversation.input_bar.shortcut.newline" = "Zeilenumbruch Einfügen";
@@ -318,6 +319,10 @@
 "conversation.create.services.subtitle" = "Öffnen Sie diese Unterhaltung für Dienste.";
 "conversation.create.receipts.title" = "Lesebestätigungen";
 "conversation.create.receipts.subtitle" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
+"conversation.create.mls.title" = "Protokoll";
+"conversation.create.mls.subtitle" = "Wählen Sie MLS, um eine Gruppe mit dem Messaging-Layer-Security-Protokoll zu erstellen (Beta-Version).";
+"conversation.create.mls.picker_title" = "Protokoll wählen";
+"conversation.create.mls.cancel" = "Abbrechen";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Audionachrichten können während eines Anrufs nicht aufgenommen werden.";
@@ -847,8 +852,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Kontaktanfrage abbrechen?";
-"profile.cancel_connection_request_dialog.message" = "Kontaktanfrage an %@ abbrechen?";
-"profile.cancel_connection_request_dialog.button_no" = "Nein";
+"profile.cancel_connection_request_dialog.message" = "Kontaktanfrage an %@ entfernen.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Abbrechen";
 "profile.cancel_connection_request_dialog.button_yes" = "Ja";
 
 // Unblock button
@@ -882,6 +887,8 @@
 "profile.details.partner" = "extern";
 "profile.details.federated" = "Föderiert";
 "profile.details.blocking_reason" = "Dieser Nutzer ist aufgrund der gesetzlichen Aufbewahrung gesperrt. [MEHR ERFAHREN](%@)";
+"profile.details.identity_warning" = "Verschaffen Sie sich Gewissheit über die Identität von %@, bevor Sie den Kontakt hinzufügen.";
+"profile.details.requested_identity_warning" = "Bitte überprüfen Sie die Identität der Person, bevor Sie die Kontaktanfrage annehmen.";
 
 // Device list
 "profile.devices.title" = "Geräte";
@@ -923,6 +930,10 @@
 "group_details.notification_options_cell.description" = "Immer benachrichtigen (einschließlich Audio- und Videoanrufe) oder nur bei Erwähnungen oder wenn jemand auf eine Ihrer Nachrichten antwortet.";
 "group_details.receipt_options_cell.title" = "Lesebestätigungen";
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
+
+"group_details.message_protocol.section_tile" = "Details zum Protokoll (Beta)";
+"group_details.message_protocol.title" = "Protokoll";
+"group_details.message_protocol.cipher_suite" = "Cipher-Suite";
 
 "group_details.conversation_admins_header.title" = "Gruppen-Admins";
 "group_details.conversation_members_header.title" = "Gruppen-Mitglieder";
@@ -1054,7 +1065,7 @@
 "self.settings.account_details.delete_account.alert.title" = "Benutzerkonto löschen";
 "self.settings.account_details.delete_account.alert.message" = "Wir senden Ihnen eine Nachricht per E-Mail oder SMS. Folgen Sie dem Link, um Ihr Konto endgültig zu löschen.";
 
-"self.settings.account_details.log_out.alert.title" = "Ausloggen";
+"self.settings.account_details.log_out.alert.title" = "Abmelden";
 "self.settings.account_details.log_out.alert.message" = "Der Nachrichtenverlauf wird auf diesem Gerät gelöscht.";
 "self.settings.account_details.log_out.alert.password" = "Passwort";
 
@@ -1958,3 +1969,23 @@
 "credentials.general-error.alert.title" = "Ungültige Informationen";
 "credentials.general-error.alert.message" = "Diese Zugangsdaten sind nicht korrekt. Bitte überprüfen Sie Ihre Angaben und versuchen Sie es erneut.";
 "add-email-password-step.cta-button.title" = "Bestätigen";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "schwarz";
+"drawing.colors.white" = "weiß";
+"drawing.colors.blue" = "dunkelblau";
+"drawing.colors.green" = "grün";
+"drawing.colors.yellow" = "gelb";
+"drawing.colors.red" = "rot";
+"drawing.colors.orange" = "orange";
+"drawing.colors.purple" = "violett";
+"drawing.colors.brown" = "braun";
+"drawing.colors.turquoise" = "türkis";
+"drawing.colors.sky" = "blau";
+"drawing.colors.lime" = "hellgrün";
+"drawing.colors.cyan" = "hellblau";
+"drawing.colors.lilac" = "lila";
+"drawing.colors.coral" = "koralle";
+"drawing.colors.pink" = "pink";
+"drawing.colors.chocolate" = "dunkelbraun";
+"drawing.colors.gray" = "grau";

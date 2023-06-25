@@ -26,6 +26,7 @@ public enum EnvironmentType: Equatable {
     case anta
     case bella
     case chala
+    case foma
     case custom(url: URL)
 
     var stringValue: String {
@@ -44,6 +45,8 @@ public enum EnvironmentType: Equatable {
             return "bella"
         case .chala:
             return "chala"
+        case .foma:
+            return "foma"
         case .custom(url: let url):
             return "custom-\(url.absoluteString)"
         }
@@ -63,6 +66,8 @@ public enum EnvironmentType: Equatable {
             self = .bella
         case EnvironmentType.chala.stringValue:
             self = .chala
+        case EnvironmentType.foma.stringValue:
+            self = .foma
         case let value where value.hasPrefix("custom-"):
             let urlString = value.dropFirst("custom-".count)
             if let url = URL(string: String(urlString)) {
