@@ -104,7 +104,7 @@ class ReactionToggle: UIControl {
            backgroundColor = ButtonColors.backroundReactionNormal
            layer.borderColor = ButtonColors.borderReactionNormal.cgColor
            counterLabel.textColor = SemanticColors.Label.textDefault
-        }        
+        }
     }
 
     // MARK: - Actions
