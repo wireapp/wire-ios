@@ -51,14 +51,20 @@ class ReactionToggle: UIControl {
         layer.cornerRadius = 12
         layer.masksToBounds = true
 
-        let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .center
-        stackView.spacing = 4
+        let insideStackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
+        let stackView = UIStackView(arrangedSubviews: [insideStackView])
 
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 0)
+        insideStackView.axis = .horizontal
+        insideStackView.distribution = .fill
+        insideStackView.alignment = .center
+        insideStackView.spacing = 4
+
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.alignment = .center
+
+        insideStackView.isLayoutMarginsRelativeArrangement = true
+        insideStackView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
 
         stackView.isUserInteractionEnabled = false
 
@@ -68,9 +74,8 @@ class ReactionToggle: UIControl {
 
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
 
         updateAppearance()
