@@ -25,8 +25,9 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
 
     // MARK: - Properties
 
-    lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 40)
-    let flowLayout = UICollectionViewFlowLayout()
+    private var collectionViewHeight: CGFloat = 40
+    private lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: collectionViewHeight)
+    private let flowLayout = UICollectionViewFlowLayout()
     private var contentSizeObservation: NSKeyValueObservation?
     private lazy var collectionView: UICollectionView = {
         return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
@@ -34,7 +35,9 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
 
     var reactions = [MessageReactionMetadata]() {
         didSet {
-            collectionView.reloadData()
+            DispatchQueue.main.async { [self] in
+                collectionView.reloadData()
+            }
         }
     }
 

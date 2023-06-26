@@ -54,7 +54,7 @@ class ReactionCollectionViewCell: UICollectionViewCell {
         )
     }
 
-    func addViews() {
+    private func addViews() {
         backgroundColor = .clear
         addSubview(reactionToggleButton)
 

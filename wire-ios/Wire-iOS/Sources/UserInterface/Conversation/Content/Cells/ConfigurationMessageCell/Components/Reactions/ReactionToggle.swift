@@ -51,14 +51,20 @@ class ReactionToggle: UIControl {
         layer.cornerRadius = 12
         layer.masksToBounds = true
 
-        let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .center
-        stackView.spacing = 4
+        let insideStackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
+        let stackView = UIStackView(arrangedSubviews: [insideStackView])
 
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 0)
+        insideStackView.axis = .horizontal
+        insideStackView.distribution = .fill
+        insideStackView.alignment = .center
+        insideStackView.spacing = 4
+
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.alignment = .center
+
+        insideStackView.isLayoutMarginsRelativeArrangement = true
+        insideStackView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
 
         stackView.isUserInteractionEnabled = false
 
@@ -68,9 +74,8 @@ class ReactionToggle: UIControl {
 
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
 
         updateAppearance()
@@ -96,17 +101,15 @@ class ReactionToggle: UIControl {
     }
 
     private func updateAppearance() {
-        backgroundColor = isToggled
-        ? ButtonColors.backgroundReactionSelected :
-        ButtonColors.backroundReactionNormal
-
-        layer.borderColor = isToggled
-        ? ButtonColors.borderReactionSelected.cgColor :
-        ButtonColors.borderReactionNormal.cgColor
-
-        counterLabel.textColor = isToggled
-        ? SemanticColors.Label.textReactionCounterSelected :
-        SemanticColors.Label.textDefault
+        if isToggled {
+           backgroundColor = ButtonColors.backgroundReactionSelected
+           layer.borderColor = ButtonColors.borderReactionSelected.cgColor
+           counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
+        } else {
+           backgroundColor = ButtonColors.backroundReactionNormal
+           layer.borderColor = ButtonColors.borderReactionNormal.cgColor
+           counterLabel.textColor = SemanticColors.Label.textDefault
+        }
     }
 
     // MARK: - Actions
