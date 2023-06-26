@@ -1,4 +1,4 @@
-name: Trigger Playground Release tasks from CirrusCI
+name: (CirrusCI) Playground
 
 on:  workflow_dispatch
 
@@ -12,6 +12,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@latest
+      - uses: cirruslabs/cirrus-action@v2
         with:
           args: 'Playground'
