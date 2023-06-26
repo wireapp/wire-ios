@@ -33,8 +33,8 @@ final class ReactionsCollectionView: UICollectionView {
 
     func setupLayout() {
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 4
-        layout.minimumInteritemSpacing = 4
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
     }
 
     @available(*, unavailable)
