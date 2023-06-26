@@ -96,17 +96,15 @@ class ReactionToggle: UIControl {
     }
 
     private func updateAppearance() {
-        backgroundColor = isToggled
-        ? ButtonColors.backgroundReactionSelected :
-        ButtonColors.backroundReactionNormal
-
-        layer.borderColor = isToggled
-        ? ButtonColors.borderReactionSelected.cgColor :
-        ButtonColors.borderReactionNormal.cgColor
-
-        counterLabel.textColor = isToggled
-        ? SemanticColors.Label.textReactionCounterSelected :
-        SemanticColors.Label.textDefault
+        if isToggled {
+           backgroundColor = ButtonColors.backgroundReactionSelected
+           layer.borderColor = ButtonColors.borderReactionSelected.cgColor
+           counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
+        } else {
+           backgroundColor = ButtonColors.backroundReactionNormal
+           layer.borderColor = ButtonColors.borderReactionNormal.cgColor
+           counterLabel.textColor = SemanticColors.Label.textDefault
+        }        
     }
 
     // MARK: - Actions
