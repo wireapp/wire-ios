@@ -414,6 +414,7 @@ final class SessionManagerTests: IntegrationTest {
         var tempUrl = self.tmpDirectoryPath().appendingPathComponent("testFile.txt")
         let testData = "Test Message"
         try? testData.write(to: tempUrl, atomically: true, encoding: .utf8)
+        XCTAssertFalse(tempUrl.path.isEmpty)
 
         // WHEN
         withExtendedLifetime(token) {
