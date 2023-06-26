@@ -290,11 +290,12 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "Appuyez pour enregistrer\nVous pouvez l'%@ après cela";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Choisissez un filtre ci-dessus";
 
-"conversation.call.many_participants_confirmation.title" = "Démarrer un appel";
-"conversation.call.many_participants_confirmation.message" = "Cela appellera %d contacts";
+"conversation.call.many_participants_confirmation.title" = "Are you sure you want to call %d people?";
 "conversation.call.many_participants_confirmation.call" = "Appel";
 
 "conversation.connection_view.in_address_book" = "dans les contacts";
+"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "Envoyer un message";
 "conversation.input_bar.shortcut.newline" = "Nouvelle ligne";
@@ -318,6 +319,10 @@
 "conversation.create.services.subtitle" = "Ouvrir cette conversation aux services.";
 "conversation.create.receipts.title" = "Accusés de lecture";
 "conversation.create.receipts.subtitle" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
+"conversation.create.mls.title" = "Protocol";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.picker_title" = "Select Protocol";
+"conversation.create.mls.cancel" = "Annuler";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Appel en cours";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Vous ne pouvez pas enregistrer de message audio pendant un appel.";
@@ -847,8 +852,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Annuler votre demande ?";
-"profile.cancel_connection_request_dialog.message" = "Annuler votre demande de connexion à %@?";
-"profile.cancel_connection_request_dialog.button_no" = "Non";
+"profile.cancel_connection_request_dialog.message" = "Remove connection request to %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Annuler";
 "profile.cancel_connection_request_dialog.button_yes" = "Oui";
 
 // Unblock button
@@ -882,6 +887,8 @@
 "profile.details.partner" = "externe";
 "profile.details.federated" = "Fédéré";
 "profile.details.blocking_reason" = "Cet utilisateur est bloqué en raison de la conservation à des fins juridiques. [PLUS D'INFOS](%@)";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
 
 // Device list
 "profile.devices.title" = "Appareils";
@@ -923,6 +930,10 @@
 "group_details.notification_options_cell.description" = "Vous pouvez être notifié pour tout (y compris les appels audio et vidéo) ou seulement quand quelqu'un vous mentionne ou répond à un de vos messages.";
 "group_details.receipt_options_cell.title" = "Accusés de lecture";
 "group_details.receipt_options_cell.description" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
+
+"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.title" = "Protocol";
+"group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
 "group_details.conversation_admins_header.title" = "Admins du groupe";
 "group_details.conversation_members_header.title" = "Participants à la conversation";
@@ -1030,13 +1041,13 @@
 "self.settings.account_picture_group.alert.choose_picture" = "Choose from Library";
 "self.settings.account_picture_group.alert.take_picture" = "Take Photo";
 "self.settings.account_picture_group.color" = "Profile color";
-"self.settings.account_picture_group.accent_color.blue" = "Blue";
-"self.settings.account_picture_group.accent_color.green" = "Green";
-"self.settings.account_picture_group.accent_color.yellow" = "Yellow";
-"self.settings.account_picture_group.accent_color.red" = "Red";
-"self.settings.account_picture_group.accent_color.amber" = "Amber";
+"self.settings.account_picture_group.accent_color.blue" = "Bleu";
+"self.settings.account_picture_group.accent_color.green" = "Vert";
+"self.settings.account_picture_group.accent_color.yellow" = "Jaune";
+"self.settings.account_picture_group.accent_color.red" = "Rouge";
+"self.settings.account_picture_group.accent_color.amber" = "Ambre";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
-"self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.accent_color.purple" = "Violet";
 
 "self.settings.account_personal_information_group.title" = "Données Personnelles";
 
@@ -1186,7 +1197,7 @@
 // Developer options
 "self.settings.developer_options.title" = "Options du développeur";
 "self.settings.developer_options.loggin.title" = "Options";
-"self.settings.developer_options.database_statistics.title" = "Database Statistics";
+"self.settings.developer_options.database_statistics.title" = "Statistiques de la base de données";
 "self.settings.apns_logging.title" = "Enregistrement des APNS";
 
 // Privacy (visibility) options
@@ -1292,7 +1303,7 @@
 
 // Landing screen
 
-"landing.header" = "Wire. Log in or create a personal account.";
+"landing.header" = "Wire. Connectez-vous ou créez un compte personnel.";
 "landing.welcome_message" = "Vous souhaitez créer un compte Pro ou Entreprise pour votre entreprise ou votre organisation ?";
 "landing.welcome_submessage" = "Cette action n'est malheureusement pas possible depuis l'application - Après avoir créé votre équipe, vous pourrez vous connecter";
 "landing.create_account.title" = "Créer un compte personnel Wire";
@@ -1310,8 +1321,8 @@
 "landing.custom_backend.more_info.button.title" = "Montrer plus";
 "landing.custom_backend.more_info.alert.title" = " Vous êtes connecté au serveur tiers : %@";
 "landing.custom_backend.alert.title" = "Serveur dédié";
-"landing.custom_backend.alert.message.backend-name" = "Backend name:";
-"landing.custom_backend.alert.message.backend-url" = "Backend URL:";
+"landing.custom_backend.alert.message.backend-name" = "Nom du serveur :";
+"landing.custom_backend.alert.message.backend-url" = "URL du serveur:";
 
 // Create team
 
@@ -1349,7 +1360,7 @@
 "guest_room.link.header.subtitle" = "Invitez d'autres personnes avec un lien vers cette conversation. N'importe qui avec le lien peut rejoindre la conversation, même s'ils n'ont pas Wire.";
 "guest_room.link.not_allowed.for_self_team.explanation" = "La génération de liens d'invitation n'est pas autorisée dans votre équipe.";
 "guest_room.link.not_allowed.for_other_team.explanation" = "Vous ne pouvez pas générer de lien d'invitation dans cette conversation, car elle a été créée par un membre d'une autre équipe et cette équipe n'est pas autorisée à utiliser des liens d'invitation.";
-"guest_room.link.disabled.for_other_team.explanation" = "You can't disable the guest option in this conversation, as it has been created by someone from another team.";
+"guest_room.link.disabled.for_other_team.explanation" = "Vous ne pouvez pas désactiver l'option Invité dans cette conversation, car elle a été créée par quelqu'un d'une autre équipe.";
 
 "guest_room.link.button.title" = "Créer le lien";
 
@@ -1877,10 +1888,10 @@
 
 // Custom app lock - create passcode
 "create_passcode.textfield.placeholder" = "";
-"create_passcode.title_label" = "Set a passcode";
-"create_passcode.info_label" = "The app will lock itself after a certain time of inactivity. To unlock the app you need to enter this passcode. Make sure to remember it as there is no way to recover.";
-"create_passcode.info_label_forced_applock" = "The app will lock itself after a certain time of inactivity. To unlock the app you need to enter this passcode. Make sure to remember it as there is no way to recover.";
-"create_passcode.create_button.title" = "Set a Passcode";
+"create_passcode.title_label" = "Créer un code d'accès";
+"create_passcode.info_label" = "L'application se verrouillera après un certain temps d'inactivité. Pour déverrouiller l'application, vous devez entrer ce code d'accès. Assurez-vous de vous souvenir de ce code car il n'y a aucun moyen de le récupérer.";
+"create_passcode.info_label_forced_applock" = "L'application se verrouillera après un certain temps d'inactivité. Pour déverrouiller l'application, vous devez entrer ce code d'accès. Assurez-vous de vous souvenir de ce code car il n'y a aucun moyen de le récupérer.";
+"create_passcode.create_button.title" = "Créer un code d'accès";
 
 // Custom app lock - create passcode validation
 "create_passcode.validation.too_short" = "Minimum de huit caractères";
@@ -1958,3 +1969,23 @@
 "credentials.general-error.alert.title" = "Informations non valides";
 "credentials.general-error.alert.message" = "Ces identifiants de compte sont incorrects. Veuillez vérifier vos informations et réessayer.";
 "add-email-password-step.cta-button.title" = "Confirmer";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "noir";
+"drawing.colors.white" = "blanc";
+"drawing.colors.blue" = "bleu";
+"drawing.colors.green" = "vert";
+"drawing.colors.yellow" = "jaune";
+"drawing.colors.red" = "rouge ";
+"drawing.colors.orange" = "orange";
+"drawing.colors.purple" = "violet";
+"drawing.colors.brown" = "marron";
+"drawing.colors.turquoise" = "turquoise";
+"drawing.colors.sky" = "bleu ciel";
+"drawing.colors.lime" = "citron vert";
+"drawing.colors.cyan" = "cyan";
+"drawing.colors.lilac" = "lilas";
+"drawing.colors.coral" = "corail";
+"drawing.colors.pink" = "rose";
+"drawing.colors.chocolate" = "chocolat";
+"drawing.colors.gray" = "gray";
