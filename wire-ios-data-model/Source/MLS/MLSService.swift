@@ -419,11 +419,12 @@ public final class MLSService: MLSServiceInterface {
         guard let context = context else {
             return
         }
+
         do {
             try createGroup(for: groupID)
-
             let selfUser = ZMUser.selfUser(in: context)
             let mlsSelfUser = MLSUser(from: selfUser)
+
             Task {
                 do {
                     try await addMembersToConversation(with: [mlsSelfUser], for: groupID)

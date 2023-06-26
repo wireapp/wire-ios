@@ -2131,23 +2131,33 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         BackendInfo.domain = "example.com"
 
         // Given a group.
+        let groupID = MLSGroupID.random()
         let expectation1 = self.expectation(description: "CreateConversation should be called")
         let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
+
         mockCoreCrypto.mockCreateConversation = { _, _ in
             expectation1.fulfill()
         }
+
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            expectation2.fulfill()
-            return [ZMUpdateEvent()]
+            return []
         }
 
-        let groupID = MLSGroupID.random()
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = []
+
+        var mockUpdateKeyingMaterialArguments = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = {
+            defer { expectation2.fulfill() }
+            mockUpdateKeyingMaterialArguments.append($0)
+            return []
+        }
 
         // WHEN
         sut.createSelfGroup(for: groupID)
 
         // THEN
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockUpdateKeyingMaterialArguments, [groupID])
     }
 
     func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
