@@ -747,7 +747,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self?.deleteAccountData(for: account)
             }
 
-            // Clear cache directory when the user logout from the session.
             self?.clearCacheDirectory()
 
         })
@@ -907,11 +906,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    //clears cache directory
-    fileprivate func clearCacheDirectory() {
+    private func clearCacheDirectory() {
         guard let cachesDirectoryPath = cachesDirectory else { return }
-            let manager = FileManager.default
-            try? manager.removeItem(at: cachesDirectoryPath)
+        let manager = FileManager.default
+        try? manager.removeItem(at: cachesDirectoryPath)
     }
 
     fileprivate func deleteAccountData(for account: Account) {
