@@ -25,7 +25,8 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
 
     // MARK: - Properties
 
-    lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 40)
+    private var collectionViewHeight: CGFloat = 40
+    lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: collectionViewHeight)
     let flowLayout = UICollectionViewFlowLayout()
     private var contentSizeObservation: NSKeyValueObservation?
     private lazy var collectionView: UICollectionView = {
