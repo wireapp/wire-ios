@@ -35,7 +35,9 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
 
     var reactions = [MessageReactionMetadata]() {
         didSet {
-            collectionView.reloadData()
+            DispatchQueue.main.async {
+                collectionView.reloadData()
+            }
         }
     }
 
