@@ -105,6 +105,11 @@ jobs:
       - name: Run carthage
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: carthage build --platform iOS --use-xcframeworks
+      
+      - uses: actions/cache/save@v3
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
 
       - name: Setup workspace
         run: |
