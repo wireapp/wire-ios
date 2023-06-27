@@ -65,7 +65,7 @@ echo "ℹ️  Installing AWS CLI..."
 if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
     echo "Skipping AWS CLI install because not running on Cirrus-CI"
 else
-    which aws || curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /
+    which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
 fi 
 echo ""
 
