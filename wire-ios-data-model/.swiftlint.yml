@@ -36,5 +36,3 @@ included:
 line_length:
     warning: 400
     error: 400
-
-
