@@ -290,11 +290,12 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "點擊錄製語音訊息\n之後您可%@該訊息";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "選擇特效";
 
-"conversation.call.many_participants_confirmation.title" = "開始通話";
-"conversation.call.many_participants_confirmation.message" = "這將會致電給%d位聯絡人";
+"conversation.call.many_participants_confirmation.title" = "Are you sure you want to call %d people?";
 "conversation.call.many_participants_confirmation.call" = "通話";
 
 "conversation.connection_view.in_address_book" = "在聯絡人中";
+"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "發送訊息";
 "conversation.input_bar.shortcut.newline" = "換行";
@@ -318,6 +319,10 @@
 "conversation.create.services.subtitle" = "Open this conversation to services.";
 "conversation.create.receipts.title" = "讀取回條";
 "conversation.create.receipts.subtitle" = "當這啓用時，參與者可以看到他們在此對話中的消息何時已閱讀。";
+"conversation.create.mls.title" = "Protocol";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.picker_title" = "Select Protocol";
+"conversation.create.mls.cancel" = "取消";
 
 "conversation.input_bar.ongoing_call_alert.title" = "通話中";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通話時不能錄製語音訊息。";
@@ -847,8 +852,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "取消請求？";
-"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
-"profile.cancel_connection_request_dialog.button_no" = "不同意";
+"profile.cancel_connection_request_dialog.message" = "Remove connection request to %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "取消";
 "profile.cancel_connection_request_dialog.button_yes" = "好";
 
 // Unblock button
@@ -882,6 +887,8 @@
 "profile.details.partner" = "外部合作者";
 "profile.details.federated" = "聯邦";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
 
 // Device list
 "profile.devices.title" = "設備";
@@ -923,6 +930,10 @@
 "group_details.notification_options_cell.description" = "您可以收到有關所有內容 (包括音訊和視頻通話) 的通知, 或者僅當有人提及您或回復您的訊息時才會收到通知。";
 "group_details.receipt_options_cell.title" = "讀取回條";
 "group_details.receipt_options_cell.description" = "當這啓用時, 參與者可以看到他們在此對話中的消息何時已閱讀。";
+
+"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.title" = "Protocol";
+"group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
 "group_details.conversation_admins_header.title" = "群組管理員";
 "group_details.conversation_members_header.title" = "群組成員";
@@ -1958,3 +1969,23 @@
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
 "add-email-password-step.cta-button.title" = "確認";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "black";
+"drawing.colors.white" = "white";
+"drawing.colors.blue" = "blue";
+"drawing.colors.green" = "green";
+"drawing.colors.yellow" = "yellow";
+"drawing.colors.red" = "red";
+"drawing.colors.orange" = "orange";
+"drawing.colors.purple" = "purple";
+"drawing.colors.brown" = "brown";
+"drawing.colors.turquoise" = "turquoise";
+"drawing.colors.sky" = "sky";
+"drawing.colors.lime" = "lime";
+"drawing.colors.cyan" = "cyan";
+"drawing.colors.lilac" = "lilac";
+"drawing.colors.coral" = "coral";
+"drawing.colors.pink" = "pink";
+"drawing.colors.chocolate" = "chocolate";
+"drawing.colors.gray" = "gray";
