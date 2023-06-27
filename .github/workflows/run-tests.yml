@@ -259,7 +259,7 @@ jobs:
         with:
           files: |
             build/reports/*.junit
-            
+
   upload-test-results-datadadog:
       runs-on: ubuntu-latest
       needs: run-tests
@@ -270,6 +270,14 @@ jobs:
           uses: actions/download-artifact@v3
           with:
             name: test-reports
+        - name: Debug
+          run: | 
+            echo "."
+            ls -la .
+            echo "build"
+            ls -la build
+            echo "build/reports"
+            ls -la build/reports
         - uses: actions/setup-node@v3
           with:
             node-version: 18
