@@ -92,8 +92,8 @@ jobs:
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
-            path: fastlane/.env
-      
+            path: fastlane/
+    
       - uses: actions/cache@v3
         id: cache-carthage
         with:
@@ -105,11 +105,6 @@ jobs:
       - name: Run carthage
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: carthage build --platform iOS --use-xcframeworks
-      
-      - uses: actions/cache/save@v3
-        with:
-          path: Carthage
-          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
 
       - name: Setup workspace
         run: |
