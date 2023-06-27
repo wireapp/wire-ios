@@ -8,6 +8,8 @@ permissions:
 jobs:
   column_1_restricted:
     runs-on: ubuntu-latest
+    env:
+      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,6 +25,8 @@ jobs:
 
   column_3_restricted:
     runs-on: ubuntu-latest
+    env:
+      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
