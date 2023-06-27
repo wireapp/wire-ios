@@ -719,6 +719,16 @@ public final class SessionManager: NSObject, SessionManagerType {
         logoutCurrentSession(deleteCookie: deleteCookie, error: nil)
     }
 
+    fileprivate func deleteTemporaryData() {
+        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
+        let manager = FileManager.default
+        try? manager
+            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .forEach { file in
+                try? manager.removeItem(atPath: file.path)
+            }
+    }
+
     fileprivate func logoutCurrentSession(deleteCookie: Bool = true, deleteAccount: Bool = false, error: Error?) {
         guard let account = accountManager.selectedAccount else {
             return
@@ -748,6 +758,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
 
             self?.clearCacheDirectory()
+
+            // Clear tmp directory when the user logout from the session.
+            self?.deleteTemporaryData()
 
         })
     }
