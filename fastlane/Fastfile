@@ -51,6 +51,15 @@ platform :ios do
         sh "cd .. && ./setup.sh"
         sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
     end
+    
+    desc "Build & Upload Development build"
+    lane :development do |options|
+        options[:build_type] = "Development"
+        options[:upload_app_center] = true
+        options[:upload_dsyms_to_datadog] = true
+        options[:produce_debug_builds] = true
+        build_and_upload_app(options)
+    end
 
     desc "Build & Upload Playground build"
     lane :playground do |options|

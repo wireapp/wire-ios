@@ -1,0 +1,22 @@
+name: (CirrusCI) Development
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+    
+
+permissions: 
+  checks: write
+
+jobs:
+  development:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: cirruslabs/cirrus-action@v2
+        with:
+          args: 'Development'
