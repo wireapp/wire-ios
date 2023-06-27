@@ -66,6 +66,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     override func tearDown() {
         sut = nil
+        keyMaterialUpdatedExpectation = nil
         mockCoreCrypto = nil
         mockMLSActionExecutor = nil
         mockSyncStatus = nil
@@ -1285,8 +1286,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectation
-        let expectation = XCTestExpectation(description: "did update all keys")
-        keyMaterialUpdatedExpectation = expectation
+        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
+
 
         // When
         let sut = MLSService(
@@ -1302,7 +1303,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        wait(for: [expectation], timeout: 5)
+        waitForCustomExpectations(withTimeout: 5)
 
         // Then we updated the key material.
         XCTAssertEqual(
@@ -1354,8 +1355,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectation
-        let expectation = XCTestExpectation(description: "did update key material")
-        keyMaterialUpdatedExpectation = expectation
+        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalsArguments = [MLSGroupID]()
@@ -1390,7 +1390,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        wait(for: [expectation], timeout: 5)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
 
         // Then we committed the pending proposal.
         XCTAssertEqual(mockCommitPendingProposalsArguments, [groupID])

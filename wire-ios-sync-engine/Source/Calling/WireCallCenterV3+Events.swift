@@ -202,7 +202,8 @@ extension WireCallCenterV3 {
                                            senderUserId: AVSIdentifier,
                                            senderClientId: String,
                                            targets: AVSClientList?,
-                                           data: Data) {
+                                           data: Data,
+                                           overMLSSelfConversation: Bool = false) {
 
         guard isEnabled else { return }
 
@@ -222,7 +223,8 @@ extension WireCallCenterV3 {
                 conversationId: conversationId,
                 targets: targets,
                 data: data,
-                dataLength: data.count
+                dataLength: data.count,
+                overMLSSelfConversation: overMLSSelfConversation
             )
         }
     }
