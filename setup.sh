@@ -46,7 +46,7 @@ XCODE_VERSION=( ${version//./ } )
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️  Carthage bootstrap. This might take a while..."
-if [[ -n "${CI}" || -n "${CIRRUS_BUILD_ID}" ]]; then
+if [[ -n "${CIRRUS_BUILD_ID}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI or CIRRUS_BUILD_ID is defined"
 else 
     carthage bootstrap --cache-builds --platform ios --use-xcframeworks
