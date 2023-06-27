@@ -171,10 +171,12 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4)),
-                                        MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 1)),
-                                        MessageReaction.thumbsUp.unicodeValue: Array(users.prefix(upTo: 6))
+        message.backingUsersReaction = [MessageReaction.thumbsUp.unicodeValue: Array(users.prefix(upTo: 6)),
+                                        MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4)),
+                                        MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 1))
         ]
+
+        _ = message.backingUsersReaction.sorted(by: { $0.value.count > $1.value.count })
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
