@@ -176,8 +176,6 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
                                         MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 1))
         ]
 
-        _ = message.backingUsersReaction.sorted(by: { $0.value.count > $1.value.count })
-
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
         detailsViewController.container.selectIndex(1, animated: false)
