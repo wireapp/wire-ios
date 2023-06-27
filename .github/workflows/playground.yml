@@ -8,6 +8,8 @@ permissions:
 jobs:
   playground:
     runs-on: ubuntu-latest
+    env:
+      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
