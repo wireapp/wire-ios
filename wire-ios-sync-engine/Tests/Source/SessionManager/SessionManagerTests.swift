@@ -404,17 +404,18 @@ final class SessionManagerTests: IntegrationTest {
         return URL(fileURLWithPath: NSTemporaryDirectory())
     }
 
-    func testThatItDestroyedTmpDirectoryAfterLoggedOut() {
+    func testThatItDestroyedTmpDirectoryAfterLoggedOut() throws {
 
         // GIVEN
         XCTAssertTrue(login())
         let observer = SessionManagerObserverMock()
         let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
-
-        var tempUrl = self.tmpDirectoryPath().appendingPathComponent("testFile.txt")
+        let tempUrl = self.tmpDirectoryPath().appendingPathComponent("testFile.txt")
         let testData = "Test Message"
-        try? testData.write(to: tempUrl, atomically: true, encoding: .utf8)
-        XCTAssertFalse(tempUrl.path.isEmpty)
+        try testData.write(to: tempUrl, atomically: true, encoding: .utf8)
+        let fCount = try FileManager.default.contentsOfDirectory(atPath: tmpDirectoryPath().path).count
+        XCTAssertEqual(fCount, 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: tempUrl.path))
 
         // WHEN
         withExtendedLifetime(token) {
