@@ -1,13 +1,6 @@
 name: (CirrusCI) Bund Restricted
 
-on: 
-  workflow_dispatch:
-    inputs:
-        skip_security_tests:
-          description: 'Do you want to skip running security tests?'
-          required: false
-          default: false
-          type: boolean
+on: workflow_dispatch
 
 permissions: 
   checks: write
@@ -19,9 +12,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C1 Restricted'
+          ruby-version: '3.1'
+      - name: Install dependencies
+        run: bundle install
+      - name: Trigger build
+        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"AppStore C1 Restricted"
 
   column_3_restricted:
     runs-on: ubuntu-latest
@@ -29,6 +27,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          args: '-e SKIP_SECURITY_TESTS="${{ inputs.skip_security_tests }}" AppStore C3 Restricted'
+          ruby-version: '3.1'
+      - name: Install dependencies
+        run: bundle install
+      - name: Trigger build
+        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"AppStore C3 Restricted"

@@ -153,6 +153,9 @@ GEM
     highline (2.0.3)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     jmespath (1.6.2)
     json (2.6.3)
@@ -161,6 +164,7 @@ GEM
     mini_magick (4.12.0)
     mini_mime (1.1.2)
     multi_json (1.15.0)
+    multi_xml (0.6.0)
     multipart-post (2.0.0)
     nanaimo (0.3.0)
     naturally (2.2.1)
@@ -224,6 +228,7 @@ DEPENDENCIES
   fastlane-plugin-datadog
   fastlane-plugin-xcconfig
   git
+  httparty
 
 BUNDLED WITH
    2.4.12
