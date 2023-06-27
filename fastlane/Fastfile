@@ -252,8 +252,6 @@ platform :ios do
             end
 
             build = Build.new(options: options)
-            # We need to update the AVS version before running setup script
-            build.update_avs_version()
 
             sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
@@ -359,9 +357,7 @@ platform :ios do
 
         if build.playground_build
             changelog = "Playground build for #{build.git_branch}"
-        elsif build.avs_build
-            changelog = "AVS #{build.avs_version}"
-        elsif build.last_commit.nil? || build.last_commit.empty? 
+        elsif build.last_commit.nil? || build.last_commit.empty?
             changelog = "No changelog available"
         else
             changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
@@ -452,7 +448,6 @@ class Build
     attr_reader :last_commit
     attr_reader :for_simulator
     attr_reader :configuration
-    attr_reader :avs_version
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -481,11 +476,6 @@ class Build
             @for_simulator = for_simulator.to_s == 'true'
         end
 
-        avs_version = options[:avs_version]
-        if !avs_version.nil? && !avs_version.empty?
-            @avs_version = avs_version
-        end
-
         configuration = options[:configuration]
         if configuration.nil? 
             @configuration = "Release"
@@ -512,9 +502,6 @@ class Build
         @build_type == "Internal"
     end
 
-    def avs_build
-        @build_type == "AVS"
-    end
 
     def rc_build
         @build_type == "RC"
@@ -588,8 +575,6 @@ class Build
             result = "internal/#{suffix}"
         when "AppStore"
             result = "release/appstore"
-        when "AVS"
-            result = "avs-experimental/#{suffix}"
         when "RC"
             result = "release/#{suffix}"
         when "Beta"
@@ -600,17 +585,6 @@ class Build
 
         # We want to group related artifacts by the filename.
         result + "/" + filename
-    end
-
-    # Force custom AVS version
-
-    def update_avs_version
-        if @avs_version.nil?
-            UI.important("Using AVS version specified in source control")
-        else
-            %x( sed -i '' 's/^export APPSTORE_AVS_VERSION=.*/export APPSTORE_AVS_VERSION='"#{@avs_version}"'/g' ../avs-versions )
-            UI.important("Using custom AVS version: #{@avs_version}")
-        end
     end
 
     # Adding build number to icon
@@ -636,9 +610,6 @@ class Build
 
     def extra_info
         prefix = ""
-        if !@avs_version.nil?
-            prefix = "AVS:#{@avs_version}-"
-        end
         if rc_build
             version = IO.foreach('../wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig').grep(/WIRE_SHORT_VERSION/).first.split(" = ")[1].chomp
             prefix = "#{version}-"
@@ -652,7 +623,7 @@ class Build
     end
 
     def iconset_name
-        if playground_build || avs_build
+        if playground_build
             "Development"
         elsif rc_build
             "Release"
@@ -664,8 +635,6 @@ class Build
     def app_center_app_name
         if playground_build
             "Wire-iOS-Playground"
-        elsif avs_build
-            "Wire-iOS-AVS"
         elsif development_build
             "Wire-iOS-Development"
         elsif internal_build

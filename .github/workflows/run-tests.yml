@@ -76,8 +76,6 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      GITHUB_AVS_ACCESS_TOKEN: ${{ secrets.ZENKINS_WORKFLOW_PAT }}
-      AVS_REPO: ${{ secrets.AVS_REPO }}
       IOS_VERSION: '16.4'
       IPHONE_MODEL: 'iPhone 8'
       
@@ -96,6 +94,18 @@ jobs:
       - name: Setup simulator
         run: |
           xcrun simctl create My-iphone8 com.apple.CoreSimulator.SimDeviceType.iPhone-8 com.apple.CoreSimulator.SimRuntime.iOS-16-4
+      
+      - uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-carthage-
+      
+      - name: Run carthage
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: carthage build --platform iOS --use-xcframeworks
 
       - name: Setup workspace
         run: |
