@@ -90,12 +90,11 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
             )
 
-            guard let payloadData = try? JSONEncoder().encode(payload) else {
+            guard let payloadData = try? JSONEncoder().encode(payload),
+                  let payloadString = String(data: payloadData, encoding: .utf8) else {
                 XCTFail("failed to encode payload")
                 return
             }
-
-            let payloadString = String(data: payloadData, encoding: .utf8)!
 
             // When
             sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
@@ -169,12 +168,12 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
             )
 
-            guard let payloadData = try? JSONEncoder().encode(payload) else {
+            guard let payloadData = try? JSONEncoder().encode(payload),
+                  let payloadString = String(data: payloadData, encoding: .utf8) else {
                 XCTFail("failed to encode payload")
                 return
             }
 
-            let payloadString = String(data: payloadData, encoding: .utf8)!
 
             // When
             sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
