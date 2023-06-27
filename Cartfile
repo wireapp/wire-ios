@@ -9,7 +9,7 @@ github "wireapp/libsodium" "1.0.14"
 github "wireapp/PINCache" "2.3-xcode13.1"
 github "wireapp/HTMLString" "6.0.1_xcframework"
 github "wireapp/swift-protobuf" "1.15.0_xcframework"
-github "wireapp/wire-avs" "9.2.7"
+binary "wire-avs.json" ~> 9.2.7
 github "wireapp/ZipArchive" "v2.2.3_xcframework"
 github "wireapp/libPhoneNumber-iOS" "0.9.3_xcframework"
 github "wireapp/ocmock" "v3.4.3_Xcode14.2"
