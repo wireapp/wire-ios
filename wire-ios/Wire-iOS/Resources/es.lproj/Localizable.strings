@@ -290,11 +290,12 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "Pulsa para grabar\nPodrás %@ después de hacerlo";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Selecciona un filtro";
 
-"conversation.call.many_participants_confirmation.title" = "Inicia una llamada";
-"conversation.call.many_participants_confirmation.message" = "Llamarás a %d contactos";
+"conversation.call.many_participants_confirmation.title" = "Are you sure you want to call %d people?";
 "conversation.call.many_participants_confirmation.call" = "Llamar";
 
 "conversation.connection_view.in_address_book" = "en contactos";
+"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
+"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 
 "conversation.input_bar.shortcut.send" = "Envía Mensaje";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";
@@ -318,6 +319,10 @@
 "conversation.create.services.subtitle" = "Open this conversation to services.";
 "conversation.create.receipts.title" = "Confirmaciones de lectura";
 "conversation.create.receipts.subtitle" = "Cuando esto está activado, la gente puede ver cuándo se leen sus mensajes en esta conversación.";
+"conversation.create.mls.title" = "Protocol";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.picker_title" = "Select Protocol";
+"conversation.create.mls.cancel" = "Cancelar";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Llamada activa";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "No puede grabar un mensaje de audio durante una llamada.";
@@ -847,8 +852,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "¿Cancelar solicitud?";
-"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
-"profile.cancel_connection_request_dialog.button_no" = "No";
+"profile.cancel_connection_request_dialog.message" = "Remove connection request to %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Cancelar";
 "profile.cancel_connection_request_dialog.button_yes" = "Sí";
 
 // Unblock button
@@ -882,6 +887,8 @@
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
 
 // Device list
 "profile.devices.title" = "Dispositivos";
@@ -923,6 +930,10 @@
 "group_details.notification_options_cell.description" = "Se te notificará acerca de todo (incluidas llamadas de audio y video) o sólo cuando se te menciona.";
 "group_details.receipt_options_cell.title" = "Confirmaciones de lectura";
 "group_details.receipt_options_cell.description" = "Cuando esto está activado, la gente puede ver cuándo se leen sus mensajes en esta conversación.";
+
+"group_details.message_protocol.section_tile" = "Protocol details (beta)";
+"group_details.message_protocol.title" = "Protocol";
+"group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
@@ -1958,3 +1969,23 @@
 "credentials.general-error.alert.title" = "Invalid Information";
 "credentials.general-error.alert.message" = "These account credentials are incorrect. Please verify your details and try again.";
 "add-email-password-step.cta-button.title" = "Confirmar";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "black";
+"drawing.colors.white" = "white";
+"drawing.colors.blue" = "blue";
+"drawing.colors.green" = "green";
+"drawing.colors.yellow" = "yellow";
+"drawing.colors.red" = "red";
+"drawing.colors.orange" = "orange";
+"drawing.colors.purple" = "purple";
+"drawing.colors.brown" = "brown";
+"drawing.colors.turquoise" = "turquoise";
+"drawing.colors.sky" = "sky";
+"drawing.colors.lime" = "lime";
+"drawing.colors.cyan" = "cyan";
+"drawing.colors.lilac" = "lilac";
+"drawing.colors.coral" = "coral";
+"drawing.colors.pink" = "pink";
+"drawing.colors.chocolate" = "chocolate";
+"drawing.colors.gray" = "gray";

@@ -80,13 +80,13 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
     var mockJoinGroup: ((MLSGroupID, Data) async throws -> [ZMUpdateEvent])?
     var mockJoinGroupCount = 0
 
-    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent] {
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         guard let mock = mockJoinGroup else {
             fatalError("no mock for `joinGroup`")
         }
 
         mockJoinGroupCount += 1
-        return try await mock(groupID, publicGroupState)
+        return try await mock(groupID, groupInfo)
     }
 
     // MARK: - On epoch changed

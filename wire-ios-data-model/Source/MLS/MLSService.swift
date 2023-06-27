@@ -211,7 +211,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite) }
+                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
             }
@@ -383,7 +383,7 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             let config = ConversationConfiguration(
-                ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: backendPublicKeys.ed25519Keys,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
@@ -391,6 +391,7 @@ public final class MLSService: MLSServiceInterface {
             try coreCrypto.perform {
                 try $0.createConversation(
                     conversationId: groupID.bytes,
+                    creatorCredentialType: .basic,
                     config: config
                 )
             }
@@ -608,7 +609,7 @@ public final class MLSService: MLSServiceInterface {
     private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
         do {
             let estimatedLocalKeyPackageCount = try coreCrypto.perform {
-                try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite)
+                try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
             let lastCheckWasMoreThan24Hours = userDefaults.hasMoreThan24HoursPassedSinceLastCheck
@@ -652,7 +653,7 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [[Byte]]()
 
         do {
-            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite, amountRequested: amountRequested) }
+            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -789,7 +790,7 @@ public final class MLSService: MLSServiceInterface {
             let proposal = try coreCrypto.perform {
                 try $0.newExternalAddProposal(conversationId: groupID.bytes,
                                               epoch: epoch,
-                                              ciphersuite: defaultCipherSuite,
+                                              ciphersuite: defaultCipherSuite.rawValue,
                                               credentialType: .basic)
             }
 
@@ -879,7 +880,7 @@ public final class MLSService: MLSServiceInterface {
                 throw MLSSendExternalCommitError.conversationNotFound
             }
 
-            let publicGroupState = try await actionsProvider.fetchConversationGroupInfo(
+            let groupInfo = try await actionsProvider.fetchConversationGroupInfo(
                 conversationId: parentConversationInfo.identifier,
                 domain: parentConversationInfo.domain,
                 subgroupType: subgroupType,
@@ -891,12 +892,12 @@ public final class MLSService: MLSServiceInterface {
             if let subgroupID = subgroupID {
                 updateEvents = try await mlsActionExecutor.joinGroup(
                     subgroupID,
-                    publicGroupState: publicGroupState
+                    groupInfo: groupInfo
                 )
             } else {
                 updateEvents = try await mlsActionExecutor.joinGroup(
                     parentID,
-                    publicGroupState: publicGroupState
+                    groupInfo: groupInfo
                 )
 
                 context.performAndWait {
@@ -1381,4 +1382,33 @@ extension UserDefaults {
     func test_setLastKeyPackageCountDate(_ date: Date) {
         lastKeyPackageCountDate = date
     }
+}
+
+extension CiphersuiteName {
+
+    var rawValue: UInt16 {
+        switch self {
+        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
+            return 1
+
+        case .mls128Dhkemp256Aes128gcmSha256P256:
+            return 2
+
+        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
+            return 3
+
+        case .mls256Dhkemx448Aes256gcmSha512Ed448:
+            return 4
+
+        case .mls256Dhkemp521Aes256gcmSha512P521:
+            return 5
+
+        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
+            return 6
+
+        case .mls256Dhkemp384Aes256gcmSha384P384:
+            return 7
+        }
+    }
+
 }
