@@ -28,8 +28,8 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
         static func == (lhs: ConversationMessageToolboxCell.Configuration, rhs: ConversationMessageToolboxCell.Configuration) -> Bool {
             return lhs.deliveryState == rhs.deliveryState &&
-                   lhs.message == rhs.message &&
-                   lhs.selected == rhs.selected
+            lhs.message == rhs.message &&
+            lhs.selected == rhs.selected
         }
     }
 

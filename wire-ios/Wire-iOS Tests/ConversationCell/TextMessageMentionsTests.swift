@@ -21,7 +21,7 @@ import XCTest
 
 // MARK: - Mentions
 
-final class TextMessageMentionsTests: XCTestCase {
+final class TextMessageMentionsTests: ZMSnapshotTestCase {
     var otherUser: MockUserType!
     var selfUser: MockUserType!
 

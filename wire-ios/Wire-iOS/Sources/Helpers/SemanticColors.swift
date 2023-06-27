@@ -61,6 +61,8 @@ public enum SemanticColors {
         static let textTabBar = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
         static let textFieldFloatingLabel = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
         static let textSecurityEnabled = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
     }
 
     public enum SearchBar {
@@ -197,9 +199,14 @@ public enum SemanticColors {
         static let backgroundPickUp = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
+        // Reaction Button
+        static let backroundReactionNormal = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
+        static let borderReactionNormal = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
+        static let backgroundReactionSelected = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue900Dark)
+        static let borderReactionSelected = UIColor(light: Asset.Colors.blue300Light, dark: Asset.Colors.blue700Dark)
+
         /// Audio Buttons
         static let backgroundAudioMessageOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
-
         static let backgroundconfirmSendingAudioMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
     }
 

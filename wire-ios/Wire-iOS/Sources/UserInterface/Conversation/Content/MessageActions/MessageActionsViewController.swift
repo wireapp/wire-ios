@@ -118,7 +118,6 @@ extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
     func emojiPickerDeleteTapped() {}
 }
 
-
 private extension UIView {
     func findLabel(withText text: String) -> UILabel? {
         if let label = self as? UILabel, label.text == text {

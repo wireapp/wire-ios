@@ -39,7 +39,7 @@ enum MessageAction: CaseIterable, Equatable {
                                             .resetSession,
                                             .delete,
                                             .react(.like)]
-    
+
     case
     digitallySign,
     copy,
@@ -210,7 +210,7 @@ enum MessageAction: CaseIterable, Equatable {
             return #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
             return #selector(ConversationMessageActionController.revealMessage)
-        case .react(_):
+        case .react:
             return #selector(ConversationMessageActionController.addReaction(reaction:) )
         case .present,
              .sketchDraw,

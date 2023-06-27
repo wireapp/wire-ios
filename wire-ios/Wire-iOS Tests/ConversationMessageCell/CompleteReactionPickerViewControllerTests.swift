@@ -19,7 +19,6 @@
 @testable import Wire
 import XCTest
 
-
 final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     var sut: CompleteReactionPickerViewController!
@@ -30,11 +29,11 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
         sut.view.setNeedsLayout()
         sut.view.layoutIfNeeded()
     }
-override func tearDown() {
+    override func tearDown() {
         sut = nil
         super.tearDown()
     }
-    
+
     func testReactionPicker() {
         verify(matching: sut)
     }
@@ -46,7 +45,6 @@ override func tearDown() {
         // THEN
         verify(matching: sut)
     }
-
 
     func testReactionPicker_scrolledToBottom() {
         // GIVEN & WHEN
