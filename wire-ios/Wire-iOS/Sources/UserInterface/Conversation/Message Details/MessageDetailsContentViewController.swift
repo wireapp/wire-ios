@@ -24,16 +24,8 @@ import WireCommonComponents
 
 struct MessageDetailsSectionDescription {
 
-    let headerText: String?
-    let items: [MessageDetailsCellDescription]
-
-    init(
-        headerText: String? = nil,
-        items: [MessageDetailsCellDescription]
-    ) {
-        self.headerText = headerText
-        self.items = items
-    }
+    var headerText: String? = nil
+    var items: [MessageDetailsCellDescription]
 
 }
 
@@ -176,7 +168,7 @@ final class MessageDetailsContentViewController: UIViewController {
 
         collectionView.fitIn(view: view)
         subtitleBottom = subtitleLabel.bottomAnchor.constraint(equalTo: safeBottomAnchor)
-        subtitleBottom!.priority = .defaultHigh
+        subtitleBottom?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
             // noResultsView
