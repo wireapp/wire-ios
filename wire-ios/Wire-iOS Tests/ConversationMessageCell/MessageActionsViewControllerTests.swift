@@ -31,16 +31,71 @@ final class MessageActionsViewControllerTests: XCTestCase {
     func testMenuActionsForTextMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
-        message.senderUser = MockUserType.createUser(name: "Bob")
-
         // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForImageMessage() {
+        // GIVEN
+        let message = MockMessageFactory.imageMessage()
+        // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Share", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForAudioMessage() {
+        // GIVEN
+        guard let message = MockMessageFactory.audioMessage() else {
+            XCTFail("audio message shouldn't be nil")
+            return
+        }
+        // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertArrayEqual(actionsTitles, ["Reply", "Details", "Download", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForLocationMessage() {
+        // GIVEN
+        let message = MockMessageFactory.locationMessage()
+        // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForLinkMessage() {
+        // GIVEN
+        guard let message = MockMessageFactory.linkMessage() else {
+            XCTFail("link message shouldn't be nil")
+            return
+        }
+        // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForPingMessage() {
+        // GIVEN
+        let message = MockMessageFactory.pingMessage()
+        // WHEN
+        let actionsTitles = actionsTitlesForMessage(message: message)
+        // THEN
+        XCTAssertArrayEqual(actionsTitles, ["Delete", "Cancel"])
+    }
+
+    func actionsTitlesForMessage(message: MockMessage) -> [String] {
+        message.senderUser = MockUserType.createUser(name: "Bob")
         let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
         let sut = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
 
-        // THEN
-        let actionsTitles = sut.actions.map { $0.title ?? "" }
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        return sut.actions.map { $0.title ?? "" }
     }
+
 }
 
 final class BasicReactionPickerTests: ZMSnapshotTestCase {
