@@ -62,9 +62,11 @@ class MessageActionsViewController: UIAlertController {
 
         view.addSubview(reactionPicker)
         customContentPlaceholder.text = ""
+        reactionPicker.setContentHuggingPriority(.defaultLow, for: .vertical)
+        reactionPicker.setContentCompressionResistancePriority(.required, for: .vertical)
 
         NSLayoutConstraint.activate([
-            reactionPicker.heightAnchor.constraint(equalToConstant: 72),
+            reactionPicker.heightAnchor.constraint(greaterThanOrEqualToConstant: 72),
             reactionPicker.widthAnchor.constraint(equalTo: customContainer.widthAnchor),
             reactionPicker.leadingAnchor.constraint(equalTo: customContainer.leadingAnchor),
             reactionPicker.topAnchor.constraint(equalTo: customContainer.topAnchor),

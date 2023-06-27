@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 
 final class CompleteReactionPickerViewController: UIViewController {
 
@@ -30,6 +31,10 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     private var deleting = false
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     init(selectedReaction: String?) {
         self.selectedReaction = selectedReaction
         super.init(nibName: nil, bundle: nil)
@@ -41,6 +46,11 @@ final class CompleteReactionPickerViewController: UIViewController {
         sectionViewController.sectionDelegate = self
         setupViews()
         createConstraints()
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(preferredContentSizeChanged(_:)),
+                                               name: UIContentSizeCategory.didChangeNotification,
+                                               object: nil)
     }
 
     @available(*, unavailable)
@@ -107,6 +117,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji
+        cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         cell.isCurrent = (emoji == selectedReaction)
         return cell
     }
@@ -115,6 +126,10 @@ final class CompleteReactionPickerViewController: UIViewController {
         let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
         guard let section = minSection  else { return }
         self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
+    }
+
+    @objc func preferredContentSizeChanged(_ notification: Notification) {
+        collectionView.reloadData()
     }
 }
 
