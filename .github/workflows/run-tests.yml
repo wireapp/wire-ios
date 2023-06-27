@@ -76,8 +76,6 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      IOS_VERSION: '16.4'
-      IPHONE_MODEL: 'iPhone 8'
       
     steps:
       - uses: actions/checkout@v3
@@ -90,10 +88,11 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1.5.1
         with:
           xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
-  
-      - name: Setup simulator
-        run: |
-          xcrun simctl create My-iphone8 com.apple.CoreSimulator.SimDeviceType.iPhone-8 com.apple.CoreSimulator.SimRuntime.iOS-16-4
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+            path: fastlane/.env
       
       - uses: actions/cache@v3
         id: cache-carthage

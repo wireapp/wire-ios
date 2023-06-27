@@ -8,11 +8,11 @@ ensure_xcode_version
 
 platform :ios do
     def iPhoneNameForTesting
-        "iPhone 14"
+        ENV['IPHONE_MODEL']
     end
   
     def ios_version
-      16.4
+        ENV['IOS_VERSION']
     end
 
     def appstoreconnect_api_key_file_path 
