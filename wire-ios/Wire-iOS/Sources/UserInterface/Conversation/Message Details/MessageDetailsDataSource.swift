@@ -93,6 +93,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             !$0.items.isEmpty
         }
 
+        self.reactions.sort(by: { $0.items.count > $1.items.count })
+
         self.readReceipts = [
             MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
         ].filter {
@@ -189,6 +191,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             }.filter {
                 !$0.items.isEmpty
             }
+
+            self.reactions.sort(by: { $0.items.count > $1.items.count })
 
             self.readReceipts = [
                 MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
