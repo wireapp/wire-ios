@@ -422,7 +422,7 @@ final class SessionManagerTests: IntegrationTest {
             sessionManager?.logoutCurrentSession()
         }
 
-        let fileCount = try! FileManager.default.contentsOfDirectory(atPath: self.tmpDirectoryPath().path).count
+        let fileCount = try FileManager.default.contentsOfDirectory(atPath: self.tmpDirectoryPath().path).count
 
         // THEN
         XCTAssertEqual(fileCount, 0)
