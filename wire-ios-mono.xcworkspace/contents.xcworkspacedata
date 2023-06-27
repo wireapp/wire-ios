@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:avs-versions">
-   </FileRef>
-   <FileRef
       location = "group:Cartfile">
    </FileRef>
    <FileRef
@@ -20,7 +17,8 @@
          location = "group:Pluginfile">
       </FileRef>
       <FileRef
-         location = "group:Fastfile">
+         location = "group:Fastfile"
+         assignedFileDataType = "public.ruby-script">
       </FileRef>
    </Group>
    <FileRef
@@ -34,9 +32,6 @@
       name = "scripts">
       <FileRef
          location = "group:download-assets.sh">
-      </FileRef>
-      <FileRef
-         location = "group:download-avs.sh">
       </FileRef>
       <FileRef
          location = "group:postprocess.sh">
