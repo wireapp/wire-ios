@@ -280,14 +280,6 @@ jobs:
           uses: actions/download-artifact@v3
           with:
             name: test-reports
-        - name: Debug
-          run: | 
-            echo "."
-            ls -la .
-            echo "build"
-            ls -la build
-            echo "build/reports"
-            ls -la build/reports
         - uses: actions/setup-node@v3
           with:
             node-version: 18
@@ -295,4 +287,4 @@ jobs:
           run: npm install -g @datadog/datadog-ci
         - name: "Upload results"
           run: |
-            DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu datadog-ci junit upload --service wire-ios-mono build/reports/*.junit
+            DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu datadog-ci junit upload --service wire-ios-mono ./*.junit
