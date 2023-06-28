@@ -410,14 +410,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 name: UIApplication.didBecomeActiveNotification,
                 object: nil
             )
-//        NotificationCenter
-//            .default
-//            .addObserver(
-//                self,
-//                selector: #selector(applicationDidEnterBackground(_:)),
-//                name: UIApplication.didEnterBackgroundNotification,
-//                object: nil
-//            )
     }
 
     init(maxNumberAccounts: Int = defaultMaxNumberAccounts,
@@ -1369,9 +1361,6 @@ extension SessionManager {
         notificationsTracker?.dispatchEvent()
     }
 
-//    @objc fileprivate func applicationDidEnterBackground(_ note: Notification) {
-//        recalculateUnreadConversations()
-//    }
 }
 
 // MARK: - Unread Conversation Count
@@ -1404,19 +1393,6 @@ extension SessionManager: ZMConversationListObserver {
             updateUnreadCount(for: accountID)
         }
     }
-
-//    fileprivate func recalculateUnreadConversations() {
-//        for accountID in backgroundUserSessions.keys {
-//            guard let session = backgroundUserSessions[accountID] else { return }
-//
-//            let syncContext = session.syncManagedObjectContext
-//            syncContext.performGroupedBlock {
-//                ZMConversation.calculateLastUnreadMessages1(in: syncContext)
-//                syncContext.saveOrRollback()
-//                NotificationInContext(name: .calculateBadgeCount, context: syncContext.notificationContext).post()
-//            }
-//        }
-//    }
 
     public func updateAppIconBadge(accountID: UUID, unreadCount: Int) {
         DispatchQueue.main.async {
