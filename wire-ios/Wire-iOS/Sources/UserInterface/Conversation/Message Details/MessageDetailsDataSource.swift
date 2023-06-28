@@ -84,22 +84,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         self.conversation = message.conversation!
 
         // Assign the initial data
-        self.reactions = message.usersByReaction.map { reaction, users in
-            MessageDetailsSectionDescription(
-                headerText: "\(reaction.unicodeValue) \(reaction.displayValue) (\(users.count))",
-                items: MessageDetailsCellDescription.makeReactionCells(users)
-            )
-        }.filter {
-            !$0.items.isEmpty
-        }
-
-        self.reactions.sort(by: { $0.items.count > $1.items.count })
-
-        self.readReceipts = [
-            MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
-        ].filter {
-            !$0.items.isEmpty
-        }
+        setupReactions()
+        setupReadReceipts()
 
         // Compute the title and display mode
         let showLikesTab = message.canAddReaction
@@ -150,28 +136,17 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     // MARK: - Changes
 
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
-        // Detect changes in likes
+        // Detect changes in reactions
         if changeInfo.reactionsChanged {
             performChanges {
-                self.reactions = message.usersByReaction.map { reaction, users in
-                    MessageDetailsSectionDescription(
-                        headerText: reaction.unicodeValue,
-                        items: MessageDetailsCellDescription.makeReactionCells(users)
-                    )
-                }.filter {
-                    !$0.items.isEmpty
-                }
+                setupReactions()
             }
         }
 
         // Detect changes in read receipts
         if changeInfo.confirmationsChanged {
             performChanges {
-                self.readReceipts = [
-                    MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
-                ].filter {
-                    !$0.items.isEmpty
-                }
+                setupReadReceipts()
             }
         }
 
@@ -183,21 +158,29 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         performChanges {
-            self.reactions = message.usersByReaction.map { reaction, users in
-                MessageDetailsSectionDescription(
-                    headerText: "\(reaction.unicodeValue) \(reaction.displayValue) (\(users.count))",
-                    items: MessageDetailsCellDescription.makeReactionCells(users)
-                )
-            }.filter {
-                !$0.items.isEmpty
-            }
-
-            self.reactions.sort(by: { $0.items.count > $1.items.count })
-
-            self.readReceipts = [
-                MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
-            ]
+            setupReactions()
+            setupReadReceipts()
         }
+    }
+
+
+    private func setupReactions() {
+        self.reactions = message.usersByReaction.map { reaction, users in
+            MessageDetailsSectionDescription(
+                headerText: "\(reaction.unicodeValue) \(reaction.displayValue) (\(users.count))",
+                items: MessageDetailsCellDescription.makeReactionCells(users)
+            )
+        }.filter {
+            !$0.items.isEmpty
+        }
+
+        self.reactions.sort(by: { $0.items.count > $1.items.count })
+    }
+
+    func setupReadReceipts() {
+        self.readReceipts = [
+            MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+        ]
     }
 
     private func setupObservers() {
