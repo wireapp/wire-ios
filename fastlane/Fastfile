@@ -214,7 +214,7 @@ platform :ios do
             body: trigger_task_body,
             headers: authorization_header
         )
-        puts triggered_task["data"]["trigger"]["task"]["id"]
+        puts "https://cirrus-ci.com/task/#{triggered_task["data"]["trigger"]["task"]["id"]}"
     end
 
     def build_and_upload_app(options)

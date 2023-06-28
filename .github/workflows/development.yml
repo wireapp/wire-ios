@@ -32,10 +32,10 @@ jobs:
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
     steps:
-      - name: Notify on Wire (Automatic Branch)
+      - name: Notify on Wire
         uses: 8398a7/action-slack@v3
         env:
-          TASK_ID: playtest/${{ jobs.development.steps.trigger.stdout }}
+          TASK_URL: ${{ jobs.development.steps.trigger.stdout }}
         with:
           status: ${{ job.status }}
-          text: "Wire Development build triggered. Job: https://cirrus-ci.com/task/${{ env.TASK_ID }}"
+          text: "Wire Development build triggered. Job: ${{ env.TASK_URL }}"
