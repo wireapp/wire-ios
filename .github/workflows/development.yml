@@ -1,0 +1,41 @@
+name: (CirrusCI) Development
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+
+permissions: 
+  checks: write
+
+jobs:
+  development:
+    runs-on: ubuntu-latest
+    env:
+      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+      - name: Install dependencies
+        run: bundle install
+      - name: Trigger build
+        id: trigger
+        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Development"
+  notify:
+    needs: development
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+    steps:
+      - name: Notify on Wire
+        uses: 8398a7/action-slack@v3
+        env:
+          TASK_URL: ${{ jobs.development.steps.trigger.stdout }}
+        with:
+          status: ${{ job.status }}
+          text: "Wire Development build triggered. Job: ${{ env.TASK_URL }}"
