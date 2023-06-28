@@ -1,6 +1,10 @@
 name: (CirrusCI) Development
 
-on:  workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
 
 permissions: 
   checks: write
