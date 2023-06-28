@@ -7,10 +7,17 @@ permissions:
 jobs:
   testflight_beta:
     runs-on: ubuntu-latest
+    env:
+      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: cirruslabs/cirrus-action@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          args: 'Testflight Beta'
+          ruby-version: '3.1'
+      - name: Install dependencies
+        run: bundle install
+      - name: Trigger build
+        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Testflight Beta"
