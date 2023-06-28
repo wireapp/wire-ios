@@ -8297,7 +8297,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/../Cartfile.resolved",
-				"$(SRCROOT)/../avs-versions",
 			);
 			name = EmbedBuildInfo;
 			outputPaths = (
@@ -8305,7 +8304,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Generating ComponentsVersions.plist\"\nsource ../avs-versions\n${SRCROOT}/Scripts/embedBuildInfo --output ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/ComponentsVersions.plist\n";
+			shellScript = "echo \"Generating ComponentsVersions.plist\"\n${SRCROOT}/Scripts/embedBuildInfo --output ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/ComponentsVersions.plist\n";
 		};
 		BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10182,6 +10181,10 @@
 			baseConfigurationReference = 06F3E73224EFAB1800B1083C /* Notification-Extension-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -10266,6 +10269,10 @@
 			baseConfigurationReference = 06F3E73324EFAB1800B1083C /* Notification-Extension-Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -10344,6 +10351,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1B24239219B2C9B00F7035C /* Share-Extension-Debug.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -10355,6 +10366,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1B24238219B2C9B00F7035C /* Share-Extension-Release.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -10384,6 +10399,10 @@
 			baseConfigurationReference = F1B24232219B2C9B00F7035C /* Wire-iOS-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -10402,6 +10421,10 @@
 			baseConfigurationReference = F1B24234219B2C9B00F7035C /* Wire-iOS-Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10416,7 +10439,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F114466821A2F8BC00B5FEBA /* Tests-Debug.xcconfig */;
 			buildSettings = {
-				"EXCLUDED_ARCHS[sdk=iphonesimulator14.4]" = "i386 arm64";
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build",
@@ -10435,6 +10461,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F114466821A2F8BC00B5FEBA /* Tests-Debug.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build",
@@ -10444,7 +10474,7 @@
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				VALIDATE_WORKSPACE = NO;
 			};
 			name = Release;
@@ -10453,6 +10483,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F156509721DCED3000210504 /* CommonComponents-Debug.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -10468,6 +10502,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F156509621DCED3000210504 /* CommonComponents-Release.xcconfig */;
 			buildSettings = {
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;

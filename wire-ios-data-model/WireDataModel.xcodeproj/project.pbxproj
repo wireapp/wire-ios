@@ -4318,7 +4318,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A6891CAD7A790039E10C /* WireDataModel.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = x86_64;
+				"ARCHS[sdk=iphonesimulator*]" = (
+					x86_64,
+					arm64,
+				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -4353,7 +4356,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A67D1CAD7A790039E10C /* ios-test-target.xcconfig */;
 			buildSettings = {
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -4378,7 +4380,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A67C1CAD7A790039E10C /* ios-test-host.xcconfig */;
 			buildSettings = {
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/WireDataModelTestTarget/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
