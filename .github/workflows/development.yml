@@ -27,15 +27,3 @@ jobs:
       - name: Trigger build
         id: trigger
         run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Development"
-  notify:
-    needs: development
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
-    steps:
-      - name: Notify on Wire
-        uses: 8398a7/action-slack@v3
-        env:
-          TASK_URL: ${{ jobs.development.steps.trigger.stdout }}
-        with:
-          status: ${{ job.status }}
-          text: "Wire Development build triggered. Job: ${{ env.TASK_URL }}"
