@@ -298,6 +298,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     let pushTokenService: PushTokenServiceInterface
 
+    var cachesDirectory: URL? {
+        let manager = FileManager.default
+        return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
+    }
+
     public override init() {
         fatal("init() not implemented")
     }
@@ -714,6 +719,16 @@ public final class SessionManager: NSObject, SessionManagerType {
         logoutCurrentSession(deleteCookie: deleteCookie, error: nil)
     }
 
+    fileprivate func deleteTemporaryData() {
+        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
+        let manager = FileManager.default
+        try? manager
+            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .forEach { file in
+                try? manager.removeItem(atPath: file.path)
+            }
+    }
+
     fileprivate func logoutCurrentSession(deleteCookie: Bool = true, deleteAccount: Bool = false, error: Error?) {
         guard let account = accountManager.selectedAccount else {
             return
@@ -741,6 +756,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             if deleteAccount {
                 self?.deleteAccountData(for: account)
             }
+
+            self?.clearCacheDirectory()
+
+            // Clear tmp directory when the user logout from the session.
+            self?.deleteTemporaryData()
+
         })
     }
 
@@ -896,6 +917,12 @@ public final class SessionManager: NSObject, SessionManagerType {
                 completion()
             }
         }
+    }
+
+    private func clearCacheDirectory() {
+        guard let cachesDirectoryPath = cachesDirectory else { return }
+        let manager = FileManager.default
+        try? manager.removeItem(at: cachesDirectoryPath)
     }
 
     fileprivate func deleteAccountData(for account: Account) {
