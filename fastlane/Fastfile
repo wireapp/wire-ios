@@ -214,7 +214,6 @@ platform :ios do
             body: trigger_task_body,
             headers: authorization_header
         )
-        # {"data":{"trigger":{"task":{"id":"6498826324803584"}}}}
         puts triggered_task["data"]["trigger"]["task"]["id"]
     end
 
