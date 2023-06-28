@@ -511,7 +511,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
             let request = self.missingClientsRequest(missingClients: [self.otherClient])
-            
+
             // WHEN
             XCTAssertEqual(message.missingRecipients.count, 1)
             guard let response = self.response(forMissing: [self.otherClient], apiVersion: .v4) else {
@@ -521,7 +521,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
                                              requestUserInfo: request.userInfo,
                                              response: response,
                                              keysToParse: request.keys)
-            
+
             // THEN
             XCTAssertEqual(message.missingRecipients.count, 0)
         }

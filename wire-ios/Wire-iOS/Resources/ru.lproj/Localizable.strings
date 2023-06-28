@@ -290,11 +290,12 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "Нажмите для записи\nПосле этого его можно будет %@";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Выберите фильтр выше";
 
-"conversation.call.many_participants_confirmation.title" = "Начать звонок";
-"conversation.call.many_participants_confirmation.message" = "Вы позвоните %d участникам";
+"conversation.call.many_participants_confirmation.title" = "Вы действительно хотите позвонить %d пользователям?";
 "conversation.call.many_participants_confirmation.call" = "Звонок";
 
 "conversation.connection_view.in_address_book" = "в контактах";
+"conversation.connection_view.encryption_info" = "Общение в Wire всегда защищено сквозным шифрованием. Отправляемые и получаемые сообщения доступны только вам и вашему собеседнику.";
+"conversation.connection_view.sensitive_information_warning" = "Пожалуйста, будьте осторожны со всеми с кем делитесь конфиденциальной информацией.";
 
 "conversation.input_bar.shortcut.send" = "Отправить сообщение";
 "conversation.input_bar.shortcut.newline" = "Вставить разрыв строки";
@@ -318,6 +319,10 @@
 "conversation.create.services.subtitle" = "Открыть эту беседу для сервисов.";
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
+"conversation.create.mls.title" = "Протокол";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
+"conversation.create.mls.picker_title" = "Выбрать протокол";
+"conversation.create.mls.cancel" = "Отмена";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -847,8 +852,8 @@
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Отменить запрос?";
-"profile.cancel_connection_request_dialog.message" = "Cancel your connection request to %@?";
-"profile.cancel_connection_request_dialog.button_no" = "Нет";
+"profile.cancel_connection_request_dialog.message" = "Удалить запрос на добавление %@.";
+"profile.cancel_connection_request_dialog.button_cancel" = "Отмена";
 "profile.cancel_connection_request_dialog.button_yes" = "Да";
 
 // Unblock button
@@ -882,6 +887,8 @@
 "profile.details.partner" = "внешний";
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
+"profile.details.identity_warning" = "Перед добавлением убедитесь в личности %@.";
+"profile.details.requested_identity_warning" = "Прежде чем принять запрос на добавление, подтвердите личность пользователя.";
 
 // Device list
 "profile.devices.title" = "Устройства";
@@ -923,6 +930,10 @@
 "group_details.notification_options_cell.description" = "Вы можете получать уведомления обо всем (включая аудио- и видеовызовы) или только когда кто-то упоминает вас или отвечает на одно из ваших сообщений.";
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
+
+"group_details.message_protocol.section_tile" = "Сведения о протоколе (beta)";
+"group_details.message_protocol.title" = "Протокол";
+"group_details.message_protocol.cipher_suite" = "Набор шифров";
 
 "group_details.conversation_admins_header.title" = "Администраторы группы";
 "group_details.conversation_members_header.title" = "Участники группы";
@@ -1958,3 +1969,23 @@
 "credentials.general-error.alert.title" = "Неверная информация";
 "credentials.general-error.alert.message" = "Эти учетные данные неверны.  Проверьте их и повторите попытку.";
 "add-email-password-step.cta-button.title" = "Подтвердить";
+
+// MARK: - Sketch Colors
+"drawing.colors.black" = "черный";
+"drawing.colors.white" = "белый";
+"drawing.colors.blue" = "синий";
+"drawing.colors.green" = "зеленый";
+"drawing.colors.yellow" = "желтый";
+"drawing.colors.red" = "красный";
+"drawing.colors.orange" = "оранжевый";
+"drawing.colors.purple" = "фиолетовый";
+"drawing.colors.brown" = "коричневый";
+"drawing.colors.turquoise" = "бирюзовый";
+"drawing.colors.sky" = "небо";
+"drawing.colors.lime" = "лайм";
+"drawing.colors.cyan" = "циан";
+"drawing.colors.lilac" = "сирень";
+"drawing.colors.coral" = "коралл";
+"drawing.colors.pink" = "розовый";
+"drawing.colors.chocolate" = "шоколад";
+"drawing.colors.gray" = "серый";

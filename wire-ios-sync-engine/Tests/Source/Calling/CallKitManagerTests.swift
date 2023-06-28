@@ -293,20 +293,6 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(configuration.ringtoneSound, "ringing_from_them_long.caf")
     }
 
-    func testThatItReturnsCustomRingSound() {
-        defer {
-            UserDefaults.standard.removeObject(forKey: "ZMCallSoundName")
-        }
-        let customSoundName = "harp"
-        // given
-        UserDefaults.standard.setValue(customSoundName, forKey: "ZMCallSoundName")
-        // when
-        let configuration = WireSyncEngine.CallKitManager.providerConfiguration
-
-        // then
-        XCTAssertEqual(configuration.ringtoneSound, customSoundName + ".m4a")
-    }
-
     func testThatItInvalidatesTheProviderOnDeinit() {
         // given
         sut = CallKitManager(
@@ -940,7 +926,6 @@ class CallKitManagerTest: DatabaseTest {
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)
     }
-
 
     // MARK: - Rejecting Calls
 

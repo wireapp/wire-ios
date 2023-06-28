@@ -2091,8 +2091,8 @@ internal enum L10n {
           internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
           /// Select Protocol
           internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
-          /// Select MLS to create a MLS conversation (Beta functionality, use at your own risk).
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a MLS conversation (Beta functionality, use at your own risk).")
+          /// Select MLS to create a group using Messaging Layer Security protocol (beta version).
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using Messaging Layer Security protocol (beta version).")
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
@@ -5683,8 +5683,8 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "voice.network_error.title", fallback: "No Internet Connection")
       }
       internal enum PickUpButton {
-        /// Pick Up
-        internal static let title = L10n.tr("Localizable", "voice.pick_up_button.title", fallback: "Pick Up")
+        /// Accept
+        internal static let title = L10n.tr("Localizable", "voice.pick_up_button.title", fallback: "Accept")
       }
       internal enum SpeakerButton {
         /// Speaker
