@@ -94,11 +94,10 @@ extension ZMUserSession {
         self.managedObjectContext.saveOrRollback()
     }
 
-    // move out
-    private func recalculateUnreadConversations() {
+    func recalculateUnreadConversations() {
         WireLogger.badgeCount.info("recalculate unread conversations")
         syncManagedObjectContext.performGroupedBlock {
-            ZMConversation.calculateLastUnreadMessages1(in: self.syncManagedObjectContext)
+            ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)
             self.syncManagedObjectContext.saveOrRollback()
             NotificationInContext(name: .calculateBadgeCount, context: self.syncManagedObjectContext.notificationContext).post()
         }

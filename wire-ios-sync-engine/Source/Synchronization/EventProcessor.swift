@@ -182,7 +182,6 @@ class EventProcessor: UpdateEventProcessor {
             ZMConversation.calculateLastUnreadMessages(in: syncContext)
             syncContext.saveOrRollback()
 
-            //NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
             WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
         }
     }
