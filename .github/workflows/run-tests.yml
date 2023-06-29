@@ -97,6 +97,10 @@ jobs:
       - name: Setup workspace
         run: |
           ./setup.sh
+      
+      - name: Setup simulator
+        run: |
+          fastlane prepare_for_tests
         
       - name: Test WireSystem
         if: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
