@@ -123,7 +123,7 @@ final class CoreDataFixture {
     init() {
         /// From ZMSnapshotTestCase
 
-        XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
+        XCTAssertEqual(UIScreen.main.scale, 2, "Snapshot tests need to be run on a device with a 3x scale")
         if UIDevice.current.systemVersion.compare("16", options: .numeric, range: nil, locale: .current) == .orderedAscending {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 16")
         }

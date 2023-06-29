@@ -37,7 +37,10 @@ final class CallInfoRootViewControllerTests: ZMSnapshotTestCase {
         mockUsers = SwiftMockLoader.mockUsers()
         defaultFixture = CallInfoTestFixture(otherUser: mockOtherUser, selfUser: mockSelfUser, mockUsers: mockUsers)
         CallingConfiguration.config = .largeConferenceCalls
-        UserDefaults.applicationGroup.set(true, forKey: DeveloperFlag.deprecatedCallingUI.rawValue)
+
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.deprecatedCallingUI
+        flag.isOn = true
     }
 
     override func tearDown() {
