@@ -33,8 +33,8 @@ final class ThumbnailCreationTests: ZMSnapshotTestCase {
             return XCTFail("Failed to create thumbnail") }
 
         // Then
-        XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
-        XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
+        XCTAssertEqual(thumbnail.size.width, 150, accuracy: 1)
+        XCTAssertEqual(thumbnail.size.height, 150, accuracy: 1)
         verify(view: thumbnail.wrappedInImageView())
     }
 
@@ -51,7 +51,7 @@ final class ThumbnailCreationTests: ZMSnapshotTestCase {
         }
 
         // Then
-        XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
+        XCTAssertEqual(thumbnail.size.width, 150, accuracy: 1)
         verify(view: thumbnail.wrappedInImageView())
     }
 
@@ -68,7 +68,7 @@ final class ThumbnailCreationTests: ZMSnapshotTestCase {
         }
 
         // Then
-        XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
+        XCTAssertEqual(thumbnail.size.height, 150, accuracy: 1)
         verify(view: thumbnail.wrappedInImageView())
     }
 
