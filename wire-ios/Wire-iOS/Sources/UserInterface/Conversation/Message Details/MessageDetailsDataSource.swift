@@ -179,7 +179,9 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     func setupReadReceipts() {
         readReceipts = [
             MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
-        ]
+        ].filter {
+            !$0.items.isEmpty
+        }
     }
 
     private func setupObservers() {
