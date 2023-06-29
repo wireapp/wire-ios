@@ -26,7 +26,6 @@ final class GroupDetailsFooterViewTests: ZMSnapshotTestCase, CoreDataFixtureTest
 
     override func setUp() {
         super.setUp()
-        recordMode = true
         coreDataFixture = CoreDataFixture()
         SelfUser.provider = coreDataFixture.selfUserProvider
     }

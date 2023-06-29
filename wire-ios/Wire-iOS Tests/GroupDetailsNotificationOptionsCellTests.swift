@@ -27,7 +27,6 @@ class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
     override func setUp() {
         selfUserInTeam = true
         super.setUp()
-        recordMode = true
         cell = GroupDetailsNotificationOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         cell.overrideUserInterfaceStyle = .light
         conversation = self.createGroupConversation()

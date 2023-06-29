@@ -26,7 +26,6 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        recordMode = true
         cell = GroupDetailsTimeoutOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         conversation = createGroupConversation()
     }
