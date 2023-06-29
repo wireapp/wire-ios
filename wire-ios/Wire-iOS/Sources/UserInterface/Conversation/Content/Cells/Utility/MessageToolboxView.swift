@@ -152,7 +152,10 @@ final class MessageToolboxView: UIView {
         setupViews()
         createConstraints()
 
-        tapGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(MessageToolboxView.onTapContent(_:)))
+        tapGestureRecogniser = UITapGestureRecognizer(
+            target: self,
+            action: #selector(MessageToolboxView.onTapContent(_:))
+        )
         tapGestureRecogniser.delegate = self
         addGestureRecognizer(tapGestureRecogniser)
     }
@@ -244,7 +247,11 @@ final class MessageToolboxView: UIView {
         return bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
     }
 
-    func configureForMessage(_ message: ZMConversationMessage, forceShowTimestamp: Bool, animated: Bool = false) {
+    func configureForMessage(
+        _ message: ZMConversationMessage,
+        forceShowTimestamp: Bool,
+        animated: Bool = false
+    ) {
         if dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
@@ -263,7 +270,10 @@ final class MessageToolboxView: UIView {
         guard let dataSource = self.dataSource else { return }
 
         // Do not reload the content if it didn't change.
-        guard let newPosition = dataSource.updateContent(forceShowTimestamp: forceShowTimestamp, widthConstraint: contentWidth) else {
+        guard let newPosition = dataSource.updateContent(
+            forceShowTimestamp: forceShowTimestamp,
+            widthConstraint: contentWidth
+        ) else {
             return
         }
 
@@ -351,7 +361,11 @@ final class MessageToolboxView: UIView {
         timestampTimer = nil
     }
 
-    fileprivate func updateContentStack(to direction: SlideDirection, animated: Bool = false, changes: @escaping () -> Void) {
+    fileprivate func updateContentStack(
+        to direction: SlideDirection,
+        animated: Bool = false,
+        changes: @escaping () -> Void
+    ) {
         if animated {
             contentStack.wr_animateSlideTo(direction, newState: changes)
         } else {
@@ -472,7 +486,10 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         return nil
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         return gestureRecognizer.isEqual(self.tapGestureRecogniser)
     }
 
