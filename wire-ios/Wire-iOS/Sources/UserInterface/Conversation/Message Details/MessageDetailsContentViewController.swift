@@ -294,7 +294,10 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        header.titleLabel.text = ""
+        let section = sections[section]
+        guard let text = section.headerText else { return .zero }
+        let header = SectionHeader(frame: .zero)
+        header.titleLabel.text = text
         header.size(fittingWidth: collectionView.bounds.width)
         return header.bounds.size
     }
