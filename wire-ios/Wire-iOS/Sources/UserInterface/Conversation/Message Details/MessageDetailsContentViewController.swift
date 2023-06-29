@@ -37,8 +37,6 @@ final class MessageDetailsContentViewController: UIViewController {
 
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
-    private var header = SectionHeader(frame: .zero)
-
     /// The type of the displayed content.
     enum ContentType {
         case reactions, receipts(enabled: Bool)
@@ -72,6 +70,8 @@ final class MessageDetailsContentViewController: UIViewController {
             subtitleLabel.accessibilityValue = newValue
         }
     }
+
+    private let sectionHeaderIdentifier = "SectionHeader"
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -127,7 +127,8 @@ final class MessageDetailsContentViewController: UIViewController {
     private func configureSubviews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        collectionView = UICollectionView(forGroupedSections: (), usedInMessageDetailsVC: true)
+        collectionView = UICollectionView(forGroupedSections: ())
+        collectionView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 32, right: 0)
         collectionView.contentInset.bottom = 64
         collectionView.allowsMultipleSelection = false
         collectionView.allowsSelection = true
@@ -141,7 +142,7 @@ final class MessageDetailsContentViewController: UIViewController {
         collectionView?.register(
             SectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "SectionHeader"
+            withReuseIdentifier: sectionHeaderIdentifier
         )
         view.addSubview(collectionView)
 
@@ -309,7 +310,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
     ) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "SectionHeader",
+            withReuseIdentifier: sectionHeaderIdentifier,
             for: indexPath
         )
         let section = sections[indexPath.section]
