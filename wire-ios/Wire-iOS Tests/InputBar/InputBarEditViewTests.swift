@@ -24,6 +24,7 @@ class InputBarEditViewTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        recordMode = true
         snapshotBackgroundColor = UIColor.white
         sut = InputBarEditView()
         sut.translatesAutoresizingMaskIntoConstraints = false
