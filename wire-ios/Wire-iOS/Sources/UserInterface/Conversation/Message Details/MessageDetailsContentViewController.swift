@@ -128,8 +128,7 @@ final class MessageDetailsContentViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         collectionView = UICollectionView(forGroupedSections: ())
-        collectionView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 32, right: 0)
-        collectionView.contentInset.bottom = 64
+        collectionView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 64, right: 0)
         collectionView.allowsMultipleSelection = false
         collectionView.allowsSelection = true
         collectionView.alwaysBounceVertical = true
