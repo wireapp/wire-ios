@@ -23,7 +23,7 @@ import WireDataModel
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: Wire.MessageActionsViewController) {
-        
+
     }
 
     func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {

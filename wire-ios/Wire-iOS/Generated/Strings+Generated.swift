@@ -2099,8 +2099,8 @@ internal enum L10n {
           internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
           /// Select Protocol
           internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
-          /// Select MLS to create a MLS conversation (Beta functionality, use at your own risk).
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a MLS conversation (Beta functionality, use at your own risk).")
+          /// Select MLS to create a group using Messaging Layer Security protocol (beta version).
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using Messaging Layer Security protocol (beta version).")
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
@@ -3540,12 +3540,12 @@ internal enum L10n {
     internal enum MessageDetails {
       /// Message Details
       internal static let combinedTitle = L10n.tr("Localizable", "message_details.combined_title", fallback: "Message Details")
-      /// No one has liked this message yet.
-      internal static let emptyLikes = L10n.tr("Localizable", "message_details.empty_likes", fallback: "No one has liked this message yet.")
+      /// No one has reacted to this message yet.
+      internal static let emptyLikes = L10n.tr("Localizable", "message_details.empty_likes", fallback: "No one has reacted to this message yet.")
       /// No one has read this message yet.
       internal static let emptyReadReceipts = L10n.tr("Localizable", "message_details.empty_read_receipts", fallback: "No one has read this message yet.")
-      /// Liked
-      internal static let likesTitle = L10n.tr("Localizable", "message_details.likes_title", fallback: "Liked")
+      /// Reactions
+      internal static let reactionsTitle = L10n.tr("Localizable", "message_details.reactions_title", fallback: "Reactions")
       /// Read receipts were not on when this message was sent.
       internal static let readReceiptsDisabled = L10n.tr("Localizable", "message_details.read_receipts_disabled", fallback: "Read receipts were not on when this message was sent.")
       /// Read
@@ -3565,9 +3565,9 @@ internal enum L10n {
       /// Read at
       internal static let userReadTimestampSubtitleLabel = L10n.tr("Localizable", "message_details.user_read_timestamp_subtitle_label", fallback: "Read at")
       internal enum Tabs {
-        /// Liked (%d)
-        internal static func likes(_ p1: Int) -> String {
-          return L10n.tr("Localizable", "message_details.tabs.likes", p1, fallback: "Liked (%d)")
+        /// Reactions (%d)
+        internal static func reactions(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message_details.tabs.reactions", p1, fallback: "Reactions (%d)")
         }
         /// Read (%d)
         internal static func seen(_ p1: Int) -> String {
@@ -5691,8 +5691,8 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "voice.network_error.title", fallback: "No Internet Connection")
       }
       internal enum PickUpButton {
-        /// Pick Up
-        internal static let title = L10n.tr("Localizable", "voice.pick_up_button.title", fallback: "Pick Up")
+        /// Accept
+        internal static let title = L10n.tr("Localizable", "voice.pick_up_button.title", fallback: "Accept")
       }
       internal enum SpeakerButton {
         /// Speaker

@@ -320,7 +320,7 @@
 "conversation.create.receipts.title" = "Read receipts";
 "conversation.create.receipts.subtitle" = "When this is on, people can see when their messages in this conversation are read.";
 "conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a MLS conversation (Beta functionality, use at your own risk).";
+"conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Cancel";
 
@@ -661,7 +661,7 @@
 "voice.cancel_button.title" = "Cancel";
 "voice.call_button.title" = "Call";
 "voice.end_call_button.title" = "End Call";
-"voice.pick_up_button.title" = "Pick Up";
+"voice.pick_up_button.title" = "Accept";
 "voice.calling.title" = "Calling...";
 "voice.call_error.unsupported_version.title" = "Please update Wire";
 "voice.call_error.unsupported_version.message" = "You received a call that isn't supported by this version of Wire.\nGet the latest version in the App Store.";
@@ -1833,14 +1833,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "No one has liked this message yet.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "No one has read this message yet.";
 "message_details.read_receipts_disabled" = "Read receipts were not on when this message was sent.";
 "message_details.combined_title" = "Message Details";
-"message_details.likes_title" = "Liked";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Read";
 "message_details.tabs.seen" = "Read (%d)";
-"message_details.tabs.likes" = "Liked (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Sent: %@";
 "message_details.subtitle_edit_date" = "Edited: %@";
 "message_details.subtitle_label_voiceOver" = "Message Details";

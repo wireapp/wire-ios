@@ -175,7 +175,6 @@ enum EmojiSectionType: String {
         }
     }
 
-
     var imageAsset: ImageAsset {
         switch self {
         case .recent: return Asset.Images.recents

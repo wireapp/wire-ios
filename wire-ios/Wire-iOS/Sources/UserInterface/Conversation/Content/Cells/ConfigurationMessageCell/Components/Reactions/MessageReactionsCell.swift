@@ -47,6 +47,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     }
 
+    private var collectionViewLeadingAnchorValue: CGFloat = 40
+
     let reactionCollectionView = ReactionCollectionView()
 
     var isSelected: Bool  = false
@@ -80,7 +82,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
         NSLayoutConstraint.activate([
             reactionCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 40),
+            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: collectionViewLeadingAnchorValue),
             reactionCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
             reactionCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])

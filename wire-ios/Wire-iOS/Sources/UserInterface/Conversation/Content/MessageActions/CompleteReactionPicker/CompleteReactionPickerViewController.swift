@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 
 final class CompleteReactionPickerViewController: UIViewController {
 
@@ -27,7 +28,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
     private let selectedReactions: Set<Emoji>
-
+    
     private var deleting = false
 
     init(selectedReactions: Set<Emoji>) {
@@ -41,11 +42,20 @@ final class CompleteReactionPickerViewController: UIViewController {
         sectionViewController.sectionDelegate = self
         setupViews()
         createConstraints()
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(preferredContentSizeChanged(_:)),
+                                               name: UIContentSizeCategory.didChangeNotification,
+                                               object: nil)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -81,7 +91,11 @@ final class CompleteReactionPickerViewController: UIViewController {
     private func createConstraints() {
         guard let sectionViewControllerView = sectionViewController.view else { return }
 
+        <<<<<<< HEAD
         [topBar, searchBar,collectionView, sectionViewControllerView].prepareForLayout()
+        =======
+        [topBar, searchBar, collectionView, sectionViewControllerView].prepareForLayout()
+        >>>>>>> reactions/conversation-details
 
         NSLayoutConstraint.activate([
             topBar.topAnchor.constraint(equalTo: safeTopAnchor),
@@ -106,8 +120,14 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
+        <<<<<<< HEAD
         cell.titleLabel.text = emoji.value
         cell.isCurrent = selectedReactions.contains(emoji)
+        =======
+        cell.titleLabel.text = emoji
+        cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        cell.isCurrent = (emoji == selectedReaction)
+        >>>>>>> reactions/conversation-details
         return cell
     }
 
@@ -115,6 +135,10 @@ final class CompleteReactionPickerViewController: UIViewController {
         let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
         guard let section = minSection  else { return }
         self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
+    }
+
+    @objc func preferredContentSizeChanged(_ notification: Notification) {
+        collectionView.reloadData()
     }
 }
 

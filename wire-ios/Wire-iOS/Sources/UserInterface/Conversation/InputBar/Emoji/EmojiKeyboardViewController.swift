@@ -184,7 +184,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
+
     var isCurrent: Bool = false {
         didSet {
             guard isCurrent else {
@@ -197,7 +197,6 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
             layer.borderColor = SemanticColors.Button.reactionBorderSelected.cgColor
         }
     }
-
 
     func setupViews() {
         titleLabel.textAlignment = .center

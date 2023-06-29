@@ -1257,7 +1257,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};

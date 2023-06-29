@@ -43,6 +43,8 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
                 isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
                 performReaction: nil
             )
+        }.sorted {
+            return $0.count > $1.count
         }
 
         self.configuration = View.Configuration(reactions: reactions)
