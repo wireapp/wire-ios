@@ -102,8 +102,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-          bundler-cache: true
-      
+              
+      - name: Install dependencies
+        run: bundle install      
+
       - name: Setup simulator
         run: |
           bundle exec fastlane prepare_for_tests
@@ -267,6 +269,7 @@ jobs:
           name: test-reports
           path: |
             build/reports/*.junit
+
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
