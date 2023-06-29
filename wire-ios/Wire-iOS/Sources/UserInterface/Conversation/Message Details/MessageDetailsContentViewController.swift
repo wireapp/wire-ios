@@ -37,7 +37,6 @@ final class MessageDetailsContentViewController: UIViewController {
 
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
-    private var header = SectionHeader(frame: .zero)
 
     /// The type of the displayed content.
     enum ContentType {
@@ -294,7 +293,10 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        header.titleLabel.text = ""
+        let section = sections[section]
+        guard let text = section.headerText else { return .zero }
+        let header = SectionHeader(frame: .zero)
+        header.titleLabel.text = text
         header.size(fittingWidth: collectionView.bounds.width)
         return header.bounds.size
     }

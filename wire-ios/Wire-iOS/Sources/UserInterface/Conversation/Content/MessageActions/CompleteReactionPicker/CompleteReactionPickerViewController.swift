@@ -91,11 +91,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     private func createConstraints() {
         guard let sectionViewControllerView = sectionViewController.view else { return }
 
-        <<<<<<< HEAD
-        [topBar, searchBar,collectionView, sectionViewControllerView].prepareForLayout()
-        =======
         [topBar, searchBar, collectionView, sectionViewControllerView].prepareForLayout()
-        >>>>>>> reactions/conversation-details
 
         NSLayoutConstraint.activate([
             topBar.topAnchor.constraint(equalTo: safeTopAnchor),
@@ -120,14 +116,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
-        <<<<<<< HEAD
         cell.titleLabel.text = emoji.value
-        cell.isCurrent = selectedReactions.contains(emoji)
-        =======
-        cell.titleLabel.text = emoji
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = (emoji == selectedReaction)
-        >>>>>>> reactions/conversation-details
+        cell.isCurrent = selectedReactions.contains(emoji)
         return cell
     }
 
