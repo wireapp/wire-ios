@@ -24,4 +24,8 @@ public extension UserType {
         return canAccessCompanyInformation(of: otherUser)
     }
 
+    var isTemporaryUser: Bool {
+        return expiresAfter > 0.0
+    }
+
 }
