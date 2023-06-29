@@ -465,6 +465,7 @@ extension Payload {
             case timestamp = "time"
             case type
             case data
+            case failedToAddUsers = "failed_to_add"
         }
 
         let id: UUID?
@@ -474,6 +475,7 @@ extension Payload {
         let timestamp: Date?
         let type: String?
         let data: T
+        let failedToAddUsers: [QualifiedID]?
     }
 
     struct UpdateConverationMemberLeave: CodableEventData {

@@ -123,6 +123,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    ///
     func testUpdateOrCreateConversation_Group_AddSystemMessageWhenFailedToAddUsers() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -936,7 +937,8 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             qualifiedFrom: otherUser.qualifiedID,
             timestamp: nil,
             type: nil,
-            data: payload
+            data: payload,
+            failedToAddUsers: nil
         )
     }
 
