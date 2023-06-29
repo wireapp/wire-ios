@@ -30,7 +30,6 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     override func setUp() {
         super.setUp()
-        recordMode = true
         coreDataFixture = CoreDataFixture()
         mockConversation = createTeamGroupConversation()
         mockZMUserSession = MockZMUserSession()
