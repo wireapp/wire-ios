@@ -1353,7 +1353,6 @@ extension SessionManager {
     }
 
     @objc func applicationWillResignActive(_ note: Notification) {
-        updateAllUnreadCounts()
         activeUserSession?.appLockController.beginTimer()
     }
 
