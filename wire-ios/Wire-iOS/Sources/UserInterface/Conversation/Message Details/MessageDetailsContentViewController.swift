@@ -24,7 +24,7 @@ import WireCommonComponents
 
 struct MessageDetailsSectionDescription {
 
-    var headerText: String? = nil
+    var headerText: String?
     var items: [MessageDetailsCellDescription]
 
 }
