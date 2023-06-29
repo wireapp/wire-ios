@@ -98,9 +98,15 @@ jobs:
         run: |
           ./setup.sh
       
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+      
       - name: Setup simulator
         run: |
-          fastlane prepare_for_tests
+          bundle exec fastlane prepare_for_tests
         
       - name: Test WireSystem
         if: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
