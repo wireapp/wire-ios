@@ -25,6 +25,7 @@ final class DestructionCountdownViewTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        recordMode = true
     }
 
     override func tearDown() {

@@ -20,7 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
     var sut: ConversationViewController!
     var mockConversation: ZMConversation!
@@ -30,7 +30,7 @@ final class ConversationViewControllerSnapshotTests: XCTestCase, CoreDataFixture
 
     override func setUp() {
         super.setUp()
-
+        recordMode = true
         coreDataFixture = CoreDataFixture()
         mockConversation = createTeamGroupConversation()
         mockZMUserSession = MockZMUserSession()
