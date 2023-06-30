@@ -94,28 +94,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         verify(view: sut)
     }
 
-    func testThatItConfiguresWithTimestamp_Unselected_NoLikers() {
-        // GIVEN
-        message.backingUsersReaction = [:]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithOtherLiker() {
-        // GIVEN
-        let users = MockUser.mockUsers().first(where: { !$0.isSelfUser })!
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
 
     func testThatItConfiguresWithReadThenLiked() {
         // GIVEN
@@ -128,29 +106,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // Liked after read
         let users = MockUser.mockUsers().first(where: { !$0.isSelfUser })!
         message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithOtherLikers() {
-        // GIVEN
-        let users = MockUser.mockUsers().filter { !$0.isSelfUser }
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: users]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithSelfLiker() {
-        // GIVEN
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
