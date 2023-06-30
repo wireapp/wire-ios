@@ -49,6 +49,18 @@ import Foundation
         case .thumbsDown: return "👎"
         }
     }
+
+    public var displayValue: String {
+        switch unicodeValue {
+        case "❤️": return "Red Heart"
+        case "👍": return "Thumbs Up"
+        case "🙂": return "Slightly Smiling"
+        case "😁": return "Beaming Face"
+        case "☹️": return "Frowing Face"
+        case "👎": return "Thumbs Down"
+        default: return "break"
+        }
+    }
 }
 
 extension ZMMessage {

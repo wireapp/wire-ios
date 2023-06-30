@@ -50,22 +50,28 @@ extension ZMConversationMessage {
         let selfReaction = self.usersReaction.filter { (_, users) in
             return users.contains { $0.isSelfUser }
         }.first
-        guard let key = selfReaction?.key else { return  nil}
+        guard let key = selfReaction?.key else { return  nil }
         return MessageReaction.messageReaction(from: key)
     }
 
     func hasReactions() -> Bool {
         return self.usersReaction.map { (_, users) in
             return users.count
-            }.reduce(0, +) > 0
+        }.reduce(0, +) > 0
+    }
+
+    var usersByReaction: [MessageReaction: [UserType]] {
+        return usersReaction.mapKeys { reactionString in
+            MessageReaction.messageReaction(from: reactionString)!
+        }
     }
 
     var likers: [UserType] {
         return usersReaction.filter { (reaction, _) -> Bool in
             reaction == MessageReaction.like.unicodeValue
-            }.map { (_, users) in
-                return users
-            }.first ?? []
+        }.map { (_, users) in
+            return users
+        }.first ?? []
     }
 
     var sortedLikers: [UserType] {
