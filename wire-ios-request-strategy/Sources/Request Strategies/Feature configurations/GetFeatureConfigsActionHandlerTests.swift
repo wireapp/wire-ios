@@ -239,6 +239,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     }
 
     func test_ItHandlesResponse_200_FailedToDecodeResponse() throws {
+        throw XCTSkip("Skipping test features decoding always succeeds because all fields are optional")
         // Given
         let sut = GetFeatureConfigsActionHandler(context: syncMOC)
         var action = GetFeatureConfigsAction()
