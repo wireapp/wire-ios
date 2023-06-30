@@ -243,7 +243,14 @@ jobs:
           echo "Testing Wire-iOS..."
           xcodebuild test -retry-tests-on-failure  -test-repetition-relaunch-enabled YES -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | xcpretty --report junit --screenshots --output build/reports/Wire-iOS.junit
           exit ${PIPESTATUS[0]}
-          
+
+      - name: Upload Failed snapshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: Failed Snapshots
+          path: SnapshotResults/    
+
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
       # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
       # after the Wire-iOS.
@@ -264,7 +271,6 @@ jobs:
           name: test-reports
           path: |
             build/reports/*.junit
-            SnapshotResults/*
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
