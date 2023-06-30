@@ -164,9 +164,10 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     }
 
     private func setupReactions() {
-        reactions = message.usersByReaction.map { reaction, users in
-            MessageDetailsSectionDescription(
-                headerText: "\(reaction.unicodeValue) \(reaction.displayValue) (\(users.count))",
+        reactions = message.usersReaction.map { reaction, users in
+            let emoji = Emoji(value: reaction)
+            return MessageDetailsSectionDescription(
+                headerText: "\(emoji.value) \(emoji.name ?? "") (\(users.count))",
                 items: MessageDetailsCellDescription.makeReactionCells(users)
             )
         }.filter {
