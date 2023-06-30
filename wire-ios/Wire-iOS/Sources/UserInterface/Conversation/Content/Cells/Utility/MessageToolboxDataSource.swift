@@ -59,6 +59,8 @@ extension MessageToolboxContent: Comparable {
 
 class MessageToolboxDataSource {
 
+    typealias ContentSystem = L10n.Localizable.Content.System
+
     /// The displayed message.
     let message: ZMConversationMessage
 
@@ -110,7 +112,7 @@ class MessageToolboxDataSource {
         }
         // 2) Failed to send
         else if failedToSend && isSentBySelfUser {
-            let detailsString = "content.system.failedtosend_message_timestamp".localized && attributes
+            let detailsString = ContentSystem.failedtosendMessageTimestamp && attributes
             content = .sendFailure(detailsString)
         }
 
@@ -197,13 +199,13 @@ class MessageToolboxDataSource {
 
         switch message.deliveryState {
         case .pending:
-            deliveryStateString = "content.system.pending_message_timestamp".localized
+            deliveryStateString = ContentSystem.pendingMessageTimestamp
         case .read:
             return selfStatusForReadDeliveryState(for: message)
         case .delivered:
-            deliveryStateString = "content.system.message_delivered_timestamp".localized
+            deliveryStateString = ContentSystem.messageDeliveredTimestamp
         case .sent:
-            deliveryStateString = "content.system.message_sent_timestamp".localized
+            deliveryStateString = ContentSystem.messageSentTimestamp
         case .invalid, .failedToSend:
             return nil
         }
@@ -255,10 +257,10 @@ class MessageToolboxDataSource {
         let timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
-            timestampString = String(format: "content.system.edited_message_prefix_timestamp".localized, editedTimeString)
+            timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
         } else if let dateTimeString = message.formattedReceivedDate() {
             if let systemMessage = message as? ZMSystemMessage, systemMessage.systemMessageType == .messageDeletedForEveryone {
-                timestampString = String(format: "content.system.deleted_message_prefix_timestamp".localized, dateTimeString)
+                timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
             } else if let durationString = message.systemMessageData?.callDurationString() {
                 timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
             } else {
