@@ -32,7 +32,7 @@ enum MessageDetailsDisplayMode: Int {
 protocol MessageDetailsDataSourceObserver: AnyObject {
     /// Called when the message details change.
     func dataSourceDidChange(_ dataSource: MessageDetailsDataSource)
-    
+
     /// Called when the message subtitle changes.
     func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource)
 }
@@ -42,30 +42,30 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
  */
 
 final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserver {
-    
+
     typealias MessageDetails = L10n.Localizable.MessageDetails
-    
+
     /// The presented message.
     let message: ZMConversationMessage
-    
+
     /// The conversation where the message is
     let conversation: ZMConversation
-    
+
     /// How to display the message details.
     let displayMode: MessageDetailsDisplayMode
-    
+
     /// Whether read receipts are supported.
     let supportsReadReceipts: Bool
-    
+
     /// The title of the message details.
     let title: String
-    
+
     /// The subtitle of the message details.
     private(set) var subtitle: String!
-    
+
     /// The subtitle of the message details for accessibility purposes.
     private(set) var accessibilitySubtitle: String!
-    
+
     /// The list of reactions.
     private(set) var reactions: [MessageDetailsSectionDescription] = []
 
@@ -74,11 +74,11 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
 
     /// The object that receives information when the message details changes.
     weak var observer: MessageDetailsDataSourceObserver?
-    
+
     // MARK: - Initialization
-    
+
     private var observationTokens: [Any] = []
-    
+
     init(message: ZMConversationMessage) {
         self.message = message
         self.conversation = message.conversation!
@@ -87,7 +87,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
         supportsReadReceipts = message.needsReadConfirmation
-        
+
         switch (showLikesTab, showReceiptsTab) {
         case (true, true):
             self.displayMode = .combined
@@ -101,7 +101,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         default:
             fatal("Trying to display a message that does not support reactions or receipts.")
         }
-        
+
         super.init()
 
         // Assign the initial data
@@ -111,9 +111,9 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         updateSubtitle()
         setupObservers()
     }
-    
+
     // MARK: - Interface Properties
-    
+
     private func updateSubtitle() {
         guard let sentDate = message.formattedReceivedDate() else {
             return
@@ -122,19 +122,19 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         let sentString = MessageDetails.subtitleSendDate(sentDate)
 
         var subtitle = sentString
-        
+
         if let editedDate = message.formattedEditedDate() {
             let editedString = MessageDetails.subtitleEditDate(editedDate)
             subtitle += "\n" + editedString
         }
-        
+
         self.subtitle = subtitle
         self.accessibilitySubtitle = message.formattedAccessibleMessageDetails()
         self.observer?.detailsFooterDidChange(self)
     }
-    
+
     // MARK: - Changes
-    
+
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         // Detect changes in reactions
         if changeInfo.reactionsChanged {
@@ -142,20 +142,20 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
                 setupReactions()
             }
         }
-        
+
         // Detect changes in read receipts
         if changeInfo.confirmationsChanged {
             performChanges {
                 setupReadReceipts()
             }
         }
-        
+
         // Detect message edits
         if message.updatedAt != nil {
             updateSubtitle()
         }
     }
-    
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
         performChanges {
             setupReactions()
@@ -192,11 +192,11 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             observationTokens = [messageObserver, userObserver]
         }
     }
-    
+
     /// Commits changes to the data source and notifies the observer.
     private func performChanges(_ block: () -> Void) {
         block()
         observer?.dataSourceDidChange(self)
     }
-    
+
 }
