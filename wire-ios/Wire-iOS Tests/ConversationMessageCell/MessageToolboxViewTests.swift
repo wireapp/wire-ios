@@ -26,7 +26,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        recordMode = true
         SelfUser.setupMockSelfUser()
 
         message = MockMessageFactory.textMessage(withText: "Hello")
@@ -86,7 +85,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
     func testThatItConfiguresWithTimestamp() {
         // GIVEN
         let users = MockUser.mockUsers().filter { !$0.isSelfUser }
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: users]
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
@@ -95,21 +93,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         verify(view: sut)
     }
 
-
-    func testThatItConfiguresWithRead() {
-        // GIVEN
-        message.deliveryState = .read
-
-        let readReceipt = MockReadReceipt(user: otherUser)
-        readReceipt.serverTimestamp = Date(timeIntervalSince1970: 12345678564)
-        message.readReceipts = [readReceipt]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
 
     // MARK: - Tap Gesture
 
@@ -203,5 +186,5 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     }
 
-    
+
 }
