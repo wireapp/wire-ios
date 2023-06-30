@@ -620,6 +620,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPublicKeys() throws {
         // Given
+        uiMOC.encryptMessagesAtRest = true
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
@@ -630,15 +631,27 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When
-        let publicKeys = try sut.fetchPublicKeys()
+        let publicKeys = try XCTUnwrap(sut.fetchPublicKeys())
 
         // Then
         XCTAssertEqual(publicKeys.primary, primaryKeys.publicKey)
         XCTAssertEqual(publicKeys.secondary, secondaryKeys.publicKey)
     }
 
+    func test_FetchPublicKeys_EARDisabled() throws {
+        // Given
+        uiMOC.encryptMessagesAtRest = false
+
+        // When
+        let publicKeys = try sut.fetchPublicKeys()
+
+        // Then
+        XCTAssertNil(publicKeys)
+    }
+
     func test_FetchPublicKeys_KeyNotFound() throws {
         // Given
+        uiMOC.encryptMessagesAtRest = true
         let primaryKeys = try generatePrimaryKeyPair()
 
         // Mock
@@ -674,6 +687,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys() throws {
         // Given
+        uiMOC.encryptMessagesAtRest = true
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
@@ -684,15 +698,27 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When
-        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
+        let privateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
 
         // Then
         XCTAssertEqual(privateKeys.primary, primaryKeys.privateKey)
         XCTAssertEqual(privateKeys.secondary, secondaryKeys.privateKey)
     }
 
+    func test_FetchPrivateKeys_EARDisabled() throws {
+        // Given
+        uiMOC.encryptMessagesAtRest = false
+
+        // When
+        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
+
+        // Then
+        XCTAssertNil(privateKeys)
+    }
+
     func test_FetchPrivateKeys_ExcludingPrimary() throws {
         // Given
+        uiMOC.encryptMessagesAtRest = true
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
@@ -703,7 +729,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When
-        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: false)
+        let privateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: false))
 
         // Then
         XCTAssertNil(privateKeys.primary)
@@ -712,6 +738,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys_PrimaryKeyNotFound() throws {
         // Given
+        uiMOC.encryptMessagesAtRest = true
         let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
@@ -721,7 +748,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         )
 
         // When
-        let privateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
+        let privateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
 
         // Then
         XCTAssertNil(privateKeys.primary)
@@ -729,6 +756,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     }
 
     func test_FetchPrivateKeys_SecondaryKeyNotFound() throws {
+        // Given
+        uiMOC.encryptMessagesAtRest = true
+
         // Mock
         mockFetchingPrivateKeys(
             primary: nil,
@@ -823,12 +853,14 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let sut = EARService(accountID: userIdentifier, databaseContexts: [uiMOC])
         let oldDatabaseKey = try sut.generateKeys()
 
-        let oldPublicKeys = try sut.fetchPublicKeys()
-        let oldPrivateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
+        uiMOC.encryptMessagesAtRest = true
+        let oldPublicKeys = try XCTUnwrap(sut.fetchPublicKeys())
+        let oldPrivateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
         let oldPrimaryPublicKey = oldPublicKeys.primary
         let oldPrimaryPrivateKey = try XCTUnwrap(oldPrivateKeys.primary)
         let oldSecondaryPublicKey = oldPublicKeys.secondary
         let oldSecondaryPrivateKey = oldPrivateKeys.secondary
+        uiMOC.encryptMessagesAtRest = false
 
         // When
         try sut.enableEncryptionAtRest(context: uiMOC, skipMigration: true)
@@ -836,8 +868,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Then
         XCTAssertFalse(uiMOC.isLocked)
 
-        let newPublicKeys = try sut.fetchPublicKeys()
-        let newPrivateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
+        let newPublicKeys = try XCTUnwrap(sut.fetchPublicKeys())
+        let newPrivateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
         let newPrimaryPublicKey = newPublicKeys.primary
         let newPrimaryPrivateKey = try XCTUnwrap(newPrivateKeys.primary)
         let newSecondaryPublicKey = newPublicKeys.secondary
