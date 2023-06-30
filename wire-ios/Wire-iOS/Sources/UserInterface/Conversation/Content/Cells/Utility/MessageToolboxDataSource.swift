@@ -26,9 +26,6 @@ enum MessageToolboxContent: Equatable {
     /// Display buttons to let the user resend the message.
     case sendFailure(NSAttributedString)
 
-    /// Display the list of reactions.
-    case reactions(NSAttributedString)
-
     /// Display list of calls
     case callList(NSAttributedString)
 
@@ -45,7 +42,7 @@ extension MessageToolboxContent: Comparable {
         switch (lhs, rhs) {
         case (.sendFailure, _):
             return true
-        case (.details, .reactions):
+        case (.details, _):
             return true
         default:
             return false
@@ -99,7 +96,6 @@ class MessageToolboxDataSource {
 
     func updateContent(forceShowTimestamp: Bool, widthConstraint: CGFloat) -> SlideDirection? {
         // Compute the state
-        let likers = message.likers
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
         let showTimestamp = forceShowTimestamp || likers.isEmpty
@@ -117,11 +113,7 @@ class MessageToolboxDataSource {
             let detailsString = "content.system.failedtosend_message_timestamp".localized && attributes
             content = .sendFailure(detailsString)
         }
-        // 3) Likers
-        else if !showTimestamp {
-            let text = makeReactionsLabel(with: message.likers, widthConstraint: widthConstraint)
-            content = .reactions(text)
-        }
+
         // 4) Timestamp
         else {
             let (timestamp, status, countdown) = makeDetailsString()
@@ -134,34 +126,6 @@ class MessageToolboxDataSource {
         }
 
         return previousContent < content ? .up : .down
-    }
-
-    // MARK: - Reactions
-
-    /// Creates a label that display the likers of the message.
-    private func makeReactionsLabel(with likers: [UserType], widthConstraint: CGFloat) -> NSAttributedString {
-        let likers = message.likers
-
-        // If there is only one liker, always display the name, even if the width doesn't fit
-        if likers.count == 1 {
-            return (likers[0].name ?? "") && attributes
-        }
-
-        // Create the list of likers
-        let likersNames = likers.compactMap(\.name).joined(separator: ", ")
-
-        let likersNamesAttributedString = likersNames && attributes
-
-        // Check if the list of likers fits on the screen. Otheriwse, show the summary
-        let constrainedSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let labelSize = likersNamesAttributedString.boundingRect(with: constrainedSize, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil)
-
-        if likers.count >= 3 || labelSize.width > widthConstraint {
-            let likersCount = String(format: "participants.people.count".localized, likers.count)
-            return likersCount && attributes
-        } else {
-            return likersNamesAttributedString
-        }
     }
 
     // MARK: - Details Text

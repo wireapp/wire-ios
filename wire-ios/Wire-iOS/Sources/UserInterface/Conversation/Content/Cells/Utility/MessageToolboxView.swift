@@ -278,17 +278,6 @@ final class MessageToolboxView: UIView {
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
             }
-        case .reactions:
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 1
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = true
-                self.deleteButton.isHidden = true
-                self.resendButton.isHidden = true
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-            }
 
         case .sendFailure(let detailsString):
             updateContentStack(to: newPosition, animated: animated) {
@@ -413,8 +402,6 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         switch dataSource.content {
         case .sendFailure:
             break
-        case .reactions where dataSource.message.areMessageDetailsAvailable:
-            return .reactions
         case .details where dataSource.message.areReadReceiptsDetailsAvailable:
             return .receipts
         default:
