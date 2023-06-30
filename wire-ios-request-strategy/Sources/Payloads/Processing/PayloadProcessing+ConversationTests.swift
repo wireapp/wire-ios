@@ -710,6 +710,51 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    // MARK: - Proteus: Member Join
+
+    func test_UpdateConverationMemberJoin_WithFailedToAddUsers() {
+        syncMOC.performAndWait {
+            // given
+
+            var failedQualifiedIDs: [QualifiedID] = []
+            if let qualifiedIDs = self.otherUser.qualifiedID {
+                failedQualifiedIDs = [qualifiedIDs]
+            }
+
+            // create user
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            user.domain = groupConversation.domain
+
+            // create the event
+            let member = Payload.ConversationMember(
+                id: user.remoteIdentifier,
+                qualifiedID: user.qualifiedID,
+                conversationRole: ZMConversation.defaultMemberRoleName
+            )
+            let payload = Payload.UpdateConverationMemberJoin(userIDs: [user.remoteIdentifier],
+                                                              users: [member])
+
+            let updateEvent = self.updateEvent(from: payload)
+            let event = ConversationEventProcessor.MemberJoinPayload(
+                id: groupConversation.remoteIdentifier,
+                qualifiedID: groupConversation.qualifiedID,
+                from: otherUser.remoteIdentifier,
+                qualifiedFrom: otherUser.qualifiedID,
+                timestamp: Date(),
+                type: "conversation.member-join",
+                data: payload,
+                failedToAddUsers: failedQualifiedIDs
+            )
+
+            // when
+            event.process(in: syncMOC, originalEvent: updateEvent)
+
+            // then
+            XCTAssertEqual(groupConversation.lastMessage?.systemMessageData?.systemMessageType, .failedToAddParticipants)
+        }
+    }
+
     // MARK: - MLS: Conversation Create
 
     func testUpdateOrCreateConversation_Group_MLS_AsksToUpdateConversationIfNeeded() {
@@ -936,7 +981,8 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             qualifiedFrom: otherUser.qualifiedID,
             timestamp: nil,
             type: nil,
-            data: payload
+            data: payload,
+            failedToAddUsers: nil
         )
     }
 

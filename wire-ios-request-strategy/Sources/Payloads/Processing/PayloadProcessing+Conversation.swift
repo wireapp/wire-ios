@@ -607,6 +607,17 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
                 conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
             }
 
+            if let serverTimestamp = timestamp,
+               let failedQualifiedIDs = failedToAddUsers,
+               !failedQualifiedIDs.isEmpty {
+
+                let failedUsers = failedQualifiedIDs.compactMap {
+                    ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
+                }
+                conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers),
+                                                                 sender: conversation.creator,
+                                                                 at: serverTimestamp)
+            }
         }
 
     }
