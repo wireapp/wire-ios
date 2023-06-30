@@ -93,7 +93,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         verify(view: sut)
     }
 
-
     // MARK: - Tap Gesture
 
     func testThatItOpensReceipts_NoLikers() {
@@ -185,6 +184,5 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         verifyInAllPhoneWidths(view: sut)
 
     }
-
 
 }

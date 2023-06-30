@@ -278,7 +278,7 @@ final class MessageToolboxView: UIView {
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
             }
-        case .reactions(_):
+        case .reactions:
             updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.isHidden = false
                 self.detailsLabel.numberOfLines = 1
