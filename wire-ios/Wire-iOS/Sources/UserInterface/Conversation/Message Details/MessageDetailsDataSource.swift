@@ -66,12 +66,12 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     /// The subtitle of the message details for accessibility purposes.
     private(set) var accessibilitySubtitle: String!
     
-    /// The list of likes.
+    /// The list of reactions.
     private(set) var reactions: [MessageDetailsSectionDescription] = []
-    
+
     /// The list of read receipts with the associated date.
     private(set) var readReceipts: [MessageDetailsSectionDescription] = []
-    
+
     /// The object that receives information when the message details changes.
     weak var observer: MessageDetailsDataSourceObserver?
     
@@ -82,7 +82,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     init(message: ZMConversationMessage) {
         self.message = message
         self.conversation = message.conversation!
-        
+
         // Compute the title and display mode
         let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
@@ -118,9 +118,9 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         guard let sentDate = message.formattedReceivedDate() else {
             return
         }
-        
+
         let sentString = MessageDetails.subtitleSendDate(sentDate)
-        
+
         var subtitle = sentString
         
         if let editedDate = message.formattedEditedDate() {
@@ -162,28 +162,28 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             setupReadReceipts()
         }
     }
-    
-    
+
     private func setupReactions() {
-        reactions = message.usersReaction.map { reaction, users in
-            let emoji = Emoji(value: reaction)
-            return MessageDetailsSectionDescription(
-                headerText: "\(emoji.value) \(emoji.name ?? "") (\(users.count))",
+        reactions = message.usersByReaction.map { reaction, users in
+            MessageDetailsSectionDescription(
+                headerText: "\(reaction.unicodeValue) \(reaction.displayValue) (\(users.count))",
                 items: MessageDetailsCellDescription.makeReactionCells(users)
             )
         }.filter {
             !$0.items.isEmpty
         }
-        
+
         self.reactions.sort(by: { $0.items.count > $1.items.count })
     }
-    
+
     func setupReadReceipts() {
         readReceipts = [
             MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
-        ]
+        ].filter {
+            !$0.items.isEmpty
+        }
     }
-    
+
     private func setupObservers() {
         if let userSession = ZMUserSession.shared() {
             let messageObserver = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)

@@ -84,6 +84,10 @@ final class SessionManagerTests: IntegrationTest {
         super.tearDown()
     }
 
+    private var cachesDirectoryPath: URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+
     // MARK: max account number
     func testThatDefaultMaxAccountNumberIs3_whenDefaultValueIsUsed() {
         // given and when
@@ -400,6 +404,27 @@ final class SessionManagerTests: IntegrationTest {
         }
     }
 
+    func testThatItDestroyedCacheDirectoryAfterLoggedOut() throws {
+
+        // GIVEN
+        XCTAssertTrue(login())
+        let sessionManager = try XCTUnwrap(sessionManager)
+        let observer = SessionManagerObserverMock()
+        let token = sessionManager.addSessionManagerDestroyedSessionObserver(observer)
+        let tempUrl = self.cachesDirectoryPath.appendingPathComponent("testFile.txt")
+        let testData = "Test Message"
+        try? testData.write(to: tempUrl, atomically: true, encoding: .utf8)
+        XCTAssertFalse(tempUrl.path.isEmpty)
+
+        // WHEN
+        withExtendedLifetime(token) {
+            sessionManager.logoutCurrentSession()
+        }
+
+        // THEN
+        XCTAssertFalse(FileManager.default.fileExists(atPath: self.cachesDirectoryPath.path))
+    }
+  
     func tmpDirectoryPath() -> URL {
         return URL(fileURLWithPath: NSTemporaryDirectory())
     }

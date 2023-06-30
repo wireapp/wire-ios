@@ -24,7 +24,7 @@ import WireCommonComponents
 
 struct MessageDetailsSectionDescription {
 
-    var headerText: String? = nil
+    var headerText: String?
     var items: [MessageDetailsCellDescription]
 
 }
@@ -71,6 +71,8 @@ final class MessageDetailsContentViewController: UIViewController {
             subtitleLabel.accessibilityValue = newValue
         }
     }
+
+    private let sectionHeaderIdentifier = "SectionHeader"
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -120,14 +122,14 @@ final class MessageDetailsContentViewController: UIViewController {
             self.collectionView.collectionViewLayout.invalidateLayout()
         })
     }
-
+    
     // MARK: - Configure Views and set constraints
 
     private func configureSubviews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        collectionView = UICollectionView(forGroupedSections: (), usedInMessageDetailsVC: true)
-        collectionView.contentInset.bottom = 64
+        collectionView = UICollectionView(forGroupedSections: ())
+        collectionView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 64, right: 0)
         collectionView.allowsMultipleSelection = false
         collectionView.allowsSelection = true
         collectionView.alwaysBounceVertical = true
@@ -140,8 +142,9 @@ final class MessageDetailsContentViewController: UIViewController {
         collectionView?.register(
             SectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "SectionHeader"
+            withReuseIdentifier: sectionHeaderIdentifier
         )
+
         view.addSubview(collectionView)
 
         subtitleLabel.numberOfLines = 0
@@ -183,7 +186,7 @@ final class MessageDetailsContentViewController: UIViewController {
             subtitleBottom!
         ])
     }
-
+    
     // MARK: - Update and Configuration
 
     private func updateTitle() {
@@ -215,7 +218,7 @@ final class MessageDetailsContentViewController: UIViewController {
             subtitleBottom?.constant = -padding
             return
         }
-
+        
         // Update the bottom cell padding to fit the text
         collectionView.contentInset.bottom = footerRegionHeight
 
@@ -225,7 +228,7 @@ final class MessageDetailsContentViewController: UIViewController {
          We use this height to move the status label offscreen if needed, and move it up alongside the
          content if the user scroll up.
          */
-
+        
         let offset = scrollView.contentOffset.y + scrollView.contentInset.top
         let scrollableContentHeight = scrollView.contentInset.top + scrollView.contentSize.height + footerRegionHeight
         let visibleOnScreen = min(scrollableContentHeight - offset, scrollView.bounds.height - scrollView.contentInset.top)
@@ -234,7 +237,7 @@ final class MessageDetailsContentViewController: UIViewController {
         let constant = bottomSpace - padding
         subtitleBottom?.constant = constant
     }
-
+    
     private func configureForContentType() {
         switch contentType {
         case .reactions:
@@ -308,9 +311,10 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
     ) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "SectionHeader",
+            withReuseIdentifier: sectionHeaderIdentifier,
             for: indexPath
         )
+
         let section = sections[indexPath.section]
         (view as? SectionHeader)?.titleLabel.text = section.headerText
         (view as? SectionHeader)?.titleLabel.font = FontSpec.headerRegularFont.font!
