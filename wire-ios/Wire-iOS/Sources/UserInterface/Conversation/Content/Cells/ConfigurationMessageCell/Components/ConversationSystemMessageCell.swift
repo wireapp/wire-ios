@@ -1131,7 +1131,7 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
         var content: String = ""
         for (domain, users) in groupedUsers {
             let userNames = users.compactMap { $0.name }.joined(separator: ", ")
-            content.append(SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames, domain ?? ""))
+            content.append(SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames))
             content.append("\n")
         }
 

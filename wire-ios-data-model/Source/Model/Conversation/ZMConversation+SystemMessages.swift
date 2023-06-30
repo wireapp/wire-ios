@@ -49,7 +49,7 @@ extension ZMConversation {
                             sender: sender,
                             users: users,
                             clients: nil,
-                            timestamp: timestamp)
+                            timestamp: timestamp.nextNearestTimestamp)
     }
 
     @objc(appendNewConversationSystemMessageAtTimestamp:users:)
