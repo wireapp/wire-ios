@@ -264,7 +264,7 @@ jobs:
           name: test-reports
           path: |
             build/reports/*.junit
-
+            SnapshotResults/*
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
