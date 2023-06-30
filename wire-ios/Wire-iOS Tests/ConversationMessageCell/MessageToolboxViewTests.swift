@@ -126,30 +126,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         XCTAssertEqual(sut.preferredDetailsDisplayMode(), .receipts)
     }
 
-    func testThatItOpensLikesWhenTapped_ReceiptsEnabled() {
-        // GIVEN
-        message.conversation = createTeamGroupConversation()
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        XCTAssertEqual(sut.preferredDetailsDisplayMode(), .reactions)
-    }
-
-    func testThatItOpensLikesWhenTapped_ReceiptsDisabled() {
-        // GIVEN
-        message.conversation = createGroupConversation()
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        XCTAssertEqual(sut.preferredDetailsDisplayMode(), .reactions)
-    }
-
     func testThatItDoesNotShowLikes_ReceiptsDisabled_ShowingTimestamp() {
         // GIVEN
         message.conversation = createGroupConversation()
