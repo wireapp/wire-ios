@@ -1346,6 +1346,12 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
+            subconverationGroupIDRepository.storeSubconversationGroupID(
+                nil,
+                forType: subconversationType,
+                parentGroupID: parentGroupID
+            )
+
             try coreCrypto.perform {
                 try $0.wipeConversation(conversationId: subconversationGroupID.bytes)
             }

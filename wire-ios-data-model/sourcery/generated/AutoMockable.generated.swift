@@ -1181,10 +1181,10 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
 
     // MARK: - storeSubconversationGroupID
 
-    public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID, type: SubgroupType, parentGroupID: MLSGroupID)] = []
-    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID, SubgroupType, MLSGroupID) -> Void)?
+    public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID?, type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID?, SubgroupType, MLSGroupID) -> Void)?
 
-    public func storeSubconversationGroupID(_ groupID: MLSGroupID, forType type: SubgroupType, parentGroupID: MLSGroupID) {
+    public func storeSubconversationGroupID(_ groupID: MLSGroupID?, forType type: SubgroupType, parentGroupID: MLSGroupID) {
         storeSubconversationGroupIDForTypeParentGroupID_Invocations.append((groupID: groupID, type: type, parentGroupID: parentGroupID))
 
         guard let mock = storeSubconversationGroupIDForTypeParentGroupID_MockMethod else {

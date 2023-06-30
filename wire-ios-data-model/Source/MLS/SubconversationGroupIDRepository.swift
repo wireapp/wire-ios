@@ -22,7 +22,7 @@ import Foundation
 public protocol SubconversationGroupIDRepositoryInterface {
 
     func storeSubconversationGroupID(
-        _ groupID: MLSGroupID,
+        _ groupID: MLSGroupID?,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
     )
@@ -49,7 +49,7 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
     // MARK: - Store
 
     public func storeSubconversationGroupID(
-        _ groupID: MLSGroupID,
+        _ groupID: MLSGroupID?,
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
     ) {
