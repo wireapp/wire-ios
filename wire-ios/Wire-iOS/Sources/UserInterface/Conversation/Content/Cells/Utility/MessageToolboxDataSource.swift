@@ -91,8 +91,7 @@ class MessageToolboxDataSource {
 
     /**
      * Updates the contents of the message toolbox.
-     * - parameter forceShowTimestamp: Whether the timestamp should be shown, even if a state
-     * with a higher priority has been calculated (ex: likes).
+     * - parameter forceShowTimestamp: Whether the timestamp should be shown
      * - parameter widthConstraint: The width available to rend the toolbox contents.
      */
 
