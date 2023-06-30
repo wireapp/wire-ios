@@ -188,18 +188,6 @@ extension Payload.Conversation {
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(for: conversation)
-        if let failedQualifiedIDs = failedToAddUsers, !failedQualifiedIDs.isEmpty {
-            let failedUsers = failedQualifiedIDs.compactMap {
-                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
-            }
-
-            /// We need to remove failed users from the initial system message
-            updateSystemMessage(havingType: .newConversation,
-                                withFailedUsers: failedUsers,
-                                in: conversation)
-
-            conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
-        }
         updateMessageProtocol(for: conversation)
         updateMLSStatus(for: conversation, context: context, source: source)
 
@@ -212,6 +200,19 @@ extension Payload.Conversation {
                 // Slow synced conversations should be considered read from the start
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
+        }
+
+        if let failedQualifiedIDs = failedToAddUsers, !failedQualifiedIDs.isEmpty {
+            let failedUsers = failedQualifiedIDs.compactMap {
+                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
+            }
+
+            /// We need to remove failed users from the initial system message
+            updateSystemMessage(havingType: .newConversation,
+                                withFailedUsers: failedUsers,
+                                in: conversation)
+
+            conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
         }
     }
 

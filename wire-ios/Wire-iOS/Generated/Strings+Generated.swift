@@ -1947,9 +1947,9 @@ internal enum L10n {
           }
         }
         internal enum FailedtoaddParticipants {
-          /// **%@** could not be added to the group as the backend of **%@** could not be reached.
-          internal static func couldNotBeAdded(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", String(describing: p1), String(describing: p2), fallback: "**%@** could not be added to the group as the backend of **%@** could not be reached.")
+          /// **%@** could not be added to the group.
+          internal static func couldNotBeAdded(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", String(describing: p1), fallback: "**%@** could not be added to the group.")
           }
           /// **%@ participants** could not be added to the group.
           internal static func count(_ p1: Any) -> String {
