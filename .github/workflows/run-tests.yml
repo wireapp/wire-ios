@@ -249,7 +249,7 @@ jobs:
         if: failure()
         with:
           name: Failed Snapshots
-          path: SnapshotResults/    
+          path: wire-ios/SnapshotResults/    
 
       # WORKAROUND: if we test WireNotificationEngine and then Wire-iOS, we'll get an error when trying to build
       # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
