@@ -21,8 +21,12 @@ import XCTest
 
 final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
+    // MARK: - Properties
+
     var message: MockMessage!
     var sut: MessageToolboxView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -36,10 +40,14 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 28)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItConfiguresWithFailedToSend() {
         // GIVEN
