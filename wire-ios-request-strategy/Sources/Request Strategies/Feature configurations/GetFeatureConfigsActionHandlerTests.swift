@@ -135,8 +135,8 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-    
-    func test_ItHandlesResponseWithoutMLS_200() throws {
+
+    func test_ShouldTakeDefaultValuesWhenHandlingResponseWithNoFeatures_200() throws {
         syncMOC.performGroupedBlock {
             // Given
             let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
@@ -158,14 +158,14 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             }
 
             let payload = GetFeatureConfigsActionHandler.ResponsePayload(
-                appLock: .init(status: .enabled, config: .init(enforceAppLock: true, inactivityTimeoutSecs: 11)),
-                classifiedDomains: .init(status: .enabled, config: .init(domains: ["foo"])),
-                conferenceCalling: .init(status: .enabled),
-                conversationGuestLinks: .init(status: .enabled),
-                digitalSignatures: .init(status: .enabled),
-                fileSharing: .init(status: .enabled),
+                appLock: nil,
+                classifiedDomains: nil,
+                conferenceCalling: nil,
+                conversationGuestLinks: nil,
+                digitalSignatures: nil,
+                fileSharing: nil,
                 mls: nil,
-                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
+                selfDeletingMessages: nil
             )
 
             guard let payloadData = try? JSONEncoder().encode(payload),
@@ -173,7 +173,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 XCTFail("failed to encode payload")
                 return
             }
-
 
             // When
             sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
@@ -184,12 +183,11 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
             let appLock = featureService.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
-            XCTAssertEqual(appLock.config.enforceAppLock, true)
-            XCTAssertEqual(appLock.config.inactivityTimeoutSecs, 11)
+            XCTAssertEqual(appLock.config, .init())
 
             let classifiedDomains = featureService.fetchClassifiedDomains()
-            XCTAssertEqual(classifiedDomains.status, .enabled)
-            XCTAssertEqual(classifiedDomains.config.domains, ["foo"])
+            XCTAssertEqual(classifiedDomains.status, .disabled)
+            XCTAssertEqual(classifiedDomains.config, .init())
 
             let conferenceCalling = featureService.fetchConferenceCalling()
             XCTAssertEqual(conferenceCalling.status, .enabled)
@@ -198,7 +196,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(conversationGuestLinks.status, .enabled)
 
             let digitalSignature = featureService.fetchDigitalSignature()
-            XCTAssertEqual(digitalSignature.status, .enabled)
+            XCTAssertEqual(digitalSignature.status, .disabled)
 
             let fileSharing = featureService.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
@@ -209,7 +207,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
             let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
-            XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
+            XCTAssertEqual(selfDeletingMessage.config, .init())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
