@@ -250,6 +250,9 @@ public enum FontScheme {
     }
 
     public static func font(for fontType: FontSpec) -> UIFont? {
+        if FontScheme.fontsByFontSpec[fontType] == nil {
+           assertionFailure("missing uifont for fontspec \(fontType), got: \(FontScheme.fontsByFontSpec)")
+        }
         return FontScheme.fontsByFontSpec[fontType]
     }
 }
