@@ -172,7 +172,6 @@ final class CallInfoRootViewControllerTests: ZMSnapshotTestCase {
 
     func testGroupAudioEstablished_SmallGroup() throws {
         throw XCTSkip("this is old UI new PR is updating these screenshots")
-        isRecording = true
         // given
         let fixture = CallInfoTestFixture(otherUser: mockOtherUser, selfUser: mockSelfUser, groupSize: .small, mockUsers: mockUsers)
 
