@@ -416,8 +416,11 @@ platform :ios do
         existing_simulator = `xcrun simctl list devices | grep "#{iPhoneNameForTesting}" | grep "iOS#{ios_version}" | awk -F '[()]' '{print $2}'`.chomp
 
         if existing_simulator.empty?
-            # Create a new simulator
+            UI.message "create simulator #{iPhoneNameForTesting} - iOS#{ios_version}"
             `xcrun simctl create "#{iPhoneNameForTesting} - iOS#{ios_version}" "#{iPhoneNameForTesting}" "iOS#{ios_version}"`
+        else
+            UI.message "clear simulator content for #{existing_simulator}"
+            `xcrun simctl erase #{existing_simulator}`
         end
     end
 
