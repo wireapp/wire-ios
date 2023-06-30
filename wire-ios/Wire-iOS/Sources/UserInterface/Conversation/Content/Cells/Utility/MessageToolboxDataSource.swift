@@ -115,7 +115,7 @@ class MessageToolboxDataSource {
             content = .sendFailure(detailsString)
         }
 
-        // 4) Timestamp
+        // 3) Timestamp
         else {
             let (timestamp, status, countdown) = makeDetailsString()
             content = .details(timestamp: timestamp, status: status, countdown: countdown)
