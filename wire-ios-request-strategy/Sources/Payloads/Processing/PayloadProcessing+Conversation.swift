@@ -613,7 +613,9 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
                 let failedUsers = failedQualifiedIDs.compactMap {
                     ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
                 }
-                conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
+                conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers),
+                                                                 sender: conversation.creator,
+                                                                 at: serverTimestamp)
             }
         }
 
