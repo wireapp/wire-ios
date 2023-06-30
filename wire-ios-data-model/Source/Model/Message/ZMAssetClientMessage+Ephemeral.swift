@@ -67,11 +67,11 @@ extension ZMAssetClientMessage {
     @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
         if let isSelfUser = sender?.isSelfUser {
             // check for download state only for images that were sent by another user
-            if !isSelfUser && managedObjectContext?.zm_userInterface != nil
+            if !isSelfUser && managedObjectContext?.zm_isUserInterfaceContext == true
                 && imageMessageData != nil
                 && !hasDownloadedFile {
                 return false
-            } else if isSelfUser && managedObjectContext?.zm_isSyncContext != nil
+            } else if isSelfUser && managedObjectContext?.zm_isSyncContext == true
                         && fileMessageData != nil
                         && underlyingMessage?.assetData?.hasUploaded == false
                         && underlyingMessage?.assetData?.hasNotUploaded == false {
