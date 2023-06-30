@@ -63,15 +63,17 @@ public protocol EARServiceInterface: AnyObject {
 
     /// Fetch all public keys.
     ///
-    /// Public keys are used to encrypt content.
+    /// Public keys are used to encrypt content. If EAR is disabled,
+    /// `nil` is returned.
 
-    func fetchPublicKeys() throws -> EARPublicKeys
+    func fetchPublicKeys() throws -> EARPublicKeys?
 
     /// Fetch all private keys.
     ///
-    /// Private keys are used to decrypt context.
+    /// Private keys are used to decrypt context. If EAR is disabled,
+    /// `nil` is returned.
 
-    func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys
+    func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
 
 }
 
@@ -384,7 +386,11 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Public keys
 
-    public func fetchPublicKeys() throws -> EARPublicKeys {
+    public func fetchPublicKeys() throws -> EARPublicKeys? {
+        guard isEAREnabled() else {
+            return nil
+        }
+
         do {
             return EARPublicKeys(
                 primary: try fetchPrimaryPublicKey(),
@@ -406,7 +412,11 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Private keys
 
-    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys {
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
+        guard isEAREnabled() else {
+            return nil
+        }
+
         do {
             return EARPrivateKeys(
                 primary: includingPrimary ? try? fetchPrimaryPrivateKey() : nil,
