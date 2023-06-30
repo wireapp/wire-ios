@@ -104,4 +104,7 @@
    <FileRef
       location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:modules/DesignSystem/DesignSystem.xcodeproj">
+   </FileRef>
 </Workspace>

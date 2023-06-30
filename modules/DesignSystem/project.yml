@@ -1,0 +1,70 @@
+name: DesignSystem
+options:
+  deploymentTarget: 
+    iOS: "13"
+  groupOrdering: 
+    - order: [DesignSystemPublic, DesignSystemPrivate, DesignSystemPrivateTests, DesignSystemBundle]
+  indentWidth: 4
+  tabWidth: 4
+  createIntermediateGroups: true
+  
+targets:
+
+  # DesignSystemPublic
+  ##############################
+
+  DesignSystemPublic:
+    type: framework.static
+    platform: iOS
+    sources:
+      - DesignSystemPublic/Sources
+
+  # DesignSystemPrivate
+  ##############################
+
+  DesignSystemPrivate:
+    type: framework.static
+    platform: iOS
+    sources:
+      - DesignSystemPrivate/Sources
+      - DesignSystemPrivate/Generated
+    dependencies:
+      - target: DesignSystemPublic
+      - target: DesignSystemBundle
+    scheme:
+      testTargets:
+        - DesignSystemPrivateTests
+      gatherCoverageData: true
+    preBuildScripts:
+      - name: Run SwiftGen
+        path: Scripts/run-swiftgen.sh
+
+  # DesignSystemPrivateTests
+  ##############################
+    
+  DesignSystemPrivateTests:
+    type: bundle.unit-test
+    platform: iOS
+    info:
+      path: DesignSystemPrivateTests/Info.plist
+    sources:
+      - DesignSystemPrivateTests/
+      - DesignSystemPrivateTests/Sources
+    dependencies:
+      - target: DesignSystemPrivate
+      - target: DesignSystemPublic
+
+  # DesignSystemBundle
+  ##############################
+
+  DesignSystemBundle:
+    type: bundle
+    platform: iOS
+    info:
+      path: DesignSystemBundle/Info.plist
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.wire.$(PRODUCT_NAME:c99extidentifier)
+      PRODUCT_NAME: DesignSystemPrivate
+    sources:
+      - DesignSystemBundle
+
