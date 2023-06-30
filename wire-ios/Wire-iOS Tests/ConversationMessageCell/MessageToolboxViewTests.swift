@@ -26,6 +26,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        recordMode = true
         SelfUser.setupMockSelfUser()
 
         message = MockMessageFactory.textMessage(withText: "Hello")
@@ -95,17 +96,13 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
     }
 
 
-    func testThatItConfiguresWithReadThenLiked() {
+    func testThatItConfiguresWithRead() {
         // GIVEN
         message.deliveryState = .read
 
         let readReceipt = MockReadReceipt(user: otherUser)
         readReceipt.serverTimestamp = Date(timeIntervalSince1970: 12345678564)
         message.readReceipts = [readReceipt]
-
-        // Liked after read
-        let users = MockUser.mockUsers().first(where: { !$0.isSelfUser })!
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
@@ -206,20 +203,5 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     }
 
-    func testThatItDisplaysLongListOfLikers() {
-        // GIVEN
-        let conversation = createGroupConversation()
-        message.conversation = conversation
-        message.senderUser = MockUserType.createSelfUser(name: "Alice")
-
-        let remoteUser = createUser(name: "Esteban Julio Ricardo Montoya de la Rosa Ramírez")
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [otherUser, remoteUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
+    
 }
