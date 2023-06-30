@@ -71,8 +71,7 @@ extension ZMAssetClientMessage {
                 && imageMessageData != nil
                 && !hasDownloadedFile {
                 return false
-            } else if isSelfUser && managedObjectContext?.zm_isSyncContext == true
-                        && fileMessageData != nil
+            } else if fileMessageData != nil
                         && underlyingMessage?.assetData?.hasUploaded == false
                         && underlyingMessage?.assetData?.hasNotUploaded == false {
                     return false
