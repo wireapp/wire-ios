@@ -18,18 +18,21 @@
 
 import UIKit
 @testable import Wire
-
+import WireCommonComponents
 /// The App Delegate to use for the test target.
 
 final class TestingAppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-          window = UIWindow()
-          window?.rootViewController = UIViewController()
-          window?.makeKeyAndVisible()
-
-          return true
-      }
+        window = UIWindow()
+        window?.rootViewController = UIViewController()
+        window?.makeKeyAndVisible()
+        
+        FontScheme.configure(with: .medium)
+        FontScheme.configure(with: .small)
+        
+        return true
+    }
 }
