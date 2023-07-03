@@ -280,6 +280,15 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+            
+            
+      - name: Archiving DerivedData Logs
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: derived-data-xcode
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
 
   upload-test-results-datadadog:
     runs-on: ubuntu-latest
