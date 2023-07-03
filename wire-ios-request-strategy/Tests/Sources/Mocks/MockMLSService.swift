@@ -138,4 +138,10 @@ class MockMLSService: MLSServiceInterface {
         calls.joinSelfGroup.append(groupID)
     }
 
+    // MARK: - New epoch
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
+    }
+
 }

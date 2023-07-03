@@ -578,7 +578,6 @@ extension WireCallCenterV3 {
 
         case .mls:
             try setUpMLSConference(in: conversation)
-            
         }
     }
 
@@ -635,6 +634,8 @@ extension WireCallCenterV3 {
                     }
 
                     if var snapshot = self.callSnapshots[conversationID] {
+                        snapshot.qualifiedID = parentQualifiedID
+                        snapshot.groupIDs = (parentGroupID, subgroupID)
                         snapshot.onConferenceInfoChangedToken = token
                         self.callSnapshots[conversationID] = snapshot
                     }

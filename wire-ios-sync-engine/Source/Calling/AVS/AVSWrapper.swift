@@ -103,6 +103,7 @@ public class AVSWrapper: AVSWrapperType {
         wcall_set_participant_changed_handler(handle, callParticipantHandler, observer)
         wcall_set_req_clients_handler(handle, requestClientsHandler)
         wcall_set_active_speaker_handler(handle, activeSpeakersHandler)
+        wcall_set_req_new_epoch_handler(handle, requestNewEpochHandler)
         Self.logger.info("init finished")
     }
 
@@ -393,6 +394,12 @@ public class AVSWrapper: AVSWrapperType {
     private let activeSpeakersHandler: Handler.ActiveSpeakersChange = { _, conversationIdRef, json, contextRef in
         AVSWrapper.withCallCenter(contextRef, conversationIdRef, json) {
             $0.handleActiveSpeakersChange(conversationId: AVSIdentifier.from(string: $1), data: $2)
+        }
+    }
+
+    private let requestNewEpochHandler: Handler.RequestNewEpoch = { handle, conversationIdRef, contextRef in
+        AVSWrapper.withCallCenter(contextRef, conversationIdRef) { (callCenter, conversationID: String) in
+            callCenter.handleNewEpochRequest(conversationID: .from(string: conversationID))
         }
     }
 

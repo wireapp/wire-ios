@@ -63,6 +63,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subConversationGroupID: MLSGroupID
     ) -> AnyPublisher<MLSConferenceInfo, Never>
 
+    func generateNewEpoch(groupID: MLSGroupID) async throws
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -1261,6 +1263,13 @@ public final class MLSService: MLSServiceInterface {
         return decryptionService.onEpochChanged()
             .merge(with: mlsActionExecutor.onEpochChanged())
             .eraseToAnyPublisher()
+    }
+
+    // MARK: - Generate new epoch
+
+    public func generateNewEpoch(groupID: MLSGroupID) async throws {
+        logger.info("generating new epoch in subconveration (\(groupID))")
+        try await updateKeyMaterial(for: groupID)
     }
 
 }

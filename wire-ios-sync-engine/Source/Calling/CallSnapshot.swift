@@ -24,6 +24,10 @@ import Combine
  */
 
 struct CallSnapshot {
+
+    var qualifiedID: QualifiedID?
+    var groupIDs: (parent: MLSGroupID, subconversation: MLSGroupID)?
+
     let callParticipants: CallParticipantsSnapshot
     let callState: CallState
     let callStarter: AVSIdentifier
@@ -50,6 +54,8 @@ struct CallSnapshot {
 
     func update(with callState: CallState) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -74,6 +80,8 @@ struct CallSnapshot {
 
     func updateConstantBitrate(_ enabled: Bool) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -98,6 +106,8 @@ struct CallSnapshot {
 
     func updateVideoState(_ videoState: VideoState) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -122,6 +132,8 @@ struct CallSnapshot {
 
     func updateNetworkQuality(_ networkQuality: NetworkQuality) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -150,6 +162,8 @@ struct CallSnapshot {
 
     func updateDegradedUser(_ degradedUser: ZMUser) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -174,6 +188,8 @@ struct CallSnapshot {
 
     func updateActiveSpeakers(_ activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,
@@ -198,6 +214,8 @@ struct CallSnapshot {
 
     func updateVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode) -> CallSnapshot {
         return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
             callParticipants: callParticipants,
             callState: callState,
             callStarter: callStarter,

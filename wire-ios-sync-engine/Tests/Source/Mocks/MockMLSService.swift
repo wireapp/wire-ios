@@ -133,4 +133,14 @@ class MockMLSService: MLSServiceInterface {
         return mock()
     }
 
+    var mockGenerateNewEpoch: ((MLSGroupID) -> Void)?
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        guard let mock = mockGenerateNewEpoch else {
+            fatalError("not implemented")
+        }
+
+        return mock(groupID)
+    }
+
 }
