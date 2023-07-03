@@ -39,7 +39,8 @@ extension ZMUserSession {
     private func classification(with user: UserType) -> SecurityClassification {
         guard isSelfClassified else { return .none }
 
-        guard let otherDomain = domain(for: user) else { return .notClassified }
+        guard let otherDomain = domain(for: user),
+              user.isTemporaryUser == false else { return .notClassified }
 
         return classifiedDomainsFeature.config.domains.contains(otherDomain) ? .classified : .notClassified
     }

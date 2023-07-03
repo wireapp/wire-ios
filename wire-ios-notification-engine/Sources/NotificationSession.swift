@@ -362,6 +362,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
                 WireLogger.notifications.info("ignoring event")
             }
         }
+        context.saveOrRollback()
     }
 
     private func callEventPayloadForCallKit(from event: ZMUpdateEvent) -> CallEventPayload? {

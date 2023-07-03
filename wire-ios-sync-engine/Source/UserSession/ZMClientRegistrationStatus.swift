@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireSystem
+import WireDataModel
 
 private let zmLog = ZMSLog(tag: "ZMClientRegistrationStatus")
 
@@ -60,4 +62,94 @@ extension ZMClientRegistrationStatus {
         let outError = NSError.userSessionErrorWith(ZMUserSessionErrorCode.clientDeletedRemotely, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
         registrationStatusDelegate?.didDeleteSelfUserClient(error: outError)
     }
+
+    @objc
+    public func prepareForClientRegistration() {
+        WireLogger.userClient.info("preparing for client registration")
+
+        guard needsToRegisterClient() else {
+            WireLogger.userClient.info("no need to register client. aborting client registration")
+            return
+        }
+
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+        guard selfUser.remoteIdentifier != nil else {
+            WireLogger.userClient.info("identifier for self user is nil. aborting client registration")
+            return
+        }
+
+        if needsToCreateNewClientForSelfUser(selfUser) {
+            WireLogger.userClient.info("client creation needed. will insert client in context")
+            insertNewClient(for: selfUser)
+        } else {
+            // there is already an unregistered client in the store
+            // since there is no change in the managedObject, it will not trigger [ZMRequestAvailableNotification notifyNewRequestsAvailable:] automatically
+            // therefore we need to call it here
+            WireLogger.userClient.info("unregistered client found. notifying available requests")
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
+    }
+
+    private func insertNewClient(for selfUser: ZMUser) {
+        UserClient.insertNewSelfClient(
+            in: managedObjectContext,
+            selfUser: selfUser,
+            model: UIDevice.current.zm_model(),
+            label: UIDevice.current.name
+        )
+
+        managedObjectContext.saveOrRollback()
+    }
+
+    private func needsToCreateNewClientForSelfUser(_ selfUser: ZMUser) -> Bool {
+        if let selfClient = selfUser.selfClient(), !selfClient.isZombieObject {
+            WireLogger.userClient.info("self user has viable self client. no need to create new self client")
+            return false
+        }
+
+        let hasNotYetRegisteredClient = selfUser.clients.contains(where: { $0.remoteIdentifier == nil })
+
+        if !hasNotYetRegisteredClient {
+            WireLogger.userClient.info("self user has no client that isn't yet registered. will need to create new self client")
+        } else {
+            WireLogger.userClient.info("self user has a client that isn't yet registered. no need to create new self client")
+        }
+
+        return !hasNotYetRegisteredClient
+    }
+
+    @objc
+    public func didDeleteClient() {
+        WireLogger.userClient.info("client was deleted. will prepare for registration")
+
+        if isWaitingForClientsToBeDeleted {
+            isWaitingForClientsToBeDeleted = false
+            prepareForClientRegistration()
+        }
+    }
+
+    @objc
+    public func didFetchSelfUser() {
+        WireLogger.userClient.info("did fetch self user")
+
+        if needsToRegisterClient() {
+            if isAddingEmailNecessary() {
+                notifyEmailIsNecessary()
+            }
+            prepareForClientRegistration()
+        } else if !needsToVerifySelfClient {
+            emailCredentials = nil
+        }
+    }
+
+    private func notifyEmailIsNecessary() {
+        let error = NSError(
+            domain: NSError.ZMUserSessionErrorDomain,
+            code: Int(ZMUserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
+        )
+
+        registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
+    }
+
 }
