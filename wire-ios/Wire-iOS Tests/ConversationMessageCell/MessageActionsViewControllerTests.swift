@@ -28,6 +28,41 @@ final class MessageActionsViewControllerTests: XCTestCase {
         SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
     }
 
+    func testReactionPicker_ExistForStandardMessage() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Test tests")
+        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        // WHEN
+        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
+                                                                            actionController: actionController)
+        // THEN
+        XCTAssertTrue(messageActionsViewController.view.containsBasicReactionPicker())
+    }
+
+    func testReactionPicker_DoesnExistForEphemeralMessage() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Test tests")
+        message.isEphemeral = true
+        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        // WHEN
+        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
+                                                                            actionController: actionController)
+        // THEN
+        XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
+    }
+
+    func testReactionPicker_DoesnExistForFailedMessage() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Test tests")
+        message.deliveryState = .failedToSend
+        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        // WHEN
+        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
+                                                                            actionController: actionController)
+        // THEN
+        XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
+    }
+
     func testMenuActionsForTextMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
@@ -123,5 +158,22 @@ final class BasicReactionPickerTests: ZMSnapshotTestCase {
         picker.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))
 
         return picker
+    }
+}
+
+fileprivate extension UIView {
+
+    func containsBasicReactionPicker() -> Bool {
+        if self.subviews.contains(where: { $0.isKind(of: BasicReactionPicker.self) }) {
+                    return true
+                }
+
+                for subview in self.subviews {
+                    if subview.containsBasicReactionPicker() {
+                        return true
+                    }
+                }
+
+                return false
     }
 }
