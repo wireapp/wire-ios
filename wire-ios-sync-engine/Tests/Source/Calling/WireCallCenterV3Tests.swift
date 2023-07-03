@@ -68,6 +68,7 @@ class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         BackendInfo.domain = "wire.com"
 
         let selfUser = ZMUser.selfUser(in: uiMOC)
