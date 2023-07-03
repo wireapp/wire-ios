@@ -17,9 +17,4 @@
 //
 
 import Foundation
-
-public protocol FooInterface {
-
-    func theAnswer() -> Int
-
-}
+import UIKit

@@ -18,11 +18,4 @@
 
 import Foundation
 import DesignSystemPublic
-
-public class Foo: FooInterface {
-
-    public func theAnswer() -> Int {
-        return 42
-    }
-
-}
+import UIKit

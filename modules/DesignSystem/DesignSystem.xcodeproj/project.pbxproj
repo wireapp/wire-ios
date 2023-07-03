@@ -11,9 +11,8 @@
 		4AF5CAD7FB760C0146B6C943 /* DesignSystemPrivate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DCB5325F7EE4F19930BFCDE /* DesignSystemPrivate.framework */; };
 		5D416613F75BE450C55266F1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F8CADF5134184515AB139271 /* Localizable.strings */; };
 		94EE9302583A5C8E0B80F68C /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AE2F6CB29FA5996D779FE4 /* Strings+Generated.swift */; };
-		98EB39293B1C9FE0666B6453 /* FooInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D73D7764B553C2E7EEEACA /* FooInterface.swift */; };
-		9992BA01A8ECB00BB67324D9 /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA807C94DC77FAFE42B0E2E /* Foo.swift */; };
-		9A0F251F3079221C7CBEAD56 /* FooTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFABBCC5F623EB076BA82B19 /* FooTests.swift */; };
+		98EB39293B1C9FE0666B6453 /* DesignSystemPublic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D73D7764B553C2E7EEEACA /* DesignSystemPublic.swift */; };
+		9992BA01A8ECB00BB67324D9 /* DesignSystemPrivate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA807C94DC77FAFE42B0E2E /* DesignSystemPrivate.swift */; };
 		EEF73C982A4EFB7D0085196F /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEF73C972A4EFB7D0085196F /* Colors.xcassets */; };
 		EEF73CD62A4F0D400085196F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEF73CD42A4F0D400085196F /* Images.xcassets */; };
 		EEF73CD72A4F0D400085196F /* OtherImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEF73CD52A4F0D400085196F /* OtherImages.xcassets */; };
@@ -54,7 +53,7 @@
 /* Begin PBXFileReference section */
 		0DCB5325F7EE4F19930BFCDE /* DesignSystemPrivate.framework */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.framework; path = DesignSystemPrivate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		145BB0923704245F5275CBA2 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
-		1DA807C94DC77FAFE42B0E2E /* Foo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foo.swift; sourceTree = "<group>"; };
+		1DA807C94DC77FAFE42B0E2E /* DesignSystemPrivate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemPrivate.swift; sourceTree = "<group>"; };
 		27C449E2B6BADD1AB481502A /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		31E5B5FA231133403DECF47C /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Localizable.strings; sourceTree = "<group>"; };
 		360E84427CEAFDA3368EF1B3 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -67,9 +66,8 @@
 		9DD2CCC8EB79AA0D8EFCCD4C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A117F9628C1AFF48DB9EB666 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A28A018AA1B7A8E29D0EBF65 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		AFABBCC5F623EB076BA82B19 /* FooTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooTests.swift; sourceTree = "<group>"; };
 		B2A9B9DABDF8EBA721A96C2B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		B6D73D7764B553C2E7EEEACA /* FooInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooInterface.swift; sourceTree = "<group>"; };
+		B6D73D7764B553C2E7EEEACA /* DesignSystemPublic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemPublic.swift; sourceTree = "<group>"; };
 		BB38C11174CA3B5A7754C0B6 /* DesignSystemBundle.bundle */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.plug-in"; name = DesignSystemBundle.bundle; path = DesignSystemPrivate.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE2485138B433CB68C6F7A9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C821B18CBE5411491FAA3A84 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -112,7 +110,7 @@
 		4FCF4E7F048943A642771DAC /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B6D73D7764B553C2E7EEEACA /* FooInterface.swift */,
+				B6D73D7764B553C2E7EEEACA /* DesignSystemPublic.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -129,7 +127,7 @@
 		747CAC04F2D38CE4D6AA977A /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1DA807C94DC77FAFE42B0E2E /* Foo.swift */,
+				1DA807C94DC77FAFE42B0E2E /* DesignSystemPrivate.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -137,7 +135,6 @@
 		7AC49C603B4599EC92F1BD7B /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				AFABBCC5F623EB076BA82B19 /* FooTests.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -376,7 +373,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A0F251F3079221C7CBEAD56 /* FooTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,7 +380,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98EB39293B1C9FE0666B6453 /* FooInterface.swift in Sources */,
+				98EB39293B1C9FE0666B6453 /* DesignSystemPublic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,7 +388,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9992BA01A8ECB00BB67324D9 /* Foo.swift in Sources */,
+				9992BA01A8ECB00BB67324D9 /* DesignSystemPrivate.swift in Sources */,
 				94EE9302583A5C8E0B80F68C /* Strings+Generated.swift in Sources */,
 				EEF73CD92A4F0DAC0085196F /* Assets+Generated.swift in Sources */,
 			);

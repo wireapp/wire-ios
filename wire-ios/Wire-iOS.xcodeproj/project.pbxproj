@@ -1401,6 +1401,10 @@
 		EEF6E3C428D86408001C1799 /* MessageProtocolSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */; };
 		EEF71F6321B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */; };
 		EEF71F6521B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */; };
+		EEF73CDC2A5286B30085196F /* DesignSystemPrivate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEF73CDA2A5286B30085196F /* DesignSystemPrivate.framework */; };
+		EEF73CDD2A5286B30085196F /* DesignSystemPrivate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEF73CDA2A5286B30085196F /* DesignSystemPrivate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEF73CDE2A5286B30085196F /* DesignSystemPublic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEF73CDB2A5286B30085196F /* DesignSystemPublic.framework */; };
+		EEF73CDF2A5286B30085196F /* DesignSystemPublic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEF73CDB2A5286B30085196F /* DesignSystemPublic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEFF3E7A21B67990000834A6 /* ConversationCreateOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEFF3E7921B67990000834A6 /* ConversationCreateOptionsCell.swift */; };
 		EEFF3E7C21B6D1FB000834A6 /* ConversationCreateSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEFF3E7B21B6D1FB000834A6 /* ConversationCreateSectionController.swift */; };
 		EF00FD741FDA97BA0059FEDC /* UIViewController+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF00FD731FDA97BA0059FEDC /* UIViewController+Orientation.swift */; };
@@ -1834,6 +1838,7 @@
 				EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */,
 				EE67F6D6296F06A3001D7C88 /* Down.xcframework in Embed Frameworks */,
 				EE82971129719F9A00F12CAA /* Starscream.xcframework in Embed Frameworks */,
+				EEF73CDF2A5286B30085196F /* DesignSystemPublic.framework in Embed Frameworks */,
 				EE67F6DC296F06C2001D7C88 /* FormatterKit.xcframework in Embed Frameworks */,
 				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
 				EE67F6D3296F0692001D7C88 /* DifferenceKit.xcframework in Embed Frameworks */,
@@ -1847,6 +1852,7 @@
 				EE33C4912964860000C058D1 /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE67F6D9296F06B3001D7C88 /* FLAnimatedImage.xcframework in Embed Frameworks */,
 				EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */,
+				EEF73CDD2A5286B30085196F /* DesignSystemPrivate.framework in Embed Frameworks */,
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
 				EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */,
@@ -3380,6 +3386,8 @@
 		EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolSectionController.swift; sourceTree = "<group>"; };
 		EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsCell.swift; sourceTree = "<group>"; };
 		EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsSectionController.swift; sourceTree = "<group>"; };
+		EEF73CDA2A5286B30085196F /* DesignSystemPrivate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DesignSystemPrivate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEF73CDB2A5286B30085196F /* DesignSystemPublic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DesignSystemPublic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEFF3E7921B67990000834A6 /* ConversationCreateOptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateOptionsCell.swift; sourceTree = "<group>"; };
 		EEFF3E7B21B6D1FB000834A6 /* ConversationCreateSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateSectionController.swift; sourceTree = "<group>"; };
 		EF00FD731FDA97BA0059FEDC /* UIViewController+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Orientation.swift"; sourceTree = "<group>"; };
@@ -3769,6 +3777,7 @@
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
 				A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */,
 				EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */,
+				EEF73CDE2A5286B30085196F /* DesignSystemPublic.framework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
 				EE67F6DB296F06C2001D7C88 /* FormatterKit.xcframework in Frameworks */,
 				EE33C48A296485F400C058D1 /* WireSyncEngine.framework in Frameworks */,
@@ -3783,6 +3792,7 @@
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				87E0D6D51CD3978900C54196 /* AVKit.framework in Frameworks */,
 				169FF9331C57CB2100C5BF90 /* VideoToolbox.framework in Frameworks */,
+				EEF73CDC2A5286B30085196F /* DesignSystemPrivate.framework in Frameworks */,
 				EE67F6D5296F06A3001D7C88 /* Down.xcframework in Frameworks */,
 				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
 			);
@@ -4972,6 +4982,8 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EEF73CDA2A5286B30085196F /* DesignSystemPrivate.framework */,
+				EEF73CDB2A5286B30085196F /* DesignSystemPublic.framework */,
 				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */,
 				EE9A8581298B068A00064A9C /* WireNotificationEngine.framework */,
