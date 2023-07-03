@@ -18,6 +18,9 @@ targets:
     platform: iOS
     sources:
       - DesignSystemPublic/Sources
+    scheme:
+      configVariants:
+        # keep empty to use default config
 
   # DesignSystemPrivate
   ##############################

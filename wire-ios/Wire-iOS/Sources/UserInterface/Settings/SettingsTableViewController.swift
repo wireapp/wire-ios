@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import DesignSystemPrivate
 
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?

@@ -19,11 +19,18 @@
 import Foundation
 import UIKit
 
-final class OverflowSeparatorView: UIView {
+/// A view to separate a table view from an adjacent view
+/// during scrolling.
 
-    var inverse: Bool = false
+public final class OverflowSeparatorView: UIView {
 
-    override init(frame: CGRect) {
+    // MARK: - Properties
+
+    public var inverse = false
+
+    // MARK: - Life cycle
+
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         self.applyStyle()
     }
@@ -33,23 +40,29 @@ final class OverflowSeparatorView: UIView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
+    // MARK: - Methods
+
+    public override var intrinsicContentSize: CGSize {
+        return CGSize(
+            width: UIView.noIntrinsicMetric,
+            height: .hairline
+        )
+    }
+
     private func applyStyle() {
-        self.backgroundColor = SemanticColors.View.backgroundSeparatorCell
-        self.alpha = 0
+        backgroundColor = .separatorBackgroundColor
+        alpha = 0
     }
 
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
-    }
-
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    public func scrollViewDidScroll(scrollView: UIScrollView) {
         if inverse {
             let (height, contentHeight) = (scrollView.bounds.height, scrollView.contentSize.height)
             let offsetY = scrollView.contentOffset.y
             let showSeparator = contentHeight - offsetY > height
             alpha = showSeparator ? 1 : 0
         } else {
-            self.alpha = scrollView.contentOffset.y > 0 ? 1 : 0
+            alpha = scrollView.contentOffset.y > 0 ? 1 : 0
         }
     }
+
 }

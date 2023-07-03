@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireDataModel
+import DesignSystemPrivate
 
 protocol ShareDestination: Hashable {
     var displayName: String { get }
