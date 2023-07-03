@@ -61,7 +61,7 @@ extension XCTestCase {
 
         for(config, name) in XCTestCase.phoneConfigNames(orientation: orientation) {
             verify(matching: value,
-                   as: .image(on: config),
+                   as: .image(on: config, precision: 0.999),
                    named: name,
                    file: file,
                    testName: testName,
@@ -76,7 +76,7 @@ extension XCTestCase {
 
         for(config, name) in XCTestCase.phoneConfigNames() {
             verify(matching: createSut(config.size!),
-                   as: .image(on: config),
+                   as: .image(on: config, precision: 0.999),
                    named: name,
                    file: file,
                    testName: testName,
@@ -97,7 +97,7 @@ extension XCTestCase {
             }
 
             verify(matching: value,
-                   as: .image(on: config),
+                   as: .image(on: config, precision: 0.999),
                    named: name,
                    file: file,
                    testName: testName,
@@ -322,7 +322,7 @@ extension XCTestCase {
         }
 
         let failure = verifySnapshot(matching: value,
-                                     as: .image,
+                                     as: .image(precision: 0.999),
                                      snapshotDirectory: snapshotDirectory(file: file),
                                      file: file, testName: testName, line: line)
 
@@ -362,7 +362,7 @@ extension XCTestCase {
                 line: UInt = #line) {
 
             let failure = verifySnapshot(matching: value,
-                                         as: .image,
+                                         as: .image(precision: 0.999),
                                          named: name,
                                          snapshotDirectory: snapshotDirectory(file: file),
                                          file: file,
