@@ -38,6 +38,18 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
 
     private var indicatorImageViewTrailing: NSLayoutConstraint!
 
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = FontSpec.mediumRegularFont.font!
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 1
+        label.accessibilityIdentifier = "DateLabel"
+        label.isAccessibilityElement = true
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
@@ -56,17 +68,19 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubviews() {
+        dateLabel.text = "Date"
         addSubview(senderView)
         addSubview(indicatorImageView)
+        addSubview(dateLabel)
     }
 
     private func configureConstraints() {
         senderView.translatesAutoresizingMaskIntoConstraints = false
         indicatorImageView.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
 
         indicatorImageViewTrailing = indicatorImageView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor,
                                                                                   constant: -conversationHorizontalMargins.right)
-
         NSLayoutConstraint.activate([
             // indicatorImageView
             indicatorImageViewTrailing,
@@ -76,7 +90,12 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
             senderView.leadingAnchor.constraint(equalTo: leadingAnchor),
             senderView.topAnchor.constraint(equalTo: topAnchor),
             senderView.trailingAnchor.constraint(equalTo: indicatorImageView.leadingAnchor, constant: -8),
-            senderView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            senderView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // dateLabel
+            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            dateLabel.topAnchor.constraint(equalTo: topAnchor)
         ])
     }
 
