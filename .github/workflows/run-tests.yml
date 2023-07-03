@@ -231,7 +231,7 @@ jobs:
           echo "Building WireSyncEngine..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | xcpretty
           echo "Testing WireSyncEngine..."
-          xcodebuild test -retry-tests-on-failure -test-repetition-relaunch-enabled YES -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | xcpretty --report junit --output build/reports/WireSyncEngine.junit
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | xcpretty --report junit --output build/reports/WireSyncEngine.junit
           exit ${PIPESTATUS[0]}
           
       - name: Test Wire-iOS
@@ -241,7 +241,7 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | xcpretty
           echo "Testing Wire-iOS..."
-          xcodebuild test -retry-tests-on-failure -test-repetition-relaunch-enabled YES -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild.log | xcpretty --report junit --output build/reports/Wire-iOS.junit
+          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild.log | xcpretty --report junit --output build/reports/Wire-iOS.junit
           exit ${PIPESTATUS[0]}
 
       - name: Upload Failed snapshots
