@@ -241,7 +241,7 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | xcpretty
           echo "Testing Wire-iOS..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild.log | xcpretty --report junit --output build/reports/Wire-iOS.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild.log | xcpretty --report junit --output build/reports/Wire-iOS.junit
           exit ${PIPESTATUS[0]}
 
       - name: Upload Failed snapshots
