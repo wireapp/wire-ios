@@ -1,5 +1,7 @@
 require 'git'
 require 'base64'
+require 'httparty'
+require 'json'
 
 opt_out_usage
 default_platform(:ios)
@@ -23,7 +25,7 @@ platform :ios do
             unlock: true,
             timeout: 3600,
             lock_when_sleeps: true
-        )
+        ) if is_running_on_ci
     end
 
     before_all do |lane|
@@ -48,6 +50,15 @@ platform :ios do
     lane :prepare_for_development do |options|
         sh "cd .. && ./setup.sh"
         sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
+    end
+    
+    desc "Build & Upload Development build"
+    lane :development do |options|
+        options[:build_type] = "Development"
+        options[:upload_app_center] = true
+        options[:upload_dsyms_to_datadog] = true
+        options[:produce_debug_builds] = true
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Playground build"
@@ -125,6 +136,85 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+    end
+
+    lane :trigger_api_build_cirrus_ci do |options|
+        authorization_header = { "Authorization" => "Bearer #{ENV['CIRRUS_CI_API_TOKEN']}" }
+        uri = 'https://api.cirrus-ci.com/graphql'
+        create_build_body = <<~BODY
+        {
+            "query": "mutation CreateBuildMutation($input: RepositoryCreateBuildInput!) {
+                createBuild(input: $input) {
+                    build {
+                        id
+                    }
+                }
+            }",
+            "variables": {
+                "input": {
+                    "repositoryId": "4507403593449472",
+                    "branch": "#{ENV['GITHUB_REF_NAME']}",
+                    "clientMutationId": "trigger-build-on-cirrus-#{ENV['GITHUB_REF_NAME']}"
+                }
+            }
+        }
+        BODY
+        create_build = HTTParty.post(
+            uri,
+            body: create_build_body,
+            headers: authorization_header
+        )
+        
+        # needed for async creation of jobs on CirrusCI, 1 second would be enough but I made it a big more to be sure that Cirrus already processed the async event
+        `sleep 7` 
+        
+        created_build_id =  JSON.parse(create_build.body, symbolize_names: true)[:data][:createBuild][:build][:id]
+        get_build_body = <<~BODY
+        {
+            "query": "query GetBuildQuery($id: ID!) {
+                build(id: $id) {
+                    tasks {
+                        id
+                        name
+                    }
+                }
+            }",
+            "variables": {
+                "id": "#{created_build_id}"
+            }
+        }
+        BODY
+        build_info = HTTParty.post(
+            uri,
+            body: get_build_body,
+            headers: authorization_header
+        )
+
+        cirrus_ci_tasks = JSON.parse(build_info.body, symbolize_names: true)[:data][:build][:tasks]
+        task_to_trigger = cirrus_ci_tasks.select { |task|  task[:name] == options[:task] }.first
+        trigger_task_body = <<~BODY 
+        {
+            "query": "mutation TriggerTask($input: TaskTriggerInput!) {
+                trigger(input: $input) {
+                    task {
+                        id
+                    }
+                }
+            }",
+            "variables": {
+                "input": {
+                    "taskId": "#{task_to_trigger[:id]}",
+                    "clientMutationId": "trigger-task-#{task_to_trigger[:id]}"
+                }
+            }
+        }
+        BODY
+        triggered_task = HTTParty.post(
+            uri,
+            body: trigger_task_body,
+            headers: authorization_header
+        )
+        puts "https://cirrus-ci.com/task/#{triggered_task["data"]["trigger"]["task"]["id"]}"
     end
 
     def build_and_upload_app(options)

@@ -319,5 +319,4 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         // then
         XCTAssertEqual(classification, .classified)
     }
-
 }
