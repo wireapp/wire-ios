@@ -99,7 +99,6 @@ class MessageToolboxDataSource {
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
-        let showTimestamp = forceShowTimestamp
         let previousContent = self.content
 
         // Determine the content by priority
