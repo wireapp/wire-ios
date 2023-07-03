@@ -561,7 +561,9 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - Security Banner
 
     private func updateClassificationBanner() {
-        securityLevelView.configure(with: conversation.participants, provider: classificationProvider)
+        securityLevelView.configure(with: conversation.participants,
+                                    conversationDomain: conversation.domain,
+                                    provider: classificationProvider)
     }
 
     // MARK: - Save draft message
