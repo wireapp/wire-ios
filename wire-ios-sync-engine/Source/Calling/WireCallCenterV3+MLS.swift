@@ -26,7 +26,14 @@ extension WireCallCenterV3 {
     ) {
         switch callState {
         case .incoming, .terminating:
-            leaveStaleConferenceIfNeeded(conversationID: conversationID)
+            guard let mlsParentIDs = mlsParentIDS(for: conversationID) else {
+                return
+            }
+
+            leaveStaleConferenceIfNeeded(
+                parentQualifiedID: mlsParentIDs.0,
+                parentGroupID: mlsParentIDs.1
+            )
 
         default:
             break
@@ -34,21 +41,44 @@ extension WireCallCenterV3 {
     }
 
     func updateMLSConferenceIfNeededForMissedCall(conversationID: AVSIdentifier) {
-        leaveStaleConferenceIfNeeded(conversationID: conversationID)
+        guard let mlsParentIDs = mlsParentIDS(for: conversationID) else {
+            return
+        }
+
+        leaveStaleConferenceIfNeeded(
+            parentQualifiedID: mlsParentIDs.0,
+            parentGroupID: mlsParentIDs.1
+        )
     }
 
-    private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
+    func mlsParentIDS(for callID: AVSIdentifier) -> (QualifiedID, MLSGroupID)? {
+        guard
+            let context = uiMOC,
+            let domain = callID.domain ?? BackendInfo.domain,
+            let conversation = ZMConversation.fetch(
+                with: callID.identifier,
+                domain: domain,
+                in: context
+            ),
+            conversation.messageProtocol == .mls,
+            let qualifiedID = conversation.qualifiedID,
+            let groupID = conversation.mlsGroupID
+        else {
+            return nil
+        }
+
+        return (qualifiedID, groupID)
+    }
+
+    // Leaves the possibles subconversation for the mls conference.
+
+    private func leaveStaleConferenceIfNeeded(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID
+    ) {
         guard
             let viewContext = uiMOC,
             let syncContext = viewContext.zm_sync,
-            let domain = conversationID.domain ?? BackendInfo.domain,
-            let conversation = ZMConversation.fetch(
-                with: conversationID.identifier,
-                domain: domain,
-                in: viewContext
-            ),
-            conversation.messageProtocol == .mls,
-            let parentGroupID = conversation.mlsGroupID,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
             let selfClientID = MLSClientID(userClient: selfClient)
         else {
@@ -59,11 +89,6 @@ extension WireCallCenterV3 {
             guard let mlsService = syncContext.mlsService else {
                 return
             }
-
-            let parentQualifiedID = QualifiedID(
-                uuid: conversationID.identifier,
-                domain: domain
-            )
 
             Task {
                 do {
@@ -76,6 +101,35 @@ extension WireCallCenterV3 {
                 } catch {
                     WireLogger.calling.warn("failed to leave stale conference if needed: \(String(describing: error))")
                 }
+            }
+        }
+    }
+
+    // Leaves the subconversation for the mls conference.
+
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID
+    ) {
+        guard
+            let context = uiMOC,
+            let syncContext = context.zm_sync
+        else {
+            return
+        }
+
+        syncContext.perform {
+            guard let mlsService = syncContext.mlsService else {
+                WireLogger.calling.error("failed to leave subconversation: mlsService is missing")
+                return
+            }
+
+            Task {
+                try await mlsService.leaveSubconversation(
+                    parentQualifiedID: parentQualifiedID,
+                    parentGroupID: parentGroupID,
+                    subconversationType: .conference
+                )
             }
         }
     }

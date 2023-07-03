@@ -665,38 +665,11 @@ extension WireCallCenterV3 {
             }
         }
 
-        leaveSubconversationIfNeeded(id: conversationId)
-    }
-
-    private func leaveSubconversationIfNeeded(id: AVSIdentifier) {
-        guard
-            let context = uiMOC,
-            let syncContext = context.zm_sync,
-            let domain = id.domain ?? BackendInfo.domain,
-            let conversation = ZMConversation.fetch(
-                with: id.identifier,
-                domain: domain,
-                in: context
-            ),
-            conversation.messageProtocol == .mls,
-            let parentGroupID = conversation.mlsGroupID
-        else {
-            return
-        }
-
-        syncContext.perform {
-            guard let mlsService = syncContext.mlsService else {
-                WireLogger.calling.error("failed to leave subconversation: mlsService is missing")
-                return
-            }
-
-            Task {
-                try await mlsService.leaveSubconversation(
-                    parentQualifiedID: QualifiedID(uuid: id.identifier, domain: domain),
-                    parentGroupID: parentGroupID,
-                    subconversationType: .conference
-                )
-            }
+        if let mlsParentIDs = mlsParentIDS(for: conversationId) {
+            leaveSubconversation(
+                parentQualifiedID: mlsParentIDs.0,
+                parentGroupID: mlsParentIDs.1
+            )
         }
     }
 
