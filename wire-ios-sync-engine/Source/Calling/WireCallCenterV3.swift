@@ -664,6 +664,13 @@ extension WireCallCenterV3 {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
             }
         }
+
+        if let mlsParentIDs = mlsParentIDS(for: conversationId) {
+            leaveSubconversation(
+                parentQualifiedID: mlsParentIDs.0,
+                parentGroupID: mlsParentIDs.1
+            )
+        }
     }
 
     /**
@@ -805,6 +812,8 @@ extension WireCallCenterV3 {
         if let context = uiMOC {
             WireCallCenterMissedCallNotification(context: context, conversationId: conversationId, callerId: userId, timestamp: timestamp, video: isVideoCall).post(in: context.notificationContext)
         }
+
+        updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
     }
 
     /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it to the `bufferedEvents`.
@@ -906,6 +915,11 @@ extension WireCallCenterV3 {
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
         }
+
+        updateMLSConferenceIfNeeded(
+            conversationID: conversationId,
+            callState: callState
+        )
     }
 
 }

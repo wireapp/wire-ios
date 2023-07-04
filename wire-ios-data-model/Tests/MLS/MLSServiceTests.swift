@@ -1872,6 +1872,172 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subconversationGroupID.parentGroupID, parentID)
     }
 
+    func test_LeaveSubconversation() async throws {
+        // Given
+        let parentID = QualifiedID.random()
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+        let subconversationType = SubgroupType.conference
+
+        mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            // no op
+        }
+
+        var mockWipeConversationArguments = [[Byte]]()
+        mockCoreCrypto.mockWipeConversation = {
+            mockWipeConversationArguments.append($0)
+        }
+
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+
+        mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
+            // no op
+        }
+
+        // When
+        try await sut.leaveSubconversation(
+            parentQualifiedID: parentID,
+            parentGroupID: parentGroupID,
+            subconversationType: subconversationType
+        )
+
+        // Then
+        let leaveSubconversationInvocations = mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations
+        XCTAssertEqual(leaveSubconversationInvocations.count, 1)
+        let leaveSubconversationInvocation = try XCTUnwrap(leaveSubconversationInvocations.first)
+        XCTAssertEqual(leaveSubconversationInvocation.conversationID, parentID.uuid)
+        XCTAssertEqual(leaveSubconversationInvocation.domain, parentID.domain)
+        XCTAssertEqual(leaveSubconversationInvocation.subconversationType, subconversationType)
+
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
+
+        let clearSubconversationGroupIDInvocations = mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_Invocations
+        XCTAssertEqual(clearSubconversationGroupIDInvocations.count, 1)
+        let clearSubconversationGroupIDInvocation = try XCTUnwrap(clearSubconversationGroupIDInvocations.first)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.groupID, nil)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.type, .conference)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.parentGroupID, parentGroupID)
+    }
+
+    func test_LeaveSubconversationIfNeeded_GroupIDExists() async throws {
+        // Given
+        let parentID = QualifiedID.random()
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+        let subconversationType = SubgroupType.conference
+        let selfClientID = MLSClientID.random()
+
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+        mockCoreCrypto.mockConversationExists = {
+            XCTAssertEqual($0, subconversationGroupID.bytes)
+            return true
+        }
+
+        mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            // no op
+        }
+
+        var mockWipeConversationArguments = [[Byte]]()
+        mockCoreCrypto.mockWipeConversation = {
+            mockWipeConversationArguments.append($0)
+        }
+
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+
+        mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
+            // no op
+        }
+
+        // When
+        try await sut.leaveSubconversationIfNeeded(
+            parentQualifiedID: parentID,
+            parentGroupID: parentGroupID,
+            subconversationType: subconversationType,
+            selfClientID: selfClientID
+        )
+
+        // Then
+        let invocations = mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        let invocation = try XCTUnwrap(invocations.element(atIndex: 0))
+        XCTAssertEqual(invocation.conversationID, parentID.uuid)
+        XCTAssertEqual(invocation.domain, parentID.domain)
+        XCTAssertEqual(invocation.subconversationType, subconversationType)
+
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
+
+        let clearSubconversationGroupIDInvocations = mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_Invocations
+        XCTAssertEqual(clearSubconversationGroupIDInvocations.count, 1)
+        let clearSubconversationGroupIDInvocation = try XCTUnwrap(clearSubconversationGroupIDInvocations.first)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.groupID, nil)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.type, .conference)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.parentGroupID, parentGroupID)
+    }
+
+    func test_LeaveSubconversationIfNeeded_GroupIDDoesNotExist() async throws {
+        // Given
+        let parentID = QualifiedID.random()
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+        let subconversationType = SubgroupType.conference
+        let selfClientID = MLSClientID.random()
+
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _ in
+            return nil
+        }
+
+        mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
+            return MLSSubgroup(
+                cipherSuite: 1,
+                epoch: 1,
+                epochTimestamp: nil,
+                groupID: subconversationGroupID,
+                members: [selfClientID],
+                parentQualifiedID: parentID
+            )
+        }
+
+        mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            // no op
+        }
+
+        var mockWipeConversationArguments = [[Byte]]()
+        mockCoreCrypto.mockWipeConversation = {
+            mockWipeConversationArguments.append($0)
+        }
+
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+
+        mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
+            // no op
+        }
+
+        // When
+        try await sut.leaveSubconversationIfNeeded(
+            parentQualifiedID: parentID,
+            parentGroupID: parentGroupID,
+            subconversationType: subconversationType,
+            selfClientID: selfClientID
+        )
+
+        // Then
+        let invocations = mockActionsProvider.leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        let invocation = try XCTUnwrap(invocations.element(atIndex: 0))
+        XCTAssertEqual(invocation.conversationID, parentID.uuid)
+        XCTAssertEqual(invocation.domain, parentID.domain)
+        XCTAssertEqual(invocation.subconversationType, subconversationType)
+
+        XCTAssertEqual(mockWipeConversationArguments, [subconversationGroupID.bytes])
+
+        let clearSubconversationGroupIDInvocations = mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_Invocations
+        XCTAssertEqual(clearSubconversationGroupIDInvocations.count, 1)
+        let clearSubconversationGroupIDInvocation = try XCTUnwrap(clearSubconversationGroupIDInvocations.first)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.groupID, nil)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.type, .conference)
+        XCTAssertEqual(clearSubconversationGroupIDInvocation.parentGroupID, parentGroupID)
+    }
+
     // MARK: - On conference info changed
 
     func test_OnEpochChanged_InterleavesSources() throws {
