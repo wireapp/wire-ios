@@ -60,6 +60,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = []
 
+        createSut()
+    }
+
+    private func createSut() {
         sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
@@ -79,6 +83,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     override func tearDown() {
         sut = nil
+        keyMaterialUpdatedExpectation = nil
         mockCoreCrypto = nil
         mockSafeCoreCrypto = nil
         mockEncryptionService = nil
@@ -242,9 +247,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
     }
 
+    typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
+
     func test_GenerateConferenceInfo_Fails() {
         // Given
-        typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
 
@@ -305,7 +311,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subconversationType = SubgroupType.conference
 
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
-
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
 
         // When
@@ -1050,7 +1055,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
         // Given
         let groupID = MLSGroupID.random()
-
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.mlsGroupID = groupID
         conversation.remoteIdentifier = UUID.create()
@@ -1285,8 +1289,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectation
-        let expectation = XCTestExpectation(description: "did update all keys")
-        keyMaterialUpdatedExpectation = expectation
+        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
+
 
         // When
         let sut = MLSService(
@@ -1302,7 +1306,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        wait(for: [expectation], timeout: 5)
+        waitForCustomExpectations(withTimeout: 5)
 
         // Then we updated the key material.
         XCTAssertEqual(
@@ -1354,8 +1358,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectation
-        let expectation = XCTestExpectation(description: "did update key material")
-        keyMaterialUpdatedExpectation = expectation
+        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalsArguments = [MLSGroupID]()
@@ -1390,7 +1393,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        wait(for: [expectation], timeout: 5)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
 
         // Then we committed the pending proposal.
         XCTAssertEqual(mockCommitPendingProposalsArguments, [groupID])

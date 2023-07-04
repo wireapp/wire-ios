@@ -1,11 +1,16 @@
-name: (CirrusCI) Beta
+name: (CirrusCI) Development
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+
 permissions: 
   checks: write
 
 jobs:
-  testflight_beta:
+  development:
     runs-on: ubuntu-latest
     env:
       CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
@@ -20,4 +25,5 @@ jobs:
       - name: Install dependencies
         run: bundle install
       - name: Trigger build
-        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Testflight Beta"
+        id: trigger
+        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Development"

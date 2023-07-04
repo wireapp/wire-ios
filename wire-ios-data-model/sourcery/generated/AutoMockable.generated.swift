@@ -436,10 +436,10 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var fetchPublicKeys_Invocations: [Void] = []
     public var fetchPublicKeys_MockError: Error?
-    public var fetchPublicKeys_MockMethod: (() throws -> EARPublicKeys)?
-    public var fetchPublicKeys_MockValue: EARPublicKeys?
+    public var fetchPublicKeys_MockMethod: (() throws -> EARPublicKeys?)?
+    public var fetchPublicKeys_MockValue: EARPublicKeys??
 
-    public func fetchPublicKeys() throws -> EARPublicKeys {
+    public func fetchPublicKeys() throws -> EARPublicKeys? {
         fetchPublicKeys_Invocations.append(())
 
         if let error = fetchPublicKeys_MockError {
@@ -459,10 +459,10 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var fetchPrivateKeysIncludingPrimary_Invocations: [Bool] = []
     public var fetchPrivateKeysIncludingPrimary_MockError: Error?
-    public var fetchPrivateKeysIncludingPrimary_MockMethod: ((Bool) throws -> EARPrivateKeys)?
-    public var fetchPrivateKeysIncludingPrimary_MockValue: EARPrivateKeys?
+    public var fetchPrivateKeysIncludingPrimary_MockMethod: ((Bool) throws -> EARPrivateKeys?)?
+    public var fetchPrivateKeysIncludingPrimary_MockValue: EARPrivateKeys??
 
-    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys {
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
         fetchPrivateKeysIncludingPrimary_Invocations.append(includingPrimary)
 
         if let error = fetchPrivateKeysIncludingPrimary_MockError {

@@ -313,7 +313,7 @@ public class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, _, contextRef in
+    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, myClientsOnly, contextRef in
         guard let token = token else {
             return EINVAL
         }
@@ -331,7 +331,8 @@ public class AVSWrapper: AVSWrapperType {
                                         senderUserId: AVSIdentifier.from(string: $2),
                                         senderClientId: $3,
                                         targets: targets,
-                                        data: transformedData)
+                                        data: transformedData,
+                                        overMLSSelfConversation: myClientsOnly == 1)
         }
     }
 
