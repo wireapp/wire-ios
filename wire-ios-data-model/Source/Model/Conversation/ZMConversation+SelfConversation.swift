@@ -133,23 +133,39 @@ extension ZMConversation {
 
     // MARK: - Sync downstream
 
-    static func updateConversation(withLastReadFromSelfConversation lastRead: LastRead, inContext moc: NSManagedObjectContext) {
-        let newTimeStamp = Double(integerLiteral: lastRead.lastReadTimestamp)
-        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
+    static func updateConversation(
+        withLastReadFromSelfConversation lastRead: LastRead,
+        in context: NSManagedObjectContext
+    ) {
         guard let conversationID = UUID(uuidString: lastRead.conversationID) else {
             return
         }
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: lastRead.qualifiedConversationID.domain, in: moc)
+
+        let newTimeStamp = Double(integerLiteral: lastRead.lastReadTimestamp)
+        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: lastRead.qualifiedConversationID.domain,
+            in: context
+        )
         conversation.updateLastRead(timestamp, synchronize: false)
     }
 
-    static func updateConversation(withClearedFromSelfConversation cleared: Cleared, inContext moc: NSManagedObjectContext) {
-        let newTimeStamp = Double(integerLiteral: cleared.clearedTimestamp)
-        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
+    static func updateConversation(
+        withClearedFromSelfConversation cleared: Cleared,
+        in context: NSManagedObjectContext
+    ) {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return
         }
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: cleared.qualifiedConversationID.domain, in: moc)
+
+        let newTimeStamp = Double(integerLiteral: cleared.clearedTimestamp)
+        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: cleared.qualifiedConversationID.domain,
+            in: context
+        )
         conversation.updateCleared(timestamp, synchronize: false)
     }
 

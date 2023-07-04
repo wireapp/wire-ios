@@ -35,7 +35,10 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
 
         // WHEN
         performPretendingUiMocIsSyncMoc {
-            ZMConversation.updateConversation(withLastReadFromSelfConversation: lastRead, inContext: self.uiMOC)
+            ZMConversation.updateConversation(
+                withLastReadFromSelfConversation: lastRead,
+                in: self.uiMOC
+            )
         }
         uiMOC.saveOrRollback()
 
@@ -58,7 +61,10 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
 
         // WHEN
         performPretendingUiMocIsSyncMoc {
-            ZMConversation.updateConversation(withClearedFromSelfConversation: cleared, inContext: self.uiMOC)
+            ZMConversation.updateConversation(
+                withClearedFromSelfConversation: cleared,
+                in: self.uiMOC
+            )
         }
         uiMOC.saveOrRollback()
 
