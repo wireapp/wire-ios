@@ -219,4 +219,10 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    // MARK: - New epoch
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
+    }
+
 }

@@ -2227,4 +2227,28 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
     }
 
+    func test_GenerateNewEpoch() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+
+        var commitPendingProposalsInvocations = [MLSGroupID]()
+        mockMLSActionExecutor.mockCommitPendingProposals = {
+            commitPendingProposalsInvocations.append($0)
+            return []
+        }
+
+        var updateKeyMaterialInvocations = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = {
+            updateKeyMaterialInvocations.append($0)
+            return []
+        }
+
+        // When
+        try await sut.generateNewEpoch(groupID: groupID)
+
+        // Then
+        XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
+        XCTAssertEqual(updateKeyMaterialInvocations, [groupID])
+    }
+
 }

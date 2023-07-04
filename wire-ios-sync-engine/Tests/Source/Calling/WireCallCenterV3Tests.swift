@@ -1839,6 +1839,69 @@ extension WireCallCenterV3Tests {
     }
 }
 
+// MARK: - Request new epoch
+
+extension WireCallCenterV3Tests {
+
+    func testHandleNewEpochRequest() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        createsMLSConferenceSnapshot(
+            conversationID: conversationID,
+            qualifiedID: qualifiedID,
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID
+        )
+
+        let mlsService = MockMLSService()
+        uiMOC.zm_sync.mlsService = mlsService
+
+        let didGenereateNewEpoch = expectation(description: "didGenerateNewEpoch")
+        mlsService.mockGenerateNewEpoch = {
+            XCTAssertEqual($0, subconversationGroupID)
+            didGenereateNewEpoch.fulfill()
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID)
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    private func createsMLSConferenceSnapshot(
+        conversationID: AVSIdentifier,
+        qualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) {
+        sut.callSnapshots[conversationID] = CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: (parentGroupID, subconversationGroupID),
+            callParticipants: CallParticipantsSnapshot(
+                conversationId: conversationID,
+                members: [],
+                callCenter: sut
+            ),
+            callState: .established,
+            callStarter: selfUserID,
+            isVideo: false,
+            isGroup: true,
+            isConstantBitRate: false,
+            videoState: .stopped,
+            networkQuality: .normal,
+            isConferenceCall: true,
+            degradedUser: nil,
+            activeSpeakers: [],
+            videoGridPresentationMode: .allVideoStreams
+        )
+    }
+}
+
 private extension AVSClient {
     static var mockClient: AVSClient {
         return AVSClient(userId: AVSIdentifier(identifier: UUID(), domain: "wire.com"),

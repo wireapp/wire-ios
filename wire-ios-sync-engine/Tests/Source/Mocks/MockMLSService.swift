@@ -161,4 +161,15 @@ class MockMLSService: MLSServiceInterface {
 
         try mock(parentQualifiedID, parentGroupID, subconversationType, selfClientID)
     }
+
+    var mockGenerateNewEpoch: ((MLSGroupID) -> Void)?
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        guard let mock = mockGenerateNewEpoch else {
+            fatalError("not implemented")
+        }
+
+        return mock(groupID)
+    }
+
 }
