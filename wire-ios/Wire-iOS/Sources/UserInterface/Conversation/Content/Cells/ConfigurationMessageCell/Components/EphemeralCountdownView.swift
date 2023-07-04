@@ -25,7 +25,7 @@ class EphemeralCountdownView: UIView {
     fileprivate let destructionCountdownView: DestructionCountdownView = DestructionCountdownView()
     fileprivate let containerView =  UIView()
     fileprivate var timer: Timer?
-    fileprivate var everAnimated = false
+    fileprivate var wasEverAnimated = false
 
     var message: ZMConversationMessage?
 
@@ -65,7 +65,7 @@ class EphemeralCountdownView: UIView {
             return
         }
 
-        guard !everAnimated else {
+        guard !wasEverAnimated else {
             return
         }
 
@@ -79,19 +79,19 @@ class EphemeralCountdownView: UIView {
         }
     }
 
-    func stopCountDown(everAnimated: Bool = false) {
+    func stopCountDown(wasEverAnimated: Bool = false) {
         destructionCountdownView.stopAnimating()
         timer?.invalidate()
         timer = nil
-        self.everAnimated = everAnimated
+        self.wasEverAnimated = wasEverAnimated
     }
 
     @objc
     fileprivate func updateCountdown() {
         guard let destructionDate = message?.destructionDate else {
-            if everAnimated || message?.isObfuscated == true {
+            if wasEverAnimated || message?.isObfuscated == true {
                 isHidden = true
-                stopCountDown(everAnimated: everAnimated)
+                stopCountDown(wasEverAnimated: wasEverAnimated)
             }
             return
         }
@@ -102,10 +102,10 @@ class EphemeralCountdownView: UIView {
             if progress < 1 {
                 destructionCountdownView.startAnimating(duration: duration, currentProgress: CGFloat(progress))
                 isHidden = false
-                everAnimated = true
+                wasEverAnimated = true
             } else {
                 isHidden = true
-                stopCountDown(everAnimated: true)
+                stopCountDown(wasEverAnimated: true)
             }
         }
     }
