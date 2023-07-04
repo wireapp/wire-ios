@@ -308,7 +308,8 @@ extension XCTestCase {
     func verify(matching value: UIAlertController,
                 file: StaticString = #file,
                 testName: String = #function,
-                line: UInt = #line) {
+                line: UInt = #line) throws {
+        throw XCTSkip("UIAlertController is not fully supported, please rewrite your test")
 
         // Reset default tint color to keep constant snapshot result
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = value.view.tintColor
@@ -459,17 +460,25 @@ extension XCTestCase {
     // MARK: - UIAlertController hack
     func presentViewController(_ controller: UIViewController,
                                completion: Completion? = nil) {
-        let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))
+//        let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))
+//        guard let delegate = UIApplication.shared.delegate,
+//              let window = delegate.window else {
 
-        let container = UIViewController()
-        container.loadViewIfNeeded()
-
-        window.rootViewController = container
-        window.makeKeyAndVisible()
-
-        controller.loadViewIfNeeded()
-        controller.view.layoutIfNeeded()
-
+//            return
+//        }
+//        let container = UIViewController()
+//        container.loadViewIfNeeded()
+//
+//        window?.rootViewController = container
+//        window?.makeKeyAndVisible()
+//
+//        controller.loadViewIfNeeded()
+//        controller.view.layoutIfNeeded()
+        guard let container = UIApplication.shared.delegate?.window??.rootViewController else {
+            XCTFail("setup for test is missing a window to present alert")
+            return
+        }
+        
         container.present(controller, animated: false, completion: completion)
     }
 

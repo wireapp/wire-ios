@@ -245,18 +245,18 @@ final class CoreDataFixture {
         return user
     }
 
-    func nonTeamTest(_ block: () -> Void) {
+    func nonTeamTest(_ block: () throws -> Void) rethrows {
         let wasInTeam = selfUserInTeam
         selfUserInTeam = false
         updateTeamStatus(wasInTeam: wasInTeam)
-        block()
+        try block()
     }
 
-    func teamTest(_ block: () -> Void) {
+    func teamTest(_ block: () throws -> Void) rethrows {
         let wasInTeam = selfUserInTeam
         selfUserInTeam = true
         updateTeamStatus(wasInTeam: wasInTeam)
-        block()
+        try block()
     }
 
     func markAllMessagesAsUnread(in conversation: ZMConversation) {
