@@ -58,6 +58,15 @@ class ImagePickerManager: NSObject {
         }
         actionSheet.addAction(cameraAction)
 
+        guard !SecurityFlags.fileSharing.isEnabled else {
+            let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
+                self?.sourceType = .photoLibrary
+                self?.getImage(fromSourceType: .photoLibrary)
+            }
+            actionSheet.addAction(galleryAction)
+            return actionSheet
+        }
+
         // Cancel
         actionSheet.addAction(.cancel())
 
