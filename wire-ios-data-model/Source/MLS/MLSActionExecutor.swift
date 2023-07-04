@@ -25,7 +25,7 @@ protocol MLSActionExecutorProtocol {
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent]
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
 
 }
 
@@ -33,13 +33,32 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Types
 
-    enum Action {
+    enum Action: CustomDebugStringConvertible {
 
         case addMembers([Invitee])
         case removeClients([ClientId])
         case updateKeyMaterial
         case proposal
         case joinGroup(Data)
+
+        var debugDescription: String {
+            switch self {
+            case .addMembers:
+                return "addMembers"
+
+            case .removeClients:
+                return "removeClients"
+
+            case .updateKeyMaterial:
+                return "updateKeyMaterial"
+
+            case .proposal:
+                return "proposal"
+
+            case .joinGroup:
+                return "joinGroup"
+            }
+        }
 
     }
 
@@ -142,65 +161,67 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
-            Logging.mls.info("adding members to group (\(groupID))...")
+            WireLogger.mls.info("adding members to group (\(groupID))...")
             let bundle = try commitBundle(for: .addMembers(invitees), in: groupID)
             let result = try await sendCommitBundle(bundle, for: groupID)
-            Logging.mls.info("success: adding members to group (\(groupID))")
+            WireLogger.mls.info("success: adding members to group (\(groupID))")
             return result
         } catch {
-            Logging.mls.info("failed: adding members to group (\(groupID)): \(String(describing: error))")
+            WireLogger.mls.info("failed: adding members to group (\(groupID)): \(String(describing: error))")
             throw error
         }
     }
 
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
-            Logging.mls.info("removing clients from group (\(groupID))...")
+            WireLogger.mls.info("removing clients from group (\(groupID))...")
             let bundle = try commitBundle(for: .removeClients(clients), in: groupID)
             let result = try await sendCommitBundle(bundle, for: groupID)
-            Logging.mls.info("success: removing clients from group (\(groupID))")
+            WireLogger.mls.info("success: removing clients from group (\(groupID))")
             return result
         } catch {
-            Logging.mls.info("error: removing clients from group (\(groupID)): \(String(describing: error))")
+            WireLogger.mls.info("error: removing clients from group (\(groupID)): \(String(describing: error))")
             throw error
         }
     }
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
-            Logging.mls.info("updating key material for group (\(groupID))...")
+            WireLogger.mls.info("updating key material for group (\(groupID))...")
             let bundle = try commitBundle(for: .updateKeyMaterial, in: groupID)
             let result = try await sendCommitBundle(bundle, for: groupID)
-            Logging.mls.info("success: updating key material for group (\(groupID))")
+            WireLogger.mls.info("success: updating key material for group (\(groupID))")
             return result
         } catch {
-            Logging.mls.info("error: updating key material for group (\(groupID)): \(String(describing: error))")
+            WireLogger.mls.info("error: updating key material for group (\(groupID)): \(String(describing: error))")
             throw error
         }
     }
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
-            Logging.mls.info("committing pending proposals for group (\(groupID))...")
+            WireLogger.mls.info("committing pending proposals for group (\(groupID))...")
             let bundle = try commitBundle(for: .proposal, in: groupID)
             let result = try await sendCommitBundle(bundle, for: groupID)
-            Logging.mls.info("success: committing pending proposals for group (\(groupID))")
+            WireLogger.mls.info("success: committing pending proposals for group (\(groupID))")
             return result
+        } catch Error.noPendingProposals {
+            throw Error.noPendingProposals
         } catch {
-            Logging.mls.info("error: committing pending proposals for group (\(groupID)): \(String(describing: error))")
+            WireLogger.mls.info("error: committing pending proposals for group (\(groupID)): \(String(describing: error))")
             throw error
         }
     }
 
-    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent] {
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         do {
-            Logging.mls.info("joining group (\(groupID)) via external commit")
-            let bundle = try commitBundle(for: .joinGroup(publicGroupState), in: groupID)
+            WireLogger.mls.info("joining group (\(groupID)) via external commit")
+            let bundle = try commitBundle(for: .joinGroup(groupInfo), in: groupID)
             let result = try await sendExternalCommitBundle(bundle, for: groupID)
-            Logging.mls.info("success: joining group (\(groupID)) via external commit")
+            WireLogger.mls.info("success: joining group (\(groupID)) via external commit")
             return result
         } catch {
-            Logging.mls.info("error: joining group (\(groupID)) via external commit: \(String(describing: error))")
+            WireLogger.mls.info("error: joining group (\(groupID)) via external commit: \(String(describing: error))")
             throw error
         }
     }
@@ -209,7 +230,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func commitBundle(for action: Action, in groupID: MLSGroupID) throws -> CommitBundle {
         do {
-            Logging.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID))...")
+            WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID))...")
             switch action {
             case .addMembers(let clients):
                 let memberAddMessages = try coreCrypto.perform { try $0.addClientsToConversation(
@@ -220,7 +241,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return CommitBundle(
                     welcome: memberAddMessages.welcome,
                     commit: memberAddMessages.commit,
-                    publicGroupState: memberAddMessages.publicGroupState
+                    groupInfo: memberAddMessages.groupInfo
                 )
 
             case .removeClients(let clients):
@@ -245,20 +266,20 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
                 return bundle
 
-            case .joinGroup(let publicGroupState):
-                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(publicGroupState: publicGroupState.bytes,
+            case .joinGroup(let groupInfo):
+                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(groupInfo: groupInfo.bytes,
                                                                                                   customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil), credentialType: .basic) }
 
                 return CommitBundle(
                     welcome: nil,
                     commit: conversationInitBundle.commit,
-                    publicGroupState: conversationInitBundle.publicGroupState
+                    groupInfo: conversationInitBundle.groupInfo
                 )
             }
         } catch Error.noPendingProposals {
             throw Error.noPendingProposals
         } catch {
-            Logging.mls.warn("failed: generating commit for action (\(String(describing: action))) for group (\(groupID)): \(String(describing: error))")
+            WireLogger.mls.warn("failed: generating commit for action (\(String(describing: action))) for group (\(groupID)): \(String(describing: error))")
             throw Error.failedToGenerateCommit
         }
     }
@@ -267,11 +288,13 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func sendCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         do {
+            WireLogger.mls.info("sending commit bundle for group (\(groupID))")
             let events = try await sendCommitBundle(bundle)
+            WireLogger.mls.info("merging commit for group (\(groupID))")
             try mergeCommit(in: groupID)
             return events
         } catch let error as SendCommitBundleAction.Failure {
-            Logging.mls.warn("failed to send commit bundle: \(String(describing: error))")
+            WireLogger.mls.warn("failed to send commit bundle: \(String(describing: error))")
 
             let recoveryStrategy = error.commitRecoveryStrategy
 
@@ -292,7 +315,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             try mergePendingGroup(in: groupID)
             return events
         } catch let error as SendCommitBundleAction.Failure {
-            Logging.mls.warn("failed to send external commit bundle: \(String(describing: error))")
+            WireLogger.mls.warn("failed to send external commit bundle: \(String(describing: error))")
 
             let recoveryStrategy = error.externalCommitRecoveryStrategy
 
@@ -305,8 +328,17 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     }
 
     private func sendCommitBundle(_ bundle: CommitBundle) async throws -> [ZMUpdateEvent] {
+        var data = Data()
+        data.append(Data(bundle.commit))
+
+        if let welcome = bundle.welcome {
+            data.append(Data(welcome))
+        }
+
+        data.append(Data(bundle.groupInfo.payload))
+
         return try await actionsProvider.sendCommitBundle(
-            try bundle.protobufData(),
+            data,
             in: context.notificationContext
         )
     }
@@ -315,38 +347,46 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func mergeCommit(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("merging commit for group (\(groupID))")
             try coreCrypto.perform { try $0.commitAccepted(conversationId: groupID.bytes) }
         } catch {
+            WireLogger.mls.error("failed to merge commit for group (\(groupID))")
             throw Error.failedToMergeCommit
         }
     }
 
     private func discardPendingCommit(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("discarding pending commit for group (\(groupID))")
             try coreCrypto.perform { try $0.clearPendingCommit(conversationId: groupID.bytes) }
         } catch {
+            WireLogger.mls.error("failed to discard pending commit for group (\(groupID))")
             throw Error.failedToClearCommit
         }
     }
 
     private func mergePendingGroup(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("merging pending group (\(groupID))")
             try coreCrypto.perform {
                 try $0.mergePendingGroupFromExternalCommit(
                     conversationId: groupID.bytes
                 )
             }
         } catch {
+            WireLogger.mls.error("failed to merge pending group (\(groupID))")
             throw Error.failedToMergePendingGroup
         }
     }
 
     private func clearPendingGroup(in groupID: MLSGroupID) throws {
         do {
+            WireLogger.mls.info("clearing pending group (\(groupID))")
             try coreCrypto.perform {
                 try $0.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
             }
         } catch {
+            WireLogger.mls.error("failed to clear pending group (\(groupID))")
             throw Error.failedToClearPendingGroup
         }
     }

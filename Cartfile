@@ -15,4 +15,4 @@ github "wireapp/libPhoneNumber-iOS" "0.9.3_xcframework"
 github "wireapp/ocmock" "v3.4.3_Xcode14.2"
 github "wireapp/Starscream" "4.0.4_proxy_mode_14.2"
 github "wireapp/dd-sdk-ios" ~> 1.18.0
-github "wireapp/core-crypto" ~> 0.9.2
+github "wireapp/core-crypto" "v1.0.0-pre.5"

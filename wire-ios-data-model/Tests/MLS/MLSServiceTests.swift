@@ -327,8 +327,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCreateConversationCount += 1
 
             XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, ConversationConfiguration(
-                ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            XCTAssertEqual($1, .basic)
+            XCTAssertEqual($2, ConversationConfiguration(
+                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: [removalKey.bytes],
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             ))
@@ -347,7 +348,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         createSut()
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let config = ConversationConfiguration(
-            ciphersuite: .mls128Dhkemx25519Aes128gcmSha256Ed25519,
+            ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
             externalSenders: [],
             custom: .init(keyRotationSpan: nil, wirePolicy: nil)
         )
@@ -357,7 +358,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCreateConversationCount += 1
 
             XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, config)
+            XCTAssertEqual($1, .basic)
+            XCTAssertEqual($2, config)
 
             throw CryptoError.MalformedIdentifier(message: "bad id")
         }
@@ -1693,6 +1695,60 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [])
     }
 
+    func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
+        BackendInfo.domain = "example.com"
+        
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "UpdateKeyMaterial should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _, _ in
+            expectation1.fulfill()
+        }
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+    }
+
+    func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
+        BackendInfo.domain = "example.com"
+
+        // Given a group.
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+        let expectation2 = self.expectation(description: "AddMembers should be called")
+        mockCoreCrypto.mockCreateConversation = { _, _, _ in
+            expectation1.fulfill()
+        }
+
+        let keyPackagesMock: MockMLSActionsProvider.ClaimKeyPackagesMock = { _, _, _ in
+            [KeyPackage.init(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
+        }
+        mockActionsProvider.claimKeyPackagesMocks = [keyPackagesMock]
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            return [ZMUpdateEvent()]
+        }
+        
+        mockMLSActionExecutor.mockAddMembers = { _, _ in
+            expectation2.fulfill()
+            return [ZMUpdateEvent()]
+        }
+
+        let groupID = MLSGroupID.random()
+
+        // WHEN
+        sut.createSelfGroup(for: groupID)
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
+    }
 }
 
 extension MLSGroupID {

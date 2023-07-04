@@ -31,6 +31,8 @@ class MockMLSService: MLSServiceInterface {
         var commitPendingProposalsInGroup: [MLSGroupID] = []
         var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var wipeGroup = [MLSGroupID]()
+        var createSelfGroup = [MLSGroupID]()
+        var joinSelfGroup = [MLSGroupID]()
     }
 
     func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
@@ -104,5 +106,13 @@ class MockMLSService: MLSServiceInterface {
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
+    }
+
+    func createSelfGroup(for groupID: MLSGroupID) {
+        calls.createSelfGroup.append(groupID)
+    }
+
+    func joinSelfGroup(with groupID: MLSGroupID) {
+        calls.joinSelfGroup.append(groupID)
     }
 }

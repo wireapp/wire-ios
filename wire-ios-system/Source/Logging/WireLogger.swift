@@ -86,9 +86,11 @@ public struct WireLogger: LoggerProtocol {
     attributes: LogAttributes? = nil
   ) {
     var attributes = attributes ?? .init()
+    var message = message.logDescription
 
     if !tag.isEmpty {
       attributes["tag"] = tag
+      message = "[\(tag)] \(message)"
     }
 
     switch level {
