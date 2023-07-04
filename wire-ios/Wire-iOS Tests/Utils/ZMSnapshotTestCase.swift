@@ -101,7 +101,7 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         snapshotBackgroundColor = UIColor.clear
 
         // Enable when the design of the view has changed in order to update the reference snapshots
-        recordMode = strcmp(getenv("RECORDING_SNAPSHOTS"), "YES") == 0
+        recordMode = true //strcmp(getenv("RECORDING_SNAPSHOTS"), "YES") == 0
 
         usesDrawViewHierarchyInRect = true
 
