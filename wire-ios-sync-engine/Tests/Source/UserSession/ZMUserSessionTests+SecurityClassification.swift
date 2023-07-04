@@ -230,4 +230,35 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .classified)
     }
 
+    func testThatItReturnsNotClassified_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserIsTemporary() {
+        // given
+        let otherUser1 = createUser(moc: syncMOC, domain: UUID().uuidString)
+        let otherUser2 = createUser(moc: syncMOC, domain: nil)
+        let otherUser3 = createUser(moc: syncMOC, domain: UUID().uuidString)
+        otherUser3.expiresAt = Date(timeIntervalSinceNow: 100.0)
+        let otherUsers = [otherUser1, otherUser2, otherUser3]
+        let localDomain = UUID().uuidString
+
+        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+
+        storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
+        BackendInfo.isFederationEnabled = false
+        BackendInfo.domain = localDomain
+
+        syncMOC.performGroupedBlock {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.domain = UUID().uuidString
+            self.syncMOC.saveOrRollback()
+        }
+
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        let classification = sut.classification(with: otherUsers)
+
+        // then
+        XCTAssertEqual(classification, .notClassified)
+    }
+
 }
