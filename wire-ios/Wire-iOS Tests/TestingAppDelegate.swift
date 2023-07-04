@@ -30,9 +30,8 @@ final class TestingAppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = UIViewController()
         window?.makeKeyAndVisible()
         
-        FontScheme.configure(with: .medium)
-        FontScheme.configure(with: .small)
-        
+        FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
+
         return true
     }
 }
