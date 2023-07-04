@@ -63,6 +63,19 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subConversationGroupID: MLSGroupID
     ) -> AnyPublisher<MLSConferenceInfo, Never>
 
+    func leaveSubconversationIfNeeded(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType,
+        selfClientID: MLSClientID
+    ) async throws
+
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType
+    ) async throws
+
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
 }
@@ -1129,10 +1142,12 @@ public final class MLSService: MLSServiceInterface {
 
     public enum SubgroupFailure: Error {
 
+        case missingNotificationContext
         case failedToFetchSubgroup
         case failedToCreateSubgroup
         case failedToDeleteSubgroup
         case failedToJoinSubgroup
+        case missingSubgroupID
 
     }
 
@@ -1145,7 +1160,7 @@ public final class MLSService: MLSServiceInterface {
 
             guard let notificationContext = context?.notificationContext else {
                 logger.error("failed to create or join subgroup: missing notification context")
-                throw SubgroupFailure.failedToFetchSubgroup
+                throw SubgroupFailure.missingNotificationContext
             }
 
             let subgroup = try await fetchSubgroup(
@@ -1253,6 +1268,97 @@ public final class MLSService: MLSServiceInterface {
                 .compactMap { MLSClientID(data: Data($0)) }
         } catch {
             logger.error("failed to get members for group (\(groupID)): \(String(describing: error))")
+            throw error
+        }
+    }
+
+    public func leaveSubconversationIfNeeded(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType,
+        selfClientID: MLSClientID
+    ) async throws {
+        func leaveSubconversation(id: MLSGroupID) async throws {
+            try await self.leaveSubconversation(
+                subconversationGroupID: id,
+                parentQualifiedID: parentQualifiedID,
+                parentGroupID: parentGroupID,
+                subconversationType: subconversationType
+            )
+        }
+
+        if
+            let subConversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+                forType: subconversationType,
+                parentGroupID: parentGroupID
+            ),
+            conversationExists(groupID: subConversationGroupID)
+        {
+            try await leaveSubconversation(id: subConversationGroupID)
+        } else if let context = context?.notificationContext {
+            let subconversation = try await actionsProvider.fetchSubgroup(
+                conversationID: parentQualifiedID.uuid,
+                domain: parentQualifiedID.domain,
+                type: subconversationType,
+                context: context
+            )
+
+            guard subconversation.members.contains(selfClientID) else { return }
+            try await leaveSubconversation(id: subconversation.groupID)
+        }
+    }
+
+    public func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType
+    ) async throws {
+        guard let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+            forType: subconversationType,
+            parentGroupID: parentGroupID
+        ) else {
+            throw SubgroupFailure.missingSubgroupID
+        }
+
+        try await leaveSubconversation(
+            subconversationGroupID: subconversationGroupID,
+            parentQualifiedID: parentQualifiedID,
+            parentGroupID: parentGroupID,
+            subconversationType: subconversationType
+        )
+    }
+
+    private func leaveSubconversation(
+        subconversationGroupID: MLSGroupID,
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType
+    ) async throws {
+        do {
+            logger.info("leaving subconversation (\(subconversationType)) with parent (\(parentQualifiedID))")
+
+            guard let context = context?.notificationContext else {
+                throw SubgroupFailure.missingNotificationContext
+            }
+
+            try await actionsProvider.leaveSubconversation(
+                conversationID: parentQualifiedID.uuid,
+                domain: parentQualifiedID.domain,
+                subconversationType: subconversationType,
+                context: context
+            )
+
+            subconverationGroupIDRepository.storeSubconversationGroupID(
+                nil,
+                forType: subconversationType,
+                parentGroupID: parentGroupID
+            )
+
+            try coreCrypto.perform {
+                try $0.wipeConversation(conversationId: subconversationGroupID.bytes)
+            }
+        } catch {
+            logger.error("failed to leave subconversation (\(subconversationType)) with parent (\(parentQualifiedID)): \(String(describing: error))")
             throw error
         }
     }

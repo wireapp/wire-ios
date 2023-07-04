@@ -68,14 +68,17 @@ class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.domain = "wire.com"
+
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
-        selfUser.domain = "wire.com"
+        selfUser.domain = BackendInfo.domain
         selfUserID = selfUser.avsIdentifier
 
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser.remoteIdentifier = UUID()
-        otherUser.domain = "wire.com"
+        otherUser.domain = BackendInfo.domain
         self.otherUser = otherUser
         otherUserID = otherUser.avsIdentifier
 
@@ -461,6 +464,145 @@ class WireCallCenterV3Tests: MessagingTest {
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
+    }
+
+    func testThatLeavingAnMLSConferenceLeavesTheSubconversation() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversation = expectation(description: "didLeaveSubconversation")
+        mlsService.mockLeaveSubconversation = { parentID, parentGroupID, subconversationType in
+            XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
+            XCTAssertEqual(parentGroupID, self.groupConversation.mlsGroupID)
+            XCTAssertEqual(subconversationType, .conference)
+            didLeaveSubconversation.fulfill()
+        }
+
+        // When
+        sut.closeCall(conversationId: conversationID)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItLeavesSubconversationIfNeededOnIncoming() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = setupSelfClient(inMoc: uiMOC)
+        selfClient.user = selfUser
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        mlsService.mockLeaveSubconversationIfNeeded = {
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($2, .conference)
+            XCTAssertEqual($3, selfClientID)
+            didLeaveSubconversationIfNeeded.fulfill()
+        }
+
+        // When
+        sut.handleIncomingCall(
+            conversationId: groupConversationID,
+            messageTime: Date(),
+            client: AVSClient(
+                userId: otherUserID,
+                clientId: otherUserClientID
+            ),
+            isVideoCall: false,
+            shouldRing: false,
+            conversationType: .mlsConference
+        )
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItLeavesSubconversationIfNeededOnTerminating() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = setupSelfClient(inMoc: uiMOC)
+        selfClient.user = selfUser
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        mlsService.mockLeaveSubconversationIfNeeded = {
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($2, .conference)
+            XCTAssertEqual($3, selfClientID)
+            didLeaveSubconversationIfNeeded.fulfill()
+        }
+
+        // When
+        sut.handleCallEnd(
+            reason: .normal,
+            conversationId: groupConversationID,
+            messageTime: nil,
+            userId: otherUserID
+        )
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItLeavesSubconversationIfNeededOnMissed() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = setupSelfClient(inMoc: uiMOC)
+        selfClient.user = selfUser
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        mlsService.mockLeaveSubconversationIfNeeded = {
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($2, .conference)
+            XCTAssertEqual($3, selfClientID)
+            didLeaveSubconversationIfNeeded.fulfill()
+        }
+
+        // When
+        sut.handleMissedCall(
+            conversationId: groupConversationID,
+            messageTime: Date(),
+            userId: otherUserID,
+            isVideoCall: false
+        )
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItAnswersACall_oneToOne_normal() throws {
