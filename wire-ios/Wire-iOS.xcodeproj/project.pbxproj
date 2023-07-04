@@ -1764,6 +1764,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		01C1A7842A54B4C30058D578 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F42C537199244A700288E4D;
+			remoteInfo = "Wire-iOS";
+		};
 		065A5AE3279B07AC002D4D1E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F42C530199244A700288E4D /* Project object */;
@@ -1890,6 +1897,7 @@
 		01A5E04F297FDAB500624B65 /* convertLocalNotificationSounds */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = convertLocalNotificationSounds; sourceTree = "<group>"; };
 		01A5E050297FDAB500624B65 /* remove-bitcode.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "remove-bitcode.sh"; sourceTree = "<group>"; };
 		01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "datadog-conditional-framework.sh"; sourceTree = "<group>"; };
+		01C1A7802A54B4C30058D578 /* Wire-iOS-SnapshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS-SnapshotTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPropertyFactory+AppLock.swift"; sourceTree = "<group>"; };
 		061275DD26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragInteractionRestrictionTextView.swift; sourceTree = "<group>"; };
 		061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+ReplaceTests.swift"; sourceTree = "<group>"; };
@@ -3724,6 +3732,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		01C1A77D2A54B4C30058D578 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		065A5ADB279B07AC002D4D1E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3832,6 +3847,13 @@
 				01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */,
 			);
 			path = Scripts;
+			sourceTree = "<group>";
+		};
+		01C1A7812A54B4C30058D578 /* Wire-iOS-SnapshotTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Wire-iOS-SnapshotTests";
 			sourceTree = "<group>";
 		};
 		060B1E2D25BADCDB00A6ADA7 /* Password */ = {
@@ -5817,6 +5839,7 @@
 				168A16AA1D9597C2005CFA6C /* Wire-iOS Share Extension */,
 				F1FEA14B21DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADF279B07AC002D4D1E /* Wire Notification Service Extension */,
+				01C1A7812A54B4C30058D578 /* Wire-iOS-SnapshotTests */,
 				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
 				5EDD254221412ED200C0E254 /* EmbeddedDependencies.plist */,
@@ -5834,6 +5857,7 @@
 				168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */,
 				F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */,
 				065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */,
+				01C1A7802A54B4C30058D578 /* Wire-iOS-SnapshotTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7917,6 +7941,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		01C1A77F2A54B4C30058D578 /* Wire-iOS-SnapshotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01C1A7882A54B4C30058D578 /* Build configuration list for PBXNativeTarget "Wire-iOS-SnapshotTests" */;
+			buildPhases = (
+				01C1A77C2A54B4C30058D578 /* Sources */,
+				01C1A77D2A54B4C30058D578 /* Frameworks */,
+				01C1A77E2A54B4C30058D578 /* Resources */,
+				01C1A7892A54B4E40058D578 /* Remove Old Snapshot Results */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				01C1A7852A54B4C30058D578 /* PBXTargetDependency */,
+			);
+			name = "Wire-iOS-SnapshotTests";
+			productName = "Wire-iOS-SnapshotTests";
+			productReference = 01C1A7802A54B4C30058D578 /* Wire-iOS-SnapshotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 065A5AE6279B07AC002D4D1E /* Build configuration list for PBXNativeTarget "Wire Notification Service Extension" */;
@@ -7990,7 +8033,6 @@
 				BACB884D1AF7C48900DDCDB0 /* Sources */,
 				BACB884E1AF7C48900DDCDB0 /* Frameworks */,
 				BACB884F1AF7C48900DDCDB0 /* Resources */,
-				BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */,
 				A9C4B418266A558300C88BEB /* CopyFiles */,
 			);
 			buildRules = (
@@ -8032,10 +8074,14 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftMigration = 0710;
-				LastSwiftUpdateCheck = 1310;
+				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = "Zeta Project Germany GmbH";
 				TargetAttributes = {
+					01C1A77F2A54B4C30058D578 = {
+						CreatedOnToolsVersion = 14.3.1;
+						TestTargetID = 8F42C537199244A700288E4D;
+					};
 					065A5ADD279B07AC002D4D1E = {
 						CreatedOnToolsVersion = 13.1;
 					};
@@ -8112,11 +8158,19 @@
 				BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */,
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
+				01C1A77F2A54B4C30058D578 /* Wire-iOS-SnapshotTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		01C1A77E2A54B4C30058D578 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		065A5ADC279B07AC002D4D1E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8219,6 +8273,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		01C1A7892A54B4E40058D578 /* Remove Old Snapshot Results */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Remove Old Snapshot Results";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
+		};
 		01D97B17294CCA1A001A04BD /* Conditional Datadog Framework Removal */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -8291,20 +8363,6 @@
 			shellPath = /bin/sh;
 			shellScript = "echo \"Generating ComponentsVersions.plist\"\n${SRCROOT}/Scripts/embedBuildInfo --output ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/ComponentsVersions.plist\n";
 		};
-		BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Remove Old Snapshot Results";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
-		};
 		EE00ACE125E43FA2005FEC14 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -8344,6 +8402,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		01C1A77C2A54B4C30058D578 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		065A5ADA279B07AC002D4D1E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9976,6 +10041,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		01C1A7852A54B4C30058D578 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F42C537199244A700288E4D /* Wire-iOS */;
+			targetProxy = 01C1A7842A54B4C30058D578 /* PBXContainerItemProxy */;
+		};
 		065A5AE4279B07AC002D4D1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */;
@@ -10156,6 +10226,143 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		01C1A7862A54B4C30058D578 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5FK7R698ZP;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fbenaiteau.Wire-iOS-SnapshotTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wire.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Wire";
+			};
+			name = Debug;
+		};
+		01C1A7872A54B4C30058D578 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5FK7R698ZP;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fbenaiteau.Wire-iOS-SnapshotTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wire.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Wire";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		065A5AE7279B07AC002D4D1E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06F3E73224EFAB1800B1083C /* Notification-Extension-Debug.xcconfig */;
@@ -10500,6 +10707,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		01C1A7882A54B4C30058D578 /* Build configuration list for PBXNativeTarget "Wire-iOS-SnapshotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01C1A7862A54B4C30058D578 /* Debug */,
+				01C1A7872A54B4C30058D578 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		065A5AE6279B07AC002D4D1E /* Build configuration list for PBXNativeTarget "Wire Notification Service Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
