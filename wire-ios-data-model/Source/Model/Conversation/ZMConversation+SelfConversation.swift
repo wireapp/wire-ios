@@ -97,7 +97,7 @@ extension ZMConversation {
         _ content: MessageCapable,
         in context: NSManagedObjectContext
     ) throws -> (proteus: ZMClientMessage, mls: ZMClientMessage?) {
-        let proteusMessage = try sendMessageOverProtuesSelfConversation(
+        let proteusMessage = try sendMessageOverProteusSelfConversation(
             content,
             in: context
         )
@@ -110,7 +110,7 @@ extension ZMConversation {
         return (proteusMessage, mlsMessage)
     }
 
-    private static func sendMessageOverProtuesSelfConversation(
+    private static func sendMessageOverProteusSelfConversation(
         _ content: MessageCapable,
         in context: NSManagedObjectContext
     ) throws -> ZMClientMessage {
