@@ -65,27 +65,18 @@ extension ZMAssetClientMessage {
     }
 
     @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
-        if let isSelfUser = sender?.isSelfUser {
-            // check for download state only for images that were sent by another user
-            if !isSelfUser && managedObjectContext?.zm_isUserInterfaceContext == true
-                && imageMessageData != nil
-                && !hasDownloadedFile {
-                return false
-            } else if fileMessageData != nil
-                        && underlyingMessage?.assetData?.hasUploaded == false
-                        && underlyingMessage?.assetData?.hasNotUploaded == false {
-                    return false
-            }
-        } else {
-            if imageMessageData != nil && !hasDownloadedFile {
-                return false
-            } else if fileMessageData != nil
-                && underlyingMessage?.assetData?.hasUploaded == false
-                && underlyingMessage?.assetData?.hasNotUploaded == false {
-                return false
-            }
+        let imageNotDownloaded = imageMessageData != nil && !hasDownloadedFile
+        let fileNotUploadedNorUploaded = fileMessageData != nil
+            && underlyingMessage?.assetData?.hasUploaded == false
+            && underlyingMessage?.assetData?.hasNotUploaded == false
+        let otherSenderCheck = sender == nil || (sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true)
+        let destructionStartCondition = !(fileNotUploadedNorUploaded || (otherSenderCheck && imageNotDownloaded))
+        if destructionStartCondition {
+            return super.startDestructionIfNeeded()
         }
-        return super.startDestructionIfNeeded()
+        else {
+            return false
+        }
     }
 
     /// Extends the destruction timer to the given date, which must be later
