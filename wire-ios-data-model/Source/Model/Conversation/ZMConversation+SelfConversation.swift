@@ -141,14 +141,16 @@ extension ZMConversation {
             return
         }
 
-        let newTimeStamp = Double(integerLiteral: lastRead.lastReadTimestamp)
-        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: lastRead.qualifiedConversationID.domain,
             in: context
         )
-        conversation.updateLastRead(timestamp, synchronize: false)
+
+        conversation.updateLastRead(
+            dateFromTimestamp(lastRead.lastReadTimestamp),
+            synchronize: false
+        )
     }
 
     static func updateConversation(
@@ -159,14 +161,21 @@ extension ZMConversation {
             return
         }
 
-        let newTimeStamp = Double(integerLiteral: cleared.clearedTimestamp)
-        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
         let conversation = ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: cleared.qualifiedConversationID.domain,
             in: context
         )
-        conversation.updateCleared(timestamp, synchronize: false)
+
+        conversation.updateCleared(
+            dateFromTimestamp(cleared.clearedTimestamp),
+            synchronize: false
+        )
+    }
+
+    private static func dateFromTimestamp(_ timestamp: Int64) -> Date {
+        let interval = Double(integerLiteral: timestamp) / 1000
+        return Date(timeIntervalSince1970: interval)
     }
 
 }
