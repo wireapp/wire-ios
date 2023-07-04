@@ -18,6 +18,7 @@
 
 import UIKit
 import MobileCoreServices
+import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
@@ -58,7 +59,7 @@ class ImagePickerManager: NSObject {
         }
         actionSheet.addAction(cameraAction)
 
-        guard !SecurityFlags.fileSharing.isEnabled else {
+        guard !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).isPhotoLibraryEnabled else {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
                 self?.sourceType = .photoLibrary
                 self?.getImage(fromSourceType: .photoLibrary)
