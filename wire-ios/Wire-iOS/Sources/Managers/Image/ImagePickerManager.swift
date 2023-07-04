@@ -51,13 +51,6 @@ class ImagePickerManager: NSObject {
                                             message: nil,
                                             preferredStyle: .actionSheet)
 
-        // Choose from gallery
-        let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
-            self?.sourceType = .photoLibrary
-            self?.getImage(fromSourceType: .photoLibrary)
-        }
-        actionSheet.addAction(galleryAction)
-
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ -> Void in
             self?.sourceType = .camera
