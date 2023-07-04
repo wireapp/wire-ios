@@ -238,34 +238,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func test_ItHandlesResponse_200_FailedToDecodeResponse() throws {
-        throw XCTSkip("Skipping test features decoding always succeeds because all fields are optional")
-        // Given
-        let sut = GetFeatureConfigsActionHandler(context: syncMOC)
-        var action = GetFeatureConfigsAction()
-
-        // Expectation
-        let gotResult = expectation(description: "gotResult")
-
-        action.onResult { result in
-            switch result {
-            case .failure(.failedToDecodeResponse):
-                break
-
-            default:
-                XCTFail("Expected 'failed to decode response'")
-            }
-
-            gotResult.fulfill()
-        }
-
-        let payload = ["foo": "bar"] as ZMTransportData
-
-        // When
-        sut.handleResponse(mockResponse(status: 200, payload: payload), action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
     func test_ItHandlesResponse_403_InsuffientPermissions() throws {
         // Given
         let sut = GetFeatureConfigsActionHandler(context: syncMOC)
