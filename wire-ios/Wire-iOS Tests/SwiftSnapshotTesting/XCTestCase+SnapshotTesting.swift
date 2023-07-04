@@ -460,25 +460,17 @@ extension XCTestCase {
     // MARK: - UIAlertController hack
     func presentViewController(_ controller: UIViewController,
                                completion: Completion? = nil) {
-//        let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))
-//        guard let delegate = UIApplication.shared.delegate,
-//              let window = delegate.window else {
+        let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))
 
-//            return
-//        }
-//        let container = UIViewController()
-//        container.loadViewIfNeeded()
-//
-//        window?.rootViewController = container
-//        window?.makeKeyAndVisible()
-//
-//        controller.loadViewIfNeeded()
-//        controller.view.layoutIfNeeded()
-        guard let container = UIApplication.shared.delegate?.window??.rootViewController else {
-            XCTFail("setup for test is missing a window to present alert")
-            return
-        }
-        
+        let container = UIViewController()
+        container.loadViewIfNeeded()
+
+        window.rootViewController = container
+        window.makeKeyAndVisible()
+
+        controller.loadViewIfNeeded()
+        controller.view.layoutIfNeeded()
+
         container.present(controller, animated: false, completion: completion)
     }
 
