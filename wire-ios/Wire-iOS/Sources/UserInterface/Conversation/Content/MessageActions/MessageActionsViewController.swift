@@ -55,7 +55,7 @@ class MessageActionsViewController: UIAlertController {
 
     private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
         guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
-              let customContainer =  customContentPlaceholder.superview else { return }
+              let customContainer = customContentPlaceholder.superview else { return }
 
         let reactionPicker = BasicReactionPicker(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
         reactionPicker.delegate = delegate

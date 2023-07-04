@@ -39,7 +39,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         XCTAssertTrue(messageActionsViewController.view.containsBasicReactionPicker())
     }
 
-    func testReactionPicker_DoesnExistForEphemeralMessage() {
+    func testReactionPicker_DoesNotExistForEphemeralMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.isEphemeral = true
@@ -51,7 +51,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
 
-    func testReactionPicker_DoesnExistForFailedMessage() {
+    func testReactionPicker_DoesNotExistForFailedMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.deliveryState = .failedToSend
