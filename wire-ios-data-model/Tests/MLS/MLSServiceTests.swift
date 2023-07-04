@@ -49,7 +49,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             return 100
         }
+    }
 
+    private func createSut() {
         sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
@@ -160,6 +162,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Encrypt_IsSuccessful() {
         do {
             // Given
+            createSut()
             let groupID = MLSGroupID([1, 1, 1])
             let unencryptedMessage: Bytes = [2, 2, 2]
             let encryptedMessage: Bytes = [3, 3, 3]
@@ -187,6 +190,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_Encrypt_Fails() {
         // Given
+        createSut()
         let groupID = MLSGroupID([1, 1, 1])
         let unencryptedMessage: Bytes = [2, 2, 2]
 
@@ -208,6 +212,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Decrypt_ThrowsFailedToConvertMessageToBytes() {
         syncMOC.performAndWait {
             // Given
+            createSut()
             let invalidBase64String = "%"
 
             // When / Then
@@ -220,6 +225,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Decrypt_ThrowsFailedToDecryptMessage() {
         syncMOC.performAndWait {
             // Given
+            createSut()
             let message = Data([1, 2, 3]).base64EncodedString()
             self.mockCoreCrypto.mockDecryptMessage = { _, _ in
                 throw CryptoError.ConversationNotFound(message: "conversation not found")
@@ -235,6 +241,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Decrypt_ReturnsNil_WhenCoreCryptoReturnsNil() {
         syncMOC.performAndWait {
             // Given
+            createSut()
             let messageBytes: Bytes = [1, 2, 3]
             self.mockCoreCrypto.mockDecryptMessage = { _, _ in
                 DecryptedMessage(
@@ -264,6 +271,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_Decrypt_IsSuccessful() {
         syncMOC.performAndWait {
             // Given
+            createSut()
             let messageBytes: Bytes = [1, 2, 3]
             let sender = MLSClientID(
                 userID: UUID.create().transportString(),
@@ -307,6 +315,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CreateGroup_IsSuccessful() throws {
         // Given
+        createSut()
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
 
@@ -337,6 +346,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CreateGroup_ThrowsError() throws {
         // Given
+        createSut()
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let config = ConversationConfiguration(
             ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
@@ -368,6 +378,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_AddingMembersToConversation_Successfully() async {
         // Given
+        createSut()
         let id = UUID.create()
         let domain = "example.com"
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
@@ -414,6 +425,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async {
         // Given
+        createSut()
         let groupID = MLSGroupID(.random())
         var conversation: ZMConversation!
         let futureCommitDate = Date().addingTimeInterval(2)
@@ -481,6 +493,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_AddingMembersToConversation_ThrowsNoParticipantsToAdd() async {
         // Given
+        createSut()
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
 
         // Mock no pending proposals.
@@ -496,6 +509,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_AddingMembersToConversation_ClaimKeyPackagesFails() async {
         // Given
+        createSut()
         let domain = "example.com"
         let id = UUID.create()
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
@@ -517,6 +531,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_AddingMembersToConversation_ExecutorFails() async {
         // Given
+        createSut()
         let domain = "example.com"
         let id = UUID.create()
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
@@ -549,6 +564,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RemoveMembersFromConversation_IsSuccessful() async throws {
         // Given
+        createSut()
         let id = UUID.create().uuidString
         let domain = "example.com"
         let clientID = UUID.create().uuidString
@@ -590,6 +606,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_BeforeRemoveMembersFromConversation_IsSuccessful() async throws {
         // Given
+        createSut()
         let groupID = MLSGroupID(.random())
         var conversation: ZMConversation!
         let futureCommitDate = Date().addingTimeInterval(2)
@@ -652,6 +669,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RemovingMembersToConversation_ThrowsNoClientsToRemove() async {
         // Given
+        createSut()
         let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
 
         // Mock no pending proposals.
@@ -667,6 +685,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RemovingMembersToConversation_ExecutorFails() async {
         // Given
+        createSut()
         let id = UUID.create().uuidString
         let domain = "example.com"
         let clientID = UUID.create().uuidString
@@ -693,6 +712,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_SchedulePendingProposalCommit() throws {
         // Given
+        createSut()
         let conversationID = UUID.create()
         let groupID = MLSGroupID([1, 2, 3])
 
@@ -711,6 +731,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_NoProposalsExist() async throws {
         // Given
+        createSut()
         let overdueCommitDate = Date().addingTimeInterval(-5)
         let groupID = MLSGroupID(.random())
         var conversation: ZMConversation!
@@ -738,6 +759,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_OneOverdueCommit() async throws {
         // Given
+        createSut()
         let overdueCommitDate = Date().addingTimeInterval(-5)
         let groupID = MLSGroupID(.random())
         var conversation: ZMConversation!
@@ -777,6 +799,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_OneFutureCommit() async throws {
         // Given
+        createSut()
         let futureCommitDate = Date().addingTimeInterval(2)
         let groupID = MLSGroupID([1, 2, 3])
         var conversation: ZMConversation!
@@ -816,6 +839,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_CommitPendingProposals_MultipleCommits() async throws {
         // Given
+        createSut()
         let overdueCommitDate = Date().addingTimeInterval(-5)
         let futureCommitDate1 = Date().addingTimeInterval(2)
         let futureCommitDate2 = Date().addingTimeInterval(5)
@@ -913,6 +937,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_PerformPendingJoins_IsSuccessful() {
         // Given
+        createSut()
         let groupID = MLSGroupID(.random())
         let conversationID = UUID.create()
         let domain = "example.domain.com"
@@ -987,6 +1012,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     private func test_PerformPendingJoinsRecovery(_ recovery: MLSActionExecutor.ExternalCommitErrorRecovery) {
         // Given
+        createSut()
         let shouldRetry = recovery == .retry
         let groupID = MLSGroupID(.random())
         let conversationID = UUID.create()
@@ -1054,6 +1080,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
         // Given
+        createSut()
         let groupID = MLSGroupID(.random())
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -1094,6 +1121,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_WipeGroup_IsSuccessfull() {
         // Given
+        createSut()
         let groupID = MLSGroupID(.random())
 
         var count = 0
@@ -1113,6 +1141,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_UploadKeyPackages_IsSuccessfull() {
         // Given
+        createSut()
         let clientID = self.createSelfClient(onMOC: uiMOC).remoteIdentifier
         let keyPackages: [Bytes] = [
             [1, 2, 3],
@@ -1169,6 +1198,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() {
         // Given
+        createSut()
         createSelfClient(onMOC: uiMOC)
 
         // expectation
@@ -1197,6 +1227,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() {
         // Given
+        createSut()
         createSelfClient(onMOC: uiMOC)
 
         // we need more than half the target number to have a sufficient amount
@@ -1241,6 +1272,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_ProcessWelcomeMessage_Sucess() throws {
         // Given
+        createSut()
         let groupID = MLSGroupID(.random())
         let message = Bytes.random().base64EncodedString
 
@@ -1444,6 +1476,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RetryOnCommitFailure_SingleRetry() async throws {
         // Given a group.
+        createSut()
         let groupID = MLSGroupID.random()
 
         // Mock no pending proposals.
@@ -1484,6 +1517,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RetryOnCommitFailure_MultipleRetries() async throws {
         // Given a group.
+        createSut()
         let groupID = MLSGroupID.random()
 
         // Mock no pending proposals.
@@ -1524,6 +1558,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {
         // Given a group.
+        createSut()
         let groupID = MLSGroupID.random()
 
         // Mock two failures to commit pending proposals, then a success.
@@ -1574,6 +1609,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RetryOnCommitFailure_CommitPendingProposalsAfterRetry() async throws {
         // Given a group.
+        createSut()
         let groupID = MLSGroupID.random()
 
         // Mock no pending proposals when first trying to update key material, but
@@ -1622,6 +1658,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RetryOnCommitFailure_ItGivesUp() async throws {
         // Given a group.
+        createSut()
         let groupID = MLSGroupID.random()
 
         // Mock no pending proposals.
