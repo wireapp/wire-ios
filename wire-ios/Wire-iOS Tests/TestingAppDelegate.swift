@@ -21,7 +21,6 @@ import UIKit
 import WireCommonComponents
 /// The App Delegate to use for the test target.
 
-@objc(TestingAppDelegate)
 final class TestingAppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?

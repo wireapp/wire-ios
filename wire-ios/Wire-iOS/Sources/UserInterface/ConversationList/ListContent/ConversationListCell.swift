@@ -226,7 +226,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     private func onRightAccessorySelected(_ sender: UIButton?) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        let activeMediaPlayer = AppDelegate.shared?.mediaPlaybackManager?.activeMediaPlayer
+        let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
 
         if activeMediaPlayer != nil &&
             activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
@@ -237,7 +237,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     func toggleMediaPlayer() {
-        let mediaPlaybackManager = AppDelegate.shared?.mediaPlaybackManager
+        let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager
 
         if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
             mediaPlaybackManager?.pause()

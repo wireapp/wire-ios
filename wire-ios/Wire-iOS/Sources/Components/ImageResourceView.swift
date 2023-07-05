@@ -26,7 +26,7 @@ final class ImageResourceView: FLAnimatedImageView {
     weak var delegate: ContextMenuDelegate?
     private lazy var messagePresenter: MessagePresenter = {
         let messagePresenter = MessagePresenter(mediaPlaybackManager: nil)
-        messagePresenter.modalTargetController = AppDelegate.shared?.window?.rootViewController
+        messagePresenter.modalTargetController = AppDelegate.shared.window?.rootViewController
 
         return messagePresenter
     }()

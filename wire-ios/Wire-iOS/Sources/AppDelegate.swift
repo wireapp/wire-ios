@@ -85,8 +85,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var appCenterInitCompletion: Completion?
     var launchOptions: LaunchOptions = [:]
 
-    static var shared: AppDelegate? {
-        return UIApplication.shared.delegate as? AppDelegate
+    static var shared: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
     }
 
     var mediaPlaybackManager: MediaPlaybackManager? {
