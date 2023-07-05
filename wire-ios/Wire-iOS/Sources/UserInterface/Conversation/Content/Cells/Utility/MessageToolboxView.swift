@@ -347,25 +347,6 @@ final class MessageToolboxView: UIView {
         }
     }
 
-    // MARK: - Hiding the Contents
-
-    func setHidden(_ isHidden: Bool, animated: Bool) {
-        let changes = {
-            self.heightConstraint?.constant = isHidden ? 0 : 28
-            self.alpha = isHidden ? 0 : 1
-            self.layoutIfNeeded()
-        }
-
-        if animated {
-            UIView.animate(withDuration: 0.35) {
-                changes()
-            }
-        } else {
-            layer.removeAllAnimations()
-            changes()
-        }
-    }
-
     // MARK: - Actions
 
     @objc
