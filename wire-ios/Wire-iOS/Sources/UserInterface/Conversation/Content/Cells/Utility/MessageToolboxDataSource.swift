@@ -271,4 +271,18 @@ class MessageToolboxDataSource {
         return timestampString
     }
 
+    /// Creates the timestamp text.
+    func timestampStringForSenderCell(_ message: ZMConversationMessage) -> String? {
+        let timestampString: String?
+
+        if let dateTimeString = message.formattedReceivedDate() {
+            timestampString = dateTimeString
+        } else {
+            timestampString = .none
+        }
+
+        return timestampString
+    }
+
+
 }

@@ -22,6 +22,7 @@ import WireSyncEngine
 struct ConversationMessageContext: Equatable {
     let isSameSenderAsPrevious: Bool
     let isTimeIntervalSinceLastMessageSignificant: Bool
+    let isTimeIntervalSinceLastMessageOneMinute: Bool
     let isFirstMessageOfTheDay: Bool
     let isFirstUnreadMessage: Bool
     let isLastMessage: Bool
@@ -227,14 +228,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         cellDescriptions.removeAll()
 
         let isSenderVisible = self.isSenderVisible(in: context) && message.senderUser != nil
+        let isTimeStampVisible = self.isTimestampVisible(in: context)
 
         if isBurstTimestampVisible(in: context) {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
         }
-        if isSenderVisible,
-           let sender = message.senderUser {
-            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message))
-        }
+        if isSenderVisible || isTimeStampVisible, let sender = message.senderUser {
+                add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: true))
+            }
 
         addContent(context: context, isSenderVisible: isSenderVisible)
 
@@ -285,6 +286,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
+    }
+
+    func isTimestampVisible(in context: ConversationMessageContext) -> Bool {
+        guard message.senderUser != nil,
+              !message.isKnock,
+              !message.isSystem
+        else {
+            return false
+        }
+
+        return context.isTimeIntervalSinceLastMessageOneMinute
     }
 
     // MARK: - Highlight

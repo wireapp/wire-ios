@@ -149,7 +149,7 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
         if showTimestamp == false {
             timestamp = nil
         } else {
-            timestamp = dataSource?.timestampString(message)
+            timestamp = dataSource?.timestampStringForSenderCell(message)
         }
 
         self.configuration = View.Configuration(user: sender, message: message, timestamp: timestamp, indicatorIcon: icon)
