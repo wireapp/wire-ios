@@ -63,7 +63,7 @@ class CallQualityController: NSObject {
         #else
         return Bundle.developerModeEnabled
             && !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && AppDelegate.shared.launchType != .unknown
+            && AppDelegate.shared?.launchType != .unknown
         #endif
     }
 

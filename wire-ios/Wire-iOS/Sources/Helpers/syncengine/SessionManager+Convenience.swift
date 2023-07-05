@@ -23,7 +23,7 @@ import avs
 
 extension SessionManager {
     static var shared: SessionManager? {
-        return AppDelegate.shared.appRootRouter?.sessionManager
+        return AppDelegate.shared?.appRootRouter?.sessionManager
     }
 
     static var numberOfAccounts: Int {

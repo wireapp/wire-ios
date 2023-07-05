@@ -88,12 +88,12 @@ extension UIApplication {
 
         let alert = UIAlertController.cameraPermissionAlert(with: completion)
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared?.window?.rootViewController?.present(alert, animated: true)
     }
 
     private class func wr_warnAboutMicrophonePermission() {
         let alert = UIAlertController.microphonePermissionAlert
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared?.window?.rootViewController?.present(alert, animated: true)
     }
 
     private class func wr_warnAboutPhotoLibraryRestricted() {
@@ -102,11 +102,11 @@ extension UIApplication {
             message: "library.alert.permission_warning.restrictions.explaination".localized
         )
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared?.window?.rootViewController?.present(alert, animated: true)
     }
 
     private class func wr_warnAboutPhotoLibaryDenied() {
         let alert = UIAlertController.photoLibraryPermissionAlert
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared?.window?.rootViewController?.present(alert, animated: true)
     }
 }

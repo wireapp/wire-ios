@@ -444,7 +444,7 @@ extension AppRootRouter {
     }
 
     private func resetSelfUserProviderIfNeeded(for appState: AppState) {
-        guard AppDelegate.shared.shouldConfigureSelfUserProvider else { return }
+        guard AppDelegate.shared?.shouldConfigureSelfUserProvider == true else { return }
 
         switch appState {
         case .authenticated: break
@@ -454,7 +454,7 @@ extension AppRootRouter {
     }
 
     private func configureSelfUserProviderIfNeeded(for appState: AppState) {
-        guard AppDelegate.shared.shouldConfigureSelfUserProvider else { return }
+        guard AppDelegate.shared?.shouldConfigureSelfUserProvider == true else { return }
 
         if case .authenticated = appState {
             SelfUser.provider = ZMUserSession.shared()

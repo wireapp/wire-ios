@@ -113,7 +113,7 @@ extension ZMConversation {
         let internetConnectionAlert = UIAlertController.alertWithOKButton(title: "voice.network_error.title".localized,
                                                                           message: "voice.network_error.body".localized)
 
-        AppDelegate.shared.window?.rootViewController?.present(internetConnectionAlert, animated: true)
+        AppDelegate.shared?.window?.rootViewController?.present(internetConnectionAlert, animated: true)
 
         return true
     }

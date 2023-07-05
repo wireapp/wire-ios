@@ -435,7 +435,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.recorder.startRecording { _ in
             self.state = .recording
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
-            AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
+            AppDelegate.shared?.mediaPlaybackManager?.audioTrackPlayer.stop()
         }
     }
 
