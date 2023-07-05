@@ -251,7 +251,7 @@ class MessageToolboxDataSource {
     }
 
     /// Creates the timestamp text.
-    fileprivate func timestampString(_ message: ZMConversationMessage) -> String? {
+    func timestampString(_ message: ZMConversationMessage) -> String? {
         let timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
