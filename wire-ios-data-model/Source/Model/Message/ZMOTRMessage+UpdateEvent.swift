@@ -61,10 +61,16 @@ extension ZMOTRMessage {
         // Insert the message
         switch content {
         case .lastRead where conversation.isSelfConversation:
-            ZMConversation.updateConversation(withLastReadFromSelfConversation: message.lastRead, inContext: moc)
+            ZMConversation.updateConversation(
+                withLastReadFromSelfConversation: message.lastRead,
+                in: moc
+            )
 
         case .cleared where conversation.isSelfConversation:
-            ZMConversation.updateConversation(withClearedFromSelfConversation: message.cleared, inContext: moc)
+            ZMConversation.updateConversation(
+                withClearedFromSelfConversation: message.cleared,
+                in: moc
+            )
 
         case .hidden where conversation.isSelfConversation:
             ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
