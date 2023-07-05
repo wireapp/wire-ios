@@ -31,8 +31,9 @@ final class TestingAppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = UIViewController()
         window?.makeKeyAndVisible()
         
+        // Global AppDelegate settings that still need to be applied
         FontScheme.configure(with: UIApplication.shared.preferredContentSizeCategory)
-
+        Analytics.shared = Analytics(optedOut: true)
         return true
     }
 }
