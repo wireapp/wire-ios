@@ -25,6 +25,7 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
     struct Configuration {
         let user: UserType
         let message: ZMConversationMessage
+        let timestamp: String?
         let indicatorIcon: UIImage?
     }
 
@@ -62,13 +63,15 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
+
         senderView.configure(with: object.user)
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
+        dateLabel.isHidden = object.timestamp == nil
+        dateLabel.text = object.timestamp
     }
 
     private func configureSubviews() {
-        dateLabel.text = "Date"
         addSubview(senderView)
         addSubview(indicatorImageView)
         addSubview(dateLabel)
@@ -114,6 +117,7 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    fileprivate(set) var dataSource: MessageToolboxDataSource?
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
@@ -125,10 +129,11 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?
 
-    init(sender: UserType, message: ZMConversationMessage) {
+    init(sender: UserType, message: ZMConversationMessage, showTimestamp: Bool) {
         self.message = message
 
         var icon: UIImage?
+        var timestamp: String?
         let iconColor = SemanticColors.Icon.foregroundDefault
 
         if message.isDeletion {
@@ -137,7 +142,17 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
             icon = StyleKitIcon.pencil.makeImage(size: 8, color: iconColor)
         }
 
-        self.configuration = View.Configuration(user: sender, message: message, indicatorIcon: icon)
+        if dataSource?.message.nonce != message.nonce {
+            dataSource = MessageToolboxDataSource(message: message)
+        }
+
+        if showTimestamp == false {
+            timestamp = nil
+        } else {
+            timestamp = dataSource?.timestampString(message)
+        }
+
+        self.configuration = View.Configuration(user: sender, message: message, timestamp: timestamp, indicatorIcon: icon)
         setupAccessibility(sender)
         actionController = nil
     }
