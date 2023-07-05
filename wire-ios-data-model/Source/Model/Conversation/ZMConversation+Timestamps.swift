@@ -336,6 +336,8 @@ extension ZMConversation {
         updateLastUnreadKnock(lastKnockDate)
         updateLastUnreadMissedCall(lastMissedCallDate)
         internalEstimatedUnreadCount = unreadCount
+        WireLogger.badgeCount.info("update internalEstimatedUnreadCount: \(internalEstimatedUnreadCount) in \(remoteIdentifier?.uuidString) timestamp: \(Date())")
+
         internalEstimatedUnreadSelfMentionCount = unreadSelfMentionCount
         internalEstimatedUnreadSelfReplyCount = unreadSelfReplyCount
         needsToCalculateUnreadMessages = false
