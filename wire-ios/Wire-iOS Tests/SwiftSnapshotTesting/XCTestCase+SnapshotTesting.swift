@@ -21,6 +21,10 @@ import SnapshotTesting
 @testable import Wire
 import UIKit
 
+// Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
+private let precision: Float  = 0.95
+private let perceptualPrecision: Float = 1
+
 extension ViewImageConfig: Hashable {
     public static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
         return lhs.size == rhs.size && lhs.traits == rhs.traits
@@ -61,7 +65,7 @@ extension XCTestCase {
 
         for(config, name) in XCTestCase.phoneConfigNames(orientation: orientation) {
             verify(matching: value,
-                   as: .image(on: config, precision: 0.999),
+                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
                    named: name,
                    file: file,
                    testName: testName,
@@ -76,7 +80,7 @@ extension XCTestCase {
 
         for(config, name) in XCTestCase.phoneConfigNames() {
             verify(matching: createSut(config.size!),
-                   as: .image(on: config, precision: 0.999),
+                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
                    named: name,
                    file: file,
                    testName: testName,
@@ -97,7 +101,7 @@ extension XCTestCase {
             }
 
             verify(matching: value,
-                   as: .image(on: config, precision: 0.999),
+                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
                    named: name,
                    file: file,
                    testName: testName,
@@ -323,7 +327,7 @@ extension XCTestCase {
         }
 
         let failure = verifySnapshot(matching: value,
-                                     as: .image(precision: 0.999),
+                                     as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
                                      snapshotDirectory: snapshotDirectory(file: file),
                                      file: file, testName: testName, line: line)
 
@@ -363,7 +367,7 @@ extension XCTestCase {
                 line: UInt = #line) {
 
             let failure = verifySnapshot(matching: value,
-                                         as: .image(precision: 0.999),
+                                         as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
                                          named: name,
                                          snapshotDirectory: snapshotDirectory(file: file),
                                          file: file,
