@@ -480,7 +480,18 @@ extension ConversationTableViewDataSource {
         // 45 minutes
         let significantTimeInterval: TimeInterval = 60 * 45
         let isTimeIntervalSinceLastMessageSignificant: Bool
+
+        // 1 minute
+        let oneMinuteTimeInterval: TimeInterval = 1 * 60
+        let isTimeIntervalSinceLastMessageOneMunute: Bool
+
         let previousMessage = messagePrevious(to: message, at: index)
+
+        if let timeInternalToPreviousMessageIsOneMin = timeIntervalToPreviousMessage(from: message, at: index) {
+            isTimeIntervalSinceLastMessageOneMunute = timeInternalToPreviousMessageIsOneMin > oneMinuteTimeInterval
+        } else {
+            isTimeIntervalSinceLastMessageOneMunute = false
+        }
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
             isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
@@ -492,6 +503,7 @@ extension ConversationTableViewDataSource {
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
             isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
+            isTimeIntervalSinceLastMessageOneMinute: isTimeIntervalSinceLastMessageOneMunute,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
