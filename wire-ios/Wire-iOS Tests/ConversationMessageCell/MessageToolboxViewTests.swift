@@ -21,8 +21,12 @@ import XCTest
 
 final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
+    // MARK: - Properties
+
     var message: MockMessage!
     var sut: MessageToolboxView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -36,10 +40,14 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 28)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItConfiguresWithFailedToSend() {
         // GIVEN
@@ -85,75 +93,9 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
     func testThatItConfiguresWithTimestamp() {
         // GIVEN
         let users = MockUser.mockUsers().filter { !$0.isSelfUser }
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: users]
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithTimestamp_Unselected_NoLikers() {
-        // GIVEN
-        message.backingUsersReaction = [:]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithOtherLiker() {
-        // GIVEN
-        let users = MockUser.mockUsers().first(where: { !$0.isSelfUser })!
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithReadThenLiked() {
-        // GIVEN
-        message.deliveryState = .read
-
-        let readReceipt = MockReadReceipt(user: otherUser)
-        readReceipt.serverTimestamp = Date(timeIntervalSince1970: 12345678564)
-        message.readReceipts = [readReceipt]
-
-        // Liked after read
-        let users = MockUser.mockUsers().first(where: { !$0.isSelfUser })!
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithOtherLikers() {
-        // GIVEN
-        let users = MockUser.mockUsers().filter { !$0.isSelfUser }
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: users]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithSelfLiker() {
-        // GIVEN
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
 
         // THEN
         verify(view: sut)
@@ -182,30 +124,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
         // THEN
         XCTAssertEqual(sut.preferredDetailsDisplayMode(), .receipts)
-    }
-
-    func testThatItOpensLikesWhenTapped_ReceiptsEnabled() {
-        // GIVEN
-        message.conversation = createTeamGroupConversation()
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        XCTAssertEqual(sut.preferredDetailsDisplayMode(), .reactions)
-    }
-
-    func testThatItOpensLikesWhenTapped_ReceiptsDisabled() {
-        // GIVEN
-        message.conversation = createGroupConversation()
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        XCTAssertEqual(sut.preferredDetailsDisplayMode(), .reactions)
     }
 
     func testThatItDoesNotShowLikes_ReceiptsDisabled_ShowingTimestamp() {
@@ -249,22 +167,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(view: sut)
 
-    }
-
-    func testThatItDisplaysLongListOfLikers() {
-        // GIVEN
-        let conversation = createGroupConversation()
-        message.conversation = conversation
-        message.senderUser = MockUserType.createSelfUser(name: "Alice")
-
-        let remoteUser = createUser(name: "Esteban Julio Ricardo Montoya de la Rosa Ramírez")
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [otherUser, remoteUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-
-        // THEN
-        verify(view: sut)
     }
 
 }

@@ -135,8 +135,7 @@ final class MessageToolboxView: UIView {
 
     fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
 
-    fileprivate let likeButton = LikeButton()
-    fileprivate let likeButtonContainer = UIView()
+    fileprivate let separatorView = UIView()
     fileprivate var likeButtonWidth: NSLayoutConstraint!
     fileprivate var heightConstraint: NSLayoutConstraint!
     fileprivate var previousLayoutBounds: CGRect = CGRect.zero
@@ -152,7 +151,10 @@ final class MessageToolboxView: UIView {
         setupViews()
         createConstraints()
 
-        tapGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(MessageToolboxView.onTapContent(_:)))
+        tapGestureRecogniser = UITapGestureRecognizer(
+            target: self,
+            action: #selector(MessageToolboxView.onTapContent(_:))
+        )
         tapGestureRecogniser.delegate = self
         addGestureRecognizer(tapGestureRecogniser)
     }
@@ -163,11 +165,6 @@ final class MessageToolboxView: UIView {
     }
 
     private func setupViews() {
-        likeButton.accessibilityIdentifier = "likeButton"
-        likeButton.addTarget(self, action: #selector(requestLike), for: .touchUpInside)
-        likeButton.setIconColor(LikeButton.normalColor, for: .normal)
-        likeButton.setIconColor(LikeButton.selectedColor, for: .selected)
-        likeButton.hitAreaPadding = CGSize(width: 20, height: 20)
 
         resendButton.addTarget(self, action: #selector(resendMessage), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(deleteMessage), for: .touchUpInside)
@@ -179,33 +176,26 @@ final class MessageToolboxView: UIView {
          statusLabel,
          statusSeparatorLabel,
          countdownLabel].forEach(contentStack.addArrangedSubview)
-        [likeButtonContainer, likeButton, contentStack].forEach(addSubview)
+        [separatorView, contentStack].forEach(addSubview)
     }
 
     private func createConstraints() {
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButtonContainer.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 28)
         heightConstraint.priority = UILayoutPriority(999)
 
-        likeButtonWidth = likeButtonContainer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
-
         NSLayoutConstraint.activate([
             heightConstraint,
 
-            // likeButton
-            likeButtonWidth,
-            likeButtonContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            likeButtonContainer.topAnchor.constraint(equalTo: topAnchor),
-            likeButtonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            likeButton.centerXAnchor.constraint(equalTo: likeButtonContainer.centerXAnchor),
-            likeButton.centerYAnchor.constraint(equalTo: likeButtonContainer.centerYAnchor),
+            separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
+            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            separatorView.topAnchor.constraint(equalTo: topAnchor),
+            separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             // statusTextView align vertically center
-            contentStack.leadingAnchor.constraint(equalTo: likeButtonContainer.trailingAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
             contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
@@ -244,7 +234,11 @@ final class MessageToolboxView: UIView {
         return bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
     }
 
-    func configureForMessage(_ message: ZMConversationMessage, forceShowTimestamp: Bool, animated: Bool = false) {
+    func configureForMessage(
+        _ message: ZMConversationMessage,
+        forceShowTimestamp: Bool,
+        animated: Bool = false
+    ) {
         if dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
@@ -263,7 +257,10 @@ final class MessageToolboxView: UIView {
         guard let dataSource = self.dataSource else { return }
 
         // Do not reload the content if it didn't change.
-        guard let newPosition = dataSource.updateContent(forceShowTimestamp: forceShowTimestamp, widthConstraint: contentWidth) else {
+        guard let newPosition = dataSource.updateContent(
+            forceShowTimestamp: forceShowTimestamp,
+            widthConstraint: contentWidth
+        ) else {
             return
         }
 
@@ -274,18 +271,6 @@ final class MessageToolboxView: UIView {
                 self.detailsLabel.attributedText = callListString
                 self.detailsLabel.isHidden = false
                 self.detailsLabel.numberOfLines = 0
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = true
-                self.deleteButton.isHidden = true
-                self.resendButton.isHidden = true
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-            }
-        case .reactions(let reactionsString):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = reactionsString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 1
                 self.hideAndCleanStatusLabel()
                 self.timestampSeparatorLabel.isHidden = true
                 self.deleteButton.isHidden = true
@@ -327,7 +312,6 @@ final class MessageToolboxView: UIView {
             }
         }
 
-        configureLikedState(dataSource.message, animated: animated)
         layoutIfNeeded()
     }
 
@@ -351,7 +335,11 @@ final class MessageToolboxView: UIView {
         timestampTimer = nil
     }
 
-    fileprivate func updateContentStack(to direction: SlideDirection, animated: Bool = false, changes: @escaping () -> Void) {
+    fileprivate func updateContentStack(
+        to direction: SlideDirection,
+        animated: Bool = false,
+        changes: @escaping () -> Void
+    ) {
         if animated {
             contentStack.wr_animateSlideTo(direction, newState: changes)
         } else {
@@ -395,53 +383,6 @@ final class MessageToolboxView: UIView {
         delegate?.messageToolboxViewDidSelectDelete(sender)
     }
 
-    func update(for change: MessageChangeInfo) {
-        if change.reactionsChanged {
-            configureLikedState(change.message, animated: true)
-        }
-    }
-
-    /// Configures the like button.
-    fileprivate func configureLikedState(_ message: ZMConversationMessage, animated: Bool) {
-        let showLikeButton: Bool
-
-        if case .reactions? = dataSource?.content {
-            showLikeButton = message.liked || message.hasReactions()
-        } else {
-            showLikeButton = message.canAddReaction
-        }
-
-        // Prepare Animations
-        let needsAnimation = animated && (showLikeButton ? likeButton.isHidden : !likeButton.isHidden)
-
-        if showLikeButton && likeButton.isHidden {
-            likeButton.alpha = 0
-            likeButton.isHidden = false
-        }
-
-        let changes = {
-            self.likeButton.alpha = showLikeButton ? 1 : 0
-        }
-
-        let completion: (Bool) -> Void = { _ in
-            self.likeButton.isHidden = !showLikeButton
-        }
-
-        // Change State and Appearance
-        likeButton.accessibilityLabel = message.liked ? "content.message.unlike".localized : "content.message.like".localized
-        likeButton.setIcon(message.liked ? .liked : .like, size: 12, for: .normal)
-        likeButton.setIcon(.liked, size: 12, for: .selected)
-        likeButton.setSelected(message.liked, animated: animated)
-
-        // Animate Changes
-        if needsAnimation {
-            UIView.animate(withDuration: 0.2, animations: changes, completion: completion)
-        } else {
-            changes()
-            completion(true)
-        }
-    }
-
 }
 
 // MARK: - Tap Gesture
@@ -461,8 +402,6 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         switch dataSource.content {
         case .sendFailure:
             break
-        case .reactions where dataSource.message.areMessageDetailsAvailable:
-            return .reactions
         case .details where dataSource.message.areReadReceiptsDetailsAvailable:
             return .receipts
         default:
@@ -472,7 +411,10 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         return nil
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         return gestureRecognizer.isEqual(self.tapGestureRecogniser)
     }
 

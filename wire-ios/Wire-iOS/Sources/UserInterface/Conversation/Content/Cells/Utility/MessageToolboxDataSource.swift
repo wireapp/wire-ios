@@ -26,9 +26,6 @@ enum MessageToolboxContent: Equatable {
     /// Display buttons to let the user resend the message.
     case sendFailure(NSAttributedString)
 
-    /// Display the list of reactions.
-    case reactions(NSAttributedString)
-
     /// Display list of calls
     case callList(NSAttributedString)
 
@@ -45,7 +42,7 @@ extension MessageToolboxContent: Comparable {
         switch (lhs, rhs) {
         case (.sendFailure, _):
             return true
-        case (.details, .reactions):
+        case (.details, _):
             return true
         default:
             return false
@@ -61,6 +58,8 @@ extension MessageToolboxContent: Comparable {
  */
 
 class MessageToolboxDataSource {
+
+    typealias ContentSystem = L10n.Localizable.Content.System
 
     /// The displayed message.
     let message: ZMConversationMessage
@@ -92,17 +91,15 @@ class MessageToolboxDataSource {
 
     /**
      * Updates the contents of the message toolbox.
-     * - parameter forceShowTimestamp: Whether the timestamp should be shown, even if a state
-     * with a higher priority has been calculated (ex: likes).
+     * - parameter forceShowTimestamp: Whether the timestamp should be shown
      * - parameter widthConstraint: The width available to rend the toolbox contents.
      */
 
     func updateContent(forceShowTimestamp: Bool, widthConstraint: CGFloat) -> SlideDirection? {
         // Compute the state
-        let likers = message.likers
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
-        let showTimestamp = forceShowTimestamp || likers.isEmpty
+        let showTimestamp = forceShowTimestamp
         let previousContent = self.content
 
         // Determine the content by priority
@@ -114,15 +111,11 @@ class MessageToolboxDataSource {
         }
         // 2) Failed to send
         else if failedToSend && isSentBySelfUser {
-            let detailsString = "content.system.failedtosend_message_timestamp".localized && attributes
+            let detailsString = ContentSystem.failedtosendMessageTimestamp && attributes
             content = .sendFailure(detailsString)
         }
-        // 3) Likers
-        else if !showTimestamp {
-            let text = makeReactionsLabel(with: message.likers, widthConstraint: widthConstraint)
-            content = .reactions(text)
-        }
-        // 4) Timestamp
+
+        // 3) Timestamp
         else {
             let (timestamp, status, countdown) = makeDetailsString()
             content = .details(timestamp: timestamp, status: status, countdown: countdown)
@@ -134,34 +127,6 @@ class MessageToolboxDataSource {
         }
 
         return previousContent < content ? .up : .down
-    }
-
-    // MARK: - Reactions
-
-    /// Creates a label that display the likers of the message.
-    private func makeReactionsLabel(with likers: [UserType], widthConstraint: CGFloat) -> NSAttributedString {
-        let likers = message.likers
-
-        // If there is only one liker, always display the name, even if the width doesn't fit
-        if likers.count == 1 {
-            return (likers[0].name ?? "") && attributes
-        }
-
-        // Create the list of likers
-        let likersNames = likers.compactMap(\.name).joined(separator: ", ")
-
-        let likersNamesAttributedString = likersNames && attributes
-
-        // Check if the list of likers fits on the screen. Otheriwse, show the summary
-        let constrainedSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let labelSize = likersNamesAttributedString.boundingRect(with: constrainedSize, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil)
-
-        if likers.count >= 3 || labelSize.width > widthConstraint {
-            let likersCount = String(format: "participants.people.count".localized, likers.count)
-            return likersCount && attributes
-        } else {
-            return likersNamesAttributedString
-        }
     }
 
     // MARK: - Details Text
@@ -233,13 +198,13 @@ class MessageToolboxDataSource {
 
         switch message.deliveryState {
         case .pending:
-            deliveryStateString = "content.system.pending_message_timestamp".localized
+            deliveryStateString = ContentSystem.pendingMessageTimestamp
         case .read:
             return selfStatusForReadDeliveryState(for: message)
         case .delivered:
-            deliveryStateString = "content.system.message_delivered_timestamp".localized
+            deliveryStateString = ContentSystem.messageDeliveredTimestamp
         case .sent:
-            deliveryStateString = "content.system.message_sent_timestamp".localized
+            deliveryStateString = ContentSystem.messageSentTimestamp
         case .invalid, .failedToSend:
             return nil
         }
@@ -291,10 +256,10 @@ class MessageToolboxDataSource {
         let timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
-            timestampString = String(format: "content.system.edited_message_prefix_timestamp".localized, editedTimeString)
+            timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
         } else if let dateTimeString = message.formattedReceivedDate() {
             if let systemMessage = message as? ZMSystemMessage, systemMessage.systemMessageType == .messageDeletedForEveryone {
-                timestampString = String(format: "content.system.deleted_message_prefix_timestamp".localized, dateTimeString)
+                timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
             } else if let durationString = message.systemMessageData?.callDurationString() {
                 timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
             } else {
