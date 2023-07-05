@@ -109,7 +109,7 @@ static NSString *const AccessModeStringsKey = @"accessModeStrings";
 static NSString *const AccessRoleStringKey = @"accessRoleString";
 NSString *const AccessRoleStringsKeyV2 = @"accessRoleStringsV2";
 
-//
+
 NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 1.0;
 
 const NSUInteger ZMConversationMaxEncodedTextMessageLength = 1500;
