@@ -49,6 +49,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
             return 100
         }
+
+        createSut()
     }
 
     private func createSut() {
@@ -1735,7 +1737,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             return [ZMUpdateEvent()]
         }
-        
+
         mockMLSActionExecutor.mockAddMembers = { _, _ in
             expectation2.fulfill()
             return [ZMUpdateEvent()]
