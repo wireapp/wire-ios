@@ -254,9 +254,9 @@ final class MessageToolboxView: UIView {
         guard let dataSource = self.dataSource else { return }
 
         // Do not reload the content if it didn't change.
-        guard (dataSource.updateContent(
+        guard dataSource.updateContent(
             widthConstraint: contentWidth
-        ) != nil) else {
+        ) != nil else {
             return
         }
 

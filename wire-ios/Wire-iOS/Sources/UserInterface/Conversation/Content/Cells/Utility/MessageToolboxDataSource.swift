@@ -139,7 +139,7 @@ class MessageToolboxDataSource {
             }.sorted { left, right in
                 left.serverTimestamp < right.serverTimestamp
             }.compactMap(timestampString)
-            
+
             let finalText = childrenTimestamps.reduce(timestamp) { (text, current) in
                 return "\(text)\n\(current)"
             }
@@ -154,7 +154,7 @@ class MessageToolboxDataSource {
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
         let deliveryStateString: NSAttributedString? = selfStatus(for: message)
         let countdownStatus = makeEphemeralCountdown()
-        
+
         if let timestampString = self.timestampString(message), message.isSent {
             if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
                 return (timestampString && attributes, deliveryStateString, countdownStatus)
@@ -192,7 +192,7 @@ class MessageToolboxDataSource {
     fileprivate func selfStatus(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let sender = message.senderUser,
               sender.isSelfUser else { return nil }
-        
+
         var deliveryStateString: String
 
         switch message.deliveryState {
@@ -283,6 +283,5 @@ class MessageToolboxDataSource {
 
         return timestampString
     }
-
 
 }
