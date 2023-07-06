@@ -129,6 +129,8 @@ extension MLSMessageSync {
                 return
             }
 
+            let payload = Payload.MLSMessageSendingStatus(response, decoder: .defaultDecoder)
+            payload?.updateFailedRecipients(for: entity)
             entity.delivered(with: response)
         }
 
@@ -136,7 +138,26 @@ extension MLSMessageSync {
             entity: Entity,
             afterFailureWithResponse response: ZMTransportResponse
         ) -> Bool {
-            return false
+            switch response.httpStatus {
+            case 533:
+                guard
+                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
+                    let data = payload.data
+                else {
+                    return false
+                }
+
+                switch data.type {
+                case .federation:
+                    payload.updateExpirationReason(for: entity, with: .federationRemoteError)
+                case .unknown:
+                    payload.updateExpirationReason(for: entity, with: .unknown)
+                }
+
+                return false
+            default:
+                return false
+            }
         }
 
     }
