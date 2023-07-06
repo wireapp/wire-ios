@@ -30,7 +30,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        recordMode = true
         SelfUser.setupMockSelfUser()
 
         message = MockMessageFactory.textMessage(withText: "Hello")
