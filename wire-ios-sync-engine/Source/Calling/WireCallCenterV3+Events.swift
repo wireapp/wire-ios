@@ -63,7 +63,7 @@ extension WireCallCenterV3: ZMConversationObserver {
 
     private func handleActiveParticipantsChange(_ changeInfo: ConversationChangeInfo) {
         guard
-            changeInfo.activeParticipantsChanged,
+            changeInfo.activeParticipantsChanged || changeInfo.participantsChanged,
             let conversationId = changeInfo.conversation.avsIdentifier,
             let completion = clientsRequestCompletionsByConversationId[conversationId]
         else {
