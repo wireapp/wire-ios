@@ -95,7 +95,7 @@ class MessageToolboxDataSource {
      * - parameter widthConstraint: The width available to rend the toolbox contents.
      */
 
-    func updateContent(forceShowTimestamp: Bool, widthConstraint: CGFloat) -> SlideDirection? {
+    func updateContent(widthConstraint: CGFloat) -> SlideDirection? {
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
@@ -271,7 +271,7 @@ class MessageToolboxDataSource {
         return timestampString
     }
 
-    /// Creates the timestamp text.
+    /// Creates the timestamp text for the SenderCell.
     func timestampStringForSenderCell(_ message: ZMConversationMessage) -> String? {
         let timestampString: String?
 

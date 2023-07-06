@@ -25,7 +25,6 @@ protocol MessageToolboxViewDelegate: AnyObject {
     func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode)
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView)
     func messageToolboxViewDidSelectDelete(_ sender: UIView?)
-    func messageToolboxViewDidRequestLike(_ messageToolboxView: MessageToolboxView)
 }
 
 private extension UILabel {
@@ -212,7 +211,7 @@ final class MessageToolboxView: UIView {
         }
 
         self.previousLayoutBounds = self.bounds
-        self.configureForMessage(message, forceShowTimestamp: self.forceShowTimestamp)
+        self.configureForMessage(message)
     }
 
     override func willMove(toWindow newWindow: UIWindow?) {
@@ -236,14 +235,12 @@ final class MessageToolboxView: UIView {
 
     func configureForMessage(
         _ message: ZMConversationMessage,
-        forceShowTimestamp: Bool,
         animated: Bool = false
     ) {
         if dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
 
-        self.forceShowTimestamp = forceShowTimestamp
         reloadContent(animated: animated)
     }
 
@@ -258,7 +255,6 @@ final class MessageToolboxView: UIView {
 
         // Do not reload the content if it didn't change.
         guard (dataSource.updateContent(
-            forceShowTimestamp: forceShowTimestamp,
             widthConstraint: contentWidth
         ) != nil) else {
             return
@@ -331,11 +327,6 @@ final class MessageToolboxView: UIView {
     }
 
     // MARK: - Actions
-
-    @objc
-    private func requestLike() {
-        delegate?.messageToolboxViewDidRequestLike(self)
-    }
 
     @objc
     private func resendMessage() {
