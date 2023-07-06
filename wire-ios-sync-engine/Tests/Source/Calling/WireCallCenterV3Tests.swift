@@ -1579,6 +1579,36 @@ extension WireCallCenterV3Tests {
     }
 }
 
+// MARK: - Update client list
+
+extension WireCallCenterV3Tests {
+
+    func test_SetClientList_WhenConversationParticipantsChange() throws {
+        // Given
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [#keyPath(ZMConversation.participantRoles)]
+
+        mockTransport.mockClientsRequestResponse = [
+            AVSClient(userId: selfUserID, clientId: "client1"),
+            AVSClient(userId: otherUserID, clientId: "client2")
+        ]
+
+        let didReceiveClientList = expectation(description: "didReceiveClientList")
+        sut.clientsRequestCompletionsByConversationId[groupConversationID] = { _ in
+            didReceiveClientList.fulfill()
+        }
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+}
+
+// MARK: - Helpers
+
 private extension AVSClient {
     static var mockClient: AVSClient {
         return AVSClient(userId: AVSIdentifier(identifier: UUID(), domain: "wire.com"),
