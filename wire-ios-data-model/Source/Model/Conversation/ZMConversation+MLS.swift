@@ -159,18 +159,32 @@ public extension ZMConversation {
         return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
     }
 
-    
     static func fetchSelfMLSConversation(
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         let request = Self.fetchRequest()
         request.fetchLimit = 2
 
-        request.predicate = NSPredicate(
-            format: "%K == %i && %K != nil",
-            argumentArray: [Self.messageProtocolKey, MessageProtocol.mls.rawValue,
-                            Self.mlsGroupIdKey]
+        let isSelfConversation = NSPredicate(
+            format: "%K == %i",
+            argumentArray: [
+                ZMConversationConversationTypeKey,
+                ZMConversationType.`self`.rawValue
+            ]
         )
+
+        let isMLSConveration = NSPredicate(
+            format: "%K == %i && %K != nil",
+            argumentArray: [
+                Self.messageProtocolKey,
+                MessageProtocol.mls.rawValue,
+                Self.mlsGroupIdKey
+            ]
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            isSelfConversation, isMLSConveration
+        ])
 
         let result = context.executeFetchRequestOrAssert(request)
         require(result.count <= 1, "More than one conversation found for a single group id")
