@@ -81,6 +81,9 @@ extension WireCallCenterV3: ZMConversationObserver {
             Self.logger.info("closing call because conversation was deleted")
             closeCall(conversationId: conversationId)
 
+        } else if !changeInfo.conversation.isSelfAnActiveMember {
+            Self.logger.info("closing call because self user is not an active member")
+            closeCall(conversationId: conversationId)
         }
     }
 
