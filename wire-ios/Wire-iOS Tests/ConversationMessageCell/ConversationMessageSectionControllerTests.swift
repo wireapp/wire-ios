@@ -30,6 +30,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         context = ConversationMessageContext(isSameSenderAsPrevious: false,
                                              isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimeIntervalSinceLastMessageOneMinute: false,
                                              isFirstMessageOfTheDay: false,
                                              isFirstUnreadMessage: false,
                                              isLastMessage: false,
