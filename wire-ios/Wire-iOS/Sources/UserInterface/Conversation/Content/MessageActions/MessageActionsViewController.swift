@@ -26,7 +26,8 @@ class MessageActionsViewController: UIAlertController {
 
     static func controller(withActions actions: [MessageAction],
                            actionController: ConversationMessageActionController) -> MessageActionsViewController {
-        let controller = MessageActionsViewController(title: MessageLabelMarker,
+        let title = actionController.canPerformAction(action: .react(.like)) ? MessageLabelMarker : nil
+        let controller = MessageActionsViewController(title: title,
                                             message: nil,
                                             preferredStyle: .actionSheet)
         controller.addMessageActions(actions, withActionController: actionController)
@@ -38,9 +39,9 @@ class MessageActionsViewController: UIAlertController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     private func addMessageActions(_ actions: [MessageAction],
-                           withActionController actionController: ConversationMessageActionController) {
+                                   withActionController actionController: ConversationMessageActionController) {
         self.actionController = actionController
         addReactionsView(withDelegate: self)
         actions.forEach { addAction($0) }
@@ -53,12 +54,12 @@ class MessageActionsViewController: UIAlertController {
     }
 
     private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
+        guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
+              let customContainer = customContentPlaceholder.superview else { return }
+
         let reactionPicker = BasicReactionPicker(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
         reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
-
-        guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
-              let customContainer =  customContentPlaceholder.superview else { return }
 
         view.addSubview(reactionPicker)
         customContentPlaceholder.text = ""
