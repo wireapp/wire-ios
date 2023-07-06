@@ -2851,8 +2851,6 @@
 		A9C33DFD23D0704F0069C8BB /* MediaPlaybackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlaybackManager.swift; sourceTree = "<group>"; };
 		A9C33DFF23D078B80069C8BB /* ConversationListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListItemView.swift; sourceTree = "<group>"; };
 		A9C3EDF723DE624D0057B705 /* SwipeMenuCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeMenuCollectionCell.swift; sourceTree = "<group>"; };
-		A9C4B411266A550700C88BEB /* SnapshotTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapshotTesting.framework; sourceTree = "<group>"; };
-		A9C4B413266A550700C88BEB /* SnapshotTesting.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = SnapshotTesting.framework.dSYM; sourceTree = "<group>"; };
 		A9C7BEBF237C0FFB005D676A /* ColorSchemeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSchemeTests.swift; sourceTree = "<group>"; };
 		A9C80F8324A629C2004D248F /* UIView+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Menu.swift"; sourceTree = "<group>"; };
 		A9C9D35D23E84EA20098CACC /* MediaPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayerDelegate.swift; sourceTree = "<group>"; };
@@ -3270,7 +3268,6 @@
 		EE67F6E1296F06F1001D7C88 /* AppCenter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenter.xcframework; path = ../Carthage/Build/AppCenter.xcframework; sourceTree = "<group>"; };
 		EE67F6E2296F06F1001D7C88 /* AppCenterCrashes.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterCrashes.xcframework; path = ../Carthage/Build/AppCenterCrashes.xcframework; sourceTree = "<group>"; };
 		EE67F6E3296F06F1001D7C88 /* AppCenterAnalytics.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterAnalytics.xcframework; path = ../Carthage/Build/AppCenterAnalytics.xcframework; sourceTree = "<group>"; };
-		EE67F72F296F0DB5001D7C88 /* SnapshotTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SnapshotTesting.xcframework; path = ../Carthage/Build/SnapshotTesting.xcframework; sourceTree = "<group>"; };
 		EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = ../Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
 		EE67F735296F0DE4001D7C88 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4998,7 +4995,6 @@
 				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
 				EE67F735296F0DE4001D7C88 /* WireDataModel.framework */,
 				EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */,
-				EE67F72F296F0DB5001D7C88 /* SnapshotTesting.xcframework */,
 				EE67F6E1296F06F1001D7C88 /* AppCenter.xcframework */,
 				EE67F6E3296F06F1001D7C88 /* AppCenterAnalytics.xcframework */,
 				EE67F6E2296F06F1001D7C88 /* AppCenterCrashes.xcframework */,
@@ -5012,7 +5008,6 @@
 				EE33C48F2964860000C058D1 /* WireNotificationEngine.framework */,
 				EE33C48C296485FA00C058D1 /* WireShareEngine.framework */,
 				EE33C489296485F400C058D1 /* WireSyncEngine.framework */,
-				A9C4B410266A550700C88BEB /* ios-arm64_x86_64-simulator */,
 				87AAE4281E43682E00E1D13A /* LocalAuthentication.framework */,
 				CE8E4FAF1DF0668A0009F437 /* ImageIO.framework */,
 				872C99111DB0EA54006A3BDE /* Intents.framework */,
@@ -6561,24 +6556,6 @@
 				A9CBBEC424CF81EE006543D4 /* UIView+ConstraintFactory.swift */,
 			);
 			path = CustomAppLock;
-			sourceTree = "<group>";
-		};
-		A9C4B410266A550700C88BEB /* ios-arm64_x86_64-simulator */ = {
-			isa = PBXGroup;
-			children = (
-				A9C4B411266A550700C88BEB /* SnapshotTesting.framework */,
-				A9C4B412266A550700C88BEB /* dSYMs */,
-			);
-			name = "ios-arm64_x86_64-simulator";
-			path = "Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator";
-			sourceTree = "<group>";
-		};
-		A9C4B412266A550700C88BEB /* dSYMs */ = {
-			isa = PBXGroup;
-			children = (
-				A9C4B413266A550700C88BEB /* SnapshotTesting.framework.dSYM */,
-			);
-			path = dSYMs;
 			sourceTree = "<group>";
 		};
 		A9DA5082240FFCEB00C2F886 /* Button */ = {
