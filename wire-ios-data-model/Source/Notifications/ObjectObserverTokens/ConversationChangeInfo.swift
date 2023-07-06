@@ -46,7 +46,8 @@ extension ZMConversation: ObjectInSnapshot {
                     #keyPath(ZMConversation.legalHoldStatus),
                     #keyPath(ZMConversation.labels),
                     #keyPath(ZMConversation.localParticipants),
-                    ZMConversation.mlsStatusKey
+                    ZMConversation.mlsStatusKey,
+                    #keyPath(ZMConversation.isDeletedRemotely)
             ])
     }
 
@@ -64,6 +65,10 @@ extension ZMConversation: ObjectInSnapshot {
 ////////////////////
 
 @objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
+
+    public var isDeleted: Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
+    }
 
     public var languageChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.language))
