@@ -1579,7 +1579,7 @@ extension WireCallCenterV3Tests {
     }
 }
 
-// MARK: - Update client list
+// MARK: - Conversation participants changed
 
 extension WireCallCenterV3Tests {
 
@@ -1603,6 +1603,24 @@ extension WireCallCenterV3Tests {
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_CallIsClosed_WhenSelfUserIsNoLongerAMember() throws {
+        // Given
+        let selfUserParticipantRole = try XCTUnwrap(groupConversation.participantRoles.first {
+            $0.user?.isSelfUser ?? false
+        })
+
+        groupConversation.participantRoles.remove(selfUserParticipantRole)
+
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [#keyPath(ZMConversation.participantRoles)]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
 
 }

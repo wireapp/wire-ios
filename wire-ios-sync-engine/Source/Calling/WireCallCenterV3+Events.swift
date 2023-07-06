@@ -28,6 +28,7 @@ extension WireCallCenterV3: ZMConversationObserver {
     public func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         handleSecurityLevelChange(changeInfo)
         handleActiveParticipantsChange(changeInfo)
+        handleSelfUserParticipationChange(changeInfo)
     }
 
     private func handleSecurityLevelChange(_ changeInfo: ConversationChangeInfo) {
@@ -71,6 +72,17 @@ extension WireCallCenterV3: ZMConversationObserver {
         }
 
         handleClientsRequest(conversationId: conversationId, completion: completion)
+    }
+
+    private func handleSelfUserParticipationChange(_ changeInfo: ConversationChangeInfo) {
+        guard
+            !changeInfo.conversation.isSelfAnActiveMember,
+            let conversationId = changeInfo.conversation.avsIdentifier
+        else {
+            return
+        }
+
+        closeCall(conversationId: conversationId)
     }
 
 }
