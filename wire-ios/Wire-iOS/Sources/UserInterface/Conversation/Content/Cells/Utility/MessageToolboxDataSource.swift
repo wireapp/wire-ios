@@ -105,7 +105,7 @@ class MessageToolboxDataSource {
 
         // 1) Call list
         if message.systemMessageData?.systemMessageType == .performedCall ||
-           message.systemMessageData?.systemMessageType == .missedCall {
+            message.systemMessageData?.systemMessageType == .missedCall {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
@@ -136,10 +136,10 @@ class MessageToolboxDataSource {
 
             let childrenTimestamps = childMessages.compactMap {
                 $0 as? ZMConversationMessage
-                }.sorted { left, right in
-                    left.serverTimestamp < right.serverTimestamp
-                }.compactMap(timestampString)
-
+            }.sorted { left, right in
+                left.serverTimestamp < right.serverTimestamp
+            }.compactMap(timestampString)
+            
             let finalText = childrenTimestamps.reduce(timestamp) { (text, current) in
                 return "\(text)\n\(current)"
             }
@@ -154,7 +154,7 @@ class MessageToolboxDataSource {
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
         let deliveryStateString: NSAttributedString? = selfStatus(for: message)
         let countdownStatus = makeEphemeralCountdown()
-
+        
         if let timestampString = self.timestampString(message), message.isSent {
             if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
                 return (timestampString && attributes, deliveryStateString, countdownStatus)
@@ -168,9 +168,9 @@ class MessageToolboxDataSource {
 
     private func makeEphemeralCountdown() -> NSAttributedString? {
         let showDestructionTimer = message.isEphemeral &&
-            !message.isObfuscated &&
-            nil != message.destructionDate &&
-            message.deliveryState != .pending
+        !message.isObfuscated &&
+        nil != message.destructionDate &&
+        message.deliveryState != .pending
 
         if let destructionDate = message.destructionDate, showDestructionTimer {
             let remaining = destructionDate.timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
@@ -191,8 +191,8 @@ class MessageToolboxDataSource {
     /// Returns the status for the sender of the message.
     fileprivate func selfStatus(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let sender = message.senderUser,
-            sender.isSelfUser else { return nil }
-
+              sender.isSelfUser else { return nil }
+        
         var deliveryStateString: String
 
         switch message.deliveryState {
@@ -262,7 +262,7 @@ class MessageToolboxDataSource {
             } else if let durationString = message.systemMessageData?.callDurationString() {
                 timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
             } else {
-                timestampString = dateTimeString
+                timestampString = .none
             }
         } else {
             timestampString = .none

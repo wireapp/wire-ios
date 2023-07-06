@@ -275,7 +275,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        return context.isLastMessage || selected || message.deliveryState == .failedToSend || message.hasReactions()
+        return context.isLastMessage || !selected || selected || message.deliveryState == .failedToSend 
     }
 
     func isSenderVisible(in context: ConversationMessageContext) -> Bool {

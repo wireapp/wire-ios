@@ -260,14 +260,13 @@ final class MessageToolboxView: UIView {
         guard let newPosition = dataSource.updateContent(
             forceShowTimestamp: forceShowTimestamp,
             widthConstraint: contentWidth
-        ) else {
+        ) != nil) else {
             return
         }
 
         switch dataSource.content {
 
         case .callList(let callListString):
-            updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.attributedText = callListString
                 self.detailsLabel.isHidden = false
                 self.detailsLabel.numberOfLines = 0
@@ -277,10 +276,8 @@ final class MessageToolboxView: UIView {
                 self.resendButton.isHidden = true
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
-            }
 
         case .sendFailure(let detailsString):
-            updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.attributedText = detailsString
                 self.detailsLabel.isHidden = false
                 self.detailsLabel.numberOfLines = 1
@@ -290,10 +287,8 @@ final class MessageToolboxView: UIView {
                 self.resendButton.isHidden = false
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
-            }
 
         case .details(let timestamp, let status, let countdown):
-            updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.attributedText = timestamp
                 self.detailsLabel.isHidden = timestamp == nil
                 self.detailsLabel.numberOfLines = 1
@@ -309,7 +304,7 @@ final class MessageToolboxView: UIView {
                 self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
                 self.countdownLabel.attributedText = countdown
                 self.countdownLabel.isHidden = countdown == nil
-            }
+
         }
 
         layoutIfNeeded()
@@ -333,18 +328,6 @@ final class MessageToolboxView: UIView {
     func stopCountdownTimer() {
         timestampTimer?.invalidate()
         timestampTimer = nil
-    }
-
-    fileprivate func updateContentStack(
-        to direction: SlideDirection,
-        animated: Bool = false,
-        changes: @escaping () -> Void
-    ) {
-        if animated {
-            contentStack.wr_animateSlideTo(direction, newState: changes)
-        } else {
-            changes()
-        }
     }
 
     // MARK: - Actions
