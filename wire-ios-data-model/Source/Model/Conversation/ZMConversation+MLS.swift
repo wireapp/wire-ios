@@ -190,4 +190,38 @@ public extension ZMConversation {
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
     }
+    
+    func joinNewMLSGroupIfNeeded() {
+        guard let syncContext = self.managedObjectContext?.zm_sync,
+              let mlsGroupID = self.mlsGroupID,
+              self.messageProtocol == .mls
+        else {
+            WireLogger.mls.warn("joinMLSGroup not needed for conversation \(self.safeForLoggingDescription)")
+            return
+        }
+        syncContext.perform {
+            guard let mlsService = syncContext.mlsService else { return }
+
+            if !mlsService.conversationExists(groupID: mlsGroupID) {
+                do {
+                    try mlsService.createGroup(for: mlsGroupID)
+                } catch {
+                    WireLogger.mls.error("failed to create Group for \(mlsGroupID   )")
+                }
+            }
+            // to rename
+            mlsService.joinSelfGroup(with: mlsGroupID)
+        
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            let mlsUser = MLSUser(from: selfUser)
+            Task {
+                WireLogger.mls.debug("addMembersToConversation start")
+                do {
+                    try await mlsService.addMembersToConversation(with: [mlsUser], for: mlsGroupID)
+                } catch {
+                    WireLogger.mls.error("failed to add other clients for joining MLS group")
+                }
+            }
+        }
+    }
 }

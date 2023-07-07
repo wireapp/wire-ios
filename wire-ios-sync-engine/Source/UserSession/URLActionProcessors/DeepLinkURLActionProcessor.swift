@@ -68,6 +68,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                                 contextProvider: strongSelf.contextProvider) { (response) in
                                 switch response {
                                 case .success(let conversation):
+                                    conversation.joinNewMLSGroupIfNeeded()
                                     delegate.showConversation(conversation, at: nil)
                                 case .failure(let error):
                                     delegate.failedToPerformAction(urlAction, error: error)
