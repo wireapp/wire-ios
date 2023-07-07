@@ -66,7 +66,7 @@ extension ZMConversation: ObjectInSnapshot {
 
 @objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
 
-    public var isDeleted: Bool {
+    public var isDeletedChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
     }
 
