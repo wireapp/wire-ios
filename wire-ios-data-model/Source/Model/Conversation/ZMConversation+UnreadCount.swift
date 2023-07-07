@@ -23,8 +23,17 @@ extension ZMConversation {
     /// Fetch all conversation that are marked as needsToCalculateUnreadMessages and calculate unread messages for them
     public static func calculateLastUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
         let fetchRequest = sortedFetchRequest(with: predicateForConversationsNeedingToBeCalculatedUnreadMessages())
+        let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation]
+
+        conversations?.forEach { $0.calculateLastUnreadMessages() }
+    }
+
+    /// Fetch all conversations that could potentially have unread messages and recalculate the latest unread messages for them.
+    public static func recalculateUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
+        let fetchRequest = sortedFetchRequest(with: predicateForConversationConsideredUnread())
 
         let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation]
+        WireLogger.badgeCount.info("calculate last unread messages for \(conversations?.count) conversations")
         conversations?.forEach { $0.calculateLastUnreadMessages() }
     }
 
