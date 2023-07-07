@@ -152,8 +152,11 @@ class MessageToolboxDataSource {
 
     /// Creates a label that display the status of the message.
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
-        let deliveryStateString: NSAttributedString? = selfStatus(for: message)
         let countdownStatus = makeEphemeralCountdown()
+        let selfMessagedeliveryStateString: NSAttributedString? = selfStatus(for: message)
+        let messageDeliveryStateString: NSAttributedString? = otherUserMessageStatus(for: message)
+
+        let deliveryStateString = messageDeliveryStateString ?? selfMessagedeliveryStateString
 
         if let timestampString = self.timestampString(message), message.isSent {
             if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
@@ -190,8 +193,32 @@ class MessageToolboxDataSource {
 
     /// Returns the status for the sender of the message.
     fileprivate func selfStatus(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard let sender = message.senderUser,
-              sender.isSelfUser else { return nil }
+        guard let sender = message.senderUser, sender.isSelfUser else {
+            return nil
+        }
+
+        var deliveryStateString: String
+
+        switch message.deliveryState {
+        case .pending:
+            deliveryStateString = ContentSystem.pendingMessageTimestamp
+        case .read:
+            return selfStatusForReadDeliveryState(for: message)
+        case .delivered:
+            deliveryStateString = ContentSystem.messageDeliveredTimestamp
+        case .sent:
+            deliveryStateString = ContentSystem.messageSentTimestamp
+        case .invalid, .failedToSend:
+            return nil
+        }
+
+        return NSAttributedString(string: deliveryStateString) && attributes
+    }
+
+    fileprivate func otherUserMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
+        guard let sender = message.senderUser, !sender.isSelfUser else {
+            return nil
+        }
 
         var deliveryStateString: String
 
