@@ -482,7 +482,7 @@ extension ConversationTableViewDataSource {
         let isTimeIntervalSinceLastMessageSignificant: Bool
 
         // 1 minute
-        let oneMinuteTimeInterval: TimeInterval = 1 * 60
+        let oneMinuteTimeInterval: TimeInterval = TimeInterval.oneMinute
         let isTimeIntervalSinceLastMessageOneMunute: Bool
 
         let previousMessage = messagePrevious(to: message, at: index)
