@@ -348,7 +348,7 @@ extension XCTestCase {
                 line: UInt = #line) {
 
             let failure = verifySnapshot(matching: value,
-                                         as: customSize == nil ? .image : .image(on: ViewImageConfig(safeArea: UIEdgeInsets.zero, size: customSize!, traits: UITraitCollection())),
+                                         as: customSize == nil ? .image : .image(on: ViewImageConfig(safeArea: UIEdgeInsets.zero, size: customSize!, traits: UITraitCollection()), precision: precision, perceptualPrecision: perceptualPrecision),
                                          named: name,
                                          record: recording,
                                          snapshotDirectory: snapshotDirectory(file: file),
