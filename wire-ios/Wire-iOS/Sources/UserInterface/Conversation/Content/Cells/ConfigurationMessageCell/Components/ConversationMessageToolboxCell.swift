@@ -111,7 +111,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, selected: Bool) {
+    init(message: ZMConversationMessage) {
         self.message = message
         self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
     }

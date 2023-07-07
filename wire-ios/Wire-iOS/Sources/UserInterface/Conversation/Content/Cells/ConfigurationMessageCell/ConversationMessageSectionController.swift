@@ -196,8 +196,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                                                                                                             state: data.state,
                                                                                                             hasError: data.isExpired,
                                                                                                             buttonAction: {
-                        data.touchAction()
-                    }))
+                    data.touchAction()
+                }))
                 cells.append(button)
             }
         }
@@ -234,13 +234,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
         }
         if isSenderVisible || isTimeStampVisible, let sender = message.senderUser {
-                add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: isTimeStampVisible))
-            }
+            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: isTimeStampVisible))
+        }
 
         addContent(context: context, isSenderVisible: isSenderVisible)
 
         if isToolboxVisible(in: context) {
-            add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
+            add(description: ConversationMessageToolboxCellDescription(message: message))
         }
 
         if !message.isSystem, !message.isEphemeral, message.hasReactions() {
