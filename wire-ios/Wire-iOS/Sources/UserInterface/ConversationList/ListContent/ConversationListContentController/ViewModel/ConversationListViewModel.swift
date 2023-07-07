@@ -548,7 +548,8 @@ final class ConversationListViewModel: NSObject {
             guard let conversation = itemToSelect as? ZMConversation else { return false }
 
             ZMUserSession.shared()?.enqueue({
-                conversation.isArchived = false
+                let outgoingConnection: Bool = conversation.relatedConnectionState == .sent
+                conversation.isArchived = outgoingConnection ? conversation.isArchived : false
             }, completionHandler: {
                 self.internalSelect(itemToSelect: itemToSelect)
             })

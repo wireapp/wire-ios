@@ -204,7 +204,7 @@ final class ConversationViewController: UIViewController {
                 })
             case .archive:
                 self?.session.enqueue({
-                    self?.conversation.isArchived = true
+                    self?.conversation.isArchived.toggle()
                 })
             }
             self?.openConversationList()
