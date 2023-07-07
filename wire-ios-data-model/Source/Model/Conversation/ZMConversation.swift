@@ -20,6 +20,9 @@ import Foundation
 
 extension ZMConversation {
 
+    @objc
+    static let isDeletedRemotelyKey: String = #keyPath(ZMConversation.isDeletedRemotely)
+
     /// Whether the conversation was deleted on the backend.
 
     @NSManaged
