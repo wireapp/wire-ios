@@ -22,7 +22,7 @@ import SnapshotTesting
 import UIKit
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float  = 0
+private let precision: Float  = 1.0
 private let perceptualPrecision: Float = 0.98
 
 extension ViewImageConfig: Hashable {
@@ -347,17 +347,23 @@ extension XCTestCase {
                 testName: String = #function,
                 line: UInt = #line) {
 
-            let failure = verifySnapshot(matching: value,
-                                         as: customSize == nil ? .image : .image(on: ViewImageConfig(safeArea: UIEdgeInsets.zero, size: customSize!, traits: UITraitCollection()), precision: precision, perceptualPrecision: perceptualPrecision),
-                                         named: name,
-                                         record: recording,
-                                         snapshotDirectory: snapshotDirectory(file: file),
-                                         file: file,
-                                         testName: testName,
-                                         line: line)
+        var config: ViewImageConfig?
+        if let customSize = customSize {
+            config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
+                                     size: customSize,
+                                     traits: UITraitCollection())
+        }
 
-            XCTAssertNil(failure, file: file, line: line)
+        let failure = verifySnapshot(matching: value,
+                                     as: config == nil ? .image(precision: precision, perceptualPrecision: perceptualPrecision) : .image(on: config!, precision: precision, perceptualPrecision: perceptualPrecision),
+                                     named: name,
+                                     record: recording,
+                                     snapshotDirectory: snapshotDirectory(file: file),
+                                     file: file,
+                                     testName: testName,
+                                     line: line)
 
+        XCTAssertNil(failure, file: file, line: line)
     }
 
     func verify(matching value: UIView,
