@@ -1579,7 +1579,7 @@ extension WireCallCenterV3Tests {
     }
 }
 
-// MARK: - Conversation participants changed
+// MARK: - Conversation changes
 
 extension WireCallCenterV3Tests {
 
@@ -1615,6 +1615,19 @@ extension WireCallCenterV3Tests {
 
         let changeInfo = ConversationChangeInfo(object: groupConversation)
         changeInfo.changedKeys = [#keyPath(ZMConversation.participantRoles)]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+    }
+
+    func test_CallIsClosed_WhenConversationIsDeleted() throws {
+        // Given
+        groupConversation.isDeletedRemotely = true
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [#keyPath(ZMConversation.isDeletedRemotely)]
 
         // When
         sut.conversationDidChange(changeInfo)
