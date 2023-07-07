@@ -95,7 +95,7 @@ class MessageToolboxDataSource {
      * - parameter widthConstraint: The width available to rend the toolbox contents.
      */
 
-    func updateContent(widthConstraint: CGFloat) -> SlideDirection? {
+    func updateContent(widthConstraint: CGFloat) -> Bool {
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
@@ -122,10 +122,10 @@ class MessageToolboxDataSource {
 
         // Only perform the changes if the content did change.
         guard previousContent != content else {
-            return nil
+            return false
         }
 
-        return previousContent < content ? .up : .down
+        return true
     }
 
     // MARK: - Details Text
@@ -262,10 +262,10 @@ class MessageToolboxDataSource {
             } else if let durationString = message.systemMessageData?.callDurationString() {
                 timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
             } else {
-                timestampString = .none
+                timestampString = nil
             }
         } else {
-            timestampString = .none
+            timestampString = nil
         }
 
         return timestampString
