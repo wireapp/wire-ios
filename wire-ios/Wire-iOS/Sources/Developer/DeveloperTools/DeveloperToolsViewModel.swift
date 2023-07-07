@@ -187,6 +187,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         })))
 
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+        items.append(.button(ButtonItem(title: "Stop federating with anta", action: stopFederatingAnta)))
 
         return Section(
             header: header,
@@ -295,6 +296,13 @@ final class DeveloperToolsViewModel: ObservableObject {
     private var selfClient: UserClient? {
         guard let session = ZMUserSession.shared() else { return nil }
         return session.selfUserClient
+    }
+
+    private func stopFederatingAnta() {
+        guard let session = ZMUserSession.shared() else { return }
+
+        let manager = FederationDeleteManager(syncContext: session.syncContext)
+        manager.backendStoppedFederatingWithDomain(domain: "anta.wire.link")
     }
 
 }

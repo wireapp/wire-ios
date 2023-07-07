@@ -29,4 +29,11 @@ extension ZMConversation {
         return domain != userDomain
     }
 
+    public static func existingConversationsHostedOnDomain(domain: String,
+                                                            moc: NSManagedObjectContext) -> [ZMConversation] {
+        let hostedOnDomainPredicate = NSPredicate(format: "%K == %@", ZMConversationDomainKey, domain)
+        let request = self.sortedFetchRequest(with: hostedOnDomainPredicate)
+
+        return moc.fetchOrAssert(request: request) as? [ZMConversation] ?? []
+    }
 }
