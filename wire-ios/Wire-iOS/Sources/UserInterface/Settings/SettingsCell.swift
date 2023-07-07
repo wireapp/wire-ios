@@ -61,9 +61,9 @@ class SettingsTableCell: SettingsTableCellProtocol {
         valueLabel.textColor = SemanticColors.Label.textDefault
         valueLabel.font = UIFont.systemFont(ofSize: 17)
         valueLabel.textAlignment = .right
+        valueLabel.lineBreakMode = .byTruncatingTail
         valueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         valueLabel.setContentHuggingPriority(.required, for: .horizontal)
-        valueLabel.adjustsFontSizeToFitWidth = true
 
         return valueLabel
     }()
