@@ -296,7 +296,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        return context.isTimeIntervalSinceLastMessageOneMinute || !context.isSameSenderAsPrevious
+        return context.isTimeIntervalSinceLastMessageOneMinute || !context.isSameSenderAsPrevious || message.updatedAt != nil
     }
 
     // MARK: - Highlight
