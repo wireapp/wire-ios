@@ -72,57 +72,73 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
     private func processPayload(_ payload: ResponsePayload) {
         let service = FeatureService(context: context)
 
-        service.storeAppLock(
-            Feature.AppLock(
-                status: payload.appLock.status,
-                config: payload.appLock.config
+        if let appLock = payload.appLock {
+            service.storeAppLock(
+                Feature.AppLock(
+                    status: appLock.status,
+                    config: appLock.config
+                )
             )
-        )
+        }
 
-        service.storeClassifiedDomains(
-            Feature.ClassifiedDomains(
-                status: payload.classifiedDomains.status,
-                config: payload.classifiedDomains.config
+        if let classifiedDomains = payload.classifiedDomains {
+            service.storeClassifiedDomains(
+                Feature.ClassifiedDomains(
+                    status: classifiedDomains.status,
+                    config: classifiedDomains.config
+                )
             )
-        )
+        }
 
-        service.storeConferenceCalling(
-            Feature.ConferenceCalling(
-                status: payload.conferenceCalling.status
+        if let conferenceCalling = payload.conferenceCalling {
+            service.storeConferenceCalling(
+                Feature.ConferenceCalling(
+                    status: conferenceCalling.status
+                )
             )
-        )
+        }
 
-        service.storeConversationGuestLinks(
-            Feature.ConversationGuestLinks(
-                status: payload.conversationGuestLinks.status
+        if let conversationGuestLinks = payload.conversationGuestLinks {
+            service.storeConversationGuestLinks(
+                Feature.ConversationGuestLinks(
+                    status: conversationGuestLinks.status
+                )
             )
-        )
+        }
 
-        service.storeDigitalSignature(
-            Feature.DigitalSignature(
-                status: payload.digitalSignatures.status
+        if let digitalSignatures = payload.digitalSignatures {
+            service.storeDigitalSignature(
+                Feature.DigitalSignature(
+                    status: digitalSignatures.status
+                )
             )
-        )
+        }
 
-        service.storeFileSharing(
-            Feature.FileSharing(
-                status: payload.fileSharing.status
+        if let fileSharing = payload.fileSharing {
+            service.storeFileSharing(
+                Feature.FileSharing(
+                    status: fileSharing.status
+                )
             )
-        )
+        }
 
-        service.storeMLS(
-            Feature.MLS(
-                status: payload.mls.status,
-                config: payload.mls.config
+        if let mls = payload.mls {
+            service.storeMLS(
+                Feature.MLS(
+                    status: mls.status,
+                    config: mls.config
+                )
             )
-        )
+        }
 
-        service.storeSelfDeletingMessages(
-            Feature.SelfDeletingMessages(
-                status: payload.selfDeletingMessages.status,
-                config: payload.selfDeletingMessages.config
+        if let selfDeletingMessages = payload.selfDeletingMessages {
+            service.storeSelfDeletingMessages(
+                Feature.SelfDeletingMessages(
+                    status: selfDeletingMessages.status,
+                    config: selfDeletingMessages.config
+                )
             )
-        )
+        }
     }
 
 }
@@ -133,14 +149,14 @@ extension GetFeatureConfigsActionHandler {
 
     struct ResponsePayload: Codable {
 
-        let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>
-        let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>
-        let conferenceCalling: FeatureStatus
-        let conversationGuestLinks: FeatureStatus
-        let digitalSignatures: FeatureStatus
-        let fileSharing: FeatureStatus
-        let mls: FeatureStatusWithConfig<Feature.MLS.Config>
-        let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>
+        let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
+        let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
+        let conferenceCalling: FeatureStatus?
+        let conversationGuestLinks: FeatureStatus?
+        let digitalSignatures: FeatureStatus?
+        let fileSharing: FeatureStatus?
+        let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
+        let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
 
     }
 

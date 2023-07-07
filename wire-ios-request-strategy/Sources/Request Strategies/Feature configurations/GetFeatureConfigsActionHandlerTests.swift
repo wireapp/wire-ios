@@ -90,12 +90,11 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
             )
 
-            guard let payloadData = try? JSONEncoder().encode(payload) else {
+            guard let payloadData = try? JSONEncoder().encode(payload),
+                  let payloadString = String(data: payloadData, encoding: .utf8) else {
                 XCTFail("failed to encode payload")
                 return
             }
-
-            let payloadString = String(data: payloadData, encoding: .utf8)!
 
             // When
             sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
@@ -137,6 +136,83 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
+    func test_ShouldTakeDefaultValuesWhenHandlingResponseWithNoFeatures_200() throws {
+        syncMOC.performGroupedBlock {
+            // Given
+            let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
+            var action = GetFeatureConfigsAction()
+
+            // Expectation
+            let gotResult = self.expectation(description: "gotResult")
+
+            action.onResult { result in
+                switch result {
+                case .success:
+                    break
+
+                default:
+                    XCTFail("Expected 'success'")
+                }
+
+                gotResult.fulfill()
+            }
+
+            let payload = GetFeatureConfigsActionHandler.ResponsePayload(
+                appLock: nil,
+                classifiedDomains: nil,
+                conferenceCalling: nil,
+                conversationGuestLinks: nil,
+                digitalSignatures: nil,
+                fileSharing: nil,
+                mls: nil,
+                selfDeletingMessages: nil
+            )
+
+            guard let payloadData = try? JSONEncoder().encode(payload),
+                  let payloadString = String(data: payloadData, encoding: .utf8) else {
+                XCTFail("failed to encode payload")
+                return
+            }
+
+            // When
+            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+
+            // Then
+            let featureService = FeatureService(context: self.syncMOC)
+
+            let appLock = featureService.fetchAppLock()
+            XCTAssertEqual(appLock.status, .enabled)
+            XCTAssertEqual(appLock.config, .init())
+
+            let classifiedDomains = featureService.fetchClassifiedDomains()
+            XCTAssertEqual(classifiedDomains.status, .disabled)
+            XCTAssertEqual(classifiedDomains.config, .init())
+
+            let conferenceCalling = featureService.fetchConferenceCalling()
+            XCTAssertEqual(conferenceCalling.status, .enabled)
+
+            let conversationGuestLinks = featureService.fetchConversationGuestLinks()
+            XCTAssertEqual(conversationGuestLinks.status, .enabled)
+
+            let digitalSignature = featureService.fetchDigitalSignature()
+            XCTAssertEqual(digitalSignature.status, .disabled)
+
+            let fileSharing = featureService.fetchFileSharing()
+            XCTAssertEqual(fileSharing.status, .enabled)
+
+            let mls = featureService.fetchMLS()
+            XCTAssertEqual(mls.status, .disabled)
+            XCTAssertEqual(mls.config, .init())
+
+            let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
+            XCTAssertEqual(selfDeletingMessage.status, .enabled)
+            XCTAssertEqual(selfDeletingMessage.config, .init())
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     func test_ItHandlesResponse_200_MalformedResponse() throws {
         // Given
         let sut = GetFeatureConfigsActionHandler(context: syncMOC)
@@ -159,33 +235,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
         // When
         sut.handleResponse(mockResponse(status: 200, payload: nil), action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func test_ItHandlesResponse_200_FailedToDecodeResponse() throws {
-        // Given
-        let sut = GetFeatureConfigsActionHandler(context: syncMOC)
-        var action = GetFeatureConfigsAction()
-
-        // Expectation
-        let gotResult = expectation(description: "gotResult")
-
-        action.onResult { result in
-            switch result {
-            case .failure(.failedToDecodeResponse):
-                break
-
-            default:
-                XCTFail("Expected 'failed to decode response'")
-            }
-
-            gotResult.fulfill()
-        }
-
-        let payload = ["foo": "bar"] as ZMTransportData
-
-        // When
-        sut.handleResponse(mockResponse(status: 200, payload: payload), action: action)
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
