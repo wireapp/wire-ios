@@ -35,6 +35,7 @@ class ImagePickerManager: NSObject {
     private weak var viewController: UIViewController?
     private var sourceType: UIImagePickerController.SourceType?
     private var completion: ((UIImage) -> Void)?
+    private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     // MARK: - Methods
     func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
@@ -52,21 +53,21 @@ class ImagePickerManager: NSObject {
                                             message: nil,
                                             preferredStyle: .actionSheet)
 
+        // Choose from gallery option, if security flag enabled
+        if mediaShareRestrictionManager.isPhotoLibraryEnabled {
+            let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
+                self?.sourceType = .photoLibrary
+                self?.getImage(fromSourceType: .photoLibrary)
+            }
+            actionSheet.addAction(galleryAction)
+        }
+
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ -> Void in
             self?.sourceType = .camera
             self?.getImage(fromSourceType: .camera)
         }
         actionSheet.addAction(cameraAction)
-
-        guard !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).isPhotoLibraryEnabled else {
-            let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
-                self?.sourceType = .photoLibrary
-                self?.getImage(fromSourceType: .photoLibrary)
-            }
-            actionSheet.addAction(galleryAction)
-            return actionSheet
-        }
 
         // Cancel
         actionSheet.addAction(.cancel())
