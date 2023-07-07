@@ -66,11 +66,11 @@ extension ZMAssetClientMessage {
 
     @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
         let imageNotDownloaded = imageMessageData != nil && !hasDownloadedFile
-        let fileNotUploadedNorUploaded = fileMessageData != nil
+        let fileHasNoUploadState = fileMessageData != nil
             && underlyingMessage?.assetData?.hasUploaded == false
             && underlyingMessage?.assetData?.hasNotUploaded == false
-        let otherSenderCheck = sender == nil || (sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true)
-        let destructionStartCondition = !(fileNotUploadedNorUploaded || (otherSenderCheck && imageNotDownloaded))
+        let hasOtherUserSender = sender == nil || (sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true)
+        let destructionStartCondition = !(fileHasNoUploadState || (hasOtherUserSender && imageNotDownloaded))
         if destructionStartCondition {
             return super.startDestructionIfNeeded()
         }
