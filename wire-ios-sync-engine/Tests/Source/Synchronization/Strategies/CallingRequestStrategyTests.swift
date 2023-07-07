@@ -644,6 +644,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func test_ThatItSendsMLSConfKeyMessage_ToAllParticipants_EvenIfTargetRecipientsAreSpecified() {
         // Given
+        createMLSSelfConversation()
         let selfClient = createSelfClient()
 
         // One user with two clients connected to self
@@ -757,6 +758,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func test_ThatItHandlesMLSRejectMessage() {
         // Given
+        createMLSSelfConversation()
         let selfClient = createSelfClient()
 
         let user1 = ZMUser.insertNewObject(in: syncMOC)
@@ -770,7 +772,7 @@ class CallingRequestStrategyTests: MessagingTest {
         // An MLS conversation with both users and self
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = .create()
-        conversation.mlsGroupID = MLSGroupID(Data([1, 2, 3]))
+        conversation.mlsGroupID = MLSGroupID(Data([2, 2, 2]))
         conversation.messageProtocol = .mls
         conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
         conversation.needsToBeUpdatedFromBackend = false
