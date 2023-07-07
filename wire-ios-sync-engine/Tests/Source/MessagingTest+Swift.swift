@@ -39,6 +39,17 @@ extension MessagingTest {
         return message
     }
 
+    @discardableResult
+    func createMLSSelfConversation() -> ZMConversation {
+        let selfConversation = ZMConversation.insertNewObject(in: syncMOC)
+        selfConversation.conversationType = .`self`
+        selfConversation.remoteIdentifier = UUID.create()
+        selfConversation.mlsGroupID = MLSGroupID(Data.secureRandomData(length: 8))
+        selfConversation.messageProtocol = .mls
+        selfConversation.mlsStatus = .ready
+        return selfConversation
+    }
+
     @objc
     public func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
