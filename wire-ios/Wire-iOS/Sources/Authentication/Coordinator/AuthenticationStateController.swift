@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSystem
+import WireDataModel
 
 private let log = ZMSLog(tag: "Authentication")
 
@@ -44,11 +45,15 @@ protocol AuthenticationStateControllerDelegate: AnyObject {
 
 class AuthenticationStateController {
 
+    enum RewindMilestone: Equatable {
+        case createCredentials(_ user: UnregisteredUser)
+    }
+
     /**
      * The type of change that occured.
      */
 
-    enum StateChangeMode {
+    enum StateChangeMode: Equatable {
         /**
          * The state was reset to the new value. All the previous states are invalidated.
          * You need to push the new interface to the stack and disable the back button.
@@ -70,6 +75,12 @@ class AuthenticationStateController {
          */
 
         case normal
+
+        /**
+         * The state was rewinded to given step and pushed to or reset to the new value. All the previous states up to given step are invalidated.
+         * You need to replace the controllers stack and enable the back button.
+         */
+        case rewindToOrReset(to: RewindMilestone)
     }
 
     /// The object that receives update about the current state and provides visual response.
@@ -113,6 +124,13 @@ class AuthenticationStateController {
             stack = [step]
         case .replace:
             stack[stack.endIndex - 1] = step
+        case .rewindToOrReset(let milestone):
+            var rewindedStep = stack.first { milestone.shouldRewind(to: $0) }
+            if rewindedStep != nil {
+                stack = [Array(stack.prefix { !milestone.shouldRewind(to: $0) }), milestone.stepsToAdd, [step]].flatMap { $0 }
+            } else {
+                stack = [step]
+            }
         }
 
         delegate?.stateDidChange(currentStep, mode: mode)
@@ -136,4 +154,22 @@ class AuthenticationStateController {
         } while !currentStep.needsInterface
     }
 
+}
+
+private extension AuthenticationStateController.RewindMilestone {
+    func shouldRewind(to step: AuthenticationFlowStep) -> Bool {
+        switch (self, step) {
+        case (.createCredentials, .createCredentials):
+            return true
+        default:
+            return false
+        }
+    }
+
+    var stepsToAdd: [AuthenticationFlowStep] {
+        switch self {
+        case .createCredentials(let user):
+            return [.createCredentials(user)]
+        }
+    }
 }

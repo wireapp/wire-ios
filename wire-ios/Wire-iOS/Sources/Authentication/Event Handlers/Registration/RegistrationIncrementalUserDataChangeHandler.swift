@@ -39,10 +39,10 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
             return handleMissingMarketingConsent(with: unregisteredUser)
 
         } else if unregisteredUser.name == nil {
-            return requestIntermediateStep(.setName, with: unregisteredUser)
+            return requestIntermediateStep(.setName, with: unregisteredUser, mode: .rewindToOrReset(to: .createCredentials(makeNewUnregisteredUser())))
 
         } else if unregisteredUser.password == nil && unregisteredUser.needsPassword {
-            return requestIntermediateStep(.setPassword, with: unregisteredUser)
+            return requestIntermediateStep(.setPassword, with: unregisteredUser, mode: .normal)
 
         } else {
             return handleRegistrationCompletion(with: unregisteredUser)
@@ -51,9 +51,9 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
 
     // MARK: - Specific Flow Handlers
 
-    private func requestIntermediateStep(_ step: IntermediateRegistrationStep, with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
+    private func requestIntermediateStep(_ step: IntermediateRegistrationStep, with user: UnregisteredUser, mode: AuthenticationStateController.StateChangeMode) -> [AuthenticationCoordinatorAction] {
         let flowStep = AuthenticationFlowStep.incrementalUserCreation(user, step)
-        return [.hideLoadingView, .transition(flowStep, mode: .reset)]
+        return [.hideLoadingView, .transition(flowStep, mode: mode)]
     }
 
     private func handleMissingMarketingConsent(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
@@ -70,6 +70,12 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
 
     private func handleRegistrationCompletion(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
         return [.showLoadingView, .completeUserRegistration]
+    }
+
+    private func makeNewUnregisteredUser() -> UnregisteredUser {
+        var user = UnregisteredUser()
+        user.accentColor = .random
+        return user
     }
 
 }
