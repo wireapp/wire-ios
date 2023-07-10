@@ -80,10 +80,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         delegate?.perform(action: action, for: message, view: selectionView ?? sender ?? self)
     }
 
-    func messageToolboxViewDidRequestLike(_ messageToolboxView: MessageToolboxView) {
-        perform(action: .react(.like))
-    }
-
     func messageToolboxViewDidSelectDelete(_ sender: UIView?) {
         perform(action: .delete, sender: sender)
     }
