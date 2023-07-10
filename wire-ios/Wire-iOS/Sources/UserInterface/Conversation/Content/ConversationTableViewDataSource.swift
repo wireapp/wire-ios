@@ -483,14 +483,14 @@ extension ConversationTableViewDataSource {
 
         // 1 minute
         let oneMinuteTimeInterval: TimeInterval = TimeInterval.oneMinute
-        let timeIntervalSinceLastMessageIsOneMunute: Bool
+        let isTimeIntervalOneMinuteSinceLastMessage: Bool
 
         let previousMessage = messagePrevious(to: message, at: index)
 
         if let timeIntervalSinceLastMessage = timeIntervalToPreviousMessage(from: message, at: index) {
-            timeIntervalSinceLastMessageIsOneMunute = timeIntervalSinceLastMessage > oneMinuteTimeInterval
+            isTimeIntervalOneMinuteSinceLastMessage = timeIntervalSinceLastMessage > oneMinuteTimeInterval
         } else {
-            timeIntervalSinceLastMessageIsOneMunute = false
+            isTimeIntervalOneMinuteSinceLastMessage = false
         }
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
