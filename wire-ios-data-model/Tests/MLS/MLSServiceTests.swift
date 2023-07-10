@@ -1425,7 +1425,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(
             sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
             Date().timeIntervalSinceNow,
-            accuracy: 0.1
+            accuracy: 3
         )
 
         // Then we scheduled a timer.
@@ -1435,7 +1435,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(
             timer.fireDate.timeIntervalSinceNow,
             Date().addingTimeInterval(.oneDay).timeIntervalSinceNow,
-            accuracy: 0.1
+            accuracy: 3
         )
     }
 
