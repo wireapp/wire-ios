@@ -189,7 +189,11 @@ public class DatadogWrapper {
         message: String,
         error: Error? = nil,
         attributes: [String: Encodable]? = nil
-    ) {}
+    ) {
+        #if DEBUG
+        print("[Datadog OFF] \(message)")
+        #endif
+    }
 
     public func startMonitoring() {}
 
