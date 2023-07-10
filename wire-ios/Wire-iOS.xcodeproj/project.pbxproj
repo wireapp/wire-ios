@@ -297,7 +297,7 @@
 		5E33F0D520ADA94B00414EA6 /* MockCallPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E33F0D420ADA94B00414EA6 /* MockCallPermissions.swift */; };
 		5E35F733217F147A00D3F4FE /* ConversationMessageSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F732217F147A00D3F4FE /* ConversationMessageSectionController.swift */; };
 		5E35F736217F417200D3F4FE /* BurstTimestampTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F735217F417200D3F4FE /* BurstTimestampTableViewCell.swift */; };
-		5E35F74121804A9E00D3F4FE /* ConversationSenderMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F74021804A9E00D3F4FE /* ConversationSenderMessageCell.swift */; };
+		5E35F74121804A9E00D3F4FE /* ConversationSenderMessageDetailsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F74021804A9E00D3F4FE /* ConversationSenderMessageDetailsCell.swift */; };
 		5E35F7452180779D00D3F4FE /* ConversationPingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F7442180779D00D3F4FE /* ConversationPingCell.swift */; };
 		5E35F7482180A26900D3F4FE /* ConversationTextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F7472180A26900D3F4FE /* ConversationTextMessageCell.swift */; };
 		5E35F7722180B8CD00D3F4FE /* ConversationMessageSectionControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E35F7702180B8C600D3F4FE /* ConversationMessageSectionControllerTests.swift */; };
@@ -2203,7 +2203,7 @@
 		5E33F0D420ADA94B00414EA6 /* MockCallPermissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCallPermissions.swift; sourceTree = "<group>"; };
 		5E35F732217F147A00D3F4FE /* ConversationMessageSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageSectionController.swift; sourceTree = "<group>"; };
 		5E35F735217F417200D3F4FE /* BurstTimestampTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BurstTimestampTableViewCell.swift; sourceTree = "<group>"; };
-		5E35F74021804A9E00D3F4FE /* ConversationSenderMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSenderMessageCell.swift; sourceTree = "<group>"; };
+		5E35F74021804A9E00D3F4FE /* ConversationSenderMessageDetailsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSenderMessageDetailsCell.swift; sourceTree = "<group>"; };
 		5E35F7442180779D00D3F4FE /* ConversationPingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationPingCell.swift; sourceTree = "<group>"; };
 		5E35F7472180A26900D3F4FE /* ConversationTextMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTextMessageCell.swift; sourceTree = "<group>"; };
 		5E35F7702180B8C600D3F4FE /* ConversationMessageSectionControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageSectionControllerTests.swift; sourceTree = "<group>"; };
@@ -4402,7 +4402,7 @@
 			children = (
 				5E35F7772181D51300D3F4FE /* ConversationIconBasedCell.swift */,
 				5E35F735217F417200D3F4FE /* BurstTimestampTableViewCell.swift */,
-				5E35F74021804A9E00D3F4FE /* ConversationSenderMessageCell.swift */,
+				5E35F74021804A9E00D3F4FE /* ConversationSenderMessageDetailsCell.swift */,
 				5E35F7752181C49100D3F4FE /* ConversationSystemMessageCell.swift */,
 				163E8C7821E363FE0030BD8D /* ConversationGuestsAllowedCell.swift */,
 				EF7F8FC021B5761C00D7723C /* ConversationReadReceiptSettingChangedCellDescription.swift */,
@@ -9531,7 +9531,7 @@
 				164C29AB1ED33A5F0026562A /* SearchResultsViewController.swift in Sources */,
 				D5168F522010F20700F8222A /* ShareDestinationCell.swift in Sources */,
 				BFB5972320E62EB6008720ED /* CancelableItem.swift in Sources */,
-				5E35F74121804A9E00D3F4FE /* ConversationSenderMessageCell.swift in Sources */,
+				5E35F74121804A9E00D3F4FE /* ConversationSenderMessageDetailsCell.swift in Sources */,
 				16D68E9B1CEF99C7003AB9E0 /* WaveformProgressView.swift in Sources */,
 				EF4C5D50233A17680092CA38 /* ConversationListContentController.swift in Sources */,
 				87BEB0441D3E478500DE9575 /* AssetLibrary.swift in Sources */,

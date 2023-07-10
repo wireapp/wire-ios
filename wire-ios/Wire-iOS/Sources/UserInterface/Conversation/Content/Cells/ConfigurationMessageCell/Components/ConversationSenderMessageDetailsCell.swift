@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-class ConversationSenderMessageCell: UIView, ConversationMessageCell {
+class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let user: UserType
@@ -110,7 +110,7 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
 }
 
 class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSenderMessageCell
+    typealias View = ConversationSenderMessageDetailsCell
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
     let configuration: View.Configuration
 
