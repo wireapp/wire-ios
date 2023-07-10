@@ -31,7 +31,7 @@ extension ZMUserSession {
 
         if let conversationDomain = conversationDomain,
            classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
-            return.notClassified
+            return .notClassified
         }
 
         let isClassified = users.allSatisfy {
