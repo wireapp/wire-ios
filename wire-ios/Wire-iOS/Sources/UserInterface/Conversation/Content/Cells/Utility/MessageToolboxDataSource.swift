@@ -163,10 +163,8 @@ class MessageToolboxDataSource {
             } else {
                 return (timestampString && attributes, nil, countdownStatus)
             }
-        } else if message.isSentBySelfUser {
-            return (nil, deliveryStateString, countdownStatus)
         } else {
-            return (nil, NSAttributedString(string: ""), countdownStatus)
+            return (nil, deliveryStateString, countdownStatus)
         }
     }
 
@@ -195,7 +193,7 @@ class MessageToolboxDataSource {
     /// Returns the status for the sender of the message.
     private func selfMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let sender = message.senderUser, sender.isSelfUser else {
-            return nil
+            return NSAttributedString(string: "")
         }
 
         var deliveryStateString: String
