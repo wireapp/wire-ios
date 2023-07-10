@@ -36,6 +36,11 @@ final public class FederationDeleteManager {
         print(conversations)
 
         // remove myself & all users from MY
+        guard let firstConversation = conversations.first else { return }
+        let selfUser = ZMUser.selfUser(in: moc)
+        firstConversation.removeParticipant(selfUser) { result in
+            print(result)
+        }
 
         // add system message about stopping federation
 
