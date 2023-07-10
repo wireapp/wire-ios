@@ -233,7 +233,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
         }
         if isSenderVisible, let sender = message.senderUser {
-            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: isTimeStampVisible))
+            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: isSenderVisible))
         }
 
         addContent(context: context, isSenderVisible: isSenderVisible)
