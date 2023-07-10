@@ -22,7 +22,7 @@ import SnapshotTesting
 import UIKit
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float  = 1.0
+private let precision: Float  = 0.90
 private let perceptualPrecision: Float = 0.98
 
 extension ViewImageConfig: Hashable {
