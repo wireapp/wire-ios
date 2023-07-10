@@ -227,7 +227,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         cellDescriptions.removeAll()
 
-        let isSenderVisible = self.isSenderVisible(in: context) && message.senderUser != nil
+        let isSenderVisible = self.shouldShowSenderDetails(in: context) && message.senderUser != nil
 
         if isBurstTimestampVisible(in: context) {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
@@ -277,7 +277,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return context.isLastMessage || message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
 
-    func isSenderVisible(in context: ConversationMessageContext) -> Bool {
+    func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
                     return false
                 }
@@ -313,38 +313,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
                 return false
     }
-
-    func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
-            guard message.senderUser != nil else {
-                return false
-            }
-
-            if message.isKnock || message.isSystem {
-                return false
-            }
-
-            // A new sender, show the sender details.
-            if !context.isSameSenderAsPrevious {
-                return true
-            }
-
-            // Show sender details again if the last message was a knock.
-            if context.previousMessageIsKnock {
-                return true
-            }
-
-            // The message was edited.
-            if message.updatedAt != nil {
-                return true
-            }
-
-            // We see the self deleting countdown.
-            if isBurstTimestampVisible(in: context) {
-                return true
-            }
-
-            return false
-        }
 
     // MARK: - Highlight
 
