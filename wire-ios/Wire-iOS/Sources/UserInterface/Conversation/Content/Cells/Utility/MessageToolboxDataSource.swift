@@ -153,9 +153,9 @@ class MessageToolboxDataSource {
     /// Creates a label that display the status of the message.
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
         let countdownStatus = makeEphemeralCountdown()
-        let messageDeliveryStateString: NSAttributedString? = messageStatus(for: message)
+        let selfMessageDeliveryStateString: NSAttributedString? = selfMessageStatus(for: message)
 
-        let deliveryStateString = messageDeliveryStateString
+        let deliveryStateString = selfMessageDeliveryStateString
 
         if let timestampString = self.timestampString(message), message.isSent {
             if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
@@ -191,8 +191,8 @@ class MessageToolboxDataSource {
     }
 
     /// Returns the status for the sender of the message.
-    private func messageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard (message.senderUser) != nil else {
+    private func selfMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
+        guard let sender = message.senderUser, sender.isSelfUser else {
             return nil
         }
 
