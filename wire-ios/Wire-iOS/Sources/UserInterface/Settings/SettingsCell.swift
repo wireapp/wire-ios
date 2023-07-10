@@ -58,10 +58,12 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
     let valueLabel: UILabel = {
         let valueLabel = UILabel()
-
         valueLabel.textColor = SemanticColors.Label.textDefault
         valueLabel.font = UIFont.systemFont(ofSize: 17)
         valueLabel.textAlignment = .right
+        valueLabel.lineBreakMode = .byTruncatingTail
+        valueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        valueLabel.setContentHuggingPriority(.required, for: .horizontal)
 
         return valueLabel
     }()
