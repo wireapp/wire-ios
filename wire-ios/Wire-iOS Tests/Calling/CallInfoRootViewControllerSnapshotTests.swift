@@ -25,7 +25,9 @@ final class CallInfoViewControllerSnapshotTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
         CallingConfiguration.config = .largeConferenceCalls
-        UserDefaults.applicationGroup.set(true, forKey: DeveloperFlag.deprecatedCallingUI.rawValue)
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.deprecatedCallingUI
+        flag.isOn = true
     }
 
     override func tearDown() {
