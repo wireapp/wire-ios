@@ -69,14 +69,16 @@ extension ZMAssetClientMessage {
         let fileHasNoUploadState = fileMessageData != nil
             && underlyingMessage?.assetData?.hasUploaded == false
             && underlyingMessage?.assetData?.hasNotUploaded == false
-        let hasOtherUserSender = sender == nil || (sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true)
-        let destructionStartCondition = !(fileHasNoUploadState || (hasOtherUserSender && imageNotDownloaded))
-        if destructionStartCondition {
-            return super.startDestructionIfNeeded()
-        }
-        else {
+        // in super.startDestructionIfNeeded() there is a logic split that triggers destruction or obfuscation depending on sender and context
+        let isOtherSender = sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true
+        let isNotSelfSender = sender == nil || isOtherSender
+        if fileHasNoUploadState {
+            return false
+        } else if isNotSelfSender && imageNotDownloaded {
+            // we do not destroy images sent by other user that are not downloaded yet, it is synced after asset is downloaded
             return false
         }
+        return super.startDestructionIfNeeded()
     }
 
     /// Extends the destruction timer to the given date, which must be later
