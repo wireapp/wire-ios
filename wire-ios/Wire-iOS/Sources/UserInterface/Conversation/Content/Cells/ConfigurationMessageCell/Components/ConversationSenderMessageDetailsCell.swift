@@ -117,7 +117,7 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    fileprivate(set) var dataSource: MessageToolboxDataSource?
+    private(set) var dataSource: ConversationSenderMessageDetailsDataSource?
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
@@ -143,13 +143,13 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
         }
 
         if dataSource?.message.nonce != message.nonce {
-            dataSource = MessageToolboxDataSource(message: message)
+            dataSource = ConversationSenderMessageDetailsDataSource(message: message)
         }
 
         if showTimestamp == false {
             timestamp = nil
         } else {
-            timestamp = dataSource?.timestampStringForSenderCell(message)
+            timestamp = dataSource?.timestampString(message)
         }
 
         self.configuration = View.Configuration(user: sender, message: message, timestamp: timestamp, indicatorIcon: icon)
