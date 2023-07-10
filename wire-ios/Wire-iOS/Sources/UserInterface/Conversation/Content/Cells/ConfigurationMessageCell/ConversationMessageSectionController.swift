@@ -228,12 +228,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         cellDescriptions.removeAll()
 
         let isSenderVisible = self.isSenderVisible(in: context) && message.senderUser != nil
-        let isTimeStampVisible = self.isTimestampVisible(in: context)
 
         if isBurstTimestampVisible(in: context) {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
         }
-        if isSenderVisible, isTimeStampVisible, let sender = message.senderUser {
+        if isSenderVisible, let sender = message.senderUser {
             add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: isTimeStampVisible))
         }
 
@@ -282,17 +281,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard message.senderUser != nil,
               !message.isKnock,
               !message.isSystem else {
-            return false
-        }
-
-        return context.isTimeIntervalSinceLastMessageOneMinute || !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
-    }
-
-    func isTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        guard message.senderUser != nil,
-              !message.isKnock,
-              !message.isSystem
-        else {
             return false
         }
 
