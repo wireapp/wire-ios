@@ -60,13 +60,13 @@ public enum DeveloperFlag: String, CaseIterable {
     private var defaultValue: Bool {
         switch self {
         case .enableMLSSupport:
-            return false
+            return true
 
         case .showCreateMLSGroupToggle:
-            return false
+            return true
 
         case .proteusViaCoreCrypto:
-            return false
+            return true
 
         case .nseV2:
             return false
