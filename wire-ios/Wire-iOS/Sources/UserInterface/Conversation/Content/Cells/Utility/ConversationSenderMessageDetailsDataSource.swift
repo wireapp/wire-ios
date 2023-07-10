@@ -39,15 +39,7 @@ class ConversationSenderMessageDetailsDataSource {
 
     /// Creates the timestamp text.
     func timestampString(_ message: ZMConversationMessage) -> String? {
-        let timestampString: String?
-
-        if let dateTimeString = message.formattedReceivedDate() {
-            timestampString = dateTimeString
-        } else {
-            timestampString = .none
-        }
-
-        return timestampString
+        return message.formattedReceivedDate()
     }
 
 }
