@@ -503,7 +503,7 @@ extension ConversationTableViewDataSource {
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
             isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
-            isTimeIntervalSinceLastMessageOneMinute: timeIntervalSinceLastMessageIsOneMunute,
+            isTimeIntervalSinceLastMessageOneMinute: isTimeIntervalOneMinuteSinceLastMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
