@@ -163,8 +163,10 @@ class MessageToolboxDataSource {
             } else {
                 return (timestampString && attributes, nil, countdownStatus)
             }
-        } else {
+        } else if message.isSentBySelfUser {
             return (nil, deliveryStateString, countdownStatus)
+        } else {
+            return (nil, NSAttributedString(string: ""), countdownStatus)
         }
     }
 
