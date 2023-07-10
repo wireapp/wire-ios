@@ -22,7 +22,7 @@ import WireSyncEngine
 struct ConversationMessageContext: Equatable {
     let isSameSenderAsPrevious: Bool
     let isTimeIntervalSinceLastMessageSignificant: Bool
-    let isTimeIntervalSinceLastMessageOneMinute: Bool
+    let isTimeIntervalDifferentFromPreviousToCurrentMessage: Bool
     let isFirstMessageOfTheDay: Bool
     let isFirstUnreadMessage: Bool
     let isLastMessage: Bool
@@ -278,14 +278,73 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isSenderVisible(in context: ConversationMessageContext) -> Bool {
-        guard message.senderUser != nil,
-              !message.isKnock,
-              !message.isSystem else {
+        guard message.senderUser != nil else {
+                    return false
+                }
+
+                if message.isKnock || message.isSystem {
+                    return false
+                }
+
+                // A new sender, show the sender details.
+                if !context.isSameSenderAsPrevious {
+                    return true
+                }
+
+                // Show sender details again if the last message was a knock.
+                if context.previousMessageIsKnock {
+                    return true
+                }
+
+                // The message was edited.
+                if message.updatedAt != nil {
+                    return true
+                }
+
+                // We see the self deleting countdown.
+                if isBurstTimestampVisible(in: context) {
+                    return true
+                }
+
+                // This message is from the same sender but in a different minute.
+                if context.isSameSenderAsPrevious && context.isTimeIntervalDifferentFromPreviousToCurrentMessage {
+                    return true
+                }
+
+                return false
+    }
+
+    func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
+            guard message.senderUser != nil else {
+                return false
+            }
+
+            if message.isKnock || message.isSystem {
+                return false
+            }
+
+            // A new sender, show the sender details.
+            if !context.isSameSenderAsPrevious {
+                return true
+            }
+
+            // Show sender details again if the last message was a knock.
+            if context.previousMessageIsKnock {
+                return true
+            }
+
+            // The message was edited.
+            if message.updatedAt != nil {
+                return true
+            }
+
+            // We see the self deleting countdown.
+            if isBurstTimestampVisible(in: context) {
+                return true
+            }
+
             return false
         }
-
-        return context.isTimeIntervalSinceLastMessageOneMinute || !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
-    }
 
     // MARK: - Highlight
 

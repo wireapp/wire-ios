@@ -482,16 +482,11 @@ extension ConversationTableViewDataSource {
         let isTimeIntervalSinceLastMessageSignificant: Bool
 
         // 1 minute
-        let oneMinuteTimeInterval: TimeInterval = TimeInterval.oneMinute
-        let isTimeIntervalOneMinuteSinceLastMessage: Bool
+        let isTimeIntervalDifferentFromPreviousToCurrentMessage: Bool
 
         let previousMessage = messagePrevious(to: message, at: index)
 
-        if let timeIntervalSinceLastMessage = timeIntervalToPreviousMessage(from: message, at: index) {
-            isTimeIntervalOneMinuteSinceLastMessage = timeIntervalSinceLastMessage > oneMinuteTimeInterval
-        } else {
-            isTimeIntervalOneMinuteSinceLastMessage = false
-        }
+        isTimeIntervalDifferentFromPreviousToCurrentMessage = IsTimeIntervalDifferentFromPreviousToCurrentMessage(for: message, at: index)
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
             isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
@@ -503,7 +498,7 @@ extension ConversationTableViewDataSource {
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
             isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
-            isTimeIntervalSinceLastMessageOneMinute: isTimeIntervalOneMinuteSinceLastMessage,
+            isTimeIntervalDifferentFromPreviousToCurrentMessage: isTimeIntervalDifferentFromPreviousToCurrentMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
@@ -524,6 +519,16 @@ extension ConversationTableViewDataSource {
     fileprivate func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
+    }
+
+    private func IsTimeIntervalDifferentFromPreviousToCurrentMessage(for message: ZMConversationMessage, at index: Int) -> Bool {
+        guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
+        let calendar = Calendar.current
+
+        let previousMessageComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: previous)
+        let currentMessageComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: current)
+
+        return previousMessageComponents != currentMessageComponents
     }
 
 }
