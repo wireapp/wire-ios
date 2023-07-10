@@ -271,20 +271,21 @@ jobs:
             build/reports/*.junit
 
   upload-test-results-datadadog:
-      runs-on: ubuntu-latest
-      needs: run-tests
-      env:
-        DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      steps:
-        - name: Download tests results
-          uses: actions/download-artifact@v3
-          with:
-            name: test-reports
-        - uses: actions/setup-node@v3
-          with:
-            node-version: 18
-        - name: Install datadog-ci
-          run: npm install -g @datadog/datadog-ci
-        - name: "Upload results"
-          run: |
-            DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu datadog-ci junit upload --service wire-ios-mono ./*.junit
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: always()
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+    steps:
+      - name: Download tests results
+        uses: actions/download-artifact@v3
+        with:
+          name: test-reports
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install datadog-ci
+        run: npm install -g @datadog/datadog-ci
+      - name: "Upload results"
+        run: |
+          DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu datadog-ci junit upload --service wire-ios-mono ./*.junit
