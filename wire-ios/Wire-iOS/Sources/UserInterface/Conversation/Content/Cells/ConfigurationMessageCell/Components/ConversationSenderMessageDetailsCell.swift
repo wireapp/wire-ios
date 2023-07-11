@@ -48,6 +48,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.font = FontSpec.mediumRegularFont.font!
+        label.textColor = SemanticColors.Label.textMessageDate
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
         label.accessibilityIdentifier = "DateLabel"
