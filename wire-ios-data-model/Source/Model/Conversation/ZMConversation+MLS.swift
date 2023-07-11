@@ -192,13 +192,17 @@ public extension ZMConversation {
     }
     
     func joinNewMLSGroupIfNeeded() {
+        WireLogger.mls.debug("joinNewMLSGroupIfNeeded")
         guard let syncContext = self.managedObjectContext?.zm_sync,
               let mlsGroupID = self.mlsGroupID,
               self.messageProtocol == .mls
         else {
+            WireLogger.mls.debug("mlsGroupId \(self.mlsGroupID)")
+            WireLogger.mls.debug("messageProtocol \(self.messageProtocol)")
             WireLogger.mls.warn("joinMLSGroup not needed for conversation \(self.safeForLoggingDescription)")
             return
         }
+        WireLogger.mls.debug("joinNewMLSGroupIfNeeded - check ok")
         syncContext.perform {
             guard let mlsService = syncContext.mlsService else { return }
 

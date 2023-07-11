@@ -63,6 +63,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationMemberJoin:
                     if let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {
+                        WireLogger.mls.debug("check payload of conversation Member Join \(conversationEvent)")
                         processMemberJoin(payload: conversationEvent, originalEvent: event)
                     }
 
@@ -131,6 +132,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 return
             }
 
+            print("🕵🏽 group id", conversation.messageProtocol)
             if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: self.context, conversation: conversation)! }) {
                 let selfUser = ZMUser.selfUser(in: self.context)
                 let users = Set(usersAndRoles.map { $0.0 })
