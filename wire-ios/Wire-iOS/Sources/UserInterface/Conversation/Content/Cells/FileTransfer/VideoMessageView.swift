@@ -51,18 +51,24 @@ final class VideoMessageView: UIView, TransferView {
 
     private var allViews: [UIView] = []
     private var state: FileMessageViewState = .unavailable
+    let dispatchGroup = DispatchGroup()
 
     required override init(frame: CGRect) {
         super.init(frame: frame)
+        print("Cancel file sending: create view")
 
         self.previewImageView.contentMode = .scaleAspectFill
         self.previewImageView.clipsToBounds = true
         self.previewImageView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+        self.previewImageView.image = nil
 
-        self.playButton.addTarget(self, action: #selector(VideoMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
+        self.playButton.addTarget(self, action: #selector(onActionButtonPressed), for: .touchUpInside)
         self.playButton.accessibilityIdentifier = "VideoActionButton"
         self.playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
         self.playButton.layer.masksToBounds = true
+        playButton.setIcon(.play, size: 28, for: .normal)
+        playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
+        playButton.isUserInteractionEnabled = true
 
         self.progressView.isUserInteractionEnabled = false
         self.progressView.accessibilityIdentifier = "VideoProgressView"
@@ -72,6 +78,7 @@ final class VideoMessageView: UIView, TransferView {
 
         self.timeLabel.numberOfLines = 1
         self.timeLabel.accessibilityIdentifier = "VideoActionTimeLabel"
+        self.timeLabel.textColor = SemanticColors.Label.textDefault
 
         self.loadingView.isHidden = true
 
@@ -135,35 +142,41 @@ final class VideoMessageView: UIView, TransferView {
     }
 
     func configure(for message: ZMConversationMessage, isInitial: Bool) {
+        print("Cancel file sending: configure message")
+
         self.fileMessage = message
 
         guard let fileMessage = self.fileMessage,
-            let fileMessageData = fileMessage.fileMessageData,
-            let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
+              let fileMessageData = fileMessage.fileMessageData,
+              let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
 
         self.state = state
-        self.previewImageView.image = nil
+        // self.previewImageView.image = nil
+          DispatchQueue.global(qos: .background).async { [weak self] in
+            if state != .unavailable {
+                self?.updateTimeLabel(withFileMessageData: fileMessageData)
+                //self?.timeLabel.textColor = SemanticColors.Label.textDefault
 
-        if state != .unavailable {
-            updateTimeLabel(withFileMessageData: fileMessageData)
-            self.timeLabel.textColor = SemanticColors.Label.textDefault
+//                fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+//                    guard let image = image else { return }
+//                    self?.updatePreviewImage(image)
+//                }
+            }
 
-            fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
-                guard let image = image else { return }
-                self?.updatePreviewImage(image)
+            if state == .uploading || state == .downloading {
+                DispatchQueue.main.async(execute: {
+                    self?.progressView.setProgress(fileMessageData.progress, animated: !isInitial)
+                })
+            }
+
+            if let viewsState = state.viewsStateForVideo() {
+                DispatchQueue.main.async(execute: {
+                    self?.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
+                    self?.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
+                })
             }
         }
-
-        if state == .uploading || state == .downloading {
-            self.progressView.setProgress(fileMessageData.progress, animated: !isInitial)
-        }
-
-        if let viewsState = state.viewsStateForVideo() {
-            self.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
-            self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
-        }
-
-        updateVisibleViews()
+        //updateVisibleViews()
     }
 
     private func visibleViews(for state: FileMessageViewState) -> [UIView] {
@@ -175,7 +188,7 @@ final class VideoMessageView: UIView, TransferView {
             return [loadingView]
         }
 
-        var visibleViews: [UIView] = [playButton, previewImageView]
+        var visibleViews: [UIView] = [previewImageView, playButton]
 
         switch state {
         case .uploading, .downloading:
@@ -196,23 +209,27 @@ final class VideoMessageView: UIView, TransferView {
     }
 
     private func updatePreviewImage(_ image: MediaAsset) {
-        previewImageView.mediaAsset = image
-        timeLabel.textColor = .white
-        updateVisibleViews()
+        DispatchQueue.main.async(execute: { [self] in
+            self.previewImageView.mediaAsset = image
+            self.timeLabel.textColor = .white
+        })
+        //updateVisibleViews()
     }
 
     private func updateTimeLabel(withFileMessageData fileMessageData: ZMFileMessageData) {
-        let duration = Int(roundf(Float(fileMessageData.durationMilliseconds) / 1000.0))
-        var timeLabelText = ByteCountFormatter.string(fromByteCount: Int64(fileMessageData.size), countStyle: .binary)
+        DispatchQueue.main.async(execute: {
+            let duration = Int(roundf(Float(fileMessageData.durationMilliseconds) / 1000.0))
+            var timeLabelText = ByteCountFormatter.string(fromByteCount: Int64(fileMessageData.size), countStyle: .binary)
 
-        if duration != 0 {
-            let (seconds, minutes) = (duration % 60, duration / 60)
-            let time = String(format: "%d:%02d", minutes, seconds)
-            timeLabelText = time + " " + String.MessageToolbox.middleDot + " " + timeLabelText
-        }
+            if duration != 0 {
+                let (seconds, minutes) = (duration % 60, duration / 60)
+                let time = String(format: "%d:%02d", minutes, seconds)
+                timeLabelText = time + " " + String.MessageToolbox.middleDot + " " + timeLabelText
+            }
 
-        self.timeLabel.text = timeLabelText
-        self.timeLabel.accessibilityValue = self.timeLabel.text
+            self.timeLabel.text = timeLabelText
+            self.timeLabel.accessibilityValue = self.timeLabel.text
+        })
     }
 
     private func updateVisibleViews() {
@@ -233,7 +250,8 @@ final class VideoMessageView: UIView, TransferView {
     // MARK: - Actions
 
     @objc
-    func onActionButtonPressed(_ sender: UIButton) {
+    func onActionButtonPressed() {
+        print("Cancel file sending: button pressed")
         guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
 
         switch fileMessageData.transferState {
@@ -251,6 +269,7 @@ final class VideoMessageView: UIView, TransferView {
                 self.delegate?.transferView(self, didSelect: .present)
             }
         }
+
     }
 
 }

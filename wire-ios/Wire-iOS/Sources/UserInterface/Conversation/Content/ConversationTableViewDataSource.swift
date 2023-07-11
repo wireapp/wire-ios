@@ -141,6 +141,19 @@ final class ConversationTableViewDataSource: NSObject {
         return updatedSections
     }
 
+    func refreshViews(updating sectionController: ConversationMessageSectionController) {
+        let sectionIdentifier = sectionController.message.objectIdentifier
+
+        guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier }) else { return }
+
+        for (row, description ) in sectionController.tableViewCellDescriptions.enumerated() {
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
+                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
+                description.configure(cell: cell, animated: true)
+            }
+        }
+    }
+
     init(conversation: ZMConversation, tableView: UpsideDownTableView, actionResponder: MessageActionResponder, cellDelegate: ConversationMessageCellDelegate) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
@@ -446,8 +459,11 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 extension ConversationTableViewDataSource: ConversationMessageSectionControllerDelegate {
 
     func messageSectionController(_ controller: ConversationMessageSectionController, didRequestRefreshForMessage message: ZMConversationMessage) {
-        reloadSections(newSections: calculateSections(updating: controller))
+//        reloadSections(newSections: calculateSections(updating: controller))
+        refreshViews(updating: controller)
     }
+
+   // func messageSectionController(_ controller: )
 
 }
 
