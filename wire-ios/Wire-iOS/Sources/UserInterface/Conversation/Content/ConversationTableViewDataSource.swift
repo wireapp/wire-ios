@@ -485,7 +485,11 @@ extension ConversationTableViewDataSource {
 
         let previousMessage = messagePrevious(to: message, at: index)
 
-        isTimestampInSameMinuteAsPreviousMessage = IsTimeIntervalDifferentFromPreviousToCurrentMessage(for: message, at: index)
+        if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
+            isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
+        } else {
+            isTimestampInSameMinuteAsPreviousMessage = false
+        }
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
             isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
@@ -520,14 +524,15 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    private func isTimestampInSameMinuteAsPreviousMessage(for message: ZMConversationMessage, at index: Int) -> Bool {
-        guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
-        let calendar = Calendar.current
+}
 
-        let previousMessageComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: previous)
-        let currentMessageComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: current)
+extension Date {
 
-        return previousMessageComponents != currentMessageComponents
-    }
+  func isInSameMinute(asDate date: Date) -> Bool {
+    let calendar = Calendar.current
+    let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+    let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+    return components != otherComponents
+  }
 
 }
