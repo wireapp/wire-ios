@@ -23,7 +23,7 @@ import Foundation
 final class MockClassificationProvider: ClassificationProviding {
     var returnClassification: SecurityClassification = .none
 
-    func classification(with users: [UserType]) -> SecurityClassification {
+    func classification(with users: [UserType], conversationDomain: String? = nil) -> SecurityClassification {
         returnClassification
     }
 }
