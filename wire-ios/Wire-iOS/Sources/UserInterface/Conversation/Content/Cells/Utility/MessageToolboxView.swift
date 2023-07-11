@@ -263,43 +263,43 @@ final class MessageToolboxView: UIView {
         switch dataSource.content {
 
         case .callList(let callListString):
-                self.detailsLabel.attributedText = callListString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 0
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = true
-                self.deleteButton.isHidden = true
-                self.resendButton.isHidden = true
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
+            self.detailsLabel.attributedText = callListString
+            self.detailsLabel.isHidden = false
+            self.detailsLabel.numberOfLines = 0
+            self.hideAndCleanStatusLabel()
+            self.timestampSeparatorLabel.isHidden = true
+            self.deleteButton.isHidden = true
+            self.resendButton.isHidden = true
+            self.statusSeparatorLabel.isHidden = true
+            self.countdownLabel.isHidden = true
 
         case .sendFailure(let detailsString):
-                self.detailsLabel.attributedText = detailsString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 1
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = false
-                self.deleteButton.isHidden = false
-                self.resendButton.isHidden = false
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
+            self.detailsLabel.attributedText = detailsString
+            self.detailsLabel.isHidden = false
+            self.detailsLabel.numberOfLines = 1
+            self.hideAndCleanStatusLabel()
+            self.timestampSeparatorLabel.isHidden = false
+            self.deleteButton.isHidden = false
+            self.resendButton.isHidden = false
+            self.statusSeparatorLabel.isHidden = true
+            self.countdownLabel.isHidden = true
 
         case .details(let timestamp, let status, let countdown):
-                self.detailsLabel.attributedText = timestamp
-                self.detailsLabel.isHidden = timestamp == nil
-                self.detailsLabel.numberOfLines = 1
-                self.statusLabel.attributedText = status
-                // override accessibilityLabel if the attributed string has customized accessibilityLabel
-                if let accessibilityLabel = status?.accessibilityLabel {
-                    self.statusLabel.accessibilityLabel = accessibilityLabel
-                }
-                self.statusLabel.isHidden = status == nil
-                self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-                self.deleteButton.isHidden = true
-                self.resendButton.isHidden = true
-                self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-                self.countdownLabel.attributedText = countdown
-                self.countdownLabel.isHidden = countdown == nil
+            self.detailsLabel.attributedText = timestamp
+            self.detailsLabel.isHidden = timestamp == nil
+            self.detailsLabel.numberOfLines = 1
+            self.statusLabel.attributedText = status
+            // override accessibilityLabel if the attributed string has customized accessibilityLabel
+            if let accessibilityLabel = status?.accessibilityLabel {
+                self.statusLabel.accessibilityLabel = accessibilityLabel
+            }
+            self.statusLabel.isHidden = status == nil
+            self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
+            self.deleteButton.isHidden = true
+            self.resendButton.isHidden = true
+            self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
+            self.countdownLabel.attributedText = countdown
+            self.countdownLabel.isHidden = countdown == nil
 
         }
 

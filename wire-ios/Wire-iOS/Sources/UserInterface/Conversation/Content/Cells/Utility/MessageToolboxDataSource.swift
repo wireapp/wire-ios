@@ -153,9 +153,8 @@ class MessageToolboxDataSource {
     /// Creates a label that display the status of the message.
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
         let countdownStatus = makeEphemeralCountdown()
-        let selfMessageDeliveryStateString: NSAttributedString? = selfMessageStatus(for: message)
 
-        let deliveryStateString = selfMessageDeliveryStateString
+        let deliveryStateString = selfMessageStatus(for: message)
 
         if let timestampString = self.timestampString(message), message.isSent {
             if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
@@ -254,7 +253,7 @@ class MessageToolboxDataSource {
     }
 
     /// Creates the timestamp text.
-    func timestampString(_ message: ZMConversationMessage) -> String? {
+    private func timestampString(_ message: ZMConversationMessage) -> String? {
         let timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
