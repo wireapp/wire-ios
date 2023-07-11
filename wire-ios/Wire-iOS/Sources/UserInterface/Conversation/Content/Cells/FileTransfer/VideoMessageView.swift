@@ -238,24 +238,26 @@ final class VideoMessageView: UIView, TransferView {
 
     @objc
     func onActionButtonPressed() {
-        print("Cancel file sending: button pressed")
-        guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
-
-        switch fileMessageData.transferState {
-        case .uploading:
-            if .none != fileMessageData.fileURL {
-                self.delegate?.transferView(self, didSelect: .cancel)
-            }
-        case .uploadingCancelled, .uploadingFailed:
-            self.delegate?.transferView(self, didSelect: .resend)
-        case .uploaded:
-            if case .downloading = fileMessageData.downloadState {
-                self.progressView.setProgress(0, animated: false)
-                self.delegate?.transferView(self, didSelect: .cancel)
-            } else {
-                self.delegate?.transferView(self, didSelect: .present)
-            }
+        DispatchQueue.global(qos: .userInitiated).async {
+            print("Cancel file sending: button pressed")
         }
+//        guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
+//
+//        switch fileMessageData.transferState {
+//        case .uploading:
+//            if .none != fileMessageData.fileURL {
+//                self.delegate?.transferView(self, didSelect: .cancel)
+//            }
+//        case .uploadingCancelled, .uploadingFailed:
+//            self.delegate?.transferView(self, didSelect: .resend)
+//        case .uploaded:
+//            if case .downloading = fileMessageData.downloadState {
+//                self.progressView.setProgress(0, animated: false)
+//                self.delegate?.transferView(self, didSelect: .cancel)
+//            } else {
+//                self.delegate?.transferView(self, didSelect: .present)
+//            }
+//        }
 
     }
 
