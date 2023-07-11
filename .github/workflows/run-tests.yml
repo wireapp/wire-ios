@@ -276,10 +276,10 @@ jobs:
     if: always()
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
-    continue-on-error: true
     steps:
       - name: Download tests results
         uses: actions/download-artifact@v3
+        continue-on-error: true
         with:
           name: test-reports
       - uses: actions/setup-node@v3
