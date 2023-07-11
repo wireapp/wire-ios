@@ -39,7 +39,7 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
             return handleMissingMarketingConsent(with: unregisteredUser)
 
         } else if unregisteredUser.name == nil {
-            return requestIntermediateStep(.setName, with: unregisteredUser, mode: .rewindToOrReset(to: .createCredentials(makeNewUnregisteredUser())))
+            return requestIntermediateStep(.setName, with: unregisteredUser, mode: .rewindToOrReset(to: .createCredentials(makeNewUnregisteredUser(from: unregisteredUser))))
 
         } else if unregisteredUser.password == nil && unregisteredUser.needsPassword {
             return requestIntermediateStep(.setPassword, with: unregisteredUser, mode: .normal)
@@ -72,9 +72,9 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
         return [.showLoadingView, .completeUserRegistration]
     }
 
-    private func makeNewUnregisteredUser() -> UnregisteredUser {
+    private func makeNewUnregisteredUser(from oldUser: UnregisteredUser) -> UnregisteredUser {
         var user = UnregisteredUser()
-        user.accentColor = .random
+        user.accentColor = oldUser.accentColor
         return user
     }
 
