@@ -532,7 +532,7 @@ extension Date {
     let calendar = Calendar.current
     let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
     let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-    return components != otherComponents
+    return components == otherComponents
   }
 
 }

@@ -308,7 +308,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // This message is from the same sender but in a different minute.
-        if context.isSameSenderAsPrevious && context.isTimestampInSameMinuteAsPreviousMessage {
+        if context.isSameSenderAsPrevious && !context.isTimestampInSameMinuteAsPreviousMessage {
             return true
         }
 
