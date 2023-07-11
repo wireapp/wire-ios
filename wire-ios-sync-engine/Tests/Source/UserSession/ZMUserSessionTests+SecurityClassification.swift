@@ -243,7 +243,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
-        BackendInfo.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
 
         syncMOC.performGroupedBlock {
@@ -272,7 +272,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
-        BackendInfo.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
 
         syncMOC.performGroupedBlock {
@@ -294,7 +294,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         // given
         let otherDomain = UUID().uuidString
         let otherUser1 = createUser(moc: syncMOC, domain: otherDomain)
-        let otherUser2 = createUser(moc: syncMOC, domain: nil)
+        let otherUser2 = createUser(moc: syncMOC, domain: UUID().uuidString)
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
@@ -302,7 +302,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
-        BackendInfo.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
 
         syncMOC.performGroupedBlock {
