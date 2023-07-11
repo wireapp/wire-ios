@@ -628,7 +628,9 @@ extension DownStyle {
     /// The style used within the conversation system message cells.
     static var systemMessage: DownStyle = {
         let style = DownStyle()
-        style.baseFont = FontSpec(.medium, .none).font!
+        if let fontFromFontSpec = FontSpec(.medium, .none).font {
+            style.baseFont = fontFromFontSpec
+        }
         style.baseFontColor = SemanticColors.Label.textDefault
         style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
         style.codeColor = SemanticColors.Label.textDefault
