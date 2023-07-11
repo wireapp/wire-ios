@@ -115,12 +115,27 @@ extension MLSMessageSync {
             case .v0, .v1:
                 return
 
-            case .v2, .v3, .v4:
+            case .v2, .v3:
                 v2processResponse(response, for: entity)
+
+            case .v4:
+                v4processResponse(response, for: entity)
             }
         }
 
         private func v2processResponse(
+            _ response: ZMTransportResponse,
+            for entity: Message
+        ) {
+            guard response.result == .success else {
+                Logging.mls.warn("failed to send mls message. Response: \(response)")
+                return
+            }
+
+            entity.delivered(with: response)
+        }
+
+        private func v4processResponse(
             _ response: ZMTransportResponse,
             for entity: Message
         ) {
