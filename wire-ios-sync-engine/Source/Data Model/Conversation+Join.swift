@@ -46,6 +46,7 @@ public enum ConversationFetchError: Error {
         }
     }
 }
+import WireRequestStrategy
 
 extension ZMConversation {
 
@@ -79,19 +80,35 @@ extension ZMConversation {
                       let conversationString = event.payload["conversation"] as? String else {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
-
+                
                 WireLogger.mls.debug("🕵🏽 test \(payload)")
                 syncContext.performGroupedBlock {
                     eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-
-                    viewContext.performGroupedBlock {
-                        guard let conversationId = UUID(uuidString: conversationString),
-                              let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)
-                        else {
-                            return completion(.failure(ConversationJoinError.unknown))
+                    let fetcher = ConversationFetcher(context: syncContext)
+                    guard let conversationId = UUID(uuidString: conversationString),
+                          let conversation = ZMConversation.fetch(with: conversationId, in: syncContext),
+                          let qualifiedId = conversation.qualifiedID
+                    else {
+                        return completion(.failure(ConversationJoinError.unknown))
+                    }
+                    
+                    Task {
+                        guard await fetcher.fetch(with: qualifiedId) else {
+                            viewContext.performGroupedBlock {
+                                completion(.failure(ConversationJoinError.unknown))
+                            }
+                            return
                         }
 
-                        completion(.success(conversation))
+                        viewContext.performGroupedBlock {
+                            guard let conversationId = UUID(uuidString: conversationString),
+                                  let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)
+                            else {
+                                return completion(.failure(ConversationJoinError.unknown))
+                            }
+                            WireLogger.mls.debug("🕵🏽 test \(conversation.mlsGroupID)")
+                            completion(.success(conversation))
+                        }
                     }
                 }
 
@@ -110,7 +127,62 @@ extension ZMConversation {
         }))
         transportSession.enqueueOneTime(request)
     }
+//
+//    public static func get(domain: String,
+//                           id: String,
+//                            transportSession: TransportSessionType,
+//                            eventProcessor: UpdateEventProcessor,
+//                            contextProvider: ContextProvider,
+//                            completion: @escaping (Result<ZMConversation>) -> Void) {
+//
+//        guard let request = ConversationGetRequestFactory.requestForGetConversation(domain: domain, id: id) else {
+//                return completion(.failure(ConversationJoinError.unknown))
+//        }
+//
+//        let syncContext = contextProvider.syncContext
+//        let viewContext = contextProvider.viewContext
+//
+//        request.add(ZMCompletionHandler(on: viewContext, block: { response in
+//            switch response.httpStatus {
+//            case 200:
+//                guard let payload = response.payload,
+//                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
+//                      let conversationString = event.payload["conversation"] as? String else {
+//                    return completion(.failure(ConversationJoinError.unknown))
+//                }
+//                WireLogger.mls.debug("🕵🏽 test \(payload)")
+//                syncContext.performGroupedBlock {
+//                    eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+//
+//                    viewContext.performGroupedBlock {
+//                        guard let conversationId = UUID(uuidString: conversationString),
+//                              let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)
+//                        else {
+//                            return completion(.failure(ConversationJoinError.unknown))
+//                        }
+//
+//                        completion(.success(conversation))
+//                    }
+//                }
+//
+//            /// The user is already a participant in the conversation
+//            case 204:
+//                /// If we get to this case, then we need to re-sync local conversations
+//                /// TODO: implement re-syncing conversations
+//                Logging.network.debug("Local conversations should be re-synced with remote ones")
+//                return completion(.failure(ConversationJoinError.unknown))
+//
+//            default:
+//                let error = ConversationJoinError(response: response)
+//                Logging.network.debug("Error joining conversation using a reusable code: \(error)")
+//                completion(.failure(error))
+//            }
+//        }))
+//        transportSession.enqueueOneTime(request)
+//    }
 
+    
+    
     /// Fetch conversation ID and name using a reusable code
     /// - Parameters:
     ///   - key: stable conversation identifier
@@ -186,3 +258,19 @@ struct ConversationJoinRequestFactory {
     }
 
 }
+//
+//
+//struct ConversationGetRequestFactory {
+//
+//    static func requestForGetConversation(domain: String, id: String) -> ZMTransportRequest? {
+//        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+//
+//        var url = URLComponents()
+//        url.path = "/conversations/\(domain)/\(id)"
+//        guard let urlString = url.string else {
+//            return nil
+//        }
+//
+//        return ZMTransportRequest(path: urlString, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+//    }
+//}

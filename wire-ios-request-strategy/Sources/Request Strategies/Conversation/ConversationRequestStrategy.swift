@@ -156,7 +156,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         isFetchingAllConversations = true
 
-        // Mark all existing conversationt to be re-fetched since they might have
+        // Mark all existing conversations to be re-fetched since they might have
         // been deleted. If not the flag will be reset after syncing the conversations
         // with the BE and no extra work will be done.
         ZMUser.selfUser(in: managedObjectContext).conversations.forEach {
@@ -864,4 +864,29 @@ private extension Collection where Element == ZMConversation {
         }
     }
 
+}
+
+import WireDataModel
+
+
+public class ConversationFetcher {
+    let handler: SyncConversationActionHandler
+
+    public init(context: NSManagedObjectContext) {
+        self.handler = SyncConversationActionHandler(context: context)
+    }
+    
+    public func fetch(with qualifiedID: QualifiedID) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            let action = SyncConversationAction(qualifiedID: qualifiedID, resultHandler: { result in
+                switch result {
+                case .success:
+                    continuation.resume(returning: true)
+                case .failure:
+                    continuation.resume(returning: false)
+                }
+            })
+            handler.performAction(action)
+        }
+    }
 }
