@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,18 @@
 
 import Foundation
 
-typealias Byte = UInt8
+public extension String {
 
-extension Data {
-
-    var bytes: [Byte] {
-        return [Byte](self)
+    static func randomDomain(hostLength: UInt = 5) -> String {
+        return "\(String.random(length: hostLength)).com"
     }
 
-}
+    static func random(length: UInt) -> String {
+        let randomChars = (0..<length).compactMap { _ in
+            "a...z".randomElement()
+        }
 
-extension Sequence where Element == Byte {
-
-    var data: Data {
-        return Data(self)
+        return String(randomChars)
     }
 
 }

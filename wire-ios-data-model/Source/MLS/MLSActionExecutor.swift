@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import Combine
 
 protocol MLSActionExecutorProtocol {
 
@@ -26,6 +27,7 @@ protocol MLSActionExecutorProtocol {
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
 
 }
 
@@ -144,6 +146,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let coreCrypto: SafeCoreCryptoProtocol
     private let context: NSManagedObjectContext
     private let actionsProvider: MLSActionsProviderProtocol
+    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     // MARK: - Life cycle
 
@@ -340,6 +343,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
         do {
             WireLogger.mls.info("merging commit for group (\(groupID))")
             try coreCrypto.perform { try $0.commitAccepted(conversationId: groupID.bytes) }
+            onEpochChangedSubject.send(groupID)
         } catch {
             WireLogger.mls.error("failed to merge commit for group (\(groupID))")
             throw Error.failedToMergeCommit
@@ -380,6 +384,13 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             WireLogger.mls.error("failed to clear pending group (\(groupID))")
             throw Error.failedToClearPendingGroup
         }
+    }
+
+    // MARK: - Epoch publisher
+
+    nonisolated
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        return onEpochChangedSubject.eraseToAnyPublisher()
     }
 }
 

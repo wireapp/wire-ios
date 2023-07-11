@@ -647,7 +647,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             conversation.remoteIdentifier = UUID.create()
             conversation.conversationType = .group
             conversation.messageProtocol = .mls
-            conversation.mlsGroupID = MLSGroupID(.random())
+            conversation.mlsGroupID = .random()
 
             // create user
             let user = ZMUser.insertNewObject(in: syncMOC)

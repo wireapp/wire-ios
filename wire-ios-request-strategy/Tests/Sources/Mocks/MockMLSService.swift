@@ -18,25 +18,29 @@
 
 import Foundation
 import WireDataModel
+import Combine
 
 class MockMLSService: MLSServiceInterface {
 
     var mockDecryptResult: MLSDecryptResult?
-    var mockDecryptionError: MLSService.MLSMessageDecryptionError?
+    var mockDecryptionError: MLSDecryptionService.MLSMessageDecryptionError?
     var calls = Calls()
 
     struct Calls {
-        var decrypt: [(String, MLSGroupID)] = []
+        var decrypt: [(String, MLSGroupID, SubgroupType?)] = []
         var commitPendingProposals: [Void] = []
         var commitPendingProposalsInGroup: [MLSGroupID] = []
-        var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
         var wipeGroup = [MLSGroupID]()
         var createSelfGroup = [MLSGroupID]()
         var joinSelfGroup = [MLSGroupID]()
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        calls.decrypt.append((message, groupID))
+    func decrypt(
+        message: String,
+        for groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID, subconversationType))
 
         if let error = mockDecryptionError {
             throw error
@@ -78,7 +82,7 @@ class MockMLSService: MLSServiceInterface {
 
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return message + [000]
     }
 
@@ -104,8 +108,26 @@ class MockMLSService: MLSServiceInterface {
         calls.commitPendingProposalsInGroup.append(groupID)
     }
 
-    func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
-        calls.scheduleCommitPendingProposals.append((groupID, commitDate))
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
+        fatalError("not implemented")
+    }
+
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
+        fatalError("not implemented")
+    }
+
+    func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+        fatalError("not implemented")
+    }
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        fatalError("not implemented")
     }
 
     func createSelfGroup(for groupID: MLSGroupID) {
@@ -115,4 +137,28 @@ class MockMLSService: MLSServiceInterface {
     func joinSelfGroup(with groupID: MLSGroupID) {
         calls.joinSelfGroup.append(groupID)
     }
+
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType
+    ) async throws {
+        fatalError("not implemented")
+    }
+
+    func leaveSubconversationIfNeeded(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType,
+        selfClientID: MLSClientID
+    ) async throws {
+        fatalError("not implemented")
+    }
+
+    // MARK: - New epoch
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
+    }
+
 }

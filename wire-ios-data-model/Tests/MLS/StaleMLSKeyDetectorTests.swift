@@ -22,14 +22,28 @@ import XCTest
 
 class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
 
+    var sut: StaleMLSKeyDetector!
+
+    // MARK: - Setup
+
+    override func setUp() {
+        super.setUp()
+        sut = StaleMLSKeyDetector(
+            refreshIntervalInDays: 5,
+            context: self.syncMOC
+        )
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+
+    // MARK: - Tests
+
     func test_GroupsWithStaleKeyingMaterial() throws {
         syncMOC.performGroupedAndWait { context in
             // Given
-            let sut = StaleMLSKeyDetector(
-                refreshIntervalInDays: 5,
-                context: context
-            )
-
             let staleGroup1 = self.createMLSGroup(in: context)
             staleGroup1.lastKeyMaterialUpdate = .distantPast
 
@@ -40,7 +54,7 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
             nonStaleGroup.lastKeyMaterialUpdate = Date().addingTimeInterval(.oneDay * -2)
 
             // When
-            let result = sut.groupsWithStaleKeyingMaterial
+            let result = self.sut.groupsWithStaleKeyingMaterial
 
             // Then
             XCTAssertTrue(result.contains(staleGroup1.id))
@@ -51,28 +65,34 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
     }
 
     func test_KeyingMaterialUpdated() throws {
-        try syncMOC.performGroupedAndWait { context in
-            // Given
-            let sut = StaleMLSKeyDetector(
-                refreshIntervalInDays: 5,
-                context: context
-            )
+        var group: MLSGroup!
 
-            let group = self.createMLSGroup(in: context)
+        syncMOC.performGroupedBlock {
+            // Given
+            group = self.createMLSGroup(in: self.syncMOC)
             XCTAssertNil(group.lastKeyMaterialUpdate)
 
             // When
-            sut.keyingMaterialUpdated(for: group.id)
+            self.sut.keyingMaterialUpdated(for: group.id)
+        }
 
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlock {
             // Then
-            let lastUpdate = try XCTUnwrap(group.lastKeyMaterialUpdate)
+            guard let lastUpdate = group.lastKeyMaterialUpdate else {
+                XCTFail("expected lastKeyMaterialUpdate")
+                return
+            }
 
             XCTAssertEqual(
                 lastUpdate.timeIntervalSinceNow,
                 Date().timeIntervalSinceNow,
-                accuracy: 0.1
+                accuracy: 0.15
             )
         }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
 }

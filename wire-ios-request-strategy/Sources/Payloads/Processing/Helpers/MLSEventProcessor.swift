@@ -185,7 +185,7 @@ extension MLSGroupID {
         guard
             let groupID = groupIdString,
             !groupID.isEmpty,
-            let bytes = groupID.base64EncodedBytes
+            let bytes = groupID.base64DecodedBytes
         else {
             return nil
         }

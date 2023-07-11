@@ -90,3 +90,15 @@ public extension Collection where Element == ZMConversation {
     }
 
 }
+
+public extension QualifiedID {
+
+    static func random() -> QualifiedID {
+        return QualifiedID(
+            uuid: UUID(),
+            domain: .randomDomain()
+        )
+    }
+
+}
+

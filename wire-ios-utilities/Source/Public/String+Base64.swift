@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,30 @@
 
 import Foundation
 
-extension Bytes {
+public extension String {
 
-    public static func random(in range: ClosedRange<UInt8> = 1...10, length: Int = 3) -> Self {
-        var bytes = Bytes()
+    var utf8Data: Data? {
+        return data(using: .utf8)
+    }
 
-        for _ in 1...length {
-            bytes.append(UInt8.random(in: range))
-        }
+    var base64EncodedData: Data? {
+        return utf8Data?.base64EncodedData()
+    }
 
-        return bytes
+    var base64EncodedBytes: [Byte]? {
+        return base64EncodedData?.bytes
+    }
+
+    var base64EncodedString: String? {
+        return utf8Data?.base64EncodedString()
+    }
+
+    var base64DecodedData: Data? {
+        return Data(base64Encoded: self)
+    }
+
+    var base64DecodedBytes: [Byte]? {
+        return base64DecodedData?.bytes
     }
 
 }

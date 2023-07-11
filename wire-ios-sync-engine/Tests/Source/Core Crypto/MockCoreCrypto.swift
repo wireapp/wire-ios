@@ -48,7 +48,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - mlsInitWithClientId
 
-    var mockMlsInitWithClientId: ((ClientId, [Bytes], Ciphersuites) throws -> Void)?
+    var mockMlsInitWithClientId: ((ClientId, [[Byte]], Ciphersuites) throws -> Void)?
 
     func mlsInitWithClientId(clientId: ClientId, signaturePublicKeys: [[UInt8]], ciphersuites: Ciphersuites) throws {
 
@@ -296,7 +296,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - joinByExternalCommit
 
-    var mockJoinByExternalCommit: ((Bytes, CustomConfiguration, MlsCredentialType) throws -> ConversationInitBundle)?
+    var mockJoinByExternalCommit: (([Byte], CustomConfiguration, MlsCredentialType) throws -> ConversationInitBundle)?
 
     func joinByExternalCommit(groupInfo: [UInt8],
                               customConfiguration: CustomConfiguration,
@@ -347,7 +347,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - exportSecretKey
 
-    var mockExportSecretKey: ((ConversationId, UInt32) throws -> Bytes)?
+    var mockExportSecretKey: ((ConversationId, UInt32) throws -> [Byte])?
 
     func exportSecretKey(conversationId: ConversationId, keyLength: UInt32) throws -> [UInt8] {
         guard let mock = mockExportSecretKey else {
@@ -369,7 +369,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
         return try mock(conversationId)
     }
 
-    // MARK: - randomBytes
+    // MARK: - random[Byte]
 
     var mockRandomBytes: ((UInt32) throws -> [UInt8])?
 
@@ -443,7 +443,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusSessionFromPrekey
 
-    var mockProteusSessionFromPrekey: ((String, Bytes) throws -> Void)?
+    var mockProteusSessionFromPrekey: ((String, [Byte]) throws -> Void)?
 
     func proteusSessionFromPrekey(sessionId: String, prekey: [UInt8]) throws {
         guard let mock = mockProteusSessionFromPrekey else {
@@ -455,7 +455,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusSessionFromMessage
 
-    var mockProteusSessionFromMessage: ((String, Bytes) throws -> Bytes)?
+    var mockProteusSessionFromMessage: ((String, [Byte]) throws -> [Byte])?
 
     func proteusSessionFromMessage(sessionId: String, envelope: [UInt8]) throws -> [UInt8] {
         guard let mock = mockProteusSessionFromMessage else {
@@ -491,7 +491,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusDecrypt
 
-    var mockProteusDecrypt: ((String, Bytes) throws -> Bytes)?
+    var mockProteusDecrypt: ((String, [Byte]) throws -> [Byte])?
 
     func proteusDecrypt(sessionId: String, ciphertext: [UInt8]) throws -> [UInt8] {
         guard let mock = mockProteusDecrypt else {
@@ -503,7 +503,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusEncrypt
 
-    var mockProteusEncrypt: ((String, Bytes) throws -> Bytes)?
+    var mockProteusEncrypt: ((String, [Byte]) throws -> [Byte])?
 
     func proteusEncrypt(sessionId: String, plaintext: [UInt8]) throws -> [UInt8] {
         guard let mock = mockProteusEncrypt else {
@@ -515,7 +515,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusEncryptBatched
 
-    var mockProteusEncryptBatched: (([String], Bytes) throws -> [String: Bytes])?
+    var mockProteusEncryptBatched: (([String], [Byte]) throws -> [String: [Byte]])?
 
     func proteusEncryptBatched(sessionId: [String], plaintext: [UInt8]) throws -> [String: [UInt8]] {
         guard let mock = mockProteusEncryptBatched else {
@@ -527,7 +527,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - proteusNewPrekey
 
-    var mockProteusNewPrekey: ((UInt16) throws -> Bytes)?
+    var mockProteusNewPrekey: ((UInt16) throws -> [Byte])?
 
     func proteusNewPrekey(prekeyId: UInt16) throws -> [UInt8] {
         guard let mock = mockProteusNewPrekey else {

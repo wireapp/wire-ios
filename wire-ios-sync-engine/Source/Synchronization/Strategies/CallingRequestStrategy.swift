@@ -242,7 +242,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 let conversationUUID = event.conversationUUID,
                 let eventTimestamp = event.timestamp
             else {
-                zmLog.error("ignoring calling message: \(genericMessage.debugDescription)")
+                zmLog.error("ignoring calling message: \(genericMessage)")
                 return
             }
 

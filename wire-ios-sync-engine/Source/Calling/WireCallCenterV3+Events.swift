@@ -365,6 +365,29 @@ extension WireCallCenterV3 {
             }
         }
     }
+
+    func handleNewEpochRequest(conversationID: AVSIdentifier) {
+        handleEvent("new-epoch-request") {
+            guard
+                let viewContext = self.uiMOC,
+                let syncContext = viewContext.zm_sync,
+                let snapshot = self.callSnapshots[conversationID],
+                let groupIDs = snapshot.groupIDs
+            else {
+                return
+            }
+
+            syncContext.perform {
+                guard let mlsService = syncContext.mlsService else {
+                    return
+                }
+
+                Task {
+                    try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                }
+            }
+        }
+    }
 }
 
 private extension Set where Element == ZMUser {
