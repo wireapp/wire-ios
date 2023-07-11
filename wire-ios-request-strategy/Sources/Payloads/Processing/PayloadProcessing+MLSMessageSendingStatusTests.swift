@@ -41,10 +41,8 @@ class PayloadProcessing_MLSMessageSendingStatusTests: MessagingTestBase {
             XCTAssertEqual(message.failedToSendRecipients?.count, 0)
 
             // When
-            var failedToSendUsers: [QualifiedID] = []
-            if let qualifiedID = self.otherUser.qualifiedID {
-                failedToSendUsers = [qualifiedID]
-            }
+            let qualifiedID = try XCTUnwrap(self.otherUser.qualifiedID)
+            let failedToSendUsers = [qualifiedID]
             let payload = Payload.MLSMessageSendingStatus(time: Date(),
                                                           events: [Data()],
                                                           failedToSend: failedToSendUsers)
