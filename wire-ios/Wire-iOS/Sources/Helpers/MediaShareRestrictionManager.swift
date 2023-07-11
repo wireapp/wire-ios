@@ -55,6 +55,10 @@ class MediaShareRestrictionManager {
         return SecurityFlags.fileSharing.isEnabled
     }
 
+    var isPhotoLibraryEnabled: Bool {
+        return SecurityFlags.cameraRoll.isEnabled
+    }
+
     // MARK: - Public Properties
 
     var level: MediaShareRestrictionLevel {
