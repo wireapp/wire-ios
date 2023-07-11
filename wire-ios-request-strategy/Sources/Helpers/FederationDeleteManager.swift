@@ -35,12 +35,21 @@ final public class FederationDeleteManager {
                                                                                moc: moc)
         print(conversations)
 
-        // remove myself & all users from MY
-        guard let firstConversation = conversations.first else { return }
+//        // remove myself & all users from MY
+//        guard let firstConversation = conversations.first else { return }
         let selfUser = ZMUser.selfUser(in: moc)
-        firstConversation.removeParticipant(selfUser) { result in
-            print(result)
+//        firstConversation.removeParticipant(selfUser) { result in
+//            print(result)
+//        }
+        if let selfDomain = selfUser.domain {
+            for conversation in conversations {
+
+                deleteAllParticipantsFromDomain(domain: selfDomain, inConversation: conversation)
+            }
         }
+
+
+
 
         // add system message about stopping federation
 
@@ -55,5 +64,19 @@ final public class FederationDeleteManager {
 
     func domainsStoppedFederating(domains: [String]) {
 
+    }
+}
+
+extension FederationDeleteManager {
+
+    func deleteAllParticipantsFromDomain(domain: String, inConversation conversation: ZMConversation) {
+        let participantsFromDomain = conversation.localParticipants.filter { $0.domain == domain }
+//        var usersFailedToRemove = [ZMUser]()
+        for participant in participantsFromDomain {
+            conversation.removeParticipant(participant) { result in
+//                guard resul == .failure else { return }
+//                usersFailedToRemove.append(participant)
+            }
+        }
     }
 }
