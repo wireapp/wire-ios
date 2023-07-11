@@ -151,30 +151,21 @@ final class VideoMessageView: UIView, TransferView {
               let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
 
         self.state = state
-        // self.previewImageView.image = nil
-          DispatchQueue.global(qos: .background).async { [weak self] in
-            if state != .unavailable {
-                self?.updateTimeLabel(withFileMessageData: fileMessageData)
-                //self?.timeLabel.textColor = SemanticColors.Label.textDefault
+        if state != .unavailable {
+            self.updateTimeLabel(withFileMessageData: fileMessageData)
+            //                fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+            //                    guard let image = image else { return }
+            //                    self?.updatePreviewImage(image)
+            //                }
+        }
 
-//                fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
-//                    guard let image = image else { return }
-//                    self?.updatePreviewImage(image)
-//                }
-            }
+        if state == .uploading || state == .downloading {
+            self.progressView.setProgress(fileMessageData.progress, animated: !isInitial)
+        }
 
-            if state == .uploading || state == .downloading {
-                DispatchQueue.main.async(execute: {
-                    self?.progressView.setProgress(fileMessageData.progress, animated: !isInitial)
-                })
-            }
-
-            if let viewsState = state.viewsStateForVideo() {
-                DispatchQueue.main.async(execute: {
-                    self?.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
-                    self?.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
-                })
-            }
+        if let viewsState = state.viewsStateForVideo() {
+            self.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
+            self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
         }
         //updateVisibleViews()
     }
@@ -209,27 +200,23 @@ final class VideoMessageView: UIView, TransferView {
     }
 
     private func updatePreviewImage(_ image: MediaAsset) {
-        DispatchQueue.main.async(execute: { [self] in
-            self.previewImageView.mediaAsset = image
-            self.timeLabel.textColor = .white
-        })
+        self.previewImageView.mediaAsset = image
+        self.timeLabel.textColor = .white
         //updateVisibleViews()
     }
 
     private func updateTimeLabel(withFileMessageData fileMessageData: ZMFileMessageData) {
-        DispatchQueue.main.async(execute: {
-            let duration = Int(roundf(Float(fileMessageData.durationMilliseconds) / 1000.0))
-            var timeLabelText = ByteCountFormatter.string(fromByteCount: Int64(fileMessageData.size), countStyle: .binary)
+        let duration = Int(roundf(Float(fileMessageData.durationMilliseconds) / 1000.0))
+        var timeLabelText = ByteCountFormatter.string(fromByteCount: Int64(fileMessageData.size), countStyle: .binary)
 
-            if duration != 0 {
-                let (seconds, minutes) = (duration % 60, duration / 60)
-                let time = String(format: "%d:%02d", minutes, seconds)
-                timeLabelText = time + " " + String.MessageToolbox.middleDot + " " + timeLabelText
-            }
+        if duration != 0 {
+            let (seconds, minutes) = (duration % 60, duration / 60)
+            let time = String(format: "%d:%02d", minutes, seconds)
+            timeLabelText = time + " " + String.MessageToolbox.middleDot + " " + timeLabelText
+        }
 
-            self.timeLabel.text = timeLabelText
-            self.timeLabel.accessibilityValue = self.timeLabel.text
-        })
+        self.timeLabel.text = timeLabelText
+        self.timeLabel.accessibilityValue = self.timeLabel.text
     }
 
     private func updateVisibleViews() {
