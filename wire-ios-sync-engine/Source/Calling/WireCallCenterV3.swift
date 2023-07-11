@@ -591,12 +591,16 @@ extension WireCallCenterV3 {
     }
 
     private func setUpMLSConference(in conversation: ZMConversation) throws {
+        guard let conversationID = conversation.avsIdentifier else {
+            throw Failure.failedToSetupMLSConference
+        }
+
         guard
-            let conversationID = conversation.avsIdentifier,
             let parentQualifiedID = conversation.qualifiedID,
             let parentGroupID = conversation.mlsGroupID,
             let syncContext = conversation.managedObjectContext?.zm_sync
         else {
+            onMLSConferenceFailure(id: conversationID)
             throw Failure.failedToSetupMLSConference
         }
 
@@ -605,6 +609,7 @@ extension WireCallCenterV3 {
                 let self = self,
                 let mlsService = syncContext.mlsService
             else {
+                self?.onMLSConferenceFailure(id: conversationID)
                 return
             }
 
@@ -641,9 +646,16 @@ extension WireCallCenterV3 {
                     }
                 } catch {
                     Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
+                    self.onMLSConferenceFailure(id: conversationID)
                     throw error
                 }
             }
+        }
+    }
+
+    private func onMLSConferenceFailure(id: AVSIdentifier) {
+        uiMOC?.perform { [weak self] in
+            self?.closeCall(conversationId: id, reason: .unknown)
         }
     }
 
