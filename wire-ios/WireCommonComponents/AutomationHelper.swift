@@ -88,6 +88,7 @@ public final class AutomationHelper: NSObject {
 
     public var preferredAPIversion: APIVersion?
     public var allowMLSGroupCreation: Bool?
+    public var enableMLSSupport: Bool?
 
     /// Whether to use the old calling overlay.
     public let deprecatedCallingUI: Bool
@@ -135,6 +136,7 @@ public final class AutomationHelper: NSObject {
         deprecatedCallingUI = arguments.hasFlag(AutomationKey.deprecatedCallingUI)
 
         allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
+        enableMLSSupport = arguments.hasFlag(AutomationKey.enableMLSSupport.rawValue)
 
         super.init()
     }
@@ -158,6 +160,7 @@ public final class AutomationHelper: NSObject {
         case preferredAPIversion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"
         case deprecatedCallingUI = "deprecated-calling-ui"
+        case enableMLSSupport = "enable-mls-support"
     }
     /// Returns the login email and password credentials if set in the given arguments
     fileprivate static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {
