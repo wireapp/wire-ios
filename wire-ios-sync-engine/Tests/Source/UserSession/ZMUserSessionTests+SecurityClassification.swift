@@ -264,7 +264,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
     func testThatItReturnsNotClassified_WhenFeatureIsEnabled_WhenConversationDomainNotClassified() {
         // given
         let otherUser1 = createUser(moc: syncMOC, domain: UUID().uuidString)
-        let otherUser2 = createUser(moc: syncMOC, domain: nil)
+        let otherUser2 = createUser(moc: syncMOC, domain: UUID().uuidString)
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
