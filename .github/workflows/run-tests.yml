@@ -299,6 +299,7 @@ jobs:
     steps:
       - name: Download tests results
         uses: actions/download-artifact@v3
+        continue-on-error: true
         with:
           name: test-reports
       - uses: actions/setup-node@v3
