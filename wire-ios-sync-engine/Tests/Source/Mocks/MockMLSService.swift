@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import Combine
 
 // Temporary Mock until we find a way to use a single mocked `mlsServiceProcotol` accross frameworks
 class MockMLSService: MLSServiceInterface {
@@ -48,11 +49,11 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         return message
     }
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
+    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
         fatalError("not implemented")
     }
 
@@ -85,4 +86,90 @@ class MockMLSService: MLSServiceInterface {
     func wipeGroup(_ groupID: MLSGroupID) {
         fatalError("not implemented")
     }
+
+    var mockCreateOrJoinSubgroup: ((QualifiedID, MLSGroupID) -> MLSGroupID)?
+
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
+        guard let mock = mockCreateOrJoinSubgroup else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentQualifiedID, parentID)
+    }
+
+    var mockGenerateConferenceInfo: ((MLSGroupID, MLSGroupID) -> MLSConferenceInfo)?
+
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
+        guard let mock = mockGenerateConferenceInfo else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentGroupID, subconversationGroupID)
+    }
+
+    var mockOnConferenceInfoChange: ((MLSGroupID, MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never>)?
+
+    func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+        guard let mock = mockOnConferenceInfoChange else {
+            fatalError("not implemented")
+        }
+
+        return mock(parentGroupID, subConversationGroupID)
+    }
+
+    var mockOnEpochChanged: (() -> AnyPublisher<MLSGroupID, Never>)?
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        guard let mock = mockOnEpochChanged else {
+            fatalError("not implemented")
+        }
+
+        return mock()
+    }
+
+    var mockLeaveSubconversation: ((QualifiedID, MLSGroupID, SubgroupType) throws -> Void)?
+
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType
+    ) async throws {
+        guard let mock = mockLeaveSubconversation else {
+            fatalError("not implemented")
+        }
+
+        try mock(parentQualifiedID, parentGroupID, subconversationType)
+    }
+
+    var mockLeaveSubconversationIfNeeded: ((QualifiedID, MLSGroupID, SubgroupType, MLSClientID) throws -> Void)?
+
+    func leaveSubconversationIfNeeded(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType,
+        selfClientID: MLSClientID
+    ) async throws {
+        guard let mock = mockLeaveSubconversationIfNeeded else {
+            fatalError("not implemented")
+        }
+
+        try mock(parentQualifiedID, parentGroupID, subconversationType, selfClientID)
+    }
+
+    var mockGenerateNewEpoch: ((MLSGroupID) -> Void)?
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        guard let mock = mockGenerateNewEpoch else {
+            fatalError("not implemented")
+        }
+
+        return mock(groupID)
+    }
+
 }

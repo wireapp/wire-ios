@@ -22,95 +22,28 @@ import XCTest
 
 class CoreCryptoCallbacksTests: XCTestCase {
 
-    func test_ClientIDBelongsToOneOfOtherClients() throws {
+    func test_HardcodedValues() {
         // Given
         let sut = CoreCryptoCallbacksImpl()
-        let userID1 = UUID.create().uuidString
-        let userID2 = UUID.create().uuidString
-        let domain = "example.com"
-
-        let mlsClientID = MLSClientID(
-            userID: userID1,
-            clientID: "client1",
-            domain: domain
-        )
-
-        let otherMLSClientIDs = [
-            // Client from same user
-            MLSClientID(
-                userID: userID1,
-                clientID: "client2",
-                domain: domain
-            ),
-            // Client from another user
-            MLSClientID(
-                userID: userID2,
-                clientID: "client3",
-                domain: domain
-            )
-        ]
-
-        let clientID = try XCTUnwrap(mlsClientID.string.data(using: .utf8)?.bytes)
-        let otherClients = otherMLSClientIDs.compactMap {
-            $0.string.data(using: .utf8)?.bytes
-        }
-
-        // When
-        let result = sut.clientIsExistingGroupUser(
-            conversationId: Bytes(),
-            clientId: clientID,
-            existingClients: otherClients,
-            parentConversationClients: nil
-        )
 
         // Then
-        XCTAssertTrue(result)
-    }
+        XCTAssertTrue(sut.authorize(
+            conversationId: .random(),
+            clientId: .random()
+        ))
 
-    func test_ClientIDDoesNotBelongToOneOfOtherClients() throws {
-        // Given
-        let sut = CoreCryptoCallbacksImpl()
-        let userID1 = UUID.create().uuidString
-        let userID2 = UUID.create().uuidString
-        let domain1 = "example.com"
-        let domain2 = "bar.com"
+        XCTAssertTrue(sut.userAuthorize(
+            conversationId: .random(),
+            externalClientId: .random(),
+            existingClients: [.random()]
+        ))
 
-        let mlsClientID = MLSClientID(
-            userID: userID1,
-            clientID: "client1",
-            domain: domain1
-        )
-
-        let otherMLSClientIDs = [
-            // Client from another user
-            MLSClientID(
-                userID: userID1,
-                clientID: "client2",
-                domain: domain2
-            ),
-            // Client from another user
-            MLSClientID(
-                userID: userID2,
-                clientID: "client3",
-                domain: domain1
-            )
-        ]
-
-        let clientID = try XCTUnwrap(mlsClientID.string.data(using: .utf8)?.bytes)
-        let otherClients = otherMLSClientIDs.compactMap {
-            $0.string.data(using: .utf8)?.bytes
-        }
-
-        // When
-        let result = sut.clientIsExistingGroupUser(
-            conversationId: Bytes(),
-            clientId: clientID,
-            existingClients: otherClients,
-            parentConversationClients: nil
-        )
-
-        // Then
-        XCTAssertFalse(result)
+        XCTAssertTrue(sut.clientIsExistingGroupUser(
+            conversationId: .random(),
+            clientId: .random(),
+            existingClients: [.random()],
+            parentConversationClients: [.random()]
+        ))
     }
 
 }

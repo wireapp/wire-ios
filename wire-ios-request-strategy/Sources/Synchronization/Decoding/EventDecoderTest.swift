@@ -507,10 +507,12 @@ extension EventDecoderTest {
             // Then
             XCTAssertNil(decryptedEvent)
 
-            let scheduleCommitPendingProposalsCalls = mockMLSService.calls.scheduleCommitPendingProposals
-            XCTAssertEqual(1, scheduleCommitPendingProposalsCalls.count)
-            XCTAssertEqual(mlsGroupID, scheduleCommitPendingProposalsCalls[0].0)
-            XCTAssertEqual(expectedCommitDate, scheduleCommitPendingProposalsCalls[0].1)
+            guard let conversation = ZMConversation.fetch(with: mlsGroupID, in: syncMOC) else {
+                XCTFail("expected conversation")
+                return
+            }
+
+            XCTAssertEqual(conversation.commitPendingProposalDate, expectedCommitDate)
         }
     }
 
@@ -630,11 +632,11 @@ extension EventDecoderTest {
     }
 
     var randomData: Data {
-        Data(Bytes.random())
+        return .random()
     }
 
     var randomGroupID: MLSGroupID {
-        MLSGroupID(Bytes.random())
+        return MLSGroupID(randomData.bytes)
     }
 }
 

@@ -52,8 +52,8 @@ extension SharingSession {
                     syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsService == nil {
-                    syncContext.mlsService = MLSEncryptionService(coreCrypto: safeCoreCrypto)
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsEncryptionService == nil {
+                    syncContext.mlsEncryptionService = MLSEncryptionService(coreCrypto: safeCoreCrypto)
                 }
 
                 WireLogger.coreCrypto.info("success: setup crypto stack")

@@ -62,7 +62,7 @@ class ProteusServiceTests: XCTestCase {
         mockCoreCrypto.mockProteusDecrypt = { id, ciphertext in
             XCTAssertEqual(id, sessionID.rawValue)
             XCTAssertEqual(ciphertext, encryptedData.bytes)
-            return Bytes(arrayLiteral: 0, 1, 2, 3, 4, 5)
+            return [0, 1, 2, 3, 4, 5]
         }
 
         // When
@@ -119,7 +119,7 @@ class ProteusServiceTests: XCTestCase {
         mockCoreCrypto.mockProteusSessionFromMessage = { id, ciphertext in
             XCTAssertEqual(id, sessionID.rawValue)
             XCTAssertEqual(ciphertext, encryptedData.bytes)
-            return Bytes(arrayLiteral: 0, 1, 2, 3, 4, 5)
+            return [0, 1, 2, 3, 4, 5]
         }
 
         // When
@@ -175,7 +175,7 @@ class ProteusServiceTests: XCTestCase {
             encryptCalls += 1
             XCTAssertEqual(sessionIDString, sessionID.rawValue)
             XCTAssertEqual(plaintextBytes, plaintext.bytes)
-            return Bytes([1, 2, 3, 4, 5])
+            return [1, 2, 3, 4, 5]
         }
 
         // When
@@ -262,22 +262,6 @@ private extension ProteusSessionID {
             userID: UUID.create().uuidString,
             clientID: .random(length: 6)
         )
-    }
-
-}
-
-private extension String {
-
-    static func randomDomain() -> Self {
-        return "\(Self.random(length: 6))@\(random(length: 6)).com"
-    }
-
-    static func random(length: UInt = 8) -> Self {
-        let aToZ = "abcdefghijklmnopqrstuvwxyz"
-
-        return (0..<length)
-            .map { _ in String(aToZ.randomElement()!) }
-            .joined()
     }
 
 }

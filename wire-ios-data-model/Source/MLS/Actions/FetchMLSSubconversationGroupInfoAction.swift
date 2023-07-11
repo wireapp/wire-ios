@@ -18,31 +18,21 @@
 
 import Foundation
 
-public typealias Bytes = [UInt8]
+public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
 
-public extension Bytes {
+    public var conversationId: UUID
+    public var domain: String
+    public var subgroupType: SubgroupType
 
-    var data: Data {
-        return .init(self)
+    public init(
+        conversationId: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.conversationId = conversationId
+        self.domain = domain
+        self.subgroupType = subgroupType
+        super.init(resultHandler: resultHandler)
     }
-
-    var base64EncodedString: String {
-        return data.base64EncodedString()
-    }
-
-    init?(base64Encoded: String) {
-        guard let bytes = Data(base64Encoded: base64Encoded)?.bytes else {
-            return nil
-        }
-        self = bytes
-    }
-
-}
-
-public extension Data {
-
-    var bytes: Bytes {
-        return .init(self)
-    }
-
 }

@@ -426,89 +426,159 @@ extension WireCallCenterV3 {
 
 extension WireCallCenterV3 {
 
-    /**
-     * Answers an incoming call in the given conversation.
-     * - parameter conversation: The conversation hosting the incoming call.
-     * - parameter video: Whether to join the call with video.
-     */
+    public enum Failure: Error {
 
-    public func answerCall(conversation: ZMConversation, video: Bool) -> Bool {
-        Self.logger.info("answering call")
-        guard let conversationId = conversation.avsIdentifier else { return false }
+        case missingAVSIdentifier
+        case missingAVSConversationType
+        case missingConferencingPermission
+        case failedToSetupMLSConference
+        case unknown
 
-        endAllCalls(exluding: conversationId)
-
-        let callType = self.callType(for: conversation,
-                                     startedWithVideo: video,
-                                     isConferenceCall: isConferenceCall(conversationId: conversationId))
-
-        let answered = avsWrapper.answerCall(conversationId: conversationId, callType: callType, useCBR: useConstantBitRateAudio)
-        if answered {
-            let callState: CallState = .answered(degraded: isDegraded(conversationId: conversationId))
-
-            let previousSnapshot = callSnapshots[conversationId]
-
-            if previousSnapshot != nil {
-                callSnapshots[conversationId] = previousSnapshot!.update(with: callState)
-            }
-
-            if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-                WireCallCenterCallStateNotification(context: context, callState: callState, conversationId: conversationId, callerId: callerId, messageTime: nil, previousCallState: previousSnapshot?.callState).post(in: context.notificationContext)
-            }
-        }
-
-        return answered
     }
 
-    /**
-     * Starts a call in the given conversation.
-     * - parameter conversation: The conversation to start the call.
-     * - parameter video: Whether to start the call as a video call.
-     */
+    /// Answers an incoming call in the given conversation.
+    ///
+    /// - Parameters:
+    ///  - conversation: The conversation hosting the incoming call.
+    ///  - video: Whether to join the call with video.
+    ///
+    /// - Throws: WireCallCenterV3.Failure
 
-    public func startCall(conversation: ZMConversation, video: Bool) -> Bool {
-        Self.logger.info("starting call")
-        guard let conversationId = conversation.avsIdentifier else { return false }
+    public func answerCall(
+        conversation: ZMConversation,
+        video: Bool
+    ) throws {
+        Self.logger.info("answering call")
+
+        guard let conversationId = conversation.avsIdentifier else {
+            throw Failure.missingAVSIdentifier
+        }
 
         endAllCalls(exluding: conversationId)
-        clearSnapshot(conversationId: conversationId) // make sure we don't have an old state for this conversation
 
-        let conversationType: AVSConversationType = conversation.conversationType == .group ? .conference : .oneToOne
+        let callType = self.callType(
+            for: conversation,
+            startedWithVideo: video,
+            isConferenceCall: isConferenceCall(conversationId: conversationId)
+        )
 
-        let callType = self.callType(for: conversation,
-                                     startedWithVideo: video,
-                                     isConferenceCall: conversationType == .conference)
+        let answered = avsWrapper.answerCall(
+            conversationId: conversationId,
+            callType: callType,
+            useCBR: useConstantBitRateAudio
+        )
 
-        if conversationType == .conference && !canStartConferenceCalls {
+        guard answered else {
+            throw Failure.unknown
+        }
+
+        let callState: CallState = .answered(degraded: isDegraded(conversationId: conversationId))
+
+        let previousSnapshot = callSnapshots[conversationId]
+
+        if previousSnapshot != nil {
+            callSnapshots[conversationId] = previousSnapshot!.update(with: callState)
+        }
+
+        if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
+            WireCallCenterCallStateNotification(
+                context: context,
+                callState: callState,
+                conversationId: conversationId,
+                callerId: callerId,
+                messageTime: nil,
+                previousCallState: previousSnapshot?.callState
+            ).post(in: context.notificationContext)
+        }
+
+        switch conversation.messageProtocol {
+        case .proteus:
+            break
+
+        case .mls:
+            try setUpMLSConference(in: conversation)
+        }
+    }
+
+    /// Starts a call in the given conversation.
+    ///
+    /// - Parameters:
+    ///   - conversation: The conversation to start the call.
+    ///   - isVideo: Whether to start the call as a video call.
+    ///
+    /// - Throws: WireCallCenterV3.Failure
+
+    public func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
+        Self.logger.info("starting call")
+
+        guard let conversationId = conversation.avsIdentifier else {
+            throw Failure.missingAVSIdentifier
+        }
+
+        endAllCalls(exluding: conversationId)
+
+        // Make sure we don't have an old state for this conversation.
+        clearSnapshot(conversationId: conversationId)
+
+        guard let conversationType = conversation.avsConversationType else {
+            throw Failure.missingAVSConversationType
+        }
+
+        let callType = self.callType(
+            for: conversation,
+            startedWithVideo: isVideo,
+            isConferenceCall: conversationType.isConference
+        )
+
+        if conversationType.isConference && !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
             }
 
-            return false
+            throw Failure.missingConferencingPermission
         }
 
-        let started = avsWrapper.startCall(conversationId: conversationId,
-                                           callType: callType,
-                                           conversationType: conversationType,
-                                           useCBR: useConstantBitRateAudio)
+        let started = avsWrapper.startCall(
+            conversationId: conversationId,
+            callType: callType,
+            conversationType: conversationType,
+            useCBR: useConstantBitRateAudio
+        )
 
-        guard started else { return false }
+        guard started else {
+            throw Failure.unknown
+        }
 
         let callState: CallState = .outgoing(degraded: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
-        createSnapshot(callState: callState, members: [], callStarter: selfUserId, video: video, for: conversationId, isConferenceCall: conversationType == .conference)
+        createSnapshot(
+            callState: callState,
+            members: [],
+            callStarter: selfUserId,
+            video: isVideo,
+            for: conversationId,
+            isConferenceCall: conversationType.isConference
+        )
 
         if let context = uiMOC {
-            WireCallCenterCallStateNotification(context: context,
-                                                callState: callState,
-                                                conversationId: conversationId,
-                                                callerId: selfUserId,
-                                                messageTime: nil,
-                                                previousCallState: previousCallState).post(in: context.notificationContext)
+            WireCallCenterCallStateNotification(
+                context: context,
+                callState: callState,
+                conversationId: conversationId,
+                callerId: selfUserId,
+                messageTime: nil,
+                previousCallState: previousCallState
+            ).post(in: context.notificationContext)
         }
 
-        return true
+        switch conversation.messageProtocol {
+        case .proteus:
+            break
+
+        case .mls:
+            try setUpMLSConference(in: conversation)
+        }
     }
 
     private var canStartConferenceCalls: Bool {
@@ -518,6 +588,75 @@ extension WireCallCenterV3 {
         guard let context = uiMOC else { return false }
         let conferenceCalling = FeatureService(context: context).fetchConferenceCalling()
         return conferenceCalling.status == .enabled
+    }
+
+    private func setUpMLSConference(in conversation: ZMConversation) throws {
+        guard let conversationID = conversation.avsIdentifier else {
+            throw Failure.failedToSetupMLSConference
+        }
+
+        guard
+            let parentQualifiedID = conversation.qualifiedID,
+            let parentGroupID = conversation.mlsGroupID,
+            let syncContext = conversation.managedObjectContext?.zm_sync
+        else {
+            onMLSConferenceFailure(id: conversationID)
+            throw Failure.failedToSetupMLSConference
+        }
+
+        syncContext.perform { [weak self] in
+            guard
+                let self = self,
+                let mlsService = syncContext.mlsService
+            else {
+                self?.onMLSConferenceFailure(id: conversationID)
+                return
+            }
+
+            Task {
+                do {
+                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                        parentQualifiedID: parentQualifiedID,
+                        parentID: parentGroupID
+                    )
+
+                    let initialConferenceInfo = try mlsService.generateConferenceInfo(
+                        parentGroupID: parentGroupID,
+                        subconversationGroupID: subgroupID
+                    )
+
+                    let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
+                        parentGroupID: parentGroupID,
+                        subConversationGroupID: subgroupID
+                    ).prepend(initialConferenceInfo)
+
+                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
+                        Self.logger.debug("passing MLS conference info to AVS")
+                        self?.avsWrapper.setMLSConferenceInfo(
+                            conversationId: conversationID,
+                            info: newConferenceInfo
+                        )
+                    }
+
+                    if var snapshot = self.callSnapshots[conversationID] {
+                        snapshot.qualifiedID = parentQualifiedID
+                        snapshot.groupIDs = (parentGroupID, subgroupID)
+                        snapshot.onConferenceInfoChangedToken = token
+                        self.callSnapshots[conversationID] = snapshot
+                    }
+                } catch {
+                    Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
+                    self.onMLSConferenceFailure(id: conversationID)
+                    throw error
+                }
+            }
+        }
+    }
+
+    private func onMLSConferenceFailure(id: AVSIdentifier) {
+        uiMOC?.perform { [weak self] in
+            self?.closeCall(conversationId: id, reason: .unknown)
+        }
     }
 
     /**
@@ -537,6 +676,13 @@ extension WireCallCenterV3 {
             } else {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
             }
+        }
+
+        if let mlsParentIDs = mlsParentIDS(for: conversationId) {
+            leaveSubconversation(
+                parentQualifiedID: mlsParentIDs.0,
+                parentGroupID: mlsParentIDs.1
+            )
         }
     }
 
@@ -679,6 +825,8 @@ extension WireCallCenterV3 {
         if let context = uiMOC {
             WireCallCenterMissedCallNotification(context: context, conversationId: conversationId, callerId: userId, timestamp: timestamp, video: isVideoCall).post(in: context.notificationContext)
         }
+
+        updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
     }
 
     /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it to the `bufferedEvents`.
@@ -780,11 +928,16 @@ extension WireCallCenterV3 {
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
         }
+
+        updateMLSConferenceIfNeeded(
+            conversationID: conversationId,
+            callState: callState
+        )
     }
 
 }
 
-extension ZMConversation {
+private extension ZMConversation {
 
     var avsConversationType: AVSConversationType? {
         switch (conversationType, messageProtocol) {
@@ -799,6 +952,20 @@ extension ZMConversation {
 
         default:
             return nil
+        }
+    }
+
+}
+
+private extension AVSConversationType {
+
+    var isConference: Bool {
+        switch self {
+        case .conference, .mlsConference:
+            return true
+
+        default:
+            return false
         }
     }
 
