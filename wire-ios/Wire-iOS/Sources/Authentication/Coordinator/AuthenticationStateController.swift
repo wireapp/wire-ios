@@ -77,7 +77,7 @@ class AuthenticationStateController {
         case normal
 
         /**
-         * The state was rewinded to given step and pushed to or reset to the new value. All the previous states up to given step are invalidated.
+         * The state rewinds to a given step and pushes to or resets to the new value. All the previous states up to given step are invalidated.
          * You need to replace the controllers stack and enable the back button.
          */
         case rewindToOrReset(to: RewindMilestone)
