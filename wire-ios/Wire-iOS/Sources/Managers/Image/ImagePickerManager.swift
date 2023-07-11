@@ -18,6 +18,7 @@
 
 import UIKit
 import MobileCoreServices
+import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
@@ -34,6 +35,7 @@ class ImagePickerManager: NSObject {
     private weak var viewController: UIViewController?
     private var sourceType: UIImagePickerController.SourceType?
     private var completion: ((UIImage) -> Void)?
+    private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     // MARK: - Methods
     func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
@@ -51,12 +53,14 @@ class ImagePickerManager: NSObject {
                                             message: nil,
                                             preferredStyle: .actionSheet)
 
-        // Choose from gallery
-        let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
-            self?.sourceType = .photoLibrary
-            self?.getImage(fromSourceType: .photoLibrary)
+        // Choose from gallery option, if security flag enabled
+        if mediaShareRestrictionManager.isPhotoLibraryEnabled {
+            let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ -> Void in
+                self?.sourceType = .photoLibrary
+                self?.getImage(fromSourceType: .photoLibrary)
+            }
+            actionSheet.addAction(galleryAction)
         }
-        actionSheet.addAction(galleryAction)
 
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ -> Void in
