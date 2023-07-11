@@ -20,14 +20,7 @@ import Foundation
 import LocalAuthentication
 
 public class MockEARServiceInterface: EARServiceInterface {
-    public func fetchPublicKeys() throws -> WireDataModel.EARPublicKeys? {
-        nil
-    }
-    
-    public func fetchPrivateKeys(includingPrimary: Bool) throws -> WireDataModel.EARPrivateKeys? {
-        nil
-    }
-    
+
     // MARK: - Life cycle
 
     public init() {}
@@ -157,35 +150,4 @@ public class MockEARServiceInterface: EARServiceInterface {
         }
     }
 
-    public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
-        fetchPrivateKeysIncludingPrimary_Invocations.append(includingPrimary)
-
-        if let error = fetchPrivateKeysIncludingPrimary_MockError {
-            throw error
-        }
-
-        if let mock = fetchPrivateKeysIncludingPrimary_MockMethod {
-            return try mock(includingPrimary)
-        } else if let mock = fetchPrivateKeysIncludingPrimary_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchPrivateKeysIncludingPrimary`")
-        }
-    }
-
-    public func fetchPublicKeys() throws -> EARPublicKeys? {
-        fetchPublicKeys_Invocations.append(())
-
-        if let error = fetchPublicKeys_MockError {
-            throw error
-        }
-
-        if let mock = fetchPublicKeys_MockMethod {
-            return try mock()
-        } else if let mock = fetchPublicKeys_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchPublicKeys`")
-        }
-    }
 }
