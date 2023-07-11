@@ -20,10 +20,12 @@ import Foundation
 extension Payload.MLSMessageSendingStatus {
 
     func updateFailedRecipients(for message: OTREntity) {
-
-        guard let failedToSendUsers = (failedToSend?.compactMap {
-            ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: message.context) }) else {
+        guard let failedToSendUserIds = failedToSend else {
             return
+        }
+        
+        let failedToSendUsers = failedToSendUserIDs.compactMap {
+            ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: message.context) 
         }
 
         if !failedToSendUsers.isEmpty {
