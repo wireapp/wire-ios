@@ -280,39 +280,39 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
-                    return false
-                }
+            return false
+        }
 
-                if message.isKnock || message.isSystem {
-                    return false
-                }
+        if message.isKnock || message.isSystem {
+            return false
+        }
 
-                // A new sender, show the sender details.
-                if !context.isSameSenderAsPrevious {
-                    return true
-                }
+        // A new sender, show the sender details.
+        if !context.isSameSenderAsPrevious {
+            return true
+        }
 
-                // Show sender details again if the last message was a knock.
-                if context.previousMessageIsKnock {
-                    return true
-                }
+        // Show sender details again if the last message was a knock.
+        if context.previousMessageIsKnock {
+            return true
+        }
 
-                // The message was edited.
-                if message.updatedAt != nil {
-                    return true
-                }
+        // The message was edited.
+        if message.updatedAt != nil {
+            return true
+        }
 
-                // We see the self deleting countdown.
-                if isBurstTimestampVisible(in: context) {
-                    return true
-                }
+        // We see the self deleting countdown.
+        if isBurstTimestampVisible(in: context) {
+            return true
+        }
 
-                // This message is from the same sender but in a different minute.
-                if context.isSameSenderAsPrevious && context.isTimestampInSameMinuteAsPreviousMessage {
-                    return true
-                }
+        // This message is from the same sender but in a different minute.
+        if context.isSameSenderAsPrevious && context.isTimestampInSameMinuteAsPreviousMessage {
+            return true
+        }
 
-                return false
+        return false
     }
 
     // MARK: - Highlight
