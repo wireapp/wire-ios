@@ -276,7 +276,7 @@ jobs:
     if: always()
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
-    continue_on_error: true
+    continue-on-error: true
     steps:
       - name: Download tests results
         uses: actions/download-artifact@v3

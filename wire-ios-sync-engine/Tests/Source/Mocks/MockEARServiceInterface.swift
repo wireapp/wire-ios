@@ -20,7 +20,14 @@ import Foundation
 import LocalAuthentication
 
 public class MockEARServiceInterface: EARServiceInterface {
-
+    public func fetchPublicKeys() throws -> WireDataModel.EARPublicKeys? {
+        nil
+    }
+    
+    public func fetchPrivateKeys(includingPrimary: Bool) throws -> WireDataModel.EARPrivateKeys? {
+        nil
+    }
+    
     // MARK: - Life cycle
 
     public init() {}
