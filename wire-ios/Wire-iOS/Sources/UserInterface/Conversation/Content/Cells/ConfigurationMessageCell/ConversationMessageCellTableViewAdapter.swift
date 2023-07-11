@@ -192,6 +192,11 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         guard let actionController = cellDescription?.actionController else { return nil }
         let actionsMenuController = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
 
+        if let popoverPresentationController = actionsMenuController.popoverPresentationController {
+            popoverPresentationController.sourceView = cellView
+            popoverPresentationController.permittedArrowDirections = .left
+        }
+
         return actionsMenuController
     }
 
