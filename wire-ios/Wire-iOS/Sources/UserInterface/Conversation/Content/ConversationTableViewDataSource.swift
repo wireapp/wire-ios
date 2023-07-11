@@ -481,12 +481,11 @@ extension ConversationTableViewDataSource {
         let significantTimeInterval: TimeInterval = 60 * 45
         let isTimeIntervalSinceLastMessageSignificant: Bool
 
-        // 1 minute
-        let isTimeIntervalDifferentFromPreviousToCurrentMessage: Bool
+        let isTimestampInSameMinuteAsPreviousMessage: Bool
 
         let previousMessage = messagePrevious(to: message, at: index)
 
-        isTimeIntervalDifferentFromPreviousToCurrentMessage = IsTimeIntervalDifferentFromPreviousToCurrentMessage(for: message, at: index)
+        isTimestampInSameMinuteAsPreviousMessage = IsTimeIntervalDifferentFromPreviousToCurrentMessage(for: message, at: index)
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
             isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
@@ -498,7 +497,7 @@ extension ConversationTableViewDataSource {
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
             isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
-            isTimeIntervalDifferentFromPreviousToCurrentMessage: isTimeIntervalDifferentFromPreviousToCurrentMessage,
+            isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
@@ -521,7 +520,7 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    private func IsTimeIntervalDifferentFromPreviousToCurrentMessage(for message: ZMConversationMessage, at index: Int) -> Bool {
+    private func isTimestampInSameMinuteAsPreviousMessage(for message: ZMConversationMessage, at index: Int) -> Bool {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
         let calendar = Calendar.current
 

@@ -136,7 +136,6 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    private(set) var dataSource: ConversationSenderMessageDetailsDataSource?
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 16
@@ -152,28 +151,17 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     /// - Parameters:
     ///   - sender: The given sender of the message
     ///   - message: The given message
-    ///   - showTimestamp: Checks if we should show or hide the timestamp
-    init(sender: UserType, message: ZMConversationMessage, showTimestamp: Bool) {
+    ///   - timestamp: The given timestamp of the message
+    init(sender: UserType, message: ZMConversationMessage, timestamp: String?) {
         self.message = message
 
         var icon: UIImage?
-        var timestamp: String?
         let iconColor = SemanticColors.Icon.foregroundDefault
 
         if message.isDeletion {
             icon = StyleKitIcon.trash.makeImage(size: 8, color: iconColor)
         } else if message.updatedAt != nil {
             icon = StyleKitIcon.pencil.makeImage(size: 8, color: iconColor)
-        }
-
-        if dataSource?.message.nonce != message.nonce {
-            dataSource = ConversationSenderMessageDetailsDataSource(message: message)
-        }
-
-        if showTimestamp == false {
-            timestamp = nil
-        } else {
-            timestamp = dataSource?.timestampString(message)
         }
 
         self.configuration = View.Configuration(user: sender, message: message, timestamp: timestamp, indicatorIcon: icon)

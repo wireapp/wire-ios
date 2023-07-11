@@ -335,7 +335,7 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(callCell)]
 
         case .messageDeletedForEveryone:
-            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: false)
+            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message, timestamp: nil)
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:

@@ -22,7 +22,7 @@ import WireSyncEngine
 struct ConversationMessageContext: Equatable {
     let isSameSenderAsPrevious: Bool
     let isTimeIntervalSinceLastMessageSignificant: Bool
-    let isTimeIntervalDifferentFromPreviousToCurrentMessage: Bool
+    let isTimestampInSameMinuteAsPreviousMessage: Bool
     let isFirstMessageOfTheDay: Bool
     let isFirstUnreadMessage: Bool
     let isLastMessage: Bool
@@ -227,13 +227,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         cellDescriptions.removeAll()
 
-        let isSenderVisible = self.shouldShowSenderDetails(in: context) && message.senderUser != nil
+        let isSenderVisible = self.shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible(in: context) {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
         }
-        if isSenderVisible, let sender = message.senderUser {
-            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, showTimestamp: isSenderVisible))
+
+        if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
+            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, timestamp: timestamp))
         }
 
         addContent(context: context, isSenderVisible: isSenderVisible)
@@ -307,7 +308,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 }
 
                 // This message is from the same sender but in a different minute.
-                if context.isSameSenderAsPrevious && context.isTimeIntervalDifferentFromPreviousToCurrentMessage {
+                if context.isSameSenderAsPrevious && context.isTimestampInSameMinuteAsPreviousMessage {
                     return true
                 }
 
