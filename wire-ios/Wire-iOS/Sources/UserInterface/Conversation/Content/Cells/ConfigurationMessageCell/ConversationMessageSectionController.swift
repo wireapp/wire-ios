@@ -275,7 +275,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        return context.isLastMessage || message.deliveryState == .failedToSend || message.isSentBySelfUser
+        return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {

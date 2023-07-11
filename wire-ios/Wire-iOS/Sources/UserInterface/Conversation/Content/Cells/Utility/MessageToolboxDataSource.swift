@@ -191,7 +191,7 @@ class MessageToolboxDataSource {
     /// Returns the status for the sender of the message.
     private func selfMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let sender = message.senderUser, sender.isSelfUser else {
-            return NSAttributedString(string: "")
+            return nil
         }
 
         var deliveryStateString: String
