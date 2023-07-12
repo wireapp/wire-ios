@@ -261,18 +261,20 @@ platform :ios do
         path = '../wire-ios-build-assets'
         `rm -rf #{path}`
         if is_running_on_ci 
-            g = Git.clone(
+            Git.clone(
                 "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-build-assets.git",
                 path
             )
             
-            puts g.branch('fix/debugbuilds').checkout
+            sh "cd ../wire-ios-build-assets/;git merge origin/fix/debugbuilds"
 
         else
             Git.clone(
                 "git@github.com:wireapp/wire-ios-build-assets.git",
                 path
             )
+            sh "cd ../wire-ios-build-assets/;git merge origin/fix/debugbuilds"
+
         end
     end
 
