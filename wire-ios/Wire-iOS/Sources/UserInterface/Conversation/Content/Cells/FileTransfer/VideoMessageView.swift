@@ -51,11 +51,9 @@ final class VideoMessageView: UIView, TransferView {
 
     private var allViews: [UIView] = []
     private var state: FileMessageViewState = .unavailable
-    let dispatchGroup = DispatchGroup()
 
     required override init(frame: CGRect) {
         super.init(frame: frame)
-        print("Cancel file sending: create view")
 
         self.previewImageView.contentMode = .scaleAspectFill
         self.previewImageView.clipsToBounds = true
@@ -66,9 +64,7 @@ final class VideoMessageView: UIView, TransferView {
         self.playButton.accessibilityIdentifier = "VideoActionButton"
         self.playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
         self.playButton.layer.masksToBounds = true
-        playButton.setIcon(.play, size: 28, for: .normal)
-        playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
-        playButton.isUserInteractionEnabled = true
+        self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
 
         self.progressView.isUserInteractionEnabled = false
         self.progressView.accessibilityIdentifier = "VideoProgressView"
@@ -142,8 +138,6 @@ final class VideoMessageView: UIView, TransferView {
     }
 
     func configure(for message: ZMConversationMessage, isInitial: Bool) {
-        print("Cancel file sending: configure message")
-
         self.fileMessage = message
 
         guard let fileMessage = self.fileMessage,
@@ -153,10 +147,10 @@ final class VideoMessageView: UIView, TransferView {
         self.state = state
         if state != .unavailable {
             self.updateTimeLabel(withFileMessageData: fileMessageData)
-            //                fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
-            //                    guard let image = image else { return }
-            //                    self?.updatePreviewImage(image)
-            //                }
+            fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+                guard let image = image else { return }
+                self?.updatePreviewImage(image)
+            }
         }
 
         if state == .uploading || state == .downloading {
@@ -167,7 +161,7 @@ final class VideoMessageView: UIView, TransferView {
             self.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
             self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
         }
-        //updateVisibleViews()
+        updateVisibleViews()
     }
 
     private func visibleViews(for state: FileMessageViewState) -> [UIView] {
@@ -202,7 +196,7 @@ final class VideoMessageView: UIView, TransferView {
     private func updatePreviewImage(_ image: MediaAsset) {
         self.previewImageView.mediaAsset = image
         self.timeLabel.textColor = .white
-        //updateVisibleViews()
+        updateVisibleViews()
     }
 
     private func updateTimeLabel(withFileMessageData fileMessageData: ZMFileMessageData) {
@@ -238,26 +232,23 @@ final class VideoMessageView: UIView, TransferView {
 
     @objc
     func onActionButtonPressed() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            print("Cancel file sending: button pressed")
+        guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
+
+        switch fileMessageData.transferState {
+        case .uploading:
+            if .none != fileMessageData.fileURL {
+                self.delegate?.transferView(self, didSelect: .cancel)
+            }
+        case .uploadingCancelled, .uploadingFailed:
+            self.delegate?.transferView(self, didSelect: .resend)
+        case .uploaded:
+            if case .downloading = fileMessageData.downloadState {
+                self.progressView.setProgress(0, animated: false)
+                self.delegate?.transferView(self, didSelect: .cancel)
+            } else {
+                self.delegate?.transferView(self, didSelect: .present)
+            }
         }
-//        guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
-//
-//        switch fileMessageData.transferState {
-//        case .uploading:
-//            if .none != fileMessageData.fileURL {
-//                self.delegate?.transferView(self, didSelect: .cancel)
-//            }
-//        case .uploadingCancelled, .uploadingFailed:
-//            self.delegate?.transferView(self, didSelect: .resend)
-//        case .uploaded:
-//            if case .downloading = fileMessageData.downloadState {
-//                self.progressView.setProgress(0, animated: false)
-//                self.delegate?.transferView(self, didSelect: .cancel)
-//            } else {
-//                self.delegate?.transferView(self, didSelect: .present)
-//            }
-//        }
 
     }
 

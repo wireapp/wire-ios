@@ -23,10 +23,9 @@ extension UIView {
 
     public func updateVisibleViews(_ views: [UIView], visibleViews: [UIView], animated: Bool) {
         if animated {
-//            UIView.transition(with: self, duration: 0.35, options: .transitionCrossDissolve, animations: {
-//                self.updateVisibleViews(views, visibleViews: visibleViews)
-//                }, completion: nil)
-            self.updateVisibleViews(views, visibleViews: visibleViews)
+            UIView.transition(with: self, duration: 0.35, options: .transitionCrossDissolve, animations: {
+                self.updateVisibleViews(views, visibleViews: visibleViews)
+                }, completion: nil)
         } else {
             self.updateVisibleViews(views, visibleViews: visibleViews)
         }

@@ -87,7 +87,7 @@ extension ConversationSelectionViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if let searchText = searchController.searchBar.text, !searchText.isEmpty {
             visibleConversations = allConversations.filter { conversation in
-                if conversation.name?.range(of: searchText, options: [.diacriticInsensitive, .caseInsensitive]) != nil {
+                if conversation.name.range(of: searchText, options: [.diacriticInsensitive, .caseInsensitive]) != nil {
                     return true
                 } else {
                     return false
