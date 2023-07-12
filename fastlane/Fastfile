@@ -232,11 +232,13 @@ platform :ios do
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         if options[:run_security_tests] || false
+            create_simulator_if_needed
             security_plans(options)
         end
         if options[:produce_debug_builds] || false
             build_for_release(options.merge({:configuration => "Debug", :for_simulator => true}))
         end
+        
         build_for_release(options)
         if options[:upload_app_store] || false
             upload_app_store(options)
@@ -265,16 +267,11 @@ platform :ios do
                 "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-build-assets.git",
                 path
             )
-            
-            sh "cd ../wire-ios-build-assets/;git merge origin/fix/debugbuilds"
-
         else
             Git.clone(
                 "git@github.com:wireapp/wire-ios-build-assets.git",
                 path
             )
-            sh "cd ../wire-ios-build-assets/;git merge origin/fix/debugbuilds"
-
         end
     end
 
