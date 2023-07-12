@@ -58,13 +58,11 @@ final class VideoMessageView: UIView, TransferView {
         self.previewImageView.contentMode = .scaleAspectFill
         self.previewImageView.clipsToBounds = true
         self.previewImageView.backgroundColor = SemanticColors.View.backgroundCollectionCell
-        self.previewImageView.image = nil
 
-        self.playButton.addTarget(self, action: #selector(onActionButtonPressed), for: .touchUpInside)
+        self.playButton.addTarget(self, action: #selector(VideoMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
         self.playButton.accessibilityIdentifier = "VideoActionButton"
         self.playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
         self.playButton.layer.masksToBounds = true
-        self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
 
         self.progressView.isUserInteractionEnabled = false
         self.progressView.accessibilityIdentifier = "VideoProgressView"
@@ -74,7 +72,6 @@ final class VideoMessageView: UIView, TransferView {
 
         self.timeLabel.numberOfLines = 1
         self.timeLabel.accessibilityIdentifier = "VideoActionTimeLabel"
-        self.timeLabel.textColor = SemanticColors.Label.textDefault
 
         self.loadingView.isHidden = true
 
@@ -146,7 +143,9 @@ final class VideoMessageView: UIView, TransferView {
 
         self.state = state
         if state != .unavailable {
-            self.updateTimeLabel(withFileMessageData: fileMessageData)
+            updateTimeLabel(withFileMessageData: fileMessageData)
+            self.timeLabel.textColor = SemanticColors.Label.textDefault
+
             fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
                 guard let image = image else { return }
                 self?.updatePreviewImage(image)
@@ -161,6 +160,7 @@ final class VideoMessageView: UIView, TransferView {
             self.playButton.setIcon(viewsState.playButtonIcon, size: 28, for: .normal)
             self.playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
         }
+
         updateVisibleViews()
     }
 
@@ -173,7 +173,7 @@ final class VideoMessageView: UIView, TransferView {
             return [loadingView]
         }
 
-        var visibleViews: [UIView] = [previewImageView, playButton]
+        var visibleViews: [UIView] = [playButton, previewImageView]
 
         switch state {
         case .uploading, .downloading:
@@ -194,8 +194,8 @@ final class VideoMessageView: UIView, TransferView {
     }
 
     private func updatePreviewImage(_ image: MediaAsset) {
-        self.previewImageView.mediaAsset = image
-        self.timeLabel.textColor = .white
+        previewImageView.mediaAsset = image
+        timeLabel.textColor = .white
         updateVisibleViews()
     }
 
@@ -231,7 +231,7 @@ final class VideoMessageView: UIView, TransferView {
     // MARK: - Actions
 
     @objc
-    func onActionButtonPressed() {
+    func onActionButtonPressed(_ sender: UIButton) {
         guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
 
         switch fileMessageData.transferState {
@@ -249,7 +249,6 @@ final class VideoMessageView: UIView, TransferView {
                 self.delegate?.transferView(self, didSelect: .present)
             }
         }
-
     }
 
 }
