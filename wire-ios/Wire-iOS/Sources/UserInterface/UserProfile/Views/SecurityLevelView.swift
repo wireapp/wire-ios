@@ -22,7 +22,7 @@ import WireSyncEngine
 import WireCommonComponents
 
 protocol ClassificationProviding {
-    func classification(with users: [UserType]) -> SecurityClassification
+    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification
 }
 
 extension ZMUserSession: ClassificationProviding {}
@@ -79,10 +79,11 @@ final class SecurityLevelView: UIView {
 
     func configure(
         with otherUsers: [UserType],
+        conversationDomain: String?,
         provider: ClassificationProviding? = ZMUserSession.shared()
     ) {
 
-        guard let classification = provider?.classification(with: otherUsers) else {
+        guard let classification = provider?.classification(with: otherUsers, conversationDomain: conversationDomain) else {
             isHidden = true
             return
         }
