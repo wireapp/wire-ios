@@ -142,6 +142,8 @@ final class VideoMessageView: UIView, TransferView {
               let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
 
         self.state = state
+        self.previewImageView.image = nil
+
         if state != .unavailable {
             updateTimeLabel(withFileMessageData: fileMessageData)
             self.timeLabel.textColor = SemanticColors.Label.textDefault
