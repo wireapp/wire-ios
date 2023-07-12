@@ -340,6 +340,25 @@ enum Payload {
         let failedToSend: ClientListByQualifiedUserID
     }
 
+    struct MLSMessageSendingStatus: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case events
+            case failedToSend = "failed_to_send"
+        }
+
+        /// Time of sending message.
+        let time: Date
+
+        /// A list of events caused by sending the message.
+        let events: [Data]
+
+        /// List of federated users who could not be reached and did not receive the message.
+        let failedToSend: [QualifiedID]?
+
+    }
+
     struct PaginationStatus: Codable {
 
         enum CodingKeys: String, CodingKey {
