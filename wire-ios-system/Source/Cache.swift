@@ -30,11 +30,6 @@ public class Cache<Key: Hashable, Value> {
     private struct EntryMetadata<Value> {
         let value: Value
         let cost: Int
-
-        init(value: Value, cost: Int) {
-            self.value = value
-            self.cost = cost
-        }
     }
 
     /// Create a new cache

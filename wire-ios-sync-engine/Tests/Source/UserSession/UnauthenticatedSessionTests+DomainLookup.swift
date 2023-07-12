@@ -101,7 +101,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
         XCTAssertTrue(gettingExpectedError)
     }
-    
+
     // MARK: Response handling
 
     func testThat404ResponseWithNoMatchingLabelIsError() {

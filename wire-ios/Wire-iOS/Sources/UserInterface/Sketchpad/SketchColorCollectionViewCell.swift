@@ -133,11 +133,6 @@ struct SketchColor: Equatable {
     var name: String
     var color: UIColor
 
-    init(name: String, color: UIColor) {
-        self.name = name
-        self.color = color
-    }
-
     static func getAllColors() -> [SketchColor] {
         return SketchColors.allCases.map { SketchColor(name: $0.name, color: $0.color) }
     }

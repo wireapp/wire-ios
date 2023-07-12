@@ -424,7 +424,7 @@ final class SessionManagerTests: IntegrationTest {
         // THEN
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.cachesDirectoryPath.path))
     }
-  
+
     func tmpDirectoryPath() -> URL {
         return URL(fileURLWithPath: NSTemporaryDirectory())
     }
@@ -441,14 +441,14 @@ final class SessionManagerTests: IntegrationTest {
         let fCount = try FileManager.default.contentsOfDirectory(atPath: tmpDirectoryPath().path).count
         XCTAssertEqual(fCount, 1)
         XCTAssertTrue(FileManager.default.fileExists(atPath: tempUrl.path))
-        
+
         // WHEN
         withExtendedLifetime(token) {
             sessionManager?.logoutCurrentSession()
         }
-        
+
         let fileCount = try FileManager.default.contentsOfDirectory(atPath: self.tmpDirectoryPath().path).count
-        
+
         // THEN
         XCTAssertEqual(fileCount, 0)
         XCTAssertFalse(FileManager.default.fileExists(atPath: tempUrl.path))
