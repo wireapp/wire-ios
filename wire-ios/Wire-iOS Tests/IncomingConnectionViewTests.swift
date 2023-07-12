@@ -44,7 +44,6 @@ final class IncomingConnectionViewTests: ZMSnapshotTestCase {
         verify(matching: sut.layoutForTest())
     }
 
-
     func testThatItRendersWithUnconnectedUser() {
         let user = MockUserType.createUser(name: "Test")
         user.isConnected = false

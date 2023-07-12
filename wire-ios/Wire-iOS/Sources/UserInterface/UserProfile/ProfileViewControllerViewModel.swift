@@ -70,7 +70,7 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     var classification: SecurityClassification {
-        classificationProvider?.classification(with: [user]) ?? .none
+        classificationProvider?.classification(with: [user], conversationDomain: nil) ?? .none
     }
 
     var hasLegalHoldItem: Bool {
