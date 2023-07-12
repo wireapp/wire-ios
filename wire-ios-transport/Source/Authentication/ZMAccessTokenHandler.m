@@ -191,7 +191,6 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         return;
     }
 
-    ZMLogInfo(@"Requesting access token from cookie (existing token: %p).", self.accessToken);
     if(self.cookieStorage.authenticationCookieData == nil) {
         ZMLogError(@"No cookie to request access token");
         [self notifyTokenFailure:nil];
@@ -236,9 +235,6 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 - (void)didCompleteAccessTokenRequestWithTask:(NSURLSessionTask *)task data:(NSData *)data session:(ZMURLSession *)session shouldRetry:(BOOL)shouldRetry apiVersion:(int)apiVersion
 {
-    ZMLogInfo(@"<---- Access token task completed: %@ // %@", task, task.error);
-    ZMLogInfo(@"<---- Access token URL session: %@", session.description);
-    
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:NO];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:task.response data:data error:transportError apiVersion:apiVersion];
     BOOL needToResend = [self processAccessTokenResponse:response];
@@ -304,7 +300,6 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         
         if ( ! didFail) {
             self.accessToken = newToken;
-            ZMLogInfo(@"New access token <%@: %p>", self.accessToken.class, self.accessToken);
             [self notifyTokenSuccess:newToken];
         }
         

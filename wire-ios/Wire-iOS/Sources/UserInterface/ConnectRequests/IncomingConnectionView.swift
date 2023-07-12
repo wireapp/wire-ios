@@ -115,7 +115,9 @@ final class IncomingConnectionView: UIView {
         usernameLabel.attributedText = viewModel.title
         usernameLabel.accessibilityIdentifier = "name"
         userDetailView.configure(with: viewModel)
-        securityLevelView.configure(with: [user], provider: classificationProvider)
+        securityLevelView.configure(with: [user],
+                                    conversationDomain: nil,
+                                    provider: classificationProvider)
     }
 
     private func createConstraints() {

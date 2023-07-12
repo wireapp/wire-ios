@@ -243,7 +243,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
-        BackendInfo.isFederationEnabled = false
+        BackendInfo.isFederationEnabled = true
         BackendInfo.domain = localDomain
 
         syncMOC.performGroupedBlock {
@@ -261,4 +261,62 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .notClassified)
     }
 
+    func testThatItReturnsNotClassified_WhenFeatureIsEnabled_WhenConversationDomainNotClassified() {
+        // given
+        let otherUser1 = createUser(moc: syncMOC, domain: UUID().uuidString)
+        let otherUser2 = createUser(moc: syncMOC, domain: UUID().uuidString)
+        let otherUsers = [otherUser1, otherUser2]
+        let localDomain = UUID().uuidString
+
+        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+
+        storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
+        BackendInfo.isFederationEnabled = true
+        BackendInfo.domain = localDomain
+
+        syncMOC.performGroupedBlock {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.domain = UUID().uuidString
+            self.syncMOC.saveOrRollback()
+        }
+
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        let classification = sut.classification(with: otherUsers, conversationDomain: "not.Classified.Domain")
+
+        // then
+        XCTAssertEqual(classification, .notClassified)
+    }
+
+    func testThatItReturnsClassified_WhenFeatureIsEnabled_WhenConversationDomainIsClassified() {
+        // given
+        let otherDomain = UUID().uuidString
+        let otherUser1 = createUser(moc: syncMOC, domain: otherDomain)
+        let otherUser2 = createUser(moc: syncMOC, domain: UUID().uuidString)
+        let otherUsers = [otherUser1, otherUser2]
+        let localDomain = UUID().uuidString
+
+        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
+
+        storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
+        BackendInfo.isFederationEnabled = true
+        BackendInfo.domain = localDomain
+
+        syncMOC.performGroupedBlock {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.domain = UUID().uuidString
+            self.syncMOC.saveOrRollback()
+        }
+
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        let classification = sut.classification(with: otherUsers, conversationDomain: otherDomain)
+
+        // then
+        XCTAssertEqual(classification, .classified)
+    }
 }

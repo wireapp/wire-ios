@@ -220,6 +220,26 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), true)
     }
 
+    func testThatItStartsAObuscationTimerForImageAssetMessagesIfTheMessageIsAMessageOfTheCurrentUser() throws {
+        // given
+        syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        syncConversation.lastReadServerTimeStamp = Date()
+        let sender = ZMUser.selfUser(in: syncMOC)
+
+        let fileMetadata = self.createFileMetadata()
+        let message = appendImageMessage(to: syncConversation)
+        message.sender = sender
+        try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))
+        XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
+
+        // when
+        XCTAssertTrue(message.startDestructionIfNeeded())
+
+        // then
+        XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
+        XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
+    }
+
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser() throws {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)

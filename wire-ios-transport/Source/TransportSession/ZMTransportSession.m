@@ -503,9 +503,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self.remoteMonitoring logWithResponse:httpResponse];
 
     ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
-    ZMLogPublic(@"Response to %@: %@", request.safeForLoggingDescription,  response.safeForLoggingDescription);
-    ZMLogInfo(@"<---- Response to %@ %@ (status %u): %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, response);
-    ZMLogInfo(@"URL Session is %@", session.description);
     if (response.result == ZMTransportResponseStatusExpired) {
         [request completeWithResponse:response];
         return;
