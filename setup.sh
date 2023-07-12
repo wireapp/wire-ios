@@ -74,8 +74,8 @@ which bundle || gem install bundler
 bundle check || bundle install
 echo ""
 
-echo "ℹ️  Downloading additional assets..."
-scripts/download-assets.sh "$@"
+echo "ℹ️  Overriding configuration if specified..."
+scripts/override-configuration_if_needed.sh "$@"
 echo "" 
 
 echo "ℹ️  Doing additional postprocessing..."
