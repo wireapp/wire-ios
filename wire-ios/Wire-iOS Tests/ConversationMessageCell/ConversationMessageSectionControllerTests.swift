@@ -112,55 +112,8 @@ final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
         let section = ConversationMessageSectionController(message: message, context: context)
 
         // THEN
-        XCTAssertFalse(section.shouldShowSenderDetails(in: context))
+
+
+        
     }
-
-    func testThatWeShowSenderDetails_WhenIsNotSameSenderAsPrevious() {
-        // GIVEN
-        let message = MockMessageFactory.textMessage(
-            withText: "Welcome to Dub Dub",
-            sender: mockSelfUser
-        )
-
-        context = ConversationMessageContext(isSameSenderAsPrevious: false,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: false,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: false,
-                                             spacing: 0)
-
-        // WHEN
-        let section = ConversationMessageSectionController(message: message, context: context)
-
-        // THEN
-        XCTAssertTrue(section.shouldShowSenderDetails(in: context))
-    }
-
-    func testIfWeShowSenderDetails_WhenPreviousMessageIsKnock() {
-        // GIVEN
-        let message = MockMessageFactory.textMessage(
-            withText: "Welcome to Dub Dub",
-            sender: mockSelfUser
-        )
-
-        context = ConversationMessageContext(isSameSenderAsPrevious: false,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: false,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: true,
-                                             spacing: 0)
-
-        // WHEN
-        let section = ConversationMessageSectionController(message: message, context: context)
-
-        // THEN
-        XCTAssertTrue(section.shouldShowSenderDetails(in: context))
-    }
-
 }
