@@ -58,6 +58,7 @@ platform :ios do
         options[:upload_app_center] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        options[:last_commit] = last_git_commit
         build_and_upload_app(options)
     end
 
