@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+import WireDataModel
 
 class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDelegate {
 
@@ -90,6 +91,37 @@ class AuthenticationStateControllerTests: XCTestCase {
         XCTAssertEqual(stateController.stack, [.landingScreen])
         XCTAssertEqual(delegate.lastKnownChangeMode, .reset)
         XCTAssertEqual(delegate.lastKnownStep, .landingScreen)
+    }
+
+    func testThatItAdvancesStateWithRewind() {
+        // GIVEN
+        let user = UnregisteredUser()
+        stateController.transition(to: .landingScreen, mode: .normal)
+        stateController.transition(to: .createCredentials(user), mode: .normal)
+
+        // WHEN
+        stateController.transition(to: .incrementalUserCreation(user, .setName), mode: .rewindToOrReset(to: .createCredentials(user)))
+
+        // THEN
+        XCTAssertEqual(stateController.currentStep, .incrementalUserCreation(user, .setName))
+        XCTAssertEqual(stateController.stack, [.start, .landingScreen, .createCredentials(user), .incrementalUserCreation(user, .setName)])
+        XCTAssertEqual(delegate.lastKnownChangeMode, .rewindToOrReset(to: .createCredentials(user)))
+        XCTAssertEqual(delegate.lastKnownStep, .incrementalUserCreation(user, .setName))
+    }
+
+    func testThatItAdvancesStateWithRewindButReset() {
+        // GIVEN
+        let user = UnregisteredUser()
+        stateController.transition(to: .landingScreen, mode: .normal)
+
+        // WHEN
+        stateController.transition(to: .incrementalUserCreation(user, .setName), mode: .rewindToOrReset(to: .createCredentials(user)))
+
+        // THEN
+        XCTAssertEqual(stateController.currentStep, .incrementalUserCreation(user, .setName))
+        XCTAssertEqual(stateController.stack, [.incrementalUserCreation(user, .setName)])
+        XCTAssertEqual(delegate.lastKnownChangeMode, .rewindToOrReset(to: .createCredentials(user)))
+        XCTAssertEqual(delegate.lastKnownStep, .incrementalUserCreation(user, .setName))
     }
 
     func testThatItDoesNotUnwindFromInitialState() {
