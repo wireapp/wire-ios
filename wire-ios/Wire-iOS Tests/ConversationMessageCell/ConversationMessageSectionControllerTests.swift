@@ -19,15 +19,18 @@
 import XCTest
 @testable import Wire
 
-final class ConversationMessageSectionControllerTests: XCTestCase {
+final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
 
-    // MARK: - Dequeuing
+    // MARK: - Properties
 
     var context: ConversationMessageContext!
+    var mockSelfUser: MockUserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        mockSelfUser = MockUserType.createDefaultSelfUser()
         context = ConversationMessageContext(isSameSenderAsPrevious: false,
                                              isTimeIntervalSinceLastMessageSignificant: false,
                                              isTimestampInSameMinuteAsPreviousMessage: false,
@@ -39,11 +42,17 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                              spacing: 0)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         context = nil
+        mockSelfUser = nil
 
         super.tearDown()
     }
+
+
+    // MARK: - Tests
 
     func testThatItReturnsCellsInCorrectOrder_Normal() {
 
@@ -80,6 +89,78 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         XCTAssertEqual(String(describing: cell1.baseType), "MockCellDescription<String>")
         XCTAssertEqual(String(describing: cell2.baseType), "MockCellDescription<Bool>")
+    }
+
+    func testThatWeDoNotShowSenderDetails_WhenIsSameSenderAsPrevious() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(
+            withText: "Hello",
+            sender: mockSelfUser
+        )
+
+        context = ConversationMessageContext(isSameSenderAsPrevious: true,
+                                             isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimestampInSameMinuteAsPreviousMessage: true,
+                                             isFirstMessageOfTheDay: false,
+                                             isFirstUnreadMessage: false,
+                                             isLastMessage: false,
+                                             searchQueries: [],
+                                             previousMessageIsKnock: false,
+                                             spacing: 0)
+
+        // WHEN
+        let section = ConversationMessageSectionController(message: message, context: context)
+
+        // THEN
+        XCTAssertFalse(section.shouldShowSenderDetails(in: context))
+    }
+
+    func testThatWeShowSenderDetails_WhenIsNotSameSenderAsPrevious() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(
+            withText: "Welcome to Dub Dub",
+            sender: mockSelfUser
+        )
+
+        context = ConversationMessageContext(isSameSenderAsPrevious: false,
+                                             isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimestampInSameMinuteAsPreviousMessage: false,
+                                             isFirstMessageOfTheDay: false,
+                                             isFirstUnreadMessage: false,
+                                             isLastMessage: false,
+                                             searchQueries: [],
+                                             previousMessageIsKnock: false,
+                                             spacing: 0)
+
+        // WHEN
+        let section = ConversationMessageSectionController(message: message, context: context)
+
+        // THEN
+        XCTAssertTrue(section.shouldShowSenderDetails(in: context))
+    }
+
+    func testIfWeShowSenderDetails_WhenPreviousMessageIsKnock() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(
+            withText: "Welcome to Dub Dub",
+            sender: mockSelfUser
+        )
+
+        context = ConversationMessageContext(isSameSenderAsPrevious: false,
+                                             isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimestampInSameMinuteAsPreviousMessage: false,
+                                             isFirstMessageOfTheDay: false,
+                                             isFirstUnreadMessage: false,
+                                             isLastMessage: false,
+                                             searchQueries: [],
+                                             previousMessageIsKnock: true,
+                                             spacing: 0)
+
+        // WHEN
+        let section = ConversationMessageSectionController(message: message, context: context)
+
+        // THEN
+        XCTAssertTrue(section.shouldShowSenderDetails(in: context))
     }
 
 }
