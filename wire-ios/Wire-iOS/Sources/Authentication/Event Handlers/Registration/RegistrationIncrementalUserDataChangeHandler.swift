@@ -39,7 +39,13 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
             return handleMissingMarketingConsent(with: unregisteredUser)
 
         } else if unregisteredUser.name == nil {
-            return requestIntermediateStep(.setName, with: unregisteredUser, mode: .rewindToOrReset(to: .createCredentials(makeNewUnregisteredUser(from: unregisteredUser))))
+            return requestIntermediateStep(
+                .setName,
+                with: unregisteredUser,
+                mode: .rewindToOrReset(
+                    to: .createCredentials(makeNewUnregisteredUser(from: unregisteredUser))
+                )
+            )
 
         } else if unregisteredUser.password == nil && unregisteredUser.needsPassword {
             return requestIntermediateStep(.setPassword, with: unregisteredUser, mode: .normal)
@@ -51,7 +57,10 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
 
     // MARK: - Specific Flow Handlers
 
-    private func requestIntermediateStep(_ step: IntermediateRegistrationStep, with user: UnregisteredUser, mode: AuthenticationStateController.StateChangeMode) -> [AuthenticationCoordinatorAction] {
+    private func requestIntermediateStep(
+        _ step: IntermediateRegistrationStep,
+        with user: UnregisteredUser,
+        mode: AuthenticationStateController.StateChangeMode) -> [AuthenticationCoordinatorAction] {
         let flowStep = AuthenticationFlowStep.incrementalUserCreation(user, step)
         return [.hideLoadingView, .transition(flowStep, mode: mode)]
     }
