@@ -1,0 +1,24 @@
+name: (CirrusCI) Playground
+
+on:  workflow_dispatch
+
+permissions: 
+  checks: write
+
+jobs:
+  playground:
+    runs-on: ubuntu-latest
+    env:
+      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+      - name: Install dependencies
+        run: bundle install
+      - name: Trigger build
+        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Playground"

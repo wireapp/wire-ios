@@ -76,8 +76,6 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      GITHUB_AVS_ACCESS_TOKEN: ${{ secrets.ZENKINS_WORKFLOW_PAT }}
-      AVS_REPO: ${{ secrets.AVS_REPO }}
       
     steps:
       - uses: actions/checkout@v3
@@ -88,6 +86,18 @@ jobs:
         run: |
           sudo xcode-select -switch /Applications/Xcode_14.2.app
           /usr/bin/xcodebuild -version
+      
+      - uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-carthage-
+      
+      - name: Run carthage
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: carthage build --platform iOS --use-xcframeworks
 
       - name: Setup workspace
         run: |
@@ -259,3 +269,24 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+
+  upload-test-results-datadadog:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: always()
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+    steps:
+      - name: Download tests results
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+        with:
+          name: test-reports
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install datadog-ci
+        run: npm install -g @datadog/datadog-ci
+      - name: "Upload results"
+        run: |
+          DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu datadog-ci junit upload --service wire-ios-mono ./*.junit
