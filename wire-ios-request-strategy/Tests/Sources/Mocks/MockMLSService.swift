@@ -32,7 +32,7 @@ class MockMLSService: MLSServiceInterface {
         var commitPendingProposalsInGroup: [MLSGroupID] = []
         var wipeGroup = [MLSGroupID]()
         var createSelfGroup = [MLSGroupID]()
-        var joinSelfGroup = [MLSGroupID]()
+        var joinGroup = [MLSGroupID]()
     }
 
     func decrypt(
@@ -134,8 +134,8 @@ class MockMLSService: MLSServiceInterface {
         calls.createSelfGroup.append(groupID)
     }
 
-    func joinSelfGroup(with groupID: MLSGroupID) {
-        calls.joinSelfGroup.append(groupID)
+    func joinGroup(with groupID: MLSGroupID) {
+        calls.joinGroup.append(groupID)
     }
 
     func leaveSubconversation(

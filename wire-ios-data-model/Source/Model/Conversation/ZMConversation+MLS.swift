@@ -209,13 +209,11 @@ public extension ZMConversation {
                     WireLogger.mls.error("failed to create Group for \(mlsGroupID   )")
                 }
             }
-            // to rename
-            mlsService.joinSelfGroup(with: mlsGroupID)
+            mlsService.joinGroup(with: mlsGroupID)
         
             let selfUser = ZMUser.selfUser(in: syncContext)
             let mlsUser = MLSUser(from: selfUser)
             Task {
-                WireLogger.mls.debug("addMembersToConversation start")
                 do {
                     try await mlsService.addMembersToConversation(with: [mlsUser], for: mlsGroupID)
                 } catch {

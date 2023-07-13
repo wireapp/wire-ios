@@ -852,7 +852,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
       
         // then
-        XCTAssertFalse(mockMLS.calls.joinSelfGroup.isEmpty)
+        XCTAssertFalse(mockMLS.calls.joinGroup.isEmpty)
     }
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) -> MockMLSService {

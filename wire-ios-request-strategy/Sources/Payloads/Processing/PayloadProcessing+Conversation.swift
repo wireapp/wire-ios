@@ -176,7 +176,7 @@ extension Payload.Conversation {
         if conversation.epoch <= 0 {
             mlsService.createSelfGroup(for: groupId)
         } else {
-            mlsService.joinSelfGroup(with: groupId)
+            mlsService.joinGroup(with: groupId)
         }
     }
 
