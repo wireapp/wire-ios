@@ -163,11 +163,6 @@ public struct WireCallCenterCallParticipantNotification: SelfPostingNotification
     let conversationId: AVSIdentifier
     let participants: [CallParticipant]
 
-    init(conversationId: AVSIdentifier, participants: [CallParticipant]) {
-        self.conversationId = conversationId
-        self.participants = participants
-    }
-
 }
 
 // MARK: - VoiceGainObserver
