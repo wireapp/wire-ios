@@ -73,11 +73,11 @@ public enum DeveloperFlag: String, CaseIterable {
     var bundleKey: String? {
         switch self {
         case .enableMLSSupport:
-            return "MLS_ENABLED"
+            return "MLSEnabled"
         case .showCreateMLSGroupToggle:
-            return "CREATE_MLS_GROUP_ENABLED"
+            return "CreateMLSGroupEnabled"
         case .proteusViaCoreCrypto:
-            return "PROTEUS_BY_CORECRYPTO_ENABLED"
+            return "ProteusByCoreCryptoEnabled"
         case .nseV2, .deprecatedCallingUI:
             return nil
         }
