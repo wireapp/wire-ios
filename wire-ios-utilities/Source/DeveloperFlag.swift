@@ -58,22 +58,10 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        switch self {
-        case .enableMLSSupport:
-            return false
-
-        case .showCreateMLSGroupToggle:
-            return false
-
-        case .proteusViaCoreCrypto:
-            return false
-
-        case .nseV2:
-            return false
-
-        case .deprecatedCallingUI:
+        guard let bundleKey = bundleKey else {
             return false
         }
+        return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
     static public func clearAllFlags() {
@@ -82,4 +70,29 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
+    var bundleKey: String? {
+        switch self {
+        case .enableMLSSupport:
+            return "MLS_ENABLED"
+        case .showCreateMLSGroupToggle:
+            return "CREATE_MLS_GROUP_ENABLED"
+        case .proteusViaCoreCrypto:
+            return "PROTEUS_BY_CORECRYPTO_ENABLED"
+        case .nseV2, .deprecatedCallingUI:
+            return nil
+        }
+    }
+}
+
+private class DeveloperFlagsDefault {
+
+    static func isEnabled(for bundleKey: String) -> Bool {
+        return Bundle(for: self).infoForKey(bundleKey) == "1"
+    }
+}
+
+public extension Bundle {
+    func infoForKey(_ key: String) -> String? {
+        return infoDictionary?[key] as? String
+    }
 }
