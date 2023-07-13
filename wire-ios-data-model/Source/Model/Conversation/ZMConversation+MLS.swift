@@ -190,16 +190,15 @@ public extension ZMConversation {
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
     }
+
+    enum ZMConversationError: Error {
+        case couldNotFindSyncContext
+    }
     
-    func joinNewMLSGroupIfNeeded() {
+    func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
         WireLogger.mls.debug("joinNewMLSGroupIfNeeded")
-        guard let syncContext = self.managedObjectContext?.zm_sync,
-              let mlsGroupID = self.mlsGroupID,
-              self.messageProtocol == .mls
-        else {
-            WireLogger.mls.debug("mlsGroupId \(self.mlsGroupID)")
-            WireLogger.mls.debug("messageProtocol \(self.messageProtocol)")
-            WireLogger.mls.warn("joinMLSGroup not needed for conversation \(self.safeForLoggingDescription)")
+        guard let syncContext = self.managedObjectContext?.zm_sync else {
+            completion?(ZMConversationError.couldNotFindSyncContext)
             return
         }
         WireLogger.mls.debug("joinNewMLSGroupIfNeeded - check ok")
@@ -211,6 +210,8 @@ public extension ZMConversation {
                     try mlsService.createGroup(for: mlsGroupID)
                 } catch {
                     WireLogger.mls.error("failed to create Group for \(mlsGroupID   )")
+                    completion?(error)
+                    return
                 }
             }
             mlsService.joinGroup(with: mlsGroupID)
@@ -222,7 +223,10 @@ public extension ZMConversation {
                     try await mlsService.addMembersToConversation(with: [mlsUser], for: mlsGroupID)
                 } catch {
                     WireLogger.mls.error("failed to add other clients for joining MLS group")
+                    completion?(error)
+                    return
                 }
+                completion?(nil)
             }
         }
     }

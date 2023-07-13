@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 class DeepLinkURLActionProcessor: URLActionProcessor {
 
@@ -68,8 +69,17 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                                 contextProvider: strongSelf.contextProvider) { (response) in
                                 switch response {
                                 case .success(let conversation):
-                                    conversation.joinNewMLSGroupIfNeeded()
-                                    delegate.showConversation(conversation, at: nil)
+                                    strongSelf.synchronise(conversation) { result in
+                                        DispatchQueue.main.async {
+                                            switch result {
+                                                case .success(let syncConversion):
+                                                    delegate.showConversation(syncConversion, at: nil)
+                                                case .failure(let error):
+                                                    delegate.failedToPerformAction(urlAction, error: error)
+                                            }
+                                        }
+                                    }
+
                                 case .failure(let error):
                                     delegate.failedToPerformAction(urlAction, error: error)
                                 }
@@ -106,6 +116,39 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
         default:
             delegate?.completedURLAction(urlAction)
+        }
+    }
+    
+    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation>) -> Void) {
+        guard let qualifiedID = conversation.qualifiedID else {
+            completion(.success(conversation))
+            return
+        }
+
+        let service = ConversationService(context: contextProvider.syncContext)
+        let viewContext = contextProvider.viewContext
+
+        service.syncConversation(qualifiedID: qualifiedID) {
+            guard let upToDateConversation = ZMConversation.fetch(with: qualifiedID, in: viewContext) else {
+                // proceed showing the group anyway
+                completion(.success(conversation))
+                return
+            }
+
+            WireLogger.mls.debug("conversation synced, ")
+            guard let groupId = upToDateConversation.mlsGroupID, upToDateConversation.messageProtocol == .mls else {
+                completion(.success(upToDateConversation))
+                return
+            }
+            
+            upToDateConversation.joinNewMLSGroup(id: groupId) { error in
+                if let error = error {
+                    WireLogger.mls.debug("failed to join MLS group: \(error)")
+                    completion(.failure(error))
+                } else {
+                    completion(.success(upToDateConversation))
+                }
+            }
         }
     }
 }
