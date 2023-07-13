@@ -52,6 +52,8 @@ done
 if [ ! -z "${OVERRIDES_DIR}" ]; then
     # Add trailing slash if not present so that cp would copy contents of directory
     [[ "${OVERRIDES_DIR}" != */ ]] && OVERRIDES_DIR="${OVERRIDES_DIR}/"
+    echo "🗑️ Removing current '${CONFIGURATION_LOCATION}'"
+    rm -rf "${CONFIGURATION_LOCATION}"
     echo "✅ Copying '${OVERRIDES_DIR}' over to '${CONFIGURATION_LOCATION}'"
     cp -RL "${OVERRIDES_DIR}" "${CONFIGURATION_LOCATION}"
 else
