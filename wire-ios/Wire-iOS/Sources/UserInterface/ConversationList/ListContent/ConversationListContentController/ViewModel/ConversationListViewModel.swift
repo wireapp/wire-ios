@@ -73,8 +73,8 @@ final class ConversationListViewModel: NSObject {
                     return "groups"
                 case .favorites:
                     return "favorites"
-                case .folder(label: let label):
-                    return label.name ?? "folder"
+                case .folder:
+                    return "folder"
                 }
             }
 
