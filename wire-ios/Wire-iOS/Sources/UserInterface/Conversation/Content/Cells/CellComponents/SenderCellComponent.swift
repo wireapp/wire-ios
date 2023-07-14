@@ -80,6 +80,11 @@ final class SenderCellComponent: UIView {
            let userSession = ZMUserSession.shared() {
             observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
+
+        // We need to call that method here to restraint the authorLabel moving
+        // outside of the view and then back to its position. For more information
+        // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
+        self.layoutIfNeeded()
     }
 
     private func configureViews(for configuration: SenderCellConfiguration) {
