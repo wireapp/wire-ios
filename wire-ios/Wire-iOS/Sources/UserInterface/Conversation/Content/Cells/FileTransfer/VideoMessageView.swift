@@ -138,8 +138,8 @@ final class VideoMessageView: UIView, TransferView {
         self.fileMessage = message
 
         guard let fileMessage = self.fileMessage,
-            let fileMessageData = fileMessage.fileMessageData,
-            let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
+              let fileMessageData = fileMessage.fileMessageData,
+              let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
 
         self.state = state
         self.previewImageView.image = nil
