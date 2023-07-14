@@ -43,8 +43,8 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func refreshImage() {
-        image = imageForCurrentToken
+    func refreshImage(tintColor: UIColor = SemanticColors.Label.textDefault) {
+        image = imageForCurrentToken?.withTintColor(tintColor)
     }
 
     private var imageForCurrentToken: UIImage? {
