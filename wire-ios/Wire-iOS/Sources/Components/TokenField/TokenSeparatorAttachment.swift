@@ -21,9 +21,19 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
 
     let token: Token<NSObjectProtocol>
 
+    typealias ViewColors = SemanticColors.View
+
     private unowned let tokenField: TokenField
     private let dotSize: CGFloat = 4
     private let dotSpacing: CGFloat = 8
+
+    private var dotColor: UIColor? {
+        return tokenField.dotColor
+    }
+
+    private var backgroundColor: UIColor? {
+        return tokenField.tokenBackgroundColor
+    }
 
     init(token: Token<NSObjectProtocol>, tokenField: TokenField) {
         self.token = token
@@ -31,7 +41,7 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
 
         super.init(data: nil, ofType: nil)
 
-        refreshImage()
+        refreshImage(tintColor: dotColor ?? ViewColors.backgroundDefaultBlack)
     }
 
     @available(*, unavailable)
@@ -51,8 +61,8 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         }
     }
 
-    private func refreshImage() {
-        image = imageForCurrentToken
+    private func refreshImage(tintColor: UIColor = ViewColors.backgroundDefaultBlack) {
+        image = imageForCurrentToken?.withTintColor(tintColor)
     }
 
     private var imageForCurrentToken: UIImage? {
@@ -90,11 +100,4 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         return i
     }
 
-    private var dotColor: UIColor? {
-        return tokenField.dotColor
-    }
-
-    private var backgroundColor: UIColor? {
-        return tokenField.tokenBackgroundColor
-    }
 }
