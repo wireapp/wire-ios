@@ -169,7 +169,7 @@ class MessageToolboxDataSource {
     private func makeEphemeralCountdown() -> NSAttributedString? {
         let showDestructionTimer = message.isEphemeral &&
         !message.isObfuscated &&
-        nil != message.destructionDate &&
+        message.destructionDate != nil &&
         message.deliveryState != .pending
 
         if let destructionDate = message.destructionDate, showDestructionTimer {
