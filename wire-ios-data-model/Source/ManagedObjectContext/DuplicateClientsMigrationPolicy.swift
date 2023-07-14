@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,23 @@
 
 import Foundation
 
-@testable import Wire
+class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
 
-final class MockClassificationProvider: ClassificationProviding {
-    var returnClassification: SecurityClassification = .none
+    override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
+        let context = manager.sourceContext
 
-    func classification(with users: [UserType], conversationDomain: String? = nil) -> SecurityClassification {
-        returnClassification
+        let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
+            entityName: UserClient.entityName(),
+            by: #keyPath(UserClient.remoteIdentifier)
+        )
+
+        duplicates.forEach { (_, clients: [NSManagedObject]) in
+            guard clients.count > 1 else {
+                return
+            }
+
+            clients.dropFirst().forEach(context.delete)
+        }
     }
+
 }
