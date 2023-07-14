@@ -98,7 +98,7 @@ final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
         )
         message.serverTimestamp = .today(at: 9, 41)
         message.senderUser = mockSelfUser
-        
+
         context = ConversationMessageContext(isSameSenderAsPrevious: false,
                                              isTimeIntervalSinceLastMessageSignificant: false,
                                              isTimestampInSameMinuteAsPreviousMessage: false,
