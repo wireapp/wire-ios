@@ -106,8 +106,8 @@ final class TokenField: UIView {
         }
     }
 
-    var dotColor: UIColor = ColorScheme.default.color(named: .textDimmed)
-    var tokenTextTransform: TextTransform = .upper
+    var dotColor: UIColor = SemanticColors.View.backgroundDefaultBlack
+    var tokenTextTransform: TextTransform = .none
     var tokenOffset: CGFloat = 0 {
         didSet {
             guard tokenOffset != oldValue else {
