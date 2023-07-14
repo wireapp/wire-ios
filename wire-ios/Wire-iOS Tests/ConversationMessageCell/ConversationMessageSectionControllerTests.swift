@@ -91,16 +91,17 @@ final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
         XCTAssertEqual(String(describing: cell2.baseType), "MockCellDescription<Bool>")
     }
 
-    func testThatWeDoNotShowSenderDetails_WhenIsSameSenderAsPrevious() {
+    func testThatWeDoShowSenderDetails_WhenIsSameSenderAsPrevious() {
         // GIVEN
         let message = MockMessageFactory.textMessage(
-            withText: "Hello",
-            sender: mockSelfUser
+            withText: "Hello"
         )
-
-        context = ConversationMessageContext(isSameSenderAsPrevious: true,
+        message.serverTimestamp = .today(at: 9, 41)
+        message.senderUser = mockSelfUser
+        
+        context = ConversationMessageContext(isSameSenderAsPrevious: false,
                                              isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: true,
+                                             isTimestampInSameMinuteAsPreviousMessage: false,
                                              isFirstMessageOfTheDay: false,
                                              isFirstUnreadMessage: false,
                                              isLastMessage: false,
@@ -112,8 +113,8 @@ final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
         let section = ConversationMessageSectionController(message: message, context: context)
 
         // THEN
-
-
-        
+        let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertTrue(description?.message == message)
+        XCTAssertNotNil(description?.configuration.timestamp)
     }
 }
