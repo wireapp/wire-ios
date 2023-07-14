@@ -23,6 +23,13 @@ import Down
 final class MessageSendFailureView: UIView {
 
     // MARK: - Properties
+    override var isHidden: Bool {
+        didSet {
+            titleLabel.isHidden = isHidden
+            retryButton.isHidden = isHidden
+        }
+    }
+
     var tapHandler: ((UIButton) -> Void)?
 
     private let stackView = UIStackView(axis: .vertical)
