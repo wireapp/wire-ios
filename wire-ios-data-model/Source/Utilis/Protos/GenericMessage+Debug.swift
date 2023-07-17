@@ -86,7 +86,7 @@ extension GenericMessage: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
         let contentDescription = content?.safeForLoggingDescription ?? "none"
-        return "GenericMessage(id: \(messageID), content: \(contentDescription))"
+        return "GenericMessage(id: \(messageID.readableHash), content: \(contentDescription))"
     }
 
 }
