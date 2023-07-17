@@ -32,30 +32,6 @@ private struct CallActionsViewInput: CallActionsViewInputType {
     let callState: CallStateExtending
 }
 
-struct CallStateMock: CallStateExtending {
-    var isConnected: Bool
-    var isTerminating: Bool
-    var canAccept: Bool
-}
-
-extension CallStateMock {
-    static var incoming: CallStateMock {
-        return CallStateMock(isConnected: false, isTerminating: false, canAccept: true)
-    }
-
-    static var outgoing: CallStateMock {
-        return CallStateMock(isConnected: false, isTerminating: false, canAccept: false)
-    }
-
-    static var terminating: CallStateMock {
-        return CallStateMock(isConnected: false, isTerminating: true, canAccept: false)
-    }
-
-    static var ongoing: CallStateMock {
-        return CallStateMock(isConnected: true, isTerminating: false, canAccept: false)
-    }
-}
-
 class CallActionsViewTests: ZMSnapshotTestCase {
 
     fileprivate var sut: CallActionsView!

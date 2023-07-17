@@ -22,25 +22,6 @@ import XCTest
 import WireUtilities
 @testable import Wire
 
-final class CallParticipantsListHelper {
-    static func participants(count participantCount: Int,
-                             videoState: VideoState? = nil,
-                             microphoneState: MicrophoneState? = nil,
-                             mockUsers: [UserType]) -> CallParticipantsList {
-        let sortedParticipants = (0..<participantCount)
-            .lazy
-            .map { mockUsers[$0] }
-            .sorted { $0.name < $1.name }
-
-        return sortedParticipants.map { CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: $0),
-                                                                                          videoState: videoState,
-                                                                                          microphoneState: microphoneState,
-                                                                                          activeSpeakerState: .inactive)
-        }
-    }
-
-}
-
 final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
 
     var sut: CallParticipantsListViewController!

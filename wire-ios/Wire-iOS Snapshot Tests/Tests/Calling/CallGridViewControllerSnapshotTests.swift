@@ -21,26 +21,6 @@ import XCTest
 import SnapshotTesting
 import WireUtilities
 
-struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
-    var isConnected: Bool = true
-
-    var shouldShowActiveSpeakerFrame: Bool = true
-
-    var floatingStream: Wire.Stream?
-
-    var streams: [Wire.Stream] = []
-
-    var videoState: VideoState = .stopped
-
-    var networkQuality: NetworkQuality = .normal
-
-    var presentationMode: VideoGridPresentationMode = .allVideoStreams
-
-    var callHasTwoParticipants: Bool = false
-
-    var isGroupCall: Bool = false
-}
-
 final class CallGridViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     var sut: CallGridViewController!

@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "AAA07DEC-1B82-4478-B1FA-38F5099B9D74",
+      "id" : "18A7E5A6-B4F9-4A90-A0EE-2A163F89A3DF",
       "name" : "Configuration 1",
       "options" : {
 
@@ -39,13 +39,6 @@
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
-    {
-      "target" : {
-        "containerPath" : "container:Wire-iOS.xcodeproj",
-        "identifier" : "BACB88501AF7C48900DDCDB0",
-        "name" : "Wire-iOS-Tests"
-      }
-    },
     {
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
