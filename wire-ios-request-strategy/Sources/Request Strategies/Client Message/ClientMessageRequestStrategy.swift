@@ -77,7 +77,7 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
         insertedObjectSync.transcoder = self
 
         messageSync.onRequestScheduled { [weak self] message, _ in
-            WireLogger.messaging.debug("stoping expiration timer for message \(message.debugInfo)")
+            WireLogger.messaging.debug("stopping expiration timer for message \(message.debugInfo)")
             self?.messageExpirationTimer.stop(for: message)
         }
     }
