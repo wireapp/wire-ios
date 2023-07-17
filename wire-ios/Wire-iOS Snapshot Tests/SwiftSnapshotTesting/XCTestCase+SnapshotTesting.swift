@@ -456,28 +456,6 @@ extension XCTestCase {
         NSAttributedString.invalidateParagraphStyle()
     }
 
-    // MARK: - UIAlertController hack
-    func presentViewController(_ controller: UIViewController,
-                               completion: Completion? = nil) {
-        let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))
-
-        let container = UIViewController()
-        container.loadViewIfNeeded()
-
-        window.rootViewController = container
-        window.makeKeyAndVisible()
-
-        controller.loadViewIfNeeded()
-        controller.view.layoutIfNeeded()
-
-        container.present(controller, animated: false, completion: completion)
-    }
-
-    func dismissViewController(_ controller: UIViewController,
-                               completion: Completion? = nil) {
-        controller.dismiss(animated: false, completion: completion)
-    }
-
     // MARK: - verify a UIViewController with a set of widths. The SUT is created in the closure instead of reusing
 
     func verifyInAllPhoneWidths(createSut: () -> UIView,

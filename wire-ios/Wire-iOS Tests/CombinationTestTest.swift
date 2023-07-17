@@ -19,58 +19,6 @@
 import XCTest
 @testable import Wire
 
-struct Mutator<SUT: Copyable, Variant: Hashable> {
-    typealias Applicator = (SUT, Variant) -> (SUT)
-    typealias CombinationPair = (combination: Variant, result: SUT)
-    let applicator: Applicator
-    let combinations: Set<Variant>
-    init(applicator: @escaping Applicator, combinations: Set<Variant>) {
-        self.applicator = applicator
-        self.combinations = combinations
-    }
-
-    func apply(_ element: SUT) -> [CombinationPair] {
-        return combinations.map {
-            (combination: $0, result: self.applicator(element, $0))
-        }
-    }
-}
-
-class CombinationTest<SUT: Copyable, Variant: Hashable> {
-    typealias M = Mutator<SUT, Variant>
-    typealias CombinationChainPair = (combinationChain: [Variant], result: SUT)
-    let mutators: [M]
-    let mutable: SUT
-    init(mutable: SUT, mutators: [M]) {
-        self.mutable = mutable
-        self.mutators = mutators
-    }
-
-    func allCombinations() -> [CombinationChainPair] {
-        var current: [CombinationChainPair] = [(combinationChain: [], result: mutable)]
-
-        self.mutators.forEach { mutator in
-            let new = current.map { variation -> [CombinationChainPair] in
-                let step = mutator.apply(variation.result)
-                return step.map {
-                    let newChain: [Variant] = [variation.combinationChain, [$0.combination]].reduce([], +)
-                    return (combinationChain: newChain, result: $0.result)
-                }
-            }
-
-            current = new.flatMap { $0 }
-        }
-
-        return current
-    }
-
-    @discardableResult func testAll(_ test: (CombinationChainPair) -> (Bool?)) -> [CombinationChainPair] {
-        return self.allCombinations().compactMap {
-            !(test($0) ?? true) ? $0 : .none
-        }
-    }
-}
-
 struct BoolPair { // Tuple would work better, but it cannot conform to @c Copyable
     var first: Bool
     var second: Bool

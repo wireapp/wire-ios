@@ -20,11 +20,6 @@ import UIKit
 import WireCommonComponents
 @testable import Wire
 
-struct ColorTile {
-    let color: AccentColor
-    let size: CGSize
-}
-
 final class ColorTilesViewController: VerticalColumnCollectionViewController, DeviceMockable {
 
     let tiles: [ColorTile]

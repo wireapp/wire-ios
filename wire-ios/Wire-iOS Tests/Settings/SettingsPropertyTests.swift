@@ -20,36 +20,6 @@ import XCTest
 import WireCommonComponents
 @testable import Wire
 
-final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
-    var needsRichProfileUpdate: Bool = false
-
-    var enableReadReceipts: Bool = false
-    var originalProfileImageData: Data!
-
-    func deleteProfileImage() {
-        // no-op
-    }
-
-    static func validate(name: inout String?) throws -> Bool {
-        return false
-    }
-
-}
-
-final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
-    var isMicrophoneMuted: Bool = false
-
-    var intensityLevel: AVSIntensityLevel = .none
-
-    func playMediaByName(_ name: String!) { }
-}
-
-final class ZMMockTracking: TrackingInterface {
-    var disableCrashSharing: Bool = false
-    var disableAnalyticsSharing: Bool = false
-    var disableCrashAndAnalyticsSharing: Bool = false
-}
-
 final class SettingsPropertyTests: XCTestCase {
     var userDefaults: UserDefaults!
 

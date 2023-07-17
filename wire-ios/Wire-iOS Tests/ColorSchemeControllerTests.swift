@@ -65,10 +65,3 @@ final class ColorSchemeControllerTests: XCTestCase {
         XCTAssertEqual(colorScheme.variant, .dark)
     }
 }
-
-extension XCTestCase {
-    func setToLightTheme() {
-        UserDefaults.standard.set("light", forKey: SettingKey.colorScheme.rawValue)
-        NotificationCenter.default.post(name: .SettingsColorSchemeChanged, object: nil)
-    }
-}
