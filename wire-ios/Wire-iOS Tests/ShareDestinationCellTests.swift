@@ -56,6 +56,7 @@ final class ShareDestinationCellTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
+        // TODO: check what would be the default value after test
         accentColor = .vividRed
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
         sut.overrideUserInterfaceStyle = .dark

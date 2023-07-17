@@ -239,12 +239,12 @@ final class ConversationInputBarViewControllerTests: ZMSnapshotTestCase {
 
     // MARK: - file action sheet
 
-    func testUploadFileActionSheet() {
+    func testUploadFileActionSheet() throws {
         let sut = ConversationInputBarViewController(conversation: mockConversation)
 
         let alert: UIAlertController = sut.createDocUploadActionSheet()
 
-        verify(matching: alert)
+        try verify(matching: alert)
     }
 
     // MARK: - Classification

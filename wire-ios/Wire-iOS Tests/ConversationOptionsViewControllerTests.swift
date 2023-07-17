@@ -330,19 +330,19 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
 
     // MARK: Renders different kind of alerts
 
-    func testThatItRendersRemoveGuestsConfirmationAlert() {
+    func testThatItRendersRemoveGuestsConfirmationAlert() throws {
         // WHEN & THEN
         let sut = UIAlertController.confirmRemovingGuests { _ in }
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
-    func testThatItRendersRevokeLinkConfirmationAlert() {
+    func testThatItRendersRevokeLinkConfirmationAlert() throws {
         // WHEN & THEN
         let sut = UIAlertController.confirmRevokingLink { _ in }
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
-    func testThatNoAlertIsShowIfNoGuestIsPresent() {
+    func testThatNoAlertIsShowIfNoGuestIsPresent() throws {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.areGuestPresent = false
@@ -353,7 +353,7 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         XCTAssertNil(sut)
     }
 
-    func testThatItRendersRemoveGuestsWarning() {
+    func testThatItRendersRemoveGuestsWarning() throws {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = ConversationGuestOptionsViewModel(configuration: config)
@@ -362,6 +362,6 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         // Show the alert
         let sut = viewModel.setAllowGuests(false)!
         // THEN
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 }

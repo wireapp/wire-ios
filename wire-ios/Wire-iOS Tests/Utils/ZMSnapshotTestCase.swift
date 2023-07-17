@@ -111,6 +111,13 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
             XCTAssertNil(error, "Unexpected error \(error)")
         }
 
+        setupCoreDataStack()
+        if needsCaches {
+            setUpCaches()
+        }
+    }
+
+    func setupCoreDataStack() {
         let account = Account(userName: "", userIdentifier: UUID())
         let coreDataStack = CoreDataStack(account: account,
                                           applicationContainer: documentsDirectory!,
@@ -121,10 +128,6 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         })
         self.coreDataStack = coreDataStack
         self.uiMOC = coreDataStack.viewContext
-
-        if needsCaches {
-            setUpCaches()
-        }
     }
 
     override open func tearDown() {

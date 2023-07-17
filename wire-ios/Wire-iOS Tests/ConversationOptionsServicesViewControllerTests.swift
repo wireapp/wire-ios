@@ -120,11 +120,11 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     // MARK: Renders different kind of alerts
 
-    func testThatItRendersRemoveServicesConfirmationAlert() {
+    func testThatItRendersRemoveServicesConfirmationAlert() throws {
         // WHEN
         let sut = UIAlertController.confirmRemovingServices { _ in }
         // THEN
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
     func testThatNoAlertIsShowIfNoServiceIsPresent() {
@@ -141,7 +141,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         XCTAssertNil(sut)
     }
 
-    func testThatItRendersRemoveServicesWarning() {
+    func testThatItRendersRemoveServicesWarning() throws {
         // GIVEN
         let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
@@ -153,7 +153,7 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let sut = viewModel.setAllowServices(false)!
 
         // THEN
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
 }

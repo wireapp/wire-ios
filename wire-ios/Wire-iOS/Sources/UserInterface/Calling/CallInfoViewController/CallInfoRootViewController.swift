@@ -84,6 +84,8 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     }
 
     private func createConstraints() {
+        contentNavigationController.view.translatesAutoresizingMaskIntoConstraints = false
+        callDegradationController.view.translatesAutoresizingMaskIntoConstraints = false
         contentNavigationController.view.fitIn(view: view)
         callDegradationController.view.fitIn(view: view)
     }

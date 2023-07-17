@@ -71,6 +71,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
                                      file: StaticString = #file,
                                      testName: String = #function,
                                      line: UInt = #line) {
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing

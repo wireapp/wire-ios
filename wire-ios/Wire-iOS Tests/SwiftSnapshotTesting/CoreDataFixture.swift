@@ -124,8 +124,8 @@ final class CoreDataFixture {
         /// From ZMSnapshotTestCase
 
         XCTAssertEqual(UIScreen.main.scale, 2, "Snapshot tests need to be run on a device with a 2x scale")
-        if UIDevice.current.systemVersion.compare("10", options: .numeric, range: nil, locale: .current) == .orderedAscending {
-            XCTFail("Snapshot tests need to be run on a device running at least iOS 10")
+        if UIDevice.current.systemVersion.compare("16", options: .numeric, range: nil, locale: .current) == .orderedAscending {
+            XCTFail("Snapshot tests need to be run on a device running at least iOS 16")
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
@@ -245,18 +245,18 @@ final class CoreDataFixture {
         return user
     }
 
-    func nonTeamTest(_ block: () -> Void) {
+    func nonTeamTest(_ block: () throws -> Void) rethrows {
         let wasInTeam = selfUserInTeam
         selfUserInTeam = false
         updateTeamStatus(wasInTeam: wasInTeam)
-        block()
+        try block()
     }
 
-    func teamTest(_ block: () -> Void) {
+    func teamTest(_ block: () throws -> Void) rethrows {
         let wasInTeam = selfUserInTeam
         selfUserInTeam = true
         updateTeamStatus(wasInTeam: wasInTeam)
-        block()
+        try block()
     }
 
     func markAllMessagesAsUnread(in conversation: ZMConversation) {
