@@ -1,23 +1,37 @@
 name: (CirrusCI) Beta
 
-on: workflow_dispatch
+on: [pull_request]
 permissions: 
   checks: write
 
 jobs:
   testflight_beta:
-    runs-on: ubuntu-latest
+    runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:latest
     env:
-      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE_64 }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
+      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
+      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
+      APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
+      S3_BUCKET: "Wire"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+      DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-      - name: Install dependencies
-        run: bundle install
+      - name: Carthage
+        run: carthage bootstrap --platform ios --use-xcframeworks
+      - name: Install Ruby Dependencies 
+        run: |
+          which bundle || gem install bundler
+          bundle check || bundle install
+      - name: Run setup
+        run: sh ./setup.sh
       - name: Trigger build
-        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Testflight Beta"
+        run: bundle exec fastlane testflight_beta
+  
