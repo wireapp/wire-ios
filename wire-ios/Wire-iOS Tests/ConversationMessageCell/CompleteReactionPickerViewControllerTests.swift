@@ -25,7 +25,7 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = CompleteReactionPickerViewController(selectedReaction: "😀")
+        sut = CompleteReactionPickerViewController(selectedReactions: [Emoji.smile])
         sut.view.setNeedsLayout()
         sut.view.layoutIfNeeded()
     }

@@ -145,14 +145,14 @@ final class BasicReactionPickerTests: ZMSnapshotTestCase {
 
     func test_BasicReactionPicker_withSelectedReaction() {
         // GIVEN WHEN
-        let sut = pickerWithReaction("👍")
+        let sut = pickerWithReaction([Emoji.thumbsUp])
 
         // THEN
         verify(matching: sut)
     }
 
-    private func pickerWithReaction(_ reaction: String?) -> BasicReactionPicker {
-        var picker = BasicReactionPicker(selectedReaction: reaction)
+    private func pickerWithReaction(_ reaction: Set<Emoji>?) -> BasicReactionPicker {
+        var picker = BasicReactionPicker(selectedReactions: reaction ?? [])
         picker.sizeToFit()
         picker.backgroundColor = .white
         picker.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))

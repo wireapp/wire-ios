@@ -45,7 +45,7 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
 
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
-        let reaction = MessageReactionMetadata(type: .like, count: 1, isSelfUserReacting: true)
+        let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
         let configuration = MessageReactionsCell.Configuration(reactions: [reaction])
 
         sut.configure(with: configuration, animated: false)
@@ -56,15 +56,13 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let likeReaction = MessageReactionMetadata(type: .like, count: 4, isSelfUserReacting: false)
-        let beamingReaction = MessageReactionMetadata(type: .beamingFace, count: 2, isSelfUserReacting: false)
-        let thumbsUpReaction = MessageReactionMetadata(type: .thumbsUp, count: 1, isSelfUserReacting: false)
-        let thumbsDownReaction = MessageReactionMetadata(type: .thumbsDown, count: 6, isSelfUserReacting: false)
-        let slightlySmilingReaction = MessageReactionMetadata(type: .slightlySmiling, count: 8, isSelfUserReacting: false)
-        let frowningFaceReaction = MessageReactionMetadata(type: .frowningFace, count: 10, isSelfUserReacting: false)
+        let likeReaction = MessageReactionMetadata(emoji: .like, count: 4, isSelfUserReacting: false)
+        let thumbsUpReaction = MessageReactionMetadata(emoji: .thumbsUp, count: 1, isSelfUserReacting: false)
+        let thumbsDownReaction = MessageReactionMetadata(emoji: .thumbsDown, count: 6, isSelfUserReacting: false)
+        let slightlySmilingReaction = MessageReactionMetadata(emoji: .smile, count: 8, isSelfUserReacting: false)
+        let frowningFaceReaction = MessageReactionMetadata(emoji: .frown, count: 10, isSelfUserReacting: false)
 
         let configuration = MessageReactionsCell.Configuration(reactions: [likeReaction,
-                                                                           beamingReaction,
                                                                            thumbsUpReaction,
                                                                            thumbsDownReaction,
                                                                            slightlySmilingReaction,

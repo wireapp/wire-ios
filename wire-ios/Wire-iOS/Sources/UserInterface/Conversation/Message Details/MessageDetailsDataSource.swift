@@ -167,7 +167,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         reactions = message.usersReaction.map { reaction, users in
             let emoji = Emoji(value: reaction)
             return MessageDetailsSectionDescription(
-                headerText: "\(emoji.value) \(emoji.name ?? "") (\(users.count))",
+                headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
                 items: MessageDetailsCellDescription.makeReactionCells(users)
             )
         }.filter {

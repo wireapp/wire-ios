@@ -28,7 +28,7 @@ final class Emoji: NSObject {
 
     init(value: String) {
         self.value = value
-        self.name = value.unicodeScalars.first?.properties.name
+        self.name = value.unicodeScalars.first?.properties.name?.lowercased()
     }
 
     override var description: String {

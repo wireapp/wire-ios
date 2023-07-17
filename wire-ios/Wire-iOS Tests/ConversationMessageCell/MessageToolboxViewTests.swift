@@ -117,7 +117,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // GIVEN
         message.conversation = createTeamGroupConversation()
         message.conversationLike = message.conversation
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
+        message.backingUsersReaction = [Emoji.like.value: [selfUser]]
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
@@ -129,7 +129,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
     func testThatItDoesNotShowLikes_ReceiptsDisabled_ShowingTimestamp() {
         // GIVEN
         message.conversation = createGroupConversation()
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
+        message.backingUsersReaction = [Emoji.like.value: [selfUser]]
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)

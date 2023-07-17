@@ -64,7 +64,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.like.value: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
@@ -91,7 +91,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
         message.readReceipts = createReceipts(users: users)
 
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.like.value: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
@@ -117,7 +117,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.like.value: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
@@ -144,7 +144,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.like.value: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
@@ -171,9 +171,9 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.thumbsUp.unicodeValue: Array(users.prefix(upTo: 6)),
-                                        MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4)),
-                                        MessageReaction.frowningFace.unicodeValue: Array(users.prefix(upTo: 1))
+        message.backingUsersReaction = [Emoji.thumbsUp.value: Array(users.prefix(upTo: 6)),
+                                        Emoji.like.value: Array(users.prefix(upTo: 4)),
+                                        Emoji.frown.value: Array(users.prefix(upTo: 1))
         ]
 
         // WHEN
@@ -273,7 +273,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.senderUser = SelfUser.current
         message.conversationLike = conversation
         message.isEphemeral = true
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [otherUser]]
+        message.backingUsersReaction = [Emoji.like.value: [otherUser]]
         message.needsReadConfirmation = true
 
         // WHEN
@@ -347,7 +347,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
             })
 
             message.readReceipts = createReceipts(users: users)
-            message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+            message.backingUsersReaction = [Emoji.like.value: Array(users.prefix(upTo: 4))]
 
             // WHEN
             let detailsViewController = MessageDetailsViewController(message: message)
