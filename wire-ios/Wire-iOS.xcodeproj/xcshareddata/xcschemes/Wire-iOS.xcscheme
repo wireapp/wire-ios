@@ -44,13 +44,13 @@
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/RegularTests.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
             reference = "container:Wire-iOS Tests/TestPlans/SecurityTests.xctestplan">
          </TestPlanReference>
          <TestPlanReference
             reference = "container:Wire-iOS Snapshot Tests/TestPlans/SnapshotTests.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Wire-iOS Tests/TestPlans/RegularTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
