@@ -77,6 +77,7 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
         insertedObjectSync.transcoder = self
 
         messageSync.onRequestScheduled { [weak self] message, _ in
+            WireLogger.messaging.debug("stoping expiration timer for message \(message.debugInfo)")
             self?.messageExpirationTimer.stop(for: message)
         }
     }
@@ -108,19 +109,23 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+        WireLogger.messaging.debug("inserting message \(object.debugInfo)")
         messageSync.sync(object) { [weak self] result, response in
             switch result {
             case .success:
+                WireLogger.messaging.debug("successfully sent message \(object.debugInfo)")
                 object.markAsSent()
                 self?.deleteMessageIfNecessary(object)
 
             case .failure(let error):
                 switch error {
                 case .messageProtocolMissing:
+                    WireLogger.messaging.error("failed to send message \(object.debugInfo): missing messsage protocol")
                     object.expire()
                     self?.localNotificationDispatcher.didFailToSend(object)
 
                 case .expired, .gaveUpRetrying:
+                    WireLogger.messaging.error("failed to send message \(object.debugInfo): \(String(describing: error))")
                     object.expire()
                     self?.localNotificationDispatcher.didFailToSend(object)
 

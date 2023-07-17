@@ -41,6 +41,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     private func timerFired(for message: ZMMessage) {
+        WireLogger.messaging.debug("expiration timer fired for message \(message.nonce)")
         guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
                 return
         }
@@ -74,11 +75,17 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
             guard let expirationDate = $0.expirationDate else { return }
             if expirationDate.compare(now) == .orderedAscending {
+                WireLogger.messaging.debug("expiring message when trying to start timer")
                 $0.expire()
                 $0.managedObjectContext?.enqueueDelayedSave()
             } else {
                 super.start(forMessageIfNeeded: $0, fire: expirationDate, userInfo: [:])
             }
         }
+    }
+
+    public override func stop(for message: ZMMessage!) {
+        WireLogger.messaging.debug("stopping timer for merssage \(message.nonce)")
+        super.stop(for: message)
     }
 }
