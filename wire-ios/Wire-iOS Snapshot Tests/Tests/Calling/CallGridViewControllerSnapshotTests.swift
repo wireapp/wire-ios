@@ -90,7 +90,7 @@ final class CallGridViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testActiveSpeakersIndicators_OneToOne() {
-        // Given / When
+        // Given // When
         configuration.streams = [stubProvider.stream(
             user: MockUserType.createUser(name: "Bob"),
             activeSpeakerState: .active(audioLevelNow: 100)

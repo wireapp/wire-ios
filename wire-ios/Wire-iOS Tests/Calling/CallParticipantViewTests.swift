@@ -134,7 +134,7 @@ class CallParticipantViewTests: XCTestCase {
     }
 
     func testCoveredState() {
-        // GIVEN / WHEN
+        // GIVEN // WHEN
         sut = createView(from: unmutedStream, isCovered: true)
 
         // THEN
