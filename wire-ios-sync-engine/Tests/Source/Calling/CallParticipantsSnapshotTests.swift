@@ -233,11 +233,11 @@ class CallParticipantsSnapshotTests: MessagingTest {
         // Given / When
         setupCallSnapshot()
         setupUsersAndClients()
-//        setupDegradationTest(degradedClient: client2)
-//
-//        // Then
-//        XCTAssertTrue(mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
-//        XCTAssertEqual(mockWireCallCenterV3.callSnapshots[conversationId]!.degradedUser, user2)
+        setupDegradationTest(degradedClient: client2)
+
+        // Then
+        XCTAssertTrue(mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
+        XCTAssertEqual(mockWireCallCenterV3.callSnapshots[conversationId]!.degradedUser, user2)
     }
 
     func testThat_ItDegradesCallSecurity_WithSelfUser_WhenSelfUserBecomesUnverified() {
