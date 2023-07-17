@@ -289,6 +289,8 @@ jobs:
           name: derived-data-xcode
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
+
 
   upload-test-results-datadadog:
     runs-on: ubuntu-latest
