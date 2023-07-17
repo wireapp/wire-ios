@@ -62,7 +62,8 @@ fileprivate extension Article {
 
 // MARK: - GenericMessage
 
- extension GenericMessage: CustomStringConvertible {
+extension GenericMessage: CustomStringConvertible {
+
     public var description: String {
         var message = self
         guard let content = content else {
@@ -78,4 +79,85 @@ fileprivate extension Article {
         }
         return message.debugDescription
     }
+
+}
+
+extension GenericMessage: SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        let contentDescription = content?.safeForLoggingDescription ?? "none"
+        return "GenericMessage(id: \(messageID.readableHash), content: \(contentDescription))"
+    }
+
+}
+
+extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        switch self {
+        case .text:
+            return "text"
+
+        case .image:
+            return "image"
+
+        case .knock:
+            return "knock"
+
+        case .lastRead:
+            return "lastRead"
+
+        case .cleared:
+            return "cleared"
+
+        case .external:
+            return "external"
+
+        case .clientAction:
+            return "clientAction"
+
+        case .calling:
+            return "calling"
+
+        case .asset:
+            return "asset"
+
+        case .hidden:
+            return "hidden"
+
+        case .location:
+            return "location"
+
+        case .deleted:
+            return "deleted"
+
+        case .edited:
+            return "edited"
+
+        case .confirmation:
+            return "confirmation"
+
+        case .reaction:
+            return "reaction"
+
+        case .ephemeral:
+            return "ephemeral"
+
+        case .availability:
+            return "availability"
+
+        case .composite:
+            return "composite"
+
+        case .buttonAction:
+            return "buttonAction"
+
+        case .buttonActionConfirmation:
+            return "buttonActionConfirmation"
+
+        case .dataTransfer:
+            return "dataTransfer"
+        }
+    }
+
 }
