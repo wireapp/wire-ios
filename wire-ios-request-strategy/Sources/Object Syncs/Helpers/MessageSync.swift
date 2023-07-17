@@ -64,8 +64,9 @@ public class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMCont
     }
 
     public func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
+        WireLogger.messaging.debug("sync message \(message.debugInfo)")
         guard let conversation = message.conversation else {
-            Logging.messageProcessing.warn("failed to sync message b/c message protocol can't be determined")
+            WireLogger.messaging.error("failed to sync message \(message.debugInfo): message protocol can't be determined")
             completion(.failure(.messageProtocolMissing), .init())
             return
         }
