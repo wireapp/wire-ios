@@ -60,6 +60,8 @@ extension ZMMessage: Sendable {
             asset.cancelTransfer()
             return
         }
+
+        WireLogger.messaging.warn("expiring message because of cancel \(nonce?.transportString().readableHash)")
         self.expire()
     }
 
