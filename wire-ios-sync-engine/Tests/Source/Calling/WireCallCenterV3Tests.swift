@@ -81,8 +81,10 @@ class WireCallCenterV3Tests: MessagingTest {
         let oneOnOneConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         oneOnOneConversation.remoteIdentifier = UUID.create()
         oneOnOneConversation.conversationType = .oneOnOne
-        oneOnOneConversationID = oneOnOneConversation.avsIdentifier!
+        oneOnOneConversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        oneOnOneConversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         self.oneOnOneConversation = oneOnOneConversation
+        oneOnOneConversationID = oneOnOneConversation.avsIdentifier!
 
         let groupConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         groupConversation.remoteIdentifier = UUID.create()
