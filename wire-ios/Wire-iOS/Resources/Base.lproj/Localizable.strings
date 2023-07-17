@@ -469,9 +469,10 @@
 
 "content.system.failedtosend_participants.show_details" = "Show Details";
 "content.system.failedtosend_participants.hide_details" = "Hide Details";
-"content.system.failedtosend_participants.count" = "**%@ participants** didn’t get your message.";
-"content.system.failedtosend_participants.will_get_later" = "**%@** will get your message later.";
-"content.system.failedtosend_participants.will_never_get" = "**%@** won’t get your message.";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.will_get_message_later" = "**%@** will get your message later.";
+"content.system.failedtosend_participants.will_never_get_message" = "**%@** won’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
 "content.system.failed_participants.learn_more" = "%@ [Learn more](%@)";
 
 "content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";

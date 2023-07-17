@@ -56,14 +56,37 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
             return ""
         }
 
-        return SystemContent.FailedtosendParticipants.count(failedUsers.count)
+        return SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> String {
-        let userNames = failedUsers.compactMap { $0.name }.joined(separator: ", ")
-        let content = SystemContent.FailedtosendParticipants.willGetLater(userNames)
+        var content: [String] = []
+        /// The list of participants with complete metadata.
+        let usersWithName = failedUsers.filter { !$0.hasEmptyName }.compactMap(\.name)
+        if !usersWithName.isEmpty {
+            content.append(SystemContent.FailedtosendParticipants.willGetMessageLater(usersWithName.joined(separator: ", ")))
+        }
 
-        return SystemContent.FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
+        /// The list of participants with incomplete metadata.
+        let usersWithoutName = failedUsers.filter { $0.hasEmptyName }
+        if !usersWithoutName.isEmpty {
+            let groupedByDomainUsers = groupByDomain(usersWithoutName)
+            content.append(SystemContent.FailedtosendParticipants.willNeverGetMessage(groupedByDomainUsers.joined(separator: ", ")))
+        }
+
+        let contentString = content.joined(separator: "\n")
+
+        return SystemContent.FailedParticipants.learnMore(contentString, URL.wr_backendOfflineLearnMore.absoluteString)
+    }
+
+    private static func groupByDomain(_ users: [UserType]) -> [String] {
+        let groupedUsers = Dictionary(grouping: users, by: \.domain)
+        var usersPerDomain: [String] = []
+        for (domain, users) in groupedUsers {
+            let usersCountString = SystemContent.FailedtosendParticipants.count(users.count)
+            usersPerDomain.append(SystemContent.FailedtosendParticipants.from(usersCountString, domain ?? ""))
+        }
+        return usersPerDomain
     }
 
 }
