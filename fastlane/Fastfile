@@ -6,8 +6,6 @@ require 'json'
 opt_out_usage
 default_platform(:ios)
 
-ensure_xcode_version
-
 platform :ios do
     def iPhoneNameForTesting
         ENV['IPHONE_MODEL']
@@ -35,6 +33,7 @@ platform :ios do
     end
 
     before_all do |lane|
+        ensure_xcode_version unless lane == :trigger_api_build_cirrus_ci
         create_keychain_if_needed
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
