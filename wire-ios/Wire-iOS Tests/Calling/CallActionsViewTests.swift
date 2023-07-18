@@ -26,7 +26,6 @@ private struct CallActionsViewInput: CallActionsViewInputType {
     var permissions: CallPermissionsConfiguration
     let canToggleMediaType, isVideoCall, isMuted: Bool
     let mediaState: MediaState
-    let variant: ColorSchemeVariant
     var cameraType: CaptureDevice
     let networkQuality: NetworkQuality = .normal
     let callState: CallStateExtending
@@ -99,7 +98,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -126,7 +124,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.incoming
         )
@@ -150,7 +147,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.incoming
         )
@@ -176,7 +172,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.outgoing
         )
@@ -200,7 +195,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .sendingVideo,
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.outgoing
         )
@@ -226,7 +220,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -250,7 +243,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: true,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -274,7 +266,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanNotBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -298,7 +289,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .sendingVideo,
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -322,7 +312,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .sendingVideo,
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -346,7 +335,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .sendingVideo,
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -372,7 +360,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: false,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.terminating
         )
@@ -396,7 +383,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .sendingVideo,
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.terminating
         )
@@ -422,7 +408,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )
@@ -446,7 +431,6 @@ class CallActionsViewTests: ZMSnapshotTestCase {
             isVideoCall: true,
             isMuted: false,
             mediaState: .notSendingVideo(speakerState: .deselectedCanBeToggled),
-            variant: .dark,
             cameraType: .front,
             callState: CallStateMock.ongoing
         )

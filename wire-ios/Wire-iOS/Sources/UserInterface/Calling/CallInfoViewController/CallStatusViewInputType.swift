@@ -20,15 +20,11 @@ import Foundation
 import UIKit
 import WireSyncEngine
 
-protocol CallStatusViewInputType: CallTypeProvider, CBRSettingProvider, ColorVariantProvider {
+protocol CallStatusViewInputType: CallTypeProvider, CBRSettingProvider {
     var state: CallStatusViewState { get }
     var isConstantBitRate: Bool { get }
     var title: String { get }
     var classification: SecurityClassification { get }
-}
-
-protocol ColorVariantProvider {
-    var variant: ColorSchemeVariant { get }
 }
 
 protocol CallTypeProvider {
@@ -50,14 +46,8 @@ extension CallStatusViewInputType {
         case (true, _, _), (false, _, false):
             return UIColor.black.withAlphaComponent(0.64)
         case (false, _, true):
-            return variant == .light ? UIColor.from(scheme: .background, variant: .light) : .black
+            return UIColor.black.withAlphaComponent(0.64)
         }
-    }
-
-    var effectiveColorVariant: ColorSchemeVariant {
-        guard callingConfig.isAudioCallColorSchemable else { return .dark }
-
-        return isVideoCall ? .dark : variant
     }
 
     var shouldShowBitrateLabel: Bool {
