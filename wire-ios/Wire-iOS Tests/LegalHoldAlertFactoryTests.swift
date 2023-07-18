@@ -33,21 +33,21 @@ final class LegalHoldAlertFactoryTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItCanCreateLegalHoldActivatedAlert() {
+    func testThatItCanCreateLegalHoldActivatedAlert() throws {
         let alert = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: user, suggestedStateChangeHandler: nil)
-        verify(matching: alert)
+        try verify(matching: alert)
     }
 
-    func testThatItCanCreateLegalHoldDeactivatedAlert() {
+    func testThatItCanCreateLegalHoldDeactivatedAlert() throws {
         let alert = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: user, suggestedStateChangeHandler: nil)
-        verify(matching: alert)
+        try verify(matching: alert)
     }
 
-    func testThatItCanCreateLegalHoldPendingAlert() {
+    func testThatItCanCreateLegalHoldPendingAlert() throws {
         let prekey = LegalHoldRequest.Prekey(id: 65535, key: Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!)
         let request = LegalHoldRequest(target: UUID(), requester: UUID(), clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
         user.legalHoldDataSource.legalHoldRequest = request
         let alert = LegalHoldAlertFactory.makeLegalHoldActivationAlert(for: request, user: user, suggestedStateChangeHandler: nil)
-        verify(matching: alert)
+        try verify(matching: alert)
     }
 }
