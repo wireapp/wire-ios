@@ -48,6 +48,9 @@ class DependencyEntitySync<Transcoder: EntityTranscoder>: NSObject, ZMContextCha
 
     public func expireEntities(withDependency dependency: NSObject) {
         for entity in entitiesWithDependencies.dependents(on: dependency) {
+            if let message = entity as? ZMClientMessage {
+                WireLogger.messaging.warn("expiring message \(message.debugInfo) with dependency \(String(describing: dependency))")
+            }
             entity.expire()
         }
     }

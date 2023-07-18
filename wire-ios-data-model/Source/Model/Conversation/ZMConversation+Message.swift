@@ -354,6 +354,8 @@ extension ZMConversation {
     ///     - `AppendMessageError` if the message couldn't be appended.
 
     private func append(_ message: ZMClientMessage, expires: Bool, hidden: Bool) throws {
+        WireLogger.messaging.debug("appending message to conversation \(message.debugInfo)")
+
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
@@ -362,6 +364,7 @@ extension ZMConversation {
 
         if expires {
             message.setExpirationDate()
+            WireLogger.messaging.debug("set expiration date \(message.expirationDate)")
         }
 
         if hidden {

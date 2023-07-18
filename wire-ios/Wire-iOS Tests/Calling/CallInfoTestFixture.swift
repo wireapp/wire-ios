@@ -72,7 +72,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -98,7 +97,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -124,7 +122,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -150,7 +147,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -176,7 +172,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -202,7 +197,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -228,7 +222,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -254,7 +247,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -280,7 +272,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .poor,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -308,7 +299,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -334,7 +324,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -360,7 +349,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .classified
         )
@@ -386,7 +374,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .notClassified
         )
@@ -412,7 +399,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -438,7 +424,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -464,7 +449,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -490,7 +474,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -516,7 +499,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -544,7 +526,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -570,7 +551,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -596,7 +576,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -622,7 +601,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -648,7 +626,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -674,7 +651,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -700,7 +676,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -728,7 +703,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -754,7 +728,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -780,7 +753,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -806,7 +778,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -832,7 +803,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .poor,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -858,7 +828,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: false,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -884,7 +853,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -910,7 +878,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -937,7 +904,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )
@@ -964,7 +930,6 @@ struct CallInfoTestFixture {
             cameraType: .front,
             networkQuality: .normal,
             userEnabledCBR: true,
-            variant: .dark,
             isForcedCBR: false,
             classification: .none
         )

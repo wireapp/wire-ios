@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21G83" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.105.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21G115" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.105.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
@@ -344,31 +344,4 @@
         <relationship name="trustedClients" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="trustedByClients" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="clients" inverseEntity="User" syncable="YES"/>
     </entity>
-    <elements>
-        <element name="Action" positionX="-189" positionY="72" width="128" height="75"/>
-        <element name="AddressBookEntry" positionX="9" positionY="153" width="128" height="90"/>
-        <element name="AssetClientMessage" positionX="9" positionY="153" width="128" height="225"/>
-        <element name="ButtonState" positionX="-225" positionY="36" width="128" height="105"/>
-        <element name="ClientMessage" positionX="9" positionY="153" width="128" height="90"/>
-        <element name="Connection" positionX="-133.4921875" positionY="424.80859375" width="128" height="163"/>
-        <element name="Conversation" positionX="785.66015625" positionY="332.30078125" width="128" height="824"/>
-        <element name="Feature" positionX="-286.9609375" positionY="-65" width="128" height="119"/>
-        <element name="GenericMessageData" positionX="18" positionY="162" width="128" height="103"/>
-        <element name="ImageMessage" positionX="5.453125" positionY="-305.99609375" width="128" height="165"/>
-        <element name="KnockMessage" positionX="520.8984375" positionY="190.5078125" width="128" height="45"/>
-        <element name="Label" positionX="-225" positionY="36" width="128" height="148"/>
-        <element name="Member" positionX="18" positionY="162" width="128" height="165"/>
-        <element name="Message" positionX="490.6328125" positionY="-395.59765625" width="128" height="433"/>
-        <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="105"/>
-        <element name="MLSGroup" positionX="-81" positionY="-234" width="128" height="59"/>
-        <element name="ParticipantRole" positionX="-207" positionY="54" width="128" height="89"/>
-        <element name="Reaction" positionX="18" positionY="162" width="128" height="103"/>
-        <element name="Role" positionX="-198" positionY="63" width="128" height="120"/>
-        <element name="Session" positionX="-252.51171875" positionY="327.24609375" width="128" height="60"/>
-        <element name="SystemMessage" positionX="289.93359375" positionY="44.8359375" width="128" height="283"/>
-        <element name="Team" positionX="153.14453125" positionY="465.515625" width="128" height="209"/>
-        <element name="TextMessage" positionX="-153" positionY="-117" width="128" height="60"/>
-        <element name="User" positionX="-111.3671875" positionY="-41.015625" width="128" height="704"/>
-        <element name="UserClient" positionX="552.40625" positionY="439.9453125" width="128" height="569"/>
-    </elements>
 </model>

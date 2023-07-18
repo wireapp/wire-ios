@@ -77,9 +77,8 @@ final class GridView: UICollectionView {
         isPagingEnabled = true
 
         contentInsetAdjustmentBehavior = .never
-        if DeveloperFlag.isUpdatedCallingUI {
-            backgroundColor = .clear
-        }
+        backgroundColor = .clear
+
     }
 
     // MARK: - Public Interface
@@ -197,10 +196,8 @@ private extension GridView {
 extension GridView: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if DeveloperFlag.isUpdatedCallingUI {
-            return sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
-        }
-        return sizeForOldUIItem(withIndexPath: indexPath, collectionView: collectionView)
+
+        return sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
     }
 
     private func sizeForNewUIItem(withIndexPath indexPath: IndexPath, collectionView: UICollectionView) -> CGSize {
@@ -211,20 +208,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         let maxWidth = collectionView.bounds.size.width - widthOfInterRowSpaces
         let heightOfInterLineSpaces = CGFloat(itemsInColumn - 1)
         let maxHeight = collectionView.bounds.size.height - heightOfInterLineSpaces
-
-        let width = maxWidth / CGFloat(itemsInRow)
-        let height = maxHeight / CGFloat(itemsInColumn)
-
-        return CGSize(width: width, height: height)
-    }
-
-    private func sizeForOldUIItem(withIndexPath indexPath: IndexPath, collectionView: UICollectionView) -> CGSize {
-
-        let maxWidth = collectionView.bounds.size.width
-        let maxHeight = collectionView.bounds.size.height
-
-        let itemsInRow = numberOfItemsIn(.row, for: indexPath)
-        let itemsInColumn = numberOfItemsIn(.column, for: indexPath)
 
         let width = maxWidth / CGFloat(itemsInRow)
         let height = maxHeight / CGFloat(itemsInColumn)
@@ -246,15 +229,15 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int) -> UIEdgeInsets {
 
-        return .zero
-    }
+            return .zero
+        }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
 
-            return DeveloperFlag.isUpdatedCallingUI ? 1.0 : .zero
+            return 1.0
         }
 
     func collectionView(
@@ -262,16 +245,16 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
 
-            return DeveloperFlag.isUpdatedCallingUI ? 1.0 : .zero
-    }
+            return 1.0
+        }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
 
-        return .zero
-    }
+            return .zero
+        }
 }
 
 // MARK: - UIScrollViewDelegate

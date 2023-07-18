@@ -58,6 +58,9 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         clipsToBounds = true
 
+        transferView.delegate = self
+        setup(transferView)
+
         addSubview(containerView)
     }
 
@@ -80,8 +83,6 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
             setup(restrictionView, heightMultiplier: 9/16)
             restrictionView.configure()
         } else {
-            transferView.delegate = self
-            setup(transferView)
             transferView.configure(for: object.message, isInitial: false)
         }
     }

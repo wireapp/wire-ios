@@ -27,7 +27,7 @@ final class ArchivedNavigationBarTests: ZMSnapshotTestCase {
         super.setUp()
 
         accentColor = .violet
-        snapshotBackgroundColor = UIColor(white: 0.2, alpha: 1)
+        snapshotBackgroundColor = SemanticColors.View.backgroundDefault
         sut = ArchivedNavigationBar(title: "ARCHIVE")
     }
 

@@ -22,10 +22,6 @@ import avs
 struct AudioEffectCellBorders: OptionSet {
     let rawValue: Int
 
-    init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
     static let None   = AudioEffectCellBorders([])
     static let Right  = AudioEffectCellBorders(rawValue: 1 << 0)
     static let Bottom = AudioEffectCellBorders(rawValue: 1 << 1)

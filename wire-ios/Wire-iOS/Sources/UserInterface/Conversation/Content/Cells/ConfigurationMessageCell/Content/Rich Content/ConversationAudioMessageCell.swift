@@ -57,6 +57,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         clipsToBounds = true
+        setup(transferView)
 
         addSubview(containerView)
     }
@@ -81,7 +82,6 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
             setup(restrictionView)
             restrictionView.configure()
         } else {
-            setup(transferView)
             transferView.configure(for: object.message, isInitial: false)
         }
     }

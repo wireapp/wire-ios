@@ -91,6 +91,8 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func expire() {
+        WireLogger.messaging.warn("expiring client message \(underlyingMessage?.safeForLoggingDescription)")
+
         guard
             let genericMessage = self.underlyingMessage,
             let content = genericMessage.content else {

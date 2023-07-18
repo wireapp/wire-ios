@@ -81,6 +81,7 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
 
     var enabled: Bool {
         didSet {
+            WireLogger.backend.debug("did set reachability enabled: \(enabled)")
             if safeReachability == nil && enabled {
                 safeReachability = reachabilityClosure()
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: self)
@@ -91,7 +92,15 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
         }
     }
     var reachabilityClosure: () -> Reachability
-    private var safeReachability: Reachability?
+    private var safeReachability: Reachability? {
+        didSet {
+            if safeReachability == nil {
+                WireLogger.backend.debug("did clear reachbility provider")
+            } else {
+                WireLogger.backend.debug("did set reachbility provider")
+            }
+        }
+    }
 
     init(enabled: Bool, reachabilityClosure: @escaping () -> Reachability) {
         self.enabled = enabled

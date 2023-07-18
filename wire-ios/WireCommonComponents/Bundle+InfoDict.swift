@@ -17,14 +17,13 @@
 
 import Foundation
 import UIKit
+import WireUtilities
 
 public extension Bundle {
     var shortVersionString: String? {
         return Bundle.main.infoForKey("CFBundleShortVersionString")
     }
-    func infoForKey(_ key: String) -> String? {
-        return infoDictionary?[key] as? String
-    }
+
     static var appMainBundle: Bundle {
         let mainBundle: Bundle
         if UIApplication.runningInExtension {

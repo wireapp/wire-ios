@@ -43,7 +43,7 @@ final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
         verifyInDarkScheme(createSut: createSut)
     }
 
-    func testForConfirmAlert() {
+    func testForConfirmAlert() throws {
         // GIVEN
         sut = WipeDatabaseViewController()
 
@@ -51,6 +51,6 @@ final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
         sut.presentConfirmAlert()
 
         // THEN
-        verify(matching: sut.confirmController!.alertController)
+        try verify(matching: sut.confirmController!.alertController)
     }
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 
+// TODO: - [AGIS] Clean this up
 enum CallActionAppearance: Equatable {
 
     case light, dark(blurred: Bool)

@@ -73,7 +73,6 @@ final class ServiceDetailViewController: UIViewController {
     ///   - serviceUser: a ServiceUser to show
     ///   - destinationConversation: the destination conversation of the serviceUser
     ///   - actionType: Enum ActionType to choose the actiion add or remove the service user
-    ///   - variant: color variant
     ///   - selfUser: self user, for inject mock user for testing
     ///   - completion: completion handler
     init(serviceUser: ServiceUser,

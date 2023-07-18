@@ -19,13 +19,13 @@
 import UIKit
 
 extension UIDevice {
-
+    
     static var isSimulator: Bool {
-        #if (arch(i386) || arch(x86_64))
-            return true
-        #else
-            return false
-        #endif
+#if targetEnvironment(simulator)
+        return true
+#else
+        return false
+#endif
+        
     }
-
 }

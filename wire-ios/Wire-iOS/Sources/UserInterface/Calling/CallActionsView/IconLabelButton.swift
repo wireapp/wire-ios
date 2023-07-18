@@ -128,6 +128,9 @@ class IconLabelButton: ButtonWithLargerHitArea {
         }
     }
 
+    // TODO: - [AGIS] Clean this up
+    // The content of this method needs to be deleted and replaced with
+    // what's in CallingActionButton
     func apply(_ configuration: CallActionAppearance) {
         setTitleColor(configuration.iconColorNormal, for: .normal)
         iconButton.setIconColor(configuration.iconColorNormal, for: .normal)

@@ -75,7 +75,6 @@ final class CallGridViewController: SpinnerCapableViewController {
             dismissMaximizedViewIfNeeded(oldPresentationMode: oldValue.presentationMode)
             updateState()
             if
-                DeveloperFlag.isUpdatedCallingUI,
                 configuration.isGroupCall,
                 configuration.isConnected,
                 !oldValue.isConnected
@@ -90,9 +89,8 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     /// Update view visibility when this view controller is covered or not
-    var isCovered: Bool = !DeveloperFlag.isUpdatedCallingUI {
+    var isCovered: Bool = false {
         didSet {
-            if DeveloperFlag.isUpdatedCallingUI { isCovered = false }
             guard isCovered != oldValue else { return }
             notifyVisibilityChanged()
             displayIndicatorViewsIfNeeded()
@@ -160,7 +158,6 @@ final class CallGridViewController: SpinnerCapableViewController {
         [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
         }
-        if DeveloperFlag.isUpdatedCallingUI {
             [ thumbnailViewController.view].forEach {
                 $0.fitIn(view: view)
             }
@@ -172,12 +169,7 @@ final class CallGridViewController: SpinnerCapableViewController {
                 gridView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
             ])
 
-        } else {
-            [gridView, thumbnailViewController.view].forEach {
-                $0.fitIn(view: view)
-            }
-        }
-        let topStackTopDistance = DeveloperFlag.isUpdatedCallingUI ? 6.0 : 24.0
+        let topStackTopDistance = 6.0
         NSLayoutConstraint.activate([
             topStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             topStack.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: topStackTopDistance),
@@ -245,8 +237,7 @@ final class CallGridViewController: SpinnerCapableViewController {
     func updateHint(for event: CallGridEvent) {
         switch event {
         case .viewDidLoad:
-            guard !DeveloperFlag.isUpdatedCallingUI else { return }
-            hintView.show(hint: .fullscreen)
+            break
         case .connectionEstablished:
             hintView.show(hint: .fullscreen)
         case .configurationChanged where configuration.callHasTwoParticipants:
@@ -309,9 +300,7 @@ final class CallGridViewController: SpinnerCapableViewController {
         updateGridViewAxis()
         updateHint(for: .configurationChanged)
         requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
-        if DeveloperFlag.isUpdatedCallingUI {
-            selfCallParticipantView?.avatarView.isHidden = !configuration.isConnected
-        }
+        selfCallParticipantView?.avatarView.isHidden = !configuration.isConnected
     }
 
     private func displaySpinnerIfNeeded() {

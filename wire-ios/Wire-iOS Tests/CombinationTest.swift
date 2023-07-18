@@ -75,11 +75,6 @@ struct BoolPair { // Tuple would work better, but it cannot conform to @c Copyab
     var first: Bool
     var second: Bool
 
-    init(first: Bool, second: Bool) {
-        self.first = first
-        self.second = second
-    }
-
     func calculate() -> Bool {
         return self.first && self.second
     }

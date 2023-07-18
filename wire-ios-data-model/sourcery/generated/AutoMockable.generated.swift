@@ -15,26 +15,6 @@ import Combine
 
 @testable import WireDataModel
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
 
     // MARK: - Life cycle
@@ -101,11 +81,10 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
     }
 
 }
+
 class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
-
-
 
     // MARK: - encryptDatabaseKey
 
@@ -160,7 +139,6 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     public init() {}
 
-
     // MARK: - storePublicKey
 
     public var storePublicKeyDescriptionKey_Invocations: [(description: PublicEARKeyDescription, key: SecKey)] = []
@@ -178,7 +156,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `storePublicKeyDescriptionKey`")
         }
 
-        try mock(description, key)            
+        try mock(description, key)
     }
 
     // MARK: - fetchPublicKey
@@ -221,7 +199,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deletePublicKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - fetchPrivateKey
@@ -264,7 +242,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deletePrivateKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - storeDatabaseKey
@@ -284,7 +262,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `storeDatabaseKeyDescriptionKey`")
         }
 
-        try mock(description, key)            
+        try mock(description, key)
     }
 
     // MARK: - fetchDatabaseKey
@@ -327,7 +305,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deleteDatabaseKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - clearCache
@@ -342,7 +320,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `clearCache`")
         }
 
-        mock()            
+        mock()
     }
 
 }
@@ -355,7 +333,6 @@ public class MockEARServiceInterface: EARServiceInterface {
     // MARK: - delegate
 
     public var delegate: EARServiceDelegate?
-
 
     // MARK: - enableEncryptionAtRest
 
@@ -374,7 +351,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `enableEncryptionAtRestContextSkipMigration`")
         }
 
-        try mock(context, skipMigration)            
+        try mock(context, skipMigration)
     }
 
     // MARK: - disableEncryptionAtRest
@@ -394,7 +371,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `disableEncryptionAtRestContextSkipMigration`")
         }
 
-        try mock(context, skipMigration)            
+        try mock(context, skipMigration)
     }
 
     // MARK: - lockDatabase
@@ -409,7 +386,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `lockDatabase`")
         }
 
-        mock()            
+        mock()
     }
 
     // MARK: - unlockDatabase
@@ -429,7 +406,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `unlockDatabaseContext`")
         }
 
-        try mock(context)            
+        try mock(context)
     }
 
     // MARK: - fetchPublicKeys

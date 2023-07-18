@@ -919,7 +919,7 @@ extension UserClient {
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
-            let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
+            let conversations = managedObjectContext?.fetchOrAssert(request: fetchRequest) ?? []
             return $0.formUnion(conversations)
         }
         return conversations
