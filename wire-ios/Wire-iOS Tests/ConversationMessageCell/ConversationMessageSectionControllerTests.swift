@@ -113,7 +113,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         // THEN
         let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertTrue(description?.message == message)
+        XCTAssertEqual(description?.message?.nonce, message.nonce)
         XCTAssertNotNil(description?.configuration.timestamp)
     }
 }
