@@ -78,7 +78,7 @@ else
     chmod 0600 .submodule-ssh-key
     ssh-add .submodule-ssh-key
     mkdir -p ~/.ssh
-    touch ~/.ssh/known_hosts
+    ssh-keyscan github.com >> ~/.ssh/known_hosts
     ssh-keygen -R github.com
     cat ~/.ssh/known_hosts
     unset SUBMODULE_SSH_KEY
