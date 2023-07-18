@@ -16,5 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+#include "../../../wire-ios/Configuration/Developer-Flags.xcconfig"
+
 APPLICATION_EXTENSION_API_ONLY = YES
 PRODUCT_NAME = WireUtilities
