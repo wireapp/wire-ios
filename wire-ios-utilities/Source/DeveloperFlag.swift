@@ -60,10 +60,8 @@ public enum DeveloperFlag: String, CaseIterable {
     private var defaultValue: Bool {
         guard let bundleKey = bundleKey else {
             return false
-
-        case .deprecatedCallingUI:
-            return false
         }
+
         return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
@@ -81,7 +79,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "CreateMLSGroupEnabled"
         case .proteusViaCoreCrypto:
             return "ProteusByCoreCryptoEnabled"
-        case .nseV2:
+        case .nseV2, .deprecatedCallingUI:
             return nil
         }
     }
