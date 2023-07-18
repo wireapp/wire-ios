@@ -106,7 +106,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
+        
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
@@ -303,9 +303,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         typealias CreateConversation = L10n.Accessibility.CreateConversation
 
         if !checkmarkIconView.isHidden {
-            accessibilityHint = isSelected
-            ? CreateConversation.SelectedUser.hint
-            : CreateConversation.UnselectedUser.hint
+            accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser.hint
         } else if let user = user, user.isServiceUser {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
