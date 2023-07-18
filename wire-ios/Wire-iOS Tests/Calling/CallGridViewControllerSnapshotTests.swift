@@ -76,7 +76,6 @@ final class CallGridViewControllerSnapshotTests: ZMSnapshotTestCase {
         )
 
         CallingConfiguration.config = .largeConferenceCalls
-        UserDefaults.applicationGroup.set(true, forKey: DeveloperFlag.deprecatedCallingUI.rawValue)
     }
 
     override func tearDown() {
@@ -254,12 +253,6 @@ final class CallGridViewControllerSnapshotTests: ZMSnapshotTestCase {
             output: .showNothing
         )
 
-        // View Did Load
-
-        assertHint(
-            input: .viewDidLoad,
-            output: .show(hint: .fullscreen)
-        )
     }
 
     // MARK: - Selective video

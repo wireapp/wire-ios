@@ -33,8 +33,7 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         key: "video_call.camera_access.denied",
         size: .normal,
         weight: .semibold,
-        color: .textForeground,
-        variant: .dark
+        color: .white
     )
 
     var configuration: CallInfoViewControllerInput {
@@ -98,7 +97,6 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         case .avatar(let user):
             avatarView.user = user.value
         case .participantsList(let participants):
-            participantsViewController.variant = configuration.effectiveColorVariant
             participantsViewController.participants = participants
         case .none: break
         }

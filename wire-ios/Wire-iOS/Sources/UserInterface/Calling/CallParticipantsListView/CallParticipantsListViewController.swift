@@ -40,12 +40,6 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     fileprivate var collectionView: CallParticipantsListView!
     let showParticipants: Bool
 
-    var variant: ColorSchemeVariant = .light {
-        didSet {
-            updateAppearance()
-        }
-    }
-
     init(participants: CallParticipantsList,
          showParticipants: Bool,
          selfUser: UserType) {
@@ -60,7 +54,6 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         self.init(participants: configuration.accessoryType.participants,
                   showParticipants: true,
                   selfUser: selfUser)
-        variant = configuration.effectiveColorVariant
         view.backgroundColor = configuration.overlayBackgroundColor
     }
 
@@ -77,7 +70,6 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         super.viewDidLoad()
         setupViews()
         createConstraints()
-        updateAppearance()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -124,8 +116,8 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
 
     private func updateRows() {
         collectionView?.rows = showParticipants
-            ? participants
-            : [.showAll(totalCount: participants.count)]
+        ? participants
+        : [.showAll(totalCount: participants.count)]
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -145,10 +137,6 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         delegate?.callParticipantsListViewControllerDidSelectShowMore(viewController: self)
-    }
-
-    private func updateAppearance() {
-        collectionView?.colorSchemeVariant = variant
     }
 
 }

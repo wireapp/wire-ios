@@ -38,7 +38,6 @@ struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
     var cameraType: CaptureDevice
     var networkQuality: NetworkQuality
     var userEnabledCBR: Bool
-    var variant: ColorSchemeVariant
     var isForcedCBR: Bool
     var classification: SecurityClassification
 }

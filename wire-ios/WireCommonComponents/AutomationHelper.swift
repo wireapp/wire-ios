@@ -89,9 +89,6 @@ public final class AutomationHelper: NSObject {
     public var preferredAPIversion: APIVersion?
     public var allowMLSGroupCreation: Bool?
 
-    /// Whether to use the old calling overlay.
-    public let deprecatedCallingUI: Bool
-
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
         let arguments: ArgumentsType = url.flatMap(FileArguments.init) ?? CommandLineArguments()
@@ -131,8 +128,6 @@ public final class AutomationHelper: NSObject {
             WireLogger.environment.info("automation helper will set preferred api version to \(apiVersion)")
             BackendInfo.preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
-
-        deprecatedCallingUI = arguments.hasFlag(AutomationKey.deprecatedCallingUI)
 
         allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
 

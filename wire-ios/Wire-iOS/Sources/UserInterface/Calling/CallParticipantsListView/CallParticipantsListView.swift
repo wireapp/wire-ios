@@ -24,7 +24,6 @@ typealias CallParticipantsList = [CallParticipantsListCellConfiguration]
 
 protocol CallParticipantsListCellConfigurable: Reusable {
     func configure(with configuration: CallParticipantsListCellConfiguration,
-                   variant: ColorSchemeVariant,
                    selfUser: UserType)
 }
 
@@ -61,24 +60,13 @@ enum CallParticipantsListCellConfiguration: Hashable {
     }
 }
 
-final class CallParticipantsListView: UICollectionView, Themeable {
+final class CallParticipantsListView: UICollectionView {
     let selfUser: UserType
 
     var rows = CallParticipantsList() {
         didSet {
             reloadData()
         }
-    }
-
-    @objc dynamic var colorSchemeVariant: ColorSchemeVariant = ColorScheme.default.variant {
-        didSet {
-            guard oldValue != colorSchemeVariant else { return }
-            applyColorScheme(colorSchemeVariant)
-        }
-    }
-
-    func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
-        reloadData()
     }
 
     init(collectionViewLayout: UICollectionViewLayout, selfUser: UserType) {
@@ -113,7 +101,6 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 
         if let configurableCell = cell as? CallParticipantsListCellConfigurable {
             configurableCell.configure(with: cellConfiguration,
-                                       variant: colorSchemeVariant,
                                        selfUser: selfUser)
         }
         return cell
@@ -124,10 +111,8 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 extension UserCell: CallParticipantsListCellConfigurable {
 
     func configure(with configuration: CallParticipantsListCellConfiguration,
-                   variant: ColorSchemeVariant,
                    selfUser: UserType) {
         guard case let .callParticipant(user, videoState, microphoneState, activeSpeakerState) = configuration else { preconditionFailure() }
-        colorSchemeVariant = variant
         contentBackgroundColor = .clear
         hidesSubtitle = true
         accessoryIconView.isHidden = true
@@ -137,7 +122,6 @@ extension UserCell: CallParticipantsListCellConfigurable {
         )
         videoIconView.set(style: VideoIconStyle(state: videoState))
         configure(with: user.value, selfUser: selfUser)
-        guard DeveloperFlag.isUpdatedCallingUI else { return }
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
 

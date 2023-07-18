@@ -25,8 +25,7 @@ enum BitRateStatus: String {
     case variable
 
     fileprivate var localizedUppercasedText: String {
-        let uppercased = !DeveloperFlag.isUpdatedCallingUI
-        return "call.status.\(rawValue)_bitrate".localized(uppercased: uppercased)
+        return "call.status.\(rawValue)_bitrate".localized
     }
 
     fileprivate var accessibilityValue: String {

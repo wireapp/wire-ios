@@ -27,8 +27,7 @@ class NotificationLabel: RoundedBlurView {
         key: nil,
         size: .medium,
         weight: .semibold,
-        color: .textForeground,
-        variant: .dark
+        color: .white
     )
 
     /// use to disable animations for unit tests
