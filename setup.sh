@@ -85,6 +85,7 @@ echo "ℹ️  Fetching submodules..."
 if [[ -z "${CIRRUS_BUILD_ID}" ]]; then 
     echo "Skipping submodules because not running on Cirrus-CI"
 else
+    git config core.sshCommand "ssh -vvv"
     git submodule update --init --recursive || true
 	git submodule sync --recursive || true
 fi 
