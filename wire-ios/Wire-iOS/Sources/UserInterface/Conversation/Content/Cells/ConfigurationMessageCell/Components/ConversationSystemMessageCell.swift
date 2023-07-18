@@ -680,7 +680,6 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {
         let font = UIFont.mediumFont
-        let boldFont = UIFont.mediumSemiboldFont
         let color = SemanticColors.Label.textDefault
 
         func attributedLocalizedUppercaseString(_ localizationKey: String, _ users: [AnyHashable]) -> NSAttributedString? {
