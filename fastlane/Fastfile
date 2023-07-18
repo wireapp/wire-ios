@@ -33,7 +33,7 @@ platform :ios do
     end
 
     before_all do |lane|
-        ensure_xcode_version unless lane == :trigger_api_build_cirrus_ci
+        ensure_xcode_version unless [:prepare_for_development, :trigger_api_build_cirrus_ci].include?(lane)
         create_keychain_if_needed
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -322,7 +322,7 @@ platform :ios do
         build_number
     end
 
-    # "Fetch dependencies and prepare for building a release"
+    # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
         fetch_latest_configuration_repo
 
@@ -357,7 +357,7 @@ platform :ios do
         end
     end
 
-    # "Build for release to AppStore or App Center/S3"
+    # Build for release to AppStore or App Center/S3
     def build_for_release(options)
         build = Build.new(options: options)
         export_method = options[:export_method] || build.export_method
@@ -391,7 +391,7 @@ platform :ios do
         end
     end
 
-    # "Run security plans"
+    # Run security plans
     def security_plans(options)
         build = Build.new(options: options)
       
@@ -426,7 +426,7 @@ platform :ios do
         end
     end
 
-    # "Upload to AppStore"
+    # Upload to AppStore
     def upload_app_store(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
@@ -446,7 +446,7 @@ platform :ios do
         )
     end
 
-    # "Upload to TestFlight"
+    # Upload to TestFlight
     def upload_testflight(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
@@ -459,7 +459,7 @@ platform :ios do
         )
     end
 
-    # "Upload for internal use"
+    # Upload for internal use
     def upload_app_center (options)
         build = Build.new(options: options)
         changelog = ""
@@ -496,7 +496,7 @@ platform :ios do
         )
     end
 
-    # "Upload to S3 (Automation builds)"
+    # Upload to S3 (Automation builds)
     def upload_s3(options)
         build = Build.new(options: options)
         s3_subfolder = options[:s3_subfolder]
@@ -518,7 +518,7 @@ platform :ios do
         sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
     end
 
-    # "Upload dSYMs for AppStore crash tracking"
+    # Upload dSYMs for AppStore crash tracking
     def upload_dsyms_to_app_center_for_appstore_build(options)
         build = Build.new(options: options)
 
@@ -536,7 +536,7 @@ platform :ios do
         )
     end
 
-    # "Upload dsyms to Datadog"
+    # Upload dsyms to Datadog
     def upload_dsyms_to_datadog(options)
         build = Build.new(options: options)
         
