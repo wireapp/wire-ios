@@ -77,7 +77,8 @@ else
     eval "$(ssh-agent -s)"
     chmod 0600 .submodule-ssh-key
     ssh-add .submodule-ssh-key
-fi 
+    unset SUBMODULE_SSH_KEY
+fi
 echo ""
 
 echo "ℹ️  Fetching submodules..."
