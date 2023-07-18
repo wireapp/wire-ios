@@ -237,7 +237,11 @@ class CallParticipantsSnapshotTests: MessagingTest {
 
         // Then
         XCTAssertTrue(mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
-        XCTAssertEqual(mockWireCallCenterV3.callSnapshots[conversationId]!.degradedUser, user2)
+        guard let callSnapshot = mockWireCallCenterV3.callSnapshots[conversationId] else {
+            XCTFail("missing expected callSnapshot for \(conversationId)")
+            return
+        }
+        XCTAssertEqual(callSnapshot.degradedUser, user2)
     }
 
     func testThat_ItDegradesCallSecurity_WithSelfUser_WhenSelfUserBecomesUnverified() {
