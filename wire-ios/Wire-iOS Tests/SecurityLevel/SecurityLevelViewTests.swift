@@ -21,16 +21,11 @@ import WireUtilities
 @testable import Wire
 
 final class SecurityLevelViewTests: ZMSnapshotTestCase {
-    private var callingUIFlag: DeveloperFlag!
-    private var deprecatedUIFlagStateBackup: Bool!
 
     private var sut: SecurityLevelView!
 
     override func setUp() {
         super.setUp()
-        callingUIFlag = DeveloperFlag.deprecatedCallingUI
-        deprecatedUIFlagStateBackup = callingUIFlag.isOn
-        callingUIFlag.isOn = false
         sut = SecurityLevelView()
         sut.backgroundColor = SemanticColors.View.backgroundDefaultWhite
         sut.translatesAutoresizingMaskIntoConstraints = true
@@ -38,9 +33,7 @@ final class SecurityLevelViewTests: ZMSnapshotTestCase {
     }
 
     override func tearDown() {
-        callingUIFlag.isOn = deprecatedUIFlagStateBackup
         sut = nil
-        callingUIFlag = nil
         super.tearDown()
     }
 
