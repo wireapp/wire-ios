@@ -29,10 +29,6 @@ struct UserSet {
 
     private var storage: Storage
 
-    private init(storage: Storage) {
-        self.storage = storage
-    }
-
 }
 
 // MARK: - Collection

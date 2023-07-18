@@ -23,7 +23,6 @@ final class LocationMessageCellTests: XCTestCase {
 
     typealias CellConfiguration = (MockMessage) -> Void
 
-    var sut: ImageMessageView!
     var mockSelfUser: MockUserType!
 
     override func setUp() {
@@ -40,13 +39,16 @@ final class LocationMessageCellTests: XCTestCase {
     }
 
     /// Disabled since the MKMApView makes the test flaky (The map view is black when running on local machine)
-    func disabled_testThatItRendersLocationCellWithAddressCorrect() {
+    func testThatItRendersLocationCellWithAddressCorrect() throws {
+        throw XCTSkip("Disabled since the MKMApView makes the test flaky (The map view is black when running on local machine)")
         // This is experimental as the MKMapView might break the snapshot tests,
         verify(message: makeMessage())
     }
 
     /// Disabled since the MKMApView makes the test flaky
-    func disabled_testThatItRendersLocationCellWithoutAddressCorrect() {
+    func testThatItRendersLocationCellWithoutAddressCorrect() throws {
+        throw XCTSkip("Disabled since the MKMApView makes the test flaky")
+        
         verify(message: makeMessage {
             $0.backingLocationMessageData.name = nil
         })
