@@ -48,8 +48,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = createConversation()
 
         // WHEN
-        (0...40).forEach { i in
-            try! conversation.appendText(content: "\(i)")
+        try (0...40).forEach { i in
+            try conversation.appendText(content: "\(i)")
         }
 
         // THEN
@@ -61,8 +61,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = createConversation()
 
         // WHEN
-        (0...40).forEach { i in
-            try! conversation.appendText(content: "\(i)")
+        try (0...40).forEach { i in
+            try conversation.appendText(content: "\(i)")
         }
 
         // THEN
@@ -77,8 +77,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = createConversation()
 
         // WHEN
-        (0...40).forEach { i in
-            try! conversation.appendText(content: "\(i)")
+        try (0...40).forEach { i in
+            try conversation.appendText(content: "\(i)")
         }
 
         // THEN
@@ -88,18 +88,18 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         XCTAssertEqual(lastMessages.first?.textMessageData?.messageText, "40")
     }
 
-    func testThatItDoesNotIncludeMessagesFromOtherConversations() {
+    func testThatItDoesNotIncludeMessagesFromOtherConversations() throws {
         // GIVEN
         let conversation = createConversation()
         let otherConversation = createConversation()
 
         // WHEN
-        (1...10).forEach { i in
-            try! conversation.appendText(content: "\(i)")
+        try (1...10).forEach { i in
+            try conversation.appendText(content: "\(i)")
         }
 
-        (1...10).forEach { i in
-            try! otherConversation.appendText(content: "Other \(i)")
+        try (1...10).forEach { i in
+            try otherConversation.appendText(content: "Other \(i)")
         }
 
         // THEN
@@ -112,12 +112,12 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
     }
 
-    func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() {
+    func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
 
         // when
-        let message = try! conversation.appendText(content: "Test Message") as! ZMMessage
+        let message = try conversation.appendText(content: "Test Message") as! ZMMessage
         message.sender = ZMUser.selfUser(in: self.uiMOC)
         message.markAsSent()
         message.textMessageData?.editText("Edited Test Message", mentions: [], fetchLinkPreview: true)

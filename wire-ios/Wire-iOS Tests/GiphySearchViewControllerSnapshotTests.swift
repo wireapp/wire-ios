@@ -40,6 +40,7 @@ final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
 
         let searchTerm: String = "apple"
         sut = GiphySearchViewController(searchTerm: searchTerm, conversation: (mockConversation as Any) as! ZMConversation, searchResultsController: resultsController)
+        sut.searchBar.placeholderLabel.isHidden = true
         mockNavigationController = sut.wrapInsideNavigationController()
 
         sut.collectionView?.backgroundColor = .white
