@@ -239,23 +239,6 @@ platform :ios do
         end
     end
 
-    def fetch_latest_private_configuration_repo 
-        path = '../wire-ios-build-assets'
-        `rm -rf #{path}`
-        if is_running_on_ci 
-            Git.clone(
-                "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-build-assets.git",
-                path
-            )
-        else
-            Git.clone(
-                "git@github.com:wireapp/wire-ios-build-assets.git",
-                path
-            )
-        end
-
-    end
-
     def download_distribution_certificate_and_profiles(build, options)
         if is_running_on_ci 
             match(
@@ -307,7 +290,6 @@ platform :ios do
     # "Fetch dependencies and prepare for building a release"
     def prepare_for_release(options)
         xcode_version = options[:xcode_version]
-        fetch_latest_private_configuration_repo
 
         if !xcode_version.nil? 
             xcversion(version: xcode_version)
