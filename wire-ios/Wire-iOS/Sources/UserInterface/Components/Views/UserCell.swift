@@ -31,10 +31,12 @@ extension UIImageView {
 
 class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
-    var hidesSubtitle: Bool = false
+    // MARK: - Properties
+
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
+    var hidesSubtitle: Bool = false
     let avatarSpacer = UIView()
     let avatar = BadgeUserImageView()
     let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
@@ -74,19 +76,29 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     var cellIdentifier: String?
     let iconColor = IconColors.foregroundDefault
 
+    // MARK: - Override properties
+
     override var isSelected: Bool {
         didSet {
-            checkmarkIconView.image = isSelected ? StyleKitIcon.checkmark.makeImage(size: 12, color: IconColors.foregroundCheckMarkSelected) : nil
-            checkmarkIconView.backgroundColor = isSelected ? .accent() : IconColors.backgroundCheckMark
-            checkmarkIconView.layer.borderColor = isSelected ? UIColor.clear.cgColor : IconColors.borderCheckMark.cgColor
-            checkmarkIconView.layer.borderWidth = isSelected ? 0 : 2
+            if isSelected {
+                checkmarkIconView.setTemplateIcon(.checkmark, size: 12)
+                checkmarkIconView.tintColor = IconColors.foregroundCheckMarkSelected
+                checkmarkIconView.backgroundColor = .accent()
+                checkmarkIconView.layer.borderColor = UIColor.clear.cgColor
+                checkmarkIconView.layer.borderWidth = 0
+            } else {
+                checkmarkIconView.image = nil
+                checkmarkIconView.backgroundColor = IconColors.backgroundCheckMark
+                checkmarkIconView.layer.borderColor = IconColors.borderCheckMark.cgColor
+                checkmarkIconView.layer.borderWidth = 2
+            }
             setupAccessibility()
         }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
+        
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
@@ -115,47 +127,68 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     override func setUp() {
         super.setUp()
 
+        // userTypeIconView
         userTypeIconView.setUpIconImageView()
-        microphoneIconView.setUpIconImageView()
-        videoIconView.setUpIconImageView()
-
         userTypeIconView.set(size: .tiny, color: iconColor)
-        microphoneIconView.set(size: .tiny, color: iconColor)
+
+        // videoIconView
+        videoIconView.setUpIconImageView()
         videoIconView.set(size: .tiny, color: iconColor)
 
+        // microphoneIconView
+        microphoneIconView.setUpIconImageView()
+        microphoneIconView.set(size: .tiny, color: iconColor)
+
+        // verifiedIconView
         verifiedIconView.image = WireStyleKit.imageOfShieldverified
         verifiedIconView.setUpIconImageView(accessibilityIdentifier: "img.shield")
 
+        // connectButton
         connectButton.setIcon(.plusCircled, size: .tiny, for: .normal)
         connectButton.setIconColor(iconColor, for: .normal)
         connectButton.imageView?.contentMode = .center
         connectButton.isHidden = true
 
+        // checkmarkIconView
         checkmarkIconView.layer.borderWidth = 2
         checkmarkIconView.contentMode = .center
         checkmarkIconView.layer.cornerRadius = 12
         checkmarkIconView.backgroundColor = IconColors.backgroundCheckMark
         checkmarkIconView.isHidden = true
 
+        // accessoryIconView
         accessoryIconView.setUpIconImageView()
         accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
+        // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.accessibilityIdentifier = "user_cell.name"
 
+        // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel.accessibilityIdentifier = "user_cell.username"
 
+        // avatar
         avatar.userSession = ZMUserSession.shared()
         avatar.initialsFont = .avatarInitial
         avatar.size = .small
         avatar.translatesAutoresizingMaskIntoConstraints = false
 
+        // avatarSpacer
         avatarSpacer.addSubview(avatar)
         avatarSpacer.translatesAutoresizingMaskIntoConstraints = false
 
-        iconStackView = UIStackView(arrangedSubviews: [videoIconView, microphoneIconView, userTypeIconView, verifiedIconView, connectButton, checkmarkIconView, accessoryIconView])
+        // iconStackView
+        iconStackView = UIStackView(
+            arrangedSubviews: [videoIconView,
+                               microphoneIconView,
+                               userTypeIconView,
+                               verifiedIconView,
+                               connectButton,
+                               checkmarkIconView,
+                               accessoryIconView]
+        )
         iconStackView.spacing = 16
         iconStackView.axis = .horizontal
         iconStackView.distribution = .fill
@@ -163,12 +196,14 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         iconStackView.translatesAutoresizingMaskIntoConstraints = false
         iconStackView.setContentHuggingPriority(.required, for: .horizontal)
 
+        // titleStackView
         titleStackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         titleStackView.axis = .vertical
         titleStackView.distribution = .equalSpacing
         titleStackView.alignment = .leading
         titleStackView.translatesAutoresizingMaskIntoConstraints = false
 
+        // contentStackView
         contentStackView = UIStackView(arrangedSubviews: [avatarSpacer, titleStackView, iconStackView])
         contentStackView.axis = .horizontal
         contentStackView.distribution = .fill
@@ -178,6 +213,8 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         contentView.addSubview(contentStackView)
         createConstraints()
     }
+
+    // MARK: - Set up constraints
 
     private func createConstraints() {
         let avatarSpacerWidthConstraint = avatarSpacer.widthAnchor.constraint(equalToConstant: UserCell.defaultAvatarSpacing)
@@ -199,14 +236,16 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         ])
     }
 
+    // MARK: - setup Accessibility
+
     func setupAccessibility() {
         typealias ClientsList = L10n.Accessibility.ClientsList
         typealias Calling = L10n.Accessibility.Calling
 
         guard let title = titleLabel.text else {
-                  isAccessibilityElement = false
-                  return
-              }
+            isAccessibilityElement = false
+            return
+        }
         isAccessibilityElement = true
         accessibilityTraits = .button
 
@@ -253,9 +292,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         typealias CreateConversation = L10n.Accessibility.CreateConversation
 
         if !checkmarkIconView.isHidden {
-            accessibilityHint = isSelected
-                                ? CreateConversation.SelectedUser.hint
-                                : CreateConversation.UnselectedUser.hint
+            accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser.hint
         } else if let user = user, user.isServiceUser {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
@@ -263,11 +300,13 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
     }
 
+    // MARK: - Update and configure methods
+
     private func updateTitleLabel(selfUser: UserType? = nil) {
         guard let user = user,
               let selfUser = selfUser else {
-                  return
-              }
+            return
+        }
         var attributedTitle = user.nameIncludingAvailability(
             color: SemanticColors.Label.textDefault,
             selfUser: selfUser)
