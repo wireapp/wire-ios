@@ -290,7 +290,14 @@ import CoreData
 
         let insertedConversations = modifiedObjects.inserted.compactMap { $0 as? ZMConversation }
         let deletedConversations = modifiedObjects.deleted.compactMap { $0 as? ZMConversation }
-        conversationListObserverCenter.conversationsChanges(inserted: insertedConversations, deleted: deletedConversations)
+        let remotelyDeletedConversations = modifiedObjects.updatedAndRefreshed
+            .compactMap { $0 as? ZMConversation }
+            .filter(\.isDeletedRemotely)
+
+        conversationListObserverCenter.conversationsChanges(
+            inserted: insertedConversations,
+            deleted: deletedConversations + remotelyDeletedConversations
+        )
     }
 
     private func checkForUnreadMessages(insertedObjects: Set<ZMManagedObject>, updatedObjects: Set<ZMManagedObject>) {

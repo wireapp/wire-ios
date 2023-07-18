@@ -40,7 +40,7 @@ class ConversationTests_Deletion: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertTrue(teamConversation.isZombieObject)
+        XCTAssertTrue(teamConversation.isDeletedRemotely)
     }
 
     func testThatDeletingAConversationIsNotDeletingItLocally_OnFailureResponse() {
@@ -71,7 +71,7 @@ class ConversationTests_Deletion: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(teamConversation.isZombieObject)
+        XCTAssertFalse(teamConversation.isDeletedRemotely)
     }
 
 }
