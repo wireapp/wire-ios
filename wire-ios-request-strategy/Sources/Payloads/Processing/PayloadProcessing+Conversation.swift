@@ -512,7 +512,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
             return
         }
 
-        context.delete(conversation)
+        conversation.isDeletedRemotely = true
     }
 
 }
