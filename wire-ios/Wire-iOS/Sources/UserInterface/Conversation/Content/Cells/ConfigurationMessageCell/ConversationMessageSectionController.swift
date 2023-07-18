@@ -334,7 +334,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                         changeObservers.append(observer)
                     } else {
                         assertionFailure("Failed to add observer for user \(user)")
-                    }       
+                    }
                 }
             }
         }
