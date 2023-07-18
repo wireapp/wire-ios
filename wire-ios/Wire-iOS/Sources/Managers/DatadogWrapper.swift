@@ -78,6 +78,12 @@ public class DatadogWrapper {
                 .trackBackgroundEvents()
                 .trackRUMLongTasks()
                 .enableCrashReporting(using: DDCrashReportingPlugin())
+                // Redacting an event information on tap action 
+                .setRUMActionEventMapper { actionEvent in
+                    var actionEvent = actionEvent
+                    actionEvent.action.target?.name = "ConversationListCell"
+                    return actionEvent
+                }
                 .build()
         )
 
