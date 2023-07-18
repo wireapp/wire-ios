@@ -22,6 +22,12 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2015 Wire. All rights reserved.</string>
+	<key>MLSEnabled</key>
+	<string>${MLS_ENABLED}</string>
+	<key>CreateMLSGroupEnabled</key>
+	<string>${CREATE_MLS_GROUP_ENABLED}</string>
+	<key>ProteusByCoreCryptoEnabled</key>
+	<string>${PROTEUS_BY_CORECRYPTO_ENABLED}</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>
