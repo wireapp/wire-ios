@@ -17,8 +17,28 @@
 //
 
 import Foundation
+import Combine
+
+struct MLSConferenceParticipantsInfo {
+    let participants: [CallParticipant]
+    let conversation: ZMConversation
+    let subconversationID: MLSGroupID
+}
 
 extension WireCallCenterV3 {
+
+    func onMLSConferenceParticipantsChanged(
+        conversation: ZMConversation,
+        subconversationID: MLSGroupID
+    ) -> AnyPublisher<MLSConferenceParticipantsInfo, Never> {
+        onParticipantsChanged().compactMap {
+            MLSConferenceParticipantsInfo(
+                participants: $0,
+                conversation: conversation,
+                subconversationID: subconversationID
+            )
+        }.eraseToAnyPublisher()
+    }
 
     func updateMLSConferenceIfNeeded(
         conversationID: AVSIdentifier,

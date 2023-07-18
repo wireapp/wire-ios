@@ -42,6 +42,7 @@ struct CallSnapshot {
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
     var onConferenceInfoChangedToken: AnyCancellable?
+    var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
 
     var isDegradedCall: Bool {
         return degradedUser != nil

@@ -22,6 +22,7 @@ import Combine
 
 // Temporary Mock until we find a way to use a single mocked `mlsServiceProcotol` accross frameworks
 class MockMLSService: MLSServiceInterface {
+
     func createSelfGroup(for groupID: MLSGroupID) {
         fatalError("not implemented")
     }
@@ -61,8 +62,14 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    var mockRemoveMembersFromConversation: (([MLSClientID], MLSGroupID) throws -> Void)?
+
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws {
-        fatalError("not implemented")
+        guard let mock = mockRemoveMembersFromConversation else {
+            fatalError("missing mock for `removeMembersFromConversation`")
+        }
+
+        try mock(clientIds, groupID)
     }
 
     func registerPendingJoin(_ group: MLSGroupID) {
@@ -94,7 +101,7 @@ class MockMLSService: MLSServiceInterface {
         parentID: MLSGroupID
     ) async throws -> MLSGroupID {
         guard let mock = mockCreateOrJoinSubgroup else {
-            fatalError("not implemented")
+            fatalError("missing mock for `createOrJoinSubgroup`")
         }
 
         return mock(parentQualifiedID, parentID)
@@ -107,7 +114,7 @@ class MockMLSService: MLSServiceInterface {
         subconversationGroupID: MLSGroupID
     ) throws -> MLSConferenceInfo {
         guard let mock = mockGenerateConferenceInfo else {
-            fatalError("not implemented")
+            fatalError("missing mock for `generateConferenceInfo`")
         }
 
         return mock(parentGroupID, subconversationGroupID)
@@ -117,7 +124,7 @@ class MockMLSService: MLSServiceInterface {
 
     func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
         guard let mock = mockOnConferenceInfoChange else {
-            fatalError("not implemented")
+            fatalError("missing mock for `onConferenceInfoChange`")
         }
 
         return mock(parentGroupID, subConversationGroupID)
@@ -127,7 +134,7 @@ class MockMLSService: MLSServiceInterface {
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         guard let mock = mockOnEpochChanged else {
-            fatalError("not implemented")
+            fatalError("missing mock for `onEpochChanged`")
         }
 
         return mock()
@@ -141,7 +148,7 @@ class MockMLSService: MLSServiceInterface {
         subconversationType: SubgroupType
     ) async throws {
         guard let mock = mockLeaveSubconversation else {
-            fatalError("not implemented")
+            fatalError("missing mock for `leaveSubconversation`")
         }
 
         try mock(parentQualifiedID, parentGroupID, subconversationType)
@@ -156,7 +163,7 @@ class MockMLSService: MLSServiceInterface {
         selfClientID: MLSClientID
     ) async throws {
         guard let mock = mockLeaveSubconversationIfNeeded else {
-            fatalError("not implemented")
+            fatalError("missing mock for `leaveSubconversationIfNeeded`")
         }
 
         try mock(parentQualifiedID, parentGroupID, subconversationType, selfClientID)
@@ -166,10 +173,20 @@ class MockMLSService: MLSServiceInterface {
 
     func generateNewEpoch(groupID: MLSGroupID) async throws {
         guard let mock = mockGenerateNewEpoch else {
-            fatalError("not implemented")
+            fatalError("missing mock for `generateNewEpoch`")
         }
 
         return mock(groupID)
+    }
+
+    var mockSubconversationMembers: ((MLSGroupID) -> [MLSClientID])?
+
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        guard let mock = mockSubconversationMembers else {
+            fatalError("missing mock for `subconversationMembers`")
+        }
+
+        return mock(subconversationGroupID)
     }
 
 }

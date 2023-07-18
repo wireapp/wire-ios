@@ -78,6 +78,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID]
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -306,6 +308,23 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("failed to generate conference info: \(String(describing: error))")
             throw MLSConferenceInfoError.failedToGenerateConferenceInfo
         }
+    }
+
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        do {
+            return try coreCrypto.perform {
+                return try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
+                    MLSClientID(data: $0.data)
+                }
+            }
+        } catch {
+            logger.warn("failed to get subconversation client ids: \(String(describing: error))")
+            throw MLSSubconversationMembersError.failedToGetSubconversationMembers
+        }
+    }
+
+    public enum MLSSubconversationMembersError: Error, Equatable {
+        case failedToGetSubconversationMembers
     }
 
     public enum MLSConferenceInfoError: Error, Equatable {
