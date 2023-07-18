@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
+final class ConversationMessageSectionControllerTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -50,7 +50,6 @@ final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
 
         super.tearDown()
     }
-
 
     // MARK: - Tests
 
