@@ -74,7 +74,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "CreateMLSGroupEnabled"
         case .proteusViaCoreCrypto:
             return "ProteusByCoreCryptoEnabled"
-        case .nseV2, .deprecatedCallingUI:
+        case .nseV2:
             return nil
         }
     }
