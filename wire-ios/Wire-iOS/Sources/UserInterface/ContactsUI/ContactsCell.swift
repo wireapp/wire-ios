@@ -38,8 +38,6 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         }
     }
 
-    var colorSchemeVariant: ColorSchemeVariant = ColorScheme.default.variant
-
     static let boldFont: FontSpec = .smallRegularFont
     static let lightFont: FontSpec = .smallLightFont
 

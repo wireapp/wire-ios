@@ -23,6 +23,11 @@ import avs
 
 private let zmLog = ZMSLog(tag: "calling")
 
+protocol ActiveCallViewControllerDelegate: AnyObject {
+    func activeCallViewControllerDidDisappear(_ activeCallViewController: UIViewController,
+                                              for conversation: ZMConversation?)
+}
+
 protocol CallInfoConfigurationObserver: AnyObject {
     func didUpdateConfiguration(configuration: CallInfoConfiguration)
 }
