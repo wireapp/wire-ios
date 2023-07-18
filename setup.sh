@@ -78,7 +78,6 @@ else
     chmod 0600 .submodule-ssh-key
     ssh-add .submodule-ssh-key
     ssh-keygen -R github.com
-    cat ~/.ssh/known_hosts
     unset SUBMODULE_SSH_KEY
 fi
 echo ""
