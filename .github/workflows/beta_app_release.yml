@@ -6,7 +6,7 @@ permissions:
 
 jobs:
   testflight_beta:
-    runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:14.2
+    runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:14.3.1
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
