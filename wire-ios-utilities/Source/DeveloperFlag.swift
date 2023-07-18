@@ -26,7 +26,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case nseV2
-    case deprecatedCallingUI
 
     public var description: String {
         switch self {
@@ -41,9 +40,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .nseV2:
             return "Turn on to use the new implementation of the notification service extension."
-
-        case .deprecatedCallingUI:
-            return "Turn on to use deprecated calling UI"
         }
     }
 
@@ -69,9 +65,6 @@ public enum DeveloperFlag: String, CaseIterable {
             return false
 
         case .nseV2:
-            return false
-
-        case .deprecatedCallingUI:
             return false
         }
     }
