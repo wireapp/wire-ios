@@ -42,12 +42,6 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
         }
     }
 
-    var variant: ColorSchemeVariant = .light {
-        didSet {
-            updateAppearance()
-        }
-    }
-
     init(participants: CallParticipantsList,
          selfUser: UserType) {
         self.participants = participants
@@ -158,9 +152,6 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
         false
     }
 
-    private func updateAppearance() {
-        collectionView?.colorSchemeVariant = variant
-    }
 }
 
 extension CallingActionsInfoViewController: CallInfoConfigurationObserver {

@@ -87,7 +87,6 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {
     var domain: String?
 
-
     var typingUsers: [UserType] = []
 
     var hasDraftMessage: Bool = false
