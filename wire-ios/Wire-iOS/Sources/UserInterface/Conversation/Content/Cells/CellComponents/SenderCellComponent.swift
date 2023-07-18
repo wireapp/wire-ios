@@ -118,6 +118,11 @@ final class SenderCellComponent: UIView {
         addSubview(stackView)
 
         createConstraints()
+
+        // We need to call that method here to restraint the authorLabel moving
+        // outside of the view and then back to its position. For more information
+        // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
+        self.layoutIfNeeded()
     }
 
     private func createConstraints() {
