@@ -116,4 +116,58 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertEqual(description?.message?.nonce, message.nonce)
         XCTAssertNotNil(description?.configuration.timestamp)
     }
+
+    func testThatWeDontShowSenderDetails_WhenIsSameSenderAsPrevious() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(
+            withText: "Welcome to Dub Dub"
+        )
+        message.serverTimestamp = .today(at: 9, 41)
+        message.senderUser = mockSelfUser
+
+        context = ConversationMessageContext(isSameSenderAsPrevious: true,
+                                             isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimestampInSameMinuteAsPreviousMessage: true,
+                                             isFirstMessageOfTheDay: false,
+                                             isFirstUnreadMessage: false,
+                                             isLastMessage: false,
+                                             searchQueries: [],
+                                             previousMessageIsKnock: false,
+                                             spacing: 0)
+
+        // WHEN
+        let section = ConversationMessageSectionController(message: message, context: context)
+
+        // THEN
+        let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertNil(description)
+        XCTAssertNil(description?.configuration.timestamp)
+    }
+
+    func testThatWeShowSenderDetails_WhenPreviousMessageIsKnock() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(
+            withText: "Welcome to Dub Dub"
+        )
+        message.serverTimestamp = .today(at: 9, 41)
+        message.senderUser = mockSelfUser
+
+        context = ConversationMessageContext(isSameSenderAsPrevious: false,
+                                             isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimestampInSameMinuteAsPreviousMessage: false,
+                                             isFirstMessageOfTheDay: false,
+                                             isFirstUnreadMessage: false,
+                                             isLastMessage: false,
+                                             searchQueries: [],
+                                             previousMessageIsKnock: true,
+                                             spacing: 0)
+
+        // WHEN
+        let section = ConversationMessageSectionController(message: message, context: context)
+
+        // THEN
+        let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertEqual(description?.message?.nonce, message.nonce)
+        XCTAssertNotNil(description?.configuration.timestamp)
+    }
 }
