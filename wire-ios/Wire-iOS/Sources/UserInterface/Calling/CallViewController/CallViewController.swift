@@ -112,11 +112,8 @@ final class CallViewController: UIViewController {
         disableVideoIfNeeded()
 
         setupViews()
-        if DeveloperFlag.isUpdatedCallingUI {
-            createConstraintsForUpdatedUI()
-        } else {
-            createConstraints()
-        }
+        createConstraints()
+
         updateConfiguration()
 
         singleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap(_:)))
@@ -199,10 +196,6 @@ final class CallViewController: UIViewController {
         return true
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return callInfoConfiguration.effectiveColorVariant == .light ? .darkContent : .lightContent
-    }
-
     override var prefersStatusBarHidden: Bool {
         return !isOverlayVisible
     }
@@ -227,20 +220,11 @@ final class CallViewController: UIViewController {
         } else {
             addToSelf(callGridViewController)
         }
-        if DeveloperFlag.isUpdatedCallingUI {
+
             view.backgroundColor = .clear
-        }
     }
 
     private func createConstraints() {
-        if isOverlayEnabled {
-            [callGridViewController, callInfoRootViewController].forEach { $0.view.fitIn(view: view) }
-        } else {
-            callGridViewController.view.fitIn(view: view)
-        }
-    }
-
-    private func createConstraintsForUpdatedUI() {
         NSLayoutConstraint.activate([
             callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
             callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
@@ -304,7 +288,6 @@ final class CallViewController: UIViewController {
         updateAppearance()
         updateIdleTimer()
         configurationObserver?.didUpdateConfiguration(configuration: callInfoConfiguration)
-        guard DeveloperFlag.isUpdatedCallingUI else { return }
         showIncomingCallStatusViewIfNeeded(forConfiguration: callInfoConfiguration)
     }
 
@@ -341,8 +324,6 @@ final class CallViewController: UIViewController {
     }
 
     private func updateAppearance() {
-        guard !DeveloperFlag.isUpdatedCallingUI else { return }
-        view.backgroundColor = UIColor.from(scheme: .background, variant: callInfoConfiguration.variant)
     }
 
     fileprivate func alertVideoUnavailable() {
