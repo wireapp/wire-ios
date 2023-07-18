@@ -863,7 +863,6 @@ extension AuthenticationCoordinator {
     }
 }
 
-
 private extension AuthenticationStateController.RewindMilestone {
     func shouldRewind(to step: UIViewController) -> Bool {
         switch self {

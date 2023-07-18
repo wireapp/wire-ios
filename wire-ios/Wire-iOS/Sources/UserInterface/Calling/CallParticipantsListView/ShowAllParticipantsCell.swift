@@ -29,7 +29,7 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
     typealias Participants = L10n.Localizable.Call.Participants
     typealias ViewColors = SemanticColors.View
-    
+
     let participantIconView = UIImageView()
     let titleLabel = UILabel()
     let accessoryIconView = UIImageView()
@@ -37,7 +37,6 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
     var sectionName: String?
     var cellIdentifier: String?
-    
 
     // MARK: - Init and overrides
 
@@ -45,7 +44,7 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
         super.init(frame: frame)
         setup()
     }
-    
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
