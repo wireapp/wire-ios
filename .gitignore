@@ -93,3 +93,4 @@ iOSInjectionProject/
 # CI-level files
 fastlane/appstoreconnect_api_key.json
 vendor/*
+.submodule-ssh-key

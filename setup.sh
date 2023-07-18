@@ -69,6 +69,26 @@ else
 fi 
 echo ""
 
+echo "ℹ️  Configuring custom configuration submodule authentication..."
+if [[ -z "${SUBMODULE_SSH_KEY}" ]]; then # 
+    echo "Skipping submodule ssh key configuration because not defined"
+else
+    echo "${SUBMODULE_SSH_KEY}" | cat > .submodule-ssh-key
+    eval "$(ssh-agent -s)"
+    chmod 0600 .submodule-ssh-key
+    ssh-add .submodule-ssh-key
+fi 
+echo ""
+
+echo "ℹ️  Fetching submodules..."
+if [[ -z "${CIRRUS_BUILD_ID}" ]]; then 
+    echo "Skipping submodules because not running on Cirrus-CI"
+else
+    git submodule update --init --recursive || true
+	git submodule sync --recursive || true
+fi 
+echo ""
+
 echo "ℹ️  Installing bundler and Ruby dependencies..."
 which bundle || gem install bundler
 bundle check || bundle install
