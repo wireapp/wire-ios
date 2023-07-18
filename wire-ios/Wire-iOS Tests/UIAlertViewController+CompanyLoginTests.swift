@@ -28,19 +28,19 @@ final class UIAlertControllerCompanyLoginSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
-    func testForSSOAndEmailAlert() {
+    func testForSSOAndEmailAlert() throws {
         sut = UIAlertController.companyLogin(ssoOnly: false, completion: {_  in})
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
-    func testForSSOOnlyAlert() {
+    func testForSSOOnlyAlert() throws {
         sut = UIAlertController.companyLogin(ssoOnly: true, completion: {_  in})
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
-    func testForAlertWithError() {
+    func testForAlertWithError() throws {
         sut = UIAlertController.companyLogin(error: .unknown) {_  in}
-        verify(matching: sut)
+        try verify(matching: sut)
     }
 
 }

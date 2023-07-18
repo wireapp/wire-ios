@@ -150,8 +150,8 @@ class AddressBook {
     let phoneNumberNormalizer: AddressBook.Normalizer
 
     init() {
-        let libPhoneNumber = NBPhoneNumberUtil()
-        self.phoneNumberNormalizer = { libPhoneNumber.normalize(phoneNumber: $0)?.validatedPhoneNumber }
+        let libPhoneNumber = NBPhoneNumberUtil.sharedInstance()
+        self.phoneNumberNormalizer = { libPhoneNumber?.normalize(phoneNumber: $0)?.validatedPhoneNumber }
     }
 
     typealias Normalizer = (String) -> (String?)
