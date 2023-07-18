@@ -33,7 +33,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         coreDataStack = coreDataFixture.coreDataStack
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
-    
+
     override func setUp() {
         super.setUp()
 

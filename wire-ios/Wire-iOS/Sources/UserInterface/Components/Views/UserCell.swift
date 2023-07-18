@@ -96,14 +96,6 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         }
     }
 
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted ?
-            SemanticColors.View.backgroundUserCellHightLighted :
-            SemanticColors.View.backgroundUserCell
-        }
-    }
-
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -134,9 +126,6 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func setUp() {
         super.setUp()
-
-        // background color
-        backgroundColor = SemanticColors.View.backgroundUserCell
 
         // userTypeIconView
         userTypeIconView.setUpIconImageView()

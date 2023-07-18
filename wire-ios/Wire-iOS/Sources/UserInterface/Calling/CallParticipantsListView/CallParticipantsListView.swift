@@ -113,7 +113,6 @@ extension UserCell: CallParticipantsListCellConfigurable {
     func configure(with configuration: CallParticipantsListCellConfiguration,
                    selfUser: UserType) {
         guard case let .callParticipant(user, videoState, microphoneState, activeSpeakerState) = configuration else { preconditionFailure() }
-        contentBackgroundColor = .clear
         hidesSubtitle = true
         accessoryIconView.isHidden = true
         microphoneIconView.set(style: MicrophoneIconStyle(

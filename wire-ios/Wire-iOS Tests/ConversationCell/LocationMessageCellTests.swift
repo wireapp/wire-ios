@@ -48,7 +48,7 @@ final class LocationMessageCellTests: XCTestCase {
     /// Disabled since the MKMApView makes the test flaky
     func testThatItRendersLocationCellWithoutAddressCorrect() throws {
         throw XCTSkip("Disabled since the MKMApView makes the test flaky")
-        
+
         verify(message: makeMessage {
             $0.backingLocationMessageData.name = nil
         })
