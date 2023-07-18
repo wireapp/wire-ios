@@ -479,8 +479,8 @@ extension AuthenticationCoordinator {
         } else {
             guard let accountId = unauthenticatedSession.accountId,
                   let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
-                      fatal("No unauthenticated account to log out from")
-                  }
+                fatal("No unauthenticated account to log out from")
+            }
 
             sessionManager.delete(account: unauthenticatedAccount)
         }
