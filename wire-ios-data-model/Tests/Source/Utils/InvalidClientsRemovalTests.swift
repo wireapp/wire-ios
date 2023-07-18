@@ -97,8 +97,6 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
 
-            syncMOC.saveOrRollback()
-
             let duplicateClient = UserClient.insertNewObject(in: syncMOC)
             duplicateClient.remoteIdentifier = otherClient.remoteIdentifier
             duplicateClient.user = nil
