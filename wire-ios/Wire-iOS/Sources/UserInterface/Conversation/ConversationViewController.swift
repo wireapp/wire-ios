@@ -108,7 +108,6 @@ final class ConversationViewController: UIViewController {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
         self.zClientViewController = zClientViewController
-        print(conversation.domain)
 
         contentViewController = ConversationContentViewController(conversation: conversation,
                                                                   message: visibleMessage,

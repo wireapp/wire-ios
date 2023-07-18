@@ -75,4 +75,9 @@ extension ZMUser {
     public static func predicateForUsersToUpdateRichProfile() -> NSPredicate {
         return NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
     }
+
+    public static func predicateForConnectedUsers(inDomain domain: String) -> NSPredicate {
+        let domainPredicate = NSPredicate(format: "(%K == %@)", #keyPath(ZMUser.domain), domain)
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [domainPredicate, predicateForConnectedUsers(withSearch: "")])
+    }
 }
