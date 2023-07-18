@@ -91,7 +91,7 @@ final class ConversationMessageSectionControllerTests: ZMSnapshotTestCase {
         XCTAssertEqual(String(describing: cell2.baseType), "MockCellDescription<Bool>")
     }
 
-    func testThatWeDoShowSenderDetails_WhenIsSameSenderAsPrevious() {
+    func testThatWeDoShowSenderDetails_WhenIsNotSameSenderAsPrevious() {
         // GIVEN
         let message = MockMessageFactory.textMessage(
             withText: "Hello"
