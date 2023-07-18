@@ -21,9 +21,15 @@ import UIKit
 import WireDataModel
 import WireCommonComponents
 
-class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
-    typealias Participants = L10n.Localizable.Call.Participants
+// MARK: - ShowAllParticipantsCell
 
+class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
+
+    // MARK: - Properties
+
+    typealias Participants = L10n.Localizable.Call.Participants
+    typealias ViewColors = SemanticColors.View
+    
     let participantIconView = UIImageView()
     let titleLabel = UILabel()
     let accessoryIconView = UIImageView()
@@ -31,38 +37,47 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
     var sectionName: String?
     var cellIdentifier: String?
+    
 
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
-        }
-    }
+    // MARK: - Init and overrides
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-
+    
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    fileprivate func setup() {
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+            ? ViewColors.backgroundUserCellHightLighted
+            : ViewColors.backgroundUserCell
+        }
+    }
 
-        backgroundColor = SemanticColors.View.backgroundUserCell
+    // MARK: - Setup and configure colors
+
+    private func setup() {
+        backgroundColor = ViewColors.backgroundUserCell
+
+        // participantIconView
         participantIconView.translatesAutoresizingMaskIntoConstraints = false
         participantIconView.contentMode = .scaleAspectFit
         participantIconView.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
 
+        // accessoryIconView
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
 
+        // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = FontSpec.init(.normal, .light).font!
 
+        // avatarSpacer
         let avatarSpacer = UIView()
         avatarSpacer.addSubview(participantIconView)
         avatarSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -71,10 +86,12 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
         avatarSpacer.centerXAnchor.constraint(equalTo: participantIconView.centerXAnchor).isActive = true
         avatarSpacer.centerYAnchor.constraint(equalTo: participantIconView.centerYAnchor).isActive = true
 
+        // iconViewSpacer
         let iconViewSpacer = UIView()
         iconViewSpacer.translatesAutoresizingMaskIntoConstraints = false
         iconViewSpacer.widthAnchor.constraint(equalToConstant: 8).isActive = true
 
+        // contentStackView
         contentStackView = UIStackView(arrangedSubviews: [avatarSpacer, titleLabel, iconViewSpacer, accessoryIconView])
         contentStackView.axis = .horizontal
         contentStackView.distribution = .fill
@@ -91,17 +108,18 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     }
 
     private func configureColors() {
-        let sectionTextColor = SemanticColors.Icon.foregroundDefault
-        backgroundColor = .clear
+        let iconTintColor = SemanticColors.Icon.foregroundDefault
 
         participantIconView.setTemplateIcon(.person, size: .tiny)
-        participantIconView.tintColor = SemanticColors.Icon.foregroundDefault
+        participantIconView.tintColor = iconTintColor
 
         accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
-        accessoryIconView.tintColor = sectionTextColor
+        accessoryIconView.tintColor = iconTintColor
 
         titleLabel.textColor = SemanticColors.Label.textDefault
     }
+
+    // MARK: - Accessibility
 
     private func setupAccessibility(with rowType: ParticipantsRowType) {
         isAccessibilityElement = true
@@ -117,9 +135,13 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
 }
 
+// MARK: - CallParticipantsListCellConfigurable
+
 extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
-    func configure(with configuration: CallParticipantsListCellConfiguration,
-                   selfUser: UserType) {
+    func configure(
+        with configuration: CallParticipantsListCellConfiguration,
+        selfUser: UserType
+    ) {
         guard case let .showAll(totalCount: totalCount) = configuration else { preconditionFailure() }
 
         titleLabel.text = Participants.showAll(totalCount)
@@ -127,7 +149,11 @@ extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
 }
 
 extension ShowAllParticipantsCell: ParticipantsCellConfigurable {
-    func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
+    func configure(
+        with rowType: ParticipantsRowType,
+        conversation: GroupDetailsConversationType,
+        showSeparator: Bool
+    ) {
         guard case let .showAll(count) = rowType else { preconditionFailure() }
         titleLabel.text = Participants.showAll(count)
         cellIdentifier = "cell.call.show_all_participants"
