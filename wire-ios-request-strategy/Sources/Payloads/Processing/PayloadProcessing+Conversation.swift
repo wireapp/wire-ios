@@ -176,7 +176,9 @@ extension Payload.Conversation {
         if conversation.epoch <= 0 {
             mlsService.createSelfGroup(for: groupId)
         } else {
-            mlsService.joinGroup(with: groupId)
+            Task {
+                try await mlsService.joinGroup(with: groupId)
+            }
         }
     }
 

@@ -214,12 +214,12 @@ public extension ZMConversation {
                     return
                 }
             }
-            mlsService.joinGroup(with: mlsGroupID)
-        
+
             let selfUser = ZMUser.selfUser(in: syncContext)
             let mlsUser = MLSUser(from: selfUser)
             Task {
                 do {
+                    try await mlsService.joinGroup(with: mlsGroupID)
                     try await mlsService.addMembersToConversation(with: [mlsUser], for: mlsGroupID)
                 } catch {
                     WireLogger.mls.error("failed to add other clients for joining MLS group")

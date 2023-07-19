@@ -26,7 +26,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func createSelfGroup(for groupID: MLSGroupID)
 
-    func joinGroup(with groupID: MLSGroupID)
+    func joinGroup(with groupID: MLSGroupID) async throws
 
     func createGroup(for groupID: MLSGroupID) throws
 
@@ -745,9 +745,8 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Joining conversations
 
-    public func joinGroup(with groupID: MLSGroupID) {
-        registerPendingJoin(groupID)
-        performPendingJoins()
+    public func joinGroup(with groupID: MLSGroupID) async throws {
+        try await joinByExternalCommit(groupID: groupID)
     }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
