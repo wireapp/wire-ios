@@ -112,9 +112,17 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(message: message, context: context)
 
         // THEN
-        let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertEqual(description?.message?.nonce, message.nonce)
-        XCTAssertNotNil(description?.configuration.timestamp)
+        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
+
+        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationTextMessageCellDescription
+        XCTAssertNotNil(conversationTextMessageCellDescription)
+
+        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 2)?.instance as? ConversationMessageToolboxCellDescription
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
+
+        XCTAssert(section.cellDescriptions.count == 3)
     }
 
     func testThatWeDontShowSenderDetails_WhenIsSameSenderAsPrevious() {
@@ -139,15 +147,24 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(message: message, context: context)
 
         // THEN
-        let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertNil(description)
-        XCTAssertNil(description?.configuration.timestamp)
+        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertNil(conversationSenderMessageCellDescription)
+        XCTAssertNil(conversationSenderMessageCellDescription?.configuration.timestamp)
+
+        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationTextMessageCellDescription
+        XCTAssertNotNil(conversationTextMessageCellDescription)
+
+        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationMessageToolboxCellDescription
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
+
+        XCTAssert(section.cellDescriptions.count == 2)
     }
 
     func testThatWeShowSenderDetails_WhenPreviousMessageIsKnock() {
         // GIVEN
         let message = MockMessageFactory.textMessage(
-            withText: "Welcome to Dub Dub"
+            withText: "Welcome to Dub Dub 2023"
         )
         message.serverTimestamp = .today(at: 9, 41)
         message.senderUser = mockSelfUser
@@ -166,8 +183,16 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(message: message, context: context)
 
         // THEN
-        let description = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertEqual(description?.message?.nonce, message.nonce)
-        XCTAssertNotNil(description?.configuration.timestamp)
+        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
+
+        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationTextMessageCellDescription
+        XCTAssertNotNil(conversationTextMessageCellDescription)
+
+        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 2)?.instance as? ConversationMessageToolboxCellDescription
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
+
+        XCTAssert(section.cellDescriptions.count == 3)
     }
 }
