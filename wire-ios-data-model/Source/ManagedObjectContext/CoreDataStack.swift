@@ -129,6 +129,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         let eventContainer = PersistentContainer(name: "ZMEventModel")
         let messagesContainer = PersistentContainer(name: "zmessaging")
+        
 
         let description: NSPersistentStoreDescription
         let eventStoreDescription: NSPersistentStoreDescription
@@ -179,7 +180,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
         } catch let error {
-            Logging.localStorage.error("Error while closing persistent store: \(error)")
+            WireLogger.localStorage.error("Error while closing persistent store: \(error)")
         }
     }
 
@@ -219,6 +220,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             return
         }
 
+        WireLogger.localStorage.info("loading messagesStore version: \(messagesContainer.modelVersion)")
         messagesContainer.loadPersistentStores { (_, error) in
 
             guard error == nil else {
@@ -243,6 +245,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             return
         }
 
+        WireLogger.localStorage.info("loading eventStore version: \(eventsContainer.modelVersion)")
         eventsContainer.loadPersistentStores { (_, error) in
 
             guard error == nil else {
@@ -255,7 +258,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             #if DEBUG
             MemoryReferenceDebugger.register(self.eventContext)
             #endif
-
+            
             completionHandler(nil)
         }
     }
@@ -364,6 +367,10 @@ public class CoreDataStack: NSObject, ContextProvider {
 }
 
 class PersistentContainer: NSPersistentContainer {
+
+    var modelVersion: String {
+        managedObjectModel.version.isEmpty ? "none" : managedObjectModel.version
+    }
 
     var storeURL: URL? {
         return persistentStoreDescriptions.first?.url
