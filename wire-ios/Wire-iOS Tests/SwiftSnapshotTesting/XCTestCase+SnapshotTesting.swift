@@ -230,7 +230,6 @@ extension XCTestCase {
                             testName: String = #function,
                             line: UInt = #line) {
 
-        ColorScheme.default.variant = .dark
         let sut = createSut()
         sut.overrideUserInterfaceStyle = .dark
 
@@ -247,7 +246,6 @@ extension XCTestCase {
                              testName: String = #function,
                              line: UInt = #line) {
 
-        ColorScheme.default.variant = .light
         let sut = createSut()
         sut.overrideUserInterfaceStyle = .light
 
