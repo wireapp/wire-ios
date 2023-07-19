@@ -94,7 +94,7 @@ class MessageToolboxDataSource {
      * - parameter widthConstraint: The width available to rend the toolbox contents.
      * - Returns: A boolean to either update the content of the message toolbox or not
      */
-    func uppdateContent(widthConstraint: CGFloat) -> Bool {
+    func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
