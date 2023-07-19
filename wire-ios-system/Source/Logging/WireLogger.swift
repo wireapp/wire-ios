@@ -171,6 +171,6 @@ public extension WireLogger {
     static let performance = WireLogger(tag: "performance")
     static let badgeCount = WireLogger(tag: "badge-count")
     static let userClient = WireLogger(tag: "user-client")
-    static let localStorage = WireLogger(tag: "LocalStorage")
+    static let localStorage = WireLogger(tag: "local-storage")
 
 }
