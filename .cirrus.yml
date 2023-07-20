@@ -40,9 +40,17 @@ run_setup_script_template: &RUN_SETUP_SCRIPT_TEMPLATE
 
 publishing_binary_task_template: &PUBLISHING_BINARY_TASK_TEMPLATE
   trigger_type: manual
+  auto_cancellation: $CIRRUS_BRANCH !=~ 'release/.*'
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *BUNDLER_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
+
+task:
+  name: Development
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  only_if: $CIRRUS_BRANCH == 'develop'
+  script:
+    - bundle exec fastlane development
 
 task:
   name: Playground
