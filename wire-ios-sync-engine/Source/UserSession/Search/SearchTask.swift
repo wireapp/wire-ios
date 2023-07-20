@@ -320,7 +320,7 @@ extension SearchTask {
     func performRemoteSearch() {
         guard
             let apiVersion = BackendInfo.apiVersion,
-            apiVersion >= .v2,
+            apiVersion >= .v1,
             case .search(let searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
