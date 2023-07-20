@@ -13,9 +13,6 @@
   },
   "testTargets" : [
     {
-      "skippedTests" : [
-        "DatabaseMigrationTests\/testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion()"
-      ],
       "target" : {
         "containerPath" : "container:WireDataModel.xcodeproj",
         "identifier" : "F9C9A5051CAD5DF10039E10C",
