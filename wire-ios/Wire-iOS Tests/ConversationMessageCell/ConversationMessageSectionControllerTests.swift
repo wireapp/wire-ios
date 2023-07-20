@@ -195,4 +195,45 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         XCTAssert(section.cellDescriptions.count == 3)
     }
+
+    func testThatWeShowSenderDetails_WhenTimestampIsNotInSameMinuteAsPreviousMessage() {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(
+            withText: "Let's discuss those things during tomorrow's standup"
+        )
+        message.serverTimestamp = .today(at: 9, 41)
+        message.senderUser = mockSelfUser
+
+        context = ConversationMessageContext(isSameSenderAsPrevious: true,
+                                             isTimeIntervalSinceLastMessageSignificant: false,
+                                             isTimestampInSameMinuteAsPreviousMessage: false,
+                                             isFirstMessageOfTheDay: false,
+                                             isFirstUnreadMessage: false,
+                                             isLastMessage: false,
+                                             searchQueries: [],
+                                             previousMessageIsKnock: true,
+                                             spacing: 0)
+
+        // WHEN
+        let section = ConversationMessageSectionController(message: message, context: context)
+
+        // THEN
+        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
+        XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
+
+        // We need to add small delay so configuration.timestamp isn't nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            XCTAssertEqual(conversationSenderMessageCellDescription?.configuration.timestamp as? Date, message.serverTimestamp)
+        }
+
+        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationTextMessageCellDescription
+        XCTAssertNotNil(conversationTextMessageCellDescription)
+
+        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 2)?.instance as? ConversationMessageToolboxCellDescription
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
+        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
+
+        XCTAssert(section.cellDescriptions.count == 3)
+    }
+
 }
