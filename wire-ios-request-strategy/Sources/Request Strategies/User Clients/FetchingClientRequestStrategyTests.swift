@@ -41,6 +41,10 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = FetchingClientRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus)
         NotificationCenter.default.addObserver(self, selector: #selector(FetchClientRequestStrategyTests.didReceiveAuthenticationNotification(_:)), name: NSNotification.Name(rawValue: "ZMUserSessionAuthenticationNotificationName"), object: nil)
         apiVersion = .v0
+
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.apiVersion = .v0
+        BackendInfo.domain = "local.com"
     }
 
     override func tearDown() {
@@ -168,7 +172,7 @@ extension FetchClientRequestStrategyTests {
             self.sut.objectsDidChange(clientSet)
 
             // THEN
-            XCTAssertEqual(self.sut.nextRequest(for: self.apiVersion)?.path, "/v1/users/list-clients")
+            XCTAssertEqual(self.sut.nextRequest(for: self.apiVersion)?.path, "/v1/users/list-clients/v2")
         }
     }
 
@@ -179,12 +183,16 @@ extension FetchClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let clientUUID = UUID()
-            let payload = [
-                "example.com": [self.otherUser.remoteIdentifier.transportString(): [
-                    Payload.UserClient(id: clientUUID.transportString(),
-                                       deviceClass: "phone")
-                ]]
-            ]
+            let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
+                "example.com": [
+                    self.otherUser.remoteIdentifier.transportString(): [
+                        Payload.UserClient(
+                            id: clientUUID.transportString(),
+                            deviceClass: "phone"
+                        )
+                    ]
+                ]
+            ])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             let clientSet: Set<NSManagedObject> = [client]
@@ -220,9 +228,9 @@ extension FetchClientRequestStrategyTests {
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             let clientSet: Set<NSManagedObject> = [client]
             let userID = self.otherUser.remoteIdentifier.transportString()
-            let payload: Payload.UserClientByDomain = [
+            let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
                 "example.com": [userID: []]
-            ]
+            ])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             self.otherUser.domain = "example.com"
 
@@ -251,12 +259,12 @@ extension FetchClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let userID = self.otherUser.remoteIdentifier!
-            let payload = [
+            let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
                 "example.com": [userID.transportString(): [
                     Payload.UserClient(id: newClientID.transportString(),
                                        deviceClass: "phone")
                 ]]
-            ]
+            ])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             existingClient = UserClient.fetchUserClient(withRemoteId: UUID().transportString(), forUser: self.otherUser, createIfNeeded: true)!
             let existingClientSet: Set<NSManagedObject> = [existingClient]
@@ -275,7 +283,15 @@ extension FetchClientRequestStrategyTests {
 
         // THEN
         syncMOC.performGroupedBlockAndWait {
-            let newClient = UserClient.fetchUserClient(withRemoteId: newClientID.transportString(), forUser: self.otherUser, createIfNeeded: false)!
+            guard let newClient = UserClient.fetchUserClient(
+                withRemoteId: newClientID.transportString(),
+                forUser: self.otherUser,
+                createIfNeeded: false
+            ) else {
+                XCTFail("expected new client")
+                return
+            }
+
             XCTAssertFalse(self.selfClient.trustedClients.contains(newClient))
             XCTAssertTrue(self.selfClient.ignoredClients.contains(newClient))
             XCTAssertTrue(self.selfClient.missingClients!.contains(newClient))
@@ -441,7 +457,7 @@ extension FetchClientRequestStrategyTests {
 
             // THEN
             if let request = request {
-                let path = "/v1/users/list-clients"
+                let path = "/v1/users/list-clients/v2"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .methodPOST)
             } else {
