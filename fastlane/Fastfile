@@ -463,7 +463,7 @@ platform :ios do
     def changelog(build)
         changelog = ""
         if build.playground_build
-            changelog += "Playground build for #{build.git_branch}\n"
+            changelog += "Playground build for #{build.git_branch}\r\n"
         end
 
         changelog += "Last commits:\n" + changelog_from_git_commits(
