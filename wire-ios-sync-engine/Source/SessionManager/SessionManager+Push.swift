@@ -105,15 +105,9 @@ extension PKPushRegistry: PushRegistry {}
 
 extension SessionManager {
 
-    public func showConversation(
-        _ conversation: ZMConversation,
-        at message: ZMConversationMessage? = nil,
-        in session: ZMUserSession
-    ) {
-        guard !conversation.isDeletedRemotely else {
-            return
-        }
-
+    public func showConversation(_ conversation: ZMConversation,
+                                 at message: ZMConversationMessage? = nil,
+                                 in session: ZMUserSession) {
         activateAccount(for: session) {
             self.presentationDelegate?.showConversation(conversation, at: message)
         }

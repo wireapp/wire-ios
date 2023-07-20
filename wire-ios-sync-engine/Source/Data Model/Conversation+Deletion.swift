@@ -56,7 +56,7 @@ extension ZMConversation {
 
                 contextProvider.syncContext.performGroupedBlock {
                     guard let conversation = ZMConversation.fetch(with: conversationId, domain: nil, in: contextProvider.syncContext) else { return }
-                    conversation.isDeletedRemotely = true
+                    contextProvider.syncContext.delete(conversation)
                     contextProvider.syncContext.saveOrRollback()
                 }
 
