@@ -58,7 +58,6 @@ platform :ios do
         options[:upload_app_center] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
-        options[:last_commit] = last_git_commit
         build_and_upload_app(options)
     end
 
@@ -560,7 +559,6 @@ class Build
     attr_reader :build_type
     attr_reader :git_branch
     attr_reader :build_number
-    attr_reader :last_commit
     attr_reader :for_simulator
     attr_reader :configuration
 
@@ -574,7 +572,7 @@ class Build
             UI.user_error! "Pass build_type parameter, e.g. fastlane build build_type:Development"
         end
 
-        @last_commit = options[:last_commit]
+
         @build_type = build_type
         if ENV['CIRRUS_BRANCH'].nil? 
             @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
