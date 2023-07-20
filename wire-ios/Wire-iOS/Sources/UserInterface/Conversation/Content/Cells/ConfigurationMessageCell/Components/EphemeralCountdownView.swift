@@ -70,7 +70,7 @@ class EphemeralCountdownView: UIView {
         }
 
         guard message?.isObfuscated == false else {
-            isHidden = true;
+            isHidden = true
             return
         }
 
