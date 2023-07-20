@@ -69,10 +69,10 @@ else
 fi 
 echo ""
 
-echo "ℹ️  Installing bundler and Ruby dependencies..."
-which bundle || gem install bundler
-bundle check || bundle install
-echo ""
+#echo "ℹ️  Installing bundler and Ruby dependencies..."
+#which bundle || gem install bundler
+#bundle check || bundle install
+#echo ""
 
 echo "ℹ️  Downloading additional assets..."
 scripts/download-assets.sh "$@"

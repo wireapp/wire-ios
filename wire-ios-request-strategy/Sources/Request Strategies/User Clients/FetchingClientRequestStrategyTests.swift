@@ -98,6 +98,19 @@ extension FetchClientRequestStrategyTests {
         }
     }
 
+    func testThatItCreatesARequestForV2_WhenUserClientNeedsToBeUpdatedFromBackend_AutomaticSync() {
+        // Given
+        let apiVersion: APIVersion = .v2
+
+        createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(
+            for: apiVersion,
+            reportObjectsChanged: false
+        ) { request in
+            XCTAssertEqual(request.path, "/v2/users/list-clients")
+            XCTAssertEqual(request.method, .methodPOST)
+        }
+    }
+
     func testThatItUpdatesTheClient_WhenReceivingTheResponse() {
         apiVersion = .v1
 
@@ -634,7 +647,12 @@ extension FetchClientRequestStrategyTests {
 // MARK: - Helper Methods
 
 extension FetchClientRequestStrategyTests {
-    func createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for apiVersion: APIVersion, clientUUID: UUID = UUID(), completion: @escaping (ZMTransportRequest) -> Void) {
+    func createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(
+        for apiVersion: APIVersion,
+        clientUUID: UUID = UUID(),
+        reportObjectsChanged: Bool = true,
+        completion: @escaping (ZMTransportRequest) -> Void
+    ) {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.apiVersion = apiVersion
@@ -645,7 +663,10 @@ extension FetchClientRequestStrategyTests {
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(clientSet)
+
+            if reportObjectsChanged {
+                self.sut.objectsDidChange(clientSet)
+            }
 
             // THEN
             let request = self.sut.nextRequest(for: self.apiVersion)
