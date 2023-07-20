@@ -189,7 +189,6 @@ extension VoiceChannel {
     }
 
     fileprivate var shouldShowActiveSpeakerFrame: Bool {
-        if DeveloperFlag.isUpdatedCallingUI { return true }
         return participants.count > 2 && videoGridPresentationMode == .allVideoStreams
     }
 

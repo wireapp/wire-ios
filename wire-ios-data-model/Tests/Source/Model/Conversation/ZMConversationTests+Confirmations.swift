@@ -90,16 +90,16 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds, [message2.nonce!.transportString()])
     }
 
-    func testThatConfirmUnreadMessagesAsRead_StillConfirmsMessages_EvenIfLastReadServerTimestampAdvances() {
+    func testThatConfirmUnreadMessagesAsRead_StillConfirmsMessages_EvenIfLastReadServerTimestampAdvances() throws {
         // Given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
 
         let user1 = createUser()
 
-        let message1 = try! conversation.appendText(content: "text1") as! ZMClientMessage
-        let message2 = try! conversation.appendText(content: "text2") as! ZMClientMessage
-        let message3 = try! conversation.appendText(content: "text3") as! ZMClientMessage
-        let message4 = try! conversation.appendText(content: "text4") as! ZMClientMessage
+        let message1 = try conversation.appendText(content: "text1") as! ZMClientMessage
+        let message2 = try conversation.appendText(content: "text2") as! ZMClientMessage
+        let message3 = try conversation.appendText(content: "text3") as! ZMClientMessage
+        let message4 = try conversation.appendText(content: "text4") as! ZMClientMessage
 
         [message1, message2, message3, message4].forEach { $0.expectsReadConfirmation = true }
 

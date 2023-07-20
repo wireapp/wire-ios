@@ -20,7 +20,17 @@ import XCTest
 @testable import Wire
 
 class WarningLabelViewTests: XCTestCase {
-    var sut = WarningLabelView()
+    var sut: WarningLabelView!
+
+    override func setUp() {
+        super.setUp()
+        sut = WarningLabelView()
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
 
     func test_WithSelfUserNoTeam() {
         // given

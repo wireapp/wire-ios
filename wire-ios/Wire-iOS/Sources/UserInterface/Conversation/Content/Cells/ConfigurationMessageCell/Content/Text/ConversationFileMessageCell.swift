@@ -57,6 +57,9 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         clipsToBounds = true
 
+        fileTransferView.delegate = self
+        setup(fileTransferView)
+
         addSubview(containerView)
     }
 
@@ -80,8 +83,6 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
             setup(restrictionView)
             restrictionView.configure(for: object.message)
         } else {
-            setup(fileTransferView)
-            fileTransferView.delegate = self
             fileTransferView.configure(for: object.message, isInitial: false)
         }
     }
