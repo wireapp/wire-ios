@@ -1,5 +1,5 @@
 macos_instance:
-  image: ghcr.io/cirruslabs/macos-ventura-xcode:14.2
+  image: ghcr.io/cirruslabs/macos-ventura-xcode:14.3.1
 
 environment:
   CIRRUS_CLONE_DEPTH: 1
@@ -43,6 +43,12 @@ publishing_binary_task_template: &PUBLISHING_BINARY_TASK_TEMPLATE
   << : *CARTHAGE_CACHE_TEMPLATE
   << : *BUNDLER_CACHE_TEMPLATE
   << : *RUN_SETUP_SCRIPT_TEMPLATE
+
+task:
+  name: Development
+  << : *PUBLISHING_BINARY_TASK_TEMPLATE
+  script:
+    - bundle exec fastlane development
 
 task:
   name: Playground

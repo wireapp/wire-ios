@@ -27,8 +27,6 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
     private var selfUser: MockUser!
     private var teamIdentifier: UUID!
     private var mockClassificationProvider: MockClassificationProvider!
-    private var callingUIFlag: DeveloperFlag!
-    private var deprecatedUIFlagStateBackup: Bool!
 
     override func setUp() {
         super.setUp()
@@ -43,9 +41,6 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockUser.feature(withUserClients: 6)
 
         mockClassificationProvider = MockClassificationProvider()
-        callingUIFlag = DeveloperFlag.deprecatedCallingUI
-        deprecatedUIFlagStateBackup = callingUIFlag.isOn
-        callingUIFlag.isOn = false
     }
 
     override func tearDown() {
@@ -54,9 +49,7 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         selfUser = nil
         teamIdentifier = nil
         mockClassificationProvider = nil
-        callingUIFlag.isOn = deprecatedUIFlagStateBackup
-        callingUIFlag = nil
-        
+
         super.tearDown()
     }
 

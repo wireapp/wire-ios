@@ -22,7 +22,7 @@ import WireSyncEngine
 import WireCommonComponents
 
 protocol ClassificationProviding {
-    func classification(with users: [UserType]) -> SecurityClassification
+    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification
 }
 
 extension ZMUserSession: ClassificationProviding {}
@@ -62,13 +62,9 @@ final class SecurityLevelView: UIView {
             isHidden = true
             return
         }
-        let isUpdatedCallingUI = DeveloperFlag.isUpdatedCallingUI
 
-        if isUpdatedCallingUI {
-            configureUpdatedCallingUI(with: classification)
-        } else {
-            configureLegacyCallingUI(with: classification)
-        }
+        configureCallingUI(with: classification)
+
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
         let securityLevelText = SecurityLocalization.securityLevel.uppercased()
@@ -79,10 +75,11 @@ final class SecurityLevelView: UIView {
 
     func configure(
         with otherUsers: [UserType],
+        conversationDomain: String?,
         provider: ClassificationProviding? = ZMUserSession.shared()
     ) {
 
-        guard let classification = provider?.classification(with: otherUsers) else {
+        guard let classification = provider?.classification(with: otherUsers, conversationDomain: conversationDomain) else {
             isHidden = true
             return
         }
@@ -94,7 +91,6 @@ final class SecurityLevelView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
 
         securityLevelLabel.textAlignment = .center
-        iconImageView.isHidden = !DeveloperFlag.isUpdatedCallingUI
         iconImageView.contentMode = .scaleAspectFit
         [topBorder, securityLevelLabel, iconImageView, bottomBorder].forEach { addSubview($0) }
 
@@ -117,7 +113,7 @@ final class SecurityLevelView: UIView {
         ])
     }
 
-    private func configureUpdatedCallingUI(with classification: SecurityClassification) {
+    private func configureCallingUI(with classification: SecurityClassification) {
         switch classification {
 
         case .classified:

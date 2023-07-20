@@ -20,7 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
+final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
     var sut: ConversationViewController!
     var mockConversation: ZMConversation!
@@ -28,10 +28,15 @@ final class ConversationViewControllerSnapshotTests: XCTestCase, CoreDataFixture
     var mockZMUserSession: MockZMUserSession!
     var coreDataFixture: CoreDataFixture!
 
+    override func setupCoreDataStack() {
+        coreDataFixture = CoreDataFixture()
+        coreDataStack = coreDataFixture.coreDataStack
+        uiMOC = coreDataFixture.coreDataStack.viewContext
+    }
+
     override func setUp() {
         super.setUp()
 
-        coreDataFixture = CoreDataFixture()
         mockConversation = createTeamGroupConversation()
         mockZMUserSession = MockZMUserSession()
         serviceUser = coreDataFixture.createServiceUser()
@@ -91,7 +96,6 @@ extension ConversationViewControllerSnapshotTests {
     func testThatGuestsBarControllerIsVisibleIfExternalsArePresent() {
         // given
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
-
         let teamMember = Member.insertNewObject(in: uiMOC)
         teamMember.user = otherUser
         teamMember.team = team

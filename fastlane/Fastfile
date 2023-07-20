@@ -8,7 +8,11 @@ default_platform(:ios)
 
 platform :ios do
     def iPhoneNameForTesting
-        "iPhone 14"
+        ENV['IPHONE_MODEL']
+    end
+  
+    def ios_version
+        ENV['IOS_VERSION']
     end
 
     def appstoreconnect_api_key_file_path 
@@ -29,6 +33,7 @@ platform :ios do
     end
 
     before_all do |lane|
+        ensure_xcode_version unless [:prepare_for_development, :trigger_api_build_cirrus_ci].include?(lane)
         create_keychain_if_needed
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -46,10 +51,24 @@ platform :ios do
         end
     end
 
+    desc "Prepare for tests"
+    lane :prepare_for_tests do
+        create_simulator_if_needed
+    end
+
     desc "Prepare for development"
     lane :prepare_for_development do |options|
         sh "cd .. && ./setup.sh"
         sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
+    end
+    
+    desc "Build & Upload Development build"
+    lane :development do |options|
+        options[:build_type] = "Development"
+        options[:upload_app_center] = true
+        options[:upload_dsyms_to_datadog] = true
+        options[:produce_debug_builds] = true
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Playground build"
@@ -205,19 +224,20 @@ platform :ios do
             body: trigger_task_body,
             headers: authorization_header
         )
-        
-        puts triggered_task
+        puts "https://cirrus-ci.com/task/#{triggered_task["data"]["trigger"]["task"]["id"]}"
     end
 
     def build_and_upload_app(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         if options[:run_security_tests] || false
+            create_simulator_if_needed
             security_plans(options)
         end
         if options[:produce_debug_builds] || false
             build_for_release(options.merge({:configuration => "Debug", :for_simulator => true}))
         end
+        
         build_for_release(options)
         if options[:upload_app_store] || false
             upload_app_store(options)
@@ -237,7 +257,8 @@ platform :ios do
         end
     end
 
-    def fetch_latest_configuration_repo 
+    def fetch_latest_configuration_repo
+        
         path = '../wire-ios-build-assets'
         `rm -rf #{path}`
         if is_running_on_ci 
@@ -251,7 +272,6 @@ platform :ios do
                 path
             )
         end
-
     end
 
     def download_distribution_certificate_and_profiles(build, options)
@@ -302,14 +322,9 @@ platform :ios do
         build_number
     end
 
-    # "Fetch dependencies and prepare for building a release"
+    # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
-        xcode_version = options[:xcode_version]
         fetch_latest_configuration_repo
-
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-        end
 
         build_type = options[:build_type]
         # Delete configurations in case we switch to different branch or repo
@@ -342,14 +357,8 @@ platform :ios do
         end
     end
 
-    # "Build for release to AppStore or App Center/S3"
+    # Build for release to AppStore or App Center/S3
     def build_for_release(options)
-        xcode_version = options[:xcode_version]
-
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-        end
-
         build = Build.new(options: options)
         export_method = options[:export_method] || build.export_method
 
@@ -382,26 +391,10 @@ platform :ios do
         end
     end
 
-    # "Run security plans"
+    # Run security plans
     def security_plans(options)
         build = Build.new(options: options)
-
-        xcode_version = options[:xcode_version]
-
-        ios_version = "16.2"
-        if !xcode_version.nil? 
-            xcversion(version: xcode_version)
-			if xcode_version == "14.2"
-                ios_version = "16.2"
-            elsif xcode_version == "13.2.1"
-                ios_version = "15.2"
-            elsif xcode_version == "13.1"
-                 ios_version = "15.0"
-            elsif xcode_version == "12.4"
-                ios_version = "14.4"
-            end
-        end
-
+      
         for scheme in ["Wire-iOS", "WireDataModel", "WireSyncEngine"] do
             run_tests(
                 testplan: "SecurityTests",
@@ -419,8 +412,21 @@ platform :ios do
             )    
         end
     end
+        
+    def create_simulator_if_needed
+        # Check if the simulator already exists
+        existing_simulator = `xcrun simctl list devices | grep "#{iPhoneNameForTesting}" | grep "iOS#{ios_version}" | awk -F '[()]' '{print $2}'`.chomp
 
-    # "Upload to AppStore"
+        if existing_simulator.empty?
+            UI.message "create simulator #{iPhoneNameForTesting} - iOS#{ios_version}"
+            `xcrun simctl create "#{iPhoneNameForTesting} - iOS#{ios_version}" "#{iPhoneNameForTesting}" "iOS#{ios_version}"`
+        else
+            UI.message "clear simulator content for #{existing_simulator}"
+            `xcrun simctl erase #{existing_simulator}`
+        end
+    end
+
+    # Upload to AppStore
     def upload_app_store(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
@@ -440,7 +446,7 @@ platform :ios do
         )
     end
 
-    # "Upload to TestFlight"
+    # Upload to TestFlight
     def upload_testflight(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
@@ -453,7 +459,7 @@ platform :ios do
         )
     end
 
-    # "Upload for internal use"
+    # Upload for internal use
     def upload_app_center (options)
         build = Build.new(options: options)
         changelog = ""
@@ -490,7 +496,7 @@ platform :ios do
         )
     end
 
-    # "Upload to S3 (Automation builds)"
+    # Upload to S3 (Automation builds)
     def upload_s3(options)
         build = Build.new(options: options)
         s3_subfolder = options[:s3_subfolder]
@@ -512,7 +518,7 @@ platform :ios do
         sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
     end
 
-    # "Upload dSYMs for AppStore crash tracking"
+    # Upload dSYMs for AppStore crash tracking
     def upload_dsyms_to_app_center_for_appstore_build(options)
         build = Build.new(options: options)
 
@@ -530,7 +536,7 @@ platform :ios do
         )
     end
 
-    # "Upload dsyms to Datadog"
+    # Upload dsyms to Datadog
     def upload_dsyms_to_datadog(options)
         build = Build.new(options: options)
         
