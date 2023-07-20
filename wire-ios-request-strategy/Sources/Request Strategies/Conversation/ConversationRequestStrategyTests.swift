@@ -493,7 +493,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertTrue(self.groupConversation.isDeletedRemotely)
+            XCTAssertTrue(self.groupConversation.isDeleted)
         }
     }
 

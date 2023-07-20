@@ -297,10 +297,6 @@ class CallParticipantsSnapshotTests: MessagingTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        XCTAssertFalse(client2.isZombieObject)
-        XCTAssertFalse(client2.isDeleted)
-        XCTAssertNotNil(client2.managedObjectContext)
     }
 
     private func setupDegradationTest(degradedClient: UserClient) {
