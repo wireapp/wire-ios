@@ -81,8 +81,10 @@ class WireCallCenterV3Tests: MessagingTest {
         let oneOnOneConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         oneOnOneConversation.remoteIdentifier = UUID.create()
         oneOnOneConversation.conversationType = .oneOnOne
-        oneOnOneConversationID = oneOnOneConversation.avsIdentifier!
+        oneOnOneConversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        oneOnOneConversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         self.oneOnOneConversation = oneOnOneConversation
+        oneOnOneConversationID = oneOnOneConversation.avsIdentifier!
 
         let groupConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         groupConversation.remoteIdentifier = UUID.create()
@@ -1578,6 +1580,67 @@ extension WireCallCenterV3Tests {
         XCTAssertEqual(mockAVSWrapper.requestVideoStreamsArguments?.videoStreams, expectedResult)
     }
 }
+
+// MARK: - Conversation changes
+
+extension WireCallCenterV3Tests {
+
+    func test_SetClientList_WhenConversationParticipantsChange() throws {
+        // Given
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [#keyPath(ZMConversation.participantRoles)]
+
+        mockTransport.mockClientsRequestResponse = [
+            AVSClient(userId: selfUserID, clientId: "client1"),
+            AVSClient(userId: otherUserID, clientId: "client2")
+        ]
+
+        let didReceiveClientList = expectation(description: "didReceiveClientList")
+        sut.clientsRequestCompletionsByConversationId[groupConversationID] = { _ in
+            didReceiveClientList.fulfill()
+        }
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_CallIsClosed_WhenSelfUserIsNoLongerAMember() throws {
+        // Given
+        let selfUserParticipantRole = try XCTUnwrap(groupConversation.participantRoles.first {
+            $0.user?.isSelfUser ?? false
+        })
+
+        groupConversation.participantRoles.remove(selfUserParticipantRole)
+
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [#keyPath(ZMConversation.participantRoles)]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+    }
+
+    func test_CallIsClosed_WhenConversationIsDeleted() throws {
+        // Given
+        groupConversation.isDeletedRemotely = true
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [#keyPath(ZMConversation.isDeletedRemotely)]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+    }
+
+}
+
+// MARK: - Helpers
 
 private extension AVSClient {
     static var mockClient: AVSClient {
