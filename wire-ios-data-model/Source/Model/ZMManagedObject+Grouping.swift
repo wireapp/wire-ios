@@ -76,31 +76,19 @@ extension Array where Element: TupleKeyArrayType {
 }
 
 extension NSManagedObjectContext {
-
-    /// Locates the entities of type `T` that have the same value for `keyPath`.
-    /// - Parameter keyPath: valid keyPath that can be fetched from the disk store (computed properties are not permitted).
-    /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
-
+    // Locates the entities of type @c T that have the same value for @c keyPath.
+    // @param keyPath valid keyPath that can be fetched from the disk store (computed properties are not permitted).
+    // @return dictionary containing the pairs of value and array of objects containing the value for @keyPath.
     public func findDuplicated<T: ZMManagedObject, ValueForKey>(by keyPath: String) -> [ValueForKey: [T]] {
-        return findDuplicated(entityName: T.entityName(), by: keyPath)
-    }
-
-    /// Locates the entities of type `T` that have the same value for `keyPath`.
-    /// - Parameters:
-    ///   - entityName: name of the managed object entity to be located
-    ///   - keyPath: valid keyPath that can be fetched from the disk store (computed properties are not permitted).
-    /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
-
-    public func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath: String) -> [ValueForKey: [T]] {
         if let storeURL = self.persistentStoreCoordinator?.persistentStores.first?.url,
-           !storeURL.isFileURL {
-            zmLog.error("findDuplicated<T> does not support in-memory store")
+            !storeURL.isFileURL {
+                zmLog.error("findDuplicated<T> does not support in-memory store")
             return [:]
         }
 
-        guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: self),
+        guard let entity = NSEntityDescription.entity(forEntityName: T.entityName(), in: self),
               let attribute = entity.attributesByName[keyPath] else {
-            fatal("Cannot preapare the fetch")
+                fatal("Cannot preapare the fetch")
         }
 
         let keyPathExpression = NSExpression(forKeyPath: keyPath)
@@ -148,11 +136,11 @@ extension Array where Element: NSObject {
     // @return dictionary containing the pairs of value and array of objects containing the value for @keyPath.
     public func group<ValueForKey>(by keyPath: String) -> [ValueForKey: [Element]] {
         let tuples: [TupleKeyArray<ValueForKey, Element>?] = self.map {
-            guard let valueForKey = $0.value(forKey: keyPath) as? ValueForKey else {
-                return nil
+                guard let valueForKey = $0.value(forKey: keyPath) as? ValueForKey else {
+                    return nil
+                }
+                return TupleKeyArray(key: valueForKey, value: [$0])
             }
-            return TupleKeyArray(key: valueForKey, value: [$0])
-        }
 
         return tuples.compactMap { $0 }.merge()
     }
