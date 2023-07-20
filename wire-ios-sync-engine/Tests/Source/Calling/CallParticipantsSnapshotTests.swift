@@ -49,10 +49,10 @@ class CallParticipantsSnapshotTests: MessagingTest {
         let aliceId = AVSIdentifier.stub
         let bobId = AVSIdentifier.stub
 
-        aliceIphone = AVSClient(userId: aliceId, clientId: "iphone")
-        aliceDesktop = AVSClient(userId: aliceId, clientId: "desktop")
-        bobIphone = AVSClient(userId: bobId, clientId: "iphone")
-        bobDesktop = AVSClient(userId: bobId, clientId: "desktop")
+        aliceIphone = AVSClient(userId: aliceId, clientId: "alice-iphone")
+        aliceDesktop = AVSClient(userId: aliceId, clientId: "alice-desktop")
+        bobIphone = AVSClient(userId: bobId, clientId: "bob-iphone")
+        bobDesktop = AVSClient(userId: bobId, clientId: "bob-desktop")
     }
 
     override func tearDown() {
@@ -237,7 +237,11 @@ class CallParticipantsSnapshotTests: MessagingTest {
 
         // Then
         XCTAssertTrue(mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
-        XCTAssertEqual(mockWireCallCenterV3.callSnapshots[conversationId]!.degradedUser, user2)
+        guard let callSnapshot = mockWireCallCenterV3.callSnapshots[conversationId] else {
+            XCTFail("missing expected callSnapshot for \(conversationId)")
+            return
+        }
+        XCTAssertEqual(callSnapshot.degradedUser, user2)
     }
 
     func testThat_ItDegradesCallSecurity_WithSelfUser_WhenSelfUserBecomesUnverified() {
@@ -293,6 +297,10 @@ class CallParticipantsSnapshotTests: MessagingTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        XCTAssertFalse(client2.isZombieObject)
+        XCTAssertFalse(client2.isDeleted)
+        XCTAssertNotNil(client2.managedObjectContext)
     }
 
     private func setupDegradationTest(degradedClient: UserClient) {

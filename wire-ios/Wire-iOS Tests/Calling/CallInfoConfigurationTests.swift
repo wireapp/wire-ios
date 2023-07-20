@@ -49,7 +49,22 @@ final class CallInfoConfigurationTests: XCTestCase {
     }
 
     func assertEquals(_ lhsConfig: CallInfoViewControllerInput, _ rhsConfig: CallInfoViewControllerInput, file: StaticString = #file, line: UInt = #line) {
-        XCTAssertTrue(lhsConfig == rhsConfig,
+        XCTAssertTrue(lhsConfig.accessoryType == rhsConfig.accessoryType,
+                      "\n\(lhsConfig)\n\nis not equal to\n\n\(rhsConfig)",
+                      file: file,
+                      line: line)
+
+        XCTAssertTrue(lhsConfig.degradationState == rhsConfig.degradationState,
+                      "\n\(lhsConfig)\n\nis not equal to\n\n\(rhsConfig)",
+                      file: file,
+                      line: line)
+
+        XCTAssertTrue(lhsConfig.videoPlaceholderState == rhsConfig.videoPlaceholderState,
+                      "\n\(lhsConfig)\n\nis not equal to\n\n\(rhsConfig)",
+                      file: file,
+                      line: line)
+
+        XCTAssertTrue(lhsConfig.disableIdleTimer == rhsConfig.disableIdleTimer,
                       "\n\(lhsConfig)\n\nis not equal to\n\n\(rhsConfig)",
                       file: file,
                       line: line)
