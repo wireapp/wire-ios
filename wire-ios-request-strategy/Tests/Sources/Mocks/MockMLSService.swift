@@ -33,6 +33,7 @@ class MockMLSService: MLSServiceInterface {
         var wipeGroup = [MLSGroupID]()
         var createSelfGroup = [MLSGroupID]()
         var joinGroup = [MLSGroupID]()
+        var joinNewGroup = [MLSGroupID]()
     }
 
     func decrypt(
@@ -132,6 +133,10 @@ class MockMLSService: MLSServiceInterface {
 
     func createSelfGroup(for groupID: MLSGroupID) {
         calls.createSelfGroup.append(groupID)
+    }
+    
+    func joinNewGroup(with groupID: MLSGroupID) async throws {
+        calls.joinNewGroup.append(groupID)
     }
 
     func joinGroup(with groupID: MLSGroupID) async throws {

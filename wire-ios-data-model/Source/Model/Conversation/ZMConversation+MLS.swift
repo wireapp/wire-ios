@@ -196,33 +196,19 @@ public extension ZMConversation {
     }
     
     func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
-        WireLogger.mls.debug("joinNewMLSGroupIfNeeded")
         guard let syncContext = self.managedObjectContext?.zm_sync else {
             completion?(ZMConversationError.couldNotFindSyncContext)
             return
         }
-        WireLogger.mls.debug("joinNewMLSGroupIfNeeded - check ok")
+
         syncContext.perform {
             guard let mlsService = syncContext.mlsService else { return }
 
-            if !mlsService.conversationExists(groupID: mlsGroupID) {
-                do {
-                    try mlsService.createGroup(for: mlsGroupID)
-                } catch {
-                    WireLogger.mls.error("failed to create Group for \(mlsGroupID   )")
-                    completion?(error)
-                    return
-                }
-            }
-
-            let selfUser = ZMUser.selfUser(in: syncContext)
-            let mlsUser = MLSUser(from: selfUser)
             Task {
                 do {
-                    try await mlsService.joinGroup(with: mlsGroupID)
-                    try await mlsService.addMembersToConversation(with: [mlsUser], for: mlsGroupID)
+                    try await mlsService.joinNewGroup(with: mlsGroupID)
                 } catch {
-                    WireLogger.mls.error("failed to add other clients for joining MLS group")
+                    WireLogger.mls.error("failed to join new MLS Group \(mlsGroupID)")
                     completion?(error)
                     return
                 }

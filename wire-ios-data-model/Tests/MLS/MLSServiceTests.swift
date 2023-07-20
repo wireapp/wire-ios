@@ -2254,4 +2254,56 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(updateKeyMaterialInvocations, [groupID])
     }
 
+    // MARK: - Guest links
+    
+    func test_ItJoinsNewGroupForGuestLink() async throws {
+        BackendInfo.domain = "example.com"
+
+        // Given
+        let groupID = MLSGroupID.random()
+        var conversation: ZMConversation!
+ 
+        uiMOC.performAndWait {
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+        }
+
+        let expectation1 = self.expectation(description: "CreateConversation should be called")
+
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in
+            return [ZMUpdateEvent()]
+        }
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+        mockCoreCrypto.mockConversationExists = {_ in
+            return false
+        }
+        mockCoreCrypto.mockCreateConversation = { _, _, _ in
+            expectation1.fulfill()
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { id in
+            XCTAssertEqual(id, groupID)
+            return []
+        }
+
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = [.init(client: "123", domain: BackendInfo.domain!, keyPackage: "", keyPackageRef: "", userID: UUID())]
+
+        mockMLSActionExecutor.mockAddMembers = { _, id in
+            XCTAssertEqual(id, groupID)
+            return []
+        }
+
+        // WHEN
+        do {
+            _ = try await sut.joinNewGroup(with: groupID)
+        } catch {
+            XCTFail("should not fail with error: \(error)")
+            return
+        }
+
+        // THEN
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
 }
