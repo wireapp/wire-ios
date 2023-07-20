@@ -45,19 +45,10 @@ final class UserClientCell: SeparatorCollectionViewCell {
 
     private weak var client: UserClientType?
 
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-            ? ViewColors.backgroundUserCellHightLighted
-            : ViewColors.backgroundUserCell
-        }
-    }
-
     override func setUp() {
         super.setUp()
 
         accessibilityIdentifier = "device_cell"
-        backgroundColor = ViewColors.backgroundUserCell
 
         setUpDeviceIconView()
 
