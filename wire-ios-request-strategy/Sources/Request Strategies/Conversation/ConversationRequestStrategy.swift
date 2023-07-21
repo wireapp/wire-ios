@@ -865,28 +865,3 @@ private extension Collection where Element == ZMConversation {
     }
 
 }
-
-import WireDataModel
-
-
-public class ConversationFetcher {
-    let handler: SyncConversationActionHandler
-
-    public init(context: NSManagedObjectContext) {
-        self.handler = SyncConversationActionHandler(context: context)
-    }
-    
-    public func fetch(with qualifiedID: QualifiedID) async -> Bool {
-        return await withCheckedContinuation { continuation in
-            let action = SyncConversationAction(qualifiedID: qualifiedID, resultHandler: { result in
-                switch result {
-                case .success:
-                    continuation.resume(returning: true)
-                case .failure:
-                    continuation.resume(returning: false)
-                }
-            })
-            handler.performAction(action)
-        }
-    }
-}
