@@ -397,7 +397,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1\n";
+			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1";
 		};
 /* End PBXShellScriptBuildPhase section */
 
