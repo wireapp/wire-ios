@@ -25,7 +25,6 @@ protocol MessageToolboxViewDelegate: AnyObject {
     func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode)
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView)
     func messageToolboxViewDidSelectDelete(_ sender: UIView?)
-    func messageToolboxViewDidRequestLike(_ messageToolboxView: MessageToolboxView)
 }
 
 private extension UILabel {
@@ -212,7 +211,7 @@ final class MessageToolboxView: UIView {
         }
 
         self.previousLayoutBounds = self.bounds
-        self.configureForMessage(message, forceShowTimestamp: self.forceShowTimestamp)
+        self.configureForMessage(message)
     }
 
     override func willMove(toWindow newWindow: UIWindow?) {
@@ -236,14 +235,12 @@ final class MessageToolboxView: UIView {
 
     func configureForMessage(
         _ message: ZMConversationMessage,
-        forceShowTimestamp: Bool,
         animated: Bool = false
     ) {
         if dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
 
-        self.forceShowTimestamp = forceShowTimestamp
         reloadContent(animated: animated)
     }
 
@@ -257,8 +254,7 @@ final class MessageToolboxView: UIView {
         guard let dataSource = self.dataSource else { return }
 
         // Do not reload the content if it didn't change.
-        guard let newPosition = dataSource.updateContent(
-            forceShowTimestamp: forceShowTimestamp,
+        guard dataSource.shouldUpdateContent(
             widthConstraint: contentWidth
         ) else {
             return
@@ -267,49 +263,44 @@ final class MessageToolboxView: UIView {
         switch dataSource.content {
 
         case .callList(let callListString):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = callListString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 0
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = true
-                self.deleteButton.isHidden = true
-                self.resendButton.isHidden = true
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-            }
+            self.detailsLabel.attributedText = callListString
+            self.detailsLabel.isHidden = false
+            self.detailsLabel.numberOfLines = 0
+            self.hideAndCleanStatusLabel()
+            self.timestampSeparatorLabel.isHidden = true
+            self.deleteButton.isHidden = true
+            self.resendButton.isHidden = true
+            self.statusSeparatorLabel.isHidden = true
+            self.countdownLabel.isHidden = true
 
         case .sendFailure(let detailsString):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = detailsString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 1
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = false
-                self.deleteButton.isHidden = false
-                self.resendButton.isHidden = false
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-            }
+            self.detailsLabel.attributedText = detailsString
+            self.detailsLabel.isHidden = false
+            self.detailsLabel.numberOfLines = 1
+            self.hideAndCleanStatusLabel()
+            self.timestampSeparatorLabel.isHidden = false
+            self.deleteButton.isHidden = false
+            self.resendButton.isHidden = false
+            self.statusSeparatorLabel.isHidden = true
+            self.countdownLabel.isHidden = true
 
         case .details(let timestamp, let status, let countdown):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = timestamp
-                self.detailsLabel.isHidden = timestamp == nil
-                self.detailsLabel.numberOfLines = 1
-                self.statusLabel.attributedText = status
-                // override accessibilityLabel if the attributed string has customized accessibilityLabel
-                if let accessibilityLabel = status?.accessibilityLabel {
-                    self.statusLabel.accessibilityLabel = accessibilityLabel
-                }
-                self.statusLabel.isHidden = status == nil
-                self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-                self.deleteButton.isHidden = true
-                self.resendButton.isHidden = true
-                self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-                self.countdownLabel.attributedText = countdown
-                self.countdownLabel.isHidden = countdown == nil
+            self.detailsLabel.attributedText = timestamp
+            self.detailsLabel.isHidden = timestamp == nil
+            self.detailsLabel.numberOfLines = 1
+            self.statusLabel.attributedText = status
+            // override accessibilityLabel if the attributed string has customized accessibilityLabel
+            if let accessibilityLabel = status?.accessibilityLabel {
+                self.statusLabel.accessibilityLabel = accessibilityLabel
             }
+            self.statusLabel.isHidden = status == nil
+            self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
+            self.deleteButton.isHidden = true
+            self.resendButton.isHidden = true
+            self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
+            self.countdownLabel.attributedText = countdown
+            self.countdownLabel.isHidden = countdown == nil
+
         }
 
         layoutIfNeeded()
@@ -335,43 +326,7 @@ final class MessageToolboxView: UIView {
         timestampTimer = nil
     }
 
-    fileprivate func updateContentStack(
-        to direction: SlideDirection,
-        animated: Bool = false,
-        changes: @escaping () -> Void
-    ) {
-        if animated {
-            contentStack.wr_animateSlideTo(direction, newState: changes)
-        } else {
-            changes()
-        }
-    }
-
-    // MARK: - Hiding the Contents
-
-    func setHidden(_ isHidden: Bool, animated: Bool) {
-        let changes = {
-            self.heightConstraint?.constant = isHidden ? 0 : 28
-            self.alpha = isHidden ? 0 : 1
-            self.layoutIfNeeded()
-        }
-
-        if animated {
-            UIView.animate(withDuration: 0.35) {
-                changes()
-            }
-        } else {
-            layer.removeAllAnimations()
-            changes()
-        }
-    }
-
     // MARK: - Actions
-
-    @objc
-    private func requestLike() {
-        delegate?.messageToolboxViewDidRequestLike(self)
-    }
 
     @objc
     private func resendMessage() {

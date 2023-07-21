@@ -54,7 +54,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.deliveryState = .failedToSend
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         verify(view: sut)
@@ -69,7 +69,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.readReceipts = [readReceipt]
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         verify(view: sut)
@@ -84,18 +84,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.readReceipts = [readReceipt]
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-
-        // THEN
-        verify(view: sut)
-    }
-
-    func testThatItConfiguresWithTimestamp() {
-        // GIVEN
-        let users = MockUser.mockUsers().filter { !$0.isSelfUser }
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         verify(view: sut)
@@ -103,39 +92,14 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     // MARK: - Tap Gesture
 
-    func testThatItOpensReceipts_NoLikers() {
+    func testThatItOpensReceipts() {
         // WHEN
         message.conversation = createTeamGroupConversation()
         message.conversationLike = message.conversation
-        sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         XCTAssertEqual(sut.preferredDetailsDisplayMode(), .receipts)
-    }
-
-    func testThatItOpensReceipts_WithLikers_ShowingTimestamp() {
-        // GIVEN
-        message.conversation = createTeamGroupConversation()
-        message.conversationLike = message.conversation
-        message.backingUsersReaction = [Emoji.like.value: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-
-        // THEN
-        XCTAssertEqual(sut.preferredDetailsDisplayMode(), .receipts)
-    }
-
-    func testThatItDoesNotShowLikes_ReceiptsDisabled_ShowingTimestamp() {
-        // GIVEN
-        message.conversation = createGroupConversation()
-        message.backingUsersReaction = [Emoji.like.value: [selfUser]]
-
-        // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-
-        // THEN
-        XCTAssertNil(sut.preferredDetailsDisplayMode())
     }
 
     func testThatItDisplaysTimestamp_Countdown_OtherUser() {
@@ -146,7 +110,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.destructionDate = Date().addingTimeInterval(10)
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         verify(view: sut)
@@ -162,7 +126,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.destructionDate = Date().addingTimeInterval(10)
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         verifyInAllPhoneWidths(view: sut)

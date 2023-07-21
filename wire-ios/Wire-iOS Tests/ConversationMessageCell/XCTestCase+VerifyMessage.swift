@@ -23,6 +23,7 @@ import SnapshotTesting
 extension ConversationMessageContext {
     fileprivate static let defaultContext = ConversationMessageContext(isSameSenderAsPrevious: false,
                                                                        isTimeIntervalSinceLastMessageSignificant: false,
+                                                                       isTimestampInSameMinuteAsPreviousMessage: false,
                                                                        isFirstMessageOfTheDay: false,
                                                                        isFirstUnreadMessage: false,
                                                                        isLastMessage: false,
