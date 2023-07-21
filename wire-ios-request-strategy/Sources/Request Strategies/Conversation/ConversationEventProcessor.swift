@@ -63,7 +63,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationMemberJoin:
                     if let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {
-                        WireLogger.mls.debug("check payload of conversation Member Join \(conversationEvent)")
                         processMemberJoin(payload: conversationEvent, originalEvent: event)
                     }
 
