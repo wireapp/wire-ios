@@ -94,7 +94,7 @@ extension ZMMessage {
         }
     }
 
-    func setReactions(
+    @objc public func setReactions(
         _ reactions: Set<String>,
         forUser user: ZMUser
     ) {

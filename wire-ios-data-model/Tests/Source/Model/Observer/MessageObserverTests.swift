@@ -193,7 +193,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: { $0.addReaction("LOVE IT, HUH", forUser: ZMUser.selfUser(in: self.uiMOC))},
+            modifier: {$0.setReactions(["LOVE IT, HUH"], forUser: ZMUser.selfUser(in: self.uiMOC))},
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -210,7 +210,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: { $0.addReaction("👻", forUser: otherUser) },
+            modifier: { $0.setReactions(["👻"], forUser: otherUser) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -220,13 +220,13 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        message.addReaction("LOVE IT, HUH", forUser: selfUser)
+        message.setReactions(["LOVE IT, HUH"], forUser: selfUser)
         uiMOC.saveOrRollback()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.addReaction(nil, forUser: selfUser)},
+            modifier: {$0.setReactions([], forUser: selfUser)},
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -240,13 +240,13 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         otherUser.remoteIdentifier = .create()
 
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        message.addReaction("👻", forUser: selfUser)
+        message.setReactions(["👻"], forUser: selfUser)
         uiMOC.saveOrRollback()
 
         // when
         checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: { $0.addReaction("👻", forUser: otherUser) },
+            modifier: { $0.setReactions(["👻"], forUser: otherUser) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
