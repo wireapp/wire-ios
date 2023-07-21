@@ -74,7 +74,7 @@ platform :ios do
     desc "Build & Upload Playground build"
     lane :playground do |options|
         options[:build_type] = "Playground"
-        options[:upload_app_center] = true
+        options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
@@ -631,7 +631,7 @@ class Build
     def export_method
         if debug_build
             "development"
-        elsif appstore_build || beta_build || rc_build
+        elsif appstore_build || beta_build || rc_build || playground_build
             "app-store"
         else 
             "ad-hoc"
@@ -639,7 +639,7 @@ class Build
     end
 
     def should_sigh_adhoc
-        !appstore_build && !rc_build && !beta_build
+        !appstore_build && !rc_build && !beta_build && !playground_build
     end
 
     # Paths
