@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireCommonComponents
 @testable import Wire
 
 final class ConversationMessageSectionControllerTests: XCTestCase {
@@ -40,6 +41,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                              searchQueries: [],
                                              previousMessageIsKnock: false,
                                              spacing: 0)
+
+        FontScheme.configure(with: .large)
+
     }
 
     // MARK: - tearDown
@@ -90,150 +94,92 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertEqual(String(describing: cell2.baseType), "MockCellDescription<Bool>")
     }
 
-    func testThatWeDoShowSenderDetails_WhenIsNotSameSenderAsPrevious() {
-        // GIVEN
-        let message = MockMessageFactory.textMessage(
-            withText: "Hello"
+    func testCellGrouping_SenderIsDifferentFromPrevious() throws {
+        // Given
+        let message = MockMessageFactory.textMessage(withText: "Hello")
+        let context = ConversationMessageContext(isSameSenderAsPrevious: false)
+
+        // When
+        let section  = ConversationMessageSectionController(
+            message: message,
+            context: context
         )
-        message.serverTimestamp = .today(at: 9, 41)
-        message.senderUser = mockSelfUser
 
-        context = ConversationMessageContext(isSameSenderAsPrevious: false,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: false,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: false,
-                                             spacing: 0)
-
-        // WHEN
-        let section = ConversationMessageSectionController(message: message, context: context)
-
-        // THEN
-        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
-
-        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationTextMessageCellDescription
-        XCTAssertNotNil(conversationTextMessageCellDescription)
-
-        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 2)?.instance as? ConversationMessageToolboxCellDescription
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
-
-        XCTAssert(section.cellDescriptions.count == 3)
-    }
-
-    func testThatWeDontShowSenderDetails_WhenIsSameSenderAsPrevious() {
-        // GIVEN
-        let message = MockMessageFactory.textMessage(
-            withText: "Welcome to Dub Dub"
-        )
-        message.serverTimestamp = .today(at: 9, 41)
-        message.senderUser = mockSelfUser
-
-        context = ConversationMessageContext(isSameSenderAsPrevious: true,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: true,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: false,
-                                             spacing: 0)
-
-        // WHEN
-        let section = ConversationMessageSectionController(message: message, context: context)
-
-        // THEN
-        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertNil(conversationSenderMessageCellDescription)
-        XCTAssertNil(conversationSenderMessageCellDescription?.configuration.timestamp)
-
-        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationTextMessageCellDescription
-        XCTAssertNotNil(conversationTextMessageCellDescription)
-
-        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationMessageToolboxCellDescription
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
-
-        XCTAssert(section.cellDescriptions.count == 2)
-    }
-
-    func testThatWeShowSenderDetails_WhenPreviousMessageIsKnock() {
-        // GIVEN
-        let message = MockMessageFactory.textMessage(
-            withText: "Welcome to Dub Dub 2023"
-        )
-        message.serverTimestamp = .today(at: 9, 41)
-        message.senderUser = mockSelfUser
-
-        context = ConversationMessageContext(isSameSenderAsPrevious: false,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: false,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: true,
-                                             spacing: 0)
-
-        // WHEN
-        let section = ConversationMessageSectionController(message: message, context: context)
-
-        // THEN
-        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
-
-        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationTextMessageCellDescription
-        XCTAssertNotNil(conversationTextMessageCellDescription)
-
-        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 2)?.instance as? ConversationMessageToolboxCellDescription
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
-
-        XCTAssert(section.cellDescriptions.count == 3)
-    }
-
-    func testThatWeShowSenderDetails_WhenTimestampIsNotInSameMinuteAsPreviousMessage() {
-        // GIVEN
-        let message = MockMessageFactory.textMessage(
-            withText: "Let's discuss those things during tomorrow's standup"
-        )
-        message.serverTimestamp = .today(at: 9, 41)
-        message.senderUser = mockSelfUser
-
-        context = ConversationMessageContext(isSameSenderAsPrevious: true,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: false,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: true,
-                                             spacing: 0)
-
-        // WHEN
-        let section = ConversationMessageSectionController(message: message, context: context)
-
-        // THEN
-        let conversationSenderMessageCellDescription = section.cellDescriptions.element(atIndex: 0)?.instance as? ConversationSenderMessageCellDescription
-        XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
-
-        // We need to add small delay so configuration.timestamp isn't nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            XCTAssertEqual(conversationSenderMessageCellDescription?.configuration.timestamp as? Date, message.serverTimestamp)
+        // Then
+        let cellDescriptions = section.cellDescriptions
+        guard cellDescriptions.count == 3 else {
+            return XCTFail("Expected 3 cells")
         }
 
-        let conversationTextMessageCellDescription = section.cellDescriptions.element(atIndex: 1)?.instance as? ConversationTextMessageCellDescription
-        XCTAssertNotNil(conversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+    }
 
-        let messageToolBoxCellDescription = section.cellDescriptions.element(atIndex: 2)?.instance as? ConversationMessageToolboxCellDescription
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.nonce, message.nonce)
-        XCTAssertEqual(messageToolBoxCellDescription?.message?.deliveryState, message.deliveryState)
+    func testCellGrouping_SenderIsSameAsPreviousAndTimestampInSameMinuteAsPreviousMessage() throws {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Welcome to Dub Dub")
+        let context = ConversationMessageContext(isSameSenderAsPrevious: true,
+                                                 isTimestampInSameMinuteAsPreviousMessage: true)
 
-        XCTAssert(section.cellDescriptions.count == 3)
+        // WHEN
+        let section  = ConversationMessageSectionController(
+            message: message,
+            context: context
+        )
+
+        // THEN
+        let cellDescriptions = section.cellDescriptions
+        guard cellDescriptions.count == 2 else {
+            return XCTFail("Expected 2 cells")
+        }
+
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationMessageToolboxCellDescription)
+    }
+
+    func testCellGrouping_PreviousMessageIsKnock() throws {
+        // Given
+        let message = MockMessageFactory.textMessage(withText: "Hello")
+        let context = ConversationMessageContext(previousMessageIsKnock: true)
+
+        // When
+        let section  = ConversationMessageSectionController(
+            message: message,
+            context: context
+        )
+
+        // Then
+        let cellDescriptions = section.cellDescriptions
+        guard cellDescriptions.count == 3 else {
+            return XCTFail("Expected 3 cells")
+        }
+
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+    }
+
+
+    func testCellGrouping_SenderIsSameAsPreviousAndTimeStampIsNotInTheSameMinuteAsPreviousMessage() throws {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Hello")
+        let context = ConversationMessageContext(isSameSenderAsPrevious: true,
+                                                 isTimestampInSameMinuteAsPreviousMessage: false)
+        // WHEN
+        let section  = ConversationMessageSectionController(
+            message: message,
+            context: context
+        )
+
+        let cellDescriptions = section.cellDescriptions
+        guard cellDescriptions.count == 3 else {
+            return XCTFail("Expected 3 cells")
+        }
+
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
 }

@@ -20,15 +20,15 @@ import Foundation
 import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
-    let isSameSenderAsPrevious: Bool
-    let isTimeIntervalSinceLastMessageSignificant: Bool
-    let isTimestampInSameMinuteAsPreviousMessage: Bool
-    let isFirstMessageOfTheDay: Bool
-    let isFirstUnreadMessage: Bool
-    let isLastMessage: Bool
-    let searchQueries: [String]
-    let previousMessageIsKnock: Bool
-    let spacing: Float
+    var isSameSenderAsPrevious: Bool = false
+    var isTimeIntervalSinceLastMessageSignificant: Bool = false
+    var isTimestampInSameMinuteAsPreviousMessage: Bool = false
+    var isFirstMessageOfTheDay: Bool = false
+    var isFirstUnreadMessage: Bool = false
+    var isLastMessage: Bool = false
+    var searchQueries: [String] = []
+    var previousMessageIsKnock: Bool = false
+    var spacing: Float = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
