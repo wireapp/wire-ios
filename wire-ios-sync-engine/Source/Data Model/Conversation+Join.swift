@@ -46,7 +46,6 @@ public enum ConversationFetchError: Error {
         }
     }
 }
-import WireRequestStrategy
 
 extension ZMConversation {
 
