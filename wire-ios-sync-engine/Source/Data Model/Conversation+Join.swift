@@ -81,7 +81,6 @@ extension ZMConversation {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
 
-                WireLogger.mls.debug("🕵🏽 test \(payload)")
                 syncContext.performGroupedBlock {
                     eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
 
