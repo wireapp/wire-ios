@@ -810,7 +810,8 @@ extension ZMLocalNotificationTests_Message {
         try syncMOC.performGroupedAndWait { _ in
             let earService = EARService(
                 accountID: self.accountIdentifier,
-                databaseContexts: [self.syncMOC]
+                databaseContexts: [self.syncMOC],
+                earEnabledStorage: UserDefaults.random()
             )
 
             try earService.enableEncryptionAtRest(
@@ -831,7 +832,8 @@ extension ZMLocalNotificationTests_Message {
         try syncMOC.performGroupedAndWait { _ in
             let earService = EARService(
                 accountID: self.accountIdentifier,
-                databaseContexts: [self.syncMOC]
+                databaseContexts: [self.syncMOC],
+                earEnabledStorage: UserDefaults.random()
             )
 
             try earService.enableEncryptionAtRest(

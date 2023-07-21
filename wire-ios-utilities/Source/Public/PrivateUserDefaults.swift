@@ -40,7 +40,10 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
     private func scopeKey(_ key: Key) -> String {
         return "\(userID.uuidString)_\(key.rawValue)"
     }
+}
 
+extension PrivateUserDefaults {
+    
     public func setUUID(_ uuid: UUID?, forKey key: Key) {
         storage.set(uuid?.uuidString, forKey: scopeKey(key))
     }
@@ -48,6 +51,15 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
     public func getUUID(forKey key: Key) -> UUID? {
         guard let uuidString = storage.string(forKey: scopeKey(key)) else { return nil }
         return UUID(uuidString: uuidString)
+    }
+    
+
+    public func set(_ value: Bool, forKey key: Key) {
+        storage.set(value, forKey: scopeKey(key))
+    }
+
+    public func bool(forKey key: Key) -> Bool {
+        return storage.bool(forKey: scopeKey(key))
     }
 
 }

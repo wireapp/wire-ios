@@ -216,6 +216,7 @@ class EventProcessorTests: MessagingTest {
             let earService = EARService(
                 accountID: userIdentifier,
                 databaseContexts: [uiMOC, syncMOC]
+                earEnabledStorage: UserDefaults.random()
             )
 
             try earService.enableEncryptionAtRest(

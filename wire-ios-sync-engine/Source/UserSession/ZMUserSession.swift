@@ -279,7 +279,8 @@ public class ZMUserSession: NSObject {
                 coreDataStack.syncContext,
                 coreDataStack.searchContext
             ],
-            canPerformKeyMigration: true
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults
         )
 
         self.lastEventIDRepository = LastEventIDRepository(

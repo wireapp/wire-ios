@@ -850,7 +850,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
         // Given
-        let sut = EARService(accountID: userIdentifier, databaseContexts: [uiMOC])
+        let sut = EARService(accountID: userIdentifier, databaseContexts: [uiMOC],                 earEnabledStorage: UserDefaults.random())
         let oldDatabaseKey = try sut.generateKeys()
 
         uiMOC.encryptMessagesAtRest = true
