@@ -54,6 +54,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         registerSectionHeader()
 
         NotificationCenter.default.addObserver(self, selector: #selector(showErrorAlertForConversationRequest), name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showErrorAlertForNonFederatingBackends), name: ZMConversation.nonFederatingBackendsNotification, object: nil)
     }
 
     @available(*, unavailable)
@@ -99,6 +100,16 @@ final class ConversationListContentController: UICollectionViewController, Popov
     func showErrorAlertForConversationRequest() {
         typealias ConversationError = L10n.Localizable.Error.Conversation
         UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.missingLegalholdConsent)
+    }
+
+    @objc
+    func showErrorAlertForNonFederatingBackends(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              userInfo.keys.contains(ZMConversation.UserInfoKeys.nonFederatingBackends.rawValue),
+              let nonFederatingBackends = userInfo[ZMConversation.UserInfoKeys.nonFederatingBackends.rawValue] as? NonFederatingBackendsTuple
+            else { return }
+        let alert = UIAlertController.notFullyConnectedGraphAlert(backends: nonFederatingBackends, completion: { _ in })
+        alert.presentTopmost()
     }
 
     private func activeMediaPlayerChanged() {
@@ -477,5 +488,39 @@ extension ConversationListContentController: ConversationListCellDelegate {
 
         startCallController = ConversationCallController(conversation: conversation, target: self)
         startCallController?.joinCall()
+    }
+}
+
+private enum NonFullyConnectedGraphAction {
+    case editParticipantsList
+    case discardGroupCreation
+    case learnMore
+}
+
+private extension UIAlertController {
+    static func notFullyConnectedGraphAlert(backends: NonFederatingBackendsTuple, completion: @escaping (NonFullyConnectedGraphAction) -> Void) -> UIAlertController {
+        let alert = UIAlertController(
+            title: "Group can’t be created",
+            message: "People from backends \(backends.backendA) and \(backends.backendB) can’t join the same group conversation.\nTo create the group, remove affected participants.", preferredStyle: .alert)
+        let editParticipantsAction = UIAlertAction(
+            title: "Edit Participants List",
+            style: .default,
+            handler: { _ in completion(.editParticipantsList) }
+        )
+        let discardGroupCreationAction = UIAlertAction(
+            title: "Discard Group Creation",
+            style: .default,
+            handler: { _ in completion(.discardGroupCreation) }
+        )
+        let learnMoreAction = UIAlertAction(
+            title: "Learn More",
+            style: .default,
+            handler: { _ in completion(.learnMore) }
+        )
+        alert.addAction(editParticipantsAction)
+        alert.addAction(discardGroupCreationAction)
+        alert.addAction(learnMoreAction)
+        alert.preferredAction = editParticipantsAction
+        return alert
     }
 }

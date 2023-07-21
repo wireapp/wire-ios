@@ -18,6 +18,16 @@
 
 import Foundation
 
+public struct NonFederatingBackendsTuple {
+    public let backendA: String
+    public let backendB: String
+
+    public init(backendA: String, backendB: String) {
+        self.backendA = backendA
+        self.backendB = backendB
+    }
+}
+
 extension ZMConversation {
 
     func isFederating(with user: UserType) -> Bool {

@@ -340,6 +340,23 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             newConversation.notifyMissingLegalHoldConsent()
         }
 
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return false }
+
+        switch apiVersion {
+        case .v4:
+        if response.httpStatus == 409,
+           let nonFederatingFailure = Payload.NonFederatingBackends(response, decoder: .defaultDecoder),
+           nonFederatingFailure.nonFederatingBackends.count == 2
+        {
+            let nonFederatingBackends = NonFederatingBackendsTuple(
+                backendA: nonFederatingFailure.nonFederatingBackends[0],
+                backendB: nonFederatingFailure.nonFederatingBackends[1])
+            newConversation.notifyNonFederatingBackends(backends: nonFederatingBackends)
+        }
+        case .v0, .v1, .v2, .v3:
+            break
+        }
+
         return false
     }
 

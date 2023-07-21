@@ -375,6 +375,17 @@ enum Payload {
         }
     }
 
+    struct NonFederatingBackends: Codable {
+        enum CodingKeys: String, CodingKey {
+            case nonFederatingBackends = "non_federating_backends"
+        }
+
+        let nonFederatingBackends: [String]
+
+        init(nonFederatingBackends: [String]) {
+            self.nonFederatingBackends = nonFederatingBackends
+        }
+    }
 }
 
 extension Payload.ResponseFailure {

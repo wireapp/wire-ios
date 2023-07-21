@@ -19,19 +19,24 @@
 import Foundation
 
 extension ZMConversation {
+    public enum UserInfoKeys: String {
+        case nonFederatingBackends
+    }
+
     @objc public static let lastReadDidChangeNotificationName = Notification.Name(rawValue: "ZMConversationLastReadDidChangeNotificationName")
     @objc public static let clearTypingNotificationName = Notification.Name(rawValue: "ZMConversationClearTypingNotificationName")
     @objc public static let isVerifiedNotificationName = Notification.Name(rawValue: "ZMConversationIsVerifiedNotificationName")
     @objc public static let missingLegalHoldConsentNotificationName = Notification.Name(rawValue: "ZMConversationMissingLegalHoldConsentNotification")
+    @objc public static let nonFederatingBackendsNotification = Notification.Name(rawValue: "ZMConversationNonFederatingBackendsNotification")
 
     /// Sends a notification with the given name on the UI context
-    func notifyOnUI(name: Notification.Name) {
+    func notifyOnUI(name: Notification.Name, userInfo: [String: Any]? = nil) {
         guard let userInterfaceContext = self.managedObjectContext?.zm_userInterface else {
             return
         }
 
         userInterfaceContext.performGroupedBlock {
-            NotificationInContext(name: name, context: userInterfaceContext.notificationContext, object: self).post()
+            NotificationInContext(name: name, context: userInterfaceContext.notificationContext, object: self, userInfo: userInfo).post()
         }
     }
 }

@@ -58,7 +58,6 @@ public struct ZMConversationRemoteClientChangeSet: OptionSet {
 }
 
 extension ZMConversation {
-
     /// Contains current security level of conversation.
     /// Client should check this property to properly annotate conversation.
     @NSManaged public internal(set) var securityLevel: ZMConversationSecurityLevel
@@ -105,6 +104,10 @@ extension ZMConversation {
 
     public func notifyMissingLegalHoldConsent() {
         notifyOnUI(name: ZMConversation.missingLegalHoldConsentNotificationName)
+    }
+
+    public func notifyNonFederatingBackends(backends: NonFederatingBackendsTuple) {
+        notifyOnUI(name: ZMConversation.nonFederatingBackendsNotification, userInfo: [UserInfoKeys.nonFederatingBackends.rawValue: backends])
     }
 
     // MARK: - Events
