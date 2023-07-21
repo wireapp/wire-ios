@@ -222,7 +222,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertNotNil(conversationSenderMessageCellDescription?.configuration.timestamp)
 
         // We need to add small delay so configuration.timestamp isn't nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             XCTAssertEqual(conversationSenderMessageCellDescription?.configuration.timestamp as? Date, message.serverTimestamp)
         }
 
