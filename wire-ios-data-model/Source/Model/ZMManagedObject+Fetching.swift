@@ -42,7 +42,6 @@ extension ZMManagedObject {
                              in: context)
     }
     
-    
     public static func fetch(with qualifiedId: QualifiedID, in context: NSManagedObjectContext) -> Self? {
         return fetch(with: qualifiedId.uuid, domain: qualifiedId.domain, in: context)
     }
