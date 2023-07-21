@@ -135,7 +135,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            WireLogger.mls.debug("conversation synced, ")
             guard let groupId = upToDateConversation.mlsGroupID, upToDateConversation.messageProtocol == .mls else {
                 completion(.success(upToDateConversation))
                 return
