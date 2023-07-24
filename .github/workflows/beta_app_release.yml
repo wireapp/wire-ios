@@ -16,7 +16,7 @@ jobs:
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
       APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
       APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
-      S3_BUCKET: "Wire"
+      S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
       DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
