@@ -35,10 +35,11 @@ extension UIAlertController {
 
     @objc
     public static func showErrorAlert(title: String,
-                                      message: String) {
+                                      message: String,
+                                      completion: ((UIAlertAction) -> Void)? = nil) {
         let alertController = UIAlertController(title: title,
                                                 message: message,
-                                                alertAction: .ok(style: .cancel))
+                                                alertAction: .ok(style: .cancel, handler: completion))
 
         UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alertController, animated: true)
     }

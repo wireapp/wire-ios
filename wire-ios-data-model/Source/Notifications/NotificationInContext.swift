@@ -30,7 +30,7 @@ import WireUtilities
 
 @objcMembers public class NotificationInContext: NSObject {
 
-    static let objectInNotificationKey = "objectInNotification"
+    public static let objectInNotificationKey = "objectInNotification"
 
     /// Name of the notification
     public var name: Notification.Name {

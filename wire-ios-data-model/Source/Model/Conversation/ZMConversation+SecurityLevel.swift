@@ -102,12 +102,20 @@ extension ZMConversation {
         managedObjectContext?.saveOrRollback()
     }
 
+    public func notifyInsertedConversationUpdated() {
+        notifyOnUI(name: ZMConversation.insertedConversationUpdatedNotificationName)
+    }
+
+    public func notifyUnknownResponseError() {
+        notifyOnUI(name: ZMConversation.unknownResponseErrorNotificationName)
+    }
+
     public func notifyMissingLegalHoldConsent() {
         notifyOnUI(name: ZMConversation.missingLegalHoldConsentNotificationName)
     }
 
     public func notifyNonFederatingBackends(backends: NonFederatingBackendsTuple) {
-        notifyOnUI(name: ZMConversation.nonFederatingBackendsNotification, userInfo: [UserInfoKeys.nonFederatingBackends.rawValue: backends])
+        notifyOnUI(name: ZMConversation.nonFederatingBackendsNotificationName, userInfo: [UserInfoKeys.nonFederatingBackends.rawValue: backends])
     }
 
     // MARK: - Events

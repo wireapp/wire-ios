@@ -163,18 +163,18 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         enableReceipts: Bool,
         encryptionProtocol: EncryptionProtocol
     ) {
-        dismiss(controller: controller) { [weak self] in
-            guard let weakSelf = self else { return }
-
-            weakSelf.delegate?.startUI(
-                weakSelf,
-                createConversationWith: participants,
-                name: name,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                enableReceipts: enableReceipts,
-                encryptionProtocol: encryptionProtocol
-            )
+        delegate?.startUI(
+            self,
+            createConversationWith: participants,
+            name: name,
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            enableReceipts: enableReceipts,
+            encryptionProtocol: encryptionProtocol
+        ) { [weak self] postCompletionAction in
+            self?.dismiss(controller: controller) {
+                postCompletionAction()
+            }
         }
     }
 

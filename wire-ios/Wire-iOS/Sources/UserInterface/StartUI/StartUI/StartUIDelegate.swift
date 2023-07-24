@@ -32,6 +32,7 @@ protocol StartUIDelegate: AnyObject {
         allowGuests: Bool,
         allowServices: Bool,
         enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        encryptionProtocol: EncryptionProtocol,
+        onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void
     )
 }

@@ -27,7 +27,9 @@ extension ZMConversation {
     @objc public static let clearTypingNotificationName = Notification.Name(rawValue: "ZMConversationClearTypingNotificationName")
     @objc public static let isVerifiedNotificationName = Notification.Name(rawValue: "ZMConversationIsVerifiedNotificationName")
     @objc public static let missingLegalHoldConsentNotificationName = Notification.Name(rawValue: "ZMConversationMissingLegalHoldConsentNotification")
-    @objc public static let nonFederatingBackendsNotification = Notification.Name(rawValue: "ZMConversationNonFederatingBackendsNotification")
+    @objc public static let nonFederatingBackendsNotificationName = Notification.Name(rawValue: "ZMConversationNonFederatingBackendsNotification")
+    @objc public static let insertedConversationUpdatedNotificationName = Notification.Name(rawValue: "ZMConversationInsertedConversationUpdatedNotification")
+    @objc public static let unknownResponseErrorNotificationName = Notification.Name(rawValue: "ZMConversationUnknownResponseErrorNotification")
 
     /// Sends a notification with the given name on the UI context
     func notifyOnUI(name: Notification.Name, userInfo: [String: Any]? = nil) {

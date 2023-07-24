@@ -334,24 +334,30 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         guard let newConversation = managedObject as? ZMConversation else {
             return false
         }
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return false }
+        var knownError = false
+        defer {
+            if !knownError {
+                newConversation.notifyUnknownResponseError()
+            }
+        }
 
         if let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder),
            responseFailure.code == 412 && responseFailure.label == .missingLegalholdConsent {
             newConversation.notifyMissingLegalHoldConsent()
+            knownError = true
         }
-
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return false }
 
         switch apiVersion {
         case .v4:
         if response.httpStatus == 409,
            let nonFederatingFailure = Payload.NonFederatingBackends(response, decoder: .defaultDecoder),
-           nonFederatingFailure.nonFederatingBackends.count == 2
-        {
+           nonFederatingFailure.nonFederatingBackends.count == 2 {
             let nonFederatingBackends = NonFederatingBackendsTuple(
                 backendA: nonFederatingFailure.nonFederatingBackends[0],
                 backendB: nonFederatingFailure.nonFederatingBackends[1])
             newConversation.notifyNonFederatingBackends(backends: nonFederatingBackends)
+            knownError = true
         }
         case .v0, .v1, .v2, .v3:
             break
@@ -435,6 +441,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 }
             }
         }
+
+        newConversation.notifyInsertedConversationUpdated()
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,

@@ -79,6 +79,7 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: Any?
 
         var actionsController: ConversationActionController?
+        var conversationCreationCoordinator: GroupConversationCreationCoordinator
 
         init(account: Account,
              selfUser: SelfUserType,
@@ -86,6 +87,7 @@ extension ConversationListViewController {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
+            self.conversationCreationCoordinator = GroupConversationCreationCoordinator()
         }
     }
 }
