@@ -81,6 +81,7 @@ else
     cat ~/.ssh/known_hosts
     chmod 0600 .submodule-ssh-key
     ssh-add .submodule-ssh-key
+    GIT_SSH_COMMAND="ssh -v" git clone git@github.com:wireapp/wire-ios-build-assets.git
     unset SUBMODULE_SSH_KEY
 fi
 echo ""
