@@ -54,7 +54,7 @@ fi
 echo ""
 
 echo "ℹ️  Installing ImageMagick..."
-if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
+if [[ -z "${CI}" ]]; then # skip cache bootstrap for CI
     echo "Skipping ImageMagick install because not running on Cirrus-CI"
 else
     which identify || brew install ImageMagick
@@ -62,7 +62,7 @@ fi
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
-if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
+if [[ -z "${CI}" ]]; then # skip cache bootstrap for CI
     echo "Skipping AWS CLI install because not running on Cirrus-CI"
 else
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)

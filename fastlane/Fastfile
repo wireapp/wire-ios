@@ -20,7 +20,7 @@ platform :ios do
     end
 
     def is_running_on_ci 
-        !ENV['CIRRUS_BUILD_ID'].nil?
+        !ENV['CIRRUS_BUILD_ID'].nil? || !ENV['CI'].nil?
     end
 
     def create_keychain_if_needed
