@@ -81,7 +81,7 @@ else
     cat ~/.ssh/known_hosts
     chmod 0600 .submodule-ssh-key
     ssh-add .submodule-ssh-key
-    KEY_PATH = "$(pwd)/.submodule-ssh-key"
+    KEY_PATH="$(pwd)/.submodule-ssh-key"
     cat > ~/.ssh/config <<- EOF
 Host github.com
   AddKeysToAgent yes
