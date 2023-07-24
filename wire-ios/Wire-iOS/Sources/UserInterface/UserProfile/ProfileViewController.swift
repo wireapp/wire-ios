@@ -29,7 +29,7 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet)
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet, onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void)
 }
 
 protocol BackButtonTitleDelegate: AnyObject {
@@ -466,7 +466,7 @@ extension ProfileViewController: ProfileViewControllerDelegate {
         delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet, onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void) {
         // no-op
     }
 
@@ -483,12 +483,14 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         enableReceipts: Bool,
         encryptionProtocol: EncryptionProtocol
     ) {
-        controller.dismiss(animated: true) { [weak self] in
-            self?.delegate?.profileViewController(
-                self,
-                wantsToCreateConversationWithName: name,
-                users: participants
-            )
+        delegate?.profileViewController(
+            self,
+            wantsToCreateConversationWithName: name,
+            users: participants
+        ) { postCompletionAction in
+            controller.dismiss(animated: true) {
+                postCompletionAction()
+            }
         }
     }
 }

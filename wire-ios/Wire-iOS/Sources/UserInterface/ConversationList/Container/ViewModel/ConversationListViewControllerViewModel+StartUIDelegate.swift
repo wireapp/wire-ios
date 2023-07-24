@@ -186,6 +186,29 @@ class GroupConversationCreationCoordinator {
          return true
     }
 
+    func createConversation(
+        withParticipants users: UserSet,
+        name: String?
+     ) -> Bool {
+         guard case .initialized(let completionHandler) = state else { return false }
+         guard let userSession = ZMUserSession.shared() else { return false }
+         state = .beginingToCreateConversation(completionHandler: completionHandler)
+
+         var conversation: ZMConversation?
+
+         userSession.enqueue {
+             conversation = ZMConversation.insertGroupConversation(session: userSession,
+                                                                   participants: Array(users),
+                                                                   name: name,
+                                                                   team: ZMUser.selfUser().team)
+         } completionHandler: { [weak self] in
+             guard let self = self, let conversation = conversation else { return }
+             self.state = .creatingConversation(conversation: conversation, completionHandler: completionHandler)
+         }
+
+         return true
+    }
+
     func finalize() {
         state = .finalizing
         NotificationCenter.default.removeObserver(self, name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)

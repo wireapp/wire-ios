@@ -37,29 +37,36 @@ extension ConversationViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?,
                                wantsToCreateConversationWithName name: String?,
-                               users: UserSet) {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        let conversationCreation = { [weak self] in
-            var newConversation: ZMConversation! = nil
-
-            userSession.enqueue({
-                newConversation = ZMConversation.insertGroupConversation(session: userSession,
-                                                                         participants: Array(users),
-                                                                         name: name,
-                                                                         team: ZMUser.selfUser().team)
-
-            }, completionHandler: {
-                self?.zClientViewController.select(conversation: newConversation,
-                                                   focusOnView: true,
-                                                   animated: true)
-            })
+                               users: UserSet,
+                               onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void
+        ) {
+        guard let coordinator = conversationCreationCoordinator else { return }
+        let initialized = coordinator.initialize { [weak self] result in
+            onCompletion { [weak self] in
+                switch result {
+                case .success(let conversation):
+                    let openConversation = { [weak self] in
+                        self?.zClientViewController.select(conversation: conversation,
+                                                           focusOnView: true,
+                                                           animated: true)
+                        return
+                    }
+                    if nil != self?.presentedViewController {
+                        self?.dismiss(animated: true, completion: openConversation)
+                    } else {
+                        openConversation()
+                    }
+                case .failure:
+                    self?.presentedViewController?.dismiss(animated: true)
+                }
+                self?.conversationCreationCoordinator?.finalize()
+            }
         }
-
-        if nil != presentedViewController {
-            dismiss(animated: true, completion: conversationCreation)
-        } else {
-            conversationCreation()
+        guard initialized else { return }
+        let creatingConversation = coordinator.createConversation(withParticipants: users, name: name)
+        guard creatingConversation else {
+            coordinator.finalize()
+            return
         }
     }
 }

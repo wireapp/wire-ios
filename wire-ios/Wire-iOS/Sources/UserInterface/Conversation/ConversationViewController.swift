@@ -80,6 +80,7 @@ final class ConversationViewController: UIViewController {
     private var voiceChannelStateObserverToken: Any?
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
+    var conversationCreationCoordinator: GroupConversationCreationCoordinator?
 
     var participantsController: UIViewController? {
 
@@ -108,6 +109,7 @@ final class ConversationViewController: UIViewController {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
         self.zClientViewController = zClientViewController
+        self.conversationCreationCoordinator = GroupConversationCreationCoordinator()
 
         contentViewController = ConversationContentViewController(conversation: conversation,
                                                                   message: visibleMessage,

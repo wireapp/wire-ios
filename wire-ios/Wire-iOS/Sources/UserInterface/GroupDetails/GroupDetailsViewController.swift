@@ -292,7 +292,7 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
         }
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet, onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void) {
         // no-op
     }
 }
