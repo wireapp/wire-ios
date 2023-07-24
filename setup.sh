@@ -75,12 +75,12 @@ if [[ -z "${SUBMODULE_SSH_KEY}" ]]; then #
 else
     echo "${SUBMODULE_SSH_KEY}" | cat > .submodule-ssh-key
     eval "$(ssh-agent -s)"
-    chmod 0600 .submodule-ssh-key
-    ssh-add .submodule-ssh-key
     mkdir -p ~/.ssh
     ssh-keyscan github.com >> ~/.ssh/known_hosts
     ssh-keygen -R github.com
     cat ~/.ssh/known_hosts
+    chmod 0600 .submodule-ssh-key
+    ssh-add .submodule-ssh-key
     unset SUBMODULE_SSH_KEY
 fi
 echo ""
