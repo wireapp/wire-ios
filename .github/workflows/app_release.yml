@@ -53,21 +53,29 @@ jobs:
         with:
           path: Carthage
           key: ${{ runner.os }}-carthage-${{ hashFiles('Cartfile.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-carthage-
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: carthage bootstrap --platform ios --use-xcframeworks
+      - name: Save Carthage Cache
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+          with:
+            path: Carthage/Build
+            key: ${{ steps.cache-carthage.outputs.cache-primary-key }}
       - name: Restore Bundler Cache
         uses: actions/cache@v3
         id: cache-bundler
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bundler-
       - name: Run setup
         run: sh ./setup.sh
+      - name: Save Bundler Cache
+        if: steps.cache-bundler.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+          with:
+            path: vendor/bundle
+            key: ${{ steps.cache-bundler.outputs.cache-primary-key }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
