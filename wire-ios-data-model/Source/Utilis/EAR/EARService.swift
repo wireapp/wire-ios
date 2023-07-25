@@ -75,11 +75,7 @@ public protocol EARServiceInterface: AnyObject {
     
     func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
     
-    var isDatabaseLocked: Bool { get }
     
-    var isEAREnabled: Bool { get }
-    
-    var databaseKey: VolatileData? { get }
 }
 
 public protocol EARServiceDelegate: AnyObject {
@@ -155,6 +151,7 @@ public class EARService: EARServiceInterface {
     private let secondaryPrivateKeyDescription: PrivateEARKeyDescription
     private let databaseKeyDescription: DatabaseEARKeyDescription
     private let earStorage: EARStorage
+    private var databaseContexts: [NSManagedObjectContext]
     
     public var isEAREnabled: Bool {
         earStorage.earEnabled()
@@ -194,14 +191,8 @@ public class EARService: EARServiceInterface {
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
         secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         databaseKeyDescription = .keyDescription(accountID: accountID)
+        self.databaseContexts = databaseContexts
 
-        WireLogger.ear.debug("attach earService start")
-        databaseContexts.forEach { context in
-            context.performAndWait {
-                context.earService = self
-            }
-        }
-        WireLogger.ear.debug("attach earService end")
         if canPerformKeyMigration {
             migrateKeysIfNeeded()
         }
@@ -233,7 +224,7 @@ public class EARService: EARServiceInterface {
         context: NSManagedObjectContext,
         skipMigration: Bool = false
     ) throws {
-        guard !earStorage.earEnabled() else {
+        guard !context.encryptMessagesAtRest else {
             WireLogger.ear.warn("🕵🏽 skip enableEncryptionAtRest because ear already enabled ")
             return
         }
@@ -254,11 +245,11 @@ public class EARService: EARServiceInterface {
                 
                 self.setDatabaseKeyInAllContexts(databaseKey)
                 self.earStorage.enableEAR(true)
-//                context.encryptMessagesAtRest = true
+                context.encryptMessagesAtRest = true
             } catch {
                 WireLogger.ear.error("failed to turn on EAR: \(error)")
-//                context.databaseKey = nil
-//                context.encryptMessagesAtRest = false
+                context.databaseKey = nil
+                context.encryptMessagesAtRest = false
                 self.earStorage.enableEAR(false)
                 try? self.deleteExistingKeys()
                 throw error
@@ -282,7 +273,7 @@ public class EARService: EARServiceInterface {
         context: NSManagedObjectContext,
         skipMigration: Bool = false
     ) throws {
-        guard earStorage.earEnabled() else {
+        guard context.encryptMessagesAtRest else {
             WireLogger.ear.warn("🕵🏽 skip disableEncryptionAtRest because ear already disabled ")
             return
         }
@@ -297,7 +288,7 @@ public class EARService: EARServiceInterface {
             guard let `self` = self else { return }
 
             self.earStorage.enableEAR(false)
-//            context.encryptMessagesAtRest = false
+            context.encryptMessagesAtRest = false
             self.setDatabaseKeyInAllContexts(nil)
 
             do {
@@ -307,7 +298,7 @@ public class EARService: EARServiceInterface {
             } catch {
                 WireLogger.ear.error("failed to turn off EAR: \(error)")
                 self.setDatabaseKeyInAllContexts(databaseKey)
-//                context.encryptMessagesAtRest = true
+                context.encryptMessagesAtRest = true
                 self.earStorage.enableEAR(true)
                 throw error
             }
