@@ -40,7 +40,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "❤️"
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: nonce!) as! MessageCapable, nonce: UUID.create())
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
@@ -78,11 +78,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
         let reactionEmoji = "❤️"
         self.userSession?.perform({
-            ZMMessage.addReaction(MessageReaction.like, toMessage: message!)
+            ZMMessage.addReaction(reactionEmoji, toMessage: message!)
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let observer = MessageChangeObserver.init(message: message)
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: message!.nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: message!.nonce!) as! MessageCapable, nonce: UUID.create())
 
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
@@ -119,7 +119,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "Jean Robert, j'ai mal aux pieds"
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: nonce!) as! MessageCapable, nonce: UUID.create())
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
@@ -154,7 +154,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "❤️"
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: nonce!) as! MessageCapable, nonce: UUID.create())
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
@@ -194,7 +194,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "❤️"
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: nonce!) as! MessageCapable, nonce: UUID.create())
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
@@ -241,7 +241,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertNil(ZMMessage.fetch(withNonce: nonce, for: conversation!, in: self.userSession!.managedObjectContext))
 
         let reactionEmoji = "❤️"
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: nonce!) as! MessageCapable, nonce: UUID.create())
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
@@ -291,7 +291,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
         // when
         self.userSession?.perform {
-            ZMMessage.addReaction(MessageReaction.like, toMessage: editedMessage!)
+            ZMMessage.addReaction("🥰", toMessage: editedMessage!)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -321,7 +321,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "❤️"
-        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: reactionEmoji, messageID: nonce!) as! MessageCapable, nonce: UUID.create())
+        let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: nonce!) as! MessageCapable, nonce: UUID.create())
         let fromClient = self.user1.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
