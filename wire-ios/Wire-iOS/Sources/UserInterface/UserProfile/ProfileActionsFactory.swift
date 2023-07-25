@@ -19,6 +19,7 @@
 import Foundation
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 /**
  * The actions that can be performed from the profile details or devices.
@@ -190,7 +191,7 @@ final class ProfileActionsFactory {
                 actions.append(.cancelConnectionRequest)
             } else if user.isConnected || isOnSameTeam {
                 actions.append(.openOneToOne)
-            } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
+            } else if user.canBeConnected && !user.isPendingApprovalBySelfUser && isUserFormClassifiedBackend(user: user) {
                 actions.append(.connect)
             }
 
@@ -211,6 +212,15 @@ final class ProfileActionsFactory {
         return actions
     }
 
+    private func isUserFormClassifiedBackend(user: UserType) -> Bool {
+        let selfUser = ZMUser.selfUser()
+        guard let userSession = ZMUserSession.shared(),
+              userSession.classification(with: [user]) == .classified else {
+            return false
+        }
+
+        return true
+    }
 }
 
 extension UserType {
