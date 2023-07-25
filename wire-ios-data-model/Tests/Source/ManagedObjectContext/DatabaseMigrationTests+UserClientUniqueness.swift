@@ -29,10 +29,10 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let dataModelName = "zmessaging"
 
-    func testMigratingToMessagingStore_2_106_PreventsDuplicateUserClients() throws {
+    func testMigratingToMessagingStore_2_107_PreventsDuplicateUserClients() throws {
         try migrateStore(
-            sourceVersion: "2.105.0",
-            destinationVersion: "2.106.0",
+            sourceVersion: "2.106.0",
+            destinationVersion: "2.107.0",
             preMigrationAction: { context in
                 // insert some duplicates
                 try insertDuplicateClients(with: clientID, in: context)
@@ -166,7 +166,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     // MARK: - URL Helpers
 
     private var mappingModelURL: URL? {
-        bundle.url(forResource: "MappingModel_2.105-2.106", withExtension: "cdm")
+        bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
     }
 
     private func storeURL(version: String) -> URL {

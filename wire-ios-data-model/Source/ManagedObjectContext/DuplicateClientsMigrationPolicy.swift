@@ -17,10 +17,17 @@
 //
 
 import Foundation
+import WireSystem
 
 class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
 
+    private enum Keys: String {
+        case needsToBeUpdatedFromBackend
+    }
+
     override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
+        WireLogger.localStorage.info("beginning duplicate clients migration")
+
         let context = manager.sourceContext
 
         let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
@@ -28,12 +35,16 @@ class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
             by: #keyPath(UserClient.remoteIdentifier)
         )
 
+        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate clients")
+
         duplicates.forEach { (_, clients: [NSManagedObject]) in
             guard clients.count > 1 else {
                 return
             }
 
+            clients.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             clients.dropFirst().forEach(context.delete)
+            WireLogger.localStorage.info("removed 1 occurence of duplicate clients")
         }
     }
 
