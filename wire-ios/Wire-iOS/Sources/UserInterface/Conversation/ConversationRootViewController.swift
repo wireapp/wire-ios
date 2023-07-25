@@ -94,7 +94,7 @@ final class ConversationRootViewController: UIViewController {
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        super.viewDidDisappear(animated)
 
         navBarContainer.navigationBar.accessibilityElementsHidden = true
         conversationViewController?.view.accessibilityElementsHidden = true
