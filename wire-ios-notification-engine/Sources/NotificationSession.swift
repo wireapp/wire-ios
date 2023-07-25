@@ -212,7 +212,7 @@ public class NotificationSession {
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
-        
+
         try self.init(
             coreDataStack: coreDataStack,
             transportSession: transportSession,

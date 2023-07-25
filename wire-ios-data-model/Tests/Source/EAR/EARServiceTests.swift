@@ -27,7 +27,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     var keyRepository: MockEARKeyRepositoryInterface!
     var keyEncryptor: MockEARKeyEncryptorInterface!
     var earStorage: EARStorage!
-    
+
     var prepareForMigrationCalls = 0
 
     // MARK: - Life cycle
@@ -56,7 +56,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     }
 
     func createSUT(canPerformMigration: Bool = false) -> EARService {
-        
+
         let sut = EARService(
             accountID: userIdentifier,
             keyRepository: keyRepository,
@@ -874,7 +874,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let oldSecondaryPublicKey = oldPublicKeys.secondary
         let oldSecondaryPrivateKey = oldPrivateKeys.secondary
         uiMOC.encryptMessagesAtRest = false
-        
+
         // When
         try sut.enableEncryptionAtRest(context: uiMOC, skipMigration: true)
 
