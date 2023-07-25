@@ -194,7 +194,7 @@ public extension ZMConversation {
     enum ZMConversationError: Error {
         case couldNotFindSyncContext
     }
-    
+
     func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
         guard let syncContext = self.managedObjectContext?.zm_sync else {
             completion?(ZMConversationError.couldNotFindSyncContext)

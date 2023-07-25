@@ -134,7 +134,7 @@ class MockMLSService: MLSServiceInterface {
     func createSelfGroup(for groupID: MLSGroupID) {
         calls.createSelfGroup.append(groupID)
     }
-    
+
     func joinNewGroup(with groupID: MLSGroupID) async throws {
         calls.joinNewGroup.append(groupID)
     }

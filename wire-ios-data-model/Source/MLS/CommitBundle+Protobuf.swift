@@ -19,13 +19,13 @@
 import WireProtos
 import WireCoreCrypto
 
-//extension CommitBundle {
+// extension CommitBundle {
 //    func protobufData() throws -> Data {
 //        return try Mls_CommitBundle(commitBundle: self).serializedData()
 //    }
-//}
+// }
 //
-//extension Mls_CommitBundle {
+// extension Mls_CommitBundle {
 //    init(commitBundle: CommitBundle) {
 //        self = Mls_CommitBundle.with {
 //            $0.commit = commitBundle.commit.data
@@ -38,9 +38,9 @@ import WireCoreCrypto
 //            }
 //        }
 //    }
-//}
+// }
 //
-//extension Mls_GroupInfoBundle {
+// extension Mls_GroupInfoBundle {
 //    init(groupInfoBundle: GroupInfoBundle) {
 //        self = Mls_GroupInfoBundle.with {
 //            $0.groupInfo = groupInfoBundle.payload.data
@@ -48,9 +48,9 @@ import WireCoreCrypto
 //            $0.ratchetTreeType = Mls_RatchetTreeType(ratchetTreeType: groupInfoBundle.ratchetTreeType)
 //        }
 //    }
-//}
+// }
 //
-//extension Mls_GroupInfoType {
+// extension Mls_GroupInfoType {
 //    init(encryptionType: MlsGroupInfoEncryptionType) {
 //        switch encryptionType {
 //        case .plaintext:
@@ -60,9 +60,9 @@ import WireCoreCrypto
 //            self = .publicGroupState
 //        }
 //    }
-//}
+// }
 //
-//extension Mls_RatchetTreeType {
+// extension Mls_RatchetTreeType {
 //    init(ratchetTreeType: MlsRatchetTreeType) {
 //        switch ratchetTreeType {
 //        case .full:
@@ -73,4 +73,4 @@ import WireCoreCrypto
 //            self = .reference
 //        }
 //    }
-//}
+// }

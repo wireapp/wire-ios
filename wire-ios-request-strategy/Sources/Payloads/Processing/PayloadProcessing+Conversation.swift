@@ -172,7 +172,7 @@ extension Payload.Conversation {
             return
         }
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); conv payload: \(String(describing: self))")
-        
+
         if conversation.epoch <= 0 {
             mlsService.createSelfGroup(for: groupId)
         } else {
@@ -197,7 +197,7 @@ extension Payload.Conversation {
                                                         created: &created)
 
         conversation.conversationType = .group
-        
+
         updateAttributes(for: conversation, context: context)
 
         updateMetadata(for: conversation, context: context)

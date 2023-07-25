@@ -841,7 +841,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
         }
     }
-    
+
     func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
         let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
         // then
@@ -850,20 +850,20 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
         let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
-      
+
         // then
         XCTAssertFalse(mockMLS.calls.joinGroup.isEmpty)
     }
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) -> MockMLSService {
         let mockMLS = MockMLSService()
-        
+
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLS
-            
+
             MLSEventProcessor.setMock(MockMLSEventProcessor())
             let domain = "example.com"
-            
+
             let id = QualifiedID(uuid: UUID(), domain: domain)
             // given
             let conversation = Payload.Conversation(

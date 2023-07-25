@@ -118,7 +118,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             delegate?.completedURLAction(urlAction)
         }
     }
-    
+
     private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation>) -> Void) {
         guard let qualifiedID = conversation.qualifiedID else {
             completion(.success(conversation))
@@ -139,7 +139,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 completion(.success(upToDateConversation))
                 return
             }
-            
+
             upToDateConversation.joinNewMLSGroup(id: groupId) { error in
                 if let error = error {
                     WireLogger.mls.debug("failed to join MLS group: \(error)")

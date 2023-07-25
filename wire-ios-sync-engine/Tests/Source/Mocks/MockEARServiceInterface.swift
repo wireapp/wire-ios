@@ -29,7 +29,6 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var delegate: EARServiceDelegate?
 
-
     // MARK: - enableEncryptionAtRest
 
     public var enableEncryptionAtRestContextSkipMigration_Invocations: [(context: NSManagedObjectContext, skipMigration: Bool)] = []

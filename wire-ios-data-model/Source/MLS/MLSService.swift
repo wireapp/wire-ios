@@ -27,7 +27,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func createSelfGroup(for groupID: MLSGroupID)
 
     func joinGroup(with groupID: MLSGroupID) async throws
-    
+
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
@@ -753,18 +753,18 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("MLSService is missing sync context")
             return
         }
-        
+
         if !conversationExists(groupID: groupID) {
             try createGroup(for: groupID)
         }
-        
+
         let selfUser = ZMUser.selfUser(in: context)
         let mlsUser = MLSUser(from: selfUser)
-        
+
         try await joinGroup(with: groupID)
         try await addMembersToConversation(with: [mlsUser], for: groupID)
     }
-    
+
     public func joinGroup(with groupID: MLSGroupID) async throws {
         try await joinByExternalCommit(groupID: groupID)
     }

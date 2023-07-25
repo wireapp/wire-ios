@@ -25,7 +25,7 @@ class MockMLSService: MLSServiceInterface {
     func createSelfGroup(for groupID: MLSGroupID) {
         fatalError("not implemented")
     }
-    
+
     func joinNewGroup(with groupID: MLSGroupID) async throws {
         fatalError("not implemented")
     }
