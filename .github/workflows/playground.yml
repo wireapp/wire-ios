@@ -1,43 +1,12 @@
-name: (CirrusCI) Playground
+name: Playground
 
 on: [pull_request]
 permissions: 
   checks: write
 
 jobs:
-  playground:
-    runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:14.3.1
-    env:
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
-      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
-      S3_BUCKET: "z-lohika"
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-      DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Carthage
-        run: carthage bootstrap --platform ios --use-xcframeworks
-      - name: Install Ruby Dependencies 
-        run: |
-          which bundle || gem install bundler
-          bundle check || bundle install
-      - name: Run setup
-        run: sh ./setup.sh
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-      - name: Trigger build
-        run: bundle exec fastlane playground
-  
+  development:
+    uses: wireapp/wire-ios-mono/.github/workflows/app_release.yml@main
+    with:
+      fastlane_action: playground
+    secrets: inherit

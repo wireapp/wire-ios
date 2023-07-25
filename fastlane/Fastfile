@@ -571,10 +571,10 @@ class Build
 
         @last_commit = options[:last_commit]
         @build_type = build_type
-        if ENV['CIRRUS_BRANCH'].nil? 
+        if ENV['GITHUB_REF_NAME'].nil? 
             @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
         else
-            @git_branch = ENV['CIRRUS_BRANCH']
+            @git_branch = ENV['GITHUB_REF_NAME']
         end
 
         @build_number = build_number
