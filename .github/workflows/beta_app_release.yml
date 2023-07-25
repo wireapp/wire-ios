@@ -6,7 +6,7 @@ permissions:
 
 jobs:
   testflight_beta:
-    uses: wireapp/wire-ios-mono/.github/workflows/app_release.yml
+    uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: testflight_beta
     secrets: inherit

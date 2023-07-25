@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   development:
-    uses: wireapp/wire-ios-mono/.github/workflows/app_release.yml
+    uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: appstore_public
     secrets: inherit

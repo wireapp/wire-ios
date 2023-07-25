@@ -7,13 +7,13 @@ permissions:
 
 jobs:
   column_1_production:
-    uses: wireapp/wire-ios-mono/.github/workflows/app_release.yml
+    uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: appstore_col_1_prod
     secrets: inherit
 
   column_3_production:
-    uses: wireapp/wire-ios-mono/.github/workflows/app_release.yml
+    uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: appstore_col_3_prod
     secrets: inherit
