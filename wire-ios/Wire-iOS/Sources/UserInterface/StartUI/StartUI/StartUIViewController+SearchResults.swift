@@ -154,27 +154,16 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         }
     }
 
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        delegate?.startUI(
-            self,
-            createConversationWith: participants,
-            name: name,
-            allowGuests: allowGuests,
-            allowServices: allowServices,
-            enableReceipts: enableReceipts,
-            encryptionProtocol: encryptionProtocol
-        ) { [weak self] postCompletionAction in
-            self?.dismiss(controller: controller) {
-                postCompletionAction()
-            }
+    func conversationCreationController(_ controller: ConversationCreationController, didCreateConversation conversation: ZMConversation) {
+        dismiss(controller: controller) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.startUI(self, didCreateConversation: conversation)
+        }
+    }
+
+    func conversationCreationController(_ controller: ConversationCreationController, didFailToCreateConversation failure: GroupConversationCreationEvent.FailureType) {
+        dismiss(controller: controller) { [weak self] in
+            self?.dismissIfNeeded(animated: true)
         }
     }
 

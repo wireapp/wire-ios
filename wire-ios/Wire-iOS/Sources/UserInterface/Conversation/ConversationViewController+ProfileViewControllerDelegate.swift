@@ -34,39 +34,4 @@ extension ConversationViewController: ProfileViewControllerDelegate {
             self.zClientViewController.select(conversation: conversation, focusOnView: true, animated: true)
         }
     }
-
-    func profileViewController(_ controller: ProfileViewController?,
-                               wantsToCreateConversationWithName name: String?,
-                               users: UserSet,
-                               onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void
-        ) {
-        guard let coordinator = conversationCreationCoordinator else { return }
-        let initialized = coordinator.initialize { [weak self] result in
-            onCompletion { [weak self] in
-                switch result {
-                case .success(let conversation):
-                    let openConversation = { [weak self] in
-                        self?.zClientViewController.select(conversation: conversation,
-                                                           focusOnView: true,
-                                                           animated: true)
-                        return
-                    }
-                    if nil != self?.presentedViewController {
-                        self?.dismiss(animated: true, completion: openConversation)
-                    } else {
-                        openConversation()
-                    }
-                case .failure:
-                    self?.presentedViewController?.dismiss(animated: true)
-                }
-                self?.conversationCreationCoordinator?.finalize()
-            }
-        }
-        guard initialized else { return }
-        let creatingConversation = coordinator.createConversation(withParticipants: users, name: name)
-        guard creatingConversation else {
-            coordinator.finalize()
-            return
-        }
-    }
 }

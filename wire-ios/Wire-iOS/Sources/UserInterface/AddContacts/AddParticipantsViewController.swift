@@ -88,7 +88,6 @@ extension AddParticipantsViewController.Context {
 }
 
 final class AddParticipantsViewController: UIViewController {
-
     enum CreateAction {
         case updatedUsers(UserSet)
         case create

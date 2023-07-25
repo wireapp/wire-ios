@@ -29,7 +29,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet, onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void)
 }
 
 protocol BackButtonTitleDelegate: AnyObject {
@@ -466,31 +465,19 @@ extension ProfileViewController: ProfileViewControllerDelegate {
         delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet, onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void) {
-        // no-op
-    }
-
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
+    func conversationCreationController(_ controller: ConversationCreationController, didCreateConversation conversation: ZMConversation) {
+        controller.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.profileViewController(self, wantsToNavigateTo: conversation)
+        }
+    }
 
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        delegate?.profileViewController(
-            self,
-            wantsToCreateConversationWithName: name,
-            users: participants
-        ) { postCompletionAction in
-            controller.dismiss(animated: true) {
-                postCompletionAction()
-            }
+    func conversationCreationController(_ controller: ConversationCreationController, didFailToCreateConversation failure: GroupConversationCreationEvent.FailureType) {
+        controller.dismiss(animated: true) { [weak self] in
+            self?.dismiss(animated: true)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,20 @@
 import Foundation
 import WireDataModel
 
-extension ProfilePresenter: ProfileViewControllerDelegate {
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        guard let controller = controller else { return }
-
-        dismiss(viewController: controller) {
-            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-        }
+enum GroupConversationCreationEvent {
+    enum FailureType {
+        case missingLegalHoldConsent
+        case nonFederatingBackends
+        case other
     }
+    enum PopupType {
+        case missingLegalHoldConsent(completionHandler: () -> Void)
+        case nonFederatingBackends(backends: NonFederatingBackendsTuple, actionHandler: (NonFullyConnectedGraphAction) -> Void)
+    }
+    case success(conversation: ZMConversation)
+    case failure(failureType: FailureType)
+    case hideLoader
+    case showLoader
+    case presentPopup(popupType: PopupType)
+    case openURL(url: URL)
 }

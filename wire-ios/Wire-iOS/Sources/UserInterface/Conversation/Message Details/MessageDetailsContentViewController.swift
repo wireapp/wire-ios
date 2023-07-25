@@ -305,10 +305,6 @@ extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
             ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
         }
     }
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet, onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void) {
-        // no-op
-    }
 }
 
 // MARK: - Adaptive Presentation

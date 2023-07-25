@@ -77,17 +77,15 @@ final class ConversationCreationValues {
 }
 
 protocol ConversationCreationControllerDelegate: AnyObject {
+    func conversationCreationController(
+        _ controller: ConversationCreationController,
+        didCreateConversation conversation: ZMConversation
+    )
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didFailToCreateConversation failure: GroupConversationCreationEvent.FailureType
     )
-
 }
 
 final class ConversationCreationController: UIViewController {
@@ -107,6 +105,7 @@ final class ConversationCreationController: UIViewController {
     private var values: ConversationCreationValues
 
     weak var delegate: ConversationCreationControllerDelegate?
+    var conversationCreationCoordinator: GroupConversationCreationCoordinator?
 
     // MARK: - Sections
 
@@ -208,6 +207,7 @@ final class ConversationCreationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        conversationCreationCoordinator = GroupConversationCreationCoordinator()
         view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
@@ -335,21 +335,70 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         switch action {
         case .updatedUsers(let users):
             values.participants = users
-
         case .create:
-            var allParticipants = values.participants
-            allParticipants.insert(selfUser)
-
-            delegate?.conversationCreationController(
-                self,
-                didSelectName: values.name,
-                participants: values.participants,
-                allowGuests: values.allowGuests,
-                allowServices: values.allowServices,
-                enableReceipts: values.enableReceipts,
-                encryptionProtocol: values.encryptionProtocol
-            )
+            createConversation()
         }
+    }
+
+    private func createConversation() {
+        guard let conversationCreationCoordinator = conversationCreationCoordinator else { return }
+        var allParticipants = values.participants
+        allParticipants.insert(selfUser)
+        navigationController?.isLoadingViewVisible = true
+        let initialized = conversationCreationCoordinator.initialize(eventHandler: { [weak self] event in
+            guard let self = self else { return }
+            switch event {
+            case .showLoader:
+                self.navigationController?.isLoadingViewVisible = true
+            case .hideLoader:
+                self.navigationController?.isLoadingViewVisible = false
+            case .presentPopup(let popup):
+                switch popup {
+                case .nonFederatingBackends(let backends, let handler):
+                    self.showNotFullyConnectedGraphAlert(nonFederatingBackends: backends, actionHandler: handler)
+                case .missingLegalHoldConsent(let handler):
+                    self.showMissingLegalConsentPopup(completionHandler: handler)
+                }
+            case .failure(let failure):
+                self.delegate?.conversationCreationController(self, didFailToCreateConversation: failure)
+            case .success(let conversation):
+                self.delegate?.conversationCreationController(self, didCreateConversation: conversation)
+            case .openURL(let url):
+                _ = url.openAsLink()
+            }
+        })
+        guard initialized else {
+            conversationCreationCoordinator.finalize()
+            return
+        }
+        let creatingConversation = conversationCreationCoordinator.createConversation(
+            withUsers: values.participants,
+            name: values.name, allowGuests: values.allowGuests,
+            allowServices: values.allowServices,
+            enableReceipts: values.enableReceipts,
+            encryptionProtocol: values.encryptionProtocol
+        )
+        guard creatingConversation else {
+            conversationCreationCoordinator.finalize()
+            return
+        }
+    }
+
+    private func showMissingLegalConsentPopup(completionHandler: @escaping () -> Void) {
+        typealias ConversationError = L10n.Localizable.Error.Conversation
+        UIAlertController.showErrorAlert(
+            title: ConversationError.title,
+            message: ConversationError.missingLegalholdConsent,
+            completion: { _ in completionHandler() }
+        )
+    }
+
+    private func showNotFullyConnectedGraphAlert(nonFederatingBackends: NonFederatingBackendsTuple, actionHandler: @escaping (NonFullyConnectedGraphAction) -> Void) {
+        let alert = UIAlertController.notFullyConnectedGraphAlert(
+            backends: nonFederatingBackends,
+            completion: actionHandler
+        )
+        alert.presentTopmost()
     }
 }
 
@@ -448,3 +497,32 @@ enum EncryptionProtocol: String, CaseIterable {
     case proteus = "Proteus (default)"
     case mls = "MLS"
 }
+
+extension UIAlertController {
+    static func notFullyConnectedGraphAlert(backends: NonFederatingBackendsTuple, completion: @escaping (NonFullyConnectedGraphAction) -> Void) -> UIAlertController {
+        let alert = UIAlertController(
+            title: "Group can’t be created",
+            message: "People from backends \(backends.backendA) and \(backends.backendB) can’t join the same group conversation.\nTo create the group, remove affected participants.", preferredStyle: .alert)
+        let editParticipantsAction = UIAlertAction(
+            title: "Edit Participants List",
+            style: .default,
+            handler: { _ in completion(.editParticipantsList) }
+        )
+        let discardGroupCreationAction = UIAlertAction(
+            title: "Discard Group Creation",
+            style: .default,
+            handler: { _ in completion(.discardGroupCreation) }
+        )
+        let learnMoreAction = UIAlertAction(
+            title: "Learn More",
+            style: .default,
+            handler: { _ in completion(.learnMore) }
+        )
+        alert.addAction(editParticipantsAction)
+        alert.addAction(discardGroupCreationAction)
+        alert.addAction(learnMoreAction)
+        alert.preferredAction = editParticipantsAction
+        return alert
+    }
+}
+

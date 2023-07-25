@@ -25,14 +25,5 @@ protocol StartUIDelegate: AnyObject {
 
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation)
 
-    func startUI(
-        _ startUI: StartUIViewController,
-        createConversationWith users: UserSet,
-        name: String,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol,
-        onCompletion: @escaping (_ postCompletionAction: @escaping () -> Void) -> Void
-    )
+    func startUI(_ startUI: StartUIViewController, didCreateConversation conversation: ZMConversation)
 }
