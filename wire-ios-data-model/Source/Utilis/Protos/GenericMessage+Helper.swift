@@ -443,8 +443,8 @@ extension Text {
 
         // We always keep the quote from the original message
         hasQuote
-            ? updatedText.quote = quote
-            : updatedText.clearQuote()
+        ? updatedText.quote = quote
+        : updatedText.clearQuote()
         return updatedText
     }
 
@@ -482,6 +482,8 @@ extension WireProtos.Reaction {
     }
 
     func toSet() -> Set<String> {
+        guard !emoji.isEmpty else { return [] }
+
         let result = emoji
             .components(separatedBy: ",")
             .map { String($0) }
@@ -564,7 +566,7 @@ extension MessageHide {
 extension MessageDelete {
     public init(messageId: UUID) {
         self = MessageDelete.with {
-         $0.messageID = messageId.transportString()
+            $0.messageID = messageId.transportString()
         }
     }
 }
@@ -693,7 +695,7 @@ public extension LinkPreview {
             }
 
             guard let author = twitterMetadata.author,
-                let username = twitterMetadata.username else { return }
+                  let username = twitterMetadata.username else { return }
 
             $0.tweet = WireProtos.Tweet.with({
                 $0.author = author

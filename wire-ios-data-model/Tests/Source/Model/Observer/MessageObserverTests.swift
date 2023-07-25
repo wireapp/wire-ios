@@ -193,7 +193,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions(["LOVE IT, HUH"], forUser: ZMUser.selfUser(in: self.uiMOC))},
+            modifier: {$0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC))},
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -220,7 +220,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        message.setReactions(["LOVE IT, HUH"], forUser: selfUser)
+        message.setReactions(["👻"], forUser: selfUser)
         uiMOC.saveOrRollback()
 
         // when

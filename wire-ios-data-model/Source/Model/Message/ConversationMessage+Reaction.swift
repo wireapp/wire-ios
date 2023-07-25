@@ -25,6 +25,15 @@ extension ZMMessage {
         _ reaction: String,
         toMessage message: ZMConversationMessage
     ) -> ZMClientMessage? {
+
+        guard reaction != "" else {
+            return setReactions(
+                reactions: [],
+                toMessage: message
+            )
+            
+        }
+
         var reactions = existingReactionsBySelfUser(forMessage: message)
         reactions.insert(reaction)
 

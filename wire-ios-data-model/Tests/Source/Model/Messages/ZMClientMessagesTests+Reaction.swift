@@ -37,14 +37,14 @@ extension ZMClientMessageTests_Reaction {
 
     func updateEventForAddingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "❤️", messageID: message.nonce!))
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
     }
 
     func updateEventForRemovingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "", messageID: message.nonce!))
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: [], messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
     }
@@ -67,6 +67,7 @@ extension ZMClientMessageTests_Reaction {
 
     func testThatItUpdatesTheCategoryWhenAddingAReaction() {
         let message = insertMessage()
+        message.markAsSent()
         XCTAssertTrue(message.cachedCategory.contains(.text))
         XCTAssertFalse(message.cachedCategory.contains(.liked))
 
@@ -86,7 +87,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
 
         let message = insertMessage()
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "TROP BIEN", messageID: message.nonce!))
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["TROP BIEN"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
 
         // when
@@ -103,7 +104,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
 
         let message = insertMessage()
-        message.addReaction("❤️", forUser: message.sender!)
+        ZMMessage.addReaction("❤️", toMessage: message)
         uiMOC.saveOrRollback()
 
         let event = updateEventForRemovingReaction(to: message)
@@ -123,7 +124,9 @@ extension ZMClientMessageTests_Reaction {
 
         // given
         let message = insertMessage()
-        message.addReaction("❤️", forUser: ZMUser.selfUser(in: uiMOC))
+        message.markAsSent()
+
+        ZMMessage.addReaction("❤️", toMessage: message)
         uiMOC.saveOrRollback()
         XCTAssertTrue(message.cachedCategory.contains(.text))
         XCTAssertTrue(message.cachedCategory.contains(.liked))
