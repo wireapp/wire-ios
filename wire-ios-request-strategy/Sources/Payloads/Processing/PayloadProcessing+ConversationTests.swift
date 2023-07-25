@@ -123,6 +123,28 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_Group_AddSystemMessageWhenFailedToAddUsers() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            var failedQualifiedIDs: [QualifiedID] = []
+            if let qualifiedIDs = self.otherUser.qualifiedID {
+                failedQualifiedIDs = [qualifiedIDs]
+            }
+
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           failedToAddUsers: failedQualifiedIDs,
+                                                           type: BackendConversationType.group.rawValue)
+
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
+            XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .failedToAddParticipants)
+        }
+    }
+
     func testUpdateOrCreateConversation_Group_UpdatesLastServerTimestamp() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -138,6 +160,21 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(self.groupConversation.lastServerTimeStamp, serverTimestamp)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_ResetsIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.groupConversation.isPendingMetadataRefresh = true
+            let qualifiedID = self.groupConversation.qualifiedID!
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           type: BackendConversationType.group.rawValue)
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            XCTAssertFalse(self.groupConversation.isPendingMetadataRefresh)
         }
     }
 
@@ -490,6 +527,27 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_OneToOne_ResetsIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
+            self.otherUser.isPendingMetadataRefresh = true
+            let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
+            let qualifiedID = self.oneToOneConversation.qualifiedID!
+            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+                                                           type: BackendConversationType.oneOnOne.rawValue,
+                                                           members: members)
+
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            XCTAssertEqual(self.oneToOneConversation.isPendingMetadataRefresh, self.otherUser.isPendingMetadataRefresh)
+        }
+    }
+
     func testUpdateOrCreateConversation_OneToOne_MergesWithExistingConversation() throws {
         try syncMOC.performGroupedAndWait { _ in
             // given
@@ -632,6 +690,68 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(selfConversation.lastServerTimeStamp, serverTimestamp)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Self_ResetsIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self.syncMOC)
+            selfConversation.domain = self.owningDomain
+            selfConversation.isPendingMetadataRefresh = true
+            let conversationPayload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
+                                                           type: BackendConversationType.`self`.rawValue)
+            // when
+            conversationPayload.updateOrCreate(in: self.syncMOC)
+
+            // then
+            XCTAssertFalse(selfConversation.isPendingMetadataRefresh)
+        }
+    }
+
+    // MARK: - Proteus: Member Join
+
+    func test_UpdateConverationMemberJoin_WithFailedToAddUsers() {
+        syncMOC.performAndWait {
+            // given
+
+            var failedQualifiedIDs: [QualifiedID] = []
+            if let qualifiedIDs = self.otherUser.qualifiedID {
+                failedQualifiedIDs = [qualifiedIDs]
+            }
+
+            // create user
+            let user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = UUID.create()
+            user.domain = groupConversation.domain
+
+            // create the event
+            let member = Payload.ConversationMember(
+                id: user.remoteIdentifier,
+                qualifiedID: user.qualifiedID,
+                conversationRole: ZMConversation.defaultMemberRoleName
+            )
+            let payload = Payload.UpdateConverationMemberJoin(userIDs: [user.remoteIdentifier],
+                                                              users: [member])
+
+            let updateEvent = self.updateEvent(from: payload)
+            let event = ConversationEventProcessor.MemberJoinPayload(
+                id: groupConversation.remoteIdentifier,
+                qualifiedID: groupConversation.qualifiedID,
+                from: otherUser.remoteIdentifier,
+                qualifiedFrom: otherUser.qualifiedID,
+                timestamp: Date(),
+                type: "conversation.member-join",
+                data: payload,
+                failedToAddUsers: failedQualifiedIDs
+            )
+
+            // when
+            event.process(in: syncMOC, originalEvent: updateEvent)
+
+            // then
+            XCTAssertEqual(groupConversation.lastMessage?.systemMessageData?.systemMessageType, .failedToAddParticipants)
         }
     }
 
@@ -861,7 +981,8 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             qualifiedFrom: otherUser.qualifiedID,
             timestamp: nil,
             type: nil,
-            data: payload
+            data: payload,
+            failedToAddUsers: nil
         )
     }
 

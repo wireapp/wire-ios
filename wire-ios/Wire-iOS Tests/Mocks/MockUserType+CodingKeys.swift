@@ -26,6 +26,7 @@ extension MockUserType {
         case displayName
         case initials
         case handle
+        case domain
         case isConnected
         case accentColorValue
     }

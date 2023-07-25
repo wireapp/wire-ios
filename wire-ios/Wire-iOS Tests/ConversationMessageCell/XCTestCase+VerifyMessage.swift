@@ -35,7 +35,7 @@ extension XCTestCase {
     /**
      * Performs a snapshot test for a message
      */
-    func verify(message: ZMConversationMessage,
+    func verify(message: ConversationMessage,
                 context: ConversationMessageContext? = nil,
                 waitForImagesToLoad: Bool = false,
                 waitForTextViewToLoad: Bool = false,
@@ -115,7 +115,7 @@ extension XCTestCase {
     }
 
     private func createUIStackView(
-        message: ZMConversationMessage,
+        message: ConversationMessage,
         context: ConversationMessageContext?,
         waitForImagesToLoad: Bool,
         waitForTextViewToLoad: Bool,

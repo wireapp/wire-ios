@@ -1453,7 +1453,7 @@
     XCTAssertEqualObjects(conversation.displayName, @"User 1");
 }
 
-- (void)testThatTheDisplayNameForDeletedUserIsEllipsis;
+- (void)testThatTheDisplayNameForDeletedUserIsNull;
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -1464,10 +1464,10 @@
     [self.uiMOC saveOrRollback];
     
     // then
-    XCTAssertEqualObjects(conversation.displayName, @"…");
+    XCTAssertEqualObjects(conversation.displayName, NULL);
 }
 
-- (void)testThatTheDisplayNameForGroupConversationWithoutParticipantsIsTheEmptyGroupConversationName;
+- (void)testThatTheDisplayNameForGroupConversationWithoutParticipantsIsNull;
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -1475,7 +1475,7 @@
     [self.uiMOC saveOrRollback];
 
     // then
-    XCTAssertEqualObjects(conversation.displayName, @"conversation.displayname.emptygroup");
+    XCTAssertEqualObjects(conversation.displayName, NULL);
 }
 
 - (void)testThatTheDisplayNameIsTheOtherUsersNameForAConnectionRequest;
@@ -1499,7 +1499,7 @@
     XCTAssertEqualObjects(conversation.displayName, @"Skyler Saša");
 }
 
-- (void)testThatTheDisplayNameIsEllipsisWhenTheOtherUsersNameForAConnectionRequestIsEmpty;
+- (void)testThatTheDisplayNameIsNullWhenTheOtherUsersNameForAConnectionRequestIsEmpty;
 {
     __block NSManagedObjectID *moid;
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -1517,7 +1517,7 @@
     
     // then
     XCTAssertNotNil(conversation);
-    XCTAssertEqualObjects(conversation.displayName, @"…");
+    XCTAssertEqualObjects(conversation.displayName, NULL);
 }
 
 - (void)testThatTheDisplayNameIsAlwaysTheOtherparticipantsNameInOneOnOneConversations

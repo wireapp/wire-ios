@@ -44,6 +44,14 @@ extension ZMConversation {
                             timestamp: timestamp)
     }
 
+    public func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .failedToAddParticipants,
+                            sender: sender,
+                            users: users,
+                            clients: nil,
+                            timestamp: timestamp.nextNearestTimestamp)
+    }
+
     @objc(appendNewConversationSystemMessageAtTimestamp:users:)
     public func appendNewConversationSystemMessage(at timestamp: Date, users: Set<ZMUser>) {
         let systemMessage = appendSystemMessage(type: .newConversation,
