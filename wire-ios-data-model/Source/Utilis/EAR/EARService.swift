@@ -74,8 +74,8 @@ public protocol EARServiceInterface: AnyObject {
     /// `nil` is returned.
     
     func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
-    
-    
+  
+    func setInitialEARFlagValue(_ enabled: Bool)
 }
 
 public protocol EARServiceDelegate: AnyObject {
@@ -186,13 +186,14 @@ public class EARService: EARServiceInterface {
         self.keyRepository = keyRepository
         self.keyEncryptor = keyEncryptor
         self.earStorage = earStorage
+        self.databaseContexts = databaseContexts
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
         primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
         secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         databaseKeyDescription = .keyDescription(accountID: accountID)
-        self.databaseContexts = databaseContexts
 
+        
         if canPerformKeyMigration {
             migrateKeysIfNeeded()
         }
@@ -200,6 +201,11 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Migrate keys
 
+    
+    public func setInitialEARFlagValue(_ enabled: Bool) {
+        earStorage.enableEAR(enabled)
+    }
+    
     private func migrateKeysIfNeeded() {
         WireLogger.ear.info("migrating ear keys if needed...")
 

@@ -57,7 +57,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             keyRepository: keyRepository,
             keyEncryptor: keyEncryptor,
             databaseContexts: [uiMOC, syncMOC],
-            canPerformKeyMigration: canPerformMigration
+            canPerformKeyMigration: canPerformMigration,
+            earStorage: .init(userID: userIdentifier, sharedUserDefaults: .random()!)
         )
 
         sut.delegate = self

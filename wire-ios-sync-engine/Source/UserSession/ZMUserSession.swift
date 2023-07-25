@@ -282,7 +282,10 @@ public class ZMUserSession: NSObject {
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults
         )
-
+        
+        // As we move the flag value from CoreData to UserDefaults, we set an initial value
+        self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
+        
         self.lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
