@@ -37,7 +37,6 @@ final class MessageDetailsContentViewController: UIViewController {
 
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
-
     /// The type of the displayed content.
     enum ContentType {
         case reactions, receipts(enabled: Bool)
@@ -122,7 +121,7 @@ final class MessageDetailsContentViewController: UIViewController {
             self.collectionView.collectionViewLayout.invalidateLayout()
         })
     }
-    
+
     // MARK: - Configure Views and set constraints
 
     private func configureSubviews() {
@@ -186,7 +185,7 @@ final class MessageDetailsContentViewController: UIViewController {
             subtitleBottom!
         ])
     }
-    
+
     // MARK: - Update and Configuration
 
     private func updateTitle() {
@@ -218,7 +217,7 @@ final class MessageDetailsContentViewController: UIViewController {
             subtitleBottom?.constant = -padding
             return
         }
-        
+
         // Update the bottom cell padding to fit the text
         collectionView.contentInset.bottom = footerRegionHeight
 
@@ -228,7 +227,7 @@ final class MessageDetailsContentViewController: UIViewController {
          We use this height to move the status label offscreen if needed, and move it up alongside the
          content if the user scroll up.
          */
-        
+
         let offset = scrollView.contentOffset.y + scrollView.contentInset.top
         let scrollableContentHeight = scrollView.contentInset.top + scrollView.contentSize.height + footerRegionHeight
         let visibleOnScreen = min(scrollableContentHeight - offset, scrollView.bounds.height - scrollView.contentInset.top)
@@ -237,7 +236,7 @@ final class MessageDetailsContentViewController: UIViewController {
         let constant = bottomSpace - padding
         subtitleBottom?.constant = constant
     }
-    
+
     private func configureForContentType() {
         switch contentType {
         case .reactions:

@@ -31,7 +31,7 @@ extension ZMMessage {
                 reactions: [],
                 toMessage: message
             )
-            
+
         }
 
         var reactions = existingReactionsBySelfUser(forMessage: message)

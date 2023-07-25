@@ -28,7 +28,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
     private let selectedReactions: Set<Emoji>
-    
+
     private var deleting = false
 
     init(selectedReactions: Set<Emoji>) {

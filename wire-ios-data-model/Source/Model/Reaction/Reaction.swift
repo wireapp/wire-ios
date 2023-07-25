@@ -60,7 +60,12 @@ public let ZMReactionUsersValueKey      = "users"
 
     public static func validate(unicode: String) -> Bool {
         let isDelete = unicode.count == 0
-        let isValidReaction = true
+        let unicodeScalars = unicode.unicodeScalars
+        guard let firstScalar = unicodeScalars.first else {
+            return false
+        }
+        let isValidReaction = firstScalar.properties.isEmojiPresentation || firstScalar.properties.isEmoji
+
         return isDelete || isValidReaction
     }
 }
