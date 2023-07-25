@@ -5,7 +5,7 @@ permissions:
   checks: write
 
 jobs:
-  development:
+  playground:
     uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: playground

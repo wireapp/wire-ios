@@ -70,15 +70,3 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
-      - name: Save Carthage Cache
-        if: steps.cache-carthage.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with:
-          path: Carthage/Build
-          key: ${{ steps.cache-carthage.outputs.cache-primary-key }}
-      - name: Save Bundler Cache
-        if: steps.cache-bundler.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with:
-          path: vendor/bundle
-          key: ${{ steps.cache-bundler.outputs.cache-primary-key }}
