@@ -69,7 +69,7 @@ extension ZMClientMessageTests_Reaction {
         let message = insertMessage()
         message.markAsSent()
         XCTAssertTrue(message.cachedCategory.contains(.text))
-        XCTAssertFalse(message.cachedCategory.contains(.liked))
+        XCTAssertFalse(message.cachedCategory.contains(.reacted))
 
         let event = updateEventForAddingReaction(to: message, sender: ZMUser.selfUser(in: uiMOC))
 
@@ -81,7 +81,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertTrue(message.cachedCategory.contains(.text))
-        XCTAssertTrue(message.cachedCategory.contains(.liked))
+        XCTAssertTrue(message.cachedCategory.contains(.reacted))
     }
 
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
@@ -129,7 +129,7 @@ extension ZMClientMessageTests_Reaction {
         ZMMessage.addReaction("❤️", toMessage: message)
         uiMOC.saveOrRollback()
         XCTAssertTrue(message.cachedCategory.contains(.text))
-        XCTAssertTrue(message.cachedCategory.contains(.liked))
+        XCTAssertTrue(message.cachedCategory.contains(.reacted))
 
         let event = updateEventForRemovingReaction(to: message, sender: ZMUser.selfUser(in: uiMOC))
 
@@ -142,6 +142,6 @@ extension ZMClientMessageTests_Reaction {
 
         // then
         XCTAssertTrue(message.cachedCategory.contains(.text))
-        XCTAssertFalse(message.cachedCategory.contains(.liked))
+        XCTAssertFalse(message.cachedCategory.contains(.reacted))
     }
 }

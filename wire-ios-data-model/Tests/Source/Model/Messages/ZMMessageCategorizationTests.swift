@@ -227,7 +227,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.liked])
+        XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.reacted])
     }
 
     func testThatItCategorizesLikedFileMessageWhenLikedBySelfUser() {
@@ -240,7 +240,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.liked])
+        XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.reacted])
     }
 
     func testThatItCategorizesLikedTextMessageWhenNotLikedBySelfUser() {
@@ -329,7 +329,7 @@ extension ZMMessageCategorizationTests {
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
         let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
-        likedTextMessage.cachedCategory = [MessageCategory.liked, MessageCategory.text]
+        likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
         self.conversation.managedObjectContext?.saveOrRollback()
 
@@ -361,7 +361,7 @@ extension ZMMessageCategorizationTests {
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
         let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
-        likedTextMessage.cachedCategory = [MessageCategory.liked, MessageCategory.text]
+        likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
         self.conversation.managedObjectContext?.saveOrRollback()
 
@@ -393,12 +393,12 @@ extension ZMMessageCategorizationTests {
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
         let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
-        likedTextMessage.cachedCategory = [MessageCategory.liked, MessageCategory.text]
+        likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: [MessageCategory.text, MessageCategory.liked]))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: [MessageCategory.text, MessageCategory.reacted]))
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -425,12 +425,12 @@ extension ZMMessageCategorizationTests {
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
         let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
-        likedTextMessage.cachedCategory = [MessageCategory.liked, MessageCategory.text]
+        likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: [MessageCategory.text, MessageCategory.liked], MessageCategory.knock))
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: [MessageCategory.text, MessageCategory.reacted], MessageCategory.knock))
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -457,12 +457,12 @@ extension ZMMessageCategorizationTests {
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
         let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
-        likedTextMessage.cachedCategory = [MessageCategory.liked, MessageCategory.text]
+        likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text), excluding: [MessageCategory.link, MessageCategory.liked])
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: Set(arrayLiteral: MessageCategory.text), excluding: [MessageCategory.link, MessageCategory.reacted])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
