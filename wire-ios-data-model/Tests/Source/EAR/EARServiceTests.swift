@@ -927,7 +927,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(decryptedData as Data, data)
     }
 
-    
     func test_setInitialEARFlagValue_ChangesEARStorageValue() {
         // when
         let currentValue = earStorage.earEnabled()

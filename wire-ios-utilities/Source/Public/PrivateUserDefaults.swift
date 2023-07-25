@@ -53,7 +53,6 @@ extension PrivateUserDefaults {
         return UUID(uuidString: uuidString)
     }
     
-
     public func set(_ value: Bool, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }

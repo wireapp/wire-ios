@@ -811,8 +811,9 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                earEnabledStorage: UserDefaults.random()
+                sharedUserDefaults: UserDefaults.random()!
             )
+            earService.setInitialEARFlagValue(true)
 
             try earService.enableEncryptionAtRest(
                 context: self.syncMOC,
@@ -833,8 +834,9 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                earEnabledStorage: UserDefaults.random()
+                sharedUserDefaults: UserDefaults.random()!
             )
+            earService.setInitialEARFlagValue(true)
 
             try earService.enableEncryptionAtRest(
                 context: self.syncMOC,

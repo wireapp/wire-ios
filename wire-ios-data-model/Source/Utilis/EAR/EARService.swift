@@ -95,45 +95,6 @@ public enum EARServiceFailure: Error {
 
 }
 
-@objc
-public final class EARStorage: NSObject {
-
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case enabledEAR = "com.wire.ear.enabled"
-    }
-
-    // MARK: - Life cycle
-
-    @objc
-    public init(
-        userID: UUID,
-        sharedUserDefaults: UserDefaults
-    ) {
-        storage = PrivateUserDefaults(
-            userID: userID,
-            storage: sharedUserDefaults
-        )
-
-        super.init()
-    }
-
-    // MARK: - Methods
-
-    public func earEnabled() -> Bool {
-        return storage.bool(forKey: .enabledEAR)
-    }
-
-    public func enableEAR(_ enabled: Bool) {
-        storage.set(enabled, forKey: .enabledEAR)
-    }
-}
-
 public class EARService: EARServiceInterface {
 
     // MARK: - Properties
@@ -144,6 +105,7 @@ public class EARService: EARServiceInterface {
     private let keyGenerator = EARKeyGenerator()
     private let keyEncryptor: EARKeyEncryptorInterface
     private let keyRepository: EARKeyRepositoryInterface
+    private let databaseContexts: [NSManagedObjectContext]
 
     private let primaryPublicKeyDescription: PublicEARKeyDescription
     private let primaryPrivateKeyDescription: PrivateEARKeyDescription
@@ -151,11 +113,7 @@ public class EARService: EARServiceInterface {
     private let secondaryPrivateKeyDescription: PrivateEARKeyDescription
     private let databaseKeyDescription: DatabaseEARKeyDescription
     private let earStorage: EARStorage
-    private var databaseContexts: [NSManagedObjectContext]
     
-    public var isEAREnabled: Bool {
-        earStorage.earEnabled()
-    }
     // MARK: - Life cycle
 
     public convenience init(
@@ -199,12 +157,17 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    // MARK: - Migrate keys
-
+    // MARK: - Feature Flag
     
+    public var isEAREnabled: Bool {
+        earStorage.earEnabled()
+    }
+
     public func setInitialEARFlagValue(_ enabled: Bool) {
         earStorage.enableEAR(enabled)
     }
+
+    // MARK: - Migrate keys
     
     private func migrateKeysIfNeeded() {
         WireLogger.ear.info("migrating ear keys if needed...")
@@ -231,7 +194,7 @@ public class EARService: EARServiceInterface {
         skipMigration: Bool = false
     ) throws {
         guard !context.encryptMessagesAtRest else {
-            WireLogger.ear.warn("🕵🏽 skip enableEncryptionAtRest because ear already enabled ")
+            WireLogger.ear.warn("skip enableEncryptionAtRest because EAR already enabled ")
             return
         }
 
@@ -280,7 +243,7 @@ public class EARService: EARServiceInterface {
         skipMigration: Bool = false
     ) throws {
         guard context.encryptMessagesAtRest else {
-            WireLogger.ear.warn("🕵🏽 skip disableEncryptionAtRest because ear already disabled ")
+            WireLogger.ear.warn("skip disableEncryptionAtRest because EAR already disabled ")
             return
         }
 
