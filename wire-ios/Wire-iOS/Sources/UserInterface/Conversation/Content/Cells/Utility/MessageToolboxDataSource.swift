@@ -91,22 +91,20 @@ class MessageToolboxDataSource {
 
     /**
      * Updates the contents of the message toolbox.
-     * - parameter forceShowTimestamp: Whether the timestamp should be shown
      * - parameter widthConstraint: The width available to rend the toolbox contents.
+     * - Returns: A boolean to either update the content of the message toolbox or not
      */
-
-    func updateContent(forceShowTimestamp: Bool, widthConstraint: CGFloat) -> SlideDirection? {
+    func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
-        let showTimestamp = forceShowTimestamp
         let previousContent = self.content
 
         // Determine the content by priority
 
         // 1) Call list
         if message.systemMessageData?.systemMessageType == .performedCall ||
-           message.systemMessageData?.systemMessageType == .missedCall {
+            message.systemMessageData?.systemMessageType == .missedCall {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
@@ -123,10 +121,10 @@ class MessageToolboxDataSource {
 
         // Only perform the changes if the content did change.
         guard previousContent != content else {
-            return nil
+            return false
         }
 
-        return previousContent < content ? .up : .down
+        return true
     }
 
     // MARK: - Details Text
@@ -137,9 +135,9 @@ class MessageToolboxDataSource {
 
             let childrenTimestamps = childMessages.compactMap {
                 $0 as? ZMConversationMessage
-                }.sorted { left, right in
-                    left.serverTimestamp < right.serverTimestamp
-                }.compactMap(timestampString)
+            }.sorted { left, right in
+                left.serverTimestamp < right.serverTimestamp
+            }.compactMap(timestampString)
 
             let finalText = childrenTimestamps.reduce(timestamp) { (text, current) in
                 return "\(text)\n\(current)"
@@ -153,8 +151,9 @@ class MessageToolboxDataSource {
 
     /// Creates a label that display the status of the message.
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
-        let deliveryStateString: NSAttributedString? = selfStatus(for: message)
         let countdownStatus = makeEphemeralCountdown()
+
+        let deliveryStateString = selfMessageStatus(for: message)
 
         if let timestampString = self.timestampString(message), message.isSent {
             if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
@@ -169,9 +168,9 @@ class MessageToolboxDataSource {
 
     private func makeEphemeralCountdown() -> NSAttributedString? {
         let showDestructionTimer = message.isEphemeral &&
-            !message.isObfuscated &&
-            nil != message.destructionDate &&
-            message.deliveryState != .pending
+        !message.isObfuscated &&
+        message.destructionDate != nil &&
+        message.deliveryState != .pending
 
         if let destructionDate = message.destructionDate, showDestructionTimer {
             let remaining = destructionDate.timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
@@ -190,9 +189,10 @@ class MessageToolboxDataSource {
     }
 
     /// Returns the status for the sender of the message.
-    fileprivate func selfStatus(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard let sender = message.senderUser,
-            sender.isSelfUser else { return nil }
+    private func selfMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
+        guard let sender = message.senderUser, sender.isSelfUser else {
+            return nil
+        }
 
         var deliveryStateString: String
 
@@ -252,7 +252,7 @@ class MessageToolboxDataSource {
     }
 
     /// Creates the timestamp text.
-    fileprivate func timestampString(_ message: ZMConversationMessage) -> String? {
+    private func timestampString(_ message: ZMConversationMessage) -> String? {
         let timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
@@ -263,10 +263,10 @@ class MessageToolboxDataSource {
             } else if let durationString = message.systemMessageData?.callDurationString() {
                 timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
             } else {
-                timestampString = dateTimeString
+                timestampString = nil
             }
         } else {
-            timestampString = .none
+            timestampString = nil
         }
 
         return timestampString

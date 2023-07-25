@@ -28,7 +28,6 @@ final class ConversationAudioMessageCellTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        ColorScheme.default.variant = .light
         UIColor.setAccentOverride(.vividRed)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
