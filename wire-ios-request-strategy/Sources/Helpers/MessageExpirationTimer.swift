@@ -41,7 +41,10 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     private func timerFired(for message: ZMMessage) {
-        WireLogger.messaging.debug("expiration timer fired for message \(message.nonce?.safeForLoggingDescription.readableHash)")
+        if let proteusMessage = message as? (any ProteusMessage) {
+            WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")
+        }
+
         guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
                 return
         }
@@ -75,18 +78,18 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
             guard let expirationDate = $0.expirationDate else { return }
             if expirationDate.compare(now) == .orderedAscending {
-                WireLogger.messaging.debug("expiring message when trying to start timer")
+                if let proteusMessage = $0 as? (any ProteusMessage) {
+                    WireLogger.messaging.debug("expiring message \(proteusMessage.debugInfo) when trying to start timer")
+                }
                 $0.expire()
                 $0.managedObjectContext?.enqueueDelayedSave()
             } else {
+                if let proteusMessage = $0 as? (any ProteusMessage) {
+                    WireLogger.messaging.debug("starting timer for message \(proteusMessage.debugInfo)")
+                }
                 super.start(forMessageIfNeeded: $0, fire: expirationDate, userInfo: [:])
             }
         }
-    }
-
-    public override func stop(for message: ZMMessage!) {
-        WireLogger.messaging.debug("stopping timer for merssage \(message.nonce?.safeForLoggingDescription.readableHash)")
-        super.stop(for: message)
     }
 
 }

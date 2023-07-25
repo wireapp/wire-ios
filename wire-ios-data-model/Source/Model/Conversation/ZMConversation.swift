@@ -1,4 +1,4 @@
-//
+////
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -18,23 +18,14 @@
 
 import Foundation
 
-class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
+extension ZMConversation {
 
-    override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        let context = manager.sourceContext
+    @objc
+    static let isDeletedRemotelyKey: String = #keyPath(ZMConversation.isDeletedRemotely)
 
-        let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
-            entityName: UserClient.entityName(),
-            by: #keyPath(UserClient.remoteIdentifier)
-        )
+    /// Whether the conversation was deleted on the backend.
 
-        duplicates.forEach { (_, clients: [NSManagedObject]) in
-            guard clients.count > 1 else {
-                return
-            }
-
-            clients.dropFirst().forEach(context.delete)
-        }
-    }
+    @NSManaged
+    public var isDeletedRemotely: Bool
 
 }

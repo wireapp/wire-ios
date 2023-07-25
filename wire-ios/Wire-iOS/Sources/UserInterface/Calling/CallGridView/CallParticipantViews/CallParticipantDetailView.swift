@@ -54,7 +54,6 @@ final class CallParticipantDetailsView: RoundedBlurView {
         super.init()
     }
 
-
     // MARK: - Setup Views
 
     override func setupViews() {

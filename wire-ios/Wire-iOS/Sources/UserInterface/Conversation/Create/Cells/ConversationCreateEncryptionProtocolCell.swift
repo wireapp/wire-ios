@@ -24,13 +24,9 @@ final class ConversationCreateEncryptionProtocolCell: ConversationEncryptionProt
     override func setUp() {
         super.setUp()
         title = L10n.Localizable.Conversation.Create.Mls.title
-        showSeparator = false
-    }
-
-    override func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
-        super.applyColorScheme(colorSchemeVariant)
-        let color = UIColor.from(scheme: .textForeground, variant: colorSchemeVariant)
+        let color = SemanticColors.Icon.foregroundDefault
         icon = StyleKitIcon.settingsAdvanced.makeImage(size: .tiny, color: color)
+        showSeparator = false
     }
 }
 

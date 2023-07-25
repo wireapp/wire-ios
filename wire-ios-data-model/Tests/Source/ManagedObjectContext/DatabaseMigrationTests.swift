@@ -432,7 +432,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             processedVersions.insert(version)
         }
     }
-
 }
 
 // MARK: - Helpers

@@ -21,12 +21,12 @@ import XCTest
 
 class WarningLabelViewTests: XCTestCase {
     var sut: WarningLabelView!
-    
+
     override func setUp() {
         super.setUp()
         sut = WarningLabelView()
     }
-    
+
     override func tearDown() {
         sut = nil
         super.tearDown()
