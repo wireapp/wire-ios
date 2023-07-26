@@ -1,6 +1,6 @@
 name: Beta
 
-on: workflow_dispatch
+on: [pull_request]
 
 permissions: 
   checks: write
