@@ -726,6 +726,52 @@ final class ProfileActionsFactoryTests: XCTestCase {
         ])
     }
 
+    func test_ClassificationEnabled_NotFederatingBackend() {
+
+            // GIVEN
+            selfUser.teamRole = .partner
+            selfUser.canRemoveUserFromConversation = false
+            let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+            otherUser.isGuestInConversation = true
+            otherUser.isConnected = false
+            otherUser.canBeConnected = true
+
+            let conversation = MockConversation.groupConversation()
+            conversation.activeParticipants = [selfUser, otherUser]
+
+
+
+        let mockClassificationProvider = MockClassificationProvider()
+        mockClassificationProvider.returnClassification = .notClassified
+
+        // THEN
+        verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [], classificationProvider: mockClassificationProvider)
+    }
+
+    func test_ClassificationEnabled_FederatingBackend() {
+
+            // GIVEN
+            selfUser.teamRole = .partner
+            selfUser.canRemoveUserFromConversation = false
+            let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+            otherUser.isGuestInConversation = true
+            otherUser.isConnected = false
+            otherUser.canBeConnected = true
+
+            let conversation = MockConversation.groupConversation()
+            conversation.activeParticipants = [selfUser, otherUser]
+
+
+
+        let mockClassificationProvider = MockClassificationProvider()
+        mockClassificationProvider.returnClassification = .classified
+
+        // THEN
+        verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
+            .connect
+        ], classificationProvider: mockClassificationProvider)
+    }
+
     // MARK: - Helpers
 
     func verifyActions(user: UserType,
@@ -734,8 +780,9 @@ final class ProfileActionsFactoryTests: XCTestCase {
                        expectedActions: [ProfileAction],
                        context: ProfileViewControllerContext = .oneToOneConversation,
                        file: StaticString = #file,
-                       line: UInt = #line) {
-        let factory = ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation.convertToRegularConversation(), context: context)
+                       line: UInt = #line,
+                       classificationProvider: ClassificationProviding = MockClassificationProvider()) {
+        let factory = ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation.convertToRegularConversation(), context: context, classificationProvider: classificationProvider)
         let actions = factory.makeActionsList()
         XCTAssertEqual(actions, expectedActions, file: file, line: line)
     }

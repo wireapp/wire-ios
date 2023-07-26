@@ -103,6 +103,8 @@ final class ProfileActionsFactory {
     /// The context of the Profile VC
     let context: ProfileViewControllerContext
 
+    let classificationProvider: ClassificationProviding?
+
     // MARK: - Initialization
 
     /**
@@ -113,11 +115,12 @@ final class ProfileActionsFactory {
      * perform the actions in.
      */
 
-    init(user: UserType, viewer: UserType, conversation: ZMConversation?, context: ProfileViewControllerContext) {
+    init(user: UserType, viewer: UserType, conversation: ZMConversation?, context: ProfileViewControllerContext, classificationProvider: ClassificationProviding? = ZMUserSession.shared()) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
+        self.classificationProvider = classificationProvider
     }
 
     // MARK: - Calculating the Actions
@@ -151,8 +154,11 @@ final class ProfileActionsFactory {
         } else if !user.isConnected {
             if user.isPendingApprovalByOtherUser {
                 return [.cancelConnectionRequest]
-            } else if !user.isPendingApprovalBySelfUser {
+            } else if !user.isPendingApprovalBySelfUser && canConnectWithBackendOfUser(user: user) {
                 return [.connect]
+            }
+            else {
+                return []
             }
         }
 
@@ -191,7 +197,7 @@ final class ProfileActionsFactory {
                 actions.append(.cancelConnectionRequest)
             } else if (user.isConnected && !user.hasEmptyName) || isOnSameTeam {
                 actions.append(.openOneToOne)
-            } else if user.canBeConnected && !user.isPendingApprovalBySelfUser && isUserFormClassifiedBackend(user: user) {
+            } else if user.canBeConnected && !user.isPendingApprovalBySelfUser && canConnectWithBackendOfUser(user: user) {
                 actions.append(.connect)
             }
 
@@ -213,12 +219,11 @@ final class ProfileActionsFactory {
         return actions
     }
 
-    private func isUserFormClassifiedBackend(user: UserType) -> Bool {
-        guard let userSession = ZMUserSession.shared(),
-              userSession.classification(with: [user]) == .classified else {
+    private func canConnectWithBackendOfUser(user: UserType) -> Bool {
+        guard let classificationProvider = classificationProvider,
+           classificationProvider.classification(with: [user], conversationDomain: nil) != .notClassified else {
             return false
         }
-
         return true
     }
 }
