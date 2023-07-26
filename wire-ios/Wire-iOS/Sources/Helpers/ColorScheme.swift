@@ -242,7 +242,6 @@ final class ColorScheme: NSObject {
     private(set) var defaultColorScheme: ColorScheme?
     var accentColor: UIColor = .red
 
-
     static let `default`: ColorScheme = ColorScheme()
     func color(named: ColorSchemeColor, variant: ColorSchemeVariant? = nil) -> UIColor {
         let colorSchemeVariant = variant ?? self.variant
