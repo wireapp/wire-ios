@@ -7,13 +7,13 @@ permissions:
 
 jobs:
   column_1_restricted:
-    uses: ./.github/workflows/reusable/app_release.yml
+    uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
     secrets: inherit
 
   column_3_restricted:
-    uses: ./.github/workflows/reusable/app_release.yml
+    uses: ./.github/workflows/app_release.yml
     with:
       fastlane_action: appstore_col_3_restricted
     secrets: inherit
