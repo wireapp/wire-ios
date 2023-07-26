@@ -1,6 +1,7 @@
 name: Playground
 
 on: [pull_request]
+
 permissions: 
   checks: write
 
