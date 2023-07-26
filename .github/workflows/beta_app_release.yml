@@ -1,23 +1,13 @@
-name: (CirrusCI) Beta
+name: Beta
 
 on: workflow_dispatch
+
 permissions: 
   checks: write
 
 jobs:
   testflight_beta:
-    runs-on: ubuntu-latest
-    env:
-      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-      - name: Install dependencies
-        run: bundle install
-      - name: Trigger build
-        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Testflight Beta"
+    uses: ./.github/workflows/app_release.yml
+    with:
+      fastlane_action: testflight_beta
+    secrets: inherit

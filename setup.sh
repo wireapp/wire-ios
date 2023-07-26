@@ -46,24 +46,24 @@ XCODE_VERSION=( ${version//./ } )
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️  Carthage bootstrap. This might take a while..."
-if [[ -n "${CIRRUS_BUILD_ID}" ]]; then
-    echo "Skipping Carthage bootstrap from setup.sh script since CI or CIRRUS_BUILD_ID is defined"
+if [[ -n "${CI}" ]]; then
+    echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else 
     carthage bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""
 
 echo "ℹ️  Installing ImageMagick..."
-if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
-    echo "Skipping ImageMagick install because not running on Cirrus-CI"
+if [[ -z "${CI}" ]]; then # skip cache bootstrap for CI
+    echo "Skipping ImageMagick install because not running on CI"
 else
     which identify || brew install ImageMagick
 fi 
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
-if [[ -z "${CIRRUS_BUILD_ID}" ]]; then # skip cache bootstrap for CI
-    echo "Skipping AWS CLI install because not running on Cirrus-CI"
+if [[ -z "${CI}" ]]; then # skip cache bootstrap for CI
+    echo "Skipping AWS CLI install because not running on CI"
 else
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
 fi 
