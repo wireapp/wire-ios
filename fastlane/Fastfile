@@ -460,21 +460,25 @@ platform :ios do
         )
     end
 
-    # Upload for internal use
-    def upload_app_center (options)
-        build = Build.new(options: options)
+    # Changelog for current build
+    def changelog(build)
         changelog = ""
-
         if build.playground_build
-            changelog = "Playground build for #{build.git_branch}"
-        elsif build.last_commit.nil? || build.last_commit.empty?
-            changelog = "No changelog available"
-        else
-            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
-                between: [build.last_commit, "HEAD"],
-                pretty: "* [%an] %s",
-            )
+            changelog += "Playground build for #{build.git_branch}\n\n"
         end
+
+        changelog += "Last commits:\n" + changelog_from_git_commits(
+                commits_count: 5,
+                pretty: "* [%an] %s",
+        )
+        changelog
+    end
+
+    # "Upload for internal use"
+    def upload_app_center(options)
+        build = Build.new(options: options)
+       
+        changelog = changelog(build)
 
         app_name = options[:app_center_app_name]
         if app_name.nil? 
@@ -555,7 +559,6 @@ class Build
     attr_reader :build_type
     attr_reader :git_branch
     attr_reader :build_number
-    attr_reader :last_commit
     attr_reader :for_simulator
     attr_reader :configuration
 
@@ -569,7 +572,7 @@ class Build
             UI.user_error! "Pass build_type parameter, e.g. fastlane build build_type:Development"
         end
 
-        @last_commit = options[:last_commit]
+
         @build_type = build_type
         if ENV['GITHUB_REF_NAME'].nil? 
             @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
