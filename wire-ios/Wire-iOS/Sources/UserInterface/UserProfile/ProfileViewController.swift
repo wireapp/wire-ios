@@ -553,8 +553,8 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
            connectionError == .federationDenied {
             let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
             UIAlertController.showErrorAlert(title: Strings.federationDeniedTitle, message: message)
-            return
+        } else {
+            presentLocalizedErrorAlert(error)
         }
-        presentLocalizedErrorAlert(error)
     }
 }
