@@ -411,6 +411,12 @@ public extension UserClient {
         return context.fetchOrAssert(request: fetchRequest).first
     }
 
+    static func fetchClientsNeedingUpdateFromBackend(in context: NSManagedObjectContext) -> [UserClient] {
+        let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
+        fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(UserClient.needsToBeUpdatedFromBackend))
+        return context.fetchOrAssert(request: fetchRequest)
+    }
+
     /// Use this method only for selfUser clients (selfClient + remote clients)
     @objc static func createOrUpdateSelfUserClient(
         _ payloadData: [String: AnyObject],
@@ -919,7 +925,7 @@ extension UserClient {
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
-            let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
+            let conversations = managedObjectContext?.fetchOrAssert(request: fetchRequest) ?? []
             return $0.formUnion(conversations)
         }
         return conversations

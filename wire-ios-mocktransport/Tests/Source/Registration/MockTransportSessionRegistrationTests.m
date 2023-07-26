@@ -300,7 +300,7 @@
                                       };
     
     for(NSString *key in originalPayload.allKeys) {
-        NSMutableDictionary *dictionaryWithoutAKey = [dictionaryWithoutAKey mutableCopy];
+        NSMutableDictionary *dictionaryWithoutAKey = [originalPayload mutableCopy];
         [dictionaryWithoutAKey removeObjectForKey:key];
         
         // WHEN

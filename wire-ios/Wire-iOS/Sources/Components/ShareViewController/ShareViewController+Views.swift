@@ -34,7 +34,9 @@ extension ShareViewController {
         shareablePreviewWrapper.layer.shadowOffset = CGSize(width: 0, height: 8)
         shareablePreviewWrapper.layer.shadowColor = UIColor(white: 0, alpha: 0.4).cgColor
 
-        shareablePreviewWrapper.addSubview(shareablePreviewView!)
+        if let shareablePreviewView = shareablePreviewView {
+            shareablePreviewWrapper.addSubview(shareablePreviewView)
+        }
         self.shareablePreviewWrapper = shareablePreviewWrapper
 
         self.shareablePreviewWrapper?.isHidden = !showPreview
