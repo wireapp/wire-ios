@@ -154,9 +154,6 @@ final class ProfileActionsFactory {
             } else if !user.isPendingApprovalBySelfUser {
                 return [.connect]
             }
-            else {
-                return []
-            }
         }
 
         var actions: [ProfileAction] = []
