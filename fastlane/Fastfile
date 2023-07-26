@@ -103,8 +103,8 @@ platform :ios do
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column1"
-        options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
+        options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
+        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
@@ -116,8 +116,8 @@ platform :ios do
     lane :appstore_col_3_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column3"
-        options[:app_center_app_name] = "Wire-by-Bund-Column3"
+        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
+        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
@@ -129,8 +129,8 @@ platform :ios do
     lane :appstore_col_1_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c1-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
+        options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
+        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
@@ -141,8 +141,8 @@ platform :ios do
     lane :appstore_col_3_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c3-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
+        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
+        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true

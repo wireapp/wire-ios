@@ -1,4 +1,4 @@
-name: Bund Production
+name: C1 C3 Production
 
 on:  workflow_dispatch
 
@@ -7,13 +7,13 @@ permissions:
 
 jobs:
   column_1_production:
-    uses: ./.github/workflows/app_release.yml
+    uses: ./.github/workflows/reusable/app_release.yml
     with:
       fastlane_action: appstore_col_1_prod
     secrets: inherit
 
   column_3_production:
-    uses: ./.github/workflows/app_release.yml
+    uses: ./.github/workflows/reusable/app_release.yml
     with:
       fastlane_action: appstore_col_3_prod
     secrets: inherit

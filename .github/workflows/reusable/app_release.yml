@@ -23,6 +23,22 @@ on:
         required: true
       DD_API_KEY:
         required: true
+      C1_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C1_APP_CENTER_APP_NAME_RESTRICTED:
+        required: true
+      C1_S3_SUBFOLDER_PRODUCTION:
+        required: true
+      C1_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true
+      C3_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C3_APP_CENTER_APP_NAME_RESTRICTED:
+        required: true
+      C3_S3_SUBFOLDER_PRODUCTION:
+        required: true
+      C3_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true
 
 permissions: 
   checks: write
@@ -43,6 +59,15 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
       DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
+      C1_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C1_APP_CENTER_APP_NAME_RESTRICTED }}
+      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
+      C1_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C1_APP_CENTER_APP_NAME_PRODUCTION }}
+      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
+      C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
+      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
+      C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+
     steps:
       - uses: actions/checkout@v3
       - name: Restore Carthage Cache
