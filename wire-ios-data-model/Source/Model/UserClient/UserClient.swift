@@ -74,6 +74,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var activationAddress: String?
     @NSManaged public var activationDate: Date?
     @NSManaged public var discoveryDate: Date?
+    @NSManaged public var lastActiveDate: Date?
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
     @NSManaged public var activationLocationLatitude: NSNumber?
