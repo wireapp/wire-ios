@@ -551,8 +551,8 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
 
         if let connectionError = error as? ConnectToUserError,
            connectionError == .federationDenied {
-            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
-            UIAlertController.showErrorAlert(title: Strings.federationDeniedTitle, message: message)
+            let title = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            UIAlertController.showErrorAlert(title: title, message: "")
         } else {
             presentLocalizedErrorAlert(error)
         }

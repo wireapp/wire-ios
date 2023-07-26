@@ -637,7 +637,6 @@
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "Something went wrong, please try again";
 "error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
-"error.connection.federation_denied_title" = "Connection request can not be sent";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire needs access to your Photos";
