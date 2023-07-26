@@ -436,6 +436,7 @@ public extension UserClient {
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
+        let lastActiveDate = payloadAsDictionary.date(for: "last_active")
 
         let locationCoordinates = payloadData["location"] as? [String: Double]
         let latitude = (locationCoordinates?["lat"] as NSNumber?) ?? 0
@@ -451,6 +452,7 @@ public extension UserClient {
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
+        client.lastActiveDate = lastActiveDate
         client.activationLocationLatitude = latitude
         client.activationLocationLongitude = longitude
         client.remoteIdentifier = id
