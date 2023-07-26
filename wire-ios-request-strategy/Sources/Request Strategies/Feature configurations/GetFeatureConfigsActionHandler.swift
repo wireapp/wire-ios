@@ -131,6 +131,15 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         }
 
+        if let mlsMigration = payload.mlsMigration {
+            service.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
+                )
+            )
+        }
+
         if let selfDeletingMessages = payload.selfDeletingMessages {
             service.storeSelfDeletingMessages(
                 Feature.SelfDeletingMessages(
@@ -156,6 +165,7 @@ extension GetFeatureConfigsActionHandler {
         let digitalSignatures: FeatureStatus?
         let fileSharing: FeatureStatus?
         let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
+        let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
         let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
 
     }

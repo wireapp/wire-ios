@@ -37,10 +37,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
         )
     }
 
-    let successPayload: ZMTransportData = [
-
-    ] as ZMTransportData
-
     // MARK: - Request generation
 
     func test_ItGeneratesARequest() throws {
@@ -87,6 +83,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: .init(status: .enabled),
                 fileSharing: .init(status: .enabled),
                 mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
+                mlsMigration: .init(status: .enabled, config: .init(startTime: Date(timeIntervalSince1970: 10), finaliseRegardlessAfter: Date(timeIntervalSince1970: 20))),
                 selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
             )
 
@@ -128,6 +125,10 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
+            let mlsMigration = featureService.fetchMLSMigration()
+            XCTAssertEqual(mlsMigration.status, .enabled)
+            XCTAssertEqual(mlsMigration.config, .init(startTime: Date(timeIntervalSince1970: 10), finaliseRegardlessAfter: Date(timeIntervalSince1970: 20)))
+
             let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
@@ -165,6 +166,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: nil,
                 fileSharing: nil,
                 mls: nil,
+                mlsMigration: nil,
                 selfDeletingMessages: nil
             )
 
