@@ -179,7 +179,7 @@ final class MockShareableMessage: MockMessage, Shareable {
     func previewView() -> UIView? {
         return nil
     }
-    
+
     typealias I = MockShareViewControllerConversation
 
     func share<SwiftMockConversation>(to: [SwiftMockConversation]) {

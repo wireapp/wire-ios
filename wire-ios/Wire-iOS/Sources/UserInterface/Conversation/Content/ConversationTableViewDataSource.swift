@@ -480,7 +480,16 @@ extension ConversationTableViewDataSource {
         // 45 minutes
         let significantTimeInterval: TimeInterval = 60 * 45
         let isTimeIntervalSinceLastMessageSignificant: Bool
+
+        let isTimestampInSameMinuteAsPreviousMessage: Bool
+
         let previousMessage = messagePrevious(to: message, at: index)
+
+        if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
+            isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
+        } else {
+            isTimestampInSameMinuteAsPreviousMessage = false
+        }
 
         if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
             isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
@@ -492,6 +501,7 @@ extension ConversationTableViewDataSource {
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
             isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
+            isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
@@ -513,5 +523,16 @@ extension ConversationTableViewDataSource {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
+
+}
+
+extension Date {
+
+  func isInSameMinute(asDate date: Date) -> Bool {
+    let calendar = Calendar.current
+    let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+    let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+    return components == otherComponents
+  }
 
 }
