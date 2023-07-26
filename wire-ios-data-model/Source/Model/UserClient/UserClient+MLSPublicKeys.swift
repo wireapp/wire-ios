@@ -71,3 +71,11 @@ extension UserClient {
     }
 
 }
+
+extension UserClient {
+
+    var hasMLSIdentity: Bool {
+        return mlsPublicKeys.ed25519 != nil
+    }
+
+}
