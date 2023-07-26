@@ -146,13 +146,17 @@ final class MessageThumbnailPreviewView: UIView {
     private func editIcon() -> NSAttributedString {
         if message.updatedAt != nil {
             return NSAttributedString(
-                attachment: NSTextAttachment.textAttachment(for: .pencil,
-                with: iconColor,
-                iconSize: 8,
-                insets: UIEdgeInsets(top: 0,
-                left: leftEditIconInset,
-                bottom: 0,
-                right: 0))
+                attachment: NSTextAttachment.textAttachment(
+                    for: .pencil,
+                    with: iconColor,
+                    iconSize: 8,
+                    insets: UIEdgeInsets(
+                        top: 0,
+                        left: leftEditIconInset,
+                        bottom: 0,
+                        right: 0
+                    )
+                )
             )
         } else {
             return NSAttributedString()
@@ -279,13 +283,17 @@ final class MessagePreviewView: UIView {
     private func editIcon() -> NSAttributedString {
         if message.updatedAt != nil {
             return NSAttributedString(
-                attachment: NSTextAttachment.textAttachment(for: .pencil,
-                with: iconColor,
-                iconSize: 8,
-                insets: UIEdgeInsets(top: 0,
-                left: leftEditIconInset,
-                bottom: 0,
-                right: 0))
+                attachment: NSTextAttachment.textAttachment(
+                    for: .pencil,
+                    with: iconColor,
+                    iconSize: 8,
+                    insets: UIEdgeInsets(
+                        top: 0,
+                        left: leftEditIconInset,
+                        bottom: 0,
+                        right: 0
+                    )
+                )
             )
         } else {
             return NSAttributedString()
