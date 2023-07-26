@@ -62,6 +62,7 @@ extension UITextView {
 
 final class MessageThumbnailPreviewView: UIView {
     private let senderLabel = UILabel()
+    private var leftEditIconInset: CGFloat = 10
     private let contentTextView = UITextView.previewTextView()
     private let imagePreview = ImageResourceView()
     private var observerToken: Any?
@@ -144,7 +145,19 @@ final class MessageThumbnailPreviewView: UIView {
 
     private func editIcon() -> NSAttributedString {
         if message.updatedAt != nil {
-            return "  " + NSAttributedString(attachment: NSTextAttachment.textAttachment(for: .pencil, with: iconColor, iconSize: 8))
+            return NSAttributedString(
+                attachment: NSTextAttachment.textAttachment(
+                    for: .pencil,
+                    with: iconColor,
+                    iconSize: 8,
+                    insets: UIEdgeInsets(
+                        top: 0,
+                        left: leftEditIconInset,
+                        bottom: 0,
+                        right: 0
+                    )
+                )
+            )
         } else {
             return NSAttributedString()
         }
@@ -204,6 +217,7 @@ extension MessageThumbnailPreviewView: ZMMessageObserver {
 final class MessagePreviewView: UIView {
 
     private let senderLabel = UILabel()
+    private var leftEditIconInset: CGFloat = 10
     private let contentTextView = UITextView.previewTextView()
     private var observerToken: Any?
     private let displaySender: Bool
@@ -268,7 +282,19 @@ final class MessagePreviewView: UIView {
 
     private func editIcon() -> NSAttributedString {
         if message.updatedAt != nil {
-            return "  " + NSAttributedString(attachment: NSTextAttachment.textAttachment(for: .pencil, with: iconColor, iconSize: 8))
+            return NSAttributedString(
+                attachment: NSTextAttachment.textAttachment(
+                    for: .pencil,
+                    with: iconColor,
+                    iconSize: 8,
+                    insets: UIEdgeInsets(
+                        top: 0,
+                        left: leftEditIconInset,
+                        bottom: 0,
+                        right: 0
+                    )
+                )
+            )
         } else {
             return NSAttributedString()
         }
