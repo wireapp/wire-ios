@@ -98,7 +98,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
