@@ -69,32 +69,9 @@ else
 fi 
 echo ""
 
-echo "ℹ️  Configuring custom configuration submodule authentication..."
-if [[ -z "${SUBMODULE_SSH_KEY}" ]]; then # 
-    echo "Skipping submodule ssh key configuration because not defined"
-else
-    echo "${SUBMODULE_SSH_KEY}" | cat > .submodule-ssh-key
-    eval "$(ssh-agent -s)"
-    mkdir -p ~/.ssh
-    ssh-keyscan github.com >> ~/.ssh/known_hosts
-    ssh-keygen -R github.com
-    cat ~/.ssh/known_hosts
-    chmod 0600 .submodule-ssh-key
-    ssh-add .submodule-ssh-key
-    KEY_PATH="$(pwd)/.submodule-ssh-key"
-    cat > ~/.ssh/config <<- EOF
-Host github.com
-  AddKeysToAgent yes
-  IdentityFile ${KEY_PATH}
-EOF
-    GIT_SSH_COMMAND="ssh -v" git clone git@github.com:wireapp/wire-ios-build-assets.git
-    unset SUBMODULE_SSH_KEY
-fi
-echo ""
-
 echo "ℹ️  Fetching submodules..."
-if [[ -z "${CIRRUS_BUILD_ID}" ]]; then 
-    echo "Skipping submodules because not running on Cirrus-CI"
+if [[ -z "${CI}" ]]; then 
+    echo "Skipping submodules because not running on CI"
 else
     git config core.sshCommand "ssh -vvv"
     git submodule update --init --recursive || true

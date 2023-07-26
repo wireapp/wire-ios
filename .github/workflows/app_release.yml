@@ -39,6 +39,8 @@ on:
         required: true
       C3_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
+      SUBMODULE_SSH_KEY:
+        required: true
 
 permissions: 
   checks: write
@@ -70,6 +72,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Clone build configuration submodule
+        uses: actions/checkout@v3
+        with:
+          repository: wireapp/wire-ios-build-assets
+          path: wire-ios-build-assets
+          ssh-key: ${{ secrets.SUBMODULE_SSH_KEY }}
+          persist-credentials: true
       - name: Restore Carthage Cache
         uses: actions/cache@v3
         id: cache-carthage
