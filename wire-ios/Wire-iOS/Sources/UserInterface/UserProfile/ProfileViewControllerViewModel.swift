@@ -210,7 +210,7 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     var profileActionsFactory: ProfileActionsFactory {
-        return ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation, context: context, classificationProvider: classificationProvider)
+        return ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation, context: context)
     }
 
     // MARK: Connect
