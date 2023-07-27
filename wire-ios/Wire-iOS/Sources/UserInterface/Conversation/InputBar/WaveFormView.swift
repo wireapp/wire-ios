@@ -20,12 +20,12 @@ import UIKit
 
 final class WaveFormView: UIView {
 
-    fileprivate let visualizationView = SCSiriWaveformView()
-    fileprivate let leftGradient = GradientView()
-    fileprivate let rightGradient = GradientView()
+    private let visualizationView = SCSiriWaveformView()
+    private let leftGradient = GradientView()
+    private let rightGradient = GradientView()
 
-    fileprivate lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
-    fileprivate lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
+    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
+    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
 
     var gradientWidth: CGFloat = 25 {
         didSet {
@@ -62,7 +62,7 @@ final class WaveFormView: UIView {
         visualizationView.update(withLevel: level)
     }
 
-    fileprivate func configureViews() {
+    private func configureViews() {
         [visualizationView, leftGradient, rightGradient].forEach(addSubview)
 
         visualizationView.primaryWaveLineWidth = 1
@@ -80,7 +80,7 @@ final class WaveFormView: UIView {
         rightGradient.setStartPoint(midRight, endPoint: midLeft, locations: [0, 1])
     }
 
-    fileprivate func createConstraints() {
+    private func createConstraints() {
         [visualizationView, leftGradient, rightGradient].prepareForLayout()
         NSLayoutConstraint.activate([
             visualizationView.topAnchor.constraint(equalTo: topAnchor),
@@ -100,7 +100,7 @@ final class WaveFormView: UIView {
         ])
     }
 
-    fileprivate func updateWaveFormColor() {
+    private func updateWaveFormColor() {
         let clearGradientColor = gradientColor.withAlphaComponent(0)
         let leftColors = [gradientColor, clearGradientColor].map { $0.cgColor }
         leftGradient.gradientLayer.colors = leftColors
