@@ -34,7 +34,7 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version unless [:prepare_for_development].include?(lane)
-        create_keychain_if_needed
+        create_keychain_if_needed unless [:prepare_for_development, :prepare_for_tests].include?(lane)
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
