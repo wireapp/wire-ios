@@ -93,7 +93,25 @@ jobs:
         uses: xom9ikk/dotenv@v2
         with:
             path: fastlane/
-    
+
+      - name: Restore Carthage Cache
+        uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+
+      - name: Bootstrap Carthage if no cache
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: carthage bootstrap --platform ios --use-xcframeworks
+
+      - name: Restore Bundler Cache
+        uses: actions/cache@v3
+        id: cache-bundler
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+
       - name: Setup workspace
         run: |
           ./setup.sh
