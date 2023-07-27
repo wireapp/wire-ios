@@ -28,13 +28,8 @@ final class ReactionsCollectionView: UICollectionView {
         showsHorizontalScrollIndicator = false
         EmojiCollectionViewCell.register(in: self)
         setupLayout()
+        configureObservers()
         contentInset = UIEdgeInsets(top: 10, left: 30, bottom: 10, right: 30)
-    }
-
-    func setupLayout() {
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
     }
 
     @available(*, unavailable)
@@ -42,4 +37,27 @@ final class ReactionsCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
 
+}
+
+private extension ReactionsCollectionView {
+
+    func setupLayout() {
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+    }
+
+    func configureObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func handleKeyboardPresentation(notification: Notification) {
+        let keyboardHeight = UIView.keyboardFrame(in: self, forKeyboardNotification: notification).height
+
+        contentInset = UIEdgeInsets(top: 10.0,
+                                    left: 30.0,
+                                    bottom: 10.0 + keyboardHeight,
+                                    right: 30.0)
+    }
 }
