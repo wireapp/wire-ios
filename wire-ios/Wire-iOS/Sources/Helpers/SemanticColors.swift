@@ -137,9 +137,8 @@ public enum SemanticColors {
         static let backgroundAudioViewOverlay = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundAudioViewOverlayActive = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
 
-
         // Mention
-        static let backgroundMentionUserConversation = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
+        static let backgroundUserMentionInConversation = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
     }
 
     public enum TabBar {

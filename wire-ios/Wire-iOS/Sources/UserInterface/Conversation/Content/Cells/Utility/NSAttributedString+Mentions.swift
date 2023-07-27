@@ -78,7 +78,7 @@ extension NSMutableAttributedString {
 
         if user.isSelfUser {
             color = SemanticColors.Label.textDefault
-            backgroundColor = SemanticColors.View.backgroundMentionUserConversation
+            backgroundColor = SemanticColors.View.backgroundUserMentionInConversation
         } else {
             color = .accent()
             backgroundColor = .clear
