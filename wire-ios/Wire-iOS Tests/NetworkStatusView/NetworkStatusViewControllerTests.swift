@@ -81,7 +81,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    fileprivate func setUpSut(userInterfaceIdiom: UIUserInterfaceIdiom,
+    private func setUpSut(userInterfaceIdiom: UIUserInterfaceIdiom,
                               horizontalSizeClass: UIUserInterfaceSizeClass,
                               orientation: UIInterfaceOrientation,
                               listState: NetworkStatusViewState = .offlineExpanded,
@@ -98,7 +98,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
 
     }
 
-    fileprivate func checkResult(listState: NetworkStatusViewState,
+    private func checkResult(listState: NetworkStatusViewState,
                                  rootState: NetworkStatusViewState,
                                  file: StaticString = #file, line: UInt = #line) {
 
@@ -114,7 +114,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     ///   - orientation: updated orientation
     ///   - listState: expected networkStatusView state in conversation list
     ///   - rootState: expected networkStatusView state in conversation root
-    fileprivate func checkForNetworkStatusViewState(userInterfaceIdiom: UIUserInterfaceIdiom,
+    private func checkForNetworkStatusViewState(userInterfaceIdiom: UIUserInterfaceIdiom,
                                                     horizontalSizeClass: UIUserInterfaceSizeClass,
                                                     orientation: UIInterfaceOrientation,
                                                     listState: NetworkStatusViewState,

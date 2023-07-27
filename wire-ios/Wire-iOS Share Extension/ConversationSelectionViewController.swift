@@ -24,12 +24,12 @@ private let cellReuseIdentifier = "ConversationCell"
 
 final class ConversationSelectionViewController: UITableViewController {
 
-    fileprivate var allConversations: [Conversation]
-    fileprivate var visibleConversations: [Conversation]
+    private var allConversations: [Conversation]
+    private var visibleConversations: [Conversation]
 
     var selectionHandler: ((_ conversation: Conversation) -> Void)?
 
-    fileprivate let searchController = UISearchController(searchResultsController: nil)
+    private let searchController = UISearchController(searchResultsController: nil)
 
     init(conversations: [Conversation]) {
         allConversations = conversations
