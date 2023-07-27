@@ -1429,14 +1429,6 @@ private extension TimeInterval {
 
 }
 
-private extension Date {
-
-    var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
-    }
-
-}
-
 extension Invitee {
 
     init(from keyPackage: KeyPackage) {
