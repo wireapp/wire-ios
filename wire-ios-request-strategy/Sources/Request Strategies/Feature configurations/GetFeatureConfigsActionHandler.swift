@@ -70,7 +70,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
     }
 
     private func processPayload(_ payload: ResponsePayload) {
-        let service = FeatureService(context: context)
+        let service = FeatureRepository(context: context)
 
         if let appLock = payload.appLock {
             service.storeAppLock(

@@ -40,7 +40,7 @@ class AuthenticatedRouter: NSObject {
     private let rootViewController: RootViewController
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
-    private let featureServiceProvider: FeatureServiceProvider
+    private let featureRepository: FeatureRepositoryProvider
 
     // MARK: - Public Property
 
@@ -57,7 +57,7 @@ class AuthenticatedRouter: NSObject {
          selfUser: SelfUserType,
          isComingFromRegistration: Bool,
          needToShowDataUsagePermissionDialog: Bool,
-         featureServiceProvider: FeatureServiceProvider) {
+         featureRepository: FeatureRepositoryProvider) {
 
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController)
@@ -67,7 +67,7 @@ class AuthenticatedRouter: NSObject {
                                          isComingFromRegistration: needToShowDataUsagePermissionDialog,
                                          needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog)
 
-        self.featureServiceProvider = featureServiceProvider
+        self.featureRepository = featureRepository
 
         super.init()
 
@@ -82,8 +82,8 @@ class AuthenticatedRouter: NSObject {
 
     private func notifyFeatureChange(_ note: Notification) {
         guard
-            let change = note.object as? FeatureService.FeatureChange,
-            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureServiceProvider.featureService)
+            let change = note.object as? FeatureRepository.FeatureChange,
+            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureRepository.featureRepository)
         else {
             return
         }
@@ -151,10 +151,10 @@ private extension UIViewController {
 
 }
 
-protocol FeatureServiceProvider {
+protocol FeatureRepositoryProvider {
 
-    var featureService: FeatureService { get }
+    var featureRepository: FeatureRepository { get }
 
 }
 
-extension ZMUserSession: FeatureServiceProvider {}
+extension ZMUserSession: FeatureRepositoryProvider {}

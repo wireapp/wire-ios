@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-class FeatureServiceTests: ZMBaseManagedObjectTest {
+class featureRepositoryTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
@@ -56,7 +56,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesAppLock() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             let config = Feature.AppLock.Config(
                 enforceAppLock: true,
@@ -82,7 +82,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesAppLock_ItReturnsADefaultConfigWhenConfigDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .appLock, in: self.syncMOC) { feature in
                 feature.status = .enabled
@@ -103,7 +103,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesAppLock_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .appLock)
 
             // When
@@ -120,7 +120,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresAppLock() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             let config = Feature.AppLock.Config(
                 enforceAppLock: true,
@@ -165,7 +165,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesClassifiedDomains() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             let config = Feature.ClassifiedDomains.Config(
                 domains: ["foo"]
@@ -190,7 +190,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesClassifiedDomains_ItReturnsADefaultConfigWhenConfigDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .classifiedDomains, in: self.syncMOC) { feature in
                 feature.status = .enabled
@@ -211,7 +211,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesClassifiedDomains_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .classifiedDomains)
 
             // When
@@ -228,7 +228,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresClassifiedDomains() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             let config = Feature.ClassifiedDomains.Config(
                 domains: ["foo"]
@@ -272,7 +272,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesConferenceCalling() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
                 feature.status = .disabled
@@ -291,7 +291,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesConferenceCalling_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .conferenceCalling)
 
             // When
@@ -307,7 +307,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresConferenceCalling() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             let conferenceCalling = Feature.ConferenceCalling(status: .disabled)
             self.assertFeatureDoesNotExist(name: .conferenceCalling)
 
@@ -331,7 +331,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesConversationGuestLinks() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .conversationGuestLinks, in: self.syncMOC) { feature in
                 feature.status = .disabled
@@ -350,7 +350,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesConversationGuestLinks_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .conversationGuestLinks)
 
             // When
@@ -366,7 +366,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresConversationGuestLinks() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             let conversationGuestLinks = Feature.ConversationGuestLinks(status: .disabled)
             self.assertFeatureDoesNotExist(name: .conversationGuestLinks)
 
@@ -390,7 +390,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesDigitalSignature() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .digitalSignature, in: self.syncMOC) { feature in
                 feature.status = .enabled
@@ -409,7 +409,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesDigitalSignature_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .digitalSignature)
 
             // When
@@ -425,7 +425,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresDigitalSignature() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             let digitalSignature = Feature.DigitalSignature(status: .enabled)
             self.assertFeatureDoesNotExist(name: .digitalSignature)
 
@@ -449,7 +449,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesFileSharing() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .fileSharing, in: self.syncMOC) { feature in
                 feature.status = .disabled
@@ -468,7 +468,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesFileSharing_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .fileSharing)
 
             // When
@@ -484,7 +484,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresFilesharing() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             let fileSharing = Feature.FileSharing(status: .disabled)
             self.assertFeatureDoesNotExist(name: .fileSharing)
 
@@ -508,7 +508,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesMLS() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             let config = Feature.MLS.Config(
                 protocolToggleUsers: [.create()],
@@ -537,7 +537,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesMLS_ItReturnsADefaultConfigWhenConfigDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .mls, in: self.syncMOC) { feature in
                 feature.status = .enabled
@@ -558,7 +558,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesMLS_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .mls)
 
             // When
@@ -575,7 +575,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresMLS() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             let config = Feature.MLS.Config(
                 protocolToggleUsers: [.create()],
@@ -623,7 +623,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesSelfDeletingMessages() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             let config = Feature.SelfDeletingMessages.Config(enforcedTimeoutSeconds: 123)
 
             Feature.updateOrCreate(havingName: .selfDeletingMessages, in: self.syncMOC) { feature in
@@ -645,7 +645,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesSelfDeletingMessages_ItReturnsADefaultConfigWhenConfigDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
 
             Feature.updateOrCreate(havingName: .selfDeletingMessages, in: self.syncMOC) { feature in
                 feature.status = .disabled
@@ -666,7 +666,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItFetchesSelfDeletingMessages_ItReturnsADefaultConfigWhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .selfDeletingMessages)
 
             // When
@@ -683,7 +683,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testThatItStoresSelfDeletingMessages() {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             let config = Feature.SelfDeletingMessages.Config(enforcedTimeoutSeconds: 123)
 
             let selfDeletingMessages = Feature.SelfDeletingMessages(
@@ -724,7 +724,7 @@ class FeatureServiceTests: ZMBaseManagedObjectTest {
     func testItCreatesDefaultInstances() throws {
         syncMOC.performGroupedBlock {
             // Given
-            let sut = FeatureService(context: self.syncMOC)
+            let sut = FeatureRepository(context: self.syncMOC)
             self.assertFeatureDoesNotExist(name: .appLock)
             self.assertFeatureDoesNotExist(name: .appLock)
             self.assertFeatureDoesNotExist(name: .classifiedDomains)

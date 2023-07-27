@@ -401,7 +401,7 @@ extension AppRootRouter {
                                    selfUser: ZMUser.selfUser(),
                                    isComingFromRegistration: isComingFromRegistration,
                                    needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog,
-                                   featureServiceProvider: ZMUserSession.shared()!)
+                                   featureRepository: ZMUserSession.shared()!)
     }
 }
 
