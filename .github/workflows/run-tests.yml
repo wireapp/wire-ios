@@ -329,4 +329,4 @@ jobs:
         run: npm install -g @datadog/datadog-ci
       - name: "Upload results"
         run: |
-          DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu find . -name "*.junit" -type f -exec grep -Rl 'junit' {} + | awk -v d=" " '{s=(NR==1?s:s d)$0}END{print s}' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+          DATADOG_API_KEY="${DD_API_KEY}" DD_ENV=ci DATADOG_SITE=datadoghq.eu find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
