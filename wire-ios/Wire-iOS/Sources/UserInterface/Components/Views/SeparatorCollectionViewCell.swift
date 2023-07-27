@@ -56,6 +56,7 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
 
     private func configureSubviews() {
         backgroundColor = SemanticColors.View.backgroundUserCell
+        separator.backgroundColor = SemanticColors.View.backgroundSeparatorCell
 
         setUp()
 
