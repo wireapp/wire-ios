@@ -215,9 +215,11 @@ class EventProcessorTests: MessagingTest {
         if isDatabaseLocked {
             let earService = EARService(
                 accountID: userIdentifier,
-                databaseContexts: [uiMOC, syncMOC]
+                databaseContexts: [uiMOC, syncMOC],
+                sharedUserDefaults: UserDefaults.random()!
             )
-
+            earService.setInitialEARFlagValue(true)
+            
             try earService.enableEncryptionAtRest(
                 context: syncMOC,
                 skipMigration: true

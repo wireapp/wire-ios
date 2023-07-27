@@ -1,0 +1,19 @@
+name: C1 C3 Restricted
+
+on: workflow_dispatch
+
+permissions: 
+  checks: write
+
+jobs:
+  column_1_restricted:
+    uses: ./.github/workflows/app_release.yml
+    with:
+      fastlane_action: appstore_col_1_restricted
+    secrets: inherit
+
+  column_3_restricted:
+    uses: ./.github/workflows/app_release.yml
+    with:
+      fastlane_action: appstore_col_3_restricted
+    secrets: inherit

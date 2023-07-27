@@ -20,7 +20,7 @@ platform :ios do
     end
 
     def is_running_on_ci 
-        !ENV['CIRRUS_BUILD_ID'].nil?
+        !ENV['CI'].nil?
     end
 
     def create_keychain_if_needed
@@ -33,11 +33,12 @@ platform :ios do
     end
 
     before_all do |lane|
-        ensure_xcode_version unless [:prepare_for_development, :trigger_api_build_cirrus_ci].include?(lane)
-        create_keychain_if_needed
+        ensure_xcode_version unless [:prepare_for_development].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_development, :prepare_for_tests].include?(lane)
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
+                puts "Setting AppStoreConnect API Key"
                 File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64(encoded_key)) }
             end
         end
@@ -102,8 +103,8 @@ platform :ios do
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column1"
-        options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
+        options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
+        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
@@ -115,8 +116,8 @@ platform :ios do
     lane :appstore_col_3_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column3"
-        options[:app_center_app_name] = "Wire-by-Bund-Column3"
+        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
+        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
@@ -128,8 +129,8 @@ platform :ios do
     lane :appstore_col_1_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c1-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
+        options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
+        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
@@ -140,91 +141,12 @@ platform :ios do
     lane :appstore_col_3_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c3-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
+        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
+        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
-    end
-
-    lane :trigger_api_build_cirrus_ci do |options|
-        authorization_header = { "Authorization" => "Bearer #{ENV['CIRRUS_CI_API_TOKEN']}" }
-        uri = 'https://api.cirrus-ci.com/graphql'
-        create_build_body = <<~BODY
-        {
-            "query": "mutation CreateBuildMutation($input: RepositoryCreateBuildInput!) {
-                createBuild(input: $input) {
-                    build {
-                        id
-                    }
-                }
-            }",
-            "variables": {
-                "input": {
-                    "repositoryId": "4507403593449472",
-                    "branch": "#{ENV['GITHUB_REF_NAME']}",
-                    "clientMutationId": "trigger-build-on-cirrus-#{ENV['GITHUB_REF_NAME']}"
-                }
-            }
-        }
-        BODY
-        create_build = HTTParty.post(
-            uri,
-            body: create_build_body,
-            headers: authorization_header
-        )
-        
-        # needed for async creation of jobs on CirrusCI, 1 second would be enough but I made it a big more to be sure that Cirrus already processed the async event
-        `sleep 7` 
-        
-        created_build_id =  JSON.parse(create_build.body, symbolize_names: true)[:data][:createBuild][:build][:id]
-        get_build_body = <<~BODY
-        {
-            "query": "query GetBuildQuery($id: ID!) {
-                build(id: $id) {
-                    tasks {
-                        id
-                        name
-                    }
-                }
-            }",
-            "variables": {
-                "id": "#{created_build_id}"
-            }
-        }
-        BODY
-        build_info = HTTParty.post(
-            uri,
-            body: get_build_body,
-            headers: authorization_header
-        )
-
-        cirrus_ci_tasks = JSON.parse(build_info.body, symbolize_names: true)[:data][:build][:tasks]
-        task_to_trigger = cirrus_ci_tasks.select { |task|  task[:name] == options[:task] }.first
-        trigger_task_body = <<~BODY 
-        {
-            "query": "mutation TriggerTask($input: TaskTriggerInput!) {
-                trigger(input: $input) {
-                    task {
-                        id
-                    }
-                }
-            }",
-            "variables": {
-                "input": {
-                    "taskId": "#{task_to_trigger[:id]}",
-                    "clientMutationId": "trigger-task-#{task_to_trigger[:id]}"
-                }
-            }
-        }
-        BODY
-        triggered_task = HTTParty.post(
-            uri,
-            body: trigger_task_body,
-            headers: authorization_header
-        )
-        puts "https://cirrus-ci.com/task/#{triggered_task["data"]["trigger"]["task"]["id"]}"
     end
 
     def build_and_upload_app(options)
@@ -459,21 +381,25 @@ platform :ios do
         )
     end
 
-    # Upload for internal use
-    def upload_app_center (options)
-        build = Build.new(options: options)
+    # Changelog for current build
+    def changelog(build)
         changelog = ""
-
         if build.playground_build
-            changelog = "Playground build for #{build.git_branch}"
-        elsif build.last_commit.nil? || build.last_commit.empty?
-            changelog = "No changelog available"
-        else
-            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
-                between: [build.last_commit, "HEAD"],
-                pretty: "* [%an] %s",
-            )
+            changelog += "Playground build for #{build.git_branch}\n\n"
         end
+
+        changelog += "Last commits:\n" + changelog_from_git_commits(
+                commits_count: 5,
+                pretty: "* [%an] %s",
+        )
+        changelog
+    end
+
+    # "Upload for internal use"
+    def upload_app_center(options)
+        build = Build.new(options: options)
+       
+        changelog = changelog(build)
 
         app_name = options[:app_center_app_name]
         if app_name.nil? 
@@ -554,7 +480,6 @@ class Build
     attr_reader :build_type
     attr_reader :git_branch
     attr_reader :build_number
-    attr_reader :last_commit
     attr_reader :for_simulator
     attr_reader :configuration
 
@@ -568,12 +493,12 @@ class Build
             UI.user_error! "Pass build_type parameter, e.g. fastlane build build_type:Development"
         end
 
-        @last_commit = options[:last_commit]
+
         @build_type = build_type
-        if ENV['CIRRUS_BRANCH'].nil? 
+        if ENV['GITHUB_REF_NAME'].nil? 
             @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
         else
-            @git_branch = ENV['CIRRUS_BRANCH']
+            @git_branch = ENV['GITHUB_REF_NAME']
         end
 
         @build_number = build_number

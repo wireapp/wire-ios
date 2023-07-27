@@ -335,7 +335,7 @@
 "conversation.banner.guests" = "Gäste";
 "conversation.banner.services" = "Dienste";
 "conversation.banner.externals" = "Externe";
-"conversation.banner.remotes" = "]Föderierte Benutzer";
+"conversation.banner.remotes" = "Föderierte Benutzer";
 "conversation.banner.are_present" = "%@ sind anwesend";
 "conversation.banner.are_active" = "%@ sind aktiv";
 "conversation.banner.separator" = "  und ";

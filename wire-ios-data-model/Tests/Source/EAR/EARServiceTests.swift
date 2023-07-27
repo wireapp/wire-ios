@@ -26,6 +26,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     var sut: EARService!
     var keyRepository: MockEARKeyRepositoryInterface!
     var keyEncryptor: MockEARKeyEncryptorInterface!
+    var earStorage: EARStorage!
 
     var prepareForMigrationCalls = 0
 
@@ -36,6 +37,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         keyRepository = MockEARKeyRepositoryInterface()
         keyEncryptor = MockEARKeyEncryptorInterface()
+        earStorage = .init(userID: userIdentifier, sharedUserDefaults: .random()!)
+        earStorage.enableEAR(true)
         sut = createSUT()
         prepareForMigrationCalls = 0
 
@@ -44,6 +47,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     override func tearDown() {
         sut = nil
+        earStorage = nil
         keyRepository = nil
         keyEncryptor = nil
         uiMOC.encryptMessagesAtRest = false
@@ -52,12 +56,14 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     }
 
     func createSUT(canPerformMigration: Bool = false) -> EARService {
+
         let sut = EARService(
             accountID: userIdentifier,
             keyRepository: keyRepository,
             keyEncryptor: keyEncryptor,
             databaseContexts: [uiMOC, syncMOC],
-            canPerformKeyMigration: canPerformMigration
+            canPerformKeyMigration: canPerformMigration,
+            earStorage: earStorage
         )
 
         sut.delegate = self
@@ -145,6 +151,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_ItDoesNotMigrateKeys_IfEARIsDisabled() throws {
         // Given
+        earStorage.enableEAR(false)
         uiMOC.encryptMessagesAtRest = false
 
         // When
@@ -640,6 +647,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPublicKeys_EARDisabled() throws {
         // Given
+        earStorage.enableEAR(false)
         uiMOC.encryptMessagesAtRest = false
 
         // When
@@ -707,6 +715,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     func test_FetchPrivateKeys_EARDisabled() throws {
         // Given
+        earStorage.enableEAR(false)
         uiMOC.encryptMessagesAtRest = false
 
         // When
@@ -850,9 +859,13 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
         // Given
-        let sut = EARService(accountID: userIdentifier, databaseContexts: [uiMOC])
+        let sut = EARService(accountID: userIdentifier,
+                         databaseContexts: [uiMOC],
+                         sharedUserDefaults: .random()!)
+
         let oldDatabaseKey = try sut.generateKeys()
 
+        sut.setInitialEARFlagValue(true)
         uiMOC.encryptMessagesAtRest = true
         let oldPublicKeys = try XCTUnwrap(sut.fetchPublicKeys())
         let oldPrivateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
@@ -881,6 +894,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertNotEqual(oldSecondaryPublicKey, newSecondaryPublicKey)
         XCTAssertNotEqual(oldSecondaryPrivateKey, newSecondaryPrivateKey)
         XCTAssertNotEqual(oldDatabaseKey, newDatabaseKey)
+        XCTAssertTrue(earStorage.earEnabled())
     }
 
     // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
@@ -913,6 +927,13 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(decryptedData as Data, data)
     }
 
+    func test_setInitialEARFlagValue_ChangesEARStorageValue() {
+        // when
+        let currentValue = earStorage.earEnabled()
+        sut.setInitialEARFlagValue(!currentValue)
+        // THEN
+        XCTAssertEqual(earStorage.earEnabled(), !currentValue)
+    }
 }
 
 private extension ZMGenericMessageData {

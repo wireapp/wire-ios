@@ -175,7 +175,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             accountIdentifier: accountIdentifier,
             hostBundleIdentifier: hostBundleIdentifier,
             environment: BackendEnvironment.shared,
-            appLockConfig: legacyConfig
+            appLockConfig: legacyConfig,
+            sharedUserDefaults: .applicationGroup
         )
     }
 

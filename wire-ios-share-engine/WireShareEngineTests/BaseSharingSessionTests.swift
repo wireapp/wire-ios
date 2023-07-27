@@ -165,7 +165,8 @@ class BaseTest: ZMTBaseTest {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            sharedUserDefaults: .random()!
         )
     }
 
