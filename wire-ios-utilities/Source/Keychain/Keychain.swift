@@ -21,7 +21,6 @@ import Security
 import LocalAuthentication
 
 public protocol KeychainItem {
-    
     associatedtype Value
     func queryForSetting(value: Value) -> [CFString: Any]
     var queryForGettingValue: [CFString: Any] { get }
