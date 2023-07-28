@@ -18,6 +18,7 @@
 
 import Foundation
 import CoreData
+import WireSystem
 
 @objc
 public protocol ContextProvider {
@@ -196,12 +197,18 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         dispatchGroup.enter()
         loadMessagesStore { (error) in
+            if let error = error {
+                WireLogger.localStorage.error("failed to load message store: \(error)")
+            }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
         }
 
         dispatchGroup.enter()
         loadEventStore { (error) in
+            if let error = error {
+                WireLogger.localStorage.error("failed to load event store: \(error)")
+            }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
         }

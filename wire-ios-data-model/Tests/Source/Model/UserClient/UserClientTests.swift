@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import XCTest
 import WireUtilities
@@ -64,6 +64,26 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(client.type, .permanent, "Client type should be 'permanent'")
     }
 
+    func testThatClientsAreNotDuplicatedInCoreData() throws {
+        let remoteIdentifier = "unique-client"
+
+        let client1 = UserClient.insertNewObject(in: uiMOC)
+        client1.remoteIdentifier = remoteIdentifier
+
+        let client2 = UserClient.insertNewObject(in: uiMOC)
+        client2.remoteIdentifier = remoteIdentifier
+
+        uiMOC.saveOrRollback()
+
+        let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
+        fetchRequest.fetchLimit = 2
+
+        let result = try uiMOC.fetch(fetchRequest)
+
+        XCTAssertEqual(result.count, 1, "There should be only one client with remote identifier \(remoteIdentifier)")
+    }
+
     func testThatItReturnsTrackedKeys() {
         let client = UserClient.insertNewObject(in: self.uiMOC)
         let trackedKeys = client.keysTrackedForLocalModifications()
@@ -93,12 +113,12 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
     func testThatItTracksCorrectKeys() {
         let expectedKeys = Set([ZMUserClientMarkedToDeleteKey,
-            ZMUserClientNumberOfKeysRemainingKey,
-            ZMUserClientMissingKey,
-            ZMUserClientNeedsToUpdateSignalingKeysKey,
-            ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey
-        ])
+                                ZMUserClientNumberOfKeysRemainingKey,
+                                ZMUserClientMissingKey,
+                                ZMUserClientNeedsToUpdateSignalingKeysKey,
+                                ZMUserClientNeedsToUpdateCapabilitiesKey,
+                                UserClient.needsToUploadMLSPublicKeysKey
+                               ])
 
         let client = UserClient.insertNewObject(in: self.uiMOC)
         XCTAssertEqual(client.keysTrackedForLocalModifications(), expectedKeys)
@@ -669,8 +689,8 @@ extension UserClientTests {
         // given
         _ = createSelfClient()
         let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                       "type": "permanent" as AnyObject,
-                                                       "time": Date().transportString() as AnyObject]
+                                                     "type": "permanent" as AnyObject,
+                                                     "time": Date().transportString() as AnyObject]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -688,8 +708,8 @@ extension UserClientTests {
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient() {
         // given
         let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                       "type": "permanent" as AnyObject,
-                                                       "time": Date().transportString() as AnyObject]
+                                                     "type": "permanent" as AnyObject,
+                                                     "time": Date().transportString() as AnyObject]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -708,8 +728,8 @@ extension UserClientTests {
         // given
         _ = createSelfClient()
         let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                       "type": "permanent" as AnyObject,
-                                                       "time": Date().transportString() as AnyObject]
+                                                     "type": "permanent" as AnyObject,
+                                                     "time": Date().transportString() as AnyObject]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -727,8 +747,8 @@ extension UserClientTests {
         ZMUser.selfUser(in: uiMOC).domain = "example.com"
 
         let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                       "type": "permanent" as AnyObject,
-                                                       "time": Date().transportString() as AnyObject]
+                                                     "type": "permanent" as AnyObject,
+                                                     "time": Date().transportString() as AnyObject]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -1286,7 +1306,7 @@ extension UserClientTests {
             clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
 
             // WHEN
-           resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
+            resultOfMethod = sut.establishSessionWithClient(clientB, usingPreKey: prekey, proteusProviding: mock)
 
             // THEN
             XCTAssertTrue(mockMethodCalled)
