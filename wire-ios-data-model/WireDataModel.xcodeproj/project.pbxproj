@@ -522,6 +522,8 @@
 		EE6A57E025BB1C6800F848DD /* AppLockController.State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6A57DF25BB1C6800F848DD /* AppLockController.State.swift */; };
 		EE6CB3DC24E2A4E500B0EADD /* store2-83-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE6CB3DB24E2A38500B0EADD /* store2-83-0.wiredatabase */; };
 		EE6CB3DE24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6CB3DD24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift */; };
+		EE70612A2A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7061292A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift */; };
+		EE70612C2A72ACAA00C9F351 /* store2-107-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE70612B2A72ACAA00C9F351 /* store2-107-0.wiredatabase */; };
 		EE715B7D256D153E00087A22 /* FeatureServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE715B7C256D153E00087A22 /* FeatureServiceTests.swift */; };
 		EE74E4DE2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */; };
 		EE74E4E02A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */; };
@@ -586,7 +588,6 @@
 		EEE95CD52A432FA100E136CB /* LeaveSubconversationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE95CD42A432FA100E136CB /* LeaveSubconversationAction.swift */; };
 		EEF0BC3128EEC02400ED16CA /* MockSyncStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */; };
 		EEF4010723A9213B007B1A97 /* UserType+Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF4010623A9213B007B1A97 /* UserType+Team.swift */; };
-		EEF6C76F2A70F2CB008E2F16 /* store2-107-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEF6C76E2A70F2CB008E2F16 /* store2-107-0.wiredatabase */; };
 		EEF6C7712A7101D3008E2F16 /* Feature.MLSMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6C7702A7101D3008E2F16 /* Feature.MLSMigration.swift */; };
 		EEF6C7732A71371C008E2F16 /* SupportedProtocolsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6C7722A71371C008E2F16 /* SupportedProtocolsService.swift */; };
 		EEF6C7752A724781008E2F16 /* SupportedProtocolsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6C7742A724781008E2F16 /* SupportedProtocolsServiceTests.swift */; };
@@ -1412,6 +1413,8 @@
 		EE6A57DF25BB1C6800F848DD /* AppLockController.State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.State.swift; sourceTree = "<group>"; };
 		EE6CB3DB24E2A38500B0EADD /* store2-83-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-83-0.wiredatabase"; sourceTree = "<group>"; };
 		EE6CB3DD24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMGenericMessageDataTests.swift; sourceTree = "<group>"; };
+		EE7061292A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+SupportedProtocols.swift"; sourceTree = "<group>"; };
+		EE70612B2A72ACAA00C9F351 /* store2-107-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-107-0.wiredatabase"; sourceTree = "<group>"; };
 		EE715B7C256D153E00087A22 /* FeatureServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureServiceTests.swift; sourceTree = "<group>"; };
 		EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubconversationGroupIDRepository.swift; sourceTree = "<group>"; };
 		EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubconversationGroupIDRepositoryTests.swift; sourceTree = "<group>"; };
@@ -1482,7 +1485,6 @@
 		EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSyncStatus.swift; sourceTree = "<group>"; };
 		EEF4010623A9213B007B1A97 /* UserType+Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserType+Team.swift"; sourceTree = "<group>"; };
 		EEF6C76D2A70EF81008E2F16 /* zmessaging2.107.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.107.0.xcdatamodel; sourceTree = "<group>"; };
-		EEF6C76E2A70F2CB008E2F16 /* store2-107-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-107-0.wiredatabase"; sourceTree = "<group>"; };
 		EEF6C7702A7101D3008E2F16 /* Feature.MLSMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.MLSMigration.swift; sourceTree = "<group>"; };
 		EEF6C7722A71371C008E2F16 /* SupportedProtocolsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedProtocolsService.swift; sourceTree = "<group>"; };
 		EEF6C7742A724781008E2F16 /* SupportedProtocolsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedProtocolsServiceTests.swift; sourceTree = "<group>"; };
@@ -2605,6 +2607,7 @@
 				F9A7060D1CAEE01D00C2F5FE /* ZMUser+Internal.h */,
 				F9A706101CAEE01D00C2F5FE /* ZMUser.m */,
 				F18998821E7AC6D900E579A2 /* ZMUser.swift */,
+				EE7061292A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift */,
 				EEDD426928633B2800C9EBC4 /* ZMUser+Patches.swift */,
 				EEA985972555668A002BEF02 /* ZMUser+AnalyticsIdentifier.swift */,
 				F110503C2220439900F3EB62 /* ZMUser+RichProfile.swift */,
@@ -3226,7 +3229,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				EEF6C76E2A70F2CB008E2F16 /* store2-107-0.wiredatabase */,
+				EE70612B2A72ACAA00C9F351 /* store2-107-0.wiredatabase */,
 				EEFFBEB42A67D9CF0058C343 /* store2-106-0.wiredatabase */,
 				63EDDCA028BE3B9200DE212F /* store2-105-0.wiredatabase */,
 				EE002F212878345C0027D63A /* store2-104-0.wiredatabase */,
@@ -3509,7 +3512,7 @@
 				EF9A47012109FCAE00085102 /* store2-50-0.wiredatabase in Resources */,
 				BF421B311EF4015E0079533A /* store2-30-0.wiredatabase in Resources */,
 				F9A706FA1CAEE32A00C2F5FE /* ExternalMessageTextFixture.txt in Resources */,
-				EEF6C76F2A70F2CB008E2F16 /* store2-107-0.wiredatabase in Resources */,
+				EE70612C2A72ACAA00C9F351 /* store2-107-0.wiredatabase in Resources */,
 				87F7288C21B02E2A000ED371 /* store2-55-0.wiredatabase in Resources */,
 				54AA3C9924ED2CE700FE1F94 /* store2-84-0.wiredatabase in Resources */,
 				5495BC431E019F1B004253ED /* audio.m4a in Resources */,
@@ -3876,6 +3879,7 @@
 				547E664B1F750E4A008CB1FA /* ZMConnection+Notification.swift in Sources */,
 				BF10B59D1E645A3300E7036E /* Analytics+UnknownMessage.swift in Sources */,
 				D5D10DA9203B161700145497 /* ZMConversation+AccessMode.swift in Sources */,
+				EE70612A2A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift in Sources */,
 				0660FEBD2580E4A900F4C19F /* TransferApplockKeychain.swift in Sources */,
 				63B1336029A503D100009D84 /* CoreCryptoConfiguration.swift in Sources */,
 				EF1F850422FD71BB0020F6DC /* ZMOTRMessage+VerifySender.swift in Sources */,

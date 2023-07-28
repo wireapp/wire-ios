@@ -44,6 +44,11 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
     // MARK: - Methods
 
+    func updateSupportedProtocols() {
+        let selfUser = userRepository.selfUser()
+        selfUser.supportedProtocols = calculateSupportedProtocols()
+    }
+
     func calculateSupportedProtocols() -> Set<MessageProtocol> {
         let remoteProtocols = remotelySupportedProtocols()
         let migrationState = currentMigrationState()

@@ -290,6 +290,7 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary" indexed="YES" syncable="YES"/>
         <attribute name="richProfile" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="serviceIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="supportedProtocols" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" customClassName="[Int16]" syncable="YES"/>
         <attribute name="teamIdentifier" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="teamIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
