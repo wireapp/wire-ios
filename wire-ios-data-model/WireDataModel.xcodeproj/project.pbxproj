@@ -302,7 +302,6 @@
 		63B1335929A503D100009D84 /* MLSGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333D29A503D000009D84 /* MLSGroupID.swift */; };
 		63B1335A29A503D100009D84 /* MLSActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333E29A503D000009D84 /* MLSActionExecutor.swift */; };
 		63B1335C29A503D100009D84 /* MLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334029A503D000009D84 /* MLSService.swift */; };
-		63B1335D29A503D100009D84 /* CommitBundle+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */; };
 		63B1335E29A503D100009D84 /* BackendMLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */; };
 		63B1335F29A503D100009D84 /* MessageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334329A503D000009D84 /* MessageProtocol.swift */; };
 		63B1336029A503D100009D84 /* CoreCryptoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */; };
@@ -1167,7 +1166,6 @@
 		63B1333D29A503D000009D84 /* MLSGroupID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSGroupID.swift; sourceTree = "<group>"; };
 		63B1333E29A503D000009D84 /* MLSActionExecutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSActionExecutor.swift; sourceTree = "<group>"; };
 		63B1334029A503D000009D84 /* MLSService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSService.swift; sourceTree = "<group>"; };
-		63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommitBundle+Protobuf.swift"; sourceTree = "<group>"; };
 		63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendMLSPublicKeys.swift; sourceTree = "<group>"; };
 		63B1334329A503D000009D84 /* MessageProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageProtocol.swift; sourceTree = "<group>"; };
 		63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreCryptoConfiguration.swift; sourceTree = "<group>"; };
@@ -2049,7 +2047,6 @@
 				EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */,
 				EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */,
 				EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */,
-				63B1334129A503D000009D84 /* CommitBundle+Protobuf.swift */,
 				63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */,
 				63B1334329A503D000009D84 /* MessageProtocol.swift */,
 				63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */,
@@ -3785,7 +3782,6 @@
 				BF1B98071EC31A3C00DE033B /* Member.swift in Sources */,
 				F1FDF2FE21B1572500E037A1 /* ZMGenericMessageData.swift in Sources */,
 				54CD460A1DEDA55C00BA3429 /* AddressBookEntry.swift in Sources */,
-				63B1335D29A503D100009D84 /* CommitBundle+Protobuf.swift in Sources */,
 				BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */,
 				168D7BFD26F365ED00789960 /* EntityAction.swift in Sources */,
 				F1FDF30021B1580400E037A1 /* GenericMessage+Utils.swift in Sources */,
