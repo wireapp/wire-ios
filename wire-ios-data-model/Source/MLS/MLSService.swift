@@ -26,7 +26,10 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func createSelfGroup(for groupID: MLSGroupID)
 
-    func joinSelfGroup(with groupID: MLSGroupID)
+    func joinGroup(with groupID: MLSGroupID) async throws
+
+    /// Join group after creating it if needed
+    func joinNewGroup(with groupID: MLSGroupID) async throws
 
     func createGroup(for groupID: MLSGroupID) throws
 
@@ -432,12 +435,12 @@ public final class MLSService: MLSServiceInterface {
                 do {
                     try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
                 } catch MLSAddMembersError.noInviteesToAdd {
-                    WireLogger.mls.debug("createConversation noInviteesToAdd, updateKeyMaterial")
+                    logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
                     try await updateKeyMaterial(for: groupID)
                 }
             }
         } catch {
-            WireLogger.mls.error("create group for self conversation failed: \(error.localizedDescription)")
+            logger.error("create group for self conversation failed: \(error.localizedDescription)")
         }
     }
 
@@ -745,9 +748,25 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Joining conversations
 
-    public func joinSelfGroup(with groupID: MLSGroupID) {
-        registerPendingJoin(groupID)
-        performPendingJoins()
+    public func joinNewGroup(with groupID: MLSGroupID) async throws {
+        guard let context = context else {
+            logger.warn("MLSService is missing sync context")
+            return
+        }
+
+        if !conversationExists(groupID: groupID) {
+            try createGroup(for: groupID)
+        }
+
+        let selfUser = ZMUser.selfUser(in: context)
+        let mlsUser = MLSUser(from: selfUser)
+
+        try await joinGroup(with: groupID)
+        try await addMembersToConversation(with: [mlsUser], for: groupID)
+    }
+
+    public func joinGroup(with groupID: MLSGroupID) async throws {
+        try await joinByExternalCommit(groupID: groupID)
     }
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
