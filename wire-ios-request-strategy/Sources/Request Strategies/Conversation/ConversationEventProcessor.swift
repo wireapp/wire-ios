@@ -130,7 +130,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 Logging.eventProcessing.warn("Member join update missing conversation, aborting...")
                 return
             }
-
             if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: self.context, conversation: conversation)! }) {
                 let selfUser = ZMUser.selfUser(in: self.context)
                 let users = Set(usersAndRoles.map { $0.0 })

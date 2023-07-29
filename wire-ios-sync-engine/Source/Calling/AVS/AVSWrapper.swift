@@ -398,7 +398,7 @@ public class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let requestNewEpochHandler: Handler.RequestNewEpoch = { handle, conversationIdRef, contextRef in
+    private let requestNewEpochHandler: Handler.RequestNewEpoch = { _, conversationIdRef, contextRef in
         AVSWrapper.withCallCenter(contextRef, conversationIdRef) { (callCenter, conversationID: String) in
             callCenter.handleNewEpochRequest(conversationID: .from(string: conversationID))
         }
