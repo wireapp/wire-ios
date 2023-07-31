@@ -1,0 +1,18 @@
+name: Test Develop
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+
+# This is what will cancel the workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      all: true
+    secrets: inherit
