@@ -34,7 +34,8 @@ public enum ConversationAddParticipantsError: Error {
         conversationNotFound,
         tooManyMembers,
         missingLegalHoldConsent,
-        failedToAddMLSMembers
+        failedToAddMLSMembers,
+        unreachableDomains
 }
 
 public class AddParticipantAction: EntityAction {

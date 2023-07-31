@@ -68,7 +68,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<ConnectToUserAction>.Action) {
 
         var action = action
-
+print(response)
         guard response.result == .success else {
 
             guard let failure = Payload.ResponseFailure(response, decoder: decoder) else {

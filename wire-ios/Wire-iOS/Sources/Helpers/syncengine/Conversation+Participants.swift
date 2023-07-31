@@ -47,6 +47,7 @@ extension ZMConversation {
         addParticipants(participants) { (result) in
             switch result {
             case .failure(let error):
+                // not only show the alert
                 self.showAlertForAdding(for: error)
             default:
                 break

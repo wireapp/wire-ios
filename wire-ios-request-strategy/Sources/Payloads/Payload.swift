@@ -272,11 +272,11 @@ enum Payload {
         struct FederationFailure: Codable {
 
             enum FailureType: String, Codable {
-                case federation = "federation"
+                case federation
                 case unknown
             }
 
-            let domain: String
+            let domains: [String]
             let path: String
             let type: FailureType
 
@@ -291,6 +291,7 @@ enum Payload {
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
             case federationRemoteError = "federation-remote-error"
+            case unreachableDomains = "federation-unreachable-domains-error"
             case unknown
 
             init(from decoder: Decoder) throws {
