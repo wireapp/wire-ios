@@ -302,6 +302,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+        guard message.isNormal,
+              !message.isKnock else {
+            return false
+        }
+
         return !message.failedToSendUsers.isEmpty
     }
 

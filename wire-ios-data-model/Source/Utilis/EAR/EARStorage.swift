@@ -18,23 +18,41 @@
 
 import Foundation
 
-class DuplicateClientsMigrationPolicy: NSEntityMigrationPolicy {
+@objc
+public final class EARStorage: NSObject {
 
-    override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-        let context = manager.sourceContext
+    // MARK: - Properties
 
-        let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
-            entityName: UserClient.entityName(),
-            by: #keyPath(UserClient.remoteIdentifier)
-        )
+    private let storage: PrivateUserDefaults<Key>
 
-        duplicates.forEach { (_, clients: [NSManagedObject]) in
-            guard clients.count > 1 else {
-                return
-            }
+    // MARK: - Types
 
-            clients.dropFirst().forEach(context.delete)
-        }
+    private enum Key: String, DefaultsKey {
+        case enabledEAR = "com.wire.ear.enabled"
     }
 
+    // MARK: - Life cycle
+
+    @objc
+    public init(
+        userID: UUID,
+        sharedUserDefaults: UserDefaults
+    ) {
+        storage = PrivateUserDefaults(
+            userID: userID,
+            storage: sharedUserDefaults
+        )
+
+        super.init()
+    }
+
+    // MARK: - Methods
+
+    public func earEnabled() -> Bool {
+        return storage.bool(forKey: .enabledEAR)
+    }
+
+    public func enableEAR(_ enabled: Bool) {
+        storage.set(enabled, forKey: .enabledEAR)
+    }
 }
