@@ -73,7 +73,6 @@ on:
 
 jobs:
   run-tests:
-    if: ${{ needs.detect-changes.outputs.any == 'true' }}
     runs-on: macos-13
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
