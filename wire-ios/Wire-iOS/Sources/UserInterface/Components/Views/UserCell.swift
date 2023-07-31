@@ -219,7 +219,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
 
         // unconnectedStateOverlay
-        unconnectedStateOverlay.backgroundColor = SemanticColors.View.backgroundUserCell.withAlphaComponent(0.3)
+        unconnectedStateOverlay.backgroundColor = SemanticColors.View.backgroundDefaultWhite.withAlphaComponent(0.3)
         unconnectedStateOverlay.isHidden = true
         unconnectedStateOverlay.translatesAutoresizingMaskIntoConstraints = false
 
