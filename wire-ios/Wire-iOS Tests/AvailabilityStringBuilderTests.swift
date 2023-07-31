@@ -54,7 +54,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - \Tests
+    // MARK: - Tests
 
     func testThatTheresAvailabilityInformationOtherUserIsNotTeammate() {
         // GIVEN
