@@ -1,9 +1,6 @@
 name: Test Develop
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - 'develop'
+
+on: [pull_request]
 
 # This is what will cancel the workflow
 concurrency:
