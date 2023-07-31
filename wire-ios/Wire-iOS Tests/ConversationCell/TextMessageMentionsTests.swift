@@ -40,7 +40,7 @@ final class TextMessageMentionsTests: XCTestCase {
     override func tearDown() {
         otherUser = nil
         selfUser = nil
-
+        setColorScheme(.light)
         super.tearDown()
     }
 
