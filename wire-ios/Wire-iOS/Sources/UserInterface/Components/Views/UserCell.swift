@@ -48,11 +48,14 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     let userTypeIconView = IconImageView()
     let verifiedIconView = UIImageView()
     let videoIconView = IconImageView()
+    let connectingLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+                                           color: LabelColors.textErrorDefault)
     let checkmarkIconView = UIImageView()
     let microphoneIconView = PulsingIconImageView()
     var contentStackView: UIStackView!
     var titleStackView: UIStackView!
     var iconStackView: UIStackView!
+    var unconnectedStateOverlay = UIView()
 
     fileprivate var avatarSpacerWidthConstraint: NSLayoutConstraint?
 
@@ -105,6 +108,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             verifiedIconView.isHidden = true
             videoIconView.isHidden = true
             microphoneIconView.isHidden = true
+            connectingLabel.isHidden = true
             connectButton.isHidden = true
             accessoryIconView.isHidden = true
             checkmarkIconView.image = nil
@@ -156,6 +160,9 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         checkmarkIconView.backgroundColor = IconColors.backgroundCheckMark
         checkmarkIconView.isHidden = true
 
+        // connectingLabel
+        connectingLabel.text = L10n.Localizable.Call.Status.connecting
+
         // accessoryIconView
         accessoryIconView.setUpIconImageView()
         accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
@@ -187,7 +194,8 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
                                verifiedIconView,
                                connectButton,
                                checkmarkIconView,
-                               accessoryIconView]
+                               accessoryIconView,
+                               connectingLabel]
         )
         iconStackView.spacing = 16
         iconStackView.axis = .horizontal
@@ -210,7 +218,13 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         contentStackView.alignment = .center
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
 
+        // unconnectedStateOverlay
+        unconnectedStateOverlay.backgroundColor = SemanticColors.View.backgroundUserCell.withAlphaComponent(0.3)
+        unconnectedStateOverlay.isHidden = true
+        unconnectedStateOverlay.translatesAutoresizingMaskIntoConstraints = false
+
         contentView.addSubview(contentStackView)
+        contentView.addSubview(unconnectedStateOverlay)
         createConstraints()
     }
 
@@ -232,7 +246,11 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            unconnectedStateOverlay.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            unconnectedStateOverlay.topAnchor.constraint(equalTo: contentView.topAnchor),
+            unconnectedStateOverlay.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            unconnectedStateOverlay.trailingAnchor.constraint(equalTo: titleStackView.trailingAnchor)
         ])
     }
 
