@@ -32,10 +32,10 @@ final class DestructionCountdownViewTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    func prepareSut(variant: ColorSchemeVariant = .light) {
-        ColorScheme.default.variant = variant
+    func prepareSut(uiInterfaceStyle: UIUserInterfaceStyle = .light) {
         sut = DestructionCountdownView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        sut.backgroundColor = UIColor.from(scheme: .contentBackground)
+        sut.overrideUserInterfaceStyle = uiInterfaceStyle
+        sut.backgroundColor = UIColor.clear
     }
 
     func testThatItRendersCorrectlyInInitialState() {
@@ -110,7 +110,7 @@ final class DestructionCountdownViewTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersCorrectly_80_Percent_Progress_in_dark_theme() {
-        prepareSut(variant: .dark)
+        prepareSut(uiInterfaceStyle: .dark)
 
         sut.setProgress(0.8)
         sut.setNeedsLayout()
