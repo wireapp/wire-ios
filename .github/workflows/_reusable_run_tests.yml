@@ -66,8 +66,6 @@ on:
         default: false
         required: false
     secrets:
-      GITHUB_TOKEN:
-        required: true
       ZENKINS_USERNAME:
         required: true
       DD_API_KEY:
