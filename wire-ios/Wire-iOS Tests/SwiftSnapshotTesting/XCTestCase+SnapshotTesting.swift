@@ -262,24 +262,6 @@ extension XCTestCase {
                                  file: StaticString = #file,
                                  testName: String = #function,
                                  line: UInt = #line) {
-        if var themeable = matching as? Themeable {
-            themeable.colorSchemeVariant = .light
-            matching.overrideUserInterfaceStyle = .light
-
-            verify(matching: matching,
-                   named: "LightTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-            themeable.colorSchemeVariant = .dark
-            matching.overrideUserInterfaceStyle = .dark
-
-            verify(matching: matching,
-                   named: "DarkTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-        } else {
             matching.overrideUserInterfaceStyle = .light
 
             verify(matching: matching,
@@ -298,7 +280,6 @@ extension XCTestCase {
         }
     }
 
-}
 
 extension XCTestCase {
 
