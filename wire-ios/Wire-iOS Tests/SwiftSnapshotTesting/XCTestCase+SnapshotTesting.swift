@@ -454,11 +454,6 @@ extension XCTestCase {
         return container
     }
 
-    // MARK: - color scheme
-    func resetColorScheme() {
-        setColorScheme(.light)
-    }
-
     func setColorScheme(_ variant: ColorSchemeVariant) {
         ColorScheme.default.variant = variant
         NSAttributedString.invalidateMarkdownStyle()

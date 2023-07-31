@@ -41,7 +41,6 @@ final class TextMessageMentionsTests: XCTestCase {
         otherUser = nil
         selfUser = nil
 
-        resetColorScheme()
         super.tearDown()
     }
 
