@@ -70,13 +70,8 @@ fi
 echo ""
 
 echo "ℹ️  Fetching submodules..."
-if [[ -z "${CI}" ]]; then 
-    echo "Skipping submodules because not running on CI"
-else
-    git config core.sshCommand "ssh -vvv"
     git submodule update --init --recursive || true
-	git submodule sync --recursive || true
-fi 
+    git submodule sync --recursive || true
 echo ""
 
 echo "ℹ️  Installing bundler and Ruby dependencies..."
