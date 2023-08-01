@@ -134,7 +134,7 @@ public final class AutomationHelper: NSObject {
         super.init()
     }
 
-    fileprivate enum AutomationKey: String {
+    private enum AutomationKey: String {
         case email = "loginemail"
         case password = "loginpassword"
         case logNetwork = "debug-log-network"
@@ -155,7 +155,7 @@ public final class AutomationHelper: NSObject {
         case deprecatedCallingUI = "deprecated-calling-ui"
     }
     /// Returns the login email and password credentials if set in the given arguments
-    fileprivate static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {
+    private static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {
         guard let email = arguments.flagValueIfPresent(AutomationKey.email.rawValue),
             let password = arguments.flagValueIfPresent(AutomationKey.password.rawValue) else {
             return nil
@@ -163,13 +163,13 @@ public final class AutomationHelper: NSObject {
         return AutomationEmailCredentials(email: email, password: password)
     }
     // Switches on all flags that you would like to log listed after `--debug-log=` tags should be separated by comma
-    fileprivate static func enableLogTags(_ arguments: ArgumentsType) {
+    private static func enableLogTags(_ arguments: ArgumentsType) {
         guard let tagsString = arguments.flagValueIfPresent(AutomationKey.logTags.rawValue) else { return }
         let tags = tagsString.components(separatedBy: ",")
         tags.forEach { ZMSLog.set(level: .debug, tag: $0) }
     }
     /// Returns the custom time interval for address book search delay if it set in the given arguments
-    fileprivate static func addressBookSearchDelay(_ arguments: ArgumentsType) -> TimeInterval? {
+    private static func addressBookSearchDelay(_ arguments: ArgumentsType) -> TimeInterval? {
         guard let delayString = arguments.flagValueIfPresent(AutomationKey.addressBookRemoteSearchDelay.rawValue),
             let delay = Int(delayString) else {
                 return nil

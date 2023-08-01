@@ -31,13 +31,13 @@ public class CircularProgressView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    fileprivate func setup() {
+    private func setup() {
         setupShapeLayer()
 
         NotificationCenter.default.addObserver(self, selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
-    fileprivate func setupShapeLayer() {
+    private func setupShapeLayer() {
         self.createPath()
         self.shapeLayer.lineWidth = CGFloat(lineWidth)
         self.shapeLayer.lineCap = lineCap
@@ -75,7 +75,7 @@ public class CircularProgressView: UIView {
         }
     }
 
-    fileprivate func createPath() {
+    private func createPath() {
         self.shapeLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.bounds.width/2).cgPath
     }
 
@@ -90,7 +90,7 @@ public class CircularProgressView: UIView {
         fatalError("shapeLayer is missing: \(self.layer)")
     }
 
-    fileprivate(set) var progress: Float = 0.0
+    private(set) var progress: Float = 0.0
 
     public func setProgress(_ progress: Float, animated: Bool) {
         self.progress = progress
@@ -123,7 +123,7 @@ public class CircularProgressView: UIView {
 
     let SpinningAnimationKey = "com.wire.animations.spin"
 
-    fileprivate func updateSpinningAnimation() {
+    private func updateSpinningAnimation() {
         if !deterministic {
             startSpinningAnimation()
         } else {
@@ -131,7 +131,7 @@ public class CircularProgressView: UIView {
         }
     }
 
-    fileprivate func startSpinningAnimation() {
+    private func startSpinningAnimation() {
         let rotate = CABasicAnimation.init(keyPath: "transform.rotation.z")
         rotate.fillMode = .forwards
         rotate.toValue = 2 * CGFloat.pi
@@ -143,7 +143,7 @@ public class CircularProgressView: UIView {
         self.shapeLayer.add(rotate, forKey: SpinningAnimationKey)
     }
 
-    fileprivate func stopSpinningAnimation() {
+    private func stopSpinningAnimation() {
         self.shapeLayer.removeAnimation(forKey: SpinningAnimationKey)
     }
 }
