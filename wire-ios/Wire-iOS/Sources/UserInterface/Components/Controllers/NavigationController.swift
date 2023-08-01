@@ -22,10 +22,10 @@ import WireUtilities
 class NavigationController: UINavigationController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
-    fileprivate lazy var pushTransition = NavigationTransition(operation: .push)
-    fileprivate lazy var popTransition = NavigationTransition(operation: .pop)
+    private lazy var pushTransition = NavigationTransition(operation: .push)
+    private lazy var popTransition = NavigationTransition(operation: .pop)
 
-    fileprivate var dismissGestureRecognizer: UIScreenEdgePanGestureRecognizer!
+    private var dismissGestureRecognizer: UIScreenEdgePanGestureRecognizer!
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)

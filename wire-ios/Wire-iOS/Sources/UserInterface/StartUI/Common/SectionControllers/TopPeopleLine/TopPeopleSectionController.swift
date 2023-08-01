@@ -21,9 +21,9 @@ import WireSyncEngine
 
 final class TopPeopleSectionController: SearchSectionController {
 
-    fileprivate var innerCollectionView: UICollectionView!
-    fileprivate let innerCollectionViewController = TopPeopleLineCollectionViewController()
-    fileprivate let topConversationsDirectory: TopConversationsDirectory!
+    private var innerCollectionView: UICollectionView!
+    private let innerCollectionViewController = TopPeopleLineCollectionViewController()
+    private let topConversationsDirectory: TopConversationsDirectory!
     var token: Any?
     weak var delegate: SearchSectionControllerDelegate?
 
