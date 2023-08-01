@@ -1,0 +1,12 @@
+{
+    "endpoints": {
+        "backendURL": "https://nginz-https.qa-demo-2.wire.link",
+        "backendWSURL": "https://nginz-ssl.qa-demo-2.wire.link",
+        "blackListURL": "https://assets.qa-demo-2.wire.link/public/blacklist/android.json",
+        "teamsURL": "https://teams.qa-demo-2.wire.link",
+        "accountsURL": "https://account.qa-demo-2.wire.link",
+        "websiteURL": "https://webapp.qa-demo-2.wire.link",
+        "countlyURL" : "https://countly.wire.com"
+    },
+    "title": "qa-demo-2.wire.link environment"
+}
