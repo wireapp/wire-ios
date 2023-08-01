@@ -427,6 +427,7 @@ platform :ios do
         end
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
+        puts output
         `echo S3_PATHS=#{output.gsub('upload: ', '')} >> .post_build_env`
     end
 
