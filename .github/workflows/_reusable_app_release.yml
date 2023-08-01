@@ -95,3 +95,18 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
+      - name: Archiving env variables
+        uses: actions/upload-artifact@v2
+        with:
+          name: post-build-env
+          path: |
+            .post_build_env
+
+      # - name: Notify on Wire
+      #   if: always()
+      #   uses: 8398a7/action-slack@v3
+      #   env:
+      #     PLAYTEST_BRANCH_NAME: playtest/${{ steps.date.outputs.date }}
+      #   with:
+      #     status: ${{ job.status }}
+      #     text: "Playtest branch **$PLAYTEST_BRANCH_NAME** created 🚀 - Hotfixes only on this branch"

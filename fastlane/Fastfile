@@ -70,6 +70,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Development')
     end
 
     desc "Build & Upload Playground build"
@@ -79,6 +80,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Playground')
     end
 
     desc "Build & Upload Testflight Beta build"
@@ -88,6 +90,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Testflight Beta')
     end
 
     desc "Build & Upload Public AppStore build"
@@ -97,6 +100,7 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+        save_app_name('Public AppStore Production')
     end
     
     desc "Build & Upload Col 1 Restricted AppStore build"
@@ -110,6 +114,7 @@ platform :ios do
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Column 1 Restricted')
     end
 
     desc "Build & Upload Col 3 Restricted AppStore build"
@@ -123,6 +128,7 @@ platform :ios do
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Column 3 Restricted')
     end
 
     desc "Build & Upload Col 1 Production AppStore build"
@@ -135,6 +141,7 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+        save_app_name('Column 1 Production')
     end
 
     desc "Build & Upload Col 3 Production AppStore build"
@@ -147,6 +154,7 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+        save_app_name('Column 3 Production')
     end
 
     def build_and_upload_app(options)
@@ -177,6 +185,10 @@ platform :ios do
         if options[:upload_dsyms_to_datadog] || false
             upload_dsyms_to_datadog(options)
         end
+    end
+
+    def save_app_name(name)
+        `echo APP_NAME=#{name}} >> .post_build_env`
     end
 
     def fetch_latest_configuration_repo
@@ -241,6 +253,7 @@ platform :ios do
 
     def generate_build_number
         build_number = `curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/ORUHILeMbXB4D5Z5conFzYoYpQPjVnyUA4pu56X2MHVJSFxM/increment"`
+        `echo BUILD_NUMBER=#{build_number} >> .post_build_env`
         build_number
     end
 
@@ -274,6 +287,8 @@ platform :ios do
             sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
+
+            `echo BUILD_VERSION=#{build.version_from_xcconfig} >> .post_build_env`
 
             download_distribution_certificate_and_profiles(build, options)
         end
@@ -420,6 +435,9 @@ platform :ios do
           mandatory_update: false,
           dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
         )
+
+        `echo APPCENTER_DOWNLOAD_LINK=#{ENV['APPCENTER_DOWNLOAD_LINK']} >> .post_build_env`
+        `echo APPCENTER_BUILD_INFORMATION=#{ENV['APPCENTER_BUILD_INFORMATION']} >> .post_build_env`
     end
 
     # Upload to S3 (Automation builds)
@@ -436,12 +454,13 @@ platform :ios do
         end
 
 
-
+        output = ""
         if build.appstore_build
-            sh "cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive"
+            output += `cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive`
         end
         
-        sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
+        output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
+        `echo S3_PATHS=#{output.gsub('upload: ', '')} >> .post_build_env`
     end
 
     # Upload dSYMs for AppStore crash tracking
@@ -645,11 +664,14 @@ class Build
     def extra_info
         prefix = ""
         if rc_build
-            version = IO.foreach('../wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig').grep(/WIRE_SHORT_VERSION/).first.split(" = ")[1].chomp
-            prefix = "#{version}-"
+            prefix = "#{version_from_xcconfig}-"
         end
 
         prefix + @build_number
+    end
+
+    def version_from_xcconfig
+        IO.foreach('../wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig').grep(/WIRE_SHORT_VERSION/).first.split(" = ")[1].chomp
     end
 
     def iconset_location
