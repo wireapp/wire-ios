@@ -2764,6 +2764,29 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "error.conversation.title", fallback: "Error")
         /// The conversation is full
         internal static let tooManyMembers = L10n.tr("Localizable", "error.conversation.too_many_members", fallback: "The conversation is full")
+        internal enum Nfcg {
+          /// %s, %s
+          internal static func backendListDelimeter(_ p1: UnsafePointer<CChar>, _ p2: UnsafePointer<CChar>) -> String {
+            return L10n.tr("Localizable", "error.conversation.nfcg.backend_list_delimeter", p1, p2, fallback: "%s, %s")
+          }
+          /// %s and %s
+          internal static func backendListEnd(_ p1: UnsafePointer<CChar>, _ p2: UnsafePointer<CChar>) -> String {
+            return L10n.tr("Localizable", "error.conversation.nfcg.backend_list_end", p1, p2, fallback: "%s and %s")
+          }
+          /// Discard Group Creation
+          internal static let discard = L10n.tr("Localizable", "error.conversation.nfcg.discard", fallback: "Discard Group Creation")
+          /// Edit Participants List
+          internal static let edit = L10n.tr("Localizable", "error.conversation.nfcg.edit", fallback: "Edit Participants List")
+          /// Learn More
+          internal static let learnMore = L10n.tr("Localizable", "error.conversation.nfcg.learn_more", fallback: "Learn More")
+          /// People from backends %s can’t join the same group conversation.
+          /// To create the group, remove affected participants.
+          internal static func message(_ p1: UnsafePointer<CChar>) -> String {
+            return L10n.tr("Localizable", "error.conversation.nfcg.message", p1, fallback: "People from backends %s can’t join the same group conversation.\nTo create the group, remove affected participants.")
+          }
+          /// Group can’t be created
+          internal static let title = L10n.tr("Localizable", "error.conversation.nfcg.title", fallback: "Group can’t be created")
+        }
       }
       internal enum Email {
         /// Please enter a valid email address

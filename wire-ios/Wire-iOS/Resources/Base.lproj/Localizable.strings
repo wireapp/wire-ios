@@ -1649,6 +1649,14 @@
 "error.conversation.missing_legalhold_consent" = "Due to legal hold, only team members can be added to this conversation";
 "error.message.send.missing_legalhold_consent" = "You cannot send this message because you have at least one outdated device that does not support legal hold. Please update all your devices or remove them from the app settings";
 "error.message.send.title" = "Messages cannot be sent";
+"error.conversation.nfcg.title" = "Group can’t be created";
+"error.conversation.nfcg.message" = "People from backends %s can’t join the same group conversation.
+To create the group, remove affected participants.";
+"error.conversation.nfcg.backend_list_delimeter" = "%s, %s";
+"error.conversation.nfcg.backend_list_end" = "%s and %s";
+"error.conversation.nfcg.learn_more" = "Learn More";
+"error.conversation.nfcg.discard" = "Discard Group Creation";
+"error.conversation.nfcg.edit" = "Edit Participants List";
 
 "sketchpad.initial_hint" = "Tap colors to change brush size";
 

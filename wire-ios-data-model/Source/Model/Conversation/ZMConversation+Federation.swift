@@ -19,12 +19,10 @@
 import Foundation
 
 public struct NonFederatingBackendsTuple {
-    public let backendA: String
-    public let backendB: String
+    public let backends: [String]
 
-    public init(backendA: String, backendB: String) {
-        self.backendA = backendA
-        self.backendB = backendB
+    public init(backends: [String]) {
+        self.backends = backends
     }
 }
 

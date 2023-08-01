@@ -500,21 +500,23 @@ enum EncryptionProtocol: String, CaseIterable {
 
 extension UIAlertController {
     static func notFullyConnectedGraphAlert(backends: NonFederatingBackendsTuple, completion: @escaping (NonFullyConnectedGraphAction) -> Void) -> UIAlertController {
+        typealias NfcgError = L10n.Localizable.Error.Conversation.Nfcg
         let alert = UIAlertController(
-            title: "Group can’t be created",
-            message: "People from backends \(backends.backendA) and \(backends.backendB) can’t join the same group conversation.\nTo create the group, remove affected participants.", preferredStyle: .alert)
+            title: NfcgError.title,
+            message: NfcgError.messageWithBackends(backends: backends.backends),
+            preferredStyle: .alert)
         let editParticipantsAction = UIAlertAction(
-            title: "Edit Participants List",
+            title: NfcgError.edit,
             style: .default,
             handler: { _ in completion(.editParticipantsList) }
         )
         let discardGroupCreationAction = UIAlertAction(
-            title: "Discard Group Creation",
+            title: NfcgError.discard,
             style: .default,
             handler: { _ in completion(.discardGroupCreation) }
         )
         let learnMoreAction = UIAlertAction(
-            title: "Learn More",
+            title: NfcgError.learnMore,
             style: .default,
             handler: { _ in completion(.learnMore) }
         )
@@ -526,3 +528,20 @@ extension UIAlertController {
     }
 }
 
+extension L10n.Localizable.Error.Conversation.Nfcg {
+    internal static func backendsList(backends: [String]) -> String {
+        typealias NfcgError = L10n.Localizable.Error.Conversation.Nfcg
+        guard backends.count >= 2 else { return "" }
+        var backendsString = backends[0]
+        for i in 1..<backends.count-1 {
+            backendsString = NfcgError.backendListDelimeter(backendsString, backends[i])
+        }
+        backendsString = NfcgError.backendListEnd(backendsString, backends[backends.count-1])
+        return backendsString
+    }
+
+    internal static func messageWithBackends(backends: [String]) -> String {
+        typealias NfcgError = L10n.Localizable.Error.Conversation.Nfcg
+        return NfcgError.message(backendsList(backends: backends))
+    }
+}

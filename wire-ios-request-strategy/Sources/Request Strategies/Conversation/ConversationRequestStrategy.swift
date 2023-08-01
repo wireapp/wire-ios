@@ -352,10 +352,9 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         case .v4:
         if response.httpStatus == 409,
            let nonFederatingFailure = Payload.NonFederatingBackends(response, decoder: .defaultDecoder),
-           nonFederatingFailure.nonFederatingBackends.count == 2 {
+           nonFederatingFailure.nonFederatingBackends.count >= 2 {
             let nonFederatingBackends = NonFederatingBackendsTuple(
-                backendA: nonFederatingFailure.nonFederatingBackends[0],
-                backendB: nonFederatingFailure.nonFederatingBackends[1])
+                backends: nonFederatingFailure.nonFederatingBackends)
             newConversation.notifyNonFederatingBackends(backends: nonFederatingBackends)
             knownError = true
         }
