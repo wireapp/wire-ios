@@ -26,7 +26,7 @@ public enum ConversationRemoveParticipantError: Error {
         failedToRemoveMLSMembers
 }
 
-public enum ConversationAddParticipantsError: Error {
+public enum ConversationAddParticipantsError: Error, Equatable {
    case unknown,
         invalidOperation,
         accessDenied,
@@ -35,7 +35,7 @@ public enum ConversationAddParticipantsError: Error {
         tooManyMembers,
         missingLegalHoldConsent,
         failedToAddMLSMembers,
-        unreachableDomains
+        unreachableUsers([ZMUser])
 }
 
 public class AddParticipantAction: EntityAction {

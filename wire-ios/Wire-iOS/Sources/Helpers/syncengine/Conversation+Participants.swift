@@ -39,19 +39,34 @@ extension ZMConversation {
 
     func addOrShowError(participants: [UserType]) {
         guard let session = ZMUserSession.shared(),
-                session.networkState != .offline else {
+              session.networkState != .offline else {
             self.showAlertForAdding(for: NetworkError.offline)
             return
         }
 
         addParticipants(participants) { (result) in
-            switch result {
-            case .failure(let error):
-                // not only show the alert
-                self.showAlertForAdding(for: error)
-            default:
-                break
+            guard case .failure(let error) = result else {
+                return
             }
+
+            switch error {
+            case .unreachableUsers(let users):
+                let withoutUnreachable = participants.filter { user in
+                    guard let userId = user.remoteIdentifier else {
+                        return false
+                    }
+                    return !userId.isOne(of: users.map(\.remoteIdentifier))
+                }
+                self.addParticipants(withoutUnreachable) { result in
+                    if case .failure(let error) = result {
+                        self.showAlertForAdding(for: error)
+                    }
+                }
+
+            default:
+                self.showAlertForAdding(for: error)
+            }
+
         }
     }
 
