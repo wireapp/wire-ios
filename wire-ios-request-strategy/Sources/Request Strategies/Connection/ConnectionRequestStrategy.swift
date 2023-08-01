@@ -225,7 +225,6 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        print(response)
         guard response.result != .permanentError else {
             connection.needsToBeUpdatedFromBackend = false
             return

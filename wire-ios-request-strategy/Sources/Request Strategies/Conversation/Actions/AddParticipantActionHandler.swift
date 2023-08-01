@@ -170,18 +170,18 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             }
 
             let users = participants.unreachable(for: unreachableDomains)
-            if !users.isEmpty {
-                action.notifyResult(.failure(.unreachableUsers(users)))
 
-                conversation.appendFailedToAddUsersSystemMessage(users: Set(users),
-                                                                 sender: conversation.creator,
-                                                                 at: conversation.lastServerTimeStamp ?? Date())
-            } else {
-                action.notifyResult(.failure(.unknown))
+            guard !users.isEmpty else {
+                return action.notifyResult(.success(Void()))
             }
+            action.notifyResult(.failure(.unreachableUsers(users)))
+
+            conversation.appendFailedToAddUsersSystemMessage(users: Set(users),
+                                                             sender: conversation.creator,
+                                                             at: conversation.lastServerTimeStamp ?? Date())
 
         default:
-            action.notifyResult(.failure(.unknown))
+            action.notifyResult(.failure(ConversationAddParticipantsError(response: response) ?? .unknown))
         }
     }
 }
