@@ -294,7 +294,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
                 }
             }
 
-            return UIMenu(title: conversation.displayName, children: actions)
+            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
         }
 
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,

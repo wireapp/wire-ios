@@ -240,9 +240,12 @@ public enum FontScheme {
         fontsByFontSpec[FontSpec(.subHeadline, .regular, .none)] = .systemFont(ofSize: 15, contentSizeCategory: contentSizeCategory, weight: .regular)
         // FontSize: BodyTwo
         fontsByFontSpec[FontSpec(.bodyTwo, .semibold, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .semibold)
+
         // FontSize: ButtonSmall
         fontsByFontSpec[FontSpec(.buttonSmall, .bold, .none)] = .systemFont(ofSize: 14, contentSizeCategory: contentSizeCategory, weight: .bold)
-        // FontSize: ButtonSmall
+        fontsByFontSpec[FontSpec(.buttonSmall, .semibold, .none)] = .systemFont(ofSize: 14, contentSizeCategory: contentSizeCategory, weight: .semibold)
+
+        // FontSize: Body
         fontsByFontSpec[FontSpec(.body, .regular, .none)] = .systemFont(ofSize: 17, contentSizeCategory: contentSizeCategory, weight: .regular)
 
         // FontSize: ButtonBig
@@ -250,6 +253,9 @@ public enum FontScheme {
     }
 
     public static func font(for fontType: FontSpec) -> UIFont? {
+        if FontScheme.fontsByFontSpec[fontType] == nil {
+           assertionFailure("missing uifont for fontspec \(fontType), got: \(FontScheme.fontsByFontSpec)")
+        }
         return FontScheme.fontsByFontSpec[fontType]
     }
 }

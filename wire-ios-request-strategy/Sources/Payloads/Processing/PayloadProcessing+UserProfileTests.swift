@@ -460,4 +460,19 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
         }
     }
 
+    func testUpdateUserProfile_UpdatesIsPendingMetadataRefresh() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.otherUser.isPendingMetadataRefresh = true
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
+            let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
+
+            // when
+            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+
+            // then
+            XCTAssertFalse(self.otherUser.isPendingMetadataRefresh)
+        }
+    }
+
 }

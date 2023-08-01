@@ -75,6 +75,8 @@ NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data"
 NSString *const SecurityLevelKey = @"securityLevel";
 NSString *const ZMConversationLabelsKey = @"labels";
 NSString *const ZMConversationDomainKey = @"domain";
+NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
+NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -110,7 +112,7 @@ static NSString *const AccessRoleStringKey = @"accessRoleString";
 NSString *const AccessRoleStringsKeyV2 = @"accessRoleStringsV2";
 
 
-NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 3.0;
+NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 1.0;
 
 const NSUInteger ZMConversationMaxEncodedTextMessageLength = 1500;
 const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTextMessageLength - 50; // Empirically we verified that the encoding adds 44 bytes
@@ -351,11 +353,13 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             @"isSelfAnActiveMember", // DEPRECATED
             @"lastServerSyncedActiveParticipants", // DEPRECATED
             ZMConversationDomainKey,
+            ZMConversationIsPendingMetadataRefreshKey,
             ZMConversation.messageProtocolKey,
             ZMConversation.mlsGroupIdKey,
             ZMConversation.mlsStatusKey,
             ZMConversation.commitPendingProposalDateKey,
-            ZMConversation.epochKey
+            ZMConversation.epochKey,
+            ZMConversationIsDeletedRemotelyKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];

@@ -169,6 +169,10 @@ extension ZMLocalNotification {
             WireLogger.badgeCount.info("increase internalEstimatedUnreadCount: \(conversation?.internalEstimatedUnreadCount) in \(conversation?.remoteIdentifier?.uuidString) timestamp: \(Date())")
         }
 
+        if type.shouldDecreaseUnreadCount {
+            conversation?.internalEstimatedUnreadCount -= 1
+        }
+
         if type.shouldIncreaseUnreadMentionCount {
             conversation?.internalEstimatedUnreadSelfMentionCount += 1
         }
@@ -196,6 +200,19 @@ extension LocalNotificationType {
             return false
         default:
             return true
+        }
+    }
+
+    var shouldDecreaseUnreadCount: Bool {
+        guard case LocalNotificationType.event(let contentType) = self else {
+            return false
+        }
+
+        switch contentType {
+        case .conversationDeleted:
+            return true
+        default:
+            return false
         }
     }
 

@@ -44,8 +44,7 @@ final class CallParticipantView: BaseCallParticipantView {
         key: "call.video.paused",
         size: .normal,
         weight: .semibold,
-        color: .textForeground,
-        variant: .dark
+        color: .white
     )
     private var snapshotView: UIView?
 

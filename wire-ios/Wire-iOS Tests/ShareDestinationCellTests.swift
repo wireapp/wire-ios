@@ -26,14 +26,14 @@ final class MockDestination: NSObject, ShareDestination {
 
     var showsGuestIcon: Bool
 
-    var displayName: String
+    var displayNameWithFallback: String
 
     var securityLevel: ZMConversationSecurityLevel
 
     var avatarView: UIView?
 
     init(displayName: String, avatarView: UIView? = nil, securityLevel: ZMConversationSecurityLevel = .notSecure, showsGuestIcon: Bool = false, isUnderLegalHold: Bool = false) {
-        self.displayName = displayName
+        self.displayNameWithFallback = displayName
         self.securityLevel = securityLevel
         self.avatarView = avatarView
         self.showsGuestIcon = showsGuestIcon
@@ -56,6 +56,7 @@ final class ShareDestinationCellTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
+        // TODO: check what would be the default value after test
         accentColor = .vividRed
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
         sut.overrideUserInterfaceStyle = .dark

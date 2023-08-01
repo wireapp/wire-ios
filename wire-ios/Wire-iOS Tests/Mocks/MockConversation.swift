@@ -43,7 +43,7 @@ class SwiftMockConversation: NSObject, Conversation {
         return mockLocalParticipantsContain
     }
 
-    var displayName: String = ""
+    var displayName: String? = ""
 
     var connectedUserType: UserType?
 
@@ -69,6 +69,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var firstUnreadMessage: ZMConversationMessage?
 
     var areServicesPresent: Bool = false
+
+    var domain: String?
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

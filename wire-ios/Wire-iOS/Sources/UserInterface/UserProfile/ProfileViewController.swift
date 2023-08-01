@@ -105,8 +105,8 @@ final class ProfileViewController: UIViewController {
 
         let user = viewModel.user
 
+        user.refreshData()
         if user.isTeamMember {
-            user.refreshData()
             user.refreshMembership()
         }
     }

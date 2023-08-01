@@ -18,7 +18,7 @@
 
 import UIKit
 
-class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol, Themeable {
+class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
 
     let separator = UIView()
     var separatorInsetConstraint: NSLayoutConstraint!
@@ -46,7 +46,17 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol, 
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted
+            ? SemanticColors.View.backgroundUserCellHightLighted
+            : SemanticColors.View.backgroundUserCell
+        }
+    }
+
     private func configureSubviews() {
+        backgroundColor = SemanticColors.View.backgroundUserCell
+        separator.backgroundColor = SemanticColors.View.backgroundSeparatorCell
 
         setUp()
 
@@ -54,46 +64,10 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol, 
         contentView.addSubview(separator)
 
         createSeparatorConstraints()
-
-        applyColorScheme(ColorScheme.default.variant)
-
     }
 
     func setUp() {
         // can be overriden to customize interface
-    }
-
-    // MARK: - Themable
-
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundColor = isHighlighted
-                ? UIColor(white: 0, alpha: 0.08)
-                : contentBackgroundColor(for: colorSchemeVariant)
-        }
-    }
-
-    @objc dynamic var colorSchemeVariant: ColorSchemeVariant = ColorScheme.default.variant {
-        didSet {
-            guard oldValue != colorSchemeVariant else { return }
-            applyColorScheme(colorSchemeVariant)
-        }
-    }
-
-    // if nil the background color is the default content background color for the theme
-    @objc dynamic var contentBackgroundColor: UIColor? {
-        didSet {
-            guard oldValue != contentBackgroundColor else { return }
-            applyColorScheme(colorSchemeVariant)
-        }
-    }
-
-    func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
-        separator.backgroundColor = SemanticColors.View.backgroundSeparatorCell
-    }
-
-    final func contentBackgroundColor(for colorSchemeVariant: ColorSchemeVariant) -> UIColor {
-        return contentBackgroundColor ?? UIColor.from(scheme: .barBackground, variant: colorSchemeVariant)
     }
 
 }

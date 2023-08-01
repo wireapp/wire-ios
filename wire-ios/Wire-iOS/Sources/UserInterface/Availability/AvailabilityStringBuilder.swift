@@ -23,6 +23,7 @@ final class AvailabilityStringBuilder: NSObject {
 
     static func string(for user: UserType, with style: AvailabilityLabelStyle, color: UIColor? = nil) -> NSAttributedString? {
 
+        let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
         var title: String = ""
         var color = color
         var iconColor = color
@@ -32,8 +33,11 @@ final class AvailabilityStringBuilder: NSObject {
         switch style {
         case .list:
             do {
-                if let name = user.name {
+                if let name = user.name, !name.isEmpty {
                     title = name
+                } else {
+                    title = fallbackTitle
+                    color = SemanticColors.Label.textCollectionSecondary
                 }
 
                 fontSize = .normal

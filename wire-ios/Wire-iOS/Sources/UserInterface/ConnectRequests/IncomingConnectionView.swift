@@ -101,7 +101,7 @@ final class IncomingConnectionView: UIView {
         verticalStackView.spacing = 30.0
         verticalStackView.alignment = .center
         [usernameLabel, userDetailView, securityLevelView, verticalStackView, incomingConnectionFooter].forEach(addSubview)
-        [userImageView, federatedIndicator, warningView].forEach{ verticalStackView.addArrangedSubview($0) }
+        [userImageView, federatedIndicator, warningView].forEach { verticalStackView.addArrangedSubview($0) }
         setupLabelText()
     }
 
@@ -115,7 +115,9 @@ final class IncomingConnectionView: UIView {
         usernameLabel.attributedText = viewModel.title
         usernameLabel.accessibilityIdentifier = "name"
         userDetailView.configure(with: viewModel)
-        securityLevelView.configure(with: [user], provider: classificationProvider)
+        securityLevelView.configure(with: [user],
+                                    conversationDomain: nil,
+                                    provider: classificationProvider)
     }
 
     private func createConstraints() {

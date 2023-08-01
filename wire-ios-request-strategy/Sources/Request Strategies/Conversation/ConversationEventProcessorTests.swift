@@ -46,7 +46,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
                 data: Payload.UpdateConverationMemberJoin(
                     userIDs: [],
                     users: [selfMember]
-                )
+                ),
+                failedToAddUsers: nil
             )
 
             guard let transportPayload = try? payload.toTransportDictionary() else {

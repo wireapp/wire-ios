@@ -98,7 +98,7 @@ final class CallStatusView: UIView {
         bitrateLabel.bitRateStatus = BitRateStatus(configuration.isConstantBitRate)
 
         [titleLabel, subtitleLabel, bitrateLabel].forEach {
-            $0.textColor = UIColor.from(scheme: .textForeground, variant: configuration.effectiveColorVariant)
+            $0.textColor = SemanticColors.Label.textDefault
         }
     }
 

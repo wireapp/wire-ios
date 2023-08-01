@@ -561,7 +561,9 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - Security Banner
 
     private func updateClassificationBanner() {
-        securityLevelView.configure(with: conversation.participants, provider: classificationProvider)
+        securityLevelView.configure(with: conversation.participants,
+                                    conversationDomain: conversation.domain,
+                                    provider: classificationProvider)
     }
 
     // MARK: - Save draft message
@@ -667,6 +669,7 @@ final class ConversationInputBarViewController: UIViewController,
         guard !AppDelegate.isOffline,
                 let conversation = conversation as? ZMConversation else { return }
 
+        inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation)
         giphySearchViewController.delegate = self
         ZClientViewController.shared?.present(giphySearchViewController.wrapInsideNavigationController(), animated: true)
@@ -828,7 +831,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayName)
+        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
         parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
     }
@@ -850,7 +853,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
 
-        confirmImageViewController.previewTitle = conversation.displayName.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
 
         present(confirmImageViewController, animated: false)
     }

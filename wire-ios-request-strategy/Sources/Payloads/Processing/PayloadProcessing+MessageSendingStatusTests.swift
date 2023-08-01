@@ -149,6 +149,59 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
         }
     }
 
+    func testThatItCallsTheAddFailedToSendRecipientsMethod() throws {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+            let clientID = UUID().transportString()
+            let failedToSend: Payload.ClientListByQualifiedUserID =
+                [self.domain:
+                    [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+                ]
+            let payload = Payload.MessageSendingStatus(time: Date(),
+                                                       missing: [:],
+                                                       redundant: [:],
+                                                       deleted: [:],
+                                                       failedToSend: failedToSend)
+
+            // when
+            _ = payload.updateClientsChanges(for: message)
+
+            // then
+            XCTAssertEqual(message.isFailedToSendUsers, true)
+        }
+    }
+
+    func testThatItAddsFailedToSendRecipients() throws {
+        try self.syncMOC.performGroupedAndWait { _ in
+            // given
+            guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
+                XCTFail("Failed to add message")
+                return
+            }
+
+            let domain = "example.com"
+            let clientID = UUID().transportString()
+            let failedToSend: Payload.ClientListByQualifiedUserID =
+                [domain:
+                    [self.otherUser.remoteIdentifier.transportString(): [clientID]]
+                ]
+            XCTAssertEqual(message.failedToSendRecipients?.count, 0)
+
+            // When
+            let payload = Payload.MessageSendingStatus(time: Date(),
+                                                       missing: [:],
+                                                       redundant: [:],
+                                                       deleted: [:],
+                                                       failedToSend: failedToSend)
+            _ = payload.updateClientsChanges(for: message)
+
+            // Then
+            XCTAssertEqual(message.failedToSendRecipients?.count, 1)
+            XCTAssertEqual(message.failedToSendRecipients?.first, self.otherUser)
+        }
+    }
+
     // MARK: - Payload mapping
 
     func testThatItReturnsMissingClientListByUser() {

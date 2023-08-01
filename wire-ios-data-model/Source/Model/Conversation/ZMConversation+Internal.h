@@ -79,12 +79,14 @@ extern NSString *const ZMConversationLastUnreadKnockDateKey;
 extern NSString *const ZMConversationLastUnreadMissedCallDateKey;
 extern NSString *const ZMConversationLastReadLocalTimestampKey;
 extern NSString *const ZMConversationLegalHoldStatusKey;
+extern NSString *const ZMConversationIsDeletedRemotelyKey;
 
 extern NSString *const SecurityLevelKey;
 extern NSString *const ZMConversationLabelsKey;
 extern NSString *const ZMConversationDomainKey;
 extern NSString *const TeamKey;
 extern NSString *const AccessRoleStringsKeyV2;
+extern NSString *const ZMConversationIsPendingMetadataRefreshKey;
 
 NS_ASSUME_NONNULL_END
 

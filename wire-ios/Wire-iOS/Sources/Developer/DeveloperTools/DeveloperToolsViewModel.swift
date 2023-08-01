@@ -187,7 +187,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         })))
 
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
-        items.append(.button(ButtonItem(title: "Stop federating with Anta", action: stopFederatingAnta)))
+        items.append(.button(ButtonItem(title: "Stop federating with foma", action: stopFederatingAnta)))
         items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
 
         return Section(
@@ -305,7 +305,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
     
     private func stopFederatingAnta() {
-        stopFederatingDomain(domain: "anta.wire.link")
+        stopFederatingDomain(domain: "foma.wire.link")
     }
 
     private func stopFederatingDomain(domain: String) {

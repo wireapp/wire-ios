@@ -80,4 +80,8 @@ extension ZMUser {
         let domainPredicate = NSPredicate(format: "(%K == %@)", #keyPath(ZMUser.domain), domain)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [domainPredicate, predicateForConnectedUsers(withSearch: "")])
     }
+
+    public static func predicateForUsersArePendingToRefreshMetadata() -> NSPredicate {
+        return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
+    }
 }

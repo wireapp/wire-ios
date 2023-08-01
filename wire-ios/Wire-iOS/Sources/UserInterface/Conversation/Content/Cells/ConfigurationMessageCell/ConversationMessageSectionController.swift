@@ -74,7 +74,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     /// The message that is being presented.
-    var message: ZMConversationMessage {
+    var message: ConversationMessage {
         didSet {
             updateDelegates()
         }
@@ -96,16 +96,20 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// Whether this section is selected
     private var selected: Bool
 
+    /// Whether this section is collapsed
+    private var isCollapsed: Bool
+
     private var changeObservers: [Any] = []
 
     deinit {
         changeObservers.removeAll()
     }
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
+    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
         self.message = message
         self.context = context
         self.selected = selected
+        self.isCollapsed = true
 
         super.init()
 
@@ -143,7 +147,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isFile {
             contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
-            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message)
+            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message,
+                                                                                     isCollapsed: isCollapsed,
+                                                                                     buttonAction: buttonAction)
         } else {
             contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
@@ -157,6 +163,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         cellDescriptions.append(contentsOf: contentCellDescriptions)
+    }
+
+    private func buttonAction() {
+        self.isCollapsed = !self.isCollapsed
+        self.cellDelegate?.conversationMessageShouldUpdate()
     }
 
     // MARK: - Content Cells
@@ -242,6 +253,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
         }
 
+        if isFailedRecipientsVisible(in: context) {
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedUsers: message.failedToSendUsers,
+                                                                                     isCollapsed: isCollapsed,
+                                                                                     buttonAction: { self.buttonAction() })
+            add(description: cellDescription)
+        }
+
         if let topCelldescription = cellDescriptions.first {
             topCelldescription.topMargin = context.spacing
         }
@@ -281,6 +299,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
+    }
+
+    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+        guard message.isNormal,
+              !message.isKnock else {
+            return false
+        }
+
+        return !message.failedToSendUsers.isEmpty
     }
 
     // MARK: - Highlight
@@ -330,8 +357,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
             if let users = message.systemMessageData?.users {
                 for user in users where user.remoteIdentifier != (message.senderUser as? ZMUser)?.remoteIdentifier {
-                    let observer = UserChangeInfo.add(observer: self, for: user, in: userSession)!
-                    changeObservers.append(observer)
+                    if let observer = UserChangeInfo.add(observer: self, for: user, in: userSession) {
+                        changeObservers.append(observer)
+                    } else {
+                        assertionFailure("Failed to add observer for user \(user)")
+                    }
                 }
             }
         }
