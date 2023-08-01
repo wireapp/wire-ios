@@ -290,7 +290,7 @@ enum Payload {
             case missingLegalholdConsent = "missing-legalhold-consent"
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
-            case federationDenied = "federation-denied"
+            case invalidDomain = "invalid-domain"
             case federationRemoteError = "federation-remote-error"
             case unknown
 
