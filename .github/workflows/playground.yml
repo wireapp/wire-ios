@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   playground:
-    uses: ./.github/workflows/app_release.yml
+    uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: playground
     secrets: inherit

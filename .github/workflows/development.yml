@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   development:
-    uses: ./.github/workflows/app_release.yml
+    uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: development
     secrets: inherit
