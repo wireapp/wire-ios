@@ -73,10 +73,14 @@ final class DestructionCountdownView: UIView {
     private func makePath(for bounds: CGRect) -> CGPath {
         let path = CGMutablePath()
         path.addArc(
-            center: CGPoint(x: bounds.midX,
-                            y: bounds.midY),
-            radius: min(bounds.height,
-                        bounds.width) / 4,
+            center: CGPoint(
+                x: bounds.midX,
+                y: bounds.midY
+            ),
+            radius: min(
+                bounds.height,
+                bounds.width
+            ) / 4,
             startAngle: -.pi / 2,
             endAngle: 3 * .pi / 2,
             clockwise: false
