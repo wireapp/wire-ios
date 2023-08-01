@@ -33,8 +33,8 @@ platform :ios do
     end
 
     before_all do |lane|
-        ensure_xcode_version unless [:prepare_for_development].include?(lane)
-        create_keychain_if_needed unless [:prepare_for_development, :prepare_for_tests].include?(lane)
+        ensure_xcode_version
+        create_keychain_if_needed unless [:prepare_for_tests].include?(lane)
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
@@ -55,12 +55,6 @@ platform :ios do
     desc "Prepare for tests"
     lane :prepare_for_tests do
         create_simulator_if_needed
-    end
-
-    desc "Prepare for development"
-    lane :prepare_for_development do |options|
-        sh "cd .. && ./setup.sh"
-        sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
     end
     
     desc "Build & Upload Development build"
@@ -191,23 +185,6 @@ platform :ios do
         `echo APP_NAME=#{name}} >> .post_build_env`
     end
 
-    def fetch_latest_configuration_repo
-        
-        path = '../wire-ios-build-assets'
-        `rm -rf #{path}`
-        if is_running_on_ci 
-            Git.clone(
-                "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-build-assets.git",
-                path
-            )
-        else
-            Git.clone(
-                "git@github.com:wireapp/wire-ios-build-assets.git",
-                path
-            )
-        end
-    end
-
     def download_distribution_certificate_and_profiles(build, options)
         if is_running_on_ci 
             match(
@@ -259,7 +236,7 @@ platform :ios do
 
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
-        fetch_latest_configuration_repo
+        xcode_version = options[:xcode_version]
 
         build_type = options[:build_type]
         # Delete configurations in case we switch to different branch or repo
@@ -272,19 +249,9 @@ platform :ios do
                 override_folder = "CI configuration"
             end
 
-            config_repo = options[:config_repo]
-            if config_repo.nil? 
-                config_repo = "https://github.com/wireapp/wire-ios-build-configuration.git"
-            end
-
-            config_branch = options[:config_branch]
-            if config_branch.nil? 
-                config_branch = "master"
-            end
-
             build = Build.new(options: options)
 
-            sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            sh "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
