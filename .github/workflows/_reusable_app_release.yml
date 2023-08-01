@@ -39,6 +39,8 @@ on:
         required: true
       C3_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
+      SUBMODULE_PAT:
+        required: true
 
 permissions: 
   checks: write
@@ -70,6 +72,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SUBMODULE_PAT }}
+          submodules: recursive
       - name: Restore Carthage Cache
         uses: actions/cache@v3
         id: cache-carthage
