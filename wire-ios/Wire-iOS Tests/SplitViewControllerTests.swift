@@ -85,7 +85,7 @@ final class SplitViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.rightView.frame.width, compactWidth)
     }
 
-    fileprivate func setupLeftView(isLeftViewControllerRevealed: Bool,
+    private func setupLeftView(isLeftViewControllerRevealed: Bool,
                                    animated: Bool = true,
                                    file: StaticString = #file,
                                    line: UInt = #line) {

@@ -21,9 +21,9 @@ import WireDataModel
 
 final class LegalHoldDetailsViewController: UIViewController {
 
-    fileprivate let collectionView = UICollectionView(forGroupedSections: ())
-    fileprivate let collectionViewController: SectionCollectionViewController
-    fileprivate let conversation: LegalHoldDetailsConversation
+    private let collectionView = UICollectionView(forGroupedSections: ())
+    private let collectionViewController: SectionCollectionViewController
+    private let conversation: LegalHoldDetailsConversation
 
     convenience init?(user: UserType) {
         guard let conversation = user.oneToOneConversation else { return nil }
@@ -81,14 +81,14 @@ final class LegalHoldDetailsViewController: UIViewController {
         (conversation as? ZMConversation)?.verifyLegalHoldSubjects()
     }
 
-    fileprivate func setupViews() {
+    private func setupViews() {
 
         view.addSubview(collectionView)
 
         collectionView.contentInsetAdjustmentBehavior = .never
     }
 
-    fileprivate func createConstraints() {
+    private func createConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
@@ -99,7 +99,7 @@ final class LegalHoldDetailsViewController: UIViewController {
         ])
     }
 
-    fileprivate func computeVisibleSections() -> [CollectionViewSectionController] {
+    private func computeVisibleSections() -> [CollectionViewSectionController] {
         let headerSection = SingleViewSectionController(view: LegalHoldHeaderView(frame: .zero))
         let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(conversation: conversation)
         legalHoldParticipantsSection.delegate = self

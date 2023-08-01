@@ -126,11 +126,11 @@ final class MarkdownTextView: NextResponderTextView {
     private var newlineFlag = false
 
     /// The current attributes to be applied when typing.
-    fileprivate var currentAttributes: [NSAttributedString.Key: Any] = [:]
+    private var currentAttributes: [NSAttributedString.Key: Any] = [:]
 
     /// The currently active markdown. This determines which attributes
     /// are applied when typing.
-    fileprivate(set) var activeMarkdown = Markdown.none {
+    private(set) var activeMarkdown = Markdown.none {
         didSet {
             if oldValue != activeMarkdown {
                 currentAttributes = attributes(for: activeMarkdown)
@@ -165,7 +165,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     // MARK: - Range Helpers
 
-    fileprivate var currentLineRange: NSRange? {
+    private var currentLineRange: NSRange? {
         guard selectedRange.location != NSNotFound else { return nil }
         return (text as NSString).lineRange(for: selectedRange)
     }
@@ -298,7 +298,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Returns a set containing all markdown combinations present in the given
     /// range.
-    fileprivate func markdown(in range: NSRange) -> Set<Markdown> {
+    private func markdown(in range: NSRange) -> Set<Markdown> {
         var result = Set<Markdown>()
         markdownTextStorage.enumerateAttribute(.markdownID, in: range, options: []) { md, _, _ in
             result.insert(md as? Markdown ?? .none)
@@ -359,13 +359,13 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Adds the given markdown (and the associated attributes) to the given
     /// range.
-    fileprivate func add(_ markdown: Markdown, to range: NSRange) {
+    private func add(_ markdown: Markdown, to range: NSRange) {
         updateAttributes(in: range) { $0.union(markdown) }
     }
 
     /// Removes the given markdown (and the associated attributes) from the given
     /// range.
-    fileprivate func remove(_ markdown: Markdown, from range: NSRange) {
+    private func remove(_ markdown: Markdown, from range: NSRange) {
         updateAttributes(in: range) { $0.subtracting(markdown) }
     }
 
@@ -480,7 +480,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     /// Inserts a list prefix with the given type on the current line.
-    fileprivate func insertListItem(type: ListType) {
+    private func insertListItem(type: ListType) {
 
         // remove existing list item if it exists
         removeListItem()
@@ -504,7 +504,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     /// Removes the list prefix from the current line.
-    fileprivate func removeListItem() {
+    private func removeListItem() {
         guard
             let lineRange = currentLineRange,
             let prefixRange = rangeOfListPrefix(at: lineRange)?.textRange(in: self),
