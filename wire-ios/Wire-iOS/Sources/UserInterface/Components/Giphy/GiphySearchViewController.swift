@@ -80,12 +80,12 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         cleanUpPendingTimer()
     }
 
-    fileprivate func cleanUpPendingTask() {
+    private func cleanUpPendingTask() {
         pendingSearchtask?.cancel()
         pendingSearchtask = nil
     }
 
-    fileprivate func cleanUpPendingTimer() {
+    private func cleanUpPendingTimer() {
         pendingTimer?.invalidate()
         pendingTimer = nil
     }

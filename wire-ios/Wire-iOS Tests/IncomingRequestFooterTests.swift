@@ -43,7 +43,7 @@ class IncomingRequestFooterTests: ZMSnapshotTestCase {
 
 }
 
-fileprivate extension IncomingRequestFooterView {
+private extension IncomingRequestFooterView {
 
     func prepareForSnapshots() -> UIView {
         let container = UIView()
