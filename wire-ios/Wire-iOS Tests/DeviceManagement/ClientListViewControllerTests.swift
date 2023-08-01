@@ -45,8 +45,6 @@ final class ClientListViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTe
         client = nil
         selfClient = nil
 
-        resetColorScheme()
-
         coreDataFixture = nil
 
         super.tearDown()

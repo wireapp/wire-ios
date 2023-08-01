@@ -39,7 +39,6 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
 
     override func tearDown() {
         sut = nil
-        ColorScheme.default.variant = .light
         coreDataFixture = nil
         super.tearDown()
     }
