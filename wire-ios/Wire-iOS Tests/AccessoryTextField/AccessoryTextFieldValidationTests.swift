@@ -56,7 +56,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         super.tearDown()
     }
 
-    fileprivate func checkSucceed(
+    private func checkSucceed(
         textFieldType: ValidatedTextField.Kind,
         text: String,
         file: StaticString = #file,

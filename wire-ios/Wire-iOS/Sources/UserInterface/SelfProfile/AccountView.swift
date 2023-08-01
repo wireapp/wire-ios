@@ -96,11 +96,11 @@ class BaseAccountView: UIView {
     var autoUpdateSelection: Bool = true
 
     let imageViewContainer = UIView()
-    fileprivate let outlineView = UIView()
+    private let outlineView = UIView()
     let dotView: DotView
     let selectionView = ShapeView()
-    fileprivate var unreadCountToken: Any?
-    fileprivate var selfUserObserver: NSObjectProtocol!
+    private var unreadCountToken: Any?
+    private var selfUserObserver: NSObjectProtocol!
     let account: Account
 
     var unreadCountStyle: AccountUnreadCountStyle = .none {

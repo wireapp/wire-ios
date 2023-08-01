@@ -51,7 +51,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     // MARK: - Size
 
     /// The width of the collection container.
-    fileprivate var contentWidth: CGFloat {
+    private var contentWidth: CGFloat {
         guard let collectionView = self.collectionView else {
             return 0
         }
@@ -61,7 +61,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     /// The height of the collection container.
-    fileprivate var contentHeight: CGFloat {
+    private var contentHeight: CGFloat {
         guard let collectionView = self.collectionView else {
             return 0
         }
@@ -78,10 +78,10 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     // MARK: - Layout
 
     /// The current positioning of the items.
-    fileprivate var positioning: VerticalColumnPositioning?
+    private var positioning: VerticalColumnPositioning?
 
     /// The current positioning context.
-    fileprivate var positioningContext: VerticalColumnPositioningContext {
+    private var positioningContext: VerticalColumnPositioningContext {
         return VerticalColumnPositioningContext(contentWidth: contentWidth,
                                                 numberOfColumns: numberOfColumns,
                                                 interItemSpacing: interItemSpacing,

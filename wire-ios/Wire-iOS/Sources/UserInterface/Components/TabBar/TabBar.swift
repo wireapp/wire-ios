@@ -23,13 +23,13 @@ protocol TabBarDelegate: AnyObject {
 }
 
 final class TabBar: UIView {
-    fileprivate let stackView = UIStackView()
+    private let stackView = UIStackView()
 
     // MARK: - Properties
 
     weak var delegate: TabBarDelegate?
     var animatesTransition = true
-    fileprivate(set) var items: [UITabBarItem] = []
+    private(set) var items: [UITabBarItem] = []
     private let tabInset: CGFloat = 16
 
     private let selectionLineView = UIView()
@@ -38,13 +38,13 @@ final class TabBar: UIView {
     private lazy var lineLeadingConstraint: NSLayoutConstraint = selectionLineView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: tabInset)
     private var didUpdateInitialBarPosition = false
 
-    fileprivate(set) var selectedIndex: Int {
+    private(set) var selectedIndex: Int {
         didSet {
             updateButtonSelection()
         }
     }
 
-    fileprivate var selectedTab: Tab {
+    private var selectedTab: Tab {
         return self.tabs[selectedIndex]
     }
 
@@ -149,7 +149,7 @@ final class TabBar: UIView {
         ])
     }
 
-    fileprivate func makeButtonForItem(_ index: Int, _ item: UITabBarItem) -> Tab {
+    private func makeButtonForItem(_ index: Int, _ item: UITabBarItem) -> Tab {
         let tab = Tab()
         tab.setTitle(item.title, for: .normal)
 
@@ -203,7 +203,7 @@ final class TabBar: UIView {
         updateLinePosition(animated: animated)
     }
 
-    fileprivate func updateButtonSelection() {
+    private func updateButtonSelection() {
         tabs.forEach { $0.isSelected = false }
         tabs[selectedIndex].isSelected = true
         tabs[selectedIndex].accessibilityValue = L10n.Accessibility.TabBar.Item.value

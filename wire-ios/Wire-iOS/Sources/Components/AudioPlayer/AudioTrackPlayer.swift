@@ -73,9 +73,9 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     private var nextTrackHandler: Any?
     private var previousTrackHandler: Any?
 
-    fileprivate var playerStatusObserver: NSKeyValueObservation?
-    fileprivate var playerRateObserver: NSKeyValueObservation?
-    fileprivate var playerCurrentItemObserver: NSKeyValueObservation?
+    private var playerStatusObserver: NSKeyValueObservation?
+    private var playerRateObserver: NSKeyValueObservation?
+    private var playerCurrentItemObserver: NSKeyValueObservation?
 
     private(set) var audioTrack: AudioTrack?
 

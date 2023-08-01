@@ -33,9 +33,9 @@ final class SearchResultLabelTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    fileprivate func performTest(file: StaticString = #file,
-                                 line: UInt = #line,
-                                 mode: UIUserInterfaceStyle = .light) {
+    private func performTest(file: StaticString = #file,
+                             line: UInt = #line,
+                             mode: UIUserInterfaceStyle = .light) {
         let textCombinations = Set<String>(arrayLiteral: "Very short text", "Very very long text Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
 
         let queryCombinations = Set<String>(arrayLiteral: "", "Short", "Very", "very long", "veniam")
@@ -77,7 +77,7 @@ final class SearchResultLabelTests: ZMSnapshotTestCase {
 
             self.verify(view: mockBackgroundView, identifier: identifier, file: #file, line: #line)
             return .none
-            }.count, 0, line: #line)
+        }.count, 0, line: #line)
     }
 
     func prepareForTest(mode: UIUserInterfaceStyle = .light) {

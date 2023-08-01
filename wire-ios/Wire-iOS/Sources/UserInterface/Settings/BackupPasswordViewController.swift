@@ -53,7 +53,7 @@ final class BackupPasswordViewController: UIViewController {
     typealias ViewColors = SemanticColors.View
     var completion: Completion?
 
-    fileprivate var password: Password?
+    private var password: Password?
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
@@ -163,16 +163,16 @@ final class BackupPasswordViewController: UIViewController {
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
-    fileprivate func updateState(with text: String) {
+    private func updateState(with text: String) {
         password = Password(text)
         navigationItem.rightBarButtonItem?.isEnabled = nil != password
     }
 
-    @objc dynamic fileprivate func cancel() {
+    @objc dynamic private func cancel() {
         completion?(self, nil)
     }
 
-    @objc dynamic fileprivate func completeWithCurrentResult() {
+    @objc dynamic private func completeWithCurrentResult() {
         completion?(self, password)
     }
 }

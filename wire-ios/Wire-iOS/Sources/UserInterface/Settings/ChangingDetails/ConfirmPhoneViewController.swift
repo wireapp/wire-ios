@@ -36,12 +36,12 @@ protocol ConfirmPhoneDelegate: AnyObject {
 }
 
 final class ConfirmPhoneViewController: SettingsBaseTableViewController {
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
-    fileprivate var observer: NSObjectProtocol?
-    fileprivate var observerToken: Any?
+    private weak var userProfile = ZMUserSession.shared()?.userProfile
+    private var observer: NSObjectProtocol?
+    private var observerToken: Any?
 
-    fileprivate var resendEnabled: Bool = false
-    fileprivate var timer: ZMTimer?
+    private var resendEnabled: Bool = false
+    private var timer: ZMTimer?
 
     weak var delegate: ConfirmPhoneDelegate?
     let newNumber: String
@@ -77,7 +77,7 @@ final class ConfirmPhoneViewController: SettingsBaseTableViewController {
         observer = nil
     }
 
-    fileprivate func setupViews() {
+    private func setupViews() {
         ConfirmationCodeCell.register(in: tableView)
         SettingsButtonCell.register(in: tableView)
 
@@ -101,19 +101,19 @@ final class ConfirmPhoneViewController: SettingsBaseTableViewController {
         tableView.autolayoutTableHeaderView = description
     }
 
-    fileprivate func startTimer() {
+    private func startTimer() {
         resendEnabled = false
         timer?.cancel()
         timer = ZMTimer(target: self, operationQueue: .main)
         timer?.fire(afterTimeInterval: 30)
     }
 
-    fileprivate func clearCodeInput() {
+    private func clearCodeInput() {
         let inputCode = IndexPath(item: 0, section: Section.verificationCode.rawValue)
         tableView.reloadRows(at: [inputCode], with: .none)
     }
 
-    fileprivate func reloadResendCell() {
+    private func reloadResendCell() {
         let resend = IndexPath(item: 0, section: Section.buttons.rawValue)
         tableView.reloadRows(at: [resend], with: .none)
     }

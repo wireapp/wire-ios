@@ -26,12 +26,12 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
     // MARK: - Properties
 
-    fileprivate let item: UIDynamicItem
-    fileprivate let edgeInsets: CGPoint
+    private let item: UIDynamicItem
+    private let edgeInsets: CGPoint
 
-    fileprivate let collisionBehavior: UICollisionBehavior
-    fileprivate let itemTransformBehavior: UIDynamicItemBehavior
-    fileprivate var fieldBehaviors: [UIFieldBehavior] = []
+    private let collisionBehavior: UICollisionBehavior
+    private let itemTransformBehavior: UIDynamicItemBehavior
+    private var fieldBehaviors: [UIFieldBehavior] = []
 
     // MARK: - Initialization
 

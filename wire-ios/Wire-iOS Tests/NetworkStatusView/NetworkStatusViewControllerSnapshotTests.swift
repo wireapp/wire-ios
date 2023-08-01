@@ -75,7 +75,7 @@ final class NetworkStatusViewControllerSnapshotTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    fileprivate func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line) {
+    private func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line) {
         // GIVEN
         sut.didChangeAvailability(newState: newState)
 
