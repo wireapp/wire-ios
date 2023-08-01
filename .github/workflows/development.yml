@@ -1,10 +1,6 @@
 name: Development
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - 'develop'
+on: [pull_request]
 
 permissions: 
   checks: write
