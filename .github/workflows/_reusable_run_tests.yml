@@ -122,7 +122,7 @@ jobs:
           bundle exec fastlane prepare_for_tests
         
       - name: Test WireSystem
-        if: ${{ inputs.wire-ios-system }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-system || inputs.all }}
         run: |
           echo "WireSystem has changes"
           echo "Building WireSystem..."
@@ -132,7 +132,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTesting
-        if: ${{ inputs.wire-ios-testing }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-testing || inputs.all }}
         run: |
           echo "WireTesting has changes"
           echo "Building WireTesting..."
@@ -142,7 +142,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireUtilities
-        if: ${{ inputs.wire-ios-utilities }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-utilities || inputs.all }}
         run: |
           echo "WireUtilities has changes"
           echo "Building WireUtilities..."
@@ -152,7 +152,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireCryptobox
-        if: ${{ inputs.wire-ios-cryptobox }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
         run: |
           echo "WireCryptobox has changes"
           echo "Building WireCryptobox..."
@@ -162,7 +162,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireTransport
-        if: ${{ inputs.wire-ios-transport }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-transport || inputs.all }}
         run: |
           echo "WireTransport has changes"
           echo "Building WireTransport..."
@@ -172,7 +172,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireLinkPreview
-        if: ${{ inputs.wire-ios-link-preview }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
         run: |
           echo "WireLinkPreview has changes"
           echo "Building WireLinkPreview..."
@@ -182,7 +182,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireImages
-        if: ${{ inputs.wire-ios-images }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-images || inputs.all }}
         run: |
           echo "WireImages has changes"
           echo "Building WireImages..."
@@ -192,7 +192,7 @@ jobs:
           exit ${PIPESTATUS[0]}          
 
       - name: Test WireProtos
-        if: ${{ inputs.wire-ios-protos }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-protos || inputs.all }}
         run: |
           echo "WireProtos has changes"
           echo "Building WireProtos..."
@@ -202,7 +202,7 @@ jobs:
           exit ${PIPESTATUS[0]}          
           
       - name: Test WireMockTransport
-        if: ${{ inputs.wire-ios-mocktransport }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
         run: |
           echo "WireMockTransport has changes"
           echo "Building WireMockTransport..."
@@ -212,7 +212,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireDataModel
-        if: ${{ inputs.wire-ios-data-model }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-data-model || inputs.all }}
         run: |
           echo "WireDataModel has changes"
           echo "Building WireDataModel..."
@@ -221,7 +221,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireRequestStrategy
-        if: ${{ inputs.wire-ios-request-strategy }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         run: |
           echo "WireRequestStrategy has changes"
           echo "Building WireRequestStrategy..."
@@ -231,7 +231,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test WireShareEngine
-        if: ${{ inputs.wire-ios-share-engine }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
         run: |
           echo "WireShareEngine has changes"
           echo "Building WireShareEngine..."
@@ -241,7 +241,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Test WireSyncEngine
-        if: ${{ inputs.wire-ios-sync-engine }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
         run: |
           echo "WireSyncEngine has changes"
           echo "Building WireSyncEngine..."
@@ -251,7 +251,7 @@ jobs:
           exit ${PIPESTATUS[0]}
           
       - name: Test Wire-iOS
-        if: ${{ inputs.wire-ios }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios || inputs.all }}
         run: |
           echo "Wire-iOS has changes"
           echo "Building Wire-iOS..."
@@ -273,7 +273,7 @@ jobs:
       # Wire-iOS stating that symbols from the notification can't be found. to workaround this, test the notification
       # after the Wire-iOS.
       - name: Test WireNotificationEngine
-        if: ${{ inputs.wire-ios-notification-engine }} || ${{ inputs.all }}
+        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
         run: |
           echo "WireNotificationEngine has changes"
           echo "Building WireNotificationEngine..."
