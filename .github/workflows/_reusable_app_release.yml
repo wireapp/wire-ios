@@ -100,7 +100,7 @@ jobs:
         with:
           name: post-build-env
           path: |
-            .post_build_env
+            **/*.post_build_env
 
       # - name: Notify on Wire
       #   if: always()
