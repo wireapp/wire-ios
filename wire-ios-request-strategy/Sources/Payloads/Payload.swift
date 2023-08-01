@@ -320,6 +320,7 @@ enum Payload {
             case redundant
             case deleted
             case failedToSend = "failed_to_send"
+            case failedToConfirm = "failed_to_confirm_clients"
         }
 
         /// Time of sending message.
@@ -338,6 +339,9 @@ enum Payload {
         /// When a message is partially sent contains the list of clients which
         /// didn't receive the message.
         let failedToSend: ClientListByQualifiedUserID
+
+        /// The lists the users for which the client verification could not be performed.
+        let failedToConfirm: ClientListByQualifiedUserID
     }
 
     struct MLSMessageSendingStatus: Codable {
