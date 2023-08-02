@@ -33,15 +33,31 @@ class FederationDeleteManagerTests: MessagingTestBase {
         sut = nil
     }
 
+
+    func testThatFederationDelete_markOneToOnConversationAsReadOnly()  throws {
+        syncMOC.performGroupedAndWait { [self] syncMOC in
+            // GIVEN
+            let domain = "other.user.domain"
+            otherUser.domain = domain
+            let conversation = createOneToOneConversation(with: otherUser)
+            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
+
+            // WHEN
+            sut.backendStoppedFederatingWithDomain(domain: domain)
+
+            // THEN
+//            XCTAssertFalse(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertTrue(conversation.isReadOnly)
+        }
+    }
+
     func testThatFederationDelete_removeSelfUserFromSecondBackendConversation()  throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let domain = "other.user.domain"
             otherUser.domain = domain
             let conversation = createGroupConversation(with: [otherUser], hostedByDomain: domain)
-
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
-            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
 
             // WHEN
             sut.backendStoppedFederatingWithDomain(domain: domain)
@@ -58,9 +74,6 @@ class FederationDeleteManagerTests: MessagingTestBase {
             let domain = "other.user.domain"
             otherUser.domain = domain
             let conversation = createGroupConversation(with: [otherUser], hostedByDomain: owningDomain)
-
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
-            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
 
             // WHEN
             sut.backendStoppedFederatingWithDomain(domain: domain)
@@ -120,6 +133,22 @@ extension FederationDeleteManagerTests {
             conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         }
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
+        conversation.needsToBeUpdatedFromBackend = false
+        return conversation
+    }
+
+
+    /// Creates a 1:1 conversation with a user in given domain
+    func createOneToOneConversation(with user: ZMUser) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.conversationType = .oneOnOne
+//        conversation.domain = domain
+        conversation.remoteIdentifier = UUID.create()
+//        for user in users {
+//            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+//        }
+//        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         conversation.needsToBeUpdatedFromBackend = false
         return conversation
     }

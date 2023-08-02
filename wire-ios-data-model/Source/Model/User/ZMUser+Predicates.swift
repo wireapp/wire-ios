@@ -84,4 +84,9 @@ extension ZMUser {
     public static func predicateForUsersArePendingToRefreshMetadata() -> NSPredicate {
         return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
+
+    public static func predicateForUsersPendingConnection(inDomain domain: String) -> NSPredicate {
+        let domainPredicate = NSPredicate(format: "(%K == %@)", #keyPath(ZMUser.domain), domain)
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [domainPredicate, predicateForUsers(withSearch: "", connectionStatuses: [ZMConnectionStatus.pending.rawValue])])
+    }
 }

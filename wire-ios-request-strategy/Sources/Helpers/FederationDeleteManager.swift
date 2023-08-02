@@ -46,13 +46,22 @@ final public class FederationDeleteManager {
             removeParticipantsFromDomains(domains: [domain, selfDomain], inConversation: currentConversation)
         }
 
-        //  search all connected users from domain
+        //  search all 1:1 conversations with users from domain and mark as readOnly
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(inDomain: domain))
         let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
         for user in users {
             guard let conversation = user.connection?.conversation else { continue }
-            // TODO: make conversation readOnly and add system notification
+            conversation.isForcedReadOnly = true
         }
+
+
+        //  search all users requesting connection from domain and remove request
+        let pendingFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersPendingConnection(inDomain: domain))
+        let pendingUsers = moc.fetchOrAssert(request: pendingFetchRequest) as? [ZMUser] ?? []
+        for user in pendingUsers {
+            user.conne
+        }
+
     }
 
     func domainsStoppedFederating(domains: [String]) {
