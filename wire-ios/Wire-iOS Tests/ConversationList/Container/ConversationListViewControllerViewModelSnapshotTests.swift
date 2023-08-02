@@ -22,7 +22,7 @@ import XCTest
 final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     var sut: ConversationListViewController.ViewModel!
     var mockView: UIView!
-    fileprivate var mockViewController: MockConversationListContainer!
+    private var mockViewController: MockConversationListContainer!
 
     var coreDataFixture: CoreDataFixture!
 

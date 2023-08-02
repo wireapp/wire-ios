@@ -30,14 +30,14 @@ protocol ArchivedListViewControllerDelegate: AnyObject {
 
 final class ArchivedListViewController: UIViewController {
 
-    fileprivate var collectionView: UICollectionView!
-    fileprivate let archivedNavigationBar = ArchivedNavigationBar(title: L10n.Localizable.ArchivedList.title.capitalized)
-    fileprivate let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
-    fileprivate let swipeIdentifier = "ArchivedList"
-    fileprivate let viewModel = ArchivedListViewModel()
-    fileprivate let layoutCell = ConversationListCell()
-    fileprivate var actionController: ConversationActionController?
-    fileprivate var startCallController: ConversationCallController?
+    private var collectionView: UICollectionView!
+    private let archivedNavigationBar = ArchivedNavigationBar(title: L10n.Localizable.ArchivedList.title.capitalized)
+    private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
+    private let swipeIdentifier = "ArchivedList"
+    private let viewModel = ArchivedListViewModel()
+    private let layoutCell = ConversationListCell()
+    private var actionController: ConversationActionController?
+    private var startCallController: ConversationCallController?
 
     weak var delegate: ArchivedListViewControllerDelegate?
 
