@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 
 enum AvailabilityLabelStyle: Int {
-    case list, participants, placeholder
+    case list, participants
 }
 
 extension AvailabilityKind {
