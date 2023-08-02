@@ -157,7 +157,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
             users?.filter(\.isTeamMember).forEach({ $0.refreshData() })
 
-            action.notifyResult(.failure(ConversationAddParticipantsError(response: response) ?? .unknown))
+            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
 
         case 523:
             guard let failure = Payload.ResponseFailure(response, decoder: decoder),
