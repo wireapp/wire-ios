@@ -49,7 +49,7 @@ final class UserNameTakeOverViewController: UIViewController {
     private let suggestedHandle: String
     private let name: String
     private let learnMore = RegistrationSelectHandle.subtitleLink
-    fileprivate let learnMoreURL = URL(string: "action://learn-more")!
+    private let learnMoreURL = URL(string: "action://learn-more")!
 
     weak var delegate: UserNameTakeOverViewControllerDelegate?
 

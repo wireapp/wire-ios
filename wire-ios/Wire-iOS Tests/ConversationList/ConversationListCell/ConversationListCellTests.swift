@@ -69,7 +69,7 @@ final class ConversationListCellTests: ZMSnapshotTestCase {
     // MARK: - Setup
 
     var sut: ConversationListCell!
-    fileprivate var otherUserConversation: MockConversation!
+    private var otherUserConversation: MockConversation!
     var otherUser: MockUserType!
 
     override func setUp() {
