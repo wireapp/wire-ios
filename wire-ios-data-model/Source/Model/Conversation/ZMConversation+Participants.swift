@@ -140,7 +140,8 @@ extension ZMConversation {
     }
 
     // MARK: - Participant actions
-    public func addParticipants(_ participants: [UserType], completion: @escaping AddParticipantAction.ResultHandler) {
+    public func addParticipants(_ participants: [UserType],
+                                completion: @escaping AddParticipantAction.ResultHandler) {
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return

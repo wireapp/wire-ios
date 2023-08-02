@@ -141,15 +141,15 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
             else {
                 Logging.network.warn("Can't process response, aborting.")
-                action.notifyResult(.failure(.unknown))
+                action.fail(with: .unknown)
                 return
             }
 
             eventProcessor.processConversationEvents([updateEvent])
-            action.notifyResult(.success(Void()))
+            action.succeed()
 
         case 204:
-            action.notifyResult(.success(Void()))
+            action.succeed()
 
         case 403:
             // Refresh user data since this operation might have failed
@@ -165,18 +165,18 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                   let unreachableDomains = failure.data?.domains,
                   let participants = action.userIDs.existingObjects(in: context) as? [ZMUser]
             else {
-                return action.notifyResult(.failure(.unknown))
+                return action.fail(with: .unknown)
             }
 
             let users = participants.belongingTo(domains: unreachableDomains)
 
             guard !users.isEmpty else {
-                return action.notifyResult(.success(Void()))
+                return action.succeed()
             }
-            action.notifyResult(.failure(.unreachableUsers(users)))
+            action.fail(with: .unreachableUsers(users))
 
         default:
-            action.notifyResult(.failure(ConversationAddParticipantsError(response: response) ?? .unknown))
+            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
         }
     }
 }

@@ -39,7 +39,7 @@ extension ZMConversation {
 
     func addOrShowError(participants: [UserType]) {
         guard let session = ZMUserSession.shared(),
-              session.networkState != .offline else {
+                session.networkState != .offline else {
             self.showAlertForAdding(for: NetworkError.offline)
             return
         }
@@ -50,7 +50,6 @@ extension ZMConversation {
                 self.showAlertForAdding(for: error)
             default:
                 break
-
             }
         }
     }
