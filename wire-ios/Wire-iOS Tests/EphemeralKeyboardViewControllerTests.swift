@@ -40,12 +40,12 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     }
 
     func testThatItRendersCorrectInitially() {
-        verify(view: sut.prepareForSnapshots())
+        verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectIntially_DarkMode() {
         sut.overrideUserInterfaceStyle = .dark
-        verify(view: sut.prepareForSnapshots())
+        verify(matching: sut.prepareForSnapshots())
     }
 
 }
