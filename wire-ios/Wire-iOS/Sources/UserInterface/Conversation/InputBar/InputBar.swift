@@ -187,12 +187,6 @@ final class InputBar: UIView {
         }
     }
 
-    var availabilityPlaceholder: NSAttributedString? {
-        didSet {
-            updatePlaceholder()
-        }
-    }
-
     override var bounds: CGRect {
         didSet {
             invisibleInputAccessoryView?.overriddenIntrinsicContentSize = CGSize(width: UIView.noIntrinsicMetric, height: bounds.height)
@@ -366,9 +360,7 @@ final class InputBar: UIView {
 
         var placeholder = NSAttributedString(string: ConversationInputBar.placeholder)
 
-        if let availabilityPlaceholder = availabilityPlaceholder {
-            placeholder = availabilityPlaceholder
-        } else if inputBarState.isEphemeral {
+        if inputBarState.isEphemeral {
             placeholder = NSAttributedString(string: ConversationInputBar.placeholderEphemeral) && ephemeralColor
         }
         if state.isEditing {
@@ -456,9 +448,7 @@ final class InputBar: UIView {
     }
 
     fileprivate func updatePlaceholderColors() {
-        if inputBarState.isEphemeral &&
-            inputBarState.isEphemeralEnabled &&
-            availabilityPlaceholder == nil {
+        if inputBarState.isEphemeral && inputBarState.isEphemeralEnabled {
             textView.placeholderTextColor = ephemeralColor
         } else {
             textView.placeholderTextColor = placeholderColor
