@@ -40,8 +40,7 @@ final class TextMessageMentionsTests: ZMSnapshotTestCase {
     override func tearDown() {
         otherUser = nil
         selfUser = nil
-
-        resetColorScheme()
+        setColorScheme(.light)
         super.tearDown()
     }
 

@@ -37,7 +37,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItFindsNoDuplicates_None() {
         // WHEN
-        let duplicates: [String: [UserClient]] = self.mocs.viewContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        let duplicates: [UUID: [ZMUser]] = self.mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
 
         // THEN
         XCTAssertEqual(duplicates.keys.count, 0)
@@ -45,15 +45,13 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItFindsNoDuplicates_One() {
         // GIVEN
-        let remoteIdentifier = UUID().transportString()
-
-        let client = UserClient.insertNewObject(in: self.mocs.viewContext)
-        client.remoteIdentifier = remoteIdentifier
+        let user = ZMUser.insertNewObject(in: self.mocs.viewContext)
+        user.name = "foo"
 
         self.mocs.viewContext.saveOrRollback()
 
         // WHEN
-        let duplicates: [String: [UserClient]] = self.mocs.viewContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        let duplicates: [String: [ZMUser]] = self.mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
 
         // THEN
         XCTAssertEqual(duplicates.keys.count, 0)
@@ -61,21 +59,21 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItFindsDuplicates_ManyCommon() {
         // GIVEN
-        let remoteIdentifier = UUID().transportString()
+        let name = "foo"
 
         for _ in 1...10 {
-            let client = UserClient.insertNewObject(in: self.mocs.viewContext)
-            client.remoteIdentifier = remoteIdentifier
+            let user = ZMUser.insertNewObject(in: self.mocs.viewContext)
+            user.name = name
         }
 
         self.mocs.viewContext.saveOrRollback()
 
         // WHEN
-        let duplicates: [String: [UserClient]] = self.mocs.viewContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        let duplicates: [String: [ZMUser]] = self.mocs.viewContext.findDuplicated(by: #keyPath(ZMUser.name))
 
         // THEN
         XCTAssertEqual(duplicates.keys.count, 1)
-        XCTAssertEqual(duplicates[remoteIdentifier]?.count, 10)
+        XCTAssertEqual(duplicates[name]?.count, 10)
     }
 
     public func testThatItGroupsByPropertyValue_One() {
