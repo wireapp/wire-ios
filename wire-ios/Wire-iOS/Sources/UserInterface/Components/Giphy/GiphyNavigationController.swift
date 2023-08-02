@@ -18,9 +18,7 @@
 
 import UIKit
 
-final class GiphyNavigationController: UINavigationController {
+final class GiphyNavigationController: DefaultNavigationBar {
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
+
 }
