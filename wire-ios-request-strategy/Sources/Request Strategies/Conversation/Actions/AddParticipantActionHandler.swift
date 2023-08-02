@@ -163,22 +163,17 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             guard let failure = Payload.ResponseFailure(response, decoder: decoder),
                   failure.label == .unreachableDomains,
                   let unreachableDomains = failure.data?.domains,
-                  let participants = action.userIDs.existingObjects(in: context) as? [ZMUser],
-                  let conversation = ZMConversation.existingObject(for: action.conversationID, in: context)
+                  let participants = action.userIDs.existingObjects(in: context) as? [ZMUser]
             else {
                 return action.notifyResult(.failure(.unknown))
             }
 
-            let users = participants.unreachable(for: unreachableDomains)
+            let users = participants.belongingTo(domains: unreachableDomains)
 
             guard !users.isEmpty else {
                 return action.notifyResult(.success(Void()))
             }
             action.notifyResult(.failure(.unreachableUsers(users)))
-
-            conversation.appendFailedToAddUsersSystemMessage(users: Set(users),
-                                                             sender: conversation.creator,
-                                                             at: conversation.lastServerTimeStamp ?? Date())
 
         default:
             action.notifyResult(.failure(ConversationAddParticipantsError(response: response) ?? .unknown))
@@ -188,12 +183,12 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
 extension Array where Element == ZMUser {
 
-    func unreachable(for unreachableDomains: [String]) -> [ZMUser] {
+    func belongingTo(domains: [String]) -> [ZMUser] {
         self.filter { user in
             guard let domain = user.domain else {
                 return false
             }
-            return domain.isOne(of: unreachableDomains)
+            return domain.isOne(of: domains)
         }
     }
 

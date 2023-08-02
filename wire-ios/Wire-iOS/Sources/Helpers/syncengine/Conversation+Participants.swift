@@ -45,28 +45,13 @@ extension ZMConversation {
         }
 
         addParticipants(participants) { (result) in
-            guard case .failure(let error) = result else {
-                return
-            }
-
-            switch error {
-            case .unreachableUsers(let users):
-                let withoutUnreachable = participants.filter { user in
-                    guard let userId = user.remoteIdentifier else {
-                        return false
-                    }
-                    return !userId.isOne(of: users.map(\.remoteIdentifier))
-                }
-                self.addParticipants(withoutUnreachable) { result in
-                    if case .failure(let error) = result {
-                        self.showAlertForAdding(for: error)
-                    }
-                }
-
-            default:
+            switch result {
+            case .failure(let error):
                 self.showAlertForAdding(for: error)
-            }
+            default:
+                break
 
+            }
         }
     }
 

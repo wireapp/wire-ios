@@ -315,43 +315,13 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: payload.code,
                                                transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+                                               apiVersion: APIVersion.v4.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-        }
-    }
-
-    func testThatItAddsSystemMessage_OnUnreachableDomainsError() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
-            // given
-            let unreachableUser = ZMUser.insertNewObject(in: self.syncMOC)
-            unreachableUser.remoteIdentifier = UUID()
-            unreachableUser.domain = "foma.wire.link"
-
-            let action = AddParticipantAction(users: [user, unreachableUser], conversation: conversation)
-
-            let federationType = Payload.ResponseFailure.FederationFailure.FailureType.federation
-            let payload = Payload.ResponseFailure(code: 523,
-                                                  label: .unreachableDomains,
-                                                  message: "The following domains are unreachable: [foma.wire.link]",
-                                                  data: Payload.ResponseFailure.FederationFailure(domains: ["foma.wire.link"],
-                                                                                                  path: "/federation/api-version",
-                                                                                                  type: federationType))
-            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: payload.code,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
-
-            // when
-            self.sut.handleResponse(response, action: action)
-
-            // then
-            XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .failedToAddParticipants)
         }
     }
 
