@@ -148,7 +148,7 @@ final class GiphyConfirmationViewController: UIViewController {
             imagePreview.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             imagePreview.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             imagePreview.topAnchor.constraint(equalTo: safeTopAnchor),
-            imagePreview.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
+            imagePreview.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor, constant: -20),
 
             cancelButton.heightAnchor.constraint(equalToConstant: 40),
             cancelButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),

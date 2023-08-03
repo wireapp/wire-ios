@@ -452,7 +452,6 @@
 		5EE73BF5212419ED0032986D /* AuthenticationCoordinator+Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE73BF4212419ED0032986D /* AuthenticationCoordinator+Registration.swift */; };
 		5EEFC16820BEBE56007E8A79 /* BrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEFC16720BEBE56007E8A79 /* BrowserViewController.swift */; };
 		5EF4A6E220F3C4A300A9EF22 /* GiphyCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4A6E120F3C4A300A9EF22 /* GiphyCollectionViewCell.swift */; };
-		5EF4A6E420F3C4BD00A9EF22 /* GiphyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4A6E320F3C4BD00A9EF22 /* GiphyNavigationController.swift */; };
 		5EF5C54C209B33E600676405 /* CGSize+AspectRatio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF5C54B209B33E600676405 /* CGSize+AspectRatio.swift */; };
 		5EF5CDA520EF739200CC98B0 /* DataTaskSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF5CDA420EF739200CC98B0 /* DataTaskSession.swift */; };
 		5EF5CDAA20EF925000CC98B0 /* MockDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF5CDA620EF903A00CC98B0 /* MockDataTask.swift */; };
@@ -2341,7 +2340,6 @@
 		5EEFC1A620C01C85007E8A79 /* RoundedViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedViewProtocol.swift; sourceTree = "<group>"; };
 		5EEFC1A820C01CA9007E8A79 /* RoundedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedView.swift; sourceTree = "<group>"; };
 		5EF4A6E120F3C4A300A9EF22 /* GiphyCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyCollectionViewCell.swift; sourceTree = "<group>"; };
-		5EF4A6E320F3C4BD00A9EF22 /* GiphyNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyNavigationController.swift; sourceTree = "<group>"; };
 		5EF5C54B209B33E600676405 /* CGSize+AspectRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+AspectRatio.swift"; sourceTree = "<group>"; };
 		5EF5CDA420EF739200CC98B0 /* DataTaskSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTaskSession.swift; sourceTree = "<group>"; };
 		5EF5CDA620EF903A00CC98B0 /* MockDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataTask.swift; sourceTree = "<group>"; };
@@ -5141,7 +5139,6 @@
 		871BC1511D34F8F800DF0793 /* Giphy */ = {
 			isa = PBXGroup;
 			children = (
-				5EF4A6E320F3C4BD00A9EF22 /* GiphyNavigationController.swift */,
 				5EF4A6E120F3C4A300A9EF22 /* GiphyCollectionViewCell.swift */,
 				16719A0F1D99647D00AA6B63 /* GiphySearchViewController.swift */,
 				16719A1C1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift */,
@@ -9114,7 +9111,6 @@
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,
-				5EF4A6E420F3C4BD00A9EF22 /* GiphyNavigationController.swift in Sources */,
 				1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */,
 				BD979D2E1D8F41E700E8E3CB /* String+WireLocales.swift in Sources */,
 				161A813823D07F000081B4C3 /* KeyboardAvoidingViewController.swift in Sources */,
