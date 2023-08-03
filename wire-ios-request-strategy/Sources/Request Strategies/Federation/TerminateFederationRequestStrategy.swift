@@ -95,11 +95,6 @@ extension Payload {
     /// The domain that the self domain has stopped federate with.
     struct FederationDelete: Codable {
 
-        enum CodingKeys: String, CodingKey {
-            case domain
-            case type
-        }
-
         let domain: String
         let type: String
 
@@ -107,11 +102,6 @@ extension Payload {
 
     /// The list of domains that have terminated federation with each other.
     struct ConnectionRemoved: Codable {
-
-        enum CodingKeys: String, CodingKey {
-            case domains
-            case type
-        }
 
         let domains: [String]
         let type: String
