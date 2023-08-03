@@ -142,6 +142,8 @@ extension ZMConversation {
     // MARK: - Participant actions
     public func addParticipants(_ participants: [UserType],
                                 completion: @escaping AddParticipantAction.ResultHandler) {
+        let retryLimit = 10
+        var attemptsToAddParticipants = 0
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return
@@ -149,6 +151,10 @@ extension ZMConversation {
         let users = participants.materialize(in: context)
 
         internalAddParticipants(users) { (result) in
+            guard attemptsToAddParticipants <= retryLimit else {
+                return completion(.failure(.unknown))
+            }
+            attemptsToAddParticipants += attemptsToAddParticipants
             switch result {
             case .success:
                 return completion(result)
