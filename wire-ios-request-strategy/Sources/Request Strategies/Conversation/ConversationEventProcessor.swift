@@ -95,14 +95,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     let conversationEvent = Payload.UpdateConversationMLSWelcome(data)
                     conversationEvent?.process(in: context, originalEvent: event)
 
-                case .federationDelete:
-                    let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.ConversationMember>.self)
-                    conversationEvent?.process(in: context, originalEvent: event)
-
-                case .federationConnectionRemoved:
-                    // TODO
-                    break
-
                 default:
                     break
                 }
