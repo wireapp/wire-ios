@@ -42,7 +42,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
 
             // WHEN
             sut.backendStoppedFederatingWithDomain(domain: domain)
-            
+
             // THEN
             XCTAssertTrue(conversation.isForcedReadOnly)
             XCTAssertTrue(conversation.isReadOnly)
@@ -50,7 +50,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
     }
 
 
-    func testThatFederationDelete_IgnoreConnectionRequest()  throws {
+    func testThatFederationDelete_RemovePendingConnectionRequest()  throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let domain = "other.user.domain"
@@ -62,6 +62,22 @@ class FederationDeleteManagerTests: MessagingTestBase {
 
             // THEN
             XCTAssertEqual(otherUser.connection?.status, .ignored)
+        }
+    }
+
+
+    func testThatFederationDelete_RemoveMyConnectionRequest()  throws {
+        syncMOC.performGroupedAndWait { [self] syncMOC in
+            // GIVEN
+            let domain = "other.user.domain"
+            otherUser.domain = domain
+            otherUser.connection?.status = .sent
+
+            // WHEN
+            sut.backendStoppedFederatingWithDomain(domain: domain)
+
+            // THEN
+            XCTAssertEqual(otherUser.connection, nil)
         }
     }
 

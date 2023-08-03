@@ -32,7 +32,7 @@ final public class FederationDeleteManager {
               let selfDomain = ZMUser.selfUser(in: moc).domain else { return }
 
         markAllOneToOneConversationsAsReadOnly(forDomain: domain)
-        ignoreAllPendingConnectionRequests(fromDomain: domain)
+        removeConnectionRequests(withDomain: domain)
         domainsStoppedFederating(domains: [selfDomain, domain])
     }
 
@@ -68,13 +68,13 @@ private extension FederationDeleteManager {
         }
     }
 
-    func ignoreAllPendingConnectionRequests(fromDomain domain: String) {
+    func removeConnectionRequests(withDomain domain: String) {
         guard let moc = syncContext else { return }
 
-        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersPendingConnection(inDomain: domain))
+        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersSendAndPendingConnection(inDomain: domain))
         let pendingUsers = moc.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] ?? []
         for user in pendingUsers {
-            user.connection?.status = .ignored
+            user.connection?.status = (user.connection?.status == .pending) ? .ignored : .cancelled
         }
     }
 

@@ -57,6 +57,7 @@ extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
 extern NSString *const ZMConversationExternalParticipantsStateKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
+extern NSString *const ZMConversationIsForcedReadOnlyKey;
 
 extern NSString *const ZMConversationLastReadServerTimeStampKey;
 extern NSString *const ZMConversationLastServerTimeStampKey;
