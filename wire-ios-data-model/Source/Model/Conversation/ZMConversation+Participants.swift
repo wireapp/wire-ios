@@ -454,13 +454,6 @@ extension ZMConversation {
             moc.delete(existingRole)
             return user
         })
-
-        
-//        if !removedUsers.isEmpty {
-//            let removedSelf = removedUsers.contains(where: { $0.isSelfUser })
-//            self.checkIfArchivedStatusChanged(removedSelfUser: removedSelf, initiatingUser: initiatingUser)
-//            self.checkIfVerificationLevelChanged(removedUsers: removedUsers)
-//        }
     }
 
     /// Remove participants to the conversation. The method will decide on its own whether

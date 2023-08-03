@@ -209,7 +209,6 @@
 		BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */; };
-		D33B57AD2A569CD50078A4F9 /* PayloadProcessing+Federating.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57AC2A569CD50078A4F9 /* PayloadProcessing+Federating.swift */; };
 		D33B57AF2A56A15F0078A4F9 /* Payload+Federating.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57AE2A56A15F0078A4F9 /* Payload+Federating.swift */; };
 		D33B57B12A56BDCA0078A4F9 /* FederationDeleteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57B02A56BDCA0078A4F9 /* FederationDeleteManager.swift */; };
 		D3DA067C2A5D9EF700BA9CEB /* FederationDeleteManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA067B2A5D9EF700BA9CEB /* FederationDeleteManagerTests.swift */; };
@@ -636,7 +635,6 @@
 		A90C56EB2685C23400F1007B /* ZMImagePreprocessingTrackerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMImagePreprocessingTrackerTests.h; sourceTree = "<group>"; };
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
-		D33B57AC2A569CD50078A4F9 /* PayloadProcessing+Federating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+Federating.swift"; sourceTree = "<group>"; };
 		D33B57AE2A56A15F0078A4F9 /* Payload+Federating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Federating.swift"; sourceTree = "<group>"; };
 		D33B57B02A56BDCA0078A4F9 /* FederationDeleteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteManager.swift; sourceTree = "<group>"; };
 		D3DA067B2A5D9EF700BA9CEB /* FederationDeleteManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteManagerTests.swift; sourceTree = "<group>"; };
@@ -1160,7 +1158,6 @@
 				16E5F71B26F09E5B00F35FBA /* PayloadProcessing+ConversationTests.swift */,
 				16E70F8D270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift */,
 				16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */,
-				D33B57AC2A569CD50078A4F9 /* PayloadProcessing+Federating.swift */,
 				063139DC2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift */,
 				063139DE2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift */,
 			);
@@ -1973,7 +1970,6 @@
 				F18401B02073BE0800E9F4CC /* AbstractRequestStrategy.swift in Sources */,
 				0649D14F24F63DCC001DDC78 /* ZMSound.swift in Sources */,
 				F18401C22073BE0800E9F4CC /* AssetV2DownloadRequestStrategy.swift in Sources */,
-				D33B57AD2A569CD50078A4F9 /* PayloadProcessing+Federating.swift in Sources */,
 				EEAC16D4281AE5F700B7A34D /* CallEventContent.swift in Sources */,
 				F18401D22073BE0800E9F4CC /* OTREntity.swift in Sources */,
 				16A4893A268A080E001F9127 /* InsertedObjectSync.swift in Sources */,

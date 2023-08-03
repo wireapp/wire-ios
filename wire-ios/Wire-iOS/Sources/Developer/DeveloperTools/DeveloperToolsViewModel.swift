@@ -302,7 +302,6 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func stopFederatingBella() {
         stopFederatingDomain(domain: "bella.wire.link")
-
     }
     
     private func stopFederatingFoma() {
