@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import Wire
+import XCTest
+import WireCommonComponents
+import SnapshotTesting
 import Ziphy
+@testable import Wire
 
-final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class GiphySearchViewControllerSnapshotTests: XCTestCase {
     var sut: GiphySearchViewController!
 
     var mockConversation: MockConversation!
@@ -33,6 +36,8 @@ final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
+        FontScheme.configure(with: .large)
+
         mockConversation = MockConversation.oneOnOneConversation()
         requester = MockURLSession(cache: nil)
         client = ZiphyClient(host: "localhost", requester: requester, downloadSession: requester)
@@ -43,7 +48,7 @@ final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
         sut.searchBar.placeholderLabel.isHidden = true
         mockNavigationController = sut.wrapInsideNavigationController()
 
-        sut.collectionView?.backgroundColor = .white
+        sut.collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func tearDown() {
@@ -58,6 +63,6 @@ final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testEmptySearchScreenWithKeyword() {
-        verify(view: mockNavigationController.view)
+        verify(matching: mockNavigationController.view)
     }
 }

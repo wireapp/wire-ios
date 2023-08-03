@@ -158,7 +158,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     // MARK: - Presentation
 
     func wrapInsideNavigationController() -> UINavigationController {
-        let navigationController = self.wrapInNavigationController()
+        let navigationController = self.wrapInNavigationController(setBackgroundColor: true)
 
         return navigationController
     }
