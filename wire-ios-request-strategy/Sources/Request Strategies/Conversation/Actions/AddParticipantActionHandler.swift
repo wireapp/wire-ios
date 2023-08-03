@@ -168,12 +168,13 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 return action.fail(with: .unknown)
             }
 
-            let users = participants.belongingTo(domains: unreachableDomains)
+            let unreachableUsers = participants.belongingTo(domains: unreachableDomains)
 
-            guard !users.isEmpty else {
-                return action.succeed()
-            }
-            action.fail(with: .unreachableUsers(users))
+            if unreachableUsers.isEmpty {
+                action.succeed()
+            } else {
+                action.fail(with: .unreachableUsers(unreachableUsers))
+            }   
 
         default:
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
