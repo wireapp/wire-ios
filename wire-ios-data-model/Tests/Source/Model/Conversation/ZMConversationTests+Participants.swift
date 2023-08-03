@@ -772,7 +772,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func test_AddUser_UnreachableUsers_Proteus() throws {
-        // Given a conversation and a user to add.
+        // GIVEN
         let conversationID = UUID.create()
         let user1ID = UUID.create()
         let user2ID = UUID.create()
@@ -818,8 +818,12 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             result: .failure(.unreachableUsers([user2])),
             context: syncMOC.notificationContext
         )
+        let expectation = expectation(description: "System message is added")
 
+        // WHEN
         conversation.addParticipants([user1, user2]) { _ in
+            expectation.fulfill()
+
             // Then a system message is added.
             guard let systemMessage = conversation.lastMessage?.systemMessageData else {
                 return XCTFail("expected system message")
@@ -828,6 +832,9 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
             XCTAssertEqual(systemMessage.userTypes, [user2])
         }
+
+        // THEN
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
 }
