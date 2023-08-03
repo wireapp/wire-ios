@@ -70,10 +70,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationName>.self)
                     conversationEvent?.process(in: context, originalEvent: event)
 
-                    let manager = FederationDeleteManager(syncContext: context)
-                    manager.backendStoppedFederatingWithDomain(domain: "bella.wire.link")
-
-
                 case .conversationMemberUpdate:
                     let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.ConversationMember>.self)
                     conversationEvent?.process(in: context, originalEvent: event)
