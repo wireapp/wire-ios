@@ -54,7 +54,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
     var snapshotBackgroundView: UIView? = .none
 
-    fileprivate var imageMessages: [ZMConversationMessage] = []
+    private var imageMessages: [ZMConversationMessage] = []
 
     var currentMessage: ZMConversationMessage {
         didSet {
@@ -186,7 +186,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         addToSelf(pageViewController)
     }
 
-    fileprivate func logicalPreviousIndex(for index: Int) -> Int? {
+    private func logicalPreviousIndex(for index: Int) -> Int? {
         if self.inverse {
             return self.nextIndex(for: index)
         } else {
@@ -194,7 +194,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
-    fileprivate func previousIndex(for index: Int) -> Int? {
+    private func previousIndex(for index: Int) -> Int? {
         let nextIndex = index - 1
 
         guard nextIndex >= 0 else {
@@ -204,7 +204,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         return nextIndex
     }
 
-    fileprivate func logicalNextIndex(for index: Int) -> Int? {
+    private func logicalNextIndex(for index: Int) -> Int? {
         if self.inverse {
             return self.previousIndex(for: index)
         } else {
@@ -212,7 +212,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
-    fileprivate func nextIndex(for index: Int) -> Int? {
+    private func nextIndex(for index: Int) -> Int? {
         let nextIndex = index + 1
         guard self.imageMessages.count > nextIndex else {
             return .none
@@ -348,7 +348,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         self.updateButtonsForMessage()
     }
 
-    fileprivate func updateLikeButton() {
+    private func updateLikeButton() {
 
         let messageAction: MessageAction = currentMessage.liked ? .like : .unlike
 
@@ -357,12 +357,12 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         likeButton.accessibilityLabel = messageAction.accessibilityLabel
     }
 
-    fileprivate func updateBarsForPreview() {
+    private func updateBarsForPreview() {
         buttonsBar?.isHidden = isPreviewing
         separator.isHidden = isPreviewing
     }
 
-    fileprivate func imageController(for message: ZMConversationMessage) -> FullscreenImageViewController {
+    private func imageController(for message: ZMConversationMessage) -> FullscreenImageViewController {
         let imageViewController = FullscreenImageViewController(message: message)
         imageViewController.delegate = self
         imageViewController.swipeToDismiss = self.swipeToDismiss
@@ -372,7 +372,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         return imageViewController
     }
 
-    fileprivate func indexOf(message messageToFind: ZMConversationMessage) -> Int? {
+    private func indexOf(message messageToFind: ZMConversationMessage) -> Int? {
         return self.imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
             return message == messageToFind
         })

@@ -46,7 +46,7 @@ final class ConversationListViewController: UIViewController {
     var pushPermissionDeniedViewController: PermissionDeniedViewController?
     var usernameTakeoverViewController: UserNameTakeOverViewController?
 
-    fileprivate let noConversationLabel: UILabel = {
+    private let noConversationLabel: UILabel = {
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
@@ -388,7 +388,7 @@ private extension UITabBarItem {
 
 }
 
-fileprivate extension NSAttributedString {
+private extension NSAttributedString {
     static var attributedTextForNoConversationLabel: NSAttributedString? {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)

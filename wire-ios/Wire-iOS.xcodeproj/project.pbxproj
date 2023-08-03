@@ -452,7 +452,6 @@
 		5EE73BF5212419ED0032986D /* AuthenticationCoordinator+Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE73BF4212419ED0032986D /* AuthenticationCoordinator+Registration.swift */; };
 		5EEFC16820BEBE56007E8A79 /* BrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEFC16720BEBE56007E8A79 /* BrowserViewController.swift */; };
 		5EF4A6E220F3C4A300A9EF22 /* GiphyCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4A6E120F3C4A300A9EF22 /* GiphyCollectionViewCell.swift */; };
-		5EF4A6E420F3C4BD00A9EF22 /* GiphyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4A6E320F3C4BD00A9EF22 /* GiphyNavigationController.swift */; };
 		5EF5C54C209B33E600676405 /* CGSize+AspectRatio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF5C54B209B33E600676405 /* CGSize+AspectRatio.swift */; };
 		5EF5CDA520EF739200CC98B0 /* DataTaskSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF5CDA420EF739200CC98B0 /* DataTaskSession.swift */; };
 		5EF5CDAA20EF925000CC98B0 /* MockDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF5CDA620EF903A00CC98B0 /* MockDataTask.swift */; };
@@ -1714,7 +1713,6 @@
 		F15650DB21DD10A100210504 /* UserImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164A55AC20ECFD7400AE62A6 /* UserImageView.swift */; };
 		F15650DC21DD10A100210504 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E672C8E2178D85200522E61 /* AvatarImageView.swift */; };
 		F15650DD21DD10DD00210504 /* ThreeDotsLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87831A961E69B5E600DDF3C3 /* ThreeDotsLoadingView.swift */; };
-		F15650DE21DD10DD00210504 /* ImageMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 879D6AFB1E69E20900DC07A1 /* ImageMessageView.swift */; };
 		F15650E021DD119D00210504 /* OverflowSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870533FE1DD6162400A7F822 /* OverflowSeparatorView.swift */; };
 		F15650E121DD11CA00210504 /* SpinnerSubtitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D524BE62207BA15300542A4E /* SpinnerSubtitleView.swift */; };
 		F15650E321DD11D700210504 /* CABasicAnimation+Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5168F42200F6F2300F8222A /* CABasicAnimation+Rotation.swift */; };
@@ -2344,7 +2342,6 @@
 		5EEFC1A620C01C85007E8A79 /* RoundedViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedViewProtocol.swift; sourceTree = "<group>"; };
 		5EEFC1A820C01CA9007E8A79 /* RoundedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedView.swift; sourceTree = "<group>"; };
 		5EF4A6E120F3C4A300A9EF22 /* GiphyCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyCollectionViewCell.swift; sourceTree = "<group>"; };
-		5EF4A6E320F3C4BD00A9EF22 /* GiphyNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyNavigationController.swift; sourceTree = "<group>"; };
 		5EF5C54B209B33E600676405 /* CGSize+AspectRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+AspectRatio.swift"; sourceTree = "<group>"; };
 		5EF5CDA420EF739200CC98B0 /* DataTaskSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTaskSession.swift; sourceTree = "<group>"; };
 		5EF5CDA620EF903A00CC98B0 /* MockDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataTask.swift; sourceTree = "<group>"; };
@@ -2625,7 +2622,6 @@
 		879718911D1C109900163C07 /* AudioRecordKeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecordKeyboardViewController.swift; sourceTree = "<group>"; };
 		879718971D1C767600163C07 /* AudioEffectsPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioEffectsPickerViewController.swift; sourceTree = "<group>"; };
 		8797A9B32046D687009865D5 /* GuestsBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestsBarController.swift; sourceTree = "<group>"; };
-		879D6AFB1E69E20900DC07A1 /* ImageMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageMessageView.swift; sourceTree = "<group>"; };
 		879E5E981F0104A6007A88A3 /* UITextView+Autocorrect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextView+Autocorrect.swift"; sourceTree = "<group>"; };
 		87A15FCB1E07E8EB00AED79B /* CollectionsSectionSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsSectionSet.swift; sourceTree = "<group>"; };
 		87A15FCD1E07EAB400AED79B /* AssetCollectionWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetCollectionWrapper.swift; sourceTree = "<group>"; };
@@ -5088,7 +5084,6 @@
 				63421E4A2614C25700ADA723 /* NotificationLabel.swift */,
 				870533FE1DD6162400A7F822 /* OverflowSeparatorView.swift */,
 				87831A961E69B5E600DDF3C3 /* ThreeDotsLoadingView.swift */,
-				879D6AFB1E69E20900DC07A1 /* ImageMessageView.swift */,
 				5E672C8E2178D85200522E61 /* AvatarImageView.swift */,
 				164A55AC20ECFD7400AE62A6 /* UserImageView.swift */,
 				5EEFC1A320C01BE8007E8A79 /* RoundedView */,
@@ -5148,7 +5143,6 @@
 		871BC1511D34F8F800DF0793 /* Giphy */ = {
 			isa = PBXGroup;
 			children = (
-				5EF4A6E320F3C4BD00A9EF22 /* GiphyNavigationController.swift */,
 				5EF4A6E120F3C4A300A9EF22 /* GiphyCollectionViewCell.swift */,
 				16719A0F1D99647D00AA6B63 /* GiphySearchViewController.swift */,
 				16719A1C1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift */,
@@ -9003,7 +8997,6 @@
 				F16E8EA8214A910F005ED9E2 /* ConversationInputBarViewController+Mentions.swift in Sources */,
 				87D56DF61E003A5300DFF722 /* CollectionsViewController.swift in Sources */,
 				EE6C212928438B3A0031EFB9 /* SettingsCellDescriptorFactory+Developer.swift in Sources */,
-				F15650DE21DD10DD00210504 /* ImageMessageView.swift in Sources */,
 				5E766D9B211472C0005242B4 /* AuthenticationFlowStep.swift in Sources */,
 				E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */,
 				EF2388882211B8C500331C07 /* UserType+DisplayString.swift in Sources */,
@@ -9125,7 +9118,6 @@
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,
-				5EF4A6E420F3C4BD00A9EF22 /* GiphyNavigationController.swift in Sources */,
 				1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */,
 				BD979D2E1D8F41E700E8E3CB /* String+WireLocales.swift in Sources */,
 				161A813823D07F000081B4C3 /* KeyboardAvoidingViewController.swift in Sources */,
