@@ -100,6 +100,26 @@ extension UIColor {
         }
     }
 
+    class func lowAccentColorForUsernameMention() -> UIColor {
+        let safeAccentColor = AccentColor(ZMAccentColor: indexedAccentColor()) ?? .blue
+        switch safeAccentColor {
+        case .blue:
+            return SemanticColors.View.backgroundBlueUsernameMention
+        case .red:
+            return SemanticColors.View.backgroundRedUsernameMention
+        case .green:
+            return SemanticColors.View.backgroundGreenUsernameMention
+        case .yellow:
+            return SemanticColors.View.backgroundAmberUsernameMention
+        case .amber:
+            return SemanticColors.View.backgroundAmberUsernameMention
+        case .turquoise:
+            return SemanticColors.View.backgroundTurqoiseUsernameMention
+        case .purple:
+            return SemanticColors.View.backgroundPurpleUsernameMention
+        }
+    }
+
     static func buttonEmptyText(variant: ColorSchemeVariant) -> UIColor {
         switch variant {
         case .dark:
