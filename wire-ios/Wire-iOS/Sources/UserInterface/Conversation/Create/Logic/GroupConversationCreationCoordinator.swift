@@ -19,6 +19,41 @@
 import Foundation
 import WireDataModel
 
+protocol GroupConversationCreator {
+    func insertGroupConversation(
+        moc: NSManagedObjectContext,
+        participants: [ZMUser],
+        name: String?,
+        team: Team?,
+        allowGuests: Bool,
+        allowServices: Bool,
+        readReceipts: Bool,
+        messageProtocol: MessageProtocol) -> ZMConversation?
+}
+
+class DefaultGroupConversationCreator: GroupConversationCreator {
+    func insertGroupConversation(
+        moc: NSManagedObjectContext,
+        participants: [ZMUser],
+        name: String?,
+        team: Team?,
+        allowGuests: Bool,
+        allowServices: Bool,
+        readReceipts: Bool,
+        messageProtocol: MessageProtocol) -> ZMConversation? {
+            return ZMConversation.insertGroupConversation(
+                moc: moc,
+                participants: participants,
+                name: name,
+                team: team,
+                allowGuests: allowGuests,
+                allowServices: allowServices,
+                readReceipts: readReceipts,
+                messageProtocol: messageProtocol
+            )
+        }
+}
+
 class GroupConversationCreationCoordinator {
     private enum State {
         case ready
@@ -43,6 +78,12 @@ class GroupConversationCreationCoordinator {
             return nil
         }
     }
+    
+    private var creator: GroupConversationCreator
+    
+    init(creator: GroupConversationCreator) {
+        self.creator = creator
+    }
 
     func initialize(eventHandler: @escaping (GroupConversationCreationEvent) -> Void) -> Bool {
         guard case .ready = state else { return false }
@@ -61,12 +102,13 @@ class GroupConversationCreationCoordinator {
         allowGuests: Bool,
         allowServices: Bool,
         enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        encryptionProtocol: EncryptionProtocol,
+        userSession: UserSessionInterface,
+        moc: NSManagedObjectContext
      ) -> Bool {
          guard case .initialized(let eventHandler) = state else { return false }
          guard
-             let users = users,
-             let userSession = ZMUserSession.shared()
+             let users = users
          else {
              return false
          }
@@ -75,10 +117,10 @@ class GroupConversationCreationCoordinator {
 
          var conversation: ZMConversation?
 
-         userSession.enqueue {
-             conversation = ZMConversation.insertGroupConversation(
-                 moc: userSession.viewContext,
-                 participants: users.materialize(in: userSession.viewContext),
+         userSession.enqueue { [weak self] in
+             conversation = self?.creator.insertGroupConversation(
+                 moc: moc,
+                 participants: users.materialize(in: moc),
                  name: name,
                  team: ZMUser.selfUser().team,
                  allowGuests: allowGuests,

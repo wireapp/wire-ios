@@ -207,7 +207,9 @@ final class ConversationCreationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        conversationCreationCoordinator = GroupConversationCreationCoordinator()
+        conversationCreationCoordinator = GroupConversationCreationCoordinator(
+            creator: DefaultGroupConversationCreator()
+        )
         view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
@@ -341,6 +343,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
     }
 
     private func createConversation() {
+        guard let userSession = ZMUserSession.shared() else { return }
         guard let conversationCreationCoordinator = conversationCreationCoordinator else { return }
         var allParticipants = values.participants
         allParticipants.insert(selfUser)
@@ -376,7 +379,9 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             name: values.name, allowGuests: values.allowGuests,
             allowServices: values.allowServices,
             enableReceipts: values.enableReceipts,
-            encryptionProtocol: values.encryptionProtocol
+            encryptionProtocol: values.encryptionProtocol,
+            userSession: userSession,
+            moc: userSession.viewContext
         )
         guard creatingConversation else {
             conversationCreationCoordinator.finalize()

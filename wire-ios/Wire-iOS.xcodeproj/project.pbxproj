@@ -234,6 +234,7 @@
 		4045CBB42A7002260023EFAA /* NonFullyConnectedGraphAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4045CBB32A7002260023EFAA /* NonFullyConnectedGraphAction.swift */; };
 		4045CBB62A7002490023EFAA /* GroupConversationCreationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4045CBB52A7002490023EFAA /* GroupConversationCreationEvent.swift */; };
 		4045CBB82A70026E0023EFAA /* GroupConversationCreationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4045CBB72A70026E0023EFAA /* GroupConversationCreationCoordinator.swift */; };
+		4045CBBB2A7B80E80023EFAA /* GroupConversationCreationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4045CBBA2A7B80E80023EFAA /* GroupConversationCreationCoordinatorTests.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5405444E253842C200FAE77A /* LaunchSequenceOperation.swift */; };
 		540C8AA8255ABD7600AA6992 /* SwitchingAccountRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540C8AA5255ABD1A00AA6992 /* SwitchingAccountRouterTests.swift */; };
@@ -2121,6 +2122,7 @@
 		4045CBB32A7002260023EFAA /* NonFullyConnectedGraphAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonFullyConnectedGraphAction.swift; sourceTree = "<group>"; };
 		4045CBB52A7002490023EFAA /* GroupConversationCreationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupConversationCreationEvent.swift; sourceTree = "<group>"; };
 		4045CBB72A70026E0023EFAA /* GroupConversationCreationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupConversationCreationCoordinator.swift; sourceTree = "<group>"; };
+		4045CBBA2A7B80E80023EFAA /* GroupConversationCreationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupConversationCreationCoordinatorTests.swift; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
 		5405444E253842C200FAE77A /* LaunchSequenceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchSequenceOperation.swift; sourceTree = "<group>"; };
 		540C8AA4255ABD1A00AA6992 /* URLActionRouterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLActionRouterTests.swift; sourceTree = "<group>"; };
@@ -4246,6 +4248,14 @@
 				4045CBB72A70026E0023EFAA /* GroupConversationCreationCoordinator.swift */,
 			);
 			path = Logic;
+			sourceTree = "<group>";
+		};
+		4045CBB92A7B80CB0023EFAA /* ConversationCreation */ = {
+			isa = PBXGroup;
+			children = (
+				4045CBBA2A7B80E80023EFAA /* GroupConversationCreationCoordinatorTests.swift */,
+			);
+			path = ConversationCreation;
 			sourceTree = "<group>";
 		};
 		4067991A29C88A71001326B5 /* SecurityLevel */ = {
@@ -6629,6 +6639,7 @@
 		BACB88521AF7C48900DDCDB0 /* Wire-iOS Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4045CBB92A7B80CB0023EFAA /* ConversationCreation */,
 				4067991A29C88A71001326B5 /* SecurityLevel */,
 				2B56189C29A508E900D8CCCA /* TestPlans */,
 				068F07272829BC0F003E3249 /* Notification Service Extension */,
@@ -9689,6 +9700,7 @@
 				EE329F9525E65AC100861EC6 /* AppLockModule.MockApplicationStateProvider.swift in Sources */,
 				EF6251D421392FFE00943708 /* MockTapGestureRecognizer.swift in Sources */,
 				5E628028222021970039A8AB /* ProfileFooterViewTests.swift in Sources */,
+				4045CBBB2A7B80E80023EFAA /* GroupConversationCreationCoordinatorTests.swift in Sources */,
 				A984AAE924099A9B002CFF2E /* SettingsTests.swift in Sources */,
 				EF1EA4631FB0937000B53063 /* MockUser+filename.swift in Sources */,
 				162AE74D219DB1BD00581D98 /* ConversationImageMessageTests.swift in Sources */,
