@@ -263,6 +263,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
+            TerminateFederationRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory),
             ConversationStatusStrategy(
                 managedObjectContext: syncMOC),
             UserClientEventConsumer(
