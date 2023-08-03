@@ -32,47 +32,40 @@ final public class FederationDeleteManager {
               let selfDomain = ZMUser.selfUser(in: moc).domain else { return }
 
         // search all conversations hosted on domain and remove participants from selfDomain
-        removeAllParticipantsFromDomain(selfDomain, fromConversationsOnDomain: domain)
+        removeAllParticipantsFromDomain(selfDomain, inConversationsOnDomain: domain)
 
         // search all conversation hosted on selfDomain that have participants from domain and remove them
-        removeAllParticipantsFromDomain(domain, fromConversationsOnDomain: selfDomain)
+        removeAllParticipantsFromDomain(domain, inConversationsOnDomain: selfDomain)
 
 
         // find all conversations where participants are from domain and selfDomain
-        let conversations = ZMConversation.existingConversationsHostedOnDomainDifferentThan(domain: selfDomain, moc: moc)
-        let domainsThatStoppedFederating = [selfDomain, domain]
-        let filteredConvesations = conversations.filter { $0.containsParticipantsFromAllDomains(domains: domainsThatStoppedFederating)}
-        for currentConversation in filteredConvesations {
+        let conversations = ZMConversation.existingConversationsHostedOnDomainDifferentThan(myDomain: selfDomain,
+                                                                                            otherDomain: domain,
+                                                                                            moc: moc)
+        for currentConversation in conversations {
             removeParticipantsFromDomains(domains: [domain, selfDomain], inConversation: currentConversation)
         }
 
-        //  search all 1:1 conversations with users from domain and mark as readOnly
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(inDomain: domain))
-        let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
-        for user in users {
-            guard let conversation = user.connection?.conversation else { continue }
-            conversation.isForcedReadOnly = true
-        }
+        markAllOneToOneConversationsAsReadOnly(forDomain: domain)
 
+        ignoreAllPendingConnectionRequests(fromDomain: domain)
 
-        //  search all users requesting connection from domain and remove request
-        let pendingFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersPendingConnection(inDomain: domain))
-        let pendingUsers = moc.fetchOrAssert(request: pendingFetchRequest) as? [ZMUser] ?? []
-        for user in pendingUsers {
-            user.conne
-        }
-
+        do {
+            try moc.save()
+        } catch {}
     }
 
-    func domainsStoppedFederating(domains: [String]) {
+    public func domainsStoppedFederating(domains: [String]) {
         guard let moc = syncContext else { return }
-        let conversations = ZMConversation.allGroupConversationWithDomain(moc: moc)
+        let conversations = ZMConversation.allGroupConversationWithSomeDomain(moc: moc)
 
         for currentConversation in conversations {
             if domains.contains(currentConversation.domain ?? "") {
+                // if conversation hosted on one of domains, then remove only users from the other domain
                 let domainsToRemove = domains.filter { $0 != currentConversation.domain ?? "" }
                 removeParticipantsFromDomains(domains: domainsToRemove, inConversation: currentConversation)
             } else {
+                //r emove participants from both domains
                 guard currentConversation.containsParticipantsFromAllDomains(domains: domains) else { continue }
                 removeParticipantsFromDomains(domains: domains, inConversation: currentConversation)
             }
@@ -80,7 +73,29 @@ final public class FederationDeleteManager {
     }
 }
 
-extension FederationDeleteManager {
+private extension FederationDeleteManager {
+
+    func markAllOneToOneConversationsAsReadOnly(forDomain domain: String) {
+        guard let moc = syncContext else { return }
+
+        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(inDomain: domain))
+        let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
+        for user in users {
+            guard let conversation = user.connection?.conversation else { continue }
+            conversation.isForcedReadOnly = true
+            conversation.userDefinedName = "hehe"
+        }
+    }
+
+    func ignoreAllPendingConnectionRequests(fromDomain domain: String) {
+        guard let moc = syncContext else { return }
+
+        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersPendingConnection(inDomain: domain))
+        let pendingUsers = moc.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] ?? []
+        for user in pendingUsers {
+            user.connection?.status = .ignored
+        }
+    }
 
     func removeParticipantsFromDomains(domains: [String], inConversation conversation: ZMConversation) {
         let participants = conversation.localParticipants.filter { domains.contains($0.domain ?? "") }
@@ -88,7 +103,7 @@ extension FederationDeleteManager {
         addSystemMessageAboutRemovedParticipants(participants: participants, inConversation: conversation)
     }
 
-    func removeAllParticipantsFromDomain(_ participantsDomain: String, fromConversationsOnDomain conversationDomain: String) {
+    func removeAllParticipantsFromDomain(_ participantsDomain: String, inConversationsOnDomain conversationDomain: String) {
         guard let moc = syncContext else { return }
         let conversations = ZMConversation.existingConversationsHostedOnDomain(domain: conversationDomain,
                                                                                moc: moc)
@@ -109,7 +124,7 @@ extension FederationDeleteManager {
         guard let moc = syncContext else { return }
         let selfUser = ZMUser.selfUser(in: moc)
 
-        // TODO: create new system message "xyz was removed from conversation" instead of current "you removed XYZ from conversation"
+        // TODO: create new system message "xyz was removed from conversation" instead of current "you removed XYZ from conversation", will be changed in next PR
         conversation.appendParticipantsRemovedSystemMessage(users: participants, sender: selfUser, at: Date())
     }
 }
