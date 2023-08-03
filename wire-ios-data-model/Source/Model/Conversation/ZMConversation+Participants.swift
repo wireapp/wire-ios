@@ -442,18 +442,15 @@ extension ZMConversation {
 
         guard let moc = self.managedObjectContext else { return }
         let existingUsers = Set(self.participantRoles.map { $0.user })
-
-        let removedUsers = Set(users.compactMap { user -> ZMUser? in
-
+        for user in users {
             guard
                 existingUsers.contains(user),
                 let existingRole = participantRoles.first(where: { $0.user == user })
-            else { return nil }
-
+            else { continue }
+            
             participantRoles.remove(existingRole)
             moc.delete(existingRole)
-            return user
-        })
+        }
     }
 
     /// Remove participants to the conversation. The method will decide on its own whether

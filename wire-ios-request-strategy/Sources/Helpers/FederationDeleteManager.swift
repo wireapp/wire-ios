@@ -31,28 +31,9 @@ final public class FederationDeleteManager {
         guard let moc = syncContext,
               let selfDomain = ZMUser.selfUser(in: moc).domain else { return }
 
-        // search all conversations hosted on domain and remove participants from selfDomain
-        removeAllParticipantsFromDomain(selfDomain, inConversationsOnDomain: domain)
-
-        // search all conversation hosted on selfDomain that have participants from domain and remove them
-        removeAllParticipantsFromDomain(domain, inConversationsOnDomain: selfDomain)
-
-
-        // find all conversations where participants are from domain and selfDomain
-        let conversations = ZMConversation.existingConversationsHostedOnDomainDifferentThan(myDomain: selfDomain,
-                                                                                            otherDomain: domain,
-                                                                                            moc: moc)
-        for currentConversation in conversations {
-            removeParticipantsFromDomains(domains: [domain, selfDomain], inConversation: currentConversation)
-        }
-
         markAllOneToOneConversationsAsReadOnly(forDomain: domain)
-
         ignoreAllPendingConnectionRequests(fromDomain: domain)
-
-        do {
-            try moc.save()
-        } catch {}
+        domainsStoppedFederating(domains: [selfDomain, domain])
     }
 
     public func domainsStoppedFederating(domains: [String]) {
@@ -65,11 +46,12 @@ final public class FederationDeleteManager {
                 let domainsToRemove = domains.filter { $0 != currentConversation.domain ?? "" }
                 removeParticipantsFromDomains(domains: domainsToRemove, inConversation: currentConversation)
             } else {
-                //r emove participants from both domains
+                //remove participants from both domains
                 guard currentConversation.containsParticipantsFromAllDomains(domains: domains) else { continue }
                 removeParticipantsFromDomains(domains: domains, inConversation: currentConversation)
             }
         }
+        try? moc.save()
     }
 }
 
@@ -83,7 +65,6 @@ private extension FederationDeleteManager {
         for user in users {
             guard let conversation = user.connection?.conversation else { continue }
             conversation.isForcedReadOnly = true
-            conversation.userDefinedName = "hehe"
         }
     }
 
