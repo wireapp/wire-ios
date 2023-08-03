@@ -108,13 +108,12 @@ private extension FederationDeleteManager {
         let conversations = ZMConversation.existingConversationsHostedOnDomain(domain: conversationDomain,
                                                                                moc: moc)
         for conversation in conversations {
-            deleteAllParticipantsFromDomain(domain: participantsDomain,
-                                            inConversation: conversation,
-                                            selfUser: ZMUser.selfUser(in: moc))
+            removeAllParticipantsFromDomain(domain: participantsDomain,
+                                            inConversation: conversation)
         }
     }
 
-    func deleteAllParticipantsFromDomain(domain: String, inConversation conversation: ZMConversation, selfUser: ZMUser) {
+    func removeAllParticipantsFromDomain(domain: String, inConversation conversation: ZMConversation) {
         let participantsFromDomain = conversation.localParticipants.filter { $0.domain == domain }
         conversation.removeParticipantsWithoutUpdatingState(users: participantsFromDomain)
         addSystemMessageAboutRemovedParticipants(participants: participantsFromDomain, inConversation: conversation)
