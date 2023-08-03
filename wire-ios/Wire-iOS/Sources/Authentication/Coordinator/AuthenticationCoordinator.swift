@@ -432,7 +432,7 @@ extension AuthenticationCoordinator {
 
     func makeUnregisteredUser() -> UnregisteredUser {
         let user = UnregisteredUser()
-        user.accentColor = .random
+        user.accentColor = .blue
         return user
     }
 
