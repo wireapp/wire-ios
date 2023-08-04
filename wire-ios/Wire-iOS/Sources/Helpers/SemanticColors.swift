@@ -30,7 +30,6 @@ public enum SemanticColors {
 
     public enum LegacyColors {
         // Legacy accent colors
-        static let strongLimeGreen = UIColor(red: 0, green: 0.784, blue: 0, alpha: 1)
         static let vividRed = UIColor(red: 1, green: 0.152, blue: 0, alpha: 1)
     }
 
