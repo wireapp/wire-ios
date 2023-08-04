@@ -20,10 +20,14 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ConfirmEmailDelegate
+
 protocol ConfirmEmailDelegate: AnyObject {
     func resendVerification(inController controller: ConfirmEmailViewController)
     func didConfirmEmail(inController controller: ConfirmEmailViewController)
 }
+
+// MARK: - UITableView extension
 
 extension UITableView {
     var autolayoutTableHeaderView: UIView? {
@@ -52,12 +56,19 @@ extension UITableView {
     }
 }
 
+// MARK: - ConfirmEmailViewController
+
 final class ConfirmEmailViewController: SettingsBaseTableViewController {
+
+    // MARK: - Properties
+
     fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     weak var delegate: ConfirmEmailDelegate?
 
     let newEmail: String
     fileprivate var observer: NSObjectProtocol?
+
+    // MARK: - Init
 
     init(newEmail: String, delegate: ConfirmEmailDelegate?) {
         self.newEmail = newEmail
@@ -71,6 +82,8 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Override methods
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -83,6 +96,8 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         super.viewWillAppear(animated)
         observer = nil
     }
+
+    // MARK: - Override methods
 
     func setupViews() {
         SettingsButtonCell.register(in: tableView)
@@ -99,6 +114,8 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
         tableView.autolayoutTableHeaderView = description
     }
+
+    // MARK: - Setup tableView
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -132,10 +149,12 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     }
 }
 
+// MARK: - ZMUserObserver
+
 extension ConfirmEmailViewController: ZMUserObserver {
     func userDidChange(_ note: WireDataModel.UserChangeInfo) {
         if note.user.isSelfUser {
-            // we need to check if the notification really happened because 
+            // we need to check if the notification really happened because
             // the email got changed to what we expected
             if let currentEmail = ZMUser.selfUser().emailAddress, currentEmail == newEmail {
                 delegate?.didConfirmEmail(inController: self)
