@@ -63,9 +63,11 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
 
 extension TerminateFederationRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent],
-                              liveEvents: Bool,
-                              prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) {
         events.forEach(processEvent)
     }
 
