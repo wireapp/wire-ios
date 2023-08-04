@@ -550,9 +550,9 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         typealias Strings = L10n.Localizable.Error.Connection
 
         if let connectionError = error as? ConnectToUserError,
-           connectionError == .invalidDomain {
-            let title = Strings.federationDeniedMessage(viewModel.user.name ?? "")
-            UIAlertController.showErrorAlert(title: title, message: "")
+           connectionError == .federationDenied {
+            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            UIAlertController.showErrorAlert(title: "", message: message)
         } else {
             presentLocalizedErrorAlert(error)
         }

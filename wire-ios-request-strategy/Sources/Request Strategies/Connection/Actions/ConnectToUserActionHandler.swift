@@ -83,8 +83,8 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
                 action.notifyResult(.failure(.missingLegalholdConsent))
             case (403, .connectionLimit):
                 action.notifyResult(.failure(.connectionLimitReached))
-            case (422, .invalidDomain):
-                action.notifyResult(.failure(.invalidDomain))
+            case (422, .federationDenied):
+                action.notifyResult(.failure(.federationDenied))
             default:
                 action.notifyResult(.failure(.unknown))
             }

@@ -24,7 +24,7 @@ public enum ConnectToUserError: Error {
     case connectionLimitReached
     case missingLegalholdConsent
     case internalInconsistency
-    case invalidDomain
+    case federationDenied
 }
 
 public enum UpdateConnectionError: Error {
@@ -34,7 +34,7 @@ public enum UpdateConnectionError: Error {
     case connectionLimitReached
     case missingLegalholdConsent
     case internalInconsistency
-    case invalidDomain
+    case federationDenied
 }
 
 public struct ConnectToUserAction: EntityAction {
