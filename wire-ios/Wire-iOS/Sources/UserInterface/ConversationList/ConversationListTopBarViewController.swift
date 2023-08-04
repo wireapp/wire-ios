@@ -173,6 +173,7 @@ final class ConversationListTopBarViewController: UIViewController {
         accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
 
         if let selfUser = ZMUser.selfUser(),
+           selfUser.clientsRequiringUserAttention.count > 0 {
             accountView.accessibilityLabel = "self.new-device.voiceover.label".localized
         }
 

@@ -28,6 +28,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: ZMSnapshotTestCas
 
     override func setUp() {
         super.setUp()
+        FontScheme.configure(with: .large)
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
     }
