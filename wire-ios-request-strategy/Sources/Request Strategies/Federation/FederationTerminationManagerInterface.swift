@@ -18,10 +18,16 @@
 
 import Foundation
 
-import Foundation
-import WireSystem
-
 public protocol FederationTerminationManagerInterface {
 
+    func handleFederationTerminationWith(_ domain: String)
+    func handleFederationTerminationBetween(_ domains: [String])
 
+}
+
+/// TODO Katerina: Remove it
+class TempFederationDeleteManager: FederationTerminationManagerInterface {
+    func handleFederationTerminationWith(_ domain: String) {}
+
+    func handleFederationTerminationBetween(_ domains: [String]) {}
 }

@@ -26,6 +26,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     // MARK: - Properties
 
     private let entitySync: EntityActionSync
+    var federationTerminationManager: FederationTerminationManagerInterface
 
     // MARK: - Life cycle
 
@@ -34,6 +35,8 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus
     ) {
         entitySync = EntityActionSync(actionHandlers: [])
+        /// TODO Katerina
+        federationTerminationManager = TempFederationDeleteManager()
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -67,20 +70,18 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
     }
 
     private func processEvent(_ event: ZMUpdateEvent) {
-        /// TODO: We need to use Marcin's PR
-        /// let manager = FederationDeleteManager(syncContext: context)
 
         switch event.type {
 
         case .federationDelete:
-            let payload = event.eventPayload(type: Payload.FederationDelete.self)
-            /// TODO:  trigger the method.
-            /// Will be implemented after Marchin merges his PRs.
+            if let payload = event.eventPayload(type: Payload.FederationDelete.self) {
+                federationTerminationManager.handleFederationTerminationWith(payload.domain)
+            }
 
         case .federationConnectionRemoved:
-            let payload = event.eventPayload(type: Payload.ConnectionRemoved.self)
-            /// TODO:  trigger the method.
-            /// Will be implemented after Marchin merges his PRs.
+            if let payload = event.eventPayload(type: Payload.ConnectionRemoved.self) {
+                federationTerminationManager.handleFederationTerminationBetween(payload.domains)
+            }
 
         default:
             break

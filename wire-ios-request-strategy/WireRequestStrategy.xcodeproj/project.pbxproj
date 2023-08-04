@@ -50,7 +50,7 @@
 		0693115724F7B1A200D14DF5 /* ZMLocalNotificationTests_Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0693115124F7B15500D14DF5 /* ZMLocalNotificationTests_Message.swift */; };
 		06A1966E2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A1966D2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift */; };
 		06A196702A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A1966F2A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift */; };
-		06A196722A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A196712A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift */; };
+		06A196732A7D0FF200B43BA5 /* FederationTerminationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A196712A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift */; };
 		06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */; };
 		06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */; };
 		06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */; };
@@ -1869,6 +1869,7 @@
 				F18401A92073BE0800E9F4CC /* MissingClientsRequestFactory.swift in Sources */,
 				16367F2626FDB4720028AF8B /* ConnectionRequestStrategy.swift in Sources */,
 				F18401AD2073BE0800E9F4CC /* ZMOTRMessage+Missing.swift in Sources */,
+				06A196732A7D0FF200B43BA5 /* FederationTerminationManagerInterface.swift in Sources */,
 				06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */,
 				068084962563B6940047899C /* FeatureConfigRequestStrategy.swift in Sources */,
 				166901F01D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m in Sources */,
@@ -2045,7 +2046,6 @@
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
 				F18401EC2073C26700E9F4CC /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
 				87F7288521AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift in Sources */,
-				06A196722A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift in Sources */,
 				EEDE7DB328EAEEFA007DC6A3 /* MockConversationService.swift in Sources */,
 				EECBE8F028E71F57005DE5DD /* SyncConversationActionHandlerTests.swift in Sources */,
 				1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */,

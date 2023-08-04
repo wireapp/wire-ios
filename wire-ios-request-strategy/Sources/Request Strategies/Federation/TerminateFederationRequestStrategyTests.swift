@@ -26,6 +26,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
 
     var sut: TerminateFederationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
+    var manager: MockFederationTerminationManager!
 
     // MARK: - Life cycle
 
@@ -38,12 +39,14 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus
         )
-
+        manager = MockFederationTerminationManager()
+        sut.federationTerminationManager = manager
     }
 
     override func tearDown() {
-        sut = nil
         mockApplicationStatus = nil
+        manager = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -66,6 +69,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
+        XCTAssertTrue(manager.didCallHandleFederationTerminationWith)
     }
 
     func testThatItProcessesEvent_federationConnectionRemoved() {
@@ -85,6 +89,22 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
+        XCTAssertTrue(manager.didCallhandleFederationTerminationBetween)
+    }
+
+}
+
+class MockFederationTerminationManager: FederationTerminationManagerInterface {
+
+    var didCallHandleFederationTerminationWith: Bool = false
+    var didCallhandleFederationTerminationBetween: Bool = false
+
+    func handleFederationTerminationWith(_ domain: String) {
+        didCallHandleFederationTerminationWith = true
+    }
+
+    func handleFederationTerminationBetween(_ domains: [String]) {
+        didCallhandleFederationTerminationBetween = true
     }
 
 }
