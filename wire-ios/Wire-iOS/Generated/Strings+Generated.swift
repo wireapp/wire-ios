@@ -1897,6 +1897,22 @@ internal enum L10n {
               }
             }
           }
+          internal enum Removed {
+            internal enum Anonymously {
+              /// %@ were removed.
+              internal static func plural(_ p1: Any) -> String {
+                return L10n.tr("Localizable", "content.system.conversation.removed.anonymously.plural", String(describing: p1), fallback: "%@ were removed.")
+              }
+              /// %@ was removed.
+              internal static func singular(_ p1: Any) -> String {
+                return L10n.tr("Localizable", "content.system.conversation.removed.anonymously.singular", String(describing: p1), fallback: "%@ was removed.")
+              }
+              /// %@ were removed.
+              internal static func you(_ p1: Any) -> String {
+                return L10n.tr("Localizable", "content.system.conversation.removed.anonymously.you", String(describing: p1), fallback: "%@ were removed.")
+              }
+            }
+          }
           internal enum Team {
             /// %@ was removed from the team.
             internal static func memberLeave(_ p1: Any) -> String {

@@ -22,7 +22,7 @@ import WireDataModel
 
 enum ConversationActionType {
 
-    case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave
+    case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave, removedAnonymously
 
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
@@ -44,9 +44,9 @@ enum ConversationActionType {
     func image(with color: UIColor) -> UIImage {
         let icon: StyleKitIcon
         switch self {
-        case .started, .none:                   icon = .conversation
-        case .added:                            icon = .plus
-        case .removed, .left, .teamMemberLeave: icon = .minus
+        case .started, .none:                                        icon = .conversation
+        case .added:                                                 icon = .plus
+        case .removed, .left, .teamMemberLeave, .removedAnonymously: icon = .minus
         }
 
         return icon.makeImage(size: .tiny, color: color)
@@ -63,6 +63,7 @@ extension ZMConversationMessage {
         case .participantsAdded:    return .added(herself: systemMessage.userIsTheSender)
         case .newConversation:      return .started(withName: systemMessage.text)
         case .teamMemberLeave:      return .teamMemberLeave
+        case .participantsRemovedAnonymously: return .removedAnonymously
         default:                    return .none
         }
     }

@@ -58,13 +58,15 @@ final public class FederationDeleteManager {
 private extension FederationDeleteManager {
 
     func markAllOneToOneConversationsAsReadOnly(forDomain domain: String) {
-        guard let moc = syncContext else { return }
+        guard let moc = syncContext,
+              let selfDomain = ZMUser.selfUser(in: moc).domain else { return }
 
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(inDomain: domain))
         let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
         for user in users {
             guard let conversation = user.connection?.conversation else { continue }
             conversation.isForcedReadOnly = true
+            addSystemMessageDomainsStoppedFederating(domains: [selfDomain, domain], inConversation: conversation)
         }
     }
 
@@ -103,9 +105,13 @@ private extension FederationDeleteManager {
     func addSystemMessageAboutRemovedParticipants(participants: Set<ZMUser>, inConversation conversation: ZMConversation) {
         guard let moc = syncContext else { return }
         let selfUser = ZMUser.selfUser(in: moc)
+        conversation.appendParticipantsRemovedAnonymouslySystemMessage(users: participants, sender: selfUser, at: Date())
+    }
 
-        // TODO: create new system message "xyz was removed from conversation" instead of current "you removed XYZ from conversation", will be changed in next PR
-        conversation.appendParticipantsRemovedSystemMessage(users: participants, sender: selfUser, at: Date())
+    func addSystemMessageDomainsStoppedFederating(domains: [String], inConversation conversation: ZMConversation) {
+        guard let moc = syncContext else { return }
+        let selfUser = ZMUser.selfUser(in: moc)
+        conversation.appendDomainsStoppedFederatingSystemMessage(domains: domains, sender: selfUser, at: Date())
     }
 }
 

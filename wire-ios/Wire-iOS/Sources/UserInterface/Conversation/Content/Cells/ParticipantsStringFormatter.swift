@@ -32,6 +32,7 @@ private extension ConversationActionType {
         case .started(withName: .none), .none: return localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
         case .started(withName: .some): return "content.system.conversation.with_name.participants"
         case .teamMemberLeave: return "content.system.conversation.team.member-leave"
+        case .removedAnonymously: return (localizationKey(with: "removed.anonymously", senderIsSelfUser: senderIsSelfUser))
         }
     }
 
@@ -162,7 +163,6 @@ final class ParticipantsStringFormatter {
 
         switch message.actionType {
         case .removed(reason: .legalHoldPolicyConflict):
-            typealias Conversation = L10n.Localizable.Content.System.Conversation
 
             var senderPath = names.names.count > 1 ? "others" : "other"
             if isSelfIncludedInUsers {
@@ -182,6 +182,14 @@ final class ParticipantsStringFormatter {
 
         case .started(withName: .some):
             result = "\(Key.with.localized) \(nameSequence.string)" && font && textColor
+
+        case .removedAnonymously:
+            var formatPath = "plural"
+            if names.names.count == 1 {
+                formatPath = isSelfIncludedInUsers ? "you" : "singular"
+            }
+            let formatString = "content.system.conversation.removed.anonymously.\(formatPath)"
+            result = formatString.localized(args: nameSequence.string) && font && textColor
 
         default: return nil
         }

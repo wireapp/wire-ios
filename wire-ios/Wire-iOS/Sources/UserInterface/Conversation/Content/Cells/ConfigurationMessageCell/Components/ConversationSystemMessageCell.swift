@@ -374,7 +374,7 @@ final class ConversationSystemMessageCellDescription {
             let missingMessagesCell = ConversationMissingMessagesSystemMessageCellDescription(message: message, data: systemMessageData)
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
 
-        case .participantsAdded, .participantsRemoved, .teamMemberLeave:
+        case .participantsAdded, .participantsRemoved, .teamMemberLeave, .participantsRemovedAnonymously:
             let participantsChangedCell = ConversationParticipantsChangedSystemMessageCellDescription(message: message, data: systemMessageData)
             return [AnyConversationMessageCellDescription(participantsChangedCell)]
 
