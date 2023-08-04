@@ -29,7 +29,6 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
-    private let transitionDelegate = TransitionDelegate()
 
     override init() {
         super.init()
@@ -45,14 +44,14 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         guard
             let controllerToPresentOn = controllerToPresentOn,
             controllerToPresentOn.isIPadRegular()
-            else { return }
+        else { return }
 
         ZClientViewController.shared?.transitionToList(animated: false, completion: nil)
 
         guard
             viewToPresentOn != nil,
             let presentedViewController = controllerToPresentOn.presentedViewController
-            else { return }
+        else { return }
 
         presentedViewController.popoverPresentationController?.sourceRect = presentedFrame
         presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0).size
@@ -75,7 +74,6 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         profileViewController.viewControllerDismisser = self
 
         let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
-        navigationController.transitioningDelegate = transitionDelegate
         navigationController.modalPresentationStyle = .formSheet
 
         controllerToPresentOn?.present(navigationController, animated: true)
@@ -91,19 +89,4 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             self.onDismiss = nil
         }
     }
-}
-
-private class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
-
-    func animationController(forPresented presented: UIViewController,
-                             presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-
-        return ZoomTransition(interactionPoint: .init(x: 0.5, y: 0.5), reversed: false)
-    }
-
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return ZoomTransition(interactionPoint: .init(x: 0.5, y: 0.5), reversed: true)
-    }
-
 }
