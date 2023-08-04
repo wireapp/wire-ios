@@ -72,7 +72,6 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
     private func processEvent(_ event: ZMUpdateEvent) {
 
         switch event.type {
-
         case .federationDelete:
             if let payload = event.eventPayload(type: Payload.FederationDelete.self) {
                 federationTerminationManager.handleFederationTerminationWith(payload.domain)
