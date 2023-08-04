@@ -18,9 +18,10 @@
 
 import XCTest
 import SnapshotTesting
+import WireCommonComponents
 @testable import Wire
 
-final class ConversationListTopBarViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class ConversationListTopBarViewControllerSnapshotTests: XCTestCase {
 
     var sut: ConversationListTopBarViewController!
     var mockAccount: Account!
