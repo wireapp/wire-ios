@@ -211,7 +211,6 @@ final class ProfileActionsFactory {
 
         return actions
     }
-
 }
 
 extension UserType {
