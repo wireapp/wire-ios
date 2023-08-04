@@ -99,6 +99,10 @@ public enum SemanticColors {
 
         // Audio Icon
         static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
+
+        // System Message Icon Colors
+        static let foregroundExclamationMarkInSystemMessage = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let foregroundCheckMarkInSystemMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
     }
 
     public enum View {
@@ -203,6 +207,7 @@ public enum SemanticColors {
         static let textCallingDisabled = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
 
         static let backgroundPickUp = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+        static let backgroundHangUp = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
         /// Audio Buttons

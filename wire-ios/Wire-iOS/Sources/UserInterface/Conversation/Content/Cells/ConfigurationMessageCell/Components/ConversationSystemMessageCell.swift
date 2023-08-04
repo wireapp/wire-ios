@@ -809,9 +809,9 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon: UIImage
         if data.systemMessageType == .decryptionFailedResolved {
-            icon = StyleKitIcon.checkmark.makeImage(size: 16, color: SemanticColors.LegacyColors.strongLimeGreen)
+            icon = StyleKitIcon.checkmark.makeImage(size: 16, color: SemanticColors.Icon.foregroundCheckMarkInSystemMessage)
         } else {
-            icon = StyleKitIcon.exclamationMark.makeImage(size: 16, color: SemanticColors.LegacyColors.vividRed)
+            icon = StyleKitIcon.exclamationMark.makeImage(size: 16, color: SemanticColors.Icon.foregroundExclamationMarkInSystemMessage)
         }
 
         let title = ConversationCannotDecryptSystemMessageCellDescription
