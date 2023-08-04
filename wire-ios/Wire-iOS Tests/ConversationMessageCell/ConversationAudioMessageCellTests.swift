@@ -81,7 +81,7 @@ final class ConversationAudioMessageCellTests: ZMSnapshotTestCase {
     func testUploadedCell_fromThisDevice_bigFileSize() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = nil
-        (message.backingFileMessageData as!  MockFileMessageData).size = UInt64(1024 * 1024 * 25)
+        (message.backingFileMessageData as! MockFileMessageData).size = UInt64(1024 * 1024 * 25)
 
         verify(message: message)
     }

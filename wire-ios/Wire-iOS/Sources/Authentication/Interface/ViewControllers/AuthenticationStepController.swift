@@ -55,14 +55,14 @@ class AuthenticationStepController: AuthenticationStepViewController {
     private var subtextLabel: UILabel!
     private var subtextLabelContainer: ContentInsetView!
     private var mainView: UIView!
-    fileprivate var errorLabel: UILabel!
-    fileprivate var errorLabelContainer: ContentInsetView!
+    private var errorLabel: UILabel!
+    private var errorLabelContainer: ContentInsetView!
 
-    fileprivate var secondaryViews: [UIView] = []
-    fileprivate var footerViews: [UIView] = []
-    fileprivate var secondaryErrorView: UIView?
-    fileprivate var secondaryViewsStackView: UIStackView!
-    fileprivate var footerViewStackView: UIStackView!
+    private var secondaryViews: [UIView] = []
+    private var footerViews: [UIView] = []
+    private var secondaryErrorView: UIView?
+    private var secondaryViewsStackView: UIStackView!
+    private var footerViewStackView: UIStackView!
 
     private var mainViewWidthRegular: NSLayoutConstraint!
     private var mainViewWidthCompact: NSLayoutConstraint!

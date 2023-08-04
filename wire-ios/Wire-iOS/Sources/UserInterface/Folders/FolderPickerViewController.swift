@@ -28,9 +28,9 @@ final class FolderPickerViewController: UIViewController {
 
     var delegate: FolderPickerViewControllerDelegate?
 
-    fileprivate var conversationDirectory: ConversationDirectoryType
-    fileprivate var items: [LabelType] = []
-    fileprivate let conversation: ZMConversation
+    private var conversationDirectory: ConversationDirectoryType
+    private var items: [LabelType] = []
+    private let conversation: ZMConversation
     private let hintLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
                                              color: SemanticColors.Label.textDefault)
     private let collectionViewLayout = UICollectionViewFlowLayout()

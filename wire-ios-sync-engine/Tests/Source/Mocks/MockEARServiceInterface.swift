@@ -150,4 +150,19 @@ public class MockEARServiceInterface: EARServiceInterface {
         }
     }
 
+    // MARK: - setInitialEARFlagValue
+
+    public var setInitialEARFlagValue_Invocations: [Bool] = []
+    public var setInitialEARFlagValue_MockMethod: ((Bool) -> Void)?
+
+    public func setInitialEARFlagValue(_ enabled: Bool) {
+        setInitialEARFlagValue_Invocations.append(enabled)
+
+        guard let mock = setInitialEARFlagValue_MockMethod else {
+            fatalError("no mock for `setInitialEARFlagValue`")
+        }
+
+        mock(enabled)
+    }
+
 }

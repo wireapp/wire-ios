@@ -59,9 +59,7 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func setupViews() {
-        let colorScheme = ColorScheme()
-        colorScheme.variant = .light
-        view.backgroundColor = colorScheme.color(named: .textForeground)
+        view.backgroundColor = SemanticColors.View.backgroundConversationView
         view.addSubview(collectionView)
 
         addChild(sectionViewController)
