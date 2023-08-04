@@ -232,6 +232,7 @@
     <entity name="SystemMessage" representedClassName="ZMSystemMessage" parentEntity="Message" syncable="YES">
         <attribute name="allTeamUsersAdded" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="decryptionErrorCode" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="domains" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="messageTimer" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsUpdatingUsers" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>

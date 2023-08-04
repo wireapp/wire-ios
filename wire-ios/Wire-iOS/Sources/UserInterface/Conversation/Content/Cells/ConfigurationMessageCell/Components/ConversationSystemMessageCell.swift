@@ -414,6 +414,11 @@ final class ConversationSystemMessageCellDescription {
                                                                                          buttonAction: buttonAction)
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
+
+        case .domainsStoppedFederating:
+            let domainsStoppFederatingCell = ConversationDomainsStoppedFederatingSystemMessageCellDescription(message: message, data: systemMessageData)
+            return [AnyConversationMessageCellDescription(domainsStoppFederatingCell)]
+
         default:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
@@ -1135,5 +1140,36 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
         }
 
         return SystemContent.FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
+    }
+}
+
+class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
+    typealias View = ParticipantsConversationSystemMessageCell
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 0
+
+    let isFullWidth: Bool = false // ~!@#$%^
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
+
+    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+        let color = SemanticColors.Icon.backgroundDefault
+        let textColor = SemanticColors.Label.textDefault
+
+//        let model = ParticipantsCellViewModel(font: .mediumFont, largeFont: .largeSemiboldFont, textColor: textColor, iconColor: color, message: message)
+
+        let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
+        configuration = View.Configuration(icon: icon, attributedText: model.attributedTitle(), showLine: false, warning: nil)
+        accessibilityLabel = model.attributedTitle()?.string
+        actionController = nil
     }
 }

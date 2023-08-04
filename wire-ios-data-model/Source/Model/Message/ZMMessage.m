@@ -902,6 +902,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
             case ZMSystemMessageTypeFailedToAddParticipants:
             case ZMSystemMessageTypeMessageTimerUpdate:
             case ZMSystemMessageTypeParticipantsRemovedAnonymously:
+            case ZMSystemMessageTypeDomainsStoppedFederating:
                 return NO;
         }
     }];

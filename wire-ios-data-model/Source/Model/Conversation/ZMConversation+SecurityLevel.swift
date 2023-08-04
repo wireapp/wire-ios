@@ -596,7 +596,8 @@ extension ZMConversation {
                              timestamp: Date,
                              duration: TimeInterval? = nil,
                              messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true) -> ZMSystemMessage {
+                             relevantForStatus: Bool = true,
+                             domains: [String]? = nil) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -604,6 +605,7 @@ extension ZMConversation {
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
         systemMessage.serverTimestamp = timestamp
+        systemMessage.domains = domains
         if let duration = duration {
             systemMessage.duration = duration
         }

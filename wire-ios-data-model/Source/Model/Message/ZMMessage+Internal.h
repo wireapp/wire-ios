@@ -144,6 +144,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic) NSNumber * _Nullable messageTimer; // Only filled for .messageTimerUpdate
 @property (nonatomic) BOOL relevantForConversationStatus; // If true (default), the message is considered to be shown inside the conversation list
 @property (nonatomic) NSNumber * _Nullable decryptionErrorCode; // If available this will be set for decryption error messages.
+//@property (nonatomic) NSArray<NSString> domains; ~!@#$%^
 + (ZMSystemMessage * _Nullable)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation * _Nonnull)conversation;
 - (void)updateNeedsUpdatingUsersIfNeeded;
 
