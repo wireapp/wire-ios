@@ -134,7 +134,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     func createPendingLegalHoldRequestView() -> UIView {
         let button = IconButton(style: .circular)
-        button.setBackgroundImageColor(SemanticColors.LegacyColors.vividRed.withAlphaComponent(0.5), for: .normal)
+        button.setBackgroundImageColor(SemanticColors.Icon.backgroundLegalHold.withAlphaComponent(0.5), for: .normal)
 
         button.setIcon(.clock, size: 12, for: .normal)
         button.setIconColor(.white, for: .normal)
