@@ -64,7 +64,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     weak var delegate: ConfirmEmailDelegate?
-
+    typealias SettingsAccountSectionEmail = L10n.Localizable.Self.Settings.AccountSection.Email.Change
     let newEmail: String
     fileprivate var observer: NSObjectProtocol?
 
@@ -102,7 +102,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     func setupViews() {
         SettingsButtonCell.register(in: tableView)
 
-        title = "self.settings.account_section.email.change.verify.title".localized(uppercased: true)
+        title = SettingsAccountSectionEmail.Verify.title
         view.backgroundColor = .clear
         tableView.isScrollEnabled = false
 
@@ -110,7 +110,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         tableView.estimatedSectionHeaderHeight = 30
 
         let description = DescriptionHeaderView()
-        description.descriptionLabel.text = "self.settings.account_section.email.change.verify.description".localized
+        description.descriptionLabel.text = SettingsAccountSectionEmail.Verify.description
 
         tableView.autolayoutTableHeaderView = description
     }
@@ -127,8 +127,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SettingsButtonCell.zm_reuseIdentifier, for: indexPath) as! SettingsButtonCell
-        let format = "self.settings.account_section.email.change.verify.resend".localized
-        let text = String(format: format, newEmail)
+        let text = SettingsAccountSectionEmail.Verify.resend(newEmail)
         cell.titleText = text
         return cell
     }
@@ -137,14 +136,15 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         delegate?.resendVerification(inController: self)
         tableView.deselectRow(at: indexPath, animated: false)
 
-        let message = String(format: "self.settings.account_section.email.change.resend.message".localized, newEmail)
+        let message = SettingsAccountSectionEmail.Resend.message(newEmail)
+
         let alert = UIAlertController(
-            title: "self.settings.account_section.email.change.resend.title".localized,
+            title: SettingsAccountSectionEmail.Resend.title,
             message: message,
             preferredStyle: .alert
         )
 
-        alert.addAction(.init(title: "general.ok".localized, style: .cancel, handler: nil))
+        alert.addAction(.init(title: L10n.Localizable.General.ok, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
 }
