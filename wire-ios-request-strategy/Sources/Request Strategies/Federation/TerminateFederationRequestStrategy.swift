@@ -25,7 +25,6 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
-    private let entitySync: EntityActionSync
     var federationTerminationManager: FederationTerminationManagerInterface
 
     // MARK: - Life cycle
@@ -34,7 +33,6 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        entitySync = EntityActionSync(actionHandlers: [])
         /// TODO Katerina
         federationTerminationManager = TempFederationDeleteManager()
 
@@ -54,7 +52,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return entitySync.nextRequest(for: apiVersion)
+        return nil
     }
 
 }

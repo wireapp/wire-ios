@@ -19,7 +19,6 @@
 import XCTest
 @testable import WireRequestStrategy
 
-/// TODO: add tests
 class TerminateFederationRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Properties
