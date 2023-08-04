@@ -671,7 +671,7 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
         let title = ConversationMissingMessagesSystemMessageCellDescription.makeAttributedString(systemMessageData: data)
         configuration =  View.Configuration(icon: StyleKitIcon.exclamationMark.makeImage(size: .tiny,
-                                                                                         color: SemanticColors.Icon.backgroundMissedPhoneCall),
+                                                                                         color: SemanticColors.Icon.foregroundExclamationMarkInSystemMessage),
                                             attributedText: title,
                                             showLine: true)
         accessibilityLabel = title.string
@@ -987,7 +987,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     }
 
     private static var exclamationMarkIcon: UIImage {
-        return StyleKitIcon.exclamationMark.makeImage(size: 16, color: SemanticColors.LegacyColors.vividRed)
+        return StyleKitIcon.exclamationMark.makeImage(size: 16, color: SemanticColors.Icon.foregroundExclamationMarkInSystemMessage)
     }
 
     private static func configureForReactivatedSelfClient(_ selfUser: UserType, link: URL) -> View.Configuration {
