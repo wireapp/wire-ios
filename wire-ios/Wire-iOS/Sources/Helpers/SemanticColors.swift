@@ -97,6 +97,10 @@ public enum SemanticColors {
         static let foregroundElapsedTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
         static let foregroundRemainingTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
 
+        //  ThreeDotsLoadingView
+        static let foregroundLoadingDotInactive = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
+        static let foregroundLoadingDotActive = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
+
         // Audio Icon
         static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
     }
