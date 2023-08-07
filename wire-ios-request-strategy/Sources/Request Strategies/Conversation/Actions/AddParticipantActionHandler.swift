@@ -184,7 +184,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
 extension AddParticipantActionHandler {
 
-    // MARK: - Payload
+    // MARK: - Error response
 
     struct ErrorResponse: Codable {
         let unreachableBackends: [String]?

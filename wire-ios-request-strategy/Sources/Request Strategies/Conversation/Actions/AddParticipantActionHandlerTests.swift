@@ -291,9 +291,10 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
         syncMOC.performGroupedAndWait { [self] _ in
             // given
+            let unreachableDomain = "foma.wire.link"
             let unreachableUser = ZMUser.insertNewObject(in: self.syncMOC)
             unreachableUser.remoteIdentifier = UUID()
-            unreachableUser.domain = "foma.wire.link"
+            unreachableUser.domain = unreachableDomain
 
             var action = AddParticipantAction(users: [user, unreachableUser], conversation: conversation)
 
@@ -304,7 +305,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let payload = AddParticipantActionHandler.ErrorResponse(unreachableBackends: ["foma.wire.link"])
+            let payload = AddParticipantActionHandler.ErrorResponse(unreachableBackends: [unreachableDomain])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 503,
