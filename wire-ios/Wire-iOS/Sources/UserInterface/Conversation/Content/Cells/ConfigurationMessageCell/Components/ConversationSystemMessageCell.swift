@@ -1053,8 +1053,9 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     }
 
     private static func configureForAddedUsers(in conversation: ZMConversation, attributes: TextAttributes) -> View.Configuration {
-        let attributedNewUsers = NSAttributedString(string: "content.system.new_users".localized, attributes: attributes.startedUsingAttributes)
-        let attributedLink = NSAttributedString(string: "content.system.verify_devices".localized, attributes: attributes.linkAttributes)
+        let attributedNewUsers = NSAttributedString(string: L10n.Localizable.Content.System.newUsers, attributes: attributes.startedUsingAttributes)
+
+        let attributedLink = NSAttributedString(string: L10n.Localizable.Content.System.verifyDevices, attributes: attributes.linkAttributes)
         let attributedText = attributedNewUsers + " " + attributedLink
 
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: .conversation(conversation))
