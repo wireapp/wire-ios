@@ -20,7 +20,8 @@ import Foundation
 
 extension ZMUser {
 
-    static let supportedProtocolsKey = "supportedProtocols"
+    @objc
+    public static let supportedProtocolsKey = "supportedProtocols"
 
     @NSManaged
     private var primitiveSupportedProtocols: [Int16]?
@@ -47,6 +48,7 @@ extension ZMUser {
             willChangeValue(forKey: Self.supportedProtocolsKey)
             primitiveSupportedProtocols = newValue.map(\.rawValue)
             didChangeValue(forKey: Self.supportedProtocolsKey)
+            setLocallyModifiedKeys([Self.supportedProtocolsKey])
         }
     }
 
