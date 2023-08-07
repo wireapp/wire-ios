@@ -754,9 +754,9 @@ class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessage
         let link = View.userClientURL.absoluteString
 
         if user.isSelfUser == true {
-            string = "content.system.unverified_self_devices".localized(args: link)
+            string = L10n.Localizable.Content.System.unverifiedSelfDevices(link)
         } else {
-            string = "content.system.unverified_other_devices".localized(args: user.name ?? "", link)
+            string = L10n.Localizable.Content.System.unverifiedOtherDevices(user.name ?? "", link)
         }
 
         return .markdown(from: string, style: .systemMessage)
@@ -793,9 +793,9 @@ class ConversationSessionResetSystemMessageCellDescription: ConversationMessageC
     static func makeAttributedString(_ sender: UserType) -> NSAttributedString {
         let string: String
         if sender.isSelfUser {
-            string =  "content.system.session_reset.self".localized
+            string =  L10n.Localizable.Content.System.SessionReset.`self`
         } else {
-            string = "content.system.session_reset.other".localized(args: sender.name ?? "")
+            string = L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
         }
 
         return NSMutableAttributedString.markdown(from: string, style: .systemMessage)
