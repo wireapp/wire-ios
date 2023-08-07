@@ -316,7 +316,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             return
         }
 
-        let manager = FederationDeleteManager(syncContext: context)
+        let manager = FederationTerminationManager(syncContext: context)
         manager.domainsStoppedFederating(domains: ["bella.wire.link",
                                                    "foma.wire.link"])
     }
@@ -329,8 +329,8 @@ final class DeveloperToolsViewModel: ObservableObject {
             return
         }
         
-        let manager = FederationDeleteManager(syncContext: context)
-        manager.backendStoppedFederatingWithDomain(domain: domain)
+        let manager = FederationTerminationManager(syncContext: context)
+        manager.handleFederationTerminationWith(domain)
     }
 
 }
