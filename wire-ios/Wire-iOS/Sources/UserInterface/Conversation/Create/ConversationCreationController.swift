@@ -345,9 +345,6 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
               let conversationCreationCoordinator = conversationCreationCoordinator
         else { return }
         do {
-            try conversationCreationCoordinator.initialize(eventHandler: { [weak self] event in
-                self?.handleConversationCreatorEvent(event: event)
-            })
             try conversationCreationCoordinator.createConversation(
                 withUsers: values.participants,
                 name: values.name,
@@ -356,10 +353,13 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 enableReceipts: values.enableReceipts,
                 encryptionProtocol: values.encryptionProtocol,
                 userSession: userSession,
-                moc: userSession.viewContext
+                moc: userSession.viewContext,
+                eventHandler: { [weak self] event in
+                    self?.handleConversationCreatorEvent(event: event)
+                }
             )
         } catch {
-            conversationCreationCoordinator.finalize()
+            // no-op
         }
     }
     

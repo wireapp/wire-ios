@@ -52,7 +52,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
     }
 
     override func tearDown() {
-        sut?.finalize()
         sut = nil
         coreDataFixture = nil
         super.tearDown()
@@ -62,14 +61,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
         do {
             sut = GroupConversationCreationCoordinator(creator: MockConversationCreator())
             var showLoaderRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .showLoader:
-                    showLoaderRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -80,7 +71,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .showLoader:
+                        showLoaderRequested = true
+                    default:
+                        break
+                    }
+                }
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertTrue(showLoaderRequested)
         } catch {
@@ -94,16 +92,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             sut = GroupConversationCreationCoordinator(creator: creator)
             var popupRequested = false
             var failureEmitted = false
-            try sut.initialize { event in
-                switch event {
-                case .presentPopup(popupType: .missingLegalHoldConsent):
-                    popupRequested = true
-                case .failure(failureType: .missingLegalHoldConsent):
-                    failureEmitted = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -114,7 +102,16 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .presentPopup(popupType: .missingLegalHoldConsent):
+                        popupRequested = true
+                    case .failure(failureType: .missingLegalHoldConsent):
+                        failureEmitted = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.missingLegalHoldConsentNotificationName,
                 object: self.uiMOC,
@@ -136,17 +133,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             sut = GroupConversationCreationCoordinator(creator: creator)
             var popupRequested = false
             var failureEmitted = false
-            try sut.initialize { event in
-                switch event {
-                case .presentPopup(popupType: .missingLegalHoldConsent(let completion)):
-                    popupRequested = true
-                    completion()
-                case .failure(failureType: .missingLegalHoldConsent):
-                    failureEmitted = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -157,7 +143,17 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .presentPopup(popupType: .missingLegalHoldConsent(let completion)):
+                        popupRequested = true
+                        completion()
+                    case .failure(failureType: .missingLegalHoldConsent):
+                        failureEmitted = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.missingLegalHoldConsentNotificationName,
                 object: self.uiMOC,
@@ -181,19 +177,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             var requestedBackends: NonFederatingBackends?
             var failureEmitted = false
             var openURLRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .presentPopup(popupType: .nonFederatingBackends(let backends, _)):
-                    popupRequested = true
-                    requestedBackends = backends
-                case .failure(failureType: .nonFederatingBackends):
-                    failureEmitted = true
-                case .openURL:
-                    openURLRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let backends = NonFederatingBackends(backends: ["a", "b", "c"])
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
@@ -205,7 +188,19 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .presentPopup(popupType: .nonFederatingBackends(let backends, _)):
+                        popupRequested = true
+                        requestedBackends = backends
+                    case .failure(failureType: .nonFederatingBackends):
+                        failureEmitted = true
+                    case .openURL:
+                        openURLRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.nonFederatingBackendsNotificationName,
                 object: self.uiMOC,
@@ -232,20 +227,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             var requestedBackends: NonFederatingBackends?
             var failureEmitted = false
             var openURLRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .presentPopup(popupType: .nonFederatingBackends(let backends, let actionHandler)):
-                    popupRequested = true
-                    requestedBackends = backends
-                    actionHandler(.discardGroupCreation)
-                case .failure(failureType: .nonFederatingBackends):
-                    failureEmitted = true
-                case .openURL:
-                    openURLRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let backends = NonFederatingBackends(backends: ["a", "b", "c"])
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
@@ -257,7 +238,20 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .presentPopup(popupType: .nonFederatingBackends(let backends, let actionHandler)):
+                        popupRequested = true
+                        requestedBackends = backends
+                        actionHandler(.discardGroupCreation)
+                    case .failure(failureType: .nonFederatingBackends):
+                        failureEmitted = true
+                    case .openURL:
+                        openURLRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.nonFederatingBackendsNotificationName,
                 object: self.uiMOC,
@@ -284,20 +278,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             var requestedBackends: NonFederatingBackends?
             var failureEmitted = false
             var openURLRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .presentPopup(popupType: .nonFederatingBackends(let backends, let actionHandler)):
-                    popupRequested = true
-                    requestedBackends = backends
-                    actionHandler(.learnMore)
-                case .failure(failureType: .nonFederatingBackends):
-                    failureEmitted = true
-                case .openURL:
-                    openURLRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let backends = NonFederatingBackends(backends: ["a", "b", "c"])
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
@@ -309,7 +289,20 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .presentPopup(popupType: .nonFederatingBackends(let backends, let actionHandler)):
+                        popupRequested = true
+                        requestedBackends = backends
+                        actionHandler(.learnMore)
+                    case .failure(failureType: .nonFederatingBackends):
+                        failureEmitted = true
+                    case .openURL:
+                        openURLRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.nonFederatingBackendsNotificationName,
                 object: self.uiMOC,
@@ -333,14 +326,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var otherFailureEmitted = false
-            try sut.initialize { event in
-                switch event {
-                case .failure(failureType: .other):
-                    otherFailureEmitted = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -351,7 +336,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .failure(failureType: .other):
+                        otherFailureEmitted = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.unknownResponseErrorNotificationName,
                 object: self.uiMOC,
@@ -371,14 +363,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var conversationCreated = false
-            try sut.initialize { event in
-                switch event {
-                case .success:
-                    conversationCreated = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -389,7 +373,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .success:
+                        conversationCreated = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.insertedConversationUpdatedNotificationName,
                 object: self.uiMOC,
@@ -409,14 +400,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var conversationCreated = false
-            try sut.initialize { event in
-                switch event {
-                case .success:
-                    conversationCreated = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -427,7 +410,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .success:
+                        conversationCreated = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.insertedConversationUpdatedNotificationName,
                 object: self.uiMOC,
@@ -447,14 +437,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var hideLoaderRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .hideLoader:
-                    hideLoaderRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -465,7 +447,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .hideLoader:
+                        hideLoaderRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.insertedConversationUpdatedNotificationName,
                 object: self.uiMOC,
@@ -485,14 +474,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var hideLoaderRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .hideLoader:
-                    hideLoaderRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -503,7 +484,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .hideLoader:
+                        hideLoaderRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.missingLegalHoldConsentNotificationName,
                 object: self.uiMOC,
@@ -523,14 +511,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var hideLoaderRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .hideLoader:
-                    hideLoaderRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let backends = NonFederatingBackends(backends: ["a", "b", "c"])
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
@@ -542,7 +522,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .hideLoader:
+                        hideLoaderRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.nonFederatingBackendsNotificationName,
                 object: self.uiMOC,
@@ -563,14 +550,6 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
             let creator = MockConversationCreator()
             sut = GroupConversationCreationCoordinator(creator: creator)
             var hideLoaderRequested = false
-            try sut.initialize { event in
-                switch event {
-                case .hideLoader:
-                    hideLoaderRequested = true
-                default:
-                    break
-                }
-            }
             let userSession = MockZMUserSession()
             let users = UserSet(arrayLiteral: MockUserType.createDefaultSelfUser(), MockUserType.createDefaultOtherUser())
             try sut.createConversation(
@@ -581,7 +560,14 @@ final class GroupConversationCreationCoordinatorTests: ZMTBaseTest, CoreDataFixt
                 enableReceipts: true,
                 encryptionProtocol: EncryptionProtocol.proteus,
                 userSession: userSession,
-                moc: self.uiMOC)
+                moc: self.uiMOC) { event in
+                    switch event {
+                    case .hideLoader:
+                        hideLoaderRequested = true
+                    default:
+                        break
+                    }
+                }
             NotificationCenter.default.post(
                 name: ZMConversation.unknownResponseErrorNotificationName,
                 object: self.uiMOC,

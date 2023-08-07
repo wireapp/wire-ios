@@ -58,16 +58,12 @@ class DefaultGroupConversationCreator: GroupConversationCreator {
 
 class GroupConversationCreationCoordinator {
     enum GroupConversationCreationCoordinatorError: Error {
-        case initializationFailure
         case creationFailure
     }
     private enum State {
         case ready
-        case initializing
-        case initialized(eventHandler: (GroupConversationCreationEvent) -> Void)
         case beginingToCreateConversation(eventHandler: (GroupConversationCreationEvent) -> Void)
         case creatingConversation(conversation: ZMConversation, eventHandler: (GroupConversationCreationEvent) -> Void)
-        case finalizing
     }
     private var state: State = .ready
 
@@ -78,9 +74,10 @@ class GroupConversationCreationCoordinator {
 
     private var eventHandler: ((GroupConversationCreationEvent) -> Void)? {
         switch state {
-        case .creatingConversation(_, let completionHandler), .initialized(let completionHandler), .beginingToCreateConversation(let completionHandler):
+        case .creatingConversation(_, let completionHandler),
+                .beginingToCreateConversation(let completionHandler):
             return completionHandler
-        case .ready, .finalizing, .initializing:
+        case .ready:
             return nil
         }
     }
@@ -89,16 +86,10 @@ class GroupConversationCreationCoordinator {
 
     init(creator: GroupConversationCreator = DefaultGroupConversationCreator()) {
         self.creator = creator
-    }
-
-    func initialize(eventHandler: @escaping (GroupConversationCreationEvent) -> Void) throws {
-        guard case .ready = state else { throw GroupConversationCreationCoordinatorError.initializationFailure }
-        state = .initializing
         NotificationCenter.default.addObserver(self, selector: #selector(missingLegalConsentErrorHandler), name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(nonFederatingBackendsErrorHandler), name: ZMConversation.nonFederatingBackendsNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(unsupportedErrorsHandler), name: ZMConversation.unknownResponseErrorNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(conversationCreatedHandler), name: ZMConversation.insertedConversationUpdatedNotificationName, object: nil)
-        state = .initialized(eventHandler: eventHandler)
     }
 
     func createConversation(
@@ -109,9 +100,10 @@ class GroupConversationCreationCoordinator {
         enableReceipts: Bool,
         encryptionProtocol: EncryptionProtocol,
         userSession: UserSessionInterface,
-        moc: NSManagedObjectContext
+        moc: NSManagedObjectContext,
+        eventHandler: @escaping (GroupConversationCreationEvent) -> Void
      ) throws {
-         guard case .initialized(let eventHandler) = state,
+         guard case .ready = state,
                let users = users
          else {
              throw GroupConversationCreationCoordinatorError.creationFailure
@@ -137,14 +129,12 @@ class GroupConversationCreationCoordinator {
              self.state = .creatingConversation(conversation: conversation, eventHandler: eventHandler)
          }
     }
-
-    func finalize() {
-        state = .finalizing
+    
+    deinit {
         NotificationCenter.default.removeObserver(self, name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)
         NotificationCenter.default.removeObserver(self, name: ZMConversation.nonFederatingBackendsNotificationName, object: nil)
         NotificationCenter.default.removeObserver(self, name: ZMConversation.unknownResponseErrorNotificationName, object: nil)
         NotificationCenter.default.removeObserver(self, name: ZMConversation.insertedConversationUpdatedNotificationName, object: nil)
-        state = .ready
     }
 
     @objc func conversationCreatedHandler(notification: Notification) {
@@ -152,6 +142,7 @@ class GroupConversationCreationCoordinator {
             else { return }
         eventHandler?(.hideLoader)
         eventHandler?(.success(conversation: conversation))
+        reset()
     }
 
     @objc func unsupportedErrorsHandler(notification: Notification) {
@@ -159,6 +150,7 @@ class GroupConversationCreationCoordinator {
             else { return }
         eventHandler?(.hideLoader)
         eventHandler?(.failure(failureType: .other))
+        reset()
     }
 
     @objc func missingLegalConsentErrorHandler(notification: Notification) {
@@ -171,6 +163,7 @@ class GroupConversationCreationCoordinator {
                 popupType: .missingLegalHoldConsent(
                     completionHandler: { [weak self] in
                         self?.eventHandler?(.failure(failureType: .missingLegalHoldConsent))
+                        self?.reset()
                     }
                 )
             )
@@ -191,13 +184,13 @@ class GroupConversationCreationCoordinator {
                     actionHandler: { [weak self] action in
                         switch action {
                         case .editParticipantsList:
-                            self?.finalize()
+                            self?.reset()
                         case .discardGroupCreation:
                             self?.eventHandler?(.failure(failureType: .nonFederatingBackends))
-                            self?.finalize()
+                            self?.reset()
                         case .learnMore:
                             self?.eventHandler?(.openURL(url: WireUrl.shared.support))
-                            self?.finalize()
+                            self?.reset()
                         }
                     }
                 )
@@ -214,5 +207,9 @@ class GroupConversationCreationCoordinator {
             conversation.objectID == notificationConversation.objectID
         else { return nil }
         return conversation
+    }
+    
+    private func reset() {
+        state = .ready
     }
 }
