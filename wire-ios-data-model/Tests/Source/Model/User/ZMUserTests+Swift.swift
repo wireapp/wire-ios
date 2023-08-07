@@ -975,6 +975,19 @@ extension ZMUserTests_Swift {
         // THEN
         XCTAssert(user.readReceiptsEnabled)
     }
+
+    func testThatMLSCantBeRemovedAsASupportedProtocol() {
+        // GIVEN
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.supportedProtocols = [.proteus, .mls]
+
+        // WHEN
+        user.supportedProtocols = [.proteus]
+
+        // THEN
+        XCTAssertEqual(user.supportedProtocols, [.proteus, .mls])
+    }
+
 }
 
 // MARK: - Verifying user
