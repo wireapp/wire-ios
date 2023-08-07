@@ -22,7 +22,12 @@ import WireDataModel
 import WireSyncEngine
 import Down
 
-// MARK: - Cells
+// MARK: Properties
+
+private typealias IconColors = SemanticColors.Icon
+private typealias LabelColors = SemanticColors.Label
+
+// MARK: - ConversationSystemMessageCell
 
 class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -41,6 +46,8 @@ class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMess
     }
 
 }
+
+// MARK: - ConversationStartedSystemMessageCell
 
 class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -91,6 +98,8 @@ extension ConversationStartedSystemMessageCell {
 
 }
 
+// MARK: - ConversationWarningSystemMessageCell
+
 class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
     struct Configuration {
         let topText: String
@@ -98,9 +107,9 @@ class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Conversat
     }
 
     private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                   color: SemanticColors.Label.textDefault)
+                                                   color: LabelColors.textDefault)
     private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                                      color: SemanticColors.Label.textDefault)
+                                                      color: LabelColors.textDefault)
 
     func configure(with object: Configuration, animated: Bool) {
         encryptionLabel.text = object.topText
@@ -118,7 +127,7 @@ class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Conversat
         bottomContentView.addSubview(sensitiveInfoLabel)
 
         lineView.isHidden = true
-        imageView.image =  Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
+        imageView.image =  Asset.Images.attention.image.withTintColor(IconColors.backgroundDefault)
     }
 
     override func configureConstraints() {
@@ -129,6 +138,8 @@ class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Conversat
             imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)])
     }
 }
+
+// MARK: - ParticipantsConversationSystemMessageCell
 
 class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -146,7 +157,7 @@ class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, Conv
         warningLabel.numberOfLines = 0
         warningLabel.isAccessibilityElement = true
         warningLabel.font = FontSpec(.small, .regular).font
-        warningLabel.textColor = SemanticColors.Label.textErrorDefault
+        warningLabel.textColor = LabelColors.textErrorDefault
         bottomContentView.addSubview(warningLabel)
     }
 
@@ -165,6 +176,8 @@ class ParticipantsConversationSystemMessageCell: ConversationIconBasedCell, Conv
         warningLabel.text = object.warning
     }
 }
+
+// MARK: - CannotDecryptSystemMessageCell
 
 class CannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -200,6 +213,8 @@ extension CannotDecryptSystemMessageCell {
 
 }
 
+// MARK: - NewDeviceSystemMessageCell
+
 class NewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     static let userClientURL: URL = URL(string: "settings://user-client")!
@@ -220,7 +235,7 @@ class NewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessage
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-       setupView()
+        setupView()
     }
 
     @available(*, unavailable)
@@ -262,6 +277,8 @@ extension NewDeviceSystemMessageCell {
 
 }
 
+// MARK: - ConversationRenamedSystemMessageCell
+
 class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration {
@@ -276,7 +293,7 @@ class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Conversat
         super.configureSubviews()
         nameLabel.numberOfLines = 0
         imageView.setTemplateIcon(.pencil, size: 16)
-        imageView.tintColor = SemanticColors.Icon.backgroundDefault
+        imageView.tintColor = IconColors.backgroundDefault
         bottomContentView.addSubview(nameLabel)
     }
 
@@ -309,8 +326,8 @@ final class ConversationSystemMessageCellDescription {
 
     static func cells(for message: ZMConversationMessage) -> [AnyConversationMessageCellDescription] {
         guard let systemMessageData = message.systemMessageData,
-            let sender = message.senderUser,
-            let conversation = message.conversationLike else {
+              let sender = message.senderUser,
+              let conversation = message.conversationLike else {
             preconditionFailure("Invalid system message")
         }
 
@@ -376,8 +393,8 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(participantsChangedCell)]
 
         case .readReceiptsEnabled,
-             .readReceiptsDisabled,
-             .readReceiptsOn:
+                .readReceiptsDisabled,
+                .readReceiptsOn:
             let cell = ConversationReadReceiptSettingChangedCellDescription(sender: sender,
                                                                             systemMessageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(cell)]
@@ -444,8 +461,8 @@ class ConversationParticipantsChangedSystemMessageCellDescription: ConversationM
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let color = SemanticColors.Icon.backgroundDefault
-        let textColor = SemanticColors.Label.textDefault
+        let color = IconColors.backgroundDefault
+        let textColor = LabelColors.textDefault
 
         let model = ParticipantsCellViewModel(font: .mediumFont, largeFont: .largeSemiboldFont, textColor: textColor, iconColor: color, message: message)
         configuration = View.Configuration(icon: model.image(), attributedText: model.attributedTitle(), showLine: true, warning: model.warning())
@@ -476,9 +493,9 @@ class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDe
         let senderText = message.senderName
         let titleString = "content.system.renamed_conv.title".localized(pov: sender.pov, args: senderText)
 
-        let title = NSAttributedString(string: titleString, attributes: [.font: UIFont.mediumFont, .foregroundColor: SemanticColors.Label.textDefault])
+        let title = NSAttributedString(string: titleString, attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault])
 
-        let conversationName = NSAttributedString(string: newName, attributes: [.font: UIFont.normalSemiboldFont, .foregroundColor: SemanticColors.Label.textDefault])
+        let conversationName = NSAttributedString(string: newName, attributes: [.font: UIFont.normalSemiboldFont, .foregroundColor: LabelColors.textDefault])
         configuration = View.Configuration(attributedText: title, newConversationName: conversationName)
         actionController = nil
         accessibilityLabel = "\(titleString), \(newName)"
@@ -507,10 +524,10 @@ class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescr
     init(message: ZMConversationMessage, data: ZMSystemMessageData, missed: Bool) {
         let viewModel = CallCellViewModel(
             icon: missed ? .endCall : .phone,
-            iconColor: missed ? SemanticColors.Icon.backgroundMissedPhoneCall : SemanticColors.Icon.backgroundPhoneCall,
+            iconColor: missed ? IconColors.backgroundMissedPhoneCall : IconColors.backgroundPhoneCall,
             systemMessageType: data.systemMessageType,
             font: .mediumFont,
-            textColor: SemanticColors.Label.textDefault,
+            textColor: LabelColors.textDefault,
             message: message
         )
 
@@ -551,7 +568,7 @@ class ConversationMessageTimerCellDescription: ConversationMessageCellDescriptio
         let timeoutValue = MessageDestructionTimeoutValue(rawValue: timer.doubleValue)
 
         var updateText: NSAttributedString?
-        let baseAttributes: [NSAttributedString.Key: AnyObject] = [.font: UIFont.mediumFont, .foregroundColor: SemanticColors.Label.textDefault]
+        let baseAttributes: [NSAttributedString.Key: AnyObject] = [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
 
         if timeoutValue == .none {
             updateText = NSAttributedString(string: "content.system.message_timer_off".localized(pov: sender.pov, args: senderText), attributes: baseAttributes)
@@ -561,7 +578,7 @@ class ConversationMessageTimerCellDescription: ConversationMessageCellDescriptio
             updateText = NSAttributedString(string: "content.system.message_timer_changes".localized(pov: sender.pov, args: senderText, timerString), attributes: baseAttributes)
         }
 
-        let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: SemanticColors.Icon.backgroundDefault)
+        let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
         configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
         accessibilityLabel = updateText?.string
         actionController = nil
@@ -590,7 +607,7 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
     init() {
         let title = NSAttributedString(
             string: "content.system.is_verified".localized,
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: SemanticColors.Label.textDefault]
+            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
         )
 
         configuration = View.Configuration(icon: WireStyleKit.imageOfShieldverified, attributedText: title, showLine: true)
@@ -619,8 +636,8 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     var conversationObserverToken: Any?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let color = SemanticColors.Label.textDefault
-        let iconColor = SemanticColors.Icon.backgroundDefault
+        let color = LabelColors.textDefault
+        let iconColor = IconColors.backgroundDefault
         let model = ParticipantsCellViewModel(font: .mediumFont, largeFont: .largeSemiboldFont, textColor: color, iconColor: iconColor, message: message)
 
         actionController = nil
@@ -630,7 +647,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
                                             icon: model.image())
         super.init()
         if !ProcessInfo.processInfo.isRunningTests,
-            let conversation = message.conversationLike as? ZMConversation {
+           let conversation = message.conversationLike as? ZMConversation {
             conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         }
         accessibilityLabel = configuration.message.string
@@ -671,7 +688,7 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
         let title = ConversationMissingMessagesSystemMessageCellDescription.makeAttributedString(systemMessageData: data)
         configuration =  View.Configuration(icon: StyleKitIcon.exclamationMark.makeImage(size: .tiny,
-                                                                                         color: SemanticColors.Icon.foregroundExclamationMarkInSystemMessage),
+                                                                                         color: IconColors.foregroundExclamationMarkInSystemMessage),
                                             attributedText: title,
                                             showLine: true)
         accessibilityLabel = title.string
@@ -680,13 +697,13 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {
         let font = UIFont.mediumFont
-        let color = SemanticColors.Label.textDefault
+        let color = LabelColors.textDefault
 
         func attributedLocalizedUppercaseString(_ localizationKey: String, _ users: [AnyHashable]) -> NSAttributedString? {
             guard !users.isEmpty else { return nil }
             let userNames = users.compactMap { ($0 as? UserType)?.name }.joined(separator: ", ")
             let string = localizationKey.localized(args: userNames + " ", users.count) + ". "
-                && font && color
+            && font && color
             return string
         }
 
@@ -809,9 +826,9 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon: UIImage
         if data.systemMessageType == .decryptionFailedResolved {
-            icon = StyleKitIcon.checkmark.makeImage(size: 16, color: SemanticColors.Icon.foregroundCheckMarkInSystemMessage)
+            icon = StyleKitIcon.checkmark.makeImage(size: 16, color: IconColors.foregroundCheckMarkInSystemMessage)
         } else {
-            icon = StyleKitIcon.exclamationMark.makeImage(size: 16, color: SemanticColors.Icon.foregroundExclamationMarkInSystemMessage)
+            icon = StyleKitIcon.exclamationMark.makeImage(size: 16, color: IconColors.foregroundExclamationMarkInSystemMessage)
         }
 
         let title = ConversationCannotDecryptSystemMessageCellDescription
@@ -918,7 +935,7 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
         let string = (BaseLocalizationString + ".error_details").localized(args: errorCode, clientIdentifier)
 
         return NSAttributedString(string: string.localizedUppercase,
-                                  attributes: [.foregroundColor: SemanticColors.Label.textDefault,
+                                  attributes: [.foregroundColor: LabelColors.textDefault,
                                                .font: UIFont.mediumFont])
     }
 
@@ -963,7 +980,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
     private static func configuration(for systemMessage: ZMSystemMessageData, in conversation: ZMConversation) -> View.Configuration {
 
-        let textAttributes = TextAttributes(boldFont: .mediumSemiboldFont, normalFont: .mediumFont, textColor: SemanticColors.Label.textDefault, link: View.userClientURL)
+        let textAttributes = TextAttributes(boldFont: .mediumSemiboldFont, normalFont: .mediumFont, textColor: LabelColors.textDefault, link: View.userClientURL)
         let clients = systemMessage.clients.compactMap({ $0 as? UserClientType })
         let users = systemMessage.userTypes.lazy
             .compactMap { $0 as? UserType }
@@ -987,7 +1004,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     }
 
     private static var exclamationMarkIcon: UIImage {
-        return StyleKitIcon.exclamationMark.makeImage(size: 16, color: SemanticColors.Icon.foregroundExclamationMarkInSystemMessage)
+        return StyleKitIcon.exclamationMark.makeImage(size: 16, color: IconColors.foregroundExclamationMarkInSystemMessage)
     }
 
     private static func configureForReactivatedSelfClient(_ selfUser: UserType, link: URL) -> View.Configuration {
