@@ -149,22 +149,24 @@ extension ZMConversation {
         }
         let users = participants.materialize(in: context)
 
-        internalAddParticipants(users) { (result) in
+        internalAddParticipants(users) { result in
             switch result {
-            case .success:
-                return completion(result)
-            case .failure(let error):
-                switch error {
-                case .unreachableUsers(let unreachableUsers):
-                    let reachableUsers = Set(users).subtracting(Set(unreachableUsers))
-                    self.appendFailedToAddUsersSystemMessage(users: Set(unreachableUsers),
-                                                             sender: self.creator,
-                                                             at: self.lastServerTimeStamp ?? Date())
+            case .failure(.unreachableUsers(let unreachableUsers)):
+                self.appendFailedToAddUsersSystemMessage(
+                    users: Set(unreachableUsers),
+                    sender: self.creator,
+                    at: self.lastServerTimeStamp ?? Date()
+                )
+                
+                let reachableUsers = Set(users).subtracting(Set(unreachableUsers))
 
-                    self.internalAddParticipants(Array(reachableUsers), completion: completion)
-                default:
-                    return completion(result)
-                }
+                self.internalAddParticipants(
+                    Array(reachableUsers), 
+                    completion: completion
+                )
+
+            default:
+                completion(result)
             }
         }
     }
