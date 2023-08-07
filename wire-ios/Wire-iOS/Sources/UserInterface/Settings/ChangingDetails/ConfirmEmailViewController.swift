@@ -20,10 +20,14 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// MARK: - ConfirmEmailDelegate
+
 protocol ConfirmEmailDelegate: AnyObject {
     func resendVerification(inController controller: ConfirmEmailViewController)
     func didConfirmEmail(inController controller: ConfirmEmailViewController)
 }
+
+// MARK: - UITableView extension
 
 extension UITableView {
     var autolayoutTableHeaderView: UIView? {
@@ -52,12 +56,19 @@ extension UITableView {
     }
 }
 
+// MARK: - ConfirmEmailViewController
+
 final class ConfirmEmailViewController: SettingsBaseTableViewController {
+
+    // MARK: - Properties
+
     fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     weak var delegate: ConfirmEmailDelegate?
-
+    typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
     let newEmail: String
     fileprivate var observer: NSObjectProtocol?
+
+    // MARK: - Init
 
     init(newEmail: String, delegate: ConfirmEmailDelegate?) {
         self.newEmail = newEmail
@@ -70,6 +81,8 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Override methods
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -84,10 +97,12 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         observer = nil
     }
 
+    // MARK: - Override methods
+
     func setupViews() {
         SettingsButtonCell.register(in: tableView)
 
-        title = "self.settings.account_section.email.change.verify.title".localized(uppercased: true)
+        title = SettingsAccountSectionEmailLocalizable.Verify.title
         view.backgroundColor = .clear
         tableView.isScrollEnabled = false
 
@@ -95,10 +110,12 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         tableView.estimatedSectionHeaderHeight = 30
 
         let description = DescriptionHeaderView()
-        description.descriptionLabel.text = "self.settings.account_section.email.change.verify.description".localized
+        description.descriptionLabel.text = SettingsAccountSectionEmailLocalizable.Verify.description
 
         tableView.autolayoutTableHeaderView = description
     }
+
+    // MARK: - Setup tableView
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -110,8 +127,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SettingsButtonCell.zm_reuseIdentifier, for: indexPath) as! SettingsButtonCell
-        let format = "self.settings.account_section.email.change.verify.resend".localized
-        let text = String(format: format, newEmail)
+        let text = SettingsAccountSectionEmailLocalizable.Verify.resend(newEmail)
         cell.titleText = text
         return cell
     }
@@ -120,22 +136,25 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
         delegate?.resendVerification(inController: self)
         tableView.deselectRow(at: indexPath, animated: false)
 
-        let message = String(format: "self.settings.account_section.email.change.resend.message".localized, newEmail)
+        let message = SettingsAccountSectionEmailLocalizable.Resend.message(newEmail)
+
         let alert = UIAlertController(
-            title: "self.settings.account_section.email.change.resend.title".localized,
+            title: SettingsAccountSectionEmailLocalizable.Resend.title,
             message: message,
             preferredStyle: .alert
         )
 
-        alert.addAction(.init(title: "general.ok".localized, style: .cancel, handler: nil))
+        alert.addAction(.init(title: L10n.Localizable.General.ok, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
 }
 
+// MARK: - ZMUserObserver
+
 extension ConfirmEmailViewController: ZMUserObserver {
     func userDidChange(_ note: WireDataModel.UserChangeInfo) {
         if note.user.isSelfUser {
-            // we need to check if the notification really happened because 
+            // we need to check if the notification really happened because
             // the email got changed to what we expected
             if let currentEmail = ZMUser.selfUser().emailAddress, currentEmail == newEmail {
                 delegate?.didConfirmEmail(inController: self)

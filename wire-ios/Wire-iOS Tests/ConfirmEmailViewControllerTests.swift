@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import SnapshotTesting
 @testable import Wire
 
-final class ConfirmEmailViewControllerTests: ZMSnapshotTestCase {
+final class ConfirmEmailViewControllerTests: XCTestCase {
 
     var sut: ConfirmEmailViewController!
 
@@ -35,6 +36,6 @@ final class ConfirmEmailViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testConfirmationSentToEmail() {
-        self.verify(view: sut.view)
+        verify(matching: sut.view)
     }
 }
