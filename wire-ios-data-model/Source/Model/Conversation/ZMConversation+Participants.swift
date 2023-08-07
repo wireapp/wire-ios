@@ -157,11 +157,11 @@ extension ZMConversation {
                     sender: self.creator,
                     at: self.lastServerTimeStamp ?? Date()
                 )
-                
+
                 let reachableUsers = Set(users).subtracting(Set(unreachableUsers))
 
                 self.internalAddParticipants(
-                    Array(reachableUsers), 
+                    Array(reachableUsers),
                     completion: completion
                 )
 
@@ -191,9 +191,7 @@ extension ZMConversation {
 
         case .proteus:
             var action = AddParticipantAction(users: users, conversation: self)
-            action.onResult { result in
-                completion(result)
-            }
+            action.onResult(resultHandler: completion)
             action.send(in: context.notificationContext)
 
         case .mls:
