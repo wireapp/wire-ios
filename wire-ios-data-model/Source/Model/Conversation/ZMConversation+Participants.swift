@@ -35,7 +35,7 @@ public enum ConversationAddParticipantsError: Error, Equatable {
         tooManyMembers,
         missingLegalHoldConsent,
         failedToAddMLSMembers,
-        unreachableUsers([ZMUser])
+        unreachableUsers(Set<ZMUser>)
 }
 
 public class AddParticipantAction: EntityAction {
@@ -153,12 +153,12 @@ extension ZMConversation {
             switch result {
             case .failure(.unreachableUsers(let unreachableUsers)):
                 self.appendFailedToAddUsersSystemMessage(
-                    users: Set(unreachableUsers),
+                    users: unreachableUsers,
                     sender: self.creator,
                     at: self.lastServerTimeStamp ?? Date()
                 )
 
-                let reachableUsers = Set(users).subtracting(Set(unreachableUsers))
+                let reachableUsers = Set(users).subtracting(unreachableUsers)
 
                 self.internalAddParticipants(
                     Array(reachableUsers),

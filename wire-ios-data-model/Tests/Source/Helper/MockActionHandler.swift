@@ -23,19 +23,25 @@ class MockActionHandler<T: EntityAction>: EntityActionHandler {
     typealias Action = T
     typealias Result = Swift.Result<Action.Result, Action.Failure>
 
-    var result: Result
+    var results: [Result]
     var token: Any?
-    var didPerformAction: Bool = false
+    var didPerformAction: Bool {
+        return results.isEmpty
+    }
+    var performedResults: [Result] = []
 
     init(result: Result, context: NotificationContext) {
-        self.result = result
+        self.results = [result]
         token = Action.registerHandler(self, context: context)
     }
 
     func performAction(_ action: Action) {
         var action = action
-        action.notifyResult(result)
-        didPerformAction = true
+        if let result = results.first {
+            action.notifyResult(result)
+            performedResults.append(result)
+            results.removeFirst()
+        }
     }
 
 }

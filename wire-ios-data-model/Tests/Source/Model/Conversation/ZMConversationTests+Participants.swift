@@ -818,6 +818,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             result: .failure(.unreachableUsers([user2])),
             context: syncMOC.notificationContext
         )
+        mockActionHandler.results.append(.success(()))
+
         let expectation = expectation(description: "System message is added")
 
         // WHEN
@@ -835,6 +837,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // THEN
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockActionHandler.performedResults.count, 2)
     }
 
 }

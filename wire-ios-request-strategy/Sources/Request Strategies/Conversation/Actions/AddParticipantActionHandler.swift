@@ -174,7 +174,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.succeed()
             } else {
                 action.fail(with: .unreachableUsers(unreachableUsers))
-            }   
+            }
 
         default:
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
@@ -184,13 +184,13 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
 extension Array where Element == ZMUser {
 
-    func belongingTo(domains: [String]) -> [ZMUser] {
-        self.filter { user in
+    func belongingTo(domains: [String]) -> Set<ZMUser> {
+        Set(self.filter { user in
             guard let domain = user.domain else {
                 return false
             }
             return domain.isOne(of: domains)
-        }
+        })
     }
 
 }
