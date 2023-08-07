@@ -713,8 +713,8 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
         let addedOrRemovedUsers = !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty
         if !systemMessageData.needsUpdatingUsers && addedOrRemovedUsers {
             title += "\n\n" + L10n.Localizable.Content.System.MissingMessages.subtitleStart + " " && font && color
-            title += L10n.Localizable.Content.System.MissingMessages.subtitleAdded(systemMessageData.addedUserTypes, systemMessageData.addedUserTypes.count)
-            title += L10n.Localizable.Content.System.MissingMessages.subtitleRemoved(systemMessageData.removedUserTypes, systemMessageData.removedUserTypes.count)
+            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_added", Array(systemMessageData.addedUserTypes))
+            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_removed", Array(systemMessageData.removedUserTypes))
         }
 
         return title
