@@ -20,12 +20,12 @@ import XCTest
 import WireDataModel
 @testable import WireRequestStrategy
 
-class FederationDeleteManagerTests: MessagingTestBase {
-    var sut: FederationDeleteManager!
+class FederationTerminationManagerTests: MessagingTestBase {
+    var sut: FederationTerminationManager!
 
     override func setUp() {
         super.setUp()
-        sut = FederationDeleteManager(syncContext: syncMOC)
+        sut = FederationTerminationManager(syncContext: syncMOC)
     }
 
     override func tearDown() {
@@ -33,7 +33,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
         sut = nil
     }
 
-    func testThatFederationDelete_markOneToOnConversationAsReadOnly()  throws {
+    func testThatFederationDelete_markOneToOneConversationAsReadOnly()  throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let domain = "other.user.domain"
@@ -41,7 +41,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
             guard let conversation = otherUser.connection?.conversation else { return }
 
             // WHEN
-            sut.backendStoppedFederatingWithDomain(domain: domain)
+            sut.handleFederationTerminationWith(domain)
 
             // THEN
             XCTAssertTrue(conversation.isForcedReadOnly)
@@ -58,7 +58,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
             otherUser.connection?.status = .pending
 
             // WHEN
-            sut.backendStoppedFederatingWithDomain(domain: domain)
+            sut.handleFederationTerminationWith(domain)
 
             // THEN
             XCTAssertEqual(otherUser.connection?.status, .ignored)
@@ -74,7 +74,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
             otherUser.connection?.status = .sent
 
             // WHEN
-            sut.backendStoppedFederatingWithDomain(domain: domain)
+            sut.handleFederationTerminationWith(domain)
 
             // THEN
             XCTAssertEqual(otherUser.connection, nil)
@@ -87,9 +87,10 @@ class FederationDeleteManagerTests: MessagingTestBase {
             let domain = "other.user.domain"
             otherUser.domain = domain
             let conversation = createGroupConversation(with: [otherUser], hostedByDomain: domain)
+            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
 
             // WHEN
-            sut.backendStoppedFederatingWithDomain(domain: domain)
+            sut.handleFederationTerminationWith(domain)
 
             // THEN
             XCTAssertFalse(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
@@ -103,9 +104,10 @@ class FederationDeleteManagerTests: MessagingTestBase {
             let domain = "other.user.domain"
             otherUser.domain = domain
             let conversation = createGroupConversation(with: [otherUser], hostedByDomain: owningDomain)
+            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
 
             // WHEN
-            sut.backendStoppedFederatingWithDomain(domain: domain)
+            sut.handleFederationTerminationWith(domain)
 
             // THEN
             XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
@@ -121,9 +123,11 @@ class FederationDeleteManagerTests: MessagingTestBase {
             otherUser.domain = domain
             thirdUser.domain = thirdDomain
             let conversation = createGroupConversation(with: [otherUser, thirdUser], hostedByDomain: thirdDomain)
+            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
 
             // WHEN
-            sut.backendStoppedFederatingWithDomain(domain: domain)
+            sut.handleFederationTerminationWith(domain)
 
             // THEN
             XCTAssertFalse(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
@@ -138,9 +142,11 @@ class FederationDeleteManagerTests: MessagingTestBase {
             otherUser.domain = "otherUser.domain"
             thirdUser.domain = "thirdUser.domain"
             let conversation = createGroupConversation(with: [thirdUser, otherUser], hostedByDomain: owningDomain)
+            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
+            XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
 
             // WHEN
-            sut.domainsStoppedFederating(domains: ["otherUser.domain", "thirdUser.domain"])
+            sut.handleFederationTerminationBetween("otherUser.domain", otherDomain: "thirdUser.domain")
 
             // THEN
             XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
@@ -155,9 +161,10 @@ class FederationDeleteManagerTests: MessagingTestBase {
             otherUser.domain = "otherUser.domain"
             thirdUser.domain = "thirdUser.domain"
             let conversation = createGroupConversation(with: [thirdUser, otherUser], hostedByDomain: "otherUser.domain")
+            XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
 
             // WHEN
-            sut.domainsStoppedFederating(domains: ["otherUser.domain", "thirdUser.domain"])
+            sut.handleFederationTerminationBetween("otherUser.domain", otherDomain: "thirdUser.domain")
 
             // THEN
             XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
@@ -167,7 +174,7 @@ class FederationDeleteManagerTests: MessagingTestBase {
     }
 }
 
-extension FederationDeleteManagerTests {
+extension FederationTerminationManagerTests {
 
     /// Creates a group conversation with a user in given domain
     func createGroupConversation(with users: [ZMUser], hostedByDomain domain: String) -> ZMConversation {

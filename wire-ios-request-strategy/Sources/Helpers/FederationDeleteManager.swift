@@ -20,25 +20,31 @@
 import Foundation
 import WireDataModel
 
-final public class FederationDeleteManager {
+public protocol FederationTerminationManagerInterface {
+    func handleFederationTerminationWith(_ domain: String)
+    func handleFederationTerminationBetween(_ domain: String, otherDomain: String)
+}
+
+final public class FederationTerminationManager: FederationTerminationManagerInterface {
     private weak var syncContext: NSManagedObjectContext?
 
     public init(syncContext: NSManagedObjectContext? = nil) {
         self.syncContext = syncContext
     }
 
-    public func backendStoppedFederatingWithDomain(domain: String) {
+    public func handleFederationTerminationWith(_ domain: String) {
         guard let moc = syncContext,
               let selfDomain = ZMUser.selfUser(in: moc).domain else { return }
 
         markAllOneToOneConversationsAsReadOnly(forDomain: domain)
         removeConnectionRequests(withDomain: domain)
-        domainsStoppedFederating(domains: [selfDomain, domain])
+        handleFederationTerminationBetween(selfDomain, otherDomain: domain)
     }
 
-    public func domainsStoppedFederating(domains: [String]) {
+    public func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
         guard let moc = syncContext else { return }
         let conversations = ZMConversation.allGroupConversationWithSomeDomain(moc: moc)
+        let domains = [domain, otherDomain]
 
         for currentConversation in conversations {
             if domains.contains(currentConversation.domain ?? "") {
@@ -57,7 +63,7 @@ final public class FederationDeleteManager {
     }
 }
 
-private extension FederationDeleteManager {
+private extension FederationTerminationManager {
 
     func markAllOneToOneConversationsAsReadOnly(forDomain domain: String) {
         guard let moc = syncContext,
@@ -86,23 +92,6 @@ private extension FederationDeleteManager {
         let participants = conversation.localParticipants.filter { domains.contains($0.domain ?? "") }
         conversation.removeParticipantsWithoutUpdatingState(users: participants)
         addSystemMessageAboutRemovedParticipants(participants: participants, inConversation: conversation)
-    }
-
-    func removeAllParticipantsFromDomain(_ participantsDomain: String, inConversationsOnDomain conversationDomain: String) {
-        guard let moc = syncContext else { return }
-        let conversations = ZMConversation.existingConversationsHostedOnDomain(domain: conversationDomain,
-                                                                               moc: moc)
-        for conversation in conversations {
-            removeAllParticipantsFromDomain(domain: participantsDomain,
-                                            inConversation: conversation)
-
-        }
-    }
-
-    func removeAllParticipantsFromDomain(domain: String, inConversation conversation: ZMConversation) {
-        let participantsFromDomain = conversation.localParticipants.filter { $0.domain == domain }
-        conversation.removeParticipantsWithoutUpdatingState(users: participantsFromDomain)
-        addSystemMessageAboutRemovedParticipants(participants: participantsFromDomain, inConversation: conversation)
     }
 
     func addSystemMessageAboutRemovedParticipants(participants: Set<ZMUser>, inConversation conversation: ZMConversation) {

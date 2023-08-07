@@ -28,24 +28,6 @@ extension ZMConversation {
 
         return domain != userDomain
     }
-
-    public static func existingConversationsHostedOnDomain(domain: String,
-                                                            moc: NSManagedObjectContext) -> [ZMConversation] {
-        let hostedOnDomainPredicate = NSPredicate(format: "%K == %@", ZMConversationDomainKey, domain)
-        let request = self.sortedFetchRequest(with: hostedOnDomainPredicate)
-
-        return moc.fetchOrAssert(request: request) as? [ZMConversation] ?? []
-    }
-
-    public static func existingConversationsHostedOnDomainDifferentThan(myDomain: String,
-                                                                        otherDomain: String,
-                                                                         moc: NSManagedObjectContext) -> [ZMConversation] {
-        let hostedOnDomainPredicate = NSPredicate(format: "%K != %@ AND %K != %@ AND %K != NULL", ZMConversationDomainKey, myDomain, ZMConversationDomainKey, otherDomain, ZMConversationDomainKey)
-        let request = self.sortedFetchRequest(with: hostedOnDomainPredicate)
-
-        return moc.fetchOrAssert(request: request) as? [ZMConversation] ?? []
-    }
-
     public static func allGroupConversationWithSomeDomain(moc: NSManagedObjectContext) -> [ZMConversation] {
 
         let hostedOnDomainPredicate = NSPredicate(format: "%K == %d AND %K != NULL", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue, ZMConversationDomainKey)

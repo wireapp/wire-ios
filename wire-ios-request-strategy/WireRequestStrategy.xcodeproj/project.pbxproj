@@ -209,7 +209,6 @@
 		BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */; };
-		D33B57AF2A56A15F0078A4F9 /* Payload+Federating.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57AE2A56A15F0078A4F9 /* Payload+Federating.swift */; };
 		D33B57B12A56BDCA0078A4F9 /* FederationDeleteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57B02A56BDCA0078A4F9 /* FederationDeleteManager.swift */; };
 		D3DA067C2A5D9EF700BA9CEB /* FederationDeleteManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA067B2A5D9EF700BA9CEB /* FederationDeleteManagerTests.swift */; };
 		D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */; };
@@ -635,7 +634,6 @@
 		A90C56EB2685C23400F1007B /* ZMImagePreprocessingTrackerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMImagePreprocessingTrackerTests.h; sourceTree = "<group>"; };
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
-		D33B57AE2A56A15F0078A4F9 /* Payload+Federating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Federating.swift"; sourceTree = "<group>"; };
 		D33B57B02A56BDCA0078A4F9 /* FederationDeleteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteManager.swift; sourceTree = "<group>"; };
 		D3DA067B2A5D9EF700BA9CEB /* FederationDeleteManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteManagerTests.swift; sourceTree = "<group>"; };
 		D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetRequestFactoryTests.swift; sourceTree = "<group>"; };
@@ -1958,7 +1956,6 @@
 				EE402C0528996C6900CA0E40 /* MLSMessage.swift in Sources */,
 				16DABDA225D69335005F4C3A /* Payload.swift in Sources */,
 				16E70F7E270EEA5400718E5D /* PayloadProcessing+UserProfile.swift in Sources */,
-				D33B57AF2A56A15F0078A4F9 /* Payload+Federating.swift in Sources */,
 				EEE0EDB12858906500BBEE29 /* MLSRequestStrategy.swift in Sources */,
 				168D7CB726FB0E9200789960 /* AddParticipantActionHandler.swift in Sources */,
 				70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */,

@@ -2772,6 +2772,10 @@ internal enum L10n {
         }
       }
       internal enum Connection {
+        /// Your backend does not federate with the backend of %@. You can not connect with them.
+        internal static func federationDeniedMessage(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "error.connection.federation_denied_message", String(describing: p1), fallback: "Your backend does not federate with the backend of %@. You can not connect with them.")
+        }
         /// Something went wrong, please try again
         internal static let genericError = L10n.tr("Localizable", "error.connection.generic_error", fallback: "Something went wrong, please try again")
         /// You cannot connect to this user due to legal hold.
