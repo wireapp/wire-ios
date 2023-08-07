@@ -606,7 +606,7 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
 
     init() {
         let title = NSAttributedString(
-            string: "content.system.is_verified".localized,
+            string: L10n.Localizable.Content.System.isVerified,
             attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
         )
 
@@ -707,14 +707,14 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
             return string
         }
 
-        var title = "content.system.missing_messages.title".localized && font && color
+        var title = L10n.Localizable.Content.System.MissingMessages.title && font && color
 
         // We only want to display the subtitle if we have the final added and removed users and either one is not empty
         let addedOrRemovedUsers = !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty
         if !systemMessageData.needsUpdatingUsers && addedOrRemovedUsers {
-            title += "\n\n" + "content.system.missing_messages.subtitle_start".localized + " " && font && color
-            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_added", Array(systemMessageData.addedUserTypes))
-            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_removed", Array(systemMessageData.removedUserTypes))
+            title += "\n\n" + L10n.Localizable.Content.System.MissingMessages.subtitleStart + " " && font && color
+            title += L10n.Localizable.Content.System.MissingMessages.subtitleAdded(systemMessageData.addedUserTypes, systemMessageData.addedUserTypes.count)
+            title += L10n.Localizable.Content.System.MissingMessages.subtitleRemoved(systemMessageData.removedUserTypes, systemMessageData.removedUserTypes.count)
         }
 
         return title
