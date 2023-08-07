@@ -159,10 +159,10 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
 
-        case 523:
-            guard let failure = Payload.ResponseFailure(response, decoder: decoder),
-                  failure.label == .unreachableDomains,
-                  let unreachableDomains = failure.data?.domains,
+        case 503:
+            guard let data = response.rawData,
+                  let payload = try? JSONDecoder().decode(ErrorResponse.self, from: data),
+                  let unreachableDomains = payload.unreachableBackends,
                   let participants = action.userIDs.existingObjects(in: context) as? [ZMUser]
             else {
                 return action.fail(with: .unknown)
@@ -180,6 +180,20 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
         }
     }
+}
+
+extension AddParticipantActionHandler {
+
+    // MARK: - Payload
+
+    struct ErrorResponse: Codable {
+        let unreachableBackends: [String]?
+
+        enum CodingKeys: String, CodingKey {
+            case  unreachableBackends = "unreachable_backends"
+        }
+    }
+
 }
 
 extension Array where Element == ZMUser {

@@ -304,16 +304,10 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let federationType = Payload.ResponseFailure.FederationFailure.FailureType.federation
-            let payload = Payload.ResponseFailure(code: 523,
-                                                  label: .unreachableDomains,
-                                                  message: "The following domains are unreachable: [foma.wire.link]",
-                                                  data: Payload.ResponseFailure.FederationFailure(domains: ["foma.wire.link"],
-                                                                                                  path: "/federation/api-version",
-                                                                                                  type: federationType))
+            let payload = AddParticipantActionHandler.ErrorResponse(unreachableBackends: ["foma.wire.link"])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: payload.code,
+                                               httpStatus: 503,
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v4.rawValue)
 

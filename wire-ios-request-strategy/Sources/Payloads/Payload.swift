@@ -291,7 +291,6 @@ enum Payload {
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
             case federationRemoteError = "federation-remote-error"
-            case unreachableDomains = "federation-unreachable-domains-error"
             case unknown
 
             init(from decoder: Decoder) throws {
