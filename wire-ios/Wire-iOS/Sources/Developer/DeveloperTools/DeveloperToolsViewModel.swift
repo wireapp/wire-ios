@@ -317,8 +317,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
 
         let manager = FederationTerminationManager(syncContext: context)
-        manager.domainsStoppedFederating(domains: ["bella.wire.link",
-                                                   "foma.wire.link"])
+        manager.handleFederationTerminationBetween("bella.wire.link", otherDomain: "foma.wire.link")
     }
 
     private func stopFederatingDomain(domain: String) {
