@@ -153,27 +153,6 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
 
 }
 
-// sourcery: AutoMockable
-protocol UserRepositoryInterface {
-
-    func selfUser() -> ZMUser
-
-}
-
-final class UserRepository: UserRepositoryInterface {
-
-    private let context: NSManagedObjectContext
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
-
-    func selfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
-    }
-
-}
-
 private extension UserClient {
 
     var isActiveMLSClient: Bool {
