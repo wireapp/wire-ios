@@ -212,6 +212,12 @@ extension URL {
         return BackendEnvironment.websiteLink(path: "pricing")
     }
 
+
+    static var wr_FederationLearnMore: URL {
+        return wr_support.appendingPathComponent("hc/en-us/categories/4719917054365-Federation")
+    }
+
+
     static var wr_guestLinksLearnMore: URL {
         return wr_support.appendingPathComponent("hc/articles/360000574069-Share-a-link-with-a-person-without-a-Wire-account-to-join-a-guest-room-conversation-in-my-team")
     }

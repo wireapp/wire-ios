@@ -164,6 +164,7 @@ typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
 @property (nonatomic, nullable) id <ZMSystemMessageData> parentMessage;
 @property (nonatomic, readonly) BOOL userIsTheSender;
 @property (nonatomic, nullable) NSNumber *messageTimer;
+@property (nonatomic, nonnull) NSArray<NSString *> *domains;
 
 @end
 

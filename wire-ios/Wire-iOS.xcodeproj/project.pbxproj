@@ -1107,6 +1107,7 @@
 		D36E027829374EEA006C3E5A /* NSLayoutConstraint+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */; };
 		D36E027A293758DD006C3E5A /* CallHeaderBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E0279293758DD006C3E5A /* CallHeaderBar.swift */; };
 		D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */; };
+		D39D6CDF2A80DB930009223A /* ConversationDomainsStoppedFederatingSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D6CDE2A80DB930009223A /* ConversationDomainsStoppedFederatingSystemMessageCell.swift */; };
 		D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */; };
 		D3A74DC7294CAFEF00DD272F /* AccessibilityActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A74DC6294CAFEF00DD272F /* AccessibilityActionView.swift */; };
 		D3BF754B29B093FD008459B5 /* WarningLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BF754A29B093FD008459B5 /* WarningLabelView.swift */; };
@@ -3102,6 +3103,7 @@
 		D364822B299630CD009EEE4D /* UIDevice+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Orientation.swift"; sourceTree = "<group>"; };
 		D36E027729374EEA006C3E5A /* NSLayoutConstraint+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Helper.swift"; sourceTree = "<group>"; };
 		D36E0279293758DD006C3E5A /* CallHeaderBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallHeaderBar.swift; sourceTree = "<group>"; };
+		D39D6CDE2A80DB930009223A /* ConversationDomainsStoppedFederatingSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDomainsStoppedFederatingSystemMessageCell.swift; sourceTree = "<group>"; };
 		D3A74DBC29432E8B00DD272F /* EstablishingCallStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstablishingCallStatusView.swift; sourceTree = "<group>"; };
 		D3A74DC6294CAFEF00DD272F /* AccessibilityActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityActionView.swift; sourceTree = "<group>"; };
 		D3BF754A29B093FD008459B5 /* WarningLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningLabelView.swift; sourceTree = "<group>"; };
@@ -4370,6 +4372,7 @@
 				1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */,
 				7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */,
 				06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */,
+				D39D6CDE2A80DB930009223A /* ConversationDomainsStoppedFederatingSystemMessageCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -8647,6 +8650,7 @@
 				7CCA7CC4221AF55300A7CA2A /* ProfileFooterView.swift in Sources */,
 				F15650DD21DD10DD00210504 /* ThreeDotsLoadingView.swift in Sources */,
 				871067401C0DC5570035603B /* SettingsPropertyTextValueCellDescriptor.swift in Sources */,
+				D39D6CDF2A80DB930009223A /* ConversationDomainsStoppedFederatingSystemMessageCell.swift in Sources */,
 				8784AE3E1FC2DE5300AAEAB8 /* MediaManagerLoader.swift in Sources */,
 				634497D924A492140000131D /* CallParticipantDetailView.swift in Sources */,
 				A95E561123FBF0C0005F8E8D /* UIViewControllerContextTransitioning+Helper.swift in Sources */,

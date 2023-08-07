@@ -1133,7 +1133,7 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
         let groupedUsers: [String?: [UserType]] = Dictionary(grouping: failedUsers, by: \.domain)
 
         var content: String = ""
-        for (domain, users) in groupedUsers {
+        for (_, users) in groupedUsers {
             let userNames = users.compactMap { $0.name }.joined(separator: ", ")
             content.append(SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames))
             content.append("\n")
@@ -1143,33 +1143,58 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
     }
 }
 
-class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ParticipantsConversationSystemMessageCell
-    let configuration: View.Configuration
+final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var actionController: ConversationMessageActionController?
+    typealias View = ConversationDomainsStoppedFederatingSystemMessageCell
+    typealias System = L10n.Localizable.Content.System
+    let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = false // ~!@#$%^
+    let isFullWidth: Bool = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
+    var message: WireDataModel.ZMConversationMessage?
+    var delegate: ConversationMessageCellDelegate?
+    var actionController: ConversationMessageActionController?
+
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let color = SemanticColors.Icon.backgroundDefault
-        let textColor = SemanticColors.Label.textDefault
-
-//        let model = ParticipantsCellViewModel(font: .mediumFont, largeFont: .largeSemiboldFont, textColor: textColor, iconColor: color, message: message)
-
         let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
-        configuration = View.Configuration(icon: icon, attributedText: model.attributedTitle(), showLine: false, warning: nil)
-        accessibilityLabel = model.attributedTitle()?.string
-        actionController = nil
+        let title = ConversationDomainsStoppedFederatingSystemMessageCellDescription.configureTitle(for: message)
+        configuration = View.Configuration(attributedText: title, icon: icon)
+        accessibilityLabel = title.string
+    }
+
+
+    private static func configureTitle(for message: ZMConversationMessage) -> NSAttributedString {
+        guard let domains = message.systemMessageData?.domains,
+              domains.count == 2 else {
+            preconditionFailure("Invalid system message")
+        }
+
+        var title: String
+        if domains[0] == SelfUser.current.domain ?? "" {
+            title = System.BackendsStopFederating.yourBackend(domains[1])
+        } else {
+            title = System.BackendsStopFederating.otherBackends(domains[0], domains[1])
+        }
+        title.append(" ")
+
+        let learnMore = NSAttributedString(string: System.BackendsStopFederating.learnMore,
+                                           attributes: [.font: UIFont.mediumSemiboldFont,
+                                                        .link: URL.wr_FederationLearnMore.absoluteString as AnyObject,
+                                                        .foregroundColor: SemanticColors.Label.textDefault])
+        let attributedTitle = NSMutableAttributedString(string: title,
+                                                        attributes: [.font: UIFont.mediumFont,
+                                                                     .foregroundColor: SemanticColors.Label.textDefault]
+                                                        )
+        attributedTitle.append(learnMore)
+
+        return attributedTitle
     }
 }

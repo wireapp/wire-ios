@@ -45,10 +45,12 @@ final public class FederationDeleteManager {
                 // if conversation hosted on one of domains, then remove only users from the other domain
                 let domainsToRemove = domains.filter { $0 != currentConversation.domain ?? "" }
                 removeParticipantsFromDomains(domains: domainsToRemove, inConversation: currentConversation)
+                addSystemMessageDomainsStoppedFederating(domains: domains, inConversation: currentConversation)
             } else {
                 //remove participants from both domains
                 guard currentConversation.containsParticipantsFromAllDomains(domains: domains) else { continue }
                 removeParticipantsFromDomains(domains: domains, inConversation: currentConversation)
+                addSystemMessageDomainsStoppedFederating(domains: domains, inConversation: currentConversation)
             }
         }
         try? moc.save()
@@ -93,6 +95,7 @@ private extension FederationDeleteManager {
         for conversation in conversations {
             removeAllParticipantsFromDomain(domain: participantsDomain,
                                             inConversation: conversation)
+
         }
     }
 

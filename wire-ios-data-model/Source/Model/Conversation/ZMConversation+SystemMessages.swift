@@ -124,8 +124,9 @@ extension ZMConversation {
     public func appendDomainsStoppedFederatingSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
         appendSystemMessage(type: .domainsStoppedFederating,
                             sender: sender,
-                            users: users,
+                            users: nil,
                             clients: nil,
-                            timestamp: timestamp)
+                            timestamp: timestamp,
+                            domains: domains)
     }
 }
