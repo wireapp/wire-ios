@@ -27,7 +27,7 @@ enum GroupConversationCreationEvent {
     }
     enum PopupType {
         case missingLegalHoldConsent(completionHandler: () -> Void)
-        case nonFederatingBackends(backends: NonFederatingBackendsTuple, actionHandler: (NonFullyConnectedGraphAction) -> Void)
+        case nonFederatingBackends(backends: NonFederatingBackends, actionHandler: (NonFullyConnectedGraphAction) -> Void)
     }
     case success(conversation: ZMConversation)
     case failure(failureType: FailureType)

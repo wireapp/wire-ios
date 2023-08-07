@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct NonFederatingBackendsTuple {
+public struct NonFederatingBackends {
     public let backends: [String]
 
     public init(backends: [String]) {

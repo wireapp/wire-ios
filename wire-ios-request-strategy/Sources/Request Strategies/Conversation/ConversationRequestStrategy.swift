@@ -353,7 +353,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         if response.httpStatus == 409,
            let nonFederatingFailure = Payload.NonFederatingBackends(response, decoder: .defaultDecoder),
            nonFederatingFailure.nonFederatingBackends.count >= 2 {
-            let nonFederatingBackends = NonFederatingBackendsTuple(
+            let nonFederatingBackends = NonFederatingBackends(
                 backends: nonFederatingFailure.nonFederatingBackends)
             newConversation.notifyNonFederatingBackends(backends: nonFederatingBackends)
             knownError = true

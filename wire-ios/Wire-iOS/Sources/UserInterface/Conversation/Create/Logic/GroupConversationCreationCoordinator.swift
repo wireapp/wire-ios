@@ -28,7 +28,8 @@ protocol GroupConversationCreator {
         allowGuests: Bool,
         allowServices: Bool,
         readReceipts: Bool,
-        messageProtocol: MessageProtocol) -> ZMConversation?
+        messageProtocol: MessageProtocol
+    ) -> ZMConversation?
 }
 
 class DefaultGroupConversationCreator: GroupConversationCreator {
@@ -40,7 +41,8 @@ class DefaultGroupConversationCreator: GroupConversationCreator {
         allowGuests: Bool,
         allowServices: Bool,
         readReceipts: Bool,
-        messageProtocol: MessageProtocol) -> ZMConversation? {
+        messageProtocol: MessageProtocol
+    ) -> ZMConversation? {
             return ZMConversation.insertGroupConversation(
                 moc: moc,
                 participants: participants,
@@ -55,6 +57,10 @@ class DefaultGroupConversationCreator: GroupConversationCreator {
 }
 
 class GroupConversationCreationCoordinator {
+    enum GroupConversationCreationCoordinatorError: Error {
+        case initializationFailure
+        case creationFailure
+    }
     private enum State {
         case ready
         case initializing
@@ -78,22 +84,21 @@ class GroupConversationCreationCoordinator {
             return nil
         }
     }
-    
+
     private var creator: GroupConversationCreator
-    
-    init(creator: GroupConversationCreator) {
+
+    init(creator: GroupConversationCreator = DefaultGroupConversationCreator()) {
         self.creator = creator
     }
 
-    func initialize(eventHandler: @escaping (GroupConversationCreationEvent) -> Void) -> Bool {
-        guard case .ready = state else { return false }
+    func initialize(eventHandler: @escaping (GroupConversationCreationEvent) -> Void) throws {
+        guard case .ready = state else { throw GroupConversationCreationCoordinatorError.initializationFailure }
         state = .initializing
         NotificationCenter.default.addObserver(self, selector: #selector(missingLegalConsentErrorHandler), name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(nonFederatingBackendsErrorHandler), name: ZMConversation.nonFederatingBackendsNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(unsupportedErrorsHandler), name: ZMConversation.unknownResponseErrorNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(conversationCreatedHandler), name: ZMConversation.insertedConversationUpdatedNotificationName, object: nil)
         state = .initialized(eventHandler: eventHandler)
-        return true
     }
 
     func createConversation(
@@ -105,12 +110,11 @@ class GroupConversationCreationCoordinator {
         encryptionProtocol: EncryptionProtocol,
         userSession: UserSessionInterface,
         moc: NSManagedObjectContext
-     ) -> Bool {
-         guard case .initialized(let eventHandler) = state else { return false }
-         guard
-             let users = users
+     ) throws {
+         guard case .initialized(let eventHandler) = state,
+               let users = users
          else {
-             return false
+             throw GroupConversationCreationCoordinatorError.creationFailure
          }
          state = .beginingToCreateConversation(eventHandler: eventHandler)
          eventHandler(.showLoader)
@@ -132,8 +136,6 @@ class GroupConversationCreationCoordinator {
              guard let self = self, let conversation = conversation else { return }
              self.state = .creatingConversation(conversation: conversation, eventHandler: eventHandler)
          }
-
-         return true
     }
 
     func finalize() {
@@ -176,12 +178,11 @@ class GroupConversationCreationCoordinator {
     }
 
     @objc func nonFederatingBackendsErrorHandler(notification: Notification) {
-            guard extractConversation(notification: notification) != nil
-                else { return }
-        guard let userInfo = notification.userInfo,
-              userInfo.keys.contains(ZMConversation.UserInfoKeys.nonFederatingBackends.rawValue),
-              let nonFederatingBackends = userInfo[ZMConversation.UserInfoKeys.nonFederatingBackends.rawValue] as? NonFederatingBackendsTuple
-            else { return }
+        guard extractConversation(notification: notification) != nil,
+            let userInfo = notification.userInfo,
+            userInfo.keys.contains(ZMConversation.UserInfoKeys.nonFederatingBackends.rawValue),
+            let nonFederatingBackends = userInfo[ZMConversation.UserInfoKeys.nonFederatingBackends.rawValue] as? NonFederatingBackends
+        else { return }
         eventHandler?(.hideLoader)
         eventHandler?(
             .presentPopup(
@@ -195,8 +196,7 @@ class GroupConversationCreationCoordinator {
                             self?.eventHandler?(.failure(failureType: .nonFederatingBackends))
                             self?.finalize()
                         case .learnMore:
-                            guard let url = URL(string: "https://support.wire.com") else { return }
-                            self?.eventHandler?(.openURL(url: url))
+                            self?.eventHandler?(.openURL(url: WireUrl.shared.support))
                             self?.finalize()
                         }
                     }

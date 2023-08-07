@@ -114,7 +114,7 @@ extension ZMConversation {
         notifyOnUI(name: ZMConversation.missingLegalHoldConsentNotificationName)
     }
 
-    public func notifyNonFederatingBackends(backends: NonFederatingBackendsTuple) {
+    public func notifyNonFederatingBackends(backends: NonFederatingBackends) {
         notifyOnUI(name: ZMConversation.nonFederatingBackendsNotificationName, userInfo: [UserInfoKeys.nonFederatingBackends.rawValue: backends])
     }
 

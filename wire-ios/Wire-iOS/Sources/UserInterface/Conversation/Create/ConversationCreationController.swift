@@ -207,9 +207,7 @@ final class ConversationCreationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        conversationCreationCoordinator = GroupConversationCreationCoordinator(
-            creator: DefaultGroupConversationCreator()
-        )
+        conversationCreationCoordinator = GroupConversationCreationCoordinator()
         view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.setupNavigationBarTitle(title: CreateGroupName.title.capitalized)
 
@@ -343,49 +341,47 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
     }
 
     private func createConversation() {
-        guard let userSession = ZMUserSession.shared() else { return }
-        guard let conversationCreationCoordinator = conversationCreationCoordinator else { return }
-        var allParticipants = values.participants
-        allParticipants.insert(selfUser)
-        navigationController?.isLoadingViewVisible = true
-        let initialized = conversationCreationCoordinator.initialize(eventHandler: { [weak self] event in
-            guard let self = self else { return }
-            switch event {
-            case .showLoader:
-                self.navigationController?.isLoadingViewVisible = true
-            case .hideLoader:
-                self.navigationController?.isLoadingViewVisible = false
-            case .presentPopup(let popup):
-                switch popup {
-                case .nonFederatingBackends(let backends, let handler):
-                    self.showNotFullyConnectedGraphAlert(nonFederatingBackends: backends, actionHandler: handler)
-                case .missingLegalHoldConsent(let handler):
-                    self.showMissingLegalConsentPopup(completionHandler: handler)
-                }
-            case .failure(let failure):
-                self.delegate?.conversationCreationController(self, didFailToCreateConversation: failure)
-            case .success(let conversation):
-                self.delegate?.conversationCreationController(self, didCreateConversation: conversation)
-            case .openURL(let url):
-                _ = url.openAsLink()
-            }
-        })
-        guard initialized else {
+        guard let userSession = ZMUserSession.shared(),
+              let conversationCreationCoordinator = conversationCreationCoordinator
+        else { return }
+        do {
+            try conversationCreationCoordinator.initialize(eventHandler: { [weak self] event in
+                self?.handleConversationCreatorEvent(event: event)
+            })
+            try conversationCreationCoordinator.createConversation(
+                withUsers: values.participants,
+                name: values.name,
+                allowGuests: values.allowGuests,
+                allowServices: values.allowServices,
+                enableReceipts: values.enableReceipts,
+                encryptionProtocol: values.encryptionProtocol,
+                userSession: userSession,
+                moc: userSession.viewContext
+            )
+        } catch {
             conversationCreationCoordinator.finalize()
-            return
         }
-        let creatingConversation = conversationCreationCoordinator.createConversation(
-            withUsers: values.participants,
-            name: values.name, allowGuests: values.allowGuests,
-            allowServices: values.allowServices,
-            enableReceipts: values.enableReceipts,
-            encryptionProtocol: values.encryptionProtocol,
-            userSession: userSession,
-            moc: userSession.viewContext
-        )
-        guard creatingConversation else {
-            conversationCreationCoordinator.finalize()
-            return
+    }
+    
+    private func handleConversationCreatorEvent(event: GroupConversationCreationEvent) {
+        switch event {
+        case .showLoader:
+            navigationController?.isLoadingViewVisible = true
+        case .hideLoader:
+            navigationController?.isLoadingViewVisible = false
+        case .presentPopup(let popup):
+            switch popup {
+            case .nonFederatingBackends(let backends, let handler):
+                self.showNotFullyConnectedGraphAlert(nonFederatingBackends: backends, actionHandler: handler)
+            case .missingLegalHoldConsent(let handler):
+                self.showMissingLegalConsentPopup(completionHandler: handler)
+            }
+        case .failure(let failure):
+            delegate?.conversationCreationController(self, didFailToCreateConversation: failure)
+        case .success(let conversation):
+            delegate?.conversationCreationController(self, didCreateConversation: conversation)
+        case .openURL(let url):
+            _ = url.openAsLink()
         }
     }
 
@@ -398,7 +394,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         )
     }
 
-    private func showNotFullyConnectedGraphAlert(nonFederatingBackends: NonFederatingBackendsTuple, actionHandler: @escaping (NonFullyConnectedGraphAction) -> Void) {
+    private func showNotFullyConnectedGraphAlert(nonFederatingBackends: NonFederatingBackends, actionHandler: @escaping (NonFullyConnectedGraphAction) -> Void) {
         let alert = UIAlertController.notFullyConnectedGraphAlert(
             backends: nonFederatingBackends,
             completion: actionHandler
@@ -504,31 +500,37 @@ enum EncryptionProtocol: String, CaseIterable {
 }
 
 extension UIAlertController {
-    static func notFullyConnectedGraphAlert(backends: NonFederatingBackendsTuple, completion: @escaping (NonFullyConnectedGraphAction) -> Void) -> UIAlertController {
+    static func notFullyConnectedGraphAlert(backends: NonFederatingBackends, completion: @escaping (NonFullyConnectedGraphAction) -> Void) -> UIAlertController {
         typealias NfcgError = L10n.Localizable.Error.Conversation.Nfcg
+
         let alert = UIAlertController(
             title: NfcgError.title,
             message: NfcgError.messageWithBackends(backends: backends.backends),
             preferredStyle: .alert)
+
         let editParticipantsAction = UIAlertAction(
             title: NfcgError.edit,
             style: .default,
             handler: { _ in completion(.editParticipantsList) }
         )
+
         let discardGroupCreationAction = UIAlertAction(
             title: NfcgError.discard,
             style: .default,
             handler: { _ in completion(.discardGroupCreation) }
         )
+
         let learnMoreAction = UIAlertAction(
             title: NfcgError.learnMore,
             style: .default,
             handler: { _ in completion(.learnMore) }
         )
+
         alert.addAction(editParticipantsAction)
         alert.addAction(discardGroupCreationAction)
         alert.addAction(learnMoreAction)
         alert.preferredAction = editParticipantsAction
+
         return alert
     }
 }
