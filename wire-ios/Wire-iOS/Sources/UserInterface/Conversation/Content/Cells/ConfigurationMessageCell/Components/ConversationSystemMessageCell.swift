@@ -923,16 +923,16 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
     }
 
     private static func resetSessionString() -> NSAttributedString {
-        let string = (BaseLocalizationString + ".reset_session").localized.localizedUppercase
+        let string = L10n.Localizable.Content.System.CannotDecrypt.resetSession
 
-        return NSAttributedString(string: string,
+        return NSAttributedString(string: string.localizedUppercase,
                                   attributes: [.link: resetSessionURL,
                                                .foregroundColor: UIColor.accent(),
                                                .font: UIFont.mediumSemiboldFont])
     }
 
     private static func errorDetailsString(errorCode: Int, clientIdentifier: String) -> NSAttributedString {
-        let string = (BaseLocalizationString + ".error_details").localized(args: errorCode, clientIdentifier)
+        let string = L10n.Localizable.Content.System.CannotDecrypt.errorDetails(errorCode, clientIdentifier)
 
         return NSAttributedString(string: string.localizedUppercase,
                                   attributes: [.foregroundColor: LabelColors.textDefault,
@@ -1008,20 +1008,20 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     }
 
     private static func configureForReactivatedSelfClient(_ selfUser: UserType, link: URL) -> View.Configuration {
-        let string = "content.system.reactivated_device".localized(args: link.absoluteString)
+        let string = L10n.Localizable.Content.System.reactivatedDevice(link.absoluteString)
         let attributedText = NSAttributedString.markdown(from: string, style: .systemMessage)
         return View.Configuration(attributedText: attributedText, icon: exclamationMarkIcon, linkTarget: .user(selfUser))
     }
 
     private static func configureForNewClientOfSelfUser(_ selfUser: UserType, clients: [UserClientType], link: URL) -> View.Configuration {
-        let string = "content.system.self_user_new_client".localized(args: link.absoluteString)
+        let string = L10n.Localizable.Content.System.selfUserNewClient(link.absoluteString)
         let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
         let isSelfClient = clients.first?.isEqual(ZMUserSession.shared()?.selfUserClient) ?? false
         return View.Configuration(attributedText: attributedText, icon: isSelfClient ? nil : verifiedIcon, linkTarget: .user(selfUser))
     }
 
     private static func configureForNewCurrentDeviceOfSelfUser(_ selfUser: UserType, link: URL) -> View.Configuration {
-        let string = "content.system.self_user_new_self_client".localized(args: link.absoluteString)
+        let string = L10n.Localizable.Content.System.selfUserNewSelfClient(link.absoluteString)
         let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
         return View.Configuration(attributedText: attributedText, icon: nil, linkTarget: .user(selfUser))
     }
@@ -1033,12 +1033,9 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         let additionalSenderCount = max(displayNamesOfOthers.count - 1, 1)
 
         // %@ %#@d_number_of_others@ started using %#@d_new_devices@
-        let senderNamesString = NSString(format: NSLocalizedString("content.system.people_started_using", comment: "") as NSString,
-                                         senderNames,
-                                         additionalSenderCount,
-                                         clients.count) as String
+        let senderNamesString = L10n.Localizable.Content.System.peopleStartedUsing(senderNames, additionalSenderCount, clients.count)
 
-        let userClientString = NSString(format: NSLocalizedString("content.system.new_devices", comment: "") as NSString, clients.count) as String
+        let userClientString = L10n.Localizable.Content.System.newDevices(clients.count)
 
         var attributedSenderNames = NSAttributedString(string: senderNamesString, attributes: attributes.startedUsingAttributes)
         attributedSenderNames = attributedSenderNames.setAttributes(attributes.senderAttributes, toSubstring: senderNames)
