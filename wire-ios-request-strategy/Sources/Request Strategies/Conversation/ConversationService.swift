@@ -38,6 +38,7 @@ public protocol ConversationServiceInterface {
 
 public enum ConversationCreationFailure: Error {
 
+    case missingPermissions
     case missingSelfClientID
     case conversationNotFound
     case networkError(CreateGroupConversationAction.Failure)
@@ -98,6 +99,11 @@ public final class ConversationService: ConversationServiceInterface {
         messageProtocol: WireDataModel.MessageProtocol,
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
+        guard ZMUser.selfUser(in: context).canCreateConversation(type: .group) else {
+            completion(.failure(.missingPermissions))
+            return
+        }
+        
         internalCreateGroupConversation(
             teamID: teamID,
             name: name,
