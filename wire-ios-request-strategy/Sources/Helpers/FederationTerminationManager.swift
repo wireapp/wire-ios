@@ -16,95 +16,133 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireDataModel
 
 public protocol FederationTerminationManagerInterface {
+
     func handleFederationTerminationWith(_ domain: String)
     func handleFederationTerminationBetween(_ domain: String, otherDomain: String)
+
 }
 
 final public class FederationTerminationManager: FederationTerminationManagerInterface {
-    private weak var syncContext: NSManagedObjectContext?
 
-    public init(syncContext: NSManagedObjectContext? = nil) {
-        self.syncContext = syncContext
+    private var context: NSManagedObjectContext
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
 
+    /// **Changes will be performed:**
+    /// - for all conversations owned by self domain, remove all users that belong to `domain` from those conversations;
+    /// - for all conversations owned by `domain`, remove all users from self domain from those conversations;
+    /// - for all conversations that are NOT owned from self domain or `domain` and contain users from self domain and `domain`,
+    /// remove users from `domain` and `otherDomain` from those conversations;
+    /// - for any connection from a user on self domain to a user on `domain`, delete the connection;
+    /// - for any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
     public func handleFederationTerminationWith(_ domain: String) {
-        guard let moc = syncContext,
-              let selfDomain = ZMUser.selfUser(in: moc).domain else { return }
-
-        markAllOneToOneConversationsAsReadOnly(forDomain: domain)
-        removeConnectionRequests(withDomain: domain)
-        handleFederationTerminationBetween(selfDomain, otherDomain: domain)
-    }
-
-    public func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
-        guard let moc = syncContext else { return }
-        let conversations = ZMConversation.allGroupConversationWithSomeDomain(moc: moc)
-        let domains = [domain, otherDomain]
-
-        for currentConversation in conversations {
-            if domains.contains(currentConversation.domain ?? "") {
-                // if conversation hosted on one of domains, then remove only users from the other domain
-                let domainsToRemove = domains.filter { $0 != currentConversation.domain ?? "" }
-                removeParticipantsFromDomains(domains: domainsToRemove, inConversation: currentConversation)
-            } else {
-                //remove participants from both domains
-                guard currentConversation.containsParticipantsFromAllDomains(domains: domains) else { continue }
-                removeParticipantsFromDomains(domains: domains, inConversation: currentConversation)
-            }
+        guard let selfDomain = ZMUser.selfUser(in: context).domain else {
+            return
         }
-        try? moc.save()
+
+        removeUsers(with: [domain], fromConversationsOwnedBy: [selfDomain])
+        removeUsers(with: [selfDomain], fromConversationsOwnedBy: [domain])
+        removeUsers(with: [selfDomain, domain], fromConversationsNotOwnedBy: [selfDomain, domain])
+
+        removeConnectionRequests(with: domain)
+        markOneToOneConversationsAsReadOnly(with: domain)
     }
+
+    /// **Changes will be performed:**
+    /// - for all conversations that are NOT owned from `domain` or `otherDomain` and contain users from `domain` and `otherDomain`,
+    /// remove users from `domain` and `otherDomain` from those conversations;
+    /// - for all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations;
+    /// - for all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
+    public func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
+        removeUsers(with: [domain, otherDomain], fromConversationsNotOwnedBy: [domain, otherDomain])
+        removeUsers(with: [domain], fromConversationsOwnedBy: [otherDomain])
+        removeUsers(with: [otherDomain], fromConversationsOwnedBy: [domain])
+    }
+
 }
 
 private extension FederationTerminationManager {
 
-    func markAllOneToOneConversationsAsReadOnly(forDomain domain: String) {
-        guard let moc = syncContext else { return }
-
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(inDomain: domain))
-        let users = moc.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
-        for user in users {
-            guard let conversation = user.connection?.conversation else { continue }
-            conversation.isForcedReadOnly = true
+    func markOneToOneConversationsAsReadOnly(with domain: String) {
+        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(with: domain))
+        if let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
+            users.forEach { user in
+                guard let conversation = user.connection?.conversation else {
+                    return
+                }
+                conversation.isForcedReadOnly = true
+            }
         }
     }
 
-    func removeConnectionRequests(withDomain domain: String) {
-        guard let moc = syncContext else { return }
-
-        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersSendAndPendingConnection(inDomain: domain))
-        let pendingUsers = moc.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] ?? []
-        for user in pendingUsers {
-            user.connection?.status = (user.connection?.status == .pending) ? .ignored : .cancelled
+    func removeConnectionRequests(with domain: String) {
+        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForSentAndPendingConnection(with: domain))
+        if let pendingUsers = context.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] {
+            pendingUsers.forEach { user in
+                user.connection?.status = (user.connection?.status == .pending) ? .ignored : .cancelled
+            }
         }
     }
 
-    func removeParticipantsFromDomains(domains: [String], inConversation conversation: ZMConversation) {
-        let participants = conversation.localParticipants.filter { domains.contains($0.domain ?? "") }
-        conversation.removeParticipantsWithoutUpdatingState(users: participants)
-        addSystemMessageAboutRemovedParticipants(participants: participants, inConversation: conversation)
+    func removeUsers(with userDomains: [String], fromConversationsOwnedBy domains: [String]) {
+        conversationsOwned(by: domains, withParticipantsFrom: userDomains).forEach { $0.removeParticipants(with: userDomains) }
     }
 
-    func addSystemMessageAboutRemovedParticipants(participants: Set<ZMUser>, inConversation conversation: ZMConversation) {
-        guard let moc = syncContext else { return }
-        let selfUser = ZMUser.selfUser(in: moc)
-
-        // TODO: create new system message "xyz was removed from conversation" instead of current "you removed XYZ from conversation", will be changed in next PR
-        conversation.appendParticipantsRemovedSystemMessage(users: participants, sender: selfUser, at: Date())
+    func conversationsOwned(by domains: [String], withParticipantsFrom userDomains: [String]) -> [ZMConversation] {
+        guard let conversations = ZMConversation.groupConversationOwned(by: domains, in: context) else {
+            return []
+        }
+        return conversations.filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
     }
+
+    func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
+        conversationsNotOwned(by: domains, withParticipantsFrom: userDomains).forEach { $0.removeParticipants(with: userDomains) }
+    }
+
+    func conversationsNotOwned(by domains: [String], withParticipantsFrom userDomains: [String]) -> [ZMConversation] {
+        guard let conversations = ZMConversation.groupConversationNotOwned(by: domains, in: context) else {
+            return []
+        }
+        return conversations.filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
+    }
+
 }
 
-fileprivate extension ZMConversation {
+private extension ZMConversation {
 
-    func containsParticipantsFromAllDomains(domains: [String]) -> Bool {
-        for currentDomain in domains {
-            guard localParticipants.contains(where: { $0.domain == currentDomain }) else { return false }
+    func removeParticipants(with domains: [String]) {
+        let participants = localParticipants.filter { user in
+            if let domain = user.domain {
+                return domain.isOne(of: domains)
+            } else {
+                return false
+            }
         }
-        return true
+
+        removeParticipantsLocally(participants)
+        // appendParticipantsRemovedSystemMessage(participants)
     }
+
+    /// TODO
+    func appendParticipantsRemovedSystemMessage(_ participants: Set<ZMUser>) {
+        guard let context = managedObjectContext else {
+            return
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        // TODO: create new system message "xyz was removed from conversation" instead of current "you removed XYZ from conversation", will be changed in next PR
+        appendParticipantsRemovedSystemMessage(users: participants, sender: selfUser, at: Date())
+    }
+
+    func hasLocalParticipantsFrom(_ domains: Set<String>) -> Bool {
+        let localParticipantDomains = Set(localParticipants.compactMap { $0.domain })
+
+        return domains.isSubset(of: localParticipantDomains)
+    }
+
 }

@@ -437,8 +437,7 @@ extension ZMConversation {
     ///
     /// The method will handle the case when the participant is not there, so it's safe to call
     /// it even if the user is not there.
-    @objc
-    public func removeParticipantsWithoutUpdatingState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
+    public func removeParticipantsLocally(_ users: Set<ZMUser>) {
 
         guard let moc = self.managedObjectContext else { return }
         let existingUsers = Set(self.participantRoles.map { $0.user })
@@ -447,7 +446,7 @@ extension ZMConversation {
                 existingUsers.contains(user),
                 let existingRole = participantRoles.first(where: { $0.user == user })
             else { continue }
-            
+
             participantRoles.remove(existingRole)
             moc.delete(existingRole)
         }

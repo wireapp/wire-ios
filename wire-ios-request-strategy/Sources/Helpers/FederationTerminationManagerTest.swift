@@ -21,27 +21,33 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 class FederationTerminationManagerTests: MessagingTestBase {
+
     var sut: FederationTerminationManager!
+    let defederatedDomain = "other.user.domain"
 
     override func setUp() {
         super.setUp()
-        sut = FederationTerminationManager(syncContext: syncMOC)
+
+        sut = FederationTerminationManager(context: syncMOC)
     }
 
     override func tearDown() {
         super.tearDown()
+
         sut = nil
     }
 
-    func testThatFederationDelete_markOneToOneConversationAsReadOnly()  throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+    // MARK: - Handle federation termination with other domain
+
+    func testThatItMarksOneToOneConversationAsReadOnly() throws {
+        syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
-            let domain = "other.user.domain"
-            otherUser.domain = domain
+            otherUser.domain = defederatedDomain
             guard let conversation = otherUser.connection?.conversation else { return }
+            XCTAssertFalse(conversation.isForcedReadOnly)
 
             // WHEN
-            sut.handleFederationTerminationWith(domain)
+            sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
             XCTAssertTrue(conversation.isForcedReadOnly)
@@ -49,129 +55,140 @@ class FederationTerminationManagerTests: MessagingTestBase {
         }
     }
 
-
-    func testThatFederationDelete_RemovePendingConnectionRequest()  throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+    func testThatItRemovesPendingConnectionRequest() throws {
+        syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
-            let domain = "other.user.domain"
-            otherUser.domain = domain
+            otherUser.domain = defederatedDomain
             otherUser.connection?.status = .pending
 
             // WHEN
-            sut.handleFederationTerminationWith(domain)
+            sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
             XCTAssertEqual(otherUser.connection?.status, .ignored)
         }
     }
 
-
-    func testThatFederationDelete_RemoveMyConnectionRequest()  throws {
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+    func testThatItRemovesSentConnectionRequest() throws {
+        syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
-            let domain = "other.user.domain"
-            otherUser.domain = domain
+            otherUser.domain = defederatedDomain
             otherUser.connection?.status = .sent
 
             // WHEN
-            sut.handleFederationTerminationWith(domain)
+            sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
             XCTAssertEqual(otherUser.connection, nil)
         }
     }
 
-    func testThatFederationDelete_removeSelfUserFromSecondBackendConversation()  throws {
+    func testItRemovesSelfUserFromConversationHostedByDefederatedDomain() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
-            let domain = "other.user.domain"
-            otherUser.domain = domain
-            let conversation = createGroupConversation(with: [otherUser], hostedByDomain: domain)
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            otherUser.domain = defederatedDomain
+            let conversation = createGroupConversation(with: [otherUser], hostedByDomain: defederatedDomain)
+            XCTAssertTrue(conversation.localParticipants.contains(selfUser))
 
             // WHEN
-            sut.handleFederationTerminationWith(domain)
+            sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
-            XCTAssertFalse(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertFalse(conversation.localParticipants.contains(selfUser))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
         }
     }
 
-    func testThatFederationDelete_removeOtherUserFromMyBackendConversation()  throws {
+    func testThatItRemovesOtherUserFromConversationHostedBySelfDomain() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
-            let domain = "other.user.domain"
-            otherUser.domain = domain
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            otherUser.domain = defederatedDomain
             let conversation = createGroupConversation(with: [otherUser], hostedByDomain: owningDomain)
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
 
             // WHEN
-            sut.handleFederationTerminationWith(domain)
+            sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
         }
     }
 
-    func testThatFederationDelete_removeMeAndOtherUserFromThirdBackendConversation()  throws {
+    func testThatItRemovesSelfUserAndOtherUserFromConversationHostedByOtherDomain() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
-            let domain = "other.user.domain"
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let thirdDomain = "third.user.domain"
-            otherUser.domain = domain
+            otherUser.domain = defederatedDomain
             thirdUser.domain = thirdDomain
             let conversation = createGroupConversation(with: [otherUser, thirdUser], hostedByDomain: thirdDomain)
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
+            XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
 
             // WHEN
-            sut.handleFederationTerminationWith(domain)
+            sut.handleFederationTerminationWith(defederatedDomain)
 
             // THEN
-            XCTAssertFalse(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertFalse(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
             XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
         }
     }
 
-    func testThatDomainsStopFederating_removeParticipantsFromMyConversation()  throws {
+    // MARK: - Handle federation termination between two domains
+
+    func testItRemovesDefederatedParticipantsFromConversationHostedBySelfDomain()  throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
-            otherUser.domain = "otherUser.domain"
-            thirdUser.domain = "thirdUser.domain"
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+
+            let firstDomain = "first.domain"
+            let secondDomain = "second.domain"
+            otherUser.domain = firstDomain
+            thirdUser.domain = secondDomain
             let conversation = createGroupConversation(with: [thirdUser, otherUser], hostedByDomain: owningDomain)
+
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
             XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
 
             // WHEN
-            sut.handleFederationTerminationBetween("otherUser.domain", otherDomain: "thirdUser.domain")
+            sut.handleFederationTerminationBetween(firstDomain, otherDomain: secondDomain)
 
             // THEN
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
             XCTAssertFalse(conversation.localParticipants.contains(thirdUser))
         }
     }
 
-    func testThatDomainsStopFederating_removeParticipantFromNonHostingdBackend()  throws {
+    func testThatItRemovesParticipantFromConversationHostedBySelfDomain1()  throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
-            otherUser.domain = "otherUser.domain"
-            thirdUser.domain = "thirdUser.domain"
-            let conversation = createGroupConversation(with: [thirdUser, otherUser], hostedByDomain: "otherUser.domain")
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+
+            let firstDomain = "first.domain"
+            let secondDomain = "second.domain"
+            otherUser.domain = firstDomain
+            thirdUser.domain = secondDomain
+            let conversation = createGroupConversation(with: [thirdUser, otherUser], hostedByDomain: firstDomain)
+
+            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
             XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
 
             // WHEN
-            sut.handleFederationTerminationBetween("otherUser.domain", otherDomain: "thirdUser.domain")
+            sut.handleFederationTerminationBetween(firstDomain, otherDomain: secondDomain)
 
             // THEN
-            XCTAssertTrue(conversation.localParticipants.contains(ZMUser.selfUser(in: syncMOC)))
+            XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
             XCTAssertFalse(conversation.localParticipants.contains(thirdUser))
         }
     }
+
 }
 
 extension FederationTerminationManagerTests {
@@ -182,14 +199,12 @@ extension FederationTerminationManagerTests {
         conversation.conversationType = .group
         conversation.domain = domain
         conversation.remoteIdentifier = UUID.create()
-        for user in users {
-            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        }
+        users.forEach { conversation.addParticipantAndUpdateConversationState(user: $0, role: nil) }
+
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
         conversation.needsToBeUpdatedFromBackend = false
         return conversation
     }
-
 
     /// Creates a 1:1 conversation with a user
     func createOneToOneConversation(with user: ZMUser) -> ZMConversation {
@@ -200,4 +215,5 @@ extension FederationTerminationManagerTests {
         conversation.needsToBeUpdatedFromBackend = false
         return conversation
     }
+
 }
