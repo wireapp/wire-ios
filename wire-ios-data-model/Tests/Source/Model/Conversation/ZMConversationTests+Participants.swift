@@ -837,7 +837,15 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // THEN
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(mockActionHandler.performedResults.count, 2)
+        XCTAssertEqual(mockActionHandler.performedActions.count, 2)
+
+        if let lastAction = mockActionHandler.performedActions.last {
+            XCTAssertEqual(lastAction.userIDs.count, 1)
+            let participants = lastAction.userIDs.existingObjects(in: syncMOC) as? [ZMUser]
+            XCTAssertEqual(participants?.count, 1)
+            XCTAssertEqual(participants?.first!.remoteIdentifier, user1.remoteIdentifier)
+        }
+
     }
 
 }

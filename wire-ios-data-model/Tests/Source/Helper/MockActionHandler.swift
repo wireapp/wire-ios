@@ -28,7 +28,7 @@ class MockActionHandler<T: EntityAction>: EntityActionHandler {
     var didPerformAction: Bool {
         return results.isEmpty
     }
-    var performedResults: [Result] = []
+    var performedActions: [Action] = []
 
     init(result: Result, context: NotificationContext) {
         self.results = [result]
@@ -39,7 +39,7 @@ class MockActionHandler<T: EntityAction>: EntityActionHandler {
         var action = action
         if let result = results.first {
             action.notifyResult(result)
-            performedResults.append(result)
+            performedActions.append(action)
             results.removeFirst()
         }
     }
