@@ -92,7 +92,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         guard let userSession = ZMUserSession.shared() else { return }
         let service = ConversationService(context: userSession.viewContext)
         let users = Set(users.materialize(in: userSession.viewContext))
-        
+
         service.createGroupConversation(
             name: name,
             users: users,
@@ -105,8 +105,8 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             case .success(let conversation):
                 self?.navigate(to: conversation)
 
-            case .failure:
-                fatalError("not implemented")
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create conversation from flow: \(String(describing: error))")
             }
         }
     }

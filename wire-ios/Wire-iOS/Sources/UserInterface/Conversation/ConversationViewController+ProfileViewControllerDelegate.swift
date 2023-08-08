@@ -62,9 +62,8 @@ extension ConversationViewController: ProfileViewControllerDelegate {
                         animated: true
                     )
 
-                case .failure:
-                    // TODO: [John] Handle
-                    fatalError("not implemented")
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create conversation from profile: \(String(describing: error))")
                 }
             }
         }

@@ -147,9 +147,8 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
                     didSelect: conversation
                 )
 
-            case .failure:
-                // TODO: handle
-                fatalError("not implemented")
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
 
         }
