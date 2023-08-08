@@ -427,8 +427,11 @@ platform :ios do
         end
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
+        puts output
+        puts output.split('\n')
         puts output.split('\n').grep(/.ipa$/)
-        `echo S3_PATHS=#{output.split('\n').grep(/.ipa$/).gsub('upload: ', '')} >> .post_build_env`
+
+        `echo S3_PATHS=#{output.split('\n').grep(/.ipa$/).join('\n').gsub('upload: ', '')} >> .post_build_env`
     end
 
     # Upload dSYMs for AppStore crash tracking
