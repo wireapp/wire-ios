@@ -427,7 +427,7 @@ platform :ios do
         end
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
-        output.dump
+        puts output.dump
         # puts output.split('\n')
         # puts output.split('\n').grep(/.ipa$/)
 
