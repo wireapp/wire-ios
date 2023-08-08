@@ -295,6 +295,22 @@
 			<string>Missed calls</string>
 		</dict>
 	</dict>
+	<key>content.system.federation_termination.participants_removed</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@lu_number_of_participants@</string>
+		<key>lu_number_of_participants</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%2$@ was removed from the conversation</string>
+			<key>other</key>
+			<string>%2$@ were removed from the conversation</string>
+		</dict>
+	</dict>
 	<key>content.system.call.missed-call.groups</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

@@ -30,7 +30,7 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
 
     private var context: NSManagedObjectContext
 
-    public init(context: NSManagedObjectContext) {
+    public init(in context: NSManagedObjectContext) {
         self.context = context
     }
 
@@ -77,6 +77,7 @@ private extension FederationTerminationManager {
                     return
                 }
                 conversation.isForcedReadOnly = true
+                //conversation.appendFederationTerminationSystemMessage(domains: [domain])
             }
         }
     }
@@ -114,6 +115,31 @@ private extension FederationTerminationManager {
 
 }
 
+// MARK: - Append system messages
+
+private extension ZMConversation {
+
+    func appendParticipantsRemovedSystemMessage(_ users: Set<ZMUser>) {
+        guard let context = managedObjectContext else {
+            return
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        appendParticipantsRemovedAnonymouslySystemMessage(users: users,
+                                                          sender: selfUser,
+                                                          removedReason: .federationTermination,
+                                                          at: Date())
+    }
+
+//    func appendFederationTerminationSystemMessage(domains: [String]) {
+//        guard let context = managedObjectContext else {
+//            return
+//        }
+//        let selfUser = ZMUser.selfUser(in: context)
+//        appendFederationTerminationSystemMessage(domains: domains, sender: selfUser, at: Date())
+//    }
+
+}
+
 private extension ZMConversation {
 
     func removeParticipants(with domains: [String]) {
@@ -126,17 +152,7 @@ private extension ZMConversation {
         }
 
         removeParticipantsLocally(participants)
-        // appendParticipantsRemovedSystemMessage(participants)
-    }
-
-    /// TODO
-    func appendParticipantsRemovedSystemMessage(_ participants: Set<ZMUser>) {
-        guard let context = managedObjectContext else {
-            return
-        }
-        let selfUser = ZMUser.selfUser(in: context)
-        // TODO: create new system message "xyz was removed from conversation" instead of current "you removed XYZ from conversation", will be changed in next PR
-        appendParticipantsRemovedSystemMessage(users: participants, sender: selfUser, at: Date())
+        appendParticipantsRemovedSystemMessage(participants)
     }
 
     func hasLocalParticipantsFrom(_ domains: Set<String>) -> Bool {

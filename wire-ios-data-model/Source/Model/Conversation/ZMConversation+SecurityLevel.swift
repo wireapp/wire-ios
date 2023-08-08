@@ -596,7 +596,8 @@ extension ZMConversation {
                              timestamp: Date,
                              duration: TimeInterval? = nil,
                              messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true) -> ZMSystemMessage {
+                             relevantForStatus: Bool = true,
+                             removedReason: ZMParticipantsRemovedReason = .none) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -613,6 +614,7 @@ extension ZMConversation {
         }
 
         systemMessage.relevantForConversationStatus = relevantForStatus
+        systemMessage.participantsRemovedReason = removedReason
 
         self.append(systemMessage)
 

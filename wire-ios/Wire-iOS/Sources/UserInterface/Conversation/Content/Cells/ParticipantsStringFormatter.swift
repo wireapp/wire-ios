@@ -86,6 +86,7 @@ final class ParticipantsStringFormatter {
         static let xAndY = "content.system.participants_1_other"
         static let completeTeam = "content.system.started_conversation.complete_team"
         static let completeTeamWithGuests = "content.system.started_conversation.complete_team.guests"
+        static let participantsRemoved = "content.system.federation_termination.participants_removed"
     }
 
     struct NameList {
@@ -176,6 +177,15 @@ final class ParticipantsStringFormatter {
                                                             .link: URL.wr_legalHoldLearnMore.absoluteString as AnyObject,
                                                             .foregroundColor: SemanticColors.Label.textDefault])
             return result += " " + learnMore
+
+        case .removed(reason: .federationTermination):
+            typealias FailedParticipants = L10n.Localizable.Content.System.FailedParticipants
+
+            let formatString = Key.participantsRemoved.localized(args: names.totalUsers, nameSequence.string)
+            let formatStringWithLink = FailedParticipants.learnMore(formatString, URL.wr_FederationLearnMore.absoluteString)
+            result = .markdown(from: formatStringWithLink, style: .systemMessage)
+
+            return result
 
         case .removed, .added(herself: false), .started(withName: .none):
             result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor

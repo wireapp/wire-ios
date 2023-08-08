@@ -303,7 +303,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func stopFederatingBella() {
         stopFederatingDomain(domain: "bella.wire.link")
     }
-    
+
     private func stopFederatingFoma() {
         stopFederatingDomain(domain: "foma.wire.link")
     }
@@ -316,7 +316,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             return
         }
 
-        let manager = FederationTerminationManager(syncContext: context)
+        let manager = FederationTerminationManager(in: context)
         manager.handleFederationTerminationBetween("bella.wire.link", otherDomain: "foma.wire.link")
     }
 
@@ -327,8 +327,8 @@ final class DeveloperToolsViewModel: ObservableObject {
         else {
             return
         }
-        
-        let manager = FederationTerminationManager(syncContext: context)
+
+        let manager = FederationTerminationManager(in: context)
         manager.handleFederationTerminationWith(domain)
     }
 

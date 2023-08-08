@@ -28,7 +28,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        sut = FederationTerminationManager(context: syncMOC)
+        sut = FederationTerminationManager(in: syncMOC)
     }
 
     override func tearDown() {

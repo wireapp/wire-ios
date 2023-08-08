@@ -1992,6 +1992,12 @@ internal enum L10n {
             return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get_message", String(describing: p1), fallback: "**%@** won’t get your message.")
           }
         }
+        internal enum FederationTermination {
+          /// Plural format key: "%#@lu_number_of_participants@"
+          internal static func participantsRemoved(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.federation_termination.participants_removed", p1, fallback: "Plural format key: \"%#@lu_number_of_participants@\"")
+          }
+        }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")

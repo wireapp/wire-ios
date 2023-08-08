@@ -113,4 +113,25 @@ extension ZMConversation {
         }
     }
 
+    public func appendParticipantsRemovedAnonymouslySystemMessage(users: Set<ZMUser>,
+                                                                  sender: ZMUser,
+                                                                  removedReason: ZMParticipantsRemovedReason,
+                                                                  at timestamp: Date) {
+        appendSystemMessage(type: .participantsRemoved,
+                            sender: sender,
+                            users: users,
+                            clients: nil,
+                            timestamp: timestamp,
+                            removedReason: removedReason)
+    }
+
+    public func appendFederationTerminationSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
+//        appendSystemMessage(type: .domainsStoppedFederating,
+//                            sender: sender,
+//                            users: nil,
+//                            clients: nil,
+//                            timestamp: timestamp,
+//                            domains: domains)
+    }
+
 }

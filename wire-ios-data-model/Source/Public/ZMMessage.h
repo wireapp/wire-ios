@@ -90,12 +90,14 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeLegalHoldDisabled,
     ZMSystemMessageTypeSessionReset,
     ZMSystemMessageTypeDecryptionFailedResolved,
+    ZMSystemMessageTypeDomainsStoppedFederating
 };
 
 typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
     ZMParticipantsRemovedReasonNone = 0,
     /// Users don't want / support LH
     ZMParticipantsRemovedReasonLegalHoldPolicyConflict = 1,
+    ZMParticipantsRemovedReasonFederationTermination = 2
 };
 
 @protocol ZMTextMessageData <NSObject>
