@@ -130,15 +130,28 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
         isLoadingViewVisible = true
 
-        userSession.perform { [weak self] in
-            guard let weakSelf = self else { return }
+        let service = ConversationService(context: userSession.viewContext)
+        service.createGroupConversation(
+            name: L10n.Localizable.General.guestRoomName,
+            users: [],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: false,
+            messageProtocol: .proteus
+        ) { [weak self] in
+            switch $0 {
+            case .success(let conversation):
+                guard let self = self else { return }
+                self.delegate?.startUI(
+                    self,
+                    didSelect: conversation
+                )
 
-            if let conversation = ZMConversation.insertGroupConversation(session: userSession,
-                                                                      participants: [],
-                                                                      name: "general.guest-room-name".localized,
-                                                                      team: ZMUser.selfUser().team) {
-                weakSelf.delegate?.startUI(weakSelf, didSelect: conversation)
+            case .failure:
+                // TODO: handle
+                fatalError("not implemented")
             }
+
         }
     }
 }

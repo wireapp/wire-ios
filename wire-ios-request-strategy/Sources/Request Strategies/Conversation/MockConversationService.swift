@@ -17,7 +17,7 @@
 
 import Foundation
 
-final class MockConversationService: ConversationServiceProtocol {
+final class MockConversationService: ConversationServiceInterface {
 
     func syncConversation(
         qualifiedID: QualifiedID,

@@ -50,7 +50,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
 
         viewController.dismissIfNeeded {
             self.createConversation(
-                withUsers: users,
+                users: users,
                 name: name,
                 allowGuests: allowGuests,
                 allowServices: allowServices,
@@ -82,68 +82,42 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     }
 
     private func createConversation(
-        withUsers users: UserSet?,
+        users: UserSet,
         name: String?,
         allowGuests: Bool,
         allowServices: Bool,
         enableReceipts: Bool,
         encryptionProtocol: EncryptionProtocol
     ) {
-        guard
-            let users = users,
-            let userSession = ZMUserSession.shared()
-        else {
-            return
-        }
-
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
-        let isTeamConversation = selfUser.hasTeam
-
-        guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
-            return
-        }
-
-        let participants = users.materialize(in: userSession.viewContext).filter { !$0.isSelfUser }
-        let qualifiedUserIDs = participants.qualifiedUserIDs ?? []
-        let unqualifiedUserIDs = participants.compactMap(\.remoteIdentifier)
-
-        let accessMode = ConversationAccessMode.value(forAllowGuests: allowGuests)
-
-        // allow guests is team only
-        var action = CreateGroupConversationAction(
-            messageProtocol: encryptionProtocol == .mls ? .mls : .proteus,
-            creatorClientID: selfClientID,
-            qualifiedUserIDs: qualifiedUserIDs,
-            unqualifiedUserIDs: qualifiedUserIDs.isEmpty ? unqualifiedUserIDs : [],
+        guard let userSession = ZMUserSession.shared() else { return }
+        let service = ConversationService(context: userSession.viewContext)
+        let users = Set(users.materialize(in: userSession.viewContext))
+        
+        service.createGroupConversation(
             name: name,
-            accessMode: isTeamConversation ? accessMode : .init(),
-            accessRoles: ConversationAccessRoleV2.from(
-                allowGuests: allowGuests,
-                allowServices: allowServices
-            ),
-            legacyAccessRole: nil,
-            teamID: selfUser.teamIdentifier,
-            isReadReceiptsEnabled: enableReceipts
-        )
+            users: users,
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            enableReceipts: enableReceipts,
+            messageProtocol: encryptionProtocol == .proteus ? .proteus : .mls
+        ) { [weak self] in
+            switch $0 {
+            case .success(let conversation):
+                self?.navigate(to: conversation)
 
-        action.perform(in: userSession.viewContext.notificationContext) { result in
-            userSession.viewContext.perform {
-                switch result {
-                case .success(let conversationObjectID):
-                    if let conversation = try? userSession.viewContext.existingObject(with: conversationObjectID) as? ZMConversation {
-                        delay(0.3) {
-                            ZClientViewController.shared?.select(
-                                conversation: conversation,
-                                focusOnView: true,
-                                animated: true
-                            )
-                        }
-                    }
-
-                case .failure(let failure):
-                    break
-                }
+            case .failure:
+                fatalError("not implemented")
             }
+        }
+    }
+
+    private func navigate(to conversation: ZMConversation) {
+        delay(0.3) {
+            ZClientViewController.shared?.select(
+                conversation: conversation,
+                focusOnView: true,
+                animated: true
+            )
         }
     }
 }
