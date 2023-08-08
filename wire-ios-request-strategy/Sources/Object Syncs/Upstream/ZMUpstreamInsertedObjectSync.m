@@ -260,6 +260,9 @@ static NSString* ZMLogTag = @"Network";
         }
         else if (response.result == ZMTransportResponseStatusTryAgainLater) {
             didFinish = NO;
+            if ([transcoder respondsToSelector:@selector(requestShouldTryAgainLaterForObject:forKeys:)]) {
+                [transcoder requestShouldTryAgainLaterForObject:nextObject forKeys:request.keys];
+            }
         }
         else if (response.result == ZMTransportResponseStatusExpired) {
             if ([transcoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)]) {

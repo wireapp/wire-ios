@@ -54,6 +54,9 @@
 /// that might time out but not implementing this will trigger an assertion.
 - (void)requestExpiredForObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet<NSString *> * _Nonnull)keys;
 
+/// If implemented, the upstream object sync will call this when an upstream request should be tried again later.
+- (void)requestShouldTryAgainLaterForObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet<NSString *> * _Nonnull)keys;
+
 /// If implemented, the transcoder can refuse requests until a conditions is fullfilled
 /// Object will be not removed from objects to be synced
 - (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet<NSString *>  * _Nonnull )keys withSync:(id _Nonnull)sync;

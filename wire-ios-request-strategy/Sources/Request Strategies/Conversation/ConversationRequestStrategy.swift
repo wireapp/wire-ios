@@ -577,6 +577,15 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return ZMUpstreamRequest(transportRequest: request)
     }
 
+    public func requestExpired(for managedObject: ZMManagedObject, forKeys keys: Set<String>) {
+        guard let conversation = managedObject as? ZMConversation else { return }
+        conversation.notifyUnknownResponseError()
+    }
+
+    public func requestShouldTryAgainLater(for managedObject: ZMManagedObject, forKeys keys: Set<String>) {
+        guard let conversation = managedObject as? ZMConversation else { return }
+        conversation.notifyUnknownResponseError()
+    }
 }
 
 class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
