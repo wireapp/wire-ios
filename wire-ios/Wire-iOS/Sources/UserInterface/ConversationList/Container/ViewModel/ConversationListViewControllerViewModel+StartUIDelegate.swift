@@ -96,28 +96,53 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             return
         }
 
-        var conversation: ZMConversation?
+        let selfUser = ZMUser.selfUser(inUserSession: userSession)
+        let isTeamConversation = selfUser.hasTeam
 
-        userSession.enqueue {
-            conversation = ZMConversation.insertGroupConversation(
-                moc: userSession.viewContext,
-                participants: users.materialize(in: userSession.viewContext),
-                name: name,
-                team: ZMUser.selfUser().team,
+        guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
+            return
+        }
+
+        let participants = users.materialize(in: userSession.viewContext).filter { !$0.isSelfUser }
+        let qualifiedUserIDs = participants.qualifiedUserIDs ?? []
+        let unqualifiedUserIDs = participants.compactMap(\.remoteIdentifier)
+
+        let accessMode = ConversationAccessMode.value(forAllowGuests: allowGuests)
+
+        // allow guests is team only
+        var action = CreateGroupConversationAction(
+            messageProtocol: encryptionProtocol == .mls ? .mls : .proteus,
+            creatorClientID: selfClientID,
+            qualifiedUserIDs: qualifiedUserIDs,
+            unqualifiedUserIDs: qualifiedUserIDs.isEmpty ? unqualifiedUserIDs : [],
+            name: name,
+            accessMode: isTeamConversation ? accessMode : .init(),
+            accessRoles: ConversationAccessRoleV2.from(
                 allowGuests: allowGuests,
-                allowServices: allowServices,
-                readReceipts: enableReceipts,
-                messageProtocol: encryptionProtocol == .mls ? .mls : .proteus
-            )
-        } completionHandler: {
-            guard let conversation = conversation else {return }
+                allowServices: allowServices
+            ),
+            legacyAccessRole: nil,
+            teamID: selfUser.teamIdentifier,
+            isReadReceiptsEnabled: enableReceipts
+        )
 
-            delay(0.3) {
-                ZClientViewController.shared?.select(
-                    conversation: conversation,
-                    focusOnView: true,
-                    animated: true
-                )
+        action.perform(in: userSession.viewContext.notificationContext) { result in
+            userSession.viewContext.perform {
+                switch result {
+                case .success(let conversationObjectID):
+                    if let conversation = try? userSession.viewContext.existingObject(with: conversationObjectID) as? ZMConversation {
+                        delay(0.3) {
+                            ZClientViewController.shared?.select(
+                                conversation: conversation,
+                                focusOnView: true,
+                                animated: true
+                            )
+                        }
+                    }
+
+                case .failure(let failure):
+                    break
+                }
             }
         }
     }

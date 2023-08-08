@@ -56,6 +56,32 @@ extension Payload {
         let creatorClient: String?
         let messageProtocol: String?
 
+        init(_ action: CreateGroupConversationAction) {
+            switch action.messageProtocol {
+            case .mls:
+                messageProtocol = "mls"
+                creatorClient = action.creatorClientID
+                qualifiedUsers = nil
+                users = nil
+
+            case .proteus:
+                messageProtocol = "proteus"
+                creatorClient = nil
+                qualifiedUsers = action.qualifiedUserIDs
+                users = action.unqualifiedUserIDs
+            }
+
+            name = action.name
+            access = action.accessMode?.stringValue
+            legacyAccessRole = action.legacyAccessRole?.rawValue
+            accessRoles = action.accessRoles.map(\.rawValue)
+            conversationRole = ZMConversation.defaultMemberRoleName
+            team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
+            readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
+            messageTimer = nil
+        }
+
+        @available(*, deprecated, message: "Use a CreateConversationAction instead")
         init(_ conversation: ZMConversation, selfClientID: String) {
             switch conversation.messageProtocol {
             case .mls:

@@ -113,7 +113,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             removeParticipantActionHandler,
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
-            SyncConversationActionHandler(context: managedObjectContext)
+            SyncConversationActionHandler(context: managedObjectContext),
+            CreateGroupConversationActionHandler(context: managedObjectContext)
         ])
 
         conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)

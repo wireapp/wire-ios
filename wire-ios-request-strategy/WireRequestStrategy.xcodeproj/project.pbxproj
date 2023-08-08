@@ -229,6 +229,7 @@
 		EE668BB22954A7C700D939E7 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB12954A7C700D939E7 /* WireDataModel.framework */; };
 		EE67F72C296F0CE4001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72B296F0CE4001D7C88 /* WireTesting.framework */; };
 		EE67F72D296F0CE4001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72B296F0CE4001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */; };
 		EE82318927D22D79008CD77B /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82318827D22D79008CD77B /* String+Random.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
@@ -648,6 +649,7 @@
 		EE57BD9E28A52E3100C46660 /* MessageSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSyncTests.swift; sourceTree = "<group>"; };
 		EE668BB12954A7C700D939E7 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F72B296F0CE4001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandler.swift; sourceTree = "<group>"; };
 		EE82318827D22D79008CD77B /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
@@ -1105,6 +1107,7 @@
 				EECBE8EB28E71ED7005DE5DD /* SyncConversationAction.swift */,
 				EECBE8ED28E71F19005DE5DD /* SyncConversationActionHandler.swift */,
 				EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */,
+				EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -1919,6 +1922,7 @@
 				EE47346E29A3A17900E6C04E /* EventDecoder+MLS.swift in Sources */,
 				63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
+				EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */,
 				0649D14524F63BBD001DDC78 /* LocalNotificationType+Configuration.swift in Sources */,
 				7AEBB677285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				F18401C32073BE0800E9F4CC /* AssetV3DownloadRequestStrategy.swift in Sources */,
