@@ -158,6 +158,7 @@ extension Payload.Conversation {
         return conversation
     }
 
+    @discardableResult
     func updateOrCreateSelfConversation(
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
