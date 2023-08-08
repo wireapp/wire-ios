@@ -57,7 +57,7 @@ extension ZMUser {
         }
 
         if !query.isEmpty {
-            let namePredicate =  NSPredicate(format: "%K CONTAINS[c] %@", #keyPath(ZMUser.normalizedName), query)
+            let namePredicate = NSPredicate(format: "%K CONTAINS[c] %@", #keyPath(ZMUser.normalizedName), query)
             let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), query.strippingLeadingAtSign())
             allPredicates.append([namePredicate, handlePredicate].compactMap {$0})
         }
