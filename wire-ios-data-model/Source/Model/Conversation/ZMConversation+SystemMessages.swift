@@ -124,9 +124,8 @@ extension ZMConversation {
                             timestamp: timestamp,
                             removedReason: removedReason)
     }
-//
+
     public func appendFederationTerminationSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
-      ///  URL.wr_FederationLearnMore.absoluteString
         appendSystemMessage(type: .domainsStoppedFederating,
                             sender: sender,
                             users: nil,
