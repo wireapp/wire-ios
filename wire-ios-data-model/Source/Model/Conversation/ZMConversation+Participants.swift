@@ -35,7 +35,7 @@ public enum ConversationAddParticipantsError: Error, Equatable {
         tooManyMembers,
         missingLegalHoldConsent,
         failedToAddMLSMembers,
-        unreachableUsers(Set<ZMUser>)
+        unreachableDomains(Set<String>)
 }
 
 public class AddParticipantAction: EntityAction {
@@ -140,18 +140,21 @@ extension ZMConversation {
     }
 
     // MARK: - Participant actions
-    public func addParticipants(_ participants: [UserType],
-                                completion: @escaping AddParticipantAction.ResultHandler) {
-
+    public func addParticipants(
+        _ participants: [UserType],
+        completion: @escaping AddParticipantAction.ResultHandler
+    ) {
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return
         }
+
         let users = participants.materialize(in: context)
 
         internalAddParticipants(users) { result in
             switch result {
-            case .failure(.unreachableUsers(let unreachableUsers)):
+            case .failure(.unreachableDomains(let domains)):
+                let unreachableUsers = users.belongingTo(domains: domains)
                 self.appendFailedToAddUsersSystemMessage(
                     users: unreachableUsers,
                     sender: self.creator,
@@ -548,4 +551,17 @@ extension ZMConversation {
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
         return localParticipants.contains { $0.userId == userId }
     }
+}
+
+extension Collection where Element == ZMUser {
+
+    func belongingTo(domains: Set<String>) -> Set<ZMUser> {
+        let result = filter { user in
+            guard let domain = user.domain else { return false }
+            return domain.isOne(of: domains)
+        }
+
+        return Set(result)
+    }
+
 }

@@ -300,7 +300,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
 
             let expectation = self.expectation(description: "Result Handler was called")
             action.onResult { (result) in
-                if case .failure(.unreachableUsers([unreachableUser])) = result {
+                if case .failure(.unreachableDomains([unreachableDomain])) = result {
                     expectation.fulfill()
                 }
             }
