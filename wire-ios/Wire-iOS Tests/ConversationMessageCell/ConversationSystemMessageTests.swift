@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationSystemMessageTests: XCTestCase {
+final class ConversationSystemMessageTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
@@ -307,6 +307,36 @@ final class ConversationSystemMessageTests: XCTestCase {
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(1))
 
         verify(message: message)
+    }
+
+    // MARK: - Domains stopped federating
+
+    func testRemoveParticipant_federationTermination() {
+        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 5, clients: 0, reason: .federationTermination)!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
+    func testSelfDomainStoppedFederatingWithOtherDomain() {
+        let selfDomain = SelfUser.current.domain ?? ""
+        let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
+                                                       users: 1,
+                                                       clients: 0,
+                                                       domains: [selfDomain, "anta.wire.link"])!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
+    func testTwoDomainsStoppedFederating() {
+        let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
+                                                       users: 1,
+                                                       clients: 0,
+                                                       domains: ["anta.wire.link", "foma.wire.link"])!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
     }
 
 }

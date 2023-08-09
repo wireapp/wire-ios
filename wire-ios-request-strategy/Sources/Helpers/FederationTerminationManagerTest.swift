@@ -39,7 +39,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
 
     // MARK: - Handle federation termination with other domain
 
-    func testThatItMarksOneToOneConversationAsReadOnly() throws {
+    func testThatItMarksOneToOneConversationAsReadOnly_AndAddsSystemMessage() throws {
         syncMOC.performGroupedAndWait { [self] _ in
             // GIVEN
             otherUser.domain = defederatedDomain
@@ -52,6 +52,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
             // THEN
             XCTAssertTrue(conversation.isForcedReadOnly)
             XCTAssertTrue(conversation.isReadOnly)
+            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
@@ -83,7 +84,7 @@ class FederationTerminationManagerTests: MessagingTestBase {
         }
     }
 
-    func testItRemovesSelfUserFromConversationHostedByDefederatedDomain() throws {
+    func testItRemovesSelfUserFromConversationHostedByDefederatedDomain_AndAddsSystemMessages() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -97,10 +98,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             // THEN
             XCTAssertFalse(conversation.localParticipants.contains(selfUser))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
-    func testThatItRemovesOtherUserFromConversationHostedBySelfDomain() throws {
+    func testThatItRemovesOtherUserFromConversationHostedBySelfDomain_AndAddsSystemMessages() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -114,10 +119,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             // THEN
             XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
-    func testThatItRemovesSelfUserAndOtherUserFromConversationHostedByOtherDomain() throws {
+    func testThatItRemovesSelfUserAndOtherUserFromConversationHostedByOtherDomain_AndAddsSystemMessages() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -136,12 +145,16 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertFalse(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
             XCTAssertTrue(conversation.localParticipants.contains(thirdUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
     // MARK: - Handle federation termination between two domains
 
-    func testItRemovesDefederatedParticipantsFromConversationHostedBySelfDomain()  throws {
+    func testItRemovesDefederatedParticipantsFromConversationHostedBySelfDomain_AndAddsSystemMessages() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -162,10 +175,14 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(otherUser))
             XCTAssertFalse(conversation.localParticipants.contains(thirdUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
-    func testThatItRemovesParticipantFromConversationHostedBySelfDomain1()  throws {
+    func testThatItRemovesParticipantFromConversationHostedBySelfDomain_AndAddsSystemMessages() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -186,6 +203,10 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertTrue(conversation.localParticipants.contains(selfUser))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
             XCTAssertFalse(conversation.localParticipants.contains(thirdUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
