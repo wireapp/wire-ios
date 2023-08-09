@@ -45,7 +45,6 @@ public enum ConversationCreationFailure: Error {
 
 }
 
-
 public final class ConversationService: ConversationServiceInterface {
 
     // MARK: - Properties
@@ -103,7 +102,7 @@ public final class ConversationService: ConversationServiceInterface {
             completion(.failure(.missingPermissions))
             return
         }
-        
+
         internalCreateGroupConversation(
             teamID: teamID,
             name: name,
