@@ -130,8 +130,8 @@ extension ZMConversation {
                             sender: sender,
                             users: nil,
                             clients: nil,
-                            timestamp: timestamp)//,
-                           // domains: domains)
+                            timestamp: timestamp,
+                            domains: domains)
     }
 
 }
