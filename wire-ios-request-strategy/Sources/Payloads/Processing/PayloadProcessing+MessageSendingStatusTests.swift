@@ -44,7 +44,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: deleted,
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
 
             // when
             _ = payload.updateClientsChanges(for: message)
@@ -67,7 +68,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: missing,
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
 
             // when
             _ = payload.updateClientsChanges(for: message)
@@ -95,7 +97,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: missing,
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
 
             // when
             _ = payload.updateClientsChanges(for: message)
@@ -117,7 +120,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: redundant,
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
 
             // when
             _ = payload.updateClientsChanges(for: message)
@@ -139,7 +143,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: redundant,
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
 
             // when
             _ = payload.updateClientsChanges(for: message)
@@ -154,7 +159,7 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
             // given
             let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
-            let failedToSend: Payload.ClientListByQualifiedUserID =
+            let failedToConfirm: Payload.ClientListByQualifiedUserID =
                 [self.domain:
                     [self.otherUser.remoteIdentifier.transportString(): [clientID]]
                 ]
@@ -162,7 +167,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: failedToSend)
+                                                       failedToSend: [:],
+                                                       failedToConfirm: failedToConfirm)
 
             // when
             _ = payload.updateClientsChanges(for: message)
@@ -182,7 +188,7 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
 
             let domain = "example.com"
             let clientID = UUID().transportString()
-            let failedToSend: Payload.ClientListByQualifiedUserID =
+            let failedToConfirm: Payload.ClientListByQualifiedUserID =
                 [domain:
                     [self.otherUser.remoteIdentifier.transportString(): [clientID]]
                 ]
@@ -193,7 +199,8 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: failedToSend)
+                                                       failedToSend: [:],
+                                                       failedToConfirm: failedToConfirm)
             _ = payload.updateClientsChanges(for: message)
 
             // Then
@@ -217,7 +224,12 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                 thirdDomain: [self.thirdUser.remoteIdentifier.transportString(): expectedThirdUserClientList]
             ]
 
-            let payload = Payload.MessageSendingStatus(time: Date(), missing: missing, redundant: [:], deleted: [:], failedToSend: [:])
+            let payload = Payload.MessageSendingStatus(time: Date(),
+                                                       missing: missing,
+                                                       redundant: [:],
+                                                       deleted: [:],
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
 
             // when
             let clientListByUser = payload.missingClientListByUser(context: self.syncMOC)
@@ -241,7 +253,12 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
             domain: [userID.transportString(): [clientID]]
         ]
 
-        let payload = Payload.MessageSendingStatus(time: Date(), missing: missing, redundant: [:], deleted: [:], failedToSend: [:])
+        let payload = Payload.MessageSendingStatus(time: Date(),
+                                                   missing: missing,
+                                                   redundant: [:],
+                                                   deleted: [:],
+                                                   failedToSend: [:],
+                                                   failedToConfirm: [:])
 
         // when
         var clientListByUser = Payload.ClientListByUser()

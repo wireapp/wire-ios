@@ -41,6 +41,7 @@ extension MockUserType {
         let user = createUser(name: name, inTeam: teamID)
         user.isSelfUser = true
         user.accentColorValue = .vividRed
+        user.domain = "example.com"
         return user
     }
 

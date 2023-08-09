@@ -26,7 +26,7 @@ public enum ConversationRemoveParticipantError: Error {
         failedToRemoveMLSMembers
 }
 
-public enum ConversationAddParticipantsError: Error {
+public enum ConversationAddParticipantsError: Error, Equatable {
    case unknown,
         invalidOperation,
         accessDenied,
@@ -34,7 +34,8 @@ public enum ConversationAddParticipantsError: Error {
         conversationNotFound,
         tooManyMembers,
         missingLegalHoldConsent,
-        failedToAddMLSMembers
+        failedToAddMLSMembers,
+        unreachableUsers(Set<ZMUser>)
 }
 
 public class AddParticipantAction: EntityAction {
@@ -139,17 +140,43 @@ extension ZMConversation {
     }
 
     // MARK: - Participant actions
+    public func addParticipants(_ participants: [UserType],
+                                completion: @escaping AddParticipantAction.ResultHandler) {
 
-    public func addParticipants(
-        _ participants: [UserType],
-        completion: @escaping AddParticipantAction.ResultHandler
-    ) {
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return
         }
-
         let users = participants.materialize(in: context)
+
+        internalAddParticipants(users) { result in
+            switch result {
+            case .failure(.unreachableUsers(let unreachableUsers)):
+                self.appendFailedToAddUsersSystemMessage(
+                    users: unreachableUsers,
+                    sender: self.creator,
+                    at: self.lastServerTimeStamp ?? Date()
+                )
+
+                let reachableUsers = Set(users).subtracting(unreachableUsers)
+
+                self.internalAddParticipants(
+                    Array(reachableUsers),
+                    completion: completion
+                )
+
+            default:
+                completion(result)
+            }
+        }
+    }
+
+    private func internalAddParticipants(_ users: [ZMUser],
+                                         completion: @escaping AddParticipantAction.ResultHandler) {
+        guard let context = managedObjectContext else {
+            completion(.failure(.unknown))
+            return
+        }
 
         guard
             conversationType == .group,
@@ -168,7 +195,7 @@ extension ZMConversation {
             action.send(in: context.notificationContext)
 
         case .mls:
-            Logging.mls.info("adding \(participants.count) participants to conversation (\(String(describing: qualifiedID)))")
+            Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
             var mlsService: MLSServiceInterface?
 
@@ -430,6 +457,25 @@ extension ZMConversation {
 
         if addedSelfUser {
             self.increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
+        }
+    }
+
+    /// Remove participants to the conversation. It will NOT be synchronized to the backend .
+    ///
+    /// The method will handle the case when the participant is not there, so it's safe to call
+    /// it even if the user is not there.
+    public func removeParticipantsLocally(_ users: Set<ZMUser>) {
+
+        guard let moc = self.managedObjectContext else { return }
+        let existingUsers = Set(self.participantRoles.map { $0.user })
+        for user in users {
+            guard
+                existingUsers.contains(user),
+                let existingRole = participantRoles.first(where: { $0.user == user })
+            else { continue }
+
+            participantRoles.remove(existingRole)
+            moc.delete(existingRole)
         }
     }
 

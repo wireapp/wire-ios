@@ -87,7 +87,8 @@ class ProteusMessageSyncTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 201,
@@ -112,7 +113,8 @@ class ProteusMessageSyncTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 201,
@@ -190,7 +192,8 @@ class ProteusMessageSyncTests: MessagingTestBase {
                                                        missing: missing,
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 412,
@@ -244,7 +247,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
             let payload = Payload.ResponseFailure(code: 533,
                                                   label: .federationRemoteError,
                                                   message: "",
-                                                  data: Payload.ResponseFailure.FederationFailure(domain: "foma.wire.link",
+                                                  data: Payload.ResponseFailure.FederationFailure(domains: ["foma.wire.link"],
                                                                                                   path: "/federation/api-version",
                                                                                                   type: federationType))
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!

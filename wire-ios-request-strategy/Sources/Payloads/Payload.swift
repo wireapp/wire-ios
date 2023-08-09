@@ -272,11 +272,11 @@ enum Payload {
         struct FederationFailure: Codable {
 
             enum FailureType: String, Codable {
-                case federation = "federation"
+                case federation
                 case unknown
             }
 
-            let domain: String
+            let domains: [String]
             let path: String
             let type: FailureType
 
@@ -290,6 +290,7 @@ enum Payload {
             case missingLegalholdConsent = "missing-legalhold-consent"
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
+            case federationDenied = "federation-denied"
             case federationRemoteError = "federation-remote-error"
             case unknown
 
@@ -320,6 +321,7 @@ enum Payload {
             case redundant
             case deleted
             case failedToSend = "failed_to_send"
+            case failedToConfirm = "failed_to_confirm_clients"
         }
 
         /// Time of sending message.
@@ -338,6 +340,9 @@ enum Payload {
         /// When a message is partially sent contains the list of clients which
         /// didn't receive the message.
         let failedToSend: ClientListByQualifiedUserID
+
+        /// The lists the users for which the client verification could not be performed.
+        let failedToConfirm: ClientListByQualifiedUserID
     }
 
     struct MLSMessageSendingStatus: Codable {

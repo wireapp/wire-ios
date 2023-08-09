@@ -274,10 +274,11 @@
     // given
     NSSet *expected = [NSSet setWithArray:@[
                           ZMConversationUserDefinedNameKey,
+                          ZMConversationIsForcedReadOnlyKey,
                           ZMConversationLastReadServerTimeStampKey,
                           ZMConversationClearedTimeStampKey,
                           ZMConversationSilencedChangedTimeStampKey,
-                          ZMConversationArchivedChangedTimeStampKey,
+                          ZMConversationArchivedChangedTimeStampKey
                           ]];
     
     // when

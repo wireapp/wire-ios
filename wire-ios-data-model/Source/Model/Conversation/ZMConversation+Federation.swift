@@ -29,4 +29,30 @@ extension ZMConversation {
         return domain != userDomain
     }
 
+    public static func groupConversationOwned(by domain: String, in context: NSManagedObjectContext) -> [ZMConversation]? {
+        let hostedOnDomainPredicate = NSPredicate(format: "%K == %d AND %K == %@",
+                                                  ZMConversationConversationTypeKey,
+                                                  ZMConversationType.group.rawValue,
+                                                  ZMConversationDomainKey,
+                                                  domain)
+        let request = self.sortedFetchRequest(with: hostedOnDomainPredicate)
+
+        return context.fetchOrAssert(request: request) as? [ZMConversation]
+    }
+
+    public static func groupConversationNotOwned(by domains: [String], in context: NSManagedObjectContext) -> [ZMConversation]? {
+        let groupConversationPredicate = NSPredicate(format: "%K == %d",
+                                                  ZMConversationConversationTypeKey,
+                                                  ZMConversationType.group.rawValue)
+        let hostedOnDomainPredicate = NSPredicate(format: "%K IN %@",
+                                                  ZMConversationDomainKey,
+                                                  domains)
+        let notHostedOnDomainPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: hostedOnDomainPredicate)
+        let resultPredicate =  NSCompoundPredicate(andPredicateWithSubpredicates: [groupConversationPredicate, notHostedOnDomainPredicate])
+
+        let request = self.sortedFetchRequest(with: resultPredicate)
+
+        return context.fetchOrAssert(request: request) as? [ZMConversation]
+    }
+
 }

@@ -518,6 +518,9 @@
 "content.system.message_timer_off" = "%@ turned off the message timer";
 "content.system.message_timer_off-you" = "%@ turned off the message timer";
 
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ turned read receipts on for everyone";
@@ -636,6 +639,7 @@
 "error.connection.title" = "Error";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "Something went wrong, please try again";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire needs access to your Photos";
