@@ -1,4 +1,5 @@
 //
+//
 //  WireStyleKit.swift
 //  Wire for iOS
 //
@@ -4384,7 +4385,7 @@ public class WireStyleKit: NSObject {
 
         //// Bezier Drawing
         context.saveGState()
-        context.setAlpha(0.24)
+        context.setAlpha(0.40)
 
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: 32, y: 64))
