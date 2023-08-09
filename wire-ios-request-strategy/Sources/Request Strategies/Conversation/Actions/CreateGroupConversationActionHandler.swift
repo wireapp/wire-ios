@@ -22,7 +22,7 @@ public final class CreateGroupConversationAction: EntityAction {
 
     public typealias Result = NSManagedObjectID
 
-    public enum Failure: Error {
+    public enum Failure: Error, Equatable {
 
         case invalidBody
         case mlsNotEnabled

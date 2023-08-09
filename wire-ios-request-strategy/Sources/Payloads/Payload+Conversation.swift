@@ -25,7 +25,7 @@ typealias CodableEventData = EventData & Codable
 
 extension Payload {
 
-    struct NewConversation: EncodableAPIVersionAware {
+    struct NewConversation: EncodableAPIVersionAware, Equatable {
         enum CodingKeys: String, CodingKey {
             case users
             case qualifiedUsers = "qualified_users"
@@ -391,7 +391,7 @@ extension Payload {
         let others: [ConversationMember]
     }
 
-    struct ConversationTeamInfo: Codable {
+    struct ConversationTeamInfo: Codable, Equatable {
         enum CodingKeys: String, CodingKey {
             case teamID = "teamid"
             case managed

@@ -230,6 +230,7 @@
 		EE67F72C296F0CE4001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72B296F0CE4001D7C88 /* WireTesting.framework */; };
 		EE67F72D296F0CE4001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72B296F0CE4001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */; };
+		EE7F02292A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */; };
 		EE82318927D22D79008CD77B /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82318827D22D79008CD77B /* String+Random.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
@@ -650,6 +651,7 @@
 		EE668BB12954A7C700D939E7 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F72B296F0CE4001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandler.swift; sourceTree = "<group>"; };
+		EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE82318827D22D79008CD77B /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
@@ -1108,6 +1110,7 @@
 				EECBE8ED28E71F19005DE5DD /* SyncConversationActionHandler.swift */,
 				EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */,
 				EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */,
+				EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -2118,6 +2121,7 @@
 				16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */,
 				16CC0833268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift in Sources */,
 				167BCBC426087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift in Sources */,
+				EE7F02292A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift in Sources */,
 				F18401F12073C26C00E9F4CC /* AssetV3DownloadRequestStrategyTests.swift in Sources */,
 				16B5B42B2705E163001A3216 /* ConnectionRequestStrategyTests.swift in Sources */,
 				F18402012073C2EA00E9F4CC /* RequestStrategyTestBase.swift in Sources */,
