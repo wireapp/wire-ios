@@ -311,8 +311,15 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
 
     // MARK: - Domains stopped federating
 
-    func testRemoveParticipant_federationTermination() {
+    func testRemoveParticipants_federationTermination() {
         let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 5, clients: 0, reason: .federationTermination)!
+        message.senderUser = SwiftMockLoader.mockUsers().last
+
+        verify(message: message, allWidths: false)
+    }
+
+    func testRemoveParticipant_federationTermination() {
+        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 1, clients: 0, reason: .federationTermination)!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allWidths: false)
