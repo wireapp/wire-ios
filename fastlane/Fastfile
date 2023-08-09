@@ -2,6 +2,7 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'fastlane/action'
 
 opt_out_usage
 default_platform(:ios)
@@ -403,9 +404,12 @@ platform :ios do
           dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
         )
 
-        appcenter_build_info = JSON.parse(lane_context['APPCENTER_BUILD_INFORMATION'])
-        `echo APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']} >> .post_build_env`
-        `echo APPCENTER_RELEASE_NOTES=#{appcenter_build_info['release_notes']} >> .post_build_env`
+        appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
+        puts appcenter_build_info
+        puts appcenter_build_info['install_url']
+        puts appcenter_build_info['release_notes']
+        `echo APPCENTER_INSTALL_LINK="#{appcenter_build_info['install_url']}" >> .post_build_env`
+        `echo APPCENTER_RELEASE_NOTES="#{appcenter_build_info['release_notes']}" >> .post_build_env`
     end
 
     # Upload to S3 (Automation builds)
@@ -428,8 +432,8 @@ platform :ios do
         end
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
-        paths = output.split(/\r/).grep(/.ipa$/).map{ |line| line.gsub('upload: ', '').gsub(/\n/, '') }.join('\n')
-        `echo S3_PATHS=#{paths} >> .post_build_env`
+        paths = output.split(/\r/).grep(/s3:\/\/.*ipa$/).map{ |line| line.gsub('upload: ', '').gsub(/\n/, '') }.join('\n')
+        `echo S3_PATHS="#{paths}" >> .post_build_env`
     end
 
     # Upload dSYMs for AppStore crash tracking
