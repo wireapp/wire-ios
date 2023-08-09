@@ -815,10 +815,9 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         ))
 
         let mockActionHandler = MockActionHandler<AddParticipantAction>(
-            result: .failure(.unreachableUsers([user2])),
+            results: [.failure(.unreachableUsers([user2])), .success(())],
             context: syncMOC.notificationContext
         )
-        mockActionHandler.results.append(.success(()))
 
         let expectation = expectation(description: "System message is added")
 

@@ -30,9 +30,13 @@ class MockActionHandler<T: EntityAction>: EntityActionHandler {
     }
     var performedActions: [Action] = []
 
-    init(result: Result, context: NotificationContext) {
-        self.results = [result]
+    init(results: [Result], context: NotificationContext) {
+        self.results = results
         token = Action.registerHandler(self, context: context)
+    }
+
+    convenience init(result: Result, context: NotificationContext) {
+        self.init(results: [result], context: context)
     }
 
     func performAction(_ action: Action) {
