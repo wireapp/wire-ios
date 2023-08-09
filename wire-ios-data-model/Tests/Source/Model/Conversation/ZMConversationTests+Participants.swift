@@ -835,7 +835,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             XCTAssertEqual(systemMessage.userTypes, [user2])
         }
 
-        // THEN
+        // Then we retried the action with only reachable users.
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(mockActionHandler.performedActions.count, 2)
 
