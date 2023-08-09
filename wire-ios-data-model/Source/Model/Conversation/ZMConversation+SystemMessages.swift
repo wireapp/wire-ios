@@ -124,14 +124,15 @@ extension ZMConversation {
                             timestamp: timestamp,
                             removedReason: removedReason)
     }
-
+//
     public func appendFederationTerminationSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
-//        appendSystemMessage(type: .domainsStoppedFederating,
-//                            sender: sender,
-//                            users: nil,
-//                            clients: nil,
-//                            timestamp: timestamp,
-//                            domains: domains)
+      ///  URL.wr_FederationLearnMore.absoluteString
+        appendSystemMessage(type: .domainsStoppedFederating,
+                            sender: sender,
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestamp)//,
+                           // domains: domains)
     }
 
 }

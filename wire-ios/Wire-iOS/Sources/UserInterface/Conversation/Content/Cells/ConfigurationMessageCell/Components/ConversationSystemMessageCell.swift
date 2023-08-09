@@ -414,6 +414,12 @@ final class ConversationSystemMessageCellDescription {
                                                                                          buttonAction: buttonAction)
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
+
+        case .domainsStoppedFederating:
+            let domainsStoppedFederatingCell = ConversationDomainsStoppedFederatingSystemMessageCellDescription(message: message,
+                                                                                                                data: systemMessageData)
+            return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
+
         default:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
@@ -1136,4 +1142,65 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
 
         return SystemContent.FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
     }
+}
+
+final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
+
+    typealias View = ConversationSystemMessageCell
+    typealias System = L10n.Localizable.Content.System
+    let configuration: View.Configuration
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 0
+
+    let isFullWidth: Bool = true
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
+
+    var message: WireDataModel.ZMConversationMessage?
+    var delegate: ConversationMessageCellDelegate?
+    var actionController: ConversationMessageActionController?
+
+    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+        let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
+        //let title = ConversationDomainsStoppedFederatingSystemMessageCellDescription.configureTitle(for: message)
+        let attributedTitle = NSMutableAttributedString(string: "title",
+                                                        attributes: [.font: UIFont.mediumFont,
+                                                                     .foregroundColor: SemanticColors.Label.textDefault]
+        )
+
+        configuration = View.Configuration(icon: icon, attributedText: attributedTitle, showLine: true)
+        accessibilityLabel = "title.string"
+    }
+
+
+//    private static func configureTitle(for message: ZMConversationMessage) -> NSAttributedString {
+//        guard let domains = message.systemMessageData?.domains,
+//              domains.count == 2 else {
+//            preconditionFailure("Invalid system message")
+//        }
+//
+//        var title: String
+//        if domains[0] == SelfUser.current.domain ?? "" {
+//            title = System.BackendsStopFederating.yourBackend(domains[1])
+//        } else {
+//            title = System.BackendsStopFederating.otherBackends(domains[0], domains[1])
+//        }
+//        title.append(" ")
+//
+//        let learnMore = NSAttributedString(string: System.BackendsStopFederating.learnMore,
+//                                           attributes: [.font: UIFont.mediumSemiboldFont,
+//                                                        .link: URL.wr_FederationLearnMore.absoluteString as AnyObject,
+//                                                        .foregroundColor: SemanticColors.Label.textDefault])
+//        let attributedTitle = NSMutableAttributedString(string: title,
+//                                                        attributes: [.font: UIFont.mediumFont,
+//                                                                     .foregroundColor: SemanticColors.Label.textDefault]
+//                                                        )
+//        attributedTitle.append(learnMore)
+//
+//        return attributedTitle
+//    }
 }

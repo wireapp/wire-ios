@@ -46,8 +46,8 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
             return
         }
 
-        removeUsers(with: [domain], fromConversationsOwnedBy: [selfDomain])
-        removeUsers(with: [selfDomain], fromConversationsOwnedBy: [domain])
+        removeUsers(with: domain, fromConversationsOwnedBy: selfDomain)
+        removeUsers(with: selfDomain, fromConversationsOwnedBy: domain)
         removeUsers(with: [selfDomain, domain], fromConversationsNotOwnedBy: [selfDomain, domain])
 
         removeConnectionRequests(with: domain)
@@ -61,8 +61,8 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
     /// - for all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
     public func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
         removeUsers(with: [domain, otherDomain], fromConversationsNotOwnedBy: [domain, otherDomain])
-        removeUsers(with: [domain], fromConversationsOwnedBy: [otherDomain])
-        removeUsers(with: [otherDomain], fromConversationsOwnedBy: [domain])
+        removeUsers(with: domain, fromConversationsOwnedBy: otherDomain)
+        removeUsers(with: otherDomain, fromConversationsOwnedBy: domain)
     }
 
 }
@@ -77,7 +77,7 @@ private extension FederationTerminationManager {
                     return
                 }
                 conversation.isForcedReadOnly = true
-                //conversation.appendFederationTerminationSystemMessage(domains: [domain])
+                conversation.appendFederationTerminationSystemMessage(domains: [domain])
             }
         }
     }
@@ -91,19 +91,26 @@ private extension FederationTerminationManager {
         }
     }
 
-    func removeUsers(with userDomains: [String], fromConversationsOwnedBy domains: [String]) {
-        conversationsOwned(by: domains, withParticipantsFrom: userDomains).forEach { $0.removeParticipants(with: userDomains) }
+    func removeUsers(with userDomain: String, fromConversationsOwnedBy domain: String) {
+        conversationsOwned(by: domain, withParticipantsFrom: userDomain).forEach {
+            $0.appendFederationTerminationSystemMessage(domains: [userDomain, domain])
+            $0.removeParticipants(with: [userDomain])
+        }
     }
 
-    func conversationsOwned(by domains: [String], withParticipantsFrom userDomains: [String]) -> [ZMConversation] {
-        guard let conversations = ZMConversation.groupConversationOwned(by: domains, in: context) else {
+    func conversationsOwned(by domain: String, withParticipantsFrom userDomain: String) -> [ZMConversation] {
+        guard let conversations = ZMConversation.groupConversationOwned(by: domain, in: context) else {
             return []
         }
-        return conversations.filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
+        return conversations.filter { $0.hasLocalParticipantsFrom(Set([userDomain])) }
     }
 
     func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
-        conversationsNotOwned(by: domains, withParticipantsFrom: userDomains).forEach { $0.removeParticipants(with: userDomains) }
+        conversationsNotOwned(by: domains, withParticipantsFrom: userDomains).forEach {
+            $0.appendFederationTerminationSystemMessage(domains: userDomains)
+            $0.removeParticipants(with: userDomains)
+
+        }
     }
 
     func conversationsNotOwned(by domains: [String], withParticipantsFrom userDomains: [String]) -> [ZMConversation] {
@@ -130,13 +137,13 @@ private extension ZMConversation {
                                                           at: Date())
     }
 
-//    func appendFederationTerminationSystemMessage(domains: [String]) {
-//        guard let context = managedObjectContext else {
-//            return
-//        }
-//        let selfUser = ZMUser.selfUser(in: context)
-//        appendFederationTerminationSystemMessage(domains: domains, sender: selfUser, at: Date())
-//    }
+    func appendFederationTerminationSystemMessage(domains: [String]) {
+        guard let context = managedObjectContext else {
+            return
+        }
+        let selfUser = ZMUser.selfUser(in: context)
+        appendFederationTerminationSystemMessage(domains: domains, sender: selfUser, at: Date())
+    }
 
 }
 

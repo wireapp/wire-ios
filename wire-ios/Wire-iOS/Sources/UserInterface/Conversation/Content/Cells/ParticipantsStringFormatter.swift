@@ -179,11 +179,8 @@ final class ParticipantsStringFormatter {
             return result += " " + learnMore
 
         case .removed(reason: .federationTermination):
-            typealias FailedParticipants = L10n.Localizable.Content.System.FailedParticipants
-
             let formatString = Key.participantsRemoved.localized(args: names.totalUsers, nameSequence.string)
-            let formatStringWithLink = FailedParticipants.learnMore(formatString, URL.wr_FederationLearnMore.absoluteString)
-            result = .markdown(from: formatStringWithLink, style: .systemMessage)
+            result = .markdown(from: formatString, style: .systemMessage)
 
             return result
 

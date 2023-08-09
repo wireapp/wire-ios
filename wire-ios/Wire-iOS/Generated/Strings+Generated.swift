@@ -1786,6 +1786,16 @@ internal enum L10n {
         }
         /// You called
         internal static let youWantedToTalk = L10n.tr("Localizable", "content.system.you_wanted_to_talk", fallback: "You called")
+        internal enum BackendsStopFederating {
+          /// The backends **%@** and **%@** stopped federating. [Learn more](%@)
+          internal static func otherBackends(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+            return L10n.tr("Localizable", "content.system.backends_stop_federating.other_backends", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "The backends **%@** and **%@** stopped federating. [Learn more](%@)")
+          }
+          /// **Your backend** stopped federating with **%@**. [Learn more](%@)
+          internal static func selfBackend(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.backends_stop_federating.self_backend", String(describing: p1), String(describing: p2), fallback: "**Your backend** stopped federating with **%@**. [Learn more](%@)")
+          }
+        }
         internal enum Call {
           /// %@ called
           internal static func called(_ p1: Any) -> String {
