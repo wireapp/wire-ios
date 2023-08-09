@@ -430,7 +430,7 @@ extension WireCallCenterV3 {
         guard isEnabled else { return }
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
-        if let participants = callSnapshots[conversationId]?.callParticipants.participants  {
+        if let participants = callSnapshots[conversationId]?.callParticipants.participants {
             onParticipantsChangedSubject.send(participants)
         }
     }

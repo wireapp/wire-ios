@@ -20,6 +20,11 @@ import Foundation
 
 public class TimerManager<Identifier: Hashable> {
 
+    enum TimerError: Error {
+        case timerAlreadyExists
+        case timerNotFound
+    }
+
     private var timers: [Identifier: Timer] = [:]
 
     public init() {}
@@ -28,9 +33,9 @@ public class TimerManager<Identifier: Hashable> {
         for identifier: Identifier,
         duration: TimeInterval,
         completion: @escaping () -> Void
-    ) {
+    ) throws {
         guard timers[identifier] == nil else {
-            return
+            throw TimerError.timerAlreadyExists
         }
 
         let timer = Timer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
@@ -40,15 +45,19 @@ public class TimerManager<Identifier: Hashable> {
         timers[identifier] = timer
     }
 
-    @discardableResult
-    public func cancelTimer(for identifier: Identifier) -> Bool {
+    public func cancelTimer(for identifier: Identifier) throws {
         guard let timer = timers[identifier] else {
-            return false
+            throw TimerError.timerNotFound
         }
 
         timer.invalidate()
         timers.removeValue(forKey: identifier)
-        return true
+    }
+
+    public func fireAllTimers() {
+        timers.forEach {
+            $0.value.fire()
+        }
     }
 
     private func timerExpired(

@@ -18,6 +18,7 @@
 
 import Foundation
 import Combine
+import WireDataModel
 
 struct MLSConferenceParticipantsInfo {
     let participants: [CallParticipant]
@@ -45,15 +46,13 @@ extension WireCallCenterV3 {
         callState: CallState
     ) {
         switch callState {
-        case .incoming, .terminating:
-            guard let mlsParentIDs = mlsParentIDS(for: conversationID) else {
-                return
-            }
 
-            leaveStaleConferenceIfNeeded(
-                parentQualifiedID: mlsParentIDs.0,
-                parentGroupID: mlsParentIDs.1
-            )
+        case .terminating:
+            removeStaleParticipantsIfNeeded(conversationID: conversationID)
+            leaveStaleConferenceIfNeeded(conversationID: conversationID)
+
+        case .incoming:
+            leaveStaleConferenceIfNeeded(conversationID: conversationID)
 
         default:
             break
@@ -61,17 +60,31 @@ extension WireCallCenterV3 {
     }
 
     func updateMLSConferenceIfNeededForMissedCall(conversationID: AVSIdentifier) {
-        guard let mlsParentIDs = mlsParentIDS(for: conversationID) else {
+        leaveStaleConferenceIfNeeded(conversationID: conversationID)
+    }
+
+    func removeStaleParticipantsIfNeeded(conversationID: AVSIdentifier) {
+        guard
+            let viewContext = uiMOC,
+            let callSnaphot = callSnapshots[conversationID],
+            let staleParticipantsRemover = callSnaphot.mlsConferenceStaleParticipantsRemover
+        else {
             return
         }
 
-        leaveStaleConferenceIfNeeded(
-            parentQualifiedID: mlsParentIDs.0,
-            parentGroupID: mlsParentIDs.1
-        )
+        let selfUser = ZMUser.selfUser(in: viewContext)
+        let participantsExcludingSelf = callSnaphot.callParticipants.participants.filter {
+            $0.userId != selfUser.avsIdentifier
+        }
+
+        guard participantsExcludingSelf.isEmpty else {
+            return
+        }
+
+        staleParticipantsRemover.performPendingRemovals()
     }
 
-    func mlsParentIDS(for callID: AVSIdentifier) -> (QualifiedID, MLSGroupID)? {
+    func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
         guard
             let context = uiMOC,
             let domain = callID.domain ?? BackendInfo.domain,
@@ -92,15 +105,13 @@ extension WireCallCenterV3 {
 
     // Leaves the possibles subconversation for the mls conference.
 
-    private func leaveStaleConferenceIfNeeded(
-        parentQualifiedID: QualifiedID,
-        parentGroupID: MLSGroupID
-    ) {
+    private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
         guard
             let viewContext = uiMOC,
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
-            let selfClientID = MLSClientID(userClient: selfClient)
+            let selfClientID = MLSClientID(userClient: selfClient),
+            let parentIDs = mlsParentIDS(for: conversationID)
         else {
             return
         }
@@ -113,8 +124,8 @@ extension WireCallCenterV3 {
             Task {
                 do {
                     try await mlsService.leaveSubconversationIfNeeded(
-                        parentQualifiedID: parentQualifiedID,
-                        parentGroupID: parentGroupID,
+                        parentQualifiedID: parentIDs.qualifiedID,
+                        parentGroupID: parentIDs.groupID,
                         subconversationType: .conference,
                         selfClientID: selfClientID
                     )

@@ -28,10 +28,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     private let timerManager = TimerManager<MLSClientID>()
     private let logger = WireLogger.mls
-
     private let removalTimeout: TimeInterval
     private let mlsService: MLSServiceInterface
     private let context: NSManagedObjectContext
+    private var previousInput: MLSConferenceParticipantsInfo?
 
     // MARK: - Life cycle
 
@@ -56,6 +56,12 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         // no op
     }
 
+    // MARK: - Interface
+
+    func performPendingRemovals() {
+        timerManager.fireAllTimers()
+    }
+
     // MARK: - Participants change handling
 
     private func process(input: MLSConferenceParticipantsInfo) {
@@ -64,7 +70,12 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             return
         }
 
-        input.participants.forEach {
+        let newAndChangedParticipants = self.newAndChangedParticipants(
+            between: previousInput?.participants ?? [],
+            and: input.participants
+        )
+
+        newAndChangedParticipants.forEach {
 
             guard let clientID = MLSClientID(callParticipant: $0) else {
                 return
@@ -82,6 +93,24 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             default: break
             }
         }
+
+        previousInput = input
+    }
+
+    private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
+        var newAndChanged = [CallParticipant]()
+
+        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { ($0.userId, $0.state) })
+
+        current.forEach { participant in
+            if let previousState = previousStates[participant.userId], previousState != participant.state {
+                newAndChanged.append(participant)
+            } else if previousStates[participant.userId] == nil {
+                newAndChanged.append(participant)
+            }
+        }
+
+        return newAndChanged
     }
 
     // MARK: - Helpers
@@ -100,18 +129,24 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         from groupID: MLSGroupID,
         after duration: TimeInterval
     ) {
-        logger.info("starting timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID))")
+        do {
+            try timerManager.startTimer(
+                for: clientID,
+                duration: duration,
+                completion: { [weak self] in
+                    guard let self = self else { return }
 
-        timerManager.startTimer(
-            for: clientID,
-            duration: duration,
-            completion: { [weak self] in
-                self?.remove(
-                    client: clientID,
-                    from: groupID
-                )
-            }
-        )
+                    self.remove(
+                        client: clientID,
+                        from: groupID
+                    )
+                }
+            )
+
+            logger.info("started timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID))")
+        } catch {
+            // timer already exists, do nothing
+        }
     }
 
     private func remove(
@@ -123,6 +158,12 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
             Task {
                 do {
+                    let subconversationMembers = try self.mlsService.subconversationMembers(for: groupID)
+
+                    guard subconversationMembers.contains(clientID) else {
+                        return
+                    }
+
                     try await self.mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
                     self.logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID))")
                 } catch {
@@ -133,10 +174,11 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 
     private func cancelRemoval(for clientID: MLSClientID) {
-        let canceled = timerManager.cancelTimer(for: clientID)
-
-        if canceled {
+        do {
+            try timerManager.cancelTimer(for: clientID)
             logger.info("canceled removal of participant (\(clientID))")
+        } catch {
+            // no timer to cancel, do nothing
         }
     }
 }
