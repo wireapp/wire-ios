@@ -33,8 +33,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        /// TODO Katerina
-        federationTerminationManager = TempFederationDeleteManager()
+        federationTerminationManager = FederationTerminationManager(in: managedObjectContext)
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -78,8 +77,12 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
             }
 
         case .federationConnectionRemoved:
-            if let payload = event.eventPayload(type: Payload.ConnectionRemoved.self) {
-                federationTerminationManager.handleFederationTerminationBetween(payload.domains)
+            if let payload = event.eventPayload(type: Payload.ConnectionRemoved.self),
+               payload.domains.count == 2,
+               let firstDomain = payload.domains.first,
+               let secondDomain = payload.domains.last {
+                federationTerminationManager.handleFederationTerminationBetween(firstDomain,
+                                                                                otherDomain: secondDomain)
             }
 
         default:

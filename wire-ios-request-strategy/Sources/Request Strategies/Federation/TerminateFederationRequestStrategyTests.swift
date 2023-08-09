@@ -102,7 +102,7 @@ class MockFederationTerminationManager: FederationTerminationManagerInterface {
         didCallHandleFederationTerminationWith = true
     }
 
-    func handleFederationTerminationBetween(_ domains: [String]) {
+    func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
         didCallhandleFederationTerminationBetween = true
     }
 

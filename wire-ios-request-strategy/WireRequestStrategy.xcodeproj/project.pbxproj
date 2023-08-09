@@ -50,7 +50,6 @@
 		0693115724F7B1A200D14DF5 /* ZMLocalNotificationTests_Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0693115124F7B15500D14DF5 /* ZMLocalNotificationTests_Message.swift */; };
 		06A1966E2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A1966D2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift */; };
 		06A196702A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A1966F2A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift */; };
-		06A196732A7D0FF200B43BA5 /* FederationTerminationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A196712A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift */; };
 		06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */; };
 		06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */; };
 		06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */; };
@@ -461,7 +460,6 @@
 		0693115524F7B17300D14DF5 /* ZMLocalNotificationTests_SystemMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_SystemMessage.swift; sourceTree = "<group>"; };
 		06A1966D2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminateFederationRequestStrategy.swift; sourceTree = "<group>"; };
 		06A1966F2A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminateFederationRequestStrategyTests.swift; sourceTree = "<group>"; };
-		06A196712A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManagerInterface.swift; sourceTree = "<group>"; };
 		06A9FDD128B36FF500B3C730 /* UpdateAccessRolesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesAction.swift; sourceTree = "<group>"; };
 		06A9FDD328B3701000B3C730 /* UpdateAccessRolesActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesActionHandler.swift; sourceTree = "<group>"; };
 		06A9FDD528B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAccessRolesActionHandlerTests.swift; sourceTree = "<group>"; };
@@ -935,7 +933,6 @@
 			children = (
 				06A1966D2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift */,
 				06A1966F2A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift */,
-				06A196712A7CDF9D00B43BA5 /* FederationTerminationManagerInterface.swift */,
 			);
 			path = Federation;
 			sourceTree = "<group>";
@@ -1876,7 +1873,6 @@
 				F18401A92073BE0800E9F4CC /* MissingClientsRequestFactory.swift in Sources */,
 				16367F2626FDB4720028AF8B /* ConnectionRequestStrategy.swift in Sources */,
 				F18401AD2073BE0800E9F4CC /* ZMOTRMessage+Missing.swift in Sources */,
-				06A196732A7D0FF200B43BA5 /* FederationTerminationManagerInterface.swift in Sources */,
 				06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */,
 				068084962563B6940047899C /* FeatureConfigRequestStrategy.swift in Sources */,
 				166901F01D7081C7000FE4AF /* ZMUpstreamInsertedObjectSync.m in Sources */,
