@@ -771,4 +771,80 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         }
     }
 
+    func test_AddUser_UnreachableUsers_Proteus() throws {
+        // GIVEN
+        let conversationID = UUID.create()
+        let user1ID = UUID.create()
+        let user2ID = UUID.create()
+        let domain = "domain.com"
+
+        syncMOC.performAndWait {
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = domain
+            conversation.conversationType = .group
+            conversation.messageProtocol = .proteus
+
+            let user1 = ZMUser.insertNewObject(in: syncMOC)
+            user1.remoteIdentifier = user1ID
+            user1.domain = domain
+
+            let user2 = ZMUser.insertNewObject(in: syncMOC)
+            user2.remoteIdentifier = user2ID
+            user2.domain = "example.com"
+
+            syncMOC.saveOrRollback()
+        }
+
+        let conversation = try XCTUnwrap(ZMConversation.fetch(
+            with: conversationID,
+            domain: domain,
+            in: uiMOC
+        ))
+
+        let user1 = try XCTUnwrap(ZMUser.fetch(
+            with: user1ID,
+            domain: domain,
+            in: uiMOC
+        ))
+
+        let user2 = try XCTUnwrap(ZMUser.fetch(
+            with: user2ID,
+            domain: "example.com",
+            in: uiMOC
+        ))
+
+        let mockActionHandler = MockActionHandler<AddParticipantAction>(
+            results: [.failure(.unreachableUsers([user2])), .success(())],
+            context: syncMOC.notificationContext
+        )
+
+        let expectation = expectation(description: "System message is added")
+
+        // WHEN
+        conversation.addParticipants([user1, user2]) { _ in
+            expectation.fulfill()
+
+            // Then a system message is added.
+            guard let systemMessage = conversation.lastMessage?.systemMessageData else {
+                return XCTFail("expected system message")
+            }
+
+            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
+            XCTAssertEqual(systemMessage.userTypes, [user2])
+        }
+
+        // Then we retried the action with only reachable users.
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockActionHandler.performedActions.count, 2)
+
+        if let lastAction = mockActionHandler.performedActions.last {
+            XCTAssertEqual(lastAction.userIDs.count, 1)
+            let participants = lastAction.userIDs.existingObjects(in: syncMOC) as? [ZMUser]
+            XCTAssertEqual(participants?.count, 1)
+            XCTAssertEqual(participants?.first!.remoteIdentifier, user1.remoteIdentifier)
+        }
+
+    }
+
 }

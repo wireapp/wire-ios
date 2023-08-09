@@ -272,11 +272,11 @@ enum Payload {
         struct FederationFailure: Codable {
 
             enum FailureType: String, Codable {
-                case federation = "federation"
+                case federation
                 case unknown
             }
 
-            let domain: String
+            let domains: [String]
             let path: String
             let type: FailureType
 
