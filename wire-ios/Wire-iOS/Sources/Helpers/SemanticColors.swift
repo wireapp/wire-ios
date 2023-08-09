@@ -103,7 +103,6 @@ public enum SemanticColors {
         static let foregroundCheckMarkInSystemMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
 
         static let backgroundLegalHold = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
-        static let foregroundLegalhold = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
     }
 
     public enum View {
