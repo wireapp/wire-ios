@@ -28,12 +28,6 @@ import WireCommonComponents
 /// The last part is optional
 public enum SemanticColors {
 
-    public enum LegacyColors {
-        // Legacy accent colors
-        static let strongLimeGreen = UIColor(red: 0, green: 0.784, blue: 0, alpha: 1)
-        static let vividRed = UIColor(red: 1, green: 0.152, blue: 0, alpha: 1)
-    }
-
     public enum Switch {
         static let backgroundOnStateEnabled = UIColor(light: Asset.Colors.green600Light, dark: Asset.Colors.green700Dark)
         static let backgroundOffStateEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray70)
@@ -103,6 +97,12 @@ public enum SemanticColors {
 
         // Audio Icon
         static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
+
+        // System Message Icon Colors
+        static let foregroundExclamationMarkInSystemMessage = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let foregroundCheckMarkInSystemMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        static let backgroundLegalHold = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
     }
 
     public enum View {
@@ -207,6 +207,7 @@ public enum SemanticColors {
         static let textCallingDisabled = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
 
         static let backgroundPickUp = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+        static let backgroundHangUp = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
         /// Audio Buttons
