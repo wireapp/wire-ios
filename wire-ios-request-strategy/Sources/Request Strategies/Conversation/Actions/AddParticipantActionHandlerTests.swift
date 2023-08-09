@@ -126,11 +126,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 return XCTFail("Error is invalid")
             }
 
-            if case error = expectedError {
-                // success
-            } else {
-                XCTFail("Unexpected error")
-            }
+            XCTAssertEqual(expectedError, error, "Unexpected error")
         }
     }
 
@@ -283,6 +279,38 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                                                httpStatus: 404,
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
+
+            // when
+            self.sut.handleResponse(response, action: action)
+
+            // then
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+
+    func testThatItCallsResultHandler_OnUnreachableDomainsError() {
+        syncMOC.performGroupedAndWait { [self] _ in
+            // given
+            let unreachableDomain = "foma.wire.link"
+            let unreachableUser = ZMUser.insertNewObject(in: self.syncMOC)
+            unreachableUser.remoteIdentifier = UUID()
+            unreachableUser.domain = unreachableDomain
+
+            var action = AddParticipantAction(users: [user, unreachableUser], conversation: conversation)
+
+            let expectation = self.expectation(description: "Result Handler was called")
+            action.onResult { (result) in
+                if case .failure(.unreachableUsers([unreachableUser])) = result {
+                    expectation.fulfill()
+                }
+            }
+
+            let payload = AddParticipantActionHandler.ErrorResponse(unreachableBackends: [unreachableDomain])
+            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
+            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
+                                               httpStatus: 503,
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v4.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)
