@@ -188,20 +188,28 @@ public enum LogLevel {
 }
 public class DatadogWrapper {
 
+#if DEBUG
+    public static let shared: DatadogWrapper? = DatadogWrapper()
+#else
     public static let shared: DatadogWrapper? = nil
+#endif
 
     public func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
         attributes: [String: Encodable]? = nil
-    ) {}
+    ) {
+#if DEBUG
+        let errorMessage = error != nil ? "- \(error!.localizedDescription)" : ""
+        print("[DATADOG OFF]", message, errorMessage)
+#endif
+    }
 
     public func startMonitoring() {}
 
     public var datadogUserId: String = "NONE"
 }
-
 #endif
 
 // MARK: - COMMON

@@ -21,16 +21,16 @@ import UIKit
 import WireSyncEngine
 
 final class TextSearchResultCell: UITableViewCell {
-    fileprivate let messageTextLabel = SearchResultLabel()
-    fileprivate let footerView = TextSearchResultFooter()
-    fileprivate let userImageViewContainer = UIView()
-    fileprivate let userImageView = UserImageView()
-    fileprivate let separatorView: UIView = {
+    private let messageTextLabel = SearchResultLabel()
+    private let footerView = TextSearchResultFooter()
+    private let userImageViewContainer = UIView()
+    private let userImageView = UserImageView()
+    private let separatorView: UIView = {
         let view = UIView()
         view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         return view
     }()
-    fileprivate var observerToken: Any?
+    private var observerToken: Any?
     let resultCountView: RoundedTextBadge = {
         let roundedTextBadge = RoundedTextBadge()
         roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
@@ -70,7 +70,7 @@ final class TextSearchResultCell: UITableViewCell {
         textLabel?.font = .smallSemiboldFont
     }
 
-    fileprivate func createConstraints() {
+    private func createConstraints() {
         [userImageView, userImageViewContainer, footerView, messageTextLabel, resultCountView, separatorView].prepareForLayout()
         NSLayoutConstraint.activate([
           userImageView.heightAnchor.constraint(equalToConstant: 24),

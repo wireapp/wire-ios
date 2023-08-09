@@ -22,7 +22,7 @@ import WireCommonComponents
 
 final class IconLabelButtonTests: ZMSnapshotTestCase {
 
-    fileprivate var button: IconLabelButton!
+    private var button: IconLabelButton!
 
     override func setUp() {
         super.setUp()

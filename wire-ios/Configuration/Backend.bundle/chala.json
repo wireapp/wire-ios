@@ -1,0 +1,11 @@
+{
+    "endpoints" : {
+        "backendURL" : "https://nginz-https.chala.wire.link",
+        "backendWSURL" : "https://nginz-ssl.chala.wire.link",
+        "blackListURL" : "https://clientblacklist.wire.com/staging",
+        "teamsURL" : "https://teams.chala.wire.link",
+        "accountsURL" : "https://account.chala.wire.link",
+        "websiteURL" : "https://wire.com"
+    },
+    "title" : "Chala Federation Environment"
+}
