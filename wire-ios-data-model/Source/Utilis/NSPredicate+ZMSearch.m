@@ -31,7 +31,7 @@
     [searchString enumerateSubstringsInRange:NSMakeRange(0, searchString.length) options:NSStringEnumerationByWords usingBlock:^(NSString *substring, NSRange __unused substringRange, NSRange __unused enclosingRange, BOOL * __unused stop) {
         
         NSString *normalizedString = substring.normalizedString;
-        NSString *regExp = [NSString stringWithFormat:@".*\\b%@.*", normalizedString];
+        NSString *regExp = [NSString stringWithFormat:@".*%@.*", normalizedString];
         
         NSMutableArray *subPredicates = [NSMutableArray array];
         [formatDictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *formatString, BOOL * __unused s) {

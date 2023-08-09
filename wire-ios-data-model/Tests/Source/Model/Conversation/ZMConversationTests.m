@@ -2783,7 +2783,7 @@
 }
 
 
-- (void)testThatItDoesNotFindAConversationThatDoesNotStartWithButContainsTheSearchString
+- (void)testThatItDoesFindAConversationThatDoesNotStartWithButContainsTheSearchString
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2799,7 +2799,7 @@
     NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
     
     // then
-    XCTAssertEqual(result.count, 0u);
+    XCTAssertEqual(result.count, 1u);
 }
 
 - (void)testThatItDoesNotFindAConversationBelongingToTeamWhenSearchingForPersonalConversations
