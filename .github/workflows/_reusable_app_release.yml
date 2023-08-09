@@ -69,6 +69,7 @@ jobs:
       C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
       - uses: actions/checkout@v3
@@ -106,12 +107,12 @@ jobs:
           name: post-build-env
           path: |
             **/*.post_build_env
-
-      # - name: Notify on Wire
-      #   if: always()
-      #   uses: 8398a7/action-slack@v3
-      #   env:
-      #     PLAYTEST_BRANCH_NAME: playtest/${{ steps.date.outputs.date }}
-      #   with:
-      #     status: ${{ job.status }}
-      #     text: "Playtest branch **$PLAYTEST_BRANCH_NAME** created 🚀 - Hotfixes only on this branch"
+      - name: Put output from fastlane into ENV
+        if: always()
+        run: source fastlane/.post_build_env
+      - name: Notify on Wire
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: "**$APP_NAME** (version: $BUILD_VERSION build: $BUILD_NUMBER) build completed  🚀\nRelease notes: $APPCENTER_RELEASE_NOTES\nInstall link: $APPCENTER_INSTALL_LINK\nAWS S3 Paths:$S3_PATHS"

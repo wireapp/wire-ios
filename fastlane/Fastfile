@@ -183,7 +183,7 @@ platform :ios do
     end
 
     def save_app_name(name)
-        `echo APP_NAME=#{name}} >> .post_build_env`
+        `echo APP_NAME=#{name} >> .post_build_env`
     end
 
     def download_distribution_certificate_and_profiles(build, options)
@@ -405,9 +405,6 @@ platform :ios do
         )
 
         appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
-        puts appcenter_build_info
-        puts appcenter_build_info['install_url']
-        puts appcenter_build_info['release_notes']
         `echo APPCENTER_INSTALL_LINK="#{appcenter_build_info['install_url']}" >> .post_build_env`
         `echo APPCENTER_RELEASE_NOTES="#{appcenter_build_info['release_notes']}" >> .post_build_env`
     end
@@ -432,7 +429,7 @@ platform :ios do
         end
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
-        paths = output.split(/\r/).grep(/s3:\/\/.*ipa$/).map{ |line| line.gsub('upload: ', '').gsub(/\n/, '') }.join('\n')
+        paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join('\n')
         `echo S3_PATHS="#{paths}" >> .post_build_env`
     end
 
