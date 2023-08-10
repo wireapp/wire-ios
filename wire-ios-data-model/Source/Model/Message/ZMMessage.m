@@ -66,6 +66,7 @@ NSString * const ZMMessageSystemMessageClientsKey = @"clients";
 NSString * const ZMMessageTextKey = @"text";
 NSString * const ZMMessageUserIDsKey = @"users_ids";
 NSString * const ZMMessageParticipantsRemovedReasonKey = @"participantsRemovedReason";
+NSString * const ZMMessageDomainsKey = @"domains";
 NSString * const ZMMessageUsersKey = @"users";
 NSString * const ZMMessageClientsKey = @"clients";
 NSString * const ZMMessageAddedUsersKey = @"addedUsers";
@@ -584,6 +585,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                              ZMMessageTextKey,
                              ZMMessageUserIDsKey,
                              ZMMessageParticipantsRemovedReasonKey,
+                             ZMMessageDomainsKey,
                              ZMMessageEventIDDataKey,
                              ZMMessageUsersKey,
                              ZMMessageClientsKey,
