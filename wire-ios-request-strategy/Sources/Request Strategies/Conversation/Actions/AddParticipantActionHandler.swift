@@ -159,11 +159,24 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
 
+        case 409:
+            guard
+                let payload = ErrorResponse(response),
+                let nonFederatingDomains = payload.non_federating_backends
+            else {
+                return action.fail(with: .unknown)
+            }
+
+            if nonFederatingDomains.isEmpty {
+                action.succeed()
+            } else {
+                action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
+            }
+
         case 503:
             guard
-                let data = response.rawData,
-                let payload = ErrorResponse(data),
-                let unreachableDomains = payload.unreachableBackends
+                let payload = ErrorResponse(response),
+                let unreachableDomains = payload.unreachable_backends
             else {
                 return action.fail(with: .unknown)
             }
@@ -185,11 +198,10 @@ extension AddParticipantActionHandler {
     // MARK: - Error response
 
     struct ErrorResponse: Codable {
-        let unreachableBackends: [String]?
 
-        enum CodingKeys: String, CodingKey {
-            case  unreachableBackends = "unreachable_backends"
-        }
+        var unreachable_backends: [String]?
+        var non_federating_backends: [String]?
+
     }
 
 }

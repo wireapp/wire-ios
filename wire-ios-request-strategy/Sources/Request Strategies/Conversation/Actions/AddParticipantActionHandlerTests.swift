@@ -290,6 +290,56 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
         }
     }
 
+    func testThatItCallsResultHandler_OnNonFederatingDomainsError() {
+        syncMOC.performGroupedAndWait { [self] _ in
+            // Given
+            let applesDomain = "apples@domain.com"
+            let bananasDomain = "bananas@domain.com"
+
+            let applesUser = ZMUser.insertNewObject(in: self.syncMOC)
+            applesUser.remoteIdentifier = UUID()
+            applesUser.domain = applesDomain
+
+            let bananasUser = ZMUser.insertNewObject(in: self.syncMOC)
+            bananasUser.remoteIdentifier = UUID()
+            bananasUser.domain = bananasDomain
+
+            var action = AddParticipantAction(
+                users: [user, applesUser, bananasUser],
+                conversation: conversation
+            )
+
+            let isDone = self.expectation(description: "isDone")
+
+            action.onResult {
+                switch $0 {
+                case .failure(.nonFederatingDomains([applesDomain, bananasDomain])):
+                    break
+
+                default:
+                    XCTFail("unexpected result: \($0)")
+                }
+
+                isDone.fulfill()
+            }
+
+            let payload = ErrorResponse(non_federating_backends: [applesDomain, bananasDomain])
+            let payloadString = payload.payloadString()!
+            let response = ZMTransportResponse(
+                payload: payloadString as ZMTransportData,
+                httpStatus: 409,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v4.rawValue
+            )
+
+            // When
+            self.sut.handleResponse(response, action: action)
+
+            // Then
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
         syncMOC.performGroupedAndWait { [self] _ in
             // Given

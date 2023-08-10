@@ -45,6 +45,7 @@ public enum ConversationAddParticipantsError: Error, Equatable {
     case missingLegalHoldConsent
     case failedToAddMLSMembers
     case unreachableDomains(Set<String>)
+    case nonFederatingDomains(Set<String>)
 
 }
 
