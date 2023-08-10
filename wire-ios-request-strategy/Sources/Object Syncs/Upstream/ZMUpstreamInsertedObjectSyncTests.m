@@ -379,7 +379,8 @@ static NSString *foo = @"foo";
     // expect
     [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY apiVersion:APIVersionV0];
     [[(id)self.mockTranscoder reject] objectToRefetchForFailedUpdateOfObject:entity];
-    
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder expect] requestShouldTryAgainLaterForObject:entity forKeys:OCMOCK_ANY];
+
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:response];
@@ -772,6 +773,7 @@ static NSString *foo = @"foo";
     [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY apiVersion:APIVersionV0];
     [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY apiVersion:APIVersionV0];
     [[(id)self.mockTranscoder reject] objectToRefetchForFailedUpdateOfObject:entity];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder expect] requestShouldTryAgainLaterForObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
@@ -794,6 +796,7 @@ static NSString *foo = @"foo";
     // expect
     [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY apiVersion:APIVersionV0];
     [[(id)self.mockTranscoder reject] objectToRefetchForFailedUpdateOfObject:entity];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder expect] requestShouldTryAgainLaterForObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
@@ -814,6 +817,7 @@ static NSString *foo = @"foo";
     
     // expect
     [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY apiVersion:APIVersionV0];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder expect] requestShouldTryAgainLaterForObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
