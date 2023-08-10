@@ -671,7 +671,6 @@ extension WireCallCenterV3 {
                     )
 
                     self.onMLSConferenceParticipantsChanged(
-                        conversation: conversation,
                         subconversationID: subgroupID
                     ).subscribe(staleParticipantsRemover)
 

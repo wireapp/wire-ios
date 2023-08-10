@@ -22,20 +22,17 @@ import WireDataModel
 
 struct MLSConferenceParticipantsInfo {
     let participants: [CallParticipant]
-    let conversation: ZMConversation
     let subconversationID: MLSGroupID
 }
 
 extension WireCallCenterV3 {
 
     func onMLSConferenceParticipantsChanged(
-        conversation: ZMConversation,
         subconversationID: MLSGroupID
     ) -> AnyPublisher<MLSConferenceParticipantsInfo, Never> {
         onParticipantsChanged().compactMap {
             MLSConferenceParticipantsInfo(
                 participants: $0,
-                conversation: conversation,
                 subconversationID: subconversationID
             )
         }.eraseToAnyPublisher()
@@ -63,7 +60,26 @@ extension WireCallCenterV3 {
         leaveStaleConferenceIfNeeded(conversationID: conversationID)
     }
 
-    func removeStaleParticipantsIfNeeded(conversationID: AVSIdentifier) {
+    func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
+        guard
+            let context = uiMOC,
+            let domain = callID.domain ?? BackendInfo.domain,
+            let conversation = ZMConversation.fetch(
+                with: callID.identifier,
+                domain: domain,
+                in: context
+            ),
+            conversation.messageProtocol == .mls,
+            let qualifiedID = conversation.qualifiedID,
+            let groupID = conversation.mlsGroupID
+        else {
+            return nil
+        }
+
+        return (qualifiedID, groupID)
+    }
+
+    private func removeStaleParticipantsIfNeeded(conversationID: AVSIdentifier) {
         guard
             let viewContext = uiMOC,
             let callSnaphot = callSnapshots[conversationID],
@@ -82,25 +98,6 @@ extension WireCallCenterV3 {
         }
 
         staleParticipantsRemover.performPendingRemovals()
-    }
-
-    func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
-        guard
-            let context = uiMOC,
-            let domain = callID.domain ?? BackendInfo.domain,
-            let conversation = ZMConversation.fetch(
-                with: callID.identifier,
-                domain: domain,
-                in: context
-            ),
-            conversation.messageProtocol == .mls,
-            let qualifiedID = conversation.qualifiedID,
-            let groupID = conversation.mlsGroupID
-        else {
-            return nil
-        }
-
-        return (qualifiedID, groupID)
     }
 
     // Leaves the possibles subconversation for the mls conference.

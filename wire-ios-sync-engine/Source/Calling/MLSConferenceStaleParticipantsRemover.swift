@@ -70,7 +70,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             return
         }
 
-        let newAndChangedParticipants = self.newAndChangedParticipants(
+        let newAndChangedParticipants = newAndChangedParticipants(
             between: previousInput?.participants ?? [],
             and: input.participants
         )

@@ -29,13 +29,11 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         microphoneState: .muted
     )
 
-    private var conversation: ZMConversation!
     private var mlsService: MockMLSService!
     private var sut: MLSConferenceStaleParticipantsRemover!
 
     override func setUp() {
         super.setUp()
-        conversation = ZMConversation.insertNewObject(in: uiMOC)
         mlsService = MockMLSService()
         sut = MLSConferenceStaleParticipantsRemover(
             mlsService: mlsService,
@@ -45,7 +43,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
     }
 
     override func tearDown() {
-        conversation = nil
         mlsService = nil
         sut = nil
         super.tearDown()
@@ -78,7 +75,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
-                conversation: conversation,
                 subconversationID: groupID
             )
         )
@@ -105,7 +101,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         // create input for the subscriber
         let input = MLSConferenceParticipantsInfo(
             participants: participants.map(\.callParticipant),
-            conversation: conversation,
             subconversationID: groupID
         )
 
@@ -113,7 +108,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
-                conversation: conversation,
                 subconversationID: groupID
             )
         )
@@ -130,7 +124,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
-                conversation: conversation,
                 subconversationID: groupID
             )
         )
@@ -166,7 +159,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
-                conversation: conversation,
                 subconversationID: groupID
             )
         )
