@@ -167,6 +167,40 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         wait(for: [expectation], timeout: 0.5)
     }
 
+    func test_PerformPendingRemovals_RemovesParticipantsBeforeTimeout() {
+        // GIVEN
+        let participants = [
+            createMLSParticipant(state: .connecting)
+        ]
+
+        mlsService.mockSubconversationMembers = { _ in
+            return participants.map(\.mlsClientID)
+        }
+
+        var removedMembers = [MLSClientID]()
+        let expectation = XCTestExpectation()
+        mlsService.mockRemoveMembersFromConversation = { clientIDs, _ in
+            removedMembers = clientIDs
+            expectation.fulfill()
+        }
+
+        _ = sut.receive(
+            MLSConferenceParticipantsInfo(
+                participants: participants.map(\.callParticipant),
+                subconversationID: groupID
+            )
+        )
+
+        // WHEN
+        sut.performPendingRemovals()
+
+        // THEN
+        // pending removals should be executed immediately but it's still async so we wait for .1 second
+        // another reason to wait for .1s is because the removal timeout is .4 seconds and we want to assert removals are triggered right away
+        wait(for: [expectation], timeout: 0.1)
+        XCTAssertEqual(participants.map(\.mlsClientID), removedMembers)
+    }
+
     // MARK: - Helpers
 
     private func expectations(
