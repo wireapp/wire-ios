@@ -42,13 +42,9 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
     /// - for any connection from a user on self domain to a user on `domain`, delete the connection;
     /// - for any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
     public func handleFederationTerminationWith(_ domain: String) {
-        guard let selfDomain = ZMUser.selfUser(in: context).domain else {
-            return
-        }
-
-        removeUsers(with: domain, fromConversationsOwnedBy: selfDomain)
-        removeUsers(with: selfDomain, fromConversationsOwnedBy: domain)
-        removeUsers(with: [selfDomain, domain], fromConversationsNotOwnedBy: [selfDomain, domain])
+        removeUsers(with: domain, fromConversationsOwnedBy: context.selfDomain)
+        removeUsers(with: context.selfDomain, fromConversationsOwnedBy: domain)
+        removeUsers(with: [context.selfDomain, domain], fromConversationsNotOwnedBy: [context.selfDomain, domain])
 
         removeConnectionRequests(with: domain)
         markOneToOneConversationsAsReadOnly(with: domain)
@@ -76,8 +72,10 @@ private extension FederationTerminationManager {
                 guard let conversation = user.connection?.conversation else {
                     return
                 }
-                conversation.isForcedReadOnly = true
-                conversation.appendFederationTerminationSystemMessage(domains: [domain])
+                if !conversation.isForcedReadOnly {
+                    conversation.appendFederationTerminationSystemMessage(domains: [domain, context.selfDomain])
+                    conversation.isForcedReadOnly = true
+                }
             }
         }
     }
@@ -166,6 +164,14 @@ private extension ZMConversation {
         let localParticipantDomains = Set(localParticipants.compactMap { $0.domain })
 
         return domains.isSubset(of: localParticipantDomains)
+    }
+
+}
+
+private extension NSManagedObjectContext {
+
+    var selfDomain: String {
+        return ZMUser.selfUser(in: self).domain ?? ""
     }
 
 }
