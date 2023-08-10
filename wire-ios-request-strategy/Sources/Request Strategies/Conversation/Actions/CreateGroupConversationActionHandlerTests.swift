@@ -33,7 +33,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     var user2ID: QualifiedID!
 
     var expectedRequestPayload: RequestPayload!
-    var successResponsePayload: ResponsePayload!
+    var successResponsePayloadProteus: ResponsePayload!
     var successResponsePayloadMLS: ResponsePayload!
 
     override func setUp() {
@@ -60,7 +60,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             messageProtocol: "proteus"
         )
 
-        successResponsePayload = ResponsePayload(
+        successResponsePayloadProteus = ResponsePayload(
             qualifiedID: conversationID,
             id: conversationID.uuid,
             type: BackendConversationType.group.rawValue,
@@ -91,7 +91,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             epoch: nil
         )
 
-        successResponsePayloadMLS = successResponsePayload
+        successResponsePayloadMLS = successResponsePayloadProteus
         successResponsePayloadMLS.messageProtocol = "mls"
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
         successResponsePayloadMLS.epoch = 0
@@ -107,14 +107,14 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         user1ID = nil
         user2ID = nil
         expectedRequestPayload = nil
-        successResponsePayload = nil
+        successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
         super.tearDown()
     }
 
-    private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
+    private func createAction() -> CreateGroupConversationAction {
         return CreateGroupConversationAction(
-            messageProtocol: messageProtocol,
+            messageProtocol: .proteus,
             creatorClientID: "creatorClientID",
             qualifiedUserIDs: [user1ID, user2ID],
             unqualifiedUserIDs: [],
@@ -257,7 +257,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             // Given
             BackendInfo.apiVersion = .v2
             action = createAction()
-            let payload = try XCTUnwrap(successResponsePayload.encodeToJSONString())
+            let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
 
             // When
             let result = try XCTUnwrap(test_itHandlesSuccess(
@@ -277,7 +277,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             // Given
             BackendInfo.apiVersion = .v2
             action = createAction()
-            let payload = try XCTUnwrap(successResponsePayload.encodeToJSONString())
+            let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
 
             // When
             let result = try XCTUnwrap(test_itHandlesSuccess(
@@ -308,7 +308,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         try syncMOC.performAndWait {
             // Given
             BackendInfo.apiVersion = .v2
-            action = createAction(messageProtocol: .mls)
+            action = createAction()
             let mlsService = MockMLSService()
             self.syncMOC.mlsService = mlsService
             let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
