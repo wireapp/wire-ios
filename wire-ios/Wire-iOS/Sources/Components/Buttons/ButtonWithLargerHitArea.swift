@@ -18,7 +18,7 @@
 import UIKit
 import WireCommonComponents
 
-class ButtonWithLargerHitArea: DynamicFontButton {
+class ButtonWithLargerHitArea: LegacyDynamicFontButton {
 
     // MARK: - Properties
 

@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-final class LinkButton: DynamicFontButton {
+final class LinkButton: LegacyDynamicFontButton {
 
     func setup(title: String) {
         let attributes: [NSAttributedString.Key: Any] = [
