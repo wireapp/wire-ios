@@ -28,12 +28,6 @@ import WireCommonComponents
 /// The last part is optional
 public enum SemanticColors {
 
-    public enum LegacyColors {
-        // Legacy accent colors
-        static let strongLimeGreen = UIColor(red: 0, green: 0.784, blue: 0, alpha: 1)
-        static let vividRed = UIColor(red: 1, green: 0.152, blue: 0, alpha: 1)
-    }
-
     public enum Switch {
         static let backgroundOnStateEnabled = UIColor(light: Asset.Colors.green600Light, dark: Asset.Colors.green700Dark)
         static let backgroundOffStateEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray70)
@@ -96,8 +90,21 @@ public enum SemanticColors {
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
 
+        static let foregroundElapsedTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
+        static let foregroundRemainingTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
+
+        //  ThreeDotsLoadingView
+        static let foregroundLoadingDotInactive = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
+        static let foregroundLoadingDotActive = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
+
         // Audio Icon
         static let foregroundAudio = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
+
+        // System Message Icon Colors
+        static let foregroundExclamationMarkInSystemMessage = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let foregroundCheckMarkInSystemMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        static let backgroundLegalHold = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
     }
 
     public enum View {
@@ -135,11 +142,18 @@ public enum SemanticColors {
         static let backgroundCallOverlay = UIColor(light: Asset.Colors.black, dark: Asset.Colors.black)
         static let backgroundCallTopOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
 
+        // Mention
+        static let backgroundBlueUsernameMention = UIColor(light: Asset.Colors.blue50Light, dark: Asset.Colors.blue800Dark)
+        static let backgroundGreenUsernameMention = UIColor(light: Asset.Colors.green50Light, dark: Asset.Colors.green800Dark)
+        static let backgroundAmberUsernameMention = UIColor(light: Asset.Colors.amber50Light, dark: Asset.Colors.amber800Dark)
+        static let backgroundRedUsernameMention = UIColor(light: Asset.Colors.red50Light, dark: Asset.Colors.red800Dark)
+        static let backgroundPurpleUsernameMention = UIColor(light: Asset.Colors.purple50Light, dark: Asset.Colors.purple800Dark)
+        static let backgroundTurqoiseUsernameMention = UIColor(light: Asset.Colors.turquoise50Light, dark: Asset.Colors.turquoise800Dark)
+
         // AudioView
         static let backgroundAudioViewOverlay = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundAudioViewOverlayActive = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
-        // Mention
-        static let backgroundUserMentionInConversation = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
+
     }
 
     public enum TabBar {
@@ -196,6 +210,7 @@ public enum SemanticColors {
         static let textCallingDisabled = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
 
         static let backgroundPickUp = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+        static let backgroundHangUp = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let textUnderlineEnabledDefault = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
         /// Audio Buttons

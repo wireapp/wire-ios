@@ -118,8 +118,8 @@ extension SessionManager: BackupSource {
 final class BackupViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
-    fileprivate let tableView = UITableView(frame: .zero)
-    fileprivate var cells: [UITableViewCell.Type] = []
+    private let tableView = UITableView(frame: .zero)
+    private var cells: [UITableViewCell.Type] = []
     let backupSource: BackupSource
 
     init(backupSource: BackupSource) {
@@ -198,7 +198,7 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - Backup Logic
 
-fileprivate extension BackupViewController {
+private extension BackupViewController {
 
     func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
