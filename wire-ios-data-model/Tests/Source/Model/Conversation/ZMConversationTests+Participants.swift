@@ -825,7 +825,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // WHEN
         conversation.addParticipants([user1, user2]) { _ in
-            expectation.fulfill()
+            defer { expectation.fulfill() }
 
             // Then a system message is added.
             guard let systemMessage = conversation.lastMessage?.systemMessageData else {
@@ -836,17 +836,105 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             XCTAssertEqual(systemMessage.userTypes, [user2])
         }
 
-        // Then we retried the action with only reachable users.
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then we retried the action with only reachable users.
         XCTAssertEqual(mockActionHandler.performedActions.count, 2)
 
         if let lastAction = mockActionHandler.performedActions.last {
-            XCTAssertEqual(lastAction.userIDs.count, 1)
-            let participants = lastAction.userIDs.existingObjects(in: syncMOC) as? [ZMUser]
-            XCTAssertEqual(participants?.count, 1)
-            XCTAssertEqual(participants?.first!.remoteIdentifier, user1.remoteIdentifier)
+            XCTAssertEqual(lastAction.userIDs, [user1.objectID])
+        }
+    }
+
+    func test_AddUser_NonFederatingDomains_Proteus() throws {
+        // GIVEN
+        let conversationID = UUID.create()
+
+        let applesDomain = "apples.com"
+        let bananasDomain = "bananas.com"
+        let carrotsDomain = "carrots.com"
+
+        let applesUserID = UUID.create()
+        let bananasUserID = UUID.create()
+        let carrotsUserID = UUID.create()
+
+        syncMOC.performAndWait {
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = applesDomain
+            conversation.conversationType = .group
+            conversation.messageProtocol = .proteus
+
+            let applesUser = ZMUser.insertNewObject(in: syncMOC)
+            applesUser.remoteIdentifier = applesUserID
+            applesUser.domain = applesDomain
+
+            let bananasUser = ZMUser.insertNewObject(in: syncMOC)
+            bananasUser.remoteIdentifier = bananasUserID
+            bananasUser.domain = bananasDomain
+
+            let carrotsUser = ZMUser.insertNewObject(in: syncMOC)
+            carrotsUser.remoteIdentifier = carrotsUserID
+            carrotsUser.domain = carrotsDomain
+
+            syncMOC.saveOrRollback()
         }
 
+        let conversation = try XCTUnwrap(ZMConversation.fetch(
+            with: conversationID,
+            domain: applesDomain,
+            in: uiMOC
+        ))
+
+        let applesUser = try XCTUnwrap(ZMUser.fetch(
+            with: applesUserID,
+            domain: applesDomain,
+            in: uiMOC
+        ))
+
+        let bananasUser = try XCTUnwrap(ZMUser.fetch(
+            with: bananasUserID,
+            domain: bananasDomain,
+            in: uiMOC
+        ))
+
+        let carrotsUser = try XCTUnwrap(ZMUser.fetch(
+            with: carrotsUserID,
+            domain: carrotsDomain,
+            in: uiMOC
+        ))
+
+        let mockActionHandler = MockActionHandler<AddParticipantAction>(
+            results: [
+                .failure(.nonFederatingDomains([bananasDomain, carrotsDomain])),
+                .success(())
+            ],
+            context: syncMOC.notificationContext
+        )
+
+        let isDone = expectation(description: "isDone")
+
+        // WHEN
+        conversation.addParticipants([applesUser, bananasUser, carrotsUser]) { _ in
+            defer { isDone.fulfill() }
+
+            // Then a system message is added.
+            guard let systemMessage = conversation.lastMessage?.systemMessageData else {
+                return XCTFail("expected system message")
+            }
+
+            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
+            XCTAssertEqual(systemMessage.userTypes, [bananasUser, carrotsUser])
+        }
+
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then we retried the action with only reachable users.
+        XCTAssertEqual(mockActionHandler.performedActions.count, 2)
+
+        if let lastAction = mockActionHandler.performedActions.last {
+            XCTAssertEqual(lastAction.userIDs, [applesUser.objectID])
+        }
     }
 
 }

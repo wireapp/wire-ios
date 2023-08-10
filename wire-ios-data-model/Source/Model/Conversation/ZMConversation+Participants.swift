@@ -156,22 +156,29 @@ extension ZMConversation {
 
         let users = participants.materialize(in: context)
 
+        func retry(excludingDomains domains: Set<String>) {
+            let usersToExclude = users.belongingTo(domains: domains)
+            appendFailedToAddUsersSystemMessage(
+                users: usersToExclude,
+                sender: creator,
+                at: lastServerTimeStamp ?? Date()
+            )
+
+            let usersToAdd = Set(users).subtracting(usersToExclude)
+
+            internalAddParticipants(
+                Array(usersToAdd),
+                completion: completion
+            )
+        }
+
         internalAddParticipants(users) { result in
             switch result {
             case .failure(.unreachableDomains(let domains)):
-                let unreachableUsers = users.belongingTo(domains: domains)
-                self.appendFailedToAddUsersSystemMessage(
-                    users: unreachableUsers,
-                    sender: self.creator,
-                    at: self.lastServerTimeStamp ?? Date()
-                )
+                retry(excludingDomains: domains)
 
-                let reachableUsers = Set(users).subtracting(unreachableUsers)
-
-                self.internalAddParticipants(
-                    Array(reachableUsers),
-                    completion: completion
-                )
+            case .failure(.nonFederatingDomains(let domains)):
+                retry(excludingDomains: domains)
 
             default:
                 completion(result)
@@ -179,8 +186,10 @@ extension ZMConversation {
         }
     }
 
-    private func internalAddParticipants(_ users: [ZMUser],
-                                         completion: @escaping AddParticipantAction.ResultHandler) {
+    private func internalAddParticipants(
+        _ users: [ZMUser],
+        completion: @escaping AddParticipantAction.ResultHandler
+    ) {
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return
