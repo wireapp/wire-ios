@@ -164,23 +164,23 @@ extension Payload {
             return .conversationCreate
         }
 
-        let qualifiedID: QualifiedID?
-        let id: UUID?
-        let type: Int?
-        let creator: UUID?
-        let access: [String]?
-        let accessRoles: [String]?
-        let legacyAccessRole: String?
-        let name: String?
-        let members: ConversationMembers?
-        let lastEvent: String?
-        let lastEventTime: String?
-        let teamID: UUID?
-        let messageTimer: TimeInterval?
-        let readReceiptMode: Int?
-        let messageProtocol: String?
-        let mlsGroupID: String?
-        let epoch: UInt?
+        var qualifiedID: QualifiedID?
+        var id: UUID?
+        var type: Int?
+        var creator: UUID?
+        var access: [String]?
+        var accessRoles: [String]?
+        var legacyAccessRole: String?
+        var name: String?
+        var members: ConversationMembers?
+        var lastEvent: String?
+        var lastEventTime: String?
+        var teamID: UUID?
+        var messageTimer: TimeInterval?
+        var readReceiptMode: Int?
+        var messageProtocol: String?
+        var mlsGroupID: String?
+        var epoch: UInt?
 
         init(qualifiedID: QualifiedID? = nil,
              id: UUID?  = nil,

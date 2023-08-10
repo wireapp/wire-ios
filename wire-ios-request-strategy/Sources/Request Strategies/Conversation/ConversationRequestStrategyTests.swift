@@ -289,61 +289,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Response processing
 
-    func testThatMLSGroupIsCreated() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let mlsService = MockMLSService()
-            self.syncMOC.mlsService = mlsService
-
-            let id = UUID.create()
-            let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
-            let mlsGroupID = MLSGroupID([1, 2, 3])
-
-            guard let request = self.sut.request(
-                forInserting: self.groupConversation,
-                forKeys: nil,
-                apiVersion: .v2
-            ) else {
-                XCTFail("Failed to create request")
-                return
-            }
-
-            let payload = Payload.Conversation(
-                qualifiedID: qualifiedID,
-                id: id,
-                type: BackendConversationType.group.rawValue,
-                messageProtocol: "mls",
-                mlsGroupID: mlsGroupID.base64EncodedString
-            )
-
-            let payloadData = payload.payloadData()!
-            let payloadString = String(bytes: payloadData, encoding: .utf8)!
-
-            let response = ZMTransportResponse(
-                payload: payloadString as ZMTransportData,
-                httpStatus: 201,
-                transportSessionError: nil,
-                apiVersion: 2
-            )
-
-            // when
-            self.sut.updateInsertedObject(
-                self.groupConversation,
-                request: request,
-                response: response
-            )
-
-            // then
-            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
-
-            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
-            XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
-            XCTAssertEqual(self.groupConversation.mlsStatus, .ready)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
         let response = responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)

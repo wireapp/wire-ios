@@ -27,17 +27,20 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     var sut: CreateGroupConversationActionHandler!
 
     var conversationID: QualifiedID!
+    var mlsGroupID: MLSGroupID!
     var teamID: UUID!
     var user1ID: QualifiedID!
     var user2ID: QualifiedID!
 
     var expectedRequestPayload: RequestPayload!
     var successResponsePayload: ResponsePayload!
+    var successResponsePayloadMLS: ResponsePayload!
 
     override func setUp() {
         super.setUp()
         sut = CreateGroupConversationActionHandler(context: syncMOC)
         conversationID = .randomID()
+        mlsGroupID = MLSGroupID([1, 2, 3])
         teamID = .create()
         user1ID = .randomID()
         user2ID = .randomID()
@@ -88,23 +91,30 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             epoch: nil
         )
 
+        successResponsePayloadMLS = successResponsePayload
+        successResponsePayloadMLS.messageProtocol = "mls"
+        successResponsePayloadMLS.mlsGroupID = mlsGroupID.base64EncodedString
+        successResponsePayloadMLS.epoch = 0
+
         BackendInfo.storage = .random()!
     }
 
     override func tearDown() {
         sut = nil
         conversationID = nil
+        mlsGroupID = nil
         teamID = nil
         user1ID = nil
         user2ID = nil
         expectedRequestPayload = nil
         successResponsePayload = nil
+        successResponsePayloadMLS = nil
         super.tearDown()
     }
 
-    private func createAction() -> CreateGroupConversationAction {
+    private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
         return CreateGroupConversationAction(
-            messageProtocol: .proteus,
+            messageProtocol: messageProtocol,
             creatorClientID: "creatorClientID",
             qualifiedUserIDs: [user1ID, user2ID],
             unqualifiedUserIDs: [],
@@ -291,6 +301,36 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         XCTAssertTrue(conversation.allowGuests)
         XCTAssertTrue(conversation.allowServices)
         XCTAssertTrue(conversation.hasReadReceiptsEnabled)
+    }
+
+    @available(iOS 15, *)
+    func test_ItCreatesMLSGroup() throws {
+        try syncMOC.performAndWait {
+            // Given
+            BackendInfo.apiVersion = .v2
+            action = createAction(messageProtocol: .mls)
+            let mlsService = MockMLSService()
+            self.syncMOC.mlsService = mlsService
+            let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
+
+            // When
+            let result = try XCTUnwrap(test_itHandlesSuccess(
+                status: 201,
+                payload: payload as ZMTransportData
+            ))
+
+            // Then
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
+            assertConversationHasCorrectValues(conversation)
+            XCTAssertEqual(conversation.messageProtocol, .mls)
+            XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
+            XCTAssertEqual(conversation.mlsStatus, .ready)
+
+            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
+
+            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
+            XCTAssertEqual(createGroupCall, mlsGroupID)
+        }
     }
 
     func test_HandleResponse_Failures() throws {
