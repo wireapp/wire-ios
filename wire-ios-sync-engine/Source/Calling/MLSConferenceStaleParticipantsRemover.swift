@@ -75,7 +75,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             and: input.participants
         )
 
-        newAndChangedParticipants.forEach {
+        newAndChangedParticipants.excludingSelf(in: context).forEach {
 
             guard let clientID = MLSClientID(callParticipant: $0) else {
                 return
@@ -181,6 +181,23 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             // no timer to cancel, do nothing
         }
     }
+}
+
+private extension Array where Element == CallParticipant {
+
+    func excludingSelf(in context: NSManagedObjectContext) -> Self {
+        var selfUserID: AVSIdentifier!
+
+        context.performAndWait {
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUserID = selfUser.avsIdentifier
+        }
+
+        return self.filter {
+            $0.userId != selfUserID
+        }
+    }
+
 }
 
 private extension MLSClientID {
