@@ -21,6 +21,8 @@ import WireCommonComponents
 
 /// A helper class that provides the label with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable Protocol.
+
+@available(*, deprecated, message: "Use `DynamicFontLabel` instead")
 class LegacyDynamicFontLabel: UILabel, DynamicTypeCapable {
 
     // MARK: - Properties
@@ -30,14 +32,14 @@ class LegacyDynamicFontLabel: UILabel, DynamicTypeCapable {
     init(text: String? = nil,
          fontSpec: FontSpec = .normalRegularFont,
          color: UIColor
-     ) {
-         self.fontSpec = fontSpec
-         super.init(frame: .zero)
+    ) {
+        self.fontSpec = fontSpec
+        super.init(frame: .zero)
 
-         self.text = text
-         self.font = fontSpec.font
-         self.textColor = color
-     }
+        self.text = text
+        self.font = fontSpec.font
+        self.textColor = color
+    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,6 +48,29 @@ class LegacyDynamicFontLabel: UILabel, DynamicTypeCapable {
     // MARK: Methods
     func redrawFont() {
         self.font = fontSpec.font
+    }
+
+}
+
+/// A helper class that provides the label with Dynamic Type Support
+class DynamicFontLabel: UILabel {
+
+    init(text: String? = nil,
+         style: UIFont.FontStyle = .body,
+         color: UIColor
+    ) {
+        super.init(frame: .zero)
+        self.text = text
+        self.textColor = color
+
+        font = .font(for: style)
+
+        self.adjustsFontForContentSizeCategory = true
+
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }
