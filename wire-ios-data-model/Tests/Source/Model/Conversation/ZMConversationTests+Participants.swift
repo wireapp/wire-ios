@@ -771,6 +771,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         }
     }
 
+    // MARK: - Add users
+
     func test_AddUser_UnreachableUsers_Proteus() throws {
         // GIVEN
         let conversationID = UUID.create()
@@ -815,7 +817,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         ))
 
         let mockActionHandler = MockActionHandler<AddParticipantAction>(
-            results: [.failure(.unreachableUsers([user2])), .success(())],
+            results: [.failure(.unreachableDomains(["example.com"])), .success(())],
             context: syncMOC.notificationContext
         )
 
