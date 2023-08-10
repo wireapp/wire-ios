@@ -21,7 +21,7 @@ import UIKit
 
 final class CustomBackendView: UIView {
     lazy var backendLabel: UILabel = {
-        let label = DynamicFontLabel(text: nil,
+        let label = LegacyDynamicFontLabel(text: nil,
                                      fontSpec: .headerSemiboldFont,
                                      color: SemanticColors.Label.textSectionHeader)
         label.textAlignment = .right

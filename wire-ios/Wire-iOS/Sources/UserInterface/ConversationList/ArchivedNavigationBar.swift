@@ -23,7 +23,7 @@ final class ArchivedNavigationBar: UIView {
     typealias NavigationColors = SemanticColors.Label
 
     let titleLabel: UILabel = {
-        let label = DynamicFontLabel(
+        let label = LegacyDynamicFontLabel(
             fontSpec: .headerSemiboldFont,
             color: NavigationColors.textDefault
         )

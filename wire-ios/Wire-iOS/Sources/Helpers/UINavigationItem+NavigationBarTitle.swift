@@ -21,7 +21,7 @@ import UIKit
 extension UINavigationItem {
 
     func setupNavigationBarTitle(title: String) {
-        let titleLabel = DynamicFontLabel(
+        let titleLabel = LegacyDynamicFontLabel(
             text: title,
             fontSpec: .headerSemiboldFont,
             color: SemanticColors.Label.textDefault)

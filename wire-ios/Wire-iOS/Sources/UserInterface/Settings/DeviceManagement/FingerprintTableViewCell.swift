@@ -23,7 +23,7 @@ import WireCommonComponents
 final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     // MARK: - Properties
-    let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
+    let titleLabel = LegacyDynamicFontLabel(fontSpec: .smallSemiboldFont,
                                       color: SemanticColors.Label.textDefault)
     let fingerprintLabel = CopyableLabel()
     let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)

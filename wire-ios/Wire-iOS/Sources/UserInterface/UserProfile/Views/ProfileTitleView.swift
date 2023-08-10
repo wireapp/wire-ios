@@ -25,7 +25,7 @@ final class ProfileTitleView: UIView {
     typealias LabelColors = SemanticColors.Label
 
     let verifiedImageView = UIImageView(image: WireStyleKit.imageOfShieldverified)
-    private let titleLabel = DynamicFontLabel(fontSpec: .normalMediumFont,
+    private let titleLabel = LegacyDynamicFontLabel(fontSpec: .normalMediumFont,
                                               color: LabelColors.textDefault)
 
     var showVerifiedShield = false {

@@ -71,7 +71,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
     private var badgeWidthConstraint: NSLayoutConstraint?
 
     private let titleLabel: UILabel = {
-        let label = DynamicFontLabel(
+        let label = LegacyDynamicFontLabel(
             fontSpec: .smallRegularFont,
             color: .white)
         label.textColor = SemanticColors.Label.textDefault

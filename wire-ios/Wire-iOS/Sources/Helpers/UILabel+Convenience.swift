@@ -39,7 +39,7 @@ extension UILabel {
     }
 
     static func createMultiLineCenterdLabel() -> UILabel {
-        let label = DynamicFontLabel(fontSpec: .largeSemiboldFont, color: SemanticColors.Label.textDefault)
+        let label = LegacyDynamicFontLabel(fontSpec: .largeSemiboldFont, color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
         label.configMultipleLineLabel()
 

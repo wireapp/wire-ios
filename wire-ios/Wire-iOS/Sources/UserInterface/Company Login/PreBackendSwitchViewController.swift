@@ -54,7 +54,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }()
 
     let informationLabel: UILabel = {
-        let label = DynamicFontLabel(text: Login.information,
+        let label = LegacyDynamicFontLabel(text: Login.information,
                                      fontSpec: .normalSemiboldFont,
                                      color: SemanticColors.Label.textDefault)
         label.textAlignment = .center

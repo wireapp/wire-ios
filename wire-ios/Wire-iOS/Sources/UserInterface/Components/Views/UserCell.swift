@@ -39,16 +39,16 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     var hidesSubtitle: Bool = false
     let avatarSpacer = UIView()
     let avatar = BadgeUserImageView()
-    let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
+    let titleLabel = LegacyDynamicFontLabel(fontSpec: .bodyTwoSemibold,
                                       color: LabelColors.textDefault)
-    let subtitleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+    let subtitleLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
                                          color: LabelColors.textCellSubtitle)
     let connectButton = IconButton()
     let accessoryIconView = UIImageView()
     let userTypeIconView = IconImageView()
     let verifiedIconView = UIImageView()
     let videoIconView = IconImageView()
-    let connectingLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+    let connectingLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
                                            color: LabelColors.textErrorDefault)
     let checkmarkIconView = UIImageView()
     let microphoneIconView = PulsingIconImageView()

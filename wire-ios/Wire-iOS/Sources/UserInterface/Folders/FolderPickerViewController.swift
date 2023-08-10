@@ -31,7 +31,7 @@ final class FolderPickerViewController: UIViewController {
     private var conversationDirectory: ConversationDirectoryType
     private var items: [LabelType] = []
     private let conversation: ZMConversation
-    private let hintLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
+    private let hintLabel = LegacyDynamicFontLabel(fontSpec: .mediumSemiboldFont,
                                              color: SemanticColors.Label.textDefault)
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
@@ -66,7 +66,7 @@ final class FolderPickerViewController: UIViewController {
     }
 
     private func configureNavbar() {
-        let navigationTitleLabel = DynamicFontLabel(
+        let navigationTitleLabel = LegacyDynamicFontLabel(
             text: L10n.Localizable.Folder.Picker.title.capitalized,
             fontSpec: .headerSemiboldFont,
             color: SemanticColors.Label.textDefault)

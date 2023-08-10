@@ -63,9 +63,9 @@ final class CallParticipantDetailsView: RoundedBlurView {
     // MARK: - Init
 
     override init() {
-        nameLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+        nameLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textWhite)
-        connectingLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
+        connectingLabel = LegacyDynamicFontLabel(fontSpec: .smallSemiboldFont,
                                            color: SemanticColors.Label.textParticipantDisconnected)
         connectingLabel.text = L10n.Localizable.Call.Grid.connecting
         super.init()

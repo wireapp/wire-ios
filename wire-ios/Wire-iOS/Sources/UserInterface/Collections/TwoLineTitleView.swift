@@ -20,14 +20,14 @@ import UIKit
 
 final class TwoLineTitleView: UIView {
 
-    let titleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
+    let titleLabel: LegacyDynamicFontLabel = {
+        let label = LegacyDynamicFontLabel(fontSpec: .headerSemiboldFont,
                                      color: SemanticColors.Label.textDefault)
         return label
     }()
 
-    let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
+    let subtitleLabel: LegacyDynamicFontLabel = {
+        let label = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textDefault)
         return label
     }()

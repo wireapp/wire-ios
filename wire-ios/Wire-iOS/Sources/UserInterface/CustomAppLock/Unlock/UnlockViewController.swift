@@ -68,7 +68,7 @@ final class UnlockViewController: UIViewController {
     }()
 
     private let titleLabel: UILabel = {
-        let label = DynamicFontLabel(text: Unlock.titleLabel,
+        let label = LegacyDynamicFontLabel(text: Unlock.titleLabel,
                                      fontSpec: .largeSemiboldFont,
                                      color: SemanticColors.Label.textDefault)
 
@@ -96,7 +96,7 @@ final class UnlockViewController: UIViewController {
     }()
 
     private lazy var nameLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
+        let label = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -106,7 +106,7 @@ final class UnlockViewController: UIViewController {
     }()
 
     private let errorLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .smallLightFont,
+        let label = LegacyDynamicFontLabel(fontSpec: .smallLightFont,
                                      color: SemanticColors.Label.textErrorDefault)
         label.text = " "
 

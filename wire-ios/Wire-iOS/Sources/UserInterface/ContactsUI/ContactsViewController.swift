@@ -30,7 +30,7 @@ final class ContactsViewController: UIViewController {
 
     let bottomContainerView = UIView()
     let bottomContainerSeparatorView = UIView()
-    let noContactsLabel = DynamicFontLabel(text: PeoplePicker.noContactsTitle,
+    let noContactsLabel = LegacyDynamicFontLabel(text: PeoplePicker.noContactsTitle,
                                            fontSpec: .headerRegularFont,
                                            color: LabelColors.textSettingsPasswordPlaceholder)
     let searchHeaderViewController = SearchHeaderViewController(userSelection: .init())
@@ -39,7 +39,7 @@ final class ContactsViewController: UIViewController {
     let inviteOthersButton = Button(style: .accentColorTextButtonStyle,
                                     cornerRadius: 16,
                                     fontSpec: .normalSemiboldFont)
-    let emptyResultsLabel = DynamicFontLabel(text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
+    let emptyResultsLabel = LegacyDynamicFontLabel(text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
                                              fontSpec: .headerRegularFont,
                                              color: LabelColors.textSettingsPasswordPlaceholder)
 

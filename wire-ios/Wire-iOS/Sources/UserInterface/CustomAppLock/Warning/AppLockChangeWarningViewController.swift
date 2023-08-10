@@ -52,8 +52,8 @@ final class AppLockChangeWarningViewController: UIViewController {
         return label
     }()
 
-    private lazy var messageLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: messageLabelText, fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
+    private lazy var messageLabel: LegacyDynamicFontLabel = {
+        let label = LegacyDynamicFontLabel(text: messageLabelText, fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
