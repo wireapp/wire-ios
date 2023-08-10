@@ -20,6 +20,26 @@ import UIKit
 import WireCommonComponents
 
 final class ConversationListAccessoryView: UIView {
+
+    // MARK: - Properties
+
+    typealias ViewColors = SemanticColors.View
+    typealias LabelColors = SemanticColors.Label
+
+    let mediaPlaybackManager: MediaPlaybackManager?
+
+    let badgeView = RoundedBadge(view: UIView())
+    let transparentIconView = UIImageView()
+    let textLabel = UILabel()
+    let iconView = UIImageView()
+    var collapseWidthConstraint: NSLayoutConstraint!
+    var expandWidthConstraint: NSLayoutConstraint!
+    var expandTransparentIconViewWidthConstraint: NSLayoutConstraint!
+    let defaultViewWidth: CGFloat = 28
+    let activeCallWidth: CGFloat = 20
+
+    let textLabelColor = SemanticColors.Label.textDefaultWhite
+
     var icon: ConversationStatusIcon? {
         didSet {
             if icon != oldValue {
@@ -37,19 +57,7 @@ final class ConversationListAccessoryView: UIView {
         return mediaManager?.activeMediaPlayer
     }
 
-    let mediaPlaybackManager: MediaPlaybackManager?
-
-    let badgeView = RoundedBadge(view: UIView())
-    let transparentIconView = UIImageView()
-    let textLabel = UILabel()
-    let iconView = UIImageView()
-    var collapseWidthConstraint: NSLayoutConstraint!
-    var expandWidthConstraint: NSLayoutConstraint!
-    var expandTransparentIconViewWidthConstraint: NSLayoutConstraint!
-    let defaultViewWidth: CGFloat = 28
-    let activeCallWidth: CGFloat = 20
-    typealias ViewColors = SemanticColors.View
-    let textLabelColor = SemanticColors.Label.textDefaultWhite
+    // MARK: - Init
 
     init(mediaPlaybackManager: MediaPlaybackManager? = nil) {
         self.mediaPlaybackManager = mediaPlaybackManager
@@ -83,6 +91,8 @@ final class ConversationListAccessoryView: UIView {
         createConstraints()
         updateForIcon()
     }
+
+    // MARK: - Setup Constraints
 
     private func createConstraints() {
         transparentIconView.translatesAutoresizingMaskIntoConstraints = false
@@ -118,6 +128,8 @@ final class ConversationListAccessoryView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Set up the view based on the state
 
     private var viewForState: UIView? {
         typealias ConversationsList = L10n.Accessibility.ConversationsList
