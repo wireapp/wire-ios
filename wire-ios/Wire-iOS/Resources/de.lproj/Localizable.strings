@@ -152,7 +152,7 @@
 
 // Conversation list voiceover accessibility
 "conversation_list.voiceover.open_conversation.hint" = "Unterhaltung öffnen";
-"conversation_list.voiceover.status.pending_connection" = "wird überprüft";
+"conversation_list.voiceover.status.pending_connection" = "ausstehend";
 "conversation_list.voiceover.status.active_call" = "Aktiver Anruf";
 "conversation_list.voiceover.status.missed_call" = "verpasster Anruf";
 "conversation_list.voiceover.status.pause_media" = "pausiere Medien";
