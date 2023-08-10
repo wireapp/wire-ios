@@ -405,8 +405,8 @@ platform :ios do
         )
 
         appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
-        `echo APPCENTER_INSTALL_LINK="#{appcenter_build_info['install_url']}" >> .post_build_env`
-        `echo APPCENTER_RELEASE_NOTES="#{appcenter_build_info['release_notes']}" >> .post_build_env`
+        `export TEMP='APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP > .post_build_env`
+        `export TEMP='APPCENTER_RELEASE_NOTES=#{appcenter_build_info['release_notes']}' && echo $TEMP > .post_build_env`
     end
 
     # Upload to S3 (Automation builds)
@@ -430,7 +430,7 @@ platform :ios do
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
         paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join('\n')
-        `echo S3_PATHS="#{paths}" >> .post_build_env`
+        `export TEMP='S3_PATHS=#{s3_paths}' && echo $TEMP > .post_build_env`
     end
 
     # Upload dSYMs for AppStore crash tracking
