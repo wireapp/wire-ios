@@ -40,12 +40,13 @@ extension WireCallCenterV3 {
 
     func updateMLSConferenceIfNeeded(
         conversationID: AVSIdentifier,
-        callState: CallState
+        callState: CallState,
+        callSnapshot: CallSnapshot?
     ) {
         switch callState {
 
         case .terminating:
-            removeStaleParticipantsIfNeeded(conversationID: conversationID)
+            removeStaleParticipantsIfNeeded(callSnapshot: callSnapshot)
             leaveStaleConferenceIfNeeded(conversationID: conversationID)
 
         case .incoming:
@@ -79,21 +80,26 @@ extension WireCallCenterV3 {
         return (qualifiedID, groupID)
     }
 
-    private func removeStaleParticipantsIfNeeded(conversationID: AVSIdentifier) {
+    private func removeStaleParticipantsIfNeeded(
+        callSnapshot: CallSnapshot?
+    ) {
         guard
             let viewContext = uiMOC,
-            let callSnaphot = callSnapshots[conversationID],
-            let staleParticipantsRemover = callSnaphot.mlsConferenceStaleParticipantsRemover
+            let callSnapshot = callSnapshot,
+            let staleParticipantsRemover = callSnapshot.mlsConferenceStaleParticipantsRemover
         else {
             return
         }
 
         let selfUser = ZMUser.selfUser(in: viewContext)
-        let participantsExcludingSelf = callSnaphot.callParticipants.participants.filter {
-            $0.userId != selfUser.avsIdentifier
+        let connectedParticipantsExcludingSelf = callSnapshot.callParticipants.participants.filter {
+            let notSelf = $0.userId != selfUser.avsIdentifier
+            let connected = $0.state.isConnected
+
+            return notSelf && connected
         }
 
-        guard participantsExcludingSelf.isEmpty else {
+        guard connectedParticipantsExcludingSelf.isEmpty else {
             return
         }
 
@@ -159,6 +165,19 @@ extension WireCallCenterV3 {
                     subconversationType: .conference
                 )
             }
+        }
+    }
+
+}
+
+extension CallParticipantState {
+
+    var isConnected: Bool {
+        switch self {
+        case .connected:
+            return true
+        default:
+            return false
         }
     }
 

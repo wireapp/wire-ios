@@ -950,10 +950,18 @@ extension WireCallCenterV3 {
         let callerId = initiatorForCall(conversationId: conversationId) ?? userId
         let previousCallState = callSnapshots[conversationId]?.callState
 
+        if let previousSnapshot = callSnapshots[conversationId] {
+            callSnapshots[conversationId] = previousSnapshot.update(with: callState)
+        }
+
+        updateMLSConferenceIfNeeded(
+            conversationID: conversationId,
+            callState: callState,
+            callSnapshot: callSnapshots[conversationId]
+        )
+
         if case .terminating = callState {
             clearSnapshot(conversationId: conversationId)
-        } else if let previousSnapshot = callSnapshots[conversationId] {
-            callSnapshots[conversationId] = previousSnapshot.update(with: callState)
         }
 
         if let context = uiMOC, let callerId = callerId {
@@ -966,10 +974,6 @@ extension WireCallCenterV3 {
             notification.post(in: context.notificationContext)
         }
 
-        updateMLSConferenceIfNeeded(
-            conversationID: conversationId,
-            callState: callState
-        )
     }
 
 }
