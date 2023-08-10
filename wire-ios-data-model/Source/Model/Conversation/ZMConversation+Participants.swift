@@ -19,25 +19,6 @@
 import Foundation
 import WireProtos
 
-public enum ConversationRemoveParticipantError: Error {
-   case unknown,
-        invalidOperation,
-        conversationNotFound,
-        failedToRemoveMLSMembers
-}
-
-public enum ConversationAddParticipantsError: Error, Equatable {
-   case unknown,
-        invalidOperation,
-        accessDenied,
-        notConnectedToUser,
-        conversationNotFound,
-        tooManyMembers,
-        missingLegalHoldConsent,
-        failedToAddMLSMembers,
-        unreachableDomains(Set<String>)
-}
-
 public class AddParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?
 
@@ -53,6 +34,20 @@ public class AddParticipantAction: EntityAction {
     }
 }
 
+public enum ConversationAddParticipantsError: Error, Equatable {
+
+    case unknown
+    case invalidOperation
+    case accessDenied
+    case notConnectedToUser
+    case conversationNotFound
+    case tooManyMembers
+    case missingLegalHoldConsent
+    case failedToAddMLSMembers
+    case unreachableDomains(Set<String>)
+
+}
+
 public class RemoveParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?
 
@@ -66,6 +61,15 @@ public class RemoveParticipantAction: EntityAction {
         userID = user.objectID
         conversationID = conversation.objectID
     }
+}
+
+public enum ConversationRemoveParticipantError: Error {
+
+    case unknown
+    case invalidOperation
+    case conversationNotFound
+    case failedToRemoveMLSMembers
+
 }
 
 class MLSClientIDsProvider {
