@@ -70,7 +70,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -96,7 +97,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -122,7 +124,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -148,7 +151,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -178,7 +182,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -204,7 +209,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -230,7 +236,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: presentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 }
