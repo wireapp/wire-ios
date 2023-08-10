@@ -30,8 +30,7 @@ extension AVSVideoView: AVSIdentifierProvider {
         return Stream(
             streamId: AVSClient(userId: AVSIdentifier.from(string: userid), clientId: clientid),
             user: nil,
-            microphoneState: .unmuted,
-            videoState: .none,
+            callParticipantState: .connected(videoState: .stopped, microphoneState: .unmuted),
             activeSpeakerState: .inactive,
             isPaused: false
         )

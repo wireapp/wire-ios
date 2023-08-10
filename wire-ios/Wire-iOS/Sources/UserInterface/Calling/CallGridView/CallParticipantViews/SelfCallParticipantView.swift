@@ -27,8 +27,8 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
     override var stream: Stream {
         didSet {
-            guard stream.videoState != self.videoState else { return }
-            updateCaptureState(with: stream.videoState)
+            guard stream.callParticipantState.videoState != self.videoState else { return }
+            updateCaptureState(with: stream.callParticipantState.videoState)
         }
     }
 
@@ -67,6 +67,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
             state: stream.microphoneState,
             shouldPulse: stream.activeSpeakerState.isSpeakingNow
         )
+        userDetailsView.callState = stream.callParticipantState
 
         guard let name = stream.user?.name else { return }
         userDetailsView.name = name + "user_cell.title.you_suffix".localized
