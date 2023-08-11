@@ -66,13 +66,17 @@ extension ZMConversation {
         }
     }
 
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
+
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
     static public func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser]) -> ZMConversation? {
         return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
 
-    /// Insert a new group conversation with name into the user session
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
 
     @objc
     static public func insertGroupConversation(session: ContextProvider,
@@ -92,6 +96,9 @@ extension ZMConversation {
                                             readReceipts: readReceipts,
                                             participantsRole: participantsRole)
     }
+
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
 
     @objc
     static public func insertGroupConversation(moc: NSManagedObjectContext,
@@ -113,21 +120,8 @@ extension ZMConversation {
                                        type: .group)
     }
 
-    /// insert a conversation with group type
-    ///
-    /// - Parameters:
-    ///   - moc: the NSManagedObjectContext
-    ///   - participants: the participants
-    ///   - name: the name of the convo
-    ///   - team: the team of the convo
-    ///   - allowGuests: allow guest or not
-    ///   - allowServices: allow services or not
-    ///   - readReceipts: allow read receipts or not
-    ///   - participantsRole: the participants' role
-    ///   - type: the convo type want to be created (for permission check)
-    ///   - messageProtocol: the protocol used to exchange EE2E communication
-    ///
-    /// - Returns: the created conversation, nullable
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
 
     static public func insertGroupConversation(
         moc: NSManagedObjectContext,
@@ -176,6 +170,9 @@ extension ZMConversation {
 
         return conversation
     }
+
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
 
     @objc
     static func fetchOrCreateOneToOneTeamConversation(

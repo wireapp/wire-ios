@@ -58,50 +58,6 @@
     XCTAssertTrue([self login]);
 }
 
-- (void)testThatAConversationIsResyncedAfterRestartingFromScratch
-{
-    NSString *conversationName = @"My conversation";
-    {
-        // Create a UI context
-        XCTAssertTrue([self login]);
-        // Get the users:
-        ZMUser *user1 = [self userForMockUser:self.user1];
-        XCTAssertNotNil(user1);
-        ZMUser *user2 = [self userForMockUser:self.user2];
-        XCTAssertNotNil(user2);
-        
-        // Create a conversation
-        __block ZMConversation *conversation;
-        [self.userSession performChanges:^{
-            conversation = [ZMConversation
-                            insertGroupConversationIntoManagedObjectContext :self.userSession.managedObjectContext
-                            withParticipants:@[user1, user2]];
-            conversation.userDefinedName = conversationName;
-        }];
-        
-        // Wait for merge ui->sync to be done
-        WaitForAllGroupsToBeEmpty(0.5);
-        XCTAssert([self waitOnMainLoopUntilBlock:^BOOL{
-            return conversation.lastModifiedDate != nil;
-        } timeout:0.5]);
-    }
-    
-    // Tears down context(s) &
-    // Re-create contexts
-    [self recreateSessionManagerAndDeleteLocalData];
-
-    {
-        // Wait for sync to be done
-        XCTAssertTrue([self login]);
-        
-        // Check that conversation is there
-        ZMConversation *conversation = [[ZMConversationList conversationsInUserSession:self.userSession] firstObjectMatchingWithBlock:^BOOL(ZMConversation *c) {
-            return [c.userDefinedName isEqual:conversationName];
-        }];
-        XCTAssertNotNil(conversation);
-    }
-}
-
 - (void)testThatChangeToAConversationNameIsResyncedAfterRestartingFromScratch;
 {
     NSString *name = @"My New Name";

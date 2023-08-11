@@ -646,24 +646,10 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
                                             selectedUsers: model.selectedUsers,
                                             icon: model.image())
         super.init()
-        if !ProcessInfo.processInfo.isRunningTests,
-           let conversation = message.conversationLike as? ZMConversation {
-            conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
-        }
+
         accessibilityLabel = configuration.message.string
     }
 
-}
-
-extension ConversationStartedSystemMessageCellDescription: ZMConversationObserver {
-    func conversationDidChange(_ note: ConversationChangeInfo) {
-        guard note.createdRemotelyChanged else { return }
-        if let conversation = message?.conversationLike,
-           conversation.conversationType == .group,
-           conversation.localParticipantsCount == 1 {
-            delegate?.conversationMessageShouldUpdate()
-        }
-    }
 }
 
 class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessageCellDescription {

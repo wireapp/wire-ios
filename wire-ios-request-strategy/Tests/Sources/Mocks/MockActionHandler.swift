@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,24 @@
 
 import Foundation
 
-public struct ConversationCreationOptions {
-    var participants: [ZMUser] = []
-    var name: String?
-    var team: Team?
-    var allowGuests: Bool = true
+class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
-    public init(participants: [ZMUser] = [], name: String? = nil, team: Team? = nil, allowGuests: Bool = true) {
-        self.participants = participants
-        self.name = name
-        self.team = team
-        self.allowGuests = allowGuests
+    typealias Action = T
+    typealias Result = Swift.Result<Action.Result, Action.Failure>
+
+    var result: Result
+    var token: Any?
+    var performedActions = [Action]()
+
+    init(result: Result, context: NotificationContext) {
+        self.result = result
+        token = Action.registerHandler(self, context: context)
     }
+
+    func performAction(_ action: Action) {
+        var action = action
+        action.notifyResult(result)
+        performedActions.append(action)
+    }
+
 }

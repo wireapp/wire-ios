@@ -131,10 +131,6 @@ extension ZMConversation: ObjectInSnapshot {
         return changedKeysContain(keys: SecurityLevelKey)
     }
 
-    public var createdRemotelyChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.remoteIdentifier))
-    }
-
     public var allowGuestsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
                changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
@@ -188,7 +184,6 @@ extension ZMConversation: ObjectInSnapshot {
                 "clearedChanged \(clearedChanged)",
                 "securityLevelChanged \(securityLevelChanged)",
                 "teamChanged \(teamChanged)",
-                "createdRemotelyChanged \(createdRemotelyChanged)",
                 "destructionTimeoutChanged \(destructionTimeoutChanged)",
                 "languageChanged \(languageChanged)",
                 "hasReadReceiptsEnabledChanged \(hasReadReceiptsEnabledChanged)",

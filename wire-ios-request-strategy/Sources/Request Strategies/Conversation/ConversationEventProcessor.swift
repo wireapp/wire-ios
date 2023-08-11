@@ -23,7 +23,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationService: ConversationServiceProtocol
+    let conversationService: ConversationServiceInterface
 
     // MARK: - Life cycle
 
@@ -36,7 +36,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     public init(
         context: NSManagedObjectContext,
-        conversationService: ConversationServiceProtocol
+        conversationService: ConversationServiceInterface
     ) {
         self.context = context
         self.conversationService = conversationService
@@ -161,14 +161,5 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             context: context
         )
     }
-
-}
-
-public protocol ConversationServiceProtocol {
-
-    func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
-    )
 
 }
