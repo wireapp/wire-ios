@@ -17,7 +17,19 @@
 
 import Foundation
 
-final class MockConversationService: ConversationServiceProtocol {
+final class MockConversationService: ConversationServiceInterface {
+
+    func createGroupConversation(
+        name: String?,
+        users: Set<ZMUser>,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        messageProtocol: WireDataModel.MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
+        fatalError("not implemented")
+    }
 
     func syncConversation(
         qualifiedID: QualifiedID,

@@ -18,13 +18,17 @@
 
 import Foundation
 import XCTest
+import WireCommonComponents
 @testable import Wire
 
-final class ConversationListAccessoryViewTests: ZMSnapshotTestCase {
+final class ConversationListAccessoryViewTests: XCTestCase {
     var sut: ConversationListAccessoryView!
 
     override func setUp() {
         super.setUp()
+
+        FontScheme.configure(with: .large)
+
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test"))
         accentColor = .violet
     }
