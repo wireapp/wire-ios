@@ -17,16 +17,19 @@
 //
 
 import XCTest
+import SnapshotTesting
+import WireCommonComponents
 @testable import Wire
 
-final class AuthenticationInterfaceBuilderTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
 
     override func setUp() {
         super.setUp()
-
+        isRecording = true
+        FontScheme.configure(with: .large)
         coreDataFixture = CoreDataFixture()
         accentColor = .strongBlue
 
