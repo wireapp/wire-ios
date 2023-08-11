@@ -27,11 +27,7 @@ extension ZMMessage {
     ) -> ZMClientMessage? {
 
         guard reaction != "" else {
-            return setReactions(
-                reactions: [],
-                for: message
-            )
-
+            return nil
         }
 
         var reactions = existingReactionsBySelfUser(for: message)
