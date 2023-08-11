@@ -442,9 +442,11 @@ extension Text {
         updatedText.expectsReadConfirmation = expectsReadConfirmation
 
         // We always keep the quote from the original message
-        hasQuote
-        ? updatedText.quote = quote
-        : updatedText.clearQuote()
+        if hasQuote {
+            updatedText.quote = quote
+        } else {
+            updatedText.clearQuote()
+        }
         return updatedText
     }
 

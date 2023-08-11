@@ -23,40 +23,40 @@ extension ZMMessage {
     @discardableResult
     @objc public static func addReaction(
         _ reaction: String,
-        toMessage message: ZMConversationMessage
+        to message: ZMConversationMessage
     ) -> ZMClientMessage? {
 
         guard reaction != "" else {
             return setReactions(
                 reactions: [],
-                toMessage: message
+                for: message
             )
 
         }
 
-        var reactions = existingReactionsBySelfUser(forMessage: message)
+        var reactions = existingReactionsBySelfUser(for: message)
         reactions.insert(reaction)
 
         return setReactions(
             reactions: reactions,
-            toMessage: message
+            for: message
         )
     }
 
     @objc public static func removeReaction(
         _ reaction: String,
-        onMessage message: ZMConversationMessage
+        from message: ZMConversationMessage
     ) {
-        var reactions = existingReactionsBySelfUser(forMessage: message)
+        var reactions = existingReactionsBySelfUser(for: message)
         reactions.remove(reaction)
 
         setReactions(
             reactions: reactions,
-            toMessage: message
+            for: message
         )
     }
 
-    private static func existingReactionsBySelfUser(forMessage message: ZMConversationMessage) -> Set<String> {
+    private static func existingReactionsBySelfUser(for message: ZMConversationMessage) -> Set<String> {
         let existingReactions = message.usersReaction.compactMap { reaction, users in
             users.contains(where: \.isSelfUser) ? reaction : nil
         }
@@ -67,7 +67,7 @@ extension ZMMessage {
     @discardableResult
     static func setReactions(
         reactions: Set<String>,
-        toMessage message: ZMConversationMessage
+        for message: ZMConversationMessage
     ) -> ZMClientMessage? {
         guard
             let message = message as? ZMMessage,

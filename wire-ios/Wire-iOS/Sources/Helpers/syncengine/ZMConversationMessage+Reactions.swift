@@ -41,12 +41,12 @@ extension ZMConversationMessage {
             if newValue {
                 ZMMessage.addReaction(
                     Emoji.like.value,
-                    toMessage: self
+                    to: self
                 )
             } else {
                 ZMMessage.removeReaction(
                     Emoji.like.value,
-                    onMessage: self
+                    from: self
                 )
             }
         }
@@ -82,12 +82,12 @@ extension ZMConversationMessage {
         if selfUserReactions().contains(reaction) {
             ZMMessage.removeReaction(
                 reaction.value,
-                onMessage: self
+                from: self
             )
         } else {
             ZMMessage.addReaction(
                 reaction.value,
-                toMessage: self
+                to: self
             )
         }
     }
