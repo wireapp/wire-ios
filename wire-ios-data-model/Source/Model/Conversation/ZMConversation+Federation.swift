@@ -49,7 +49,7 @@ public extension ZMConversation {
 
 }
 
-extension NSPredicate {
+private extension NSPredicate {
 
     static var isGroupConversation: NSPredicate {
         return hasConversationType(.group)
