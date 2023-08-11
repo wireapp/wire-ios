@@ -80,19 +80,27 @@ extension ZMUser {
         return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
 
-    public static func predicateForConnectedUsers(with domain: String) -> NSPredicate {
-        let domainPredicate = NSPredicate(format: "(%K == %@)", #keyPath(ZMUser.domain), domain)
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [domainPredicate,
-                                                                   predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
-                                                                  ])
+    public static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
+        return NSPredicate.isHostedOnDomain(domain)
+                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
     }
 
-    public static func predicateForSentAndPendingConnection(with domain: String) -> NSPredicate {
-        let domainPredicate = NSPredicate(format: "(%K == %@)", #keyPath(ZMUser.domain), domain)
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [domainPredicate,
-                                                                   predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
-                                                                                                              ZMConnectionStatus.sent.rawValue])
-                                                                  ])
+    public static func predicateForSentAndPendingConnections(hostedOnDomain domain: String) -> NSPredicate {
+        return NSPredicate.isHostedOnDomain(domain)
+                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
+                                                                          ZMConnectionStatus.sent.rawValue]))
+    }
+
+}
+
+private extension NSPredicate {
+
+    static func isHostedOnDomain(_ domain: String) -> NSPredicate {
+        return NSPredicate(
+            format: "%K == %@",
+            #keyPath(ZMUser.domain),
+            domain
+        )
     }
 
 }
