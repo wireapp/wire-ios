@@ -48,8 +48,17 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     let userTypeIconView = IconImageView()
     let verifiedIconView = UIImageView()
     let videoIconView = IconImageView()
-    let connectingLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                           color: LabelColors.textErrorDefault)
+
+    lazy var connectingLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .mediumRegularFont,
+            color: LabelColors.textErrorDefault
+        )
+
+        label.isHidden = true
+        return label
+    }()
+
     let checkmarkIconView = UIImageView()
     let microphoneIconView = PulsingIconImageView()
     var contentStackView: UIStackView!
@@ -101,7 +110,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
