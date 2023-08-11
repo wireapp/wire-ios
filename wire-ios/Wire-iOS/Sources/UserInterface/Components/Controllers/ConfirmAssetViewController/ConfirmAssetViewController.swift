@@ -62,7 +62,7 @@ final class ConfirmAssetViewController: UIViewController {
     private var imageToolbarView: ImageToolbarView?
 
     private let topPanel: UIView = UIView()
-    private let titleLabel: LegacyDynamicFontLabel = LegacyDynamicFontLabel(fontSpec: .headerSemiboldFont,
+    private let titleLabel: DynamicFontLabel = DynamicFontLabel(fontSpec: .headerSemiboldFont,
                                                                 color: SemanticColors.Label.textDefault)
     private let bottomPanel: UIView = UIView()
     private let confirmButtonsStack: UIStackView = UIStackView()

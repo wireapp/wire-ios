@@ -28,9 +28,9 @@ final class ModalTopBar: UIView {
     let dismissButton = IconButton()
     typealias ViewColors = SemanticColors.View
 
-    public let titleLabel: LegacyDynamicFontLabel = {
+    public let titleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
-        let label = LegacyDynamicFontLabel(fontSpec: .headerSemiboldFont,
+        let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
                                      color: textColor)
         label.textAlignment = .center
         label.accessibilityIdentifier = "Title"
@@ -38,9 +38,9 @@ final class ModalTopBar: UIView {
         return label
     }()
 
-    public let subtitleLabel: LegacyDynamicFontLabel = {
+    public let subtitleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
-        let label = LegacyDynamicFontLabel(fontSpec: .smallSemiboldFont,
+        let label = DynamicFontLabel(fontSpec: .smallSemiboldFont,
                                      color: textColor)
         label.textAlignment = .center
         label.accessibilityIdentifier = "Subtitle"

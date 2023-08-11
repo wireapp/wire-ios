@@ -52,13 +52,13 @@ extension CallStatusViewState {
 
 class EstablishingCallStatusView: UIView {
 
-    private let titleLabel = LegacyDynamicFontLabel(
+    private let titleLabel = DynamicFontLabel(
         text: "",
         fontSpec: .largeSemiboldFont,
         color: SemanticColors.Label.textDefault
     )
 
-    private let callStateLabel = LegacyDynamicFontLabel(
+    private let callStateLabel = DynamicFontLabel(
         text: L10n.Localizable.Voice.Calling.title,
         fontSpec: .mediumRegularFont,
         color: SemanticColors.Label.textDefault

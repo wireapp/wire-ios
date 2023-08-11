@@ -22,7 +22,7 @@ import WireCommonComponents
 
 final class SectionHeaderView: UIView {
 
-    let titleLabel = LegacyDynamicFontLabel(fontSpec: .smallSemiboldFont,
+    let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
                                       color: SemanticColors.Label.textSectionHeader)
 
     override init(frame: CGRect) {

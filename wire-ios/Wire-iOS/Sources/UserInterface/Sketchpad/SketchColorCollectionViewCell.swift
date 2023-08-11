@@ -144,7 +144,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Properties
 
-    var titleLabel = LegacyDynamicFontLabel(fontSpec: .smallRegularFont,
+    var titleLabel = DynamicFontLabel(fontSpec: .smallRegularFont,
                                       color: SemanticColors.Label.textDefault)
 
     var contentStackView = UIStackView()

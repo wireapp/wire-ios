@@ -45,7 +45,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     }()
 
     let cellNameLabel: UILabel = {
-        let label = LegacyDynamicFontLabel(
+        let label = DynamicFontLabel(
             fontSpec: .normalSemiboldFont,
             color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
@@ -77,7 +77,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     }()
 
     private let badgeLabel: UILabel = {
-        let badgeLabel = LegacyDynamicFontLabel(fontSpec: .smallMediumFont,
+        let badgeLabel = DynamicFontLabel(fontSpec: .smallMediumFont,
                                           color: SemanticColors.Label.textDefaultWhite)
         badgeLabel.textAlignment = .center
         return badgeLabel

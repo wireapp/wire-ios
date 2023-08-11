@@ -22,7 +22,7 @@ import UIKit
 import WireSystem
 
 final class NoResultsView: UIView {
-    let label = LegacyDynamicFontLabel(fontSpec: .body,
+    let label = DynamicFontLabel(fontSpec: .body,
                                  color: SemanticColors.Label.textCollectionSecondary)
     private let iconView = UIImageView()
 

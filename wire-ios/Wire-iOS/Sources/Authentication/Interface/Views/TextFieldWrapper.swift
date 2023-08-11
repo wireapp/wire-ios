@@ -20,12 +20,12 @@ import Foundation
 import UIKit
 
 final class TextFieldWrapper: UIView {
-    var label: LegacyDynamicFontLabel
+    var label: DynamicFontLabel
 
     var textField: ValidatedTextField
 
     init(label: String, textFieldBuilder: () -> ValidatedTextField, placeholder: String) {
-        self.label = LegacyDynamicFontLabel(text: label, fontSpec: .subheadlineFont, color: SemanticColors.Label.textFieldFloatingLabel)
+        self.label = DynamicFontLabel(text: label, fontSpec: .subheadlineFont, color: SemanticColors.Label.textFieldFloatingLabel)
         textField = textFieldBuilder()
         textField.placeholder = placeholder
         super.init(frame: .zero)

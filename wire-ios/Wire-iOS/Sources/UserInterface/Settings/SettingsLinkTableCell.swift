@@ -26,7 +26,7 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
     private let cellLinkLabel = CopyableLabel()
 
     private let cellNameLabel: UILabel = {
-        let label = LegacyDynamicFontLabel(
+        let label = DynamicFontLabel(
             fontSpec: .normalSemiboldFont,
             color: SemanticColors.Label.textDefault)
 

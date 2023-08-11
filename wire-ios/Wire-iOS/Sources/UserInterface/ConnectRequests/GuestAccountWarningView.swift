@@ -21,8 +21,8 @@ import UIKit
 class GuestAccountWarningView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
-    private let encryptionLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
-    private let sensitiveInfoLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
+    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
+    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
 
     // MARK: - Setup

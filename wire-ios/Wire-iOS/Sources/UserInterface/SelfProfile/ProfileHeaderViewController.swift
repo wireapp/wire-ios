@@ -78,8 +78,8 @@ final class ProfileHeaderViewController: UIViewController {
     typealias AccountPageStrings = L10n.Accessibility.AccountPage
     typealias LabelColors = SemanticColors.Label
 
-    let nameLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(fontSpec: .accountName,
+    let nameLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(fontSpec: .accountName,
                                      color: LabelColors.textDefault)
         label.accessibilityLabel = AccountPageStrings.Name.description
         label.accessibilityIdentifier = "name"
@@ -98,11 +98,11 @@ final class ProfileHeaderViewController: UIViewController {
         return label
     }()
 
-    let handleLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
+    let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                        color: LabelColors.textDefault)
-    let teamNameLabel = LegacyDynamicFontLabel(fontSpec: .accountTeam,
+    let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam,
                                          color: LabelColors.textDefault)
-    let remainingTimeLabel = LegacyDynamicFontLabel(fontSpec: .mediumSemiboldFont,
+    let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
                                               color: LabelColors.textDefault)
     let imageView =  UserImageView(size: .big)
     let availabilityTitleViewController: AvailabilityTitleViewController

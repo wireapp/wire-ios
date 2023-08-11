@@ -27,9 +27,9 @@ final class UserClientCell: SeparatorCollectionViewCell {
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
 
-    private let titleLabel = LegacyDynamicFontLabel(fontSpec: .bodyTwoSemibold,
+    private let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
                                               color: LabelColors.textDefault)
-    private let subtitleLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
+    private let subtitleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                                  color: LabelColors.textCellSubtitle)
 
     private let deviceTypeIconView = UIImageView()

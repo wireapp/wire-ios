@@ -37,7 +37,7 @@ enum BitRateStatus: String {
     }
 }
 
-class BitRateLabel: LegacyDynamicFontLabel {
+class BitRateLabel: DynamicFontLabel {
     var bitRateStatus: BitRateStatus? {
         didSet {
             updateLabel()

@@ -32,9 +32,9 @@ final class UserNameTakeOverViewController: UIViewController {
     typealias RegistrationSelectHandle = L10n.Localizable.Registration.SelectHandle.Takeover
     typealias LabelColors = SemanticColors.Label
 
-    public let displayNameLabel = LegacyDynamicFontLabel(fontSpec: .largeThinFont,
+    public let displayNameLabel = DynamicFontLabel(fontSpec: .largeThinFont,
                                                    color: LabelColors.textMessageDetails)
-    public let suggestedHandleLabel = LegacyDynamicFontLabel(fontSpec: .largeFont,
+    public let suggestedHandleLabel = DynamicFontLabel(fontSpec: .largeFont,
                                                        color: LabelColors.textDefault)
     public let subtitleTextView = WebLinkTextView()
 

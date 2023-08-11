@@ -41,14 +41,14 @@ final class ProxyCredentialsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    lazy var titleLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: Credentials.title, fontSpec: .headerSemiboldFont, color: SemanticColors.Label.textCellSubtitle)
+    lazy var titleLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerSemiboldFont, color: SemanticColors.Label.textCellSubtitle)
         label.text = Credentials.title
         return label
     }()
 
-    lazy var captionLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: Credentials.title, fontSpec: .headerRegularFont, color: SemanticColors.Label.textCellSubtitle)
+    lazy var captionLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerRegularFont, color: SemanticColors.Label.textCellSubtitle)
         label.numberOfLines = 0
         return label
     }()

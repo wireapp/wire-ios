@@ -27,13 +27,13 @@ class ClientTableViewCell: UITableViewCell, DynamicTypeCapable {
     // MARK: - Properties
     typealias LabelColors = SemanticColors.Label
 
-    let nameLabel = LegacyDynamicFontLabel(fontSpec: .normalSemiboldFont,
+    let nameLabel = DynamicFontLabel(fontSpec: .normalSemiboldFont,
                                      color: LabelColors.textDefault)
-    let labelLabel = LegacyDynamicFontLabel(fontSpec: .smallSemiboldFont,
+    let labelLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
                                       color: LabelColors.textDefault)
     let activationLabel = UILabel(frame: CGRect.zero)
     let fingerprintLabel = UILabel(frame: CGRect.zero)
-    let verifiedLabel = LegacyDynamicFontLabel(fontSpec: .smallFont,
+    let verifiedLabel = DynamicFontLabel(fontSpec: .smallFont,
                                          color: LabelColors.textDefault)
 
     private let activationLabelFont = FontSpec.smallLightFont

@@ -83,8 +83,8 @@ final class LandingViewController: AuthenticationStepViewController {
         return imageView
     }()
 
-    private let messageLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: Landing.welcomeMessage,
+    private let messageLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: Landing.welcomeMessage,
                                      fontSpec: .bodyTwoSemibold,
                                      color: SemanticColors.Label.textDefault)
 
@@ -95,8 +95,8 @@ final class LandingViewController: AuthenticationStepViewController {
         return label
     }()
 
-    private let subMessageLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: Landing.welcomeSubmessage,
+    private let subMessageLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: Landing.welcomeSubmessage,
                                      fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
@@ -158,8 +158,8 @@ final class LandingViewController: AuthenticationStepViewController {
         return button
     }()
 
-    private let createAccountInfoLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: Landing.CreateAccount.infotitle,
+    private let createAccountInfoLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: Landing.CreateAccount.infotitle,
                                      fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textDefault)
         label.textAlignment = .center

@@ -50,7 +50,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     private var contentStack: CustomSpacingStackView!
 
-    private var headlineLabel: LegacyDynamicFontLabel!
+    private var headlineLabel: DynamicFontLabel!
     private var headlineLabelContainer: ContentInsetView!
     private var subtextLabel: UILabel!
     private var subtextLabelContainer: ContentInsetView!
@@ -139,7 +139,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
         let textPadding = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
         let labelColor = SemanticColors.Label.textDefault
 
-        headlineLabel = LegacyDynamicFontLabel(fontSpec: .largeLightWithTextStyleFont,
+        headlineLabel = DynamicFontLabel(fontSpec: .largeLightWithTextStyleFont,
                                          color: labelColor)
         headlineLabelContainer = ContentInsetView(headlineLabel, inset: textPadding)
         headlineLabel.textAlignment = .center
@@ -150,7 +150,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
         headlineLabel.accessibilityTraits.insert(.header)
 
         if stepDescription.subtext != nil {
-            subtextLabel = LegacyDynamicFontLabel(fontSpec: .normalRegularFont,
+            subtextLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                             color: labelColor)
             subtextLabelContainer = ContentInsetView(subtextLabel, inset: textPadding)
             subtextLabel.textAlignment = .center

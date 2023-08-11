@@ -38,7 +38,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     let dimmingView = UIView()
     let closeButton = IconButton(fontSpec: .smallSemiboldFont)
     let titleLabel = UILabel()
-    let questionLabel = LegacyDynamicFontLabel(fontSpec: .normalRegularFont,
+    let questionLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                          color: SemanticColors.Label.textSectionFooter)
 
     var callQualityStackView: CustomSpacingStackView!
@@ -223,7 +223,7 @@ final class CallQualityView: UIStackView {
     typealias ViewColors = SemanticColors.View
 
     let defaultTextColor = SemanticColors.Label.textDefault
-    let scoreLabel = LegacyDynamicFontLabel(fontSpec: FontSpec.mediumRegularFont,
+    let scoreLabel = DynamicFontLabel(fontSpec: FontSpec.mediumRegularFont,
                                       color: SemanticColors.Label.textDefault)
     let scoreButton = Button()
     let callback: (Int) -> Void

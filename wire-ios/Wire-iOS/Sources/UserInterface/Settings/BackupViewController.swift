@@ -26,8 +26,8 @@ private typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
 
 final class BackupStatusCell: UITableViewCell {
 
-    let descriptionLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(fontSpec: .normalRegularFont,
+    let descriptionLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(fontSpec: .normalRegularFont,
                                      color: LabelColors.textDefault)
         label.textAlignment = .left
         label.numberOfLines = 0
@@ -72,8 +72,8 @@ final class BackupStatusCell: UITableViewCell {
 }
 
 final class BackupActionCell: UITableViewCell {
-    let actionTitleLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: HistoryBackup.action,
+    let actionTitleLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: HistoryBackup.action,
                                      fontSpec: .normalRegularFont,
                                      color: LabelColors.textDefault)
         label.textAlignment = .left

@@ -34,7 +34,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     let searchResultsController: ZiphySearchResultsController
     let searchBar: TextSearchInputView = TextSearchInputView()
-    let noResultsLabel = LegacyDynamicFontLabel(text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
+    let noResultsLabel = DynamicFontLabel(text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
                                           fontSpec: .normalRegularFont,
                                           color: SemanticColors.Label.textSettingsPasswordPlaceholder)
     let conversation: ZMConversation

@@ -47,7 +47,7 @@ final class WireLogoInfoView: UIView {
     }()
 
     let titleLabel: UILabel = {
-        let label = LegacyDynamicFontLabel(fontSpec: .largeSemiboldFont,
+        let label = DynamicFontLabel(fontSpec: .largeSemiboldFont,
                                      color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
         label.accessibilityValue = label.text
@@ -55,7 +55,7 @@ final class WireLogoInfoView: UIView {
     }()
 
     let subtitleLabel: UILabel = {
-        let label = LegacyDynamicFontLabel(fontSpec: .normalRegularFont,
+        let label = DynamicFontLabel(fontSpec: .normalRegularFont,
                                      color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
         label.numberOfLines = 0

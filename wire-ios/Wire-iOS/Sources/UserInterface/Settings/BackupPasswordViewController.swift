@@ -56,16 +56,16 @@ final class BackupPasswordViewController: UIViewController {
     private var password: Password?
     private let passwordView = SimpleTextField()
 
-    private let subtitleLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(text: HistoryBackup.Password.description,
+    private let subtitleLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(text: HistoryBackup.Password.description,
                                      fontSpec: .mediumRegularFont,
                                      color: LabelColors.textSectionHeader)
         label.numberOfLines = 0
         return label
     }()
 
-    private let passwordRulesLabel: LegacyDynamicFontLabel = {
-        let label = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
+    private let passwordRulesLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                      color: LabelColors.textSectionHeader)
         label.numberOfLines = 0
         return label

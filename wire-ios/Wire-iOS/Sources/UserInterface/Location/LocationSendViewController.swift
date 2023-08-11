@@ -28,7 +28,7 @@ final class LocationSendViewController: UIViewController {
     let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
 
     let addressLabel: UILabel = {
-        let label = LegacyDynamicFontLabel(fontSpec: FontSpec.normalFont, color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(fontSpec: FontSpec.normalFont, color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
         return label
     }()

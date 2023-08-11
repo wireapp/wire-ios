@@ -106,9 +106,9 @@ class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Conversat
         let bottomText: String
     }
 
-    private let encryptionLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
+    private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                                    color: LabelColors.textDefault)
-    private let sensitiveInfoLabel = LegacyDynamicFontLabel(fontSpec: .mediumRegularFont,
+    private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                                       color: LabelColors.textDefault)
 
     func configure(with object: Configuration, animated: Bool) {

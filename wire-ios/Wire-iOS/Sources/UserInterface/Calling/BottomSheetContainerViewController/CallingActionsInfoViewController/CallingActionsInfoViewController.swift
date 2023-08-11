@@ -29,7 +29,7 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
     private let stackView = UIStackView(axis: .vertical)
     private var participantsHeaderView = UIView()
     private let securityLevelView = SecurityLevelView()
-    private var participantsHeaderLabel = LegacyDynamicFontLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textSectionHeader)
+    private var participantsHeaderLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textSectionHeader)
     private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
     var isIncomingCall: Bool = false
 
