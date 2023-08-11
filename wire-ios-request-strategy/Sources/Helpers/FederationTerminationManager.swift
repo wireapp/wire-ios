@@ -107,7 +107,6 @@ private extension FederationTerminationManager {
         conversationsNotOwned(by: domains, withParticipantsFrom: userDomains).forEach {
             $0.appendFederationTerminationSystemMessage(domains: userDomains)
             $0.removeParticipants(with: userDomains)
-
         }
     }
 
