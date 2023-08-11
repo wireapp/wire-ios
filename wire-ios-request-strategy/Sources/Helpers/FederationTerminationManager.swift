@@ -66,11 +66,13 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
 private extension FederationTerminationManager {
 
     func markOneToOneConversationsAsReadOnly(with domain: String) {
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(with: domain))
+        let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
+        let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
         if let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
-            users.compactMap(\.connection?.conversation)
-                 .filter { !$0.isForcedReadOnly }
-                 .forEach { conversation in
+            users
+                .compactMap(\.connection?.conversation)
+                .filter { !$0.isForcedReadOnly }
+                .forEach { conversation in
                     conversation.appendFederationTerminationSystemMessage(domains: [domain, context.selfDomain])
                     conversation.isForcedReadOnly = true
                 }
@@ -78,7 +80,8 @@ private extension FederationTerminationManager {
     }
 
     func removeConnectionRequests(with domain: String) {
-        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForSentAndPendingConnection(with: domain))
+        let sentAndPendingConnectionsPredicate = ZMUser.predicateForSentAndPendingConnections(hostedOnDomain: domain)
+        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: sentAndPendingConnectionsPredicate)
         if let pendingUsers = context.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] {
             pendingUsers.forEach { user in
                 user.connection?.status = (user.connection?.status == .pending) ? .ignored : .cancelled
@@ -87,31 +90,27 @@ private extension FederationTerminationManager {
     }
 
     func removeUsers(with userDomain: String, fromConversationsOwnedBy domain: String) {
-        conversationsOwned(by: domain, withParticipantsFrom: userDomain).forEach {
+        conversationsHosted(on: domain, withParticipantsOn: userDomain).forEach {
             $0.appendFederationTerminationSystemMessage(domains: [userDomain, domain])
             $0.removeParticipants(with: [userDomain])
         }
     }
 
-    func conversationsOwned(by domain: String, withParticipantsFrom userDomain: String) -> [ZMConversation] {
-        guard let conversations = ZMConversation.groupConversationOwned(by: domain, in: context) else {
-            return []
-        }
-        return conversations.filter { $0.hasLocalParticipantsFrom(Set([userDomain])) }
+    func conversationsHosted(on domain: String, withParticipantsOn userDomain: String) -> [ZMConversation] {
+        return ZMConversation.groupConversations(hostedOnDomain: domain, in: context)
+                             .filter { $0.hasLocalParticipantsFrom(Set([userDomain])) }
     }
 
     func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
-        conversationsNotOwned(by: domains, withParticipantsFrom: userDomains).forEach {
+        conversationsNotHosted(on: domains, withParticipantsOn: userDomains).forEach {
             $0.appendFederationTerminationSystemMessage(domains: userDomains)
             $0.removeParticipants(with: userDomains)
         }
     }
 
-    func conversationsNotOwned(by domains: [String], withParticipantsFrom userDomains: [String]) -> [ZMConversation] {
-        guard let conversations = ZMConversation.groupConversationNotOwned(by: domains, in: context) else {
-            return []
-        }
-        return conversations.filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
+    func conversationsNotHosted(on domains: [String], withParticipantsOn userDomains: [String]) -> [ZMConversation] {
+        return ZMConversation.groupConversations(notHostedOnDomains: domains, in: context)
+                             .filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
     }
 
 }

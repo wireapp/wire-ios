@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
     func isFederating(with user: UserType) -> Bool {
         guard
@@ -29,30 +29,58 @@ extension ZMConversation {
         return domain != userDomain
     }
 
-    public static func groupConversationOwned(by domain: String, in context: NSManagedObjectContext) -> [ZMConversation]? {
-        let hostedOnDomainPredicate = NSPredicate(format: "%K == %d AND %K == %@",
-                                                  ZMConversationConversationTypeKey,
-                                                  ZMConversationType.group.rawValue,
-                                                  ZMConversationDomainKey,
-                                                  domain)
-        let request = self.sortedFetchRequest(with: hostedOnDomainPredicate)
-
-        return context.fetchOrAssert(request: request) as? [ZMConversation]
+    static func groupConversations(
+        hostedOnDomain domain: String,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        let predicate: NSPredicate = .isGroupConversation.and(.isHostedOnDomain(domain))
+        let request = sortedFetchRequest(with: predicate)
+        return context.fetchOrAssert(request: request) as? [ZMConversation] ?? []
     }
 
-    public static func groupConversationNotOwned(by domains: [String], in context: NSManagedObjectContext) -> [ZMConversation]? {
-        let groupConversationPredicate = NSPredicate(format: "%K == %d",
-                                                  ZMConversationConversationTypeKey,
-                                                  ZMConversationType.group.rawValue)
-        let hostedOnDomainPredicate = NSPredicate(format: "%K IN %@",
-                                                  ZMConversationDomainKey,
-                                                  domains)
-        let notHostedOnDomainPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: hostedOnDomainPredicate)
-        let resultPredicate =  NSCompoundPredicate(andPredicateWithSubpredicates: [groupConversationPredicate, notHostedOnDomainPredicate])
+    static func groupConversations(
+        notHostedOnDomains domains: [String],
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
+        let predicate: NSPredicate = .isGroupConversation.and(.isNotHostedOnDomains(domains))
+        let request = sortedFetchRequest(with: predicate)
+        return context.fetchOrAssert(request: request) as? [ZMConversation] ?? []
+    }
 
-        let request = self.sortedFetchRequest(with: resultPredicate)
+}
 
-        return context.fetchOrAssert(request: request) as? [ZMConversation]
+extension NSPredicate {
+
+    static var isGroupConversation: NSPredicate {
+        return hasConversationType(.group)
+    }
+
+    static func hasConversationType(_ type: ZMConversationType) -> NSPredicate {
+        return NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            type.rawValue
+        )
+    }
+
+    static func isHostedOnDomain(_ domain: String) -> NSPredicate {
+        return NSPredicate(
+            format: "%K == %@",
+            ZMConversationDomainKey,
+            domain
+        )
+    }
+
+    static func isNotHostedOnDomains(_ domains: [String]) -> NSPredicate {
+        return isHostedOnAnyDomain(domains).inverse
+    }
+
+    static func isHostedOnAnyDomain(_ domains: [String]) -> NSPredicate {
+        return NSPredicate(
+            format: "%K IN %@",
+            ZMConversationDomainKey,
+            domains
+        )
     }
 
 }
