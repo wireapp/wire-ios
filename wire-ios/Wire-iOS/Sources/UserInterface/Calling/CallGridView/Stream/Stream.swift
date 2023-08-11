@@ -24,8 +24,7 @@ struct Stream: Equatable {
 
     let streamId: AVSClient
     let user: UserType?
-    let microphoneState: MicrophoneState?
-    let videoState: VideoState?
+    let callParticipantState: CallParticipantState
     let activeSpeakerState: ActiveSpeakerState
     let isPaused: Bool
 
@@ -35,13 +34,22 @@ extension Stream: Differentiable {
     var differenceIdentifier: AVSClient {
         return streamId
     }
+
+    var microphoneState: MicrophoneState? {
+        guard case .connected(_, let state) = callParticipantState else { return nil }
+        return state
+    }
+
+    var videoState: VideoState? {
+        guard case .connected(let state, _) = callParticipantState else { return nil }
+        return state
+    }
 }
 
 extension Stream {
     static func == (lhs: Stream, rhs: Stream) -> Bool {
         return lhs.streamId == rhs.streamId
-            && lhs.microphoneState == rhs.microphoneState
-            && lhs.videoState == rhs.videoState
+            && lhs.callParticipantState == rhs.callParticipantState
             && lhs.activeSpeakerState == rhs.activeSpeakerState
     }
 }
