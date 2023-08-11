@@ -225,4 +225,9 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    // MARK: - Subconversation Members
+
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        fatalError("not implemented")
+    }
 }
