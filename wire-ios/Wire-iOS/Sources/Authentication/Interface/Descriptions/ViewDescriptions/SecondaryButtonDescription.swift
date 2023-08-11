@@ -33,7 +33,7 @@ final class SecondaryButtonDescription {
 
 extension SecondaryButtonDescription: ViewDescriptor {
     func create() -> UIView {
-        let button = LegacyDynamicFontButton(fontSpec: .buttonSmallBold)
+        let button = DynamicFontButton(fontSpec: .buttonSmallBold)
         button.applyStyle(.secondaryTextButtonStyle)
         button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12)
         button.layer.cornerRadius = 12

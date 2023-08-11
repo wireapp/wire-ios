@@ -21,15 +21,25 @@ import WireCommonComponents
 
 /// A helper class that provides the Button with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable protocol
-@available(*, deprecated, message: "Use `DynamicFontButton` instead")
-class LegacyDynamicFontButton: StylableButton, DynamicTypeCapable {
+class DynamicFontButton: StylableButton, DynamicTypeCapable {
 
     // MARK: - Properties
-    private let fontSpec: FontSpec
 
-    // MARK: - Initilization
+    private let onRedrawFont: () -> UIFont?
+
+    init(
+        style: UIFont.FontStyle = .body
+    ) {
+        // Not needed when we use a font style.
+        onRedrawFont = { return nil }
+        super.init(frame: .zero)
+        self.titleLabel?.font = .font(for: style)
+        titleLabel?.adjustsFontForContentSizeCategory = true
+    }
+
+    @available(*, deprecated, message: "Use `init(style:)` instead")
     init(fontSpec: FontSpec = .normalRegularFont) {
-        self.fontSpec = fontSpec
+        self.onRedrawFont = { return fontSpec.font }
         super.init(frame: .zero)
 
         titleLabel?.font = fontSpec.font
@@ -40,26 +50,10 @@ class LegacyDynamicFontButton: StylableButton, DynamicTypeCapable {
     }
 
     // MARK: - Methods
+
     func redrawFont() {
-        self.titleLabel?.font = fontSpec.font
-    }
-
-}
-
-/// A helper class that provides the Button with Dynamic Type Support
-class DynamicFontButton: StylableButton {
-
-    init(style: UIFont.FontStyle = .body) {
-
-        super.init(frame: .zero)
-
-        titleLabel?.font = .font(for: style)
-
-        titleLabel?.adjustsFontForContentSizeCategory = true
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        guard let newFont = onRedrawFont() else { return }
+        self.titleLabel?.font = newFont
     }
 
 }

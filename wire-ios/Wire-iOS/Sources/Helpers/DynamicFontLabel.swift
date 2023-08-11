@@ -24,6 +24,8 @@ import WireCommonComponents
 
 class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
+    // MARK: - Properties
+    
     private let onRedrawFont: () -> UIFont?
 
     // MARK: - initialization
