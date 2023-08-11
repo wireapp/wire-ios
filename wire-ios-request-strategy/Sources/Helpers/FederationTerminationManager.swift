@@ -68,15 +68,12 @@ private extension FederationTerminationManager {
     func markOneToOneConversationsAsReadOnly(with domain: String) {
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(with: domain))
         if let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
-            users.forEach { user in
-                guard let conversation = user.connection?.conversation else {
-                    return
-                }
-                if !conversation.isForcedReadOnly {
+            users.compactMap(\.connection?.conversation)
+                 .filter { !$0.isForcedReadOnly }
+                 .forEach { conversation in
                     conversation.appendFederationTerminationSystemMessage(domains: [domain, context.selfDomain])
                     conversation.isForcedReadOnly = true
                 }
-            }
         }
     }
 
