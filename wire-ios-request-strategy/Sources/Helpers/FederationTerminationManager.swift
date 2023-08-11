@@ -30,7 +30,7 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
 
     private var context: NSManagedObjectContext
 
-    public init(in context: NSManagedObjectContext) {
+    public init(with context: NSManagedObjectContext) {
         self.context = context
     }
 
