@@ -50,7 +50,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
 
         viewController.dismissIfNeeded {
             self.createConversation(
-                withUsers: users,
+                users: users,
                 name: name,
                 allowGuests: allowGuests,
                 allowServices: allowServices,
@@ -82,43 +82,42 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     }
 
     private func createConversation(
-        withUsers users: UserSet?,
+        users: UserSet,
         name: String?,
         allowGuests: Bool,
         allowServices: Bool,
         enableReceipts: Bool,
         encryptionProtocol: EncryptionProtocol
     ) {
-        guard
-            let users = users,
-            let userSession = ZMUserSession.shared()
-        else {
-            return
-        }
+        guard let userSession = ZMUserSession.shared() else { return }
+        let service = ConversationService(context: userSession.viewContext)
+        let users = Set(users.materialize(in: userSession.viewContext))
 
-        var conversation: ZMConversation?
+        service.createGroupConversation(
+            name: name,
+            users: users,
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            enableReceipts: enableReceipts,
+            messageProtocol: encryptionProtocol == .proteus ? .proteus : .mls
+        ) { [weak self] in
+            switch $0 {
+            case .success(let conversation):
+                self?.navigate(to: conversation)
 
-        userSession.enqueue {
-            conversation = ZMConversation.insertGroupConversation(
-                moc: userSession.viewContext,
-                participants: users.materialize(in: userSession.viewContext),
-                name: name,
-                team: ZMUser.selfUser().team,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                readReceipts: enableReceipts,
-                messageProtocol: encryptionProtocol == .mls ? .mls : .proteus
-            )
-        } completionHandler: {
-            guard let conversation = conversation else {return }
-
-            delay(0.3) {
-                ZClientViewController.shared?.select(
-                    conversation: conversation,
-                    focusOnView: true,
-                    animated: true
-                )
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create conversation from flow: \(String(describing: error))")
             }
+        }
+    }
+
+    private func navigate(to conversation: ZMConversation) {
+        delay(0.3) {
+            ZClientViewController.shared?.select(
+                conversation: conversation,
+                focusOnView: true,
+                animated: true
+            )
         }
     }
 }
