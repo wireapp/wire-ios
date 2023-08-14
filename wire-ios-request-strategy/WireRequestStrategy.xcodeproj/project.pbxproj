@@ -235,6 +235,10 @@
 		EE668BB22954A7C700D939E7 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB12954A7C700D939E7 /* WireDataModel.framework */; };
 		EE67F72C296F0CE4001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72B296F0CE4001D7C88 /* WireTesting.framework */; };
 		EE67F72D296F0CE4001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F72B296F0CE4001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */; };
+		EE7F02292A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */; };
+		EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */; };
+		EE7F022D2A8392EF00FE5695 /* MockActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */; };
 		EE82318927D22D79008CD77B /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82318827D22D79008CD77B /* String+Random.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
@@ -660,6 +664,10 @@
 		EE57BD9E28A52E3100C46660 /* MessageSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSyncTests.swift; sourceTree = "<group>"; };
 		EE668BB12954A7C700D939E7 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F72B296F0CE4001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandler.swift; sourceTree = "<group>"; };
+		EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandlerTests.swift; sourceTree = "<group>"; };
+		EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServiceTests.swift; sourceTree = "<group>"; };
+		EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActionHandler.swift; sourceTree = "<group>"; };
 		EE82318827D22D79008CD77B /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
@@ -944,6 +952,7 @@
 				63DA33A9286F343A00818C3C /* MockMLSEventProcessor.swift */,
 				633B396B2892D53300208124 /* MockMLSService.swift */,
 				EE30CAAF29ACAE1600A332B1 /* MockProteusServiceinterface.swift */,
+				EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1002,6 +1011,7 @@
 				1658EA6126DE22C0003D0090 /* ConversationRequestStrategy.swift */,
 				EE0CEB452893E9390055ECE5 /* ConversationEventProcessor.swift */,
 				EEDE7DB028EAEEC3007DC6A3 /* ConversationService.swift */,
+				EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */,
 				EEDE7DB228EAEEFA007DC6A3 /* MockConversationService.swift */,
 				EEDE7DAC28EAE538007DC6A3 /* ConversationEventProcessorTests.swift */,
 				16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */,
@@ -1126,6 +1136,8 @@
 				EECBE8EB28E71ED7005DE5DD /* SyncConversationAction.swift */,
 				EECBE8ED28E71F19005DE5DD /* SyncConversationActionHandler.swift */,
 				EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */,
+				EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */,
+				EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -1948,6 +1960,7 @@
 				EE47346E29A3A17900E6C04E /* EventDecoder+MLS.swift in Sources */,
 				63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
+				EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */,
 				0649D14524F63BBD001DDC78 /* LocalNotificationType+Configuration.swift in Sources */,
 				7AEBB677285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				F18401C32073BE0800E9F4CC /* AssetV3DownloadRequestStrategy.swift in Sources */,
@@ -2070,6 +2083,7 @@
 				63DA33A8286F27DD00818C3C /* MLSEventProcessorTests.swift in Sources */,
 				EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */,
 				F18401FE2073C2EA00E9F4CC /* MessagingTest+Encryption.swift in Sources */,
+				EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */,
 				7AEBB679285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift in Sources */,
 				16A86B4622A5485E00A674F8 /* IdentifierObjectSyncTests.swift in Sources */,
 				063139DF2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift in Sources */,
@@ -2093,6 +2107,7 @@
 				0605DB902511622100443219 /* ZMLocalNotificationTests_UnreadCount.swift in Sources */,
 				06A196702A7BEBD100B43BA5 /* TerminateFederationRequestStrategyTests.swift in Sources */,
 				1621D22A1D75AB2D007108C2 /* MockModelObjectContextFactory.m in Sources */,
+				EE7F022D2A8392EF00FE5695 /* MockActionHandler.swift in Sources */,
 				0693114E24F79A1300D14DF5 /* LocalNotificationContentTypeTest.swift in Sources */,
 				F18401E02073C25900E9F4CC /* ClientMessageRequestFactoryTests.swift in Sources */,
 				63CC83B3285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift in Sources */,
@@ -2146,6 +2161,7 @@
 				16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */,
 				16CC0833268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift in Sources */,
 				167BCBC426087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift in Sources */,
+				EE7F02292A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift in Sources */,
 				F18401F12073C26C00E9F4CC /* AssetV3DownloadRequestStrategyTests.swift in Sources */,
 				16B5B42B2705E163001A3216 /* ConnectionRequestStrategyTests.swift in Sources */,
 				F18402012073C2EA00E9F4CC /* RequestStrategyTestBase.swift in Sources */,

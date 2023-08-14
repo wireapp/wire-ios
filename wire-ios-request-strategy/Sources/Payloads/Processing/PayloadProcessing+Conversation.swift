@@ -67,37 +67,55 @@ extension Payload.Conversation {
         return ZMUser.fetchOrCreate(with: userID, domain: qualifiedID?.domain, in: context)
     }
 
-    func updateOrCreate(in context: NSManagedObjectContext,
-                        serverTimestamp: Date = Date(),
-                        source: Source = .eventStream) {
-
-        guard let rawType = type else { return }
-        let conversationType = BackendConversationType.clientConversationType(rawValue: rawType)
+    @discardableResult
+    func updateOrCreate(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date = Date(),
+        source: Source = .eventStream
+    ) -> ZMConversation? {
+        guard let conversationType = type.map(BackendConversationType.clientConversationType) else {
+            return nil
+        }
 
         switch conversationType {
         case .group:
-            updateOrCreateGroupConversation(in: context, serverTimestamp: serverTimestamp, source: source)
+            return updateOrCreateGroupConversation(
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
         case .`self`:
-            updateOrCreateSelfConversation(in: context, serverTimestamp: serverTimestamp, source: source)
+            return updateOrCreateSelfConversation(
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
         case .connection, .oneOnOne:
-            updateOrCreateOneToOneConversation(in: context, serverTimestamp: serverTimestamp, source: source)
+            return updateOrCreateOneToOneConversation(
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
         default:
-            break
+            return nil
         }
     }
 
+    @discardableResult
     func updateOrCreateOneToOneConversation(
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) {
-
+    ) -> ZMConversation? {
         guard
             let conversationID = id ?? qualifiedID?.uuid,
             let rawConversationType = type
         else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
-            return
+            return nil
         }
 
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
@@ -110,7 +128,7 @@ extension Payload.Conversation {
             // TODO: use conversation type from the backend once it returns the correct value
             conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
             conversation?.needsToBeUpdatedFromBackend = false
-            return
+            return conversation
         }
 
         let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
@@ -137,21 +155,28 @@ extension Payload.Conversation {
 
         conversation.needsToBeUpdatedFromBackend = false
         conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+
+        return conversation
     }
 
-    func updateOrCreateSelfConversation(in context: NSManagedObjectContext,
-                                        serverTimestamp: Date,
-                                        source: Source) {
+    @discardableResult
+    func updateOrCreateSelfConversation(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
-            return
+            return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID,
-                                                        domain: qualifiedID?.domain,
-                                                        in: context,
-                                                        created: &created)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: qualifiedID?.domain,
+            in: context,
+            created: &created
+        )
 
         conversation.conversationType = .`self`
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
@@ -161,21 +186,28 @@ extension Payload.Conversation {
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+
+        return conversation
     }
 
-    func updateOrCreateGroupConversation(in context: NSManagedObjectContext,
-                                         serverTimestamp: Date,
-                                         source: Source) {
+    @discardableResult
+    func updateOrCreateGroupConversation(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
-            return
+            return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID,
-                                                        domain: qualifiedID?.domain,
-                                                        in: context,
-                                                        created: &created)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: qualifiedID?.domain,
+            in: context,
+            created: &created
+        )
 
         conversation.conversationType = .group
         conversation.remoteIdentifier = conversationID
@@ -214,6 +246,8 @@ extension Payload.Conversation {
 
             conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
         }
+
+        return conversation
     }
 
     func updateSystemMessage(

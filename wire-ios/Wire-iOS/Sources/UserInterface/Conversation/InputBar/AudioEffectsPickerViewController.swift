@@ -28,10 +28,10 @@ protocol AudioEffectsPickerDelegate: AnyObject {
 final class AudioEffectsPickerViewController: UIViewController {
 
     let recordingPath: String
-    fileprivate let duration: TimeInterval
+    private let duration: TimeInterval
     weak var delegate: AudioEffectsPickerDelegate?
 
-    fileprivate var audioPlayerController: AudioPlayerController? {
+    private var audioPlayerController: AudioPlayerController? {
         didSet {
             if audioPlayerController == .none {
                 let selector = #selector(AudioEffectsPickerViewController.updatePlayProgressTime)
@@ -49,9 +49,9 @@ final class AudioEffectsPickerViewController: UIViewController {
 
     var state: State = .none
 
-    fileprivate let effects: [AVSAudioEffectType] = AVSAudioEffectType.displayedEffects
+    private let effects: [AVSAudioEffectType] = AVSAudioEffectType.displayedEffects
     var normalizedLoudness: [Float] = []
-    fileprivate var lastLayoutSize = CGSize.zero
+    private var lastLayoutSize = CGSize.zero
 
     var selectedAudioEffect: AVSAudioEffectType = .none {
         didSet {
@@ -91,8 +91,8 @@ final class AudioEffectsPickerViewController: UIViewController {
         }
     }
 
-    fileprivate static let effectRows = 2
-    fileprivate static let effectColumns = 4
+    private static let effectRows = 2
+    private static let effectColumns = 4
 
     deinit {
         tearDown()
@@ -115,11 +115,11 @@ final class AudioEffectsPickerViewController: UIViewController {
         audioPlayerController = .none
     }
 
-    fileprivate let collectionViewLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-    fileprivate var collectionView: UICollectionView!
-    fileprivate let statusBoxView = UIView()
+    private let collectionViewLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+    private var collectionView: UICollectionView!
+    private let statusBoxView = UIView()
     let progressView = WaveformProgressView()
-    fileprivate let subtitleLabel = UILabel()
+    private let subtitleLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -167,7 +167,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         setState(.time, animated: false)
     }
 
-    fileprivate func createCollectionView() {
+    private func createCollectionView() {
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumLineSpacing = 0
         collectionViewLayout.minimumInteritemSpacing = 0
@@ -182,7 +182,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         collectionView.backgroundColor = UIColor.clear
     }
 
-    fileprivate func loadLevels() {
+    private func loadLevels() {
         let url = URL(fileURLWithPath: recordingPath)
         FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { metadata in
             DispatchQueue.main.async(execute: {
@@ -265,7 +265,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         }
     }
 
-    fileprivate func selectCurrentFilter() {
+    private func selectCurrentFilter() {
         if let index = effects.firstIndex(where: {
             $0 == selectedAudioEffect
         }) {
@@ -274,7 +274,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         }
     }
 
-    fileprivate func playMedia(_ atPath: String) {
+    private func playMedia(_ atPath: String) {
         audioPlayerController?.tearDown()
 
         audioPlayerController = try? AudioPlayerController(contentOf: URL(fileURLWithPath: atPath))
@@ -283,7 +283,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         updatePlayProgressTime()
     }
 
-    @objc fileprivate func updatePlayProgressTime() {
+    @objc private func updatePlayProgressTime() {
         let selector = #selector(AudioEffectsPickerViewController.updatePlayProgressTime)
         if let player = audioPlayerController?.player {
             progressView.progress = Float(player.currentTime / player.duration)

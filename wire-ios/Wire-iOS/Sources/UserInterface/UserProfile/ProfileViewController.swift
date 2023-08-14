@@ -127,8 +127,6 @@ final class ProfileViewController: UIViewController {
         profileTitleView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.titleView = profileTitleView
 
-        navigationItem.titleView = profileTitleView
-
         securityLevelView.configure(with: viewModel.classification)
         view.addSubview(securityLevelView)
     }
@@ -179,8 +177,8 @@ final class ProfileViewController: UIViewController {
         updateShowVerifiedShield()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
     }
