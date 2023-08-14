@@ -477,6 +477,20 @@ extension ZMConversation {
         }
     }
 
+    /// Remove participants from the conversation. It will NOT be synchronized to the backend .
+    ///
+    /// The method will handle the case when the participant is not there, so it's safe to call
+    /// it even if the user is not there.
+    public func removeParticipantsLocally(_ users: Set<ZMUser>) {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        users
+            .compactMap { $0.participantRole(in: self) }
+            .forEach(context.delete)
+    }
+
     /// Remove participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.

@@ -18,15 +18,18 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension NSPredicate {
 
-    /// Whether the conversation was deleted on the backend.
+    var inverse: NSPredicate {
+        return NSCompoundPredicate(notPredicateWithSubpredicate: self)
+    }
 
-    @NSManaged
-    public var isDeletedRemotely: Bool
+    func and(_ other: NSPredicate) -> NSPredicate {
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [self, other])
+    }
 
-    /// Whether the converstion is marked as read only
-    @NSManaged
-    public var isForcedReadOnly: Bool
+    func or(_ other: NSPredicate) -> NSPredicate {
+        return NSCompoundPredicate(orPredicateWithSubpredicates: [self, other])
+    }
 
 }
