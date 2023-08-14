@@ -28,7 +28,6 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     override func setUp() {
         super.setUp()
-        isRecording = true
         FontScheme.configure(with: .large)
         coreDataFixture = CoreDataFixture()
         accentColor = .strongBlue
