@@ -386,6 +386,5 @@
                 <constraint value="remoteIdentifier"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
->>>>>>> feat/operations-with-nfcg
     </entity>
 </model>
