@@ -69,13 +69,18 @@ else
 fi 
 echo ""
 
+echo "ℹ️  Fetching submodules..."
+    git submodule update --init --recursive || true
+    git submodule sync --recursive || true
+echo ""
+
 echo "ℹ️  Installing bundler and Ruby dependencies..."
 which bundle || gem install bundler
 bundle check || bundle install
 echo ""
 
-echo "ℹ️  Downloading additional assets..."
-scripts/download-assets.sh "$@"
+echo "ℹ️  Overriding configuration if specified..."
+scripts/override-configuration_if_needed.sh "$@"
 echo "" 
 
 echo "ℹ️  Doing additional postprocessing..."

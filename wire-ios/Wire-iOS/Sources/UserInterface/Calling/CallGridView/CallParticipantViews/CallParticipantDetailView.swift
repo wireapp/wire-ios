@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireUtilities
+import WireSyncEngine
 
 final class CallParticipantDetailsView: RoundedBlurView {
 
@@ -28,6 +28,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
     typealias IconColors = SemanticColors.Icon
 
     private let nameLabel: UILabel
+    private let connectingLabel: UILabel
     private let microphoneIconView = PulsingIconImageView()
 
     var name: String? {
@@ -36,7 +37,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
         }
     }
 
-    private let labelContainerView = UIView()
+    private let labelsContainerView = UIStackView(axis: .horizontal)
     private let microphoneImageView = UIImageView()
     private var microphoneWidth: NSLayoutConstraint?
 
@@ -46,11 +47,27 @@ final class CallParticipantDetailsView: RoundedBlurView {
         }
     }
 
+    var callState: CallParticipantState = .connecting {
+        didSet {
+            switch callState {
+            case .unconnectedButMayConnect, .connecting:
+                connectingLabel.isHidden = false
+                nameLabel.textColor =  SemanticColors.Label.textInactive
+            default:
+                nameLabel.textColor =  SemanticColors.Label.textWhite
+                connectingLabel.isHidden = true
+            }
+        }
+    }
+
     // MARK: - Init
 
     override init() {
         nameLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
                                      color: SemanticColors.Label.textWhite)
+        connectingLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
+                                           color: SemanticColors.Label.textParticipantDisconnected)
+        connectingLabel.text = L10n.Localizable.Call.Grid.connecting
         super.init()
     }
 
@@ -58,46 +75,49 @@ final class CallParticipantDetailsView: RoundedBlurView {
 
     override func setupViews() {
         super.setupViews()
-        [microphoneImageView, labelContainerView].forEach {
+        [microphoneImageView, labelsContainerView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             addSubview($0)
         }
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        labelContainerView.addSubview(nameLabel)
-        labelContainerView.backgroundColor = .black
-        labelContainerView.layer.cornerRadius = 3.0
-        labelContainerView.layer.masksToBounds = true
+        [nameLabel, connectingLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            labelsContainerView.addArrangedSubview($0)
+        }
+        connectingLabel.isHidden = true
+        connectingLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        labelsContainerView.backgroundColor = .black
+        labelsContainerView.layer.cornerRadius = 3.0
+        labelsContainerView.spacing = 6.0
+        labelsContainerView.layer.masksToBounds = true
+        labelsContainerView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        labelsContainerView.isLayoutMarginsRelativeArrangement = true
+
         microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
                                                                          color: IconColors.foregroundMicrophone)
         microphoneImageView.backgroundColor = IconColors.foregroundDefaultWhite
         microphoneImageView.contentMode = .center
         microphoneImageView.layer.cornerRadius = 3.0
         microphoneImageView.layer.masksToBounds = true
+
         blurView.alpha = 0
     }
 
     override func createConstraints() {
         super.createConstraints()
 
-        labelContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        labelsContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
         microphoneWidth = microphoneImageView.widthAnchor.constraint(equalToConstant: 22)
         NSLayoutConstraint.activate([
-            labelContainerView.centerXAnchor.constraint(equalTo: centerXAnchor).withPriority(.defaultLow),
-            labelContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: microphoneImageView.trailingAnchor, constant: 2.0),
-            labelContainerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            labelsContainerView.centerXAnchor.constraint(equalTo: centerXAnchor).withPriority(.defaultLow),
+            labelsContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            labelsContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: microphoneImageView.trailingAnchor, constant: 2.0),
+            labelsContainerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             microphoneImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             microphoneImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             microphoneImageView.heightAnchor.constraint(equalToConstant: 22),
             microphoneWidth!
         ])
-
-        NSLayoutConstraint.activate(
-            NSLayoutConstraint.forView(view: nameLabel,
-                                       inContainer: labelContainerView,
-                                       withInsets: UIEdgeInsets.init(top: 4, left: 4, bottom: 4, right: 4))
-        )
-
         updateMicrophoneView()
 
     }
@@ -107,12 +127,12 @@ final class CallParticipantDetailsView: RoundedBlurView {
     private func updateMicrophoneView() {
         microphoneIconView.set(style: microphoneIconStyle)
         makeMicrophone(hidden: true)
-        labelContainerView.backgroundColor = .black
+        labelsContainerView.backgroundColor = .black
         nameLabel.textColor = .white
 
         switch microphoneIconStyle {
         case .unmutedPulsing:
-            labelContainerView.backgroundColor = UIColor.accent()
+            labelsContainerView.backgroundColor = UIColor.accent()
             nameLabel.textColor = SemanticColors.Label.textDefaultWhite
         case .muted:
             makeMicrophone(hidden: false)
