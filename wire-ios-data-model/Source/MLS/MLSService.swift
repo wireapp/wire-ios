@@ -1056,6 +1056,15 @@ public struct MLSUser: Equatable {
     public let selfClientID: String?
 
     public init(
+        _ qualifiedID: QualifiedID,
+        selfClientID: String? = nil
+    ) {
+        self.id = qualifiedID.uuid
+        self.domain = qualifiedID.domain
+        self.selfClientID = selfClientID
+    }
+
+    public init(
         id: UUID,
         domain: String,
         selfClientID: String? = nil

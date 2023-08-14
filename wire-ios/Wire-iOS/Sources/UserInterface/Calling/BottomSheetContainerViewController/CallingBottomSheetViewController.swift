@@ -279,8 +279,7 @@ extension VoiceChannel {
         return sortedParticipants.map {
             CallParticipantsListCellConfiguration.callParticipant(
                 user: HashBox(value: $0.user),
-                videoState: $0.state.videoState,
-                microphoneState: $0.state.microphoneState,
+                callParticipantState: $0.state,
                 activeSpeakerState: $0.activeSpeakerState
             )
         }

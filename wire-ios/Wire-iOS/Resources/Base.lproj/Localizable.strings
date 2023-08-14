@@ -705,6 +705,7 @@
 "call.overlay.switch_to.all" = "ALL";
 
 "call.grid.no_active_speakers" = "No active video speakers...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "Double tap on a tile for fullscreen";
 "call.grid.hints.go_back_or_zoom" = "Double tap to go back, pinch to zoom";
