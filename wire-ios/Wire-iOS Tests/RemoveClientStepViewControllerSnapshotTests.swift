@@ -17,16 +17,17 @@
 //
 
 import XCTest
+import WireCommonComponents
 @testable import Wire
 
-final class RemoveClientStepViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: RemoveClientStepViewController!
 
     override func setUp() {
         super.setUp()
-
+        
         coreDataFixture = CoreDataFixture()
 
         sut = RemoveClientStepViewController(clients: [mockUserClient(),

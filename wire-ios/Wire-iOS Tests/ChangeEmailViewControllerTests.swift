@@ -17,9 +17,16 @@
 //
 
 import XCTest
+import WireCommonComponents
+import SnapshotTesting
 @testable import Wire
 
-final class ChangeEmailViewControllerTests: ZMSnapshotTestCase {
+final class ChangeEmailViewControllerTests: XCTestCase {
+
+    override func setUp() {
+        super.setUp()
+        FontScheme.configure(with: .large)
+    }
 
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")

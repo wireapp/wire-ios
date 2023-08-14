@@ -20,7 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
+final class ProfileDetailsViewControllerTests: XCTestCase {
 
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
@@ -28,6 +28,7 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+
         selfUserTeam = UUID()
         selfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: selfUserTeam)
 
