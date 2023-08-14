@@ -36,6 +36,8 @@ extension ConversationAddParticipantsError {
 
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
+    let decoder: JSONDecoder = .defaultDecoder
+
     private let eventProcessor: ConversationEventProcessorProtocol
 
     convenience required init(context: NSManagedObjectContext) {
@@ -57,7 +59,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         case .v1:
             return v1Request(for: action)
         case .v2, .v3, .v4:
-            return v2Request(for: action)
+            return v2Request(for: action, apiVersion: apiVersion)
         }
     }
 
@@ -98,7 +100,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: 1)
     }
 
-    private func v2Request(for action: AddParticipantAction) -> ZMTransportRequest? {
+    private func v2Request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
         guard
@@ -112,7 +114,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: 2)
+        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: apiVersion.rawValue)
     }
 
     private func payload(for action: AddParticipantAction) -> ZMTransportData? {
@@ -134,32 +136,72 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
         switch response.httpStatus {
         case 200:
-
             guard
                 let payload = response.payload,
                 let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
             else {
                 Logging.network.warn("Can't process response, aborting.")
-                action.notifyResult(.failure(.unknown))
+                action.fail(with: .unknown)
                 return
             }
 
             eventProcessor.processConversationEvents([updateEvent])
-
-            action.notifyResult(.success(Void()))
+            action.succeed()
 
         case 204:
-            action.notifyResult(.success(Void()))
-        default:
-            if response.httpStatus == 403 {
-                // Refresh user data since this operation might have failed
-                // due to a team member being removed/deleted from the team.
-                let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
-                users?.filter(\.isTeamMember).forEach({ $0.refreshData() })
+            action.succeed()
+
+        case 403:
+            // Refresh user data since this operation might have failed
+            // due to a team member being removed/deleted from the team.
+            let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
+            users?.filter(\.isTeamMember).forEach({ $0.refreshData() })
+
+            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
+
+        case 409:
+            guard
+                let payload = ErrorResponse(response),
+                let nonFederatingDomains = payload.non_federating_backends
+            else {
+                return action.fail(with: .unknown)
             }
 
-            action.notifyResult(.failure(ConversationAddParticipantsError(response: response) ?? .unknown))
+            if nonFederatingDomains.isEmpty {
+                action.succeed()
+            } else {
+                action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
+            }
+
+        case 503:
+            guard
+                let payload = ErrorResponse(response),
+                let unreachableDomains = payload.unreachable_backends
+            else {
+                return action.fail(with: .unknown)
+            }
+
+            if unreachableDomains.isEmpty {
+                action.succeed()
+            } else {
+                action.fail(with: .unreachableDomains(Set(unreachableDomains)))
+            }
+
+        default:
+            action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
         }
+    }
+}
+
+extension AddParticipantActionHandler {
+
+    // MARK: - Error response
+
+    struct ErrorResponse: Codable {
+
+        var unreachable_backends: [String]?
+        var non_federating_backends: [String]?
+
     }
 
 }

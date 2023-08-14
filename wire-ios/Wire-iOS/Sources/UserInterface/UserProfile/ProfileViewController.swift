@@ -536,6 +536,14 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     }
 
     func presentError(_ error: LocalizedError) {
-        presentLocalizedErrorAlert(error)
+        typealias Strings = L10n.Localizable.Error.Connection
+
+        if let connectionError = error as? ConnectToUserError,
+           connectionError == .federationDenied {
+            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            UIAlertController.showErrorAlert(title: "", message: message)
+        } else {
+            presentLocalizedErrorAlert(error)
+        }
     }
 }

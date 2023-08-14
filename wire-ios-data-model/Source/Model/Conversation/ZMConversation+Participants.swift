@@ -19,24 +19,6 @@
 import Foundation
 import WireProtos
 
-public enum ConversationRemoveParticipantError: Error {
-   case unknown,
-        invalidOperation,
-        conversationNotFound,
-        failedToRemoveMLSMembers
-}
-
-public enum ConversationAddParticipantsError: Error {
-   case unknown,
-        invalidOperation,
-        accessDenied,
-        notConnectedToUser,
-        conversationNotFound,
-        tooManyMembers,
-        missingLegalHoldConsent,
-        failedToAddMLSMembers
-}
-
 public class AddParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?
 
@@ -52,6 +34,21 @@ public class AddParticipantAction: EntityAction {
     }
 }
 
+public enum ConversationAddParticipantsError: Error, Equatable {
+
+    case unknown
+    case invalidOperation
+    case accessDenied
+    case notConnectedToUser
+    case conversationNotFound
+    case tooManyMembers
+    case missingLegalHoldConsent
+    case failedToAddMLSMembers
+    case unreachableDomains(Set<String>)
+    case nonFederatingDomains(Set<String>)
+
+}
+
 public class RemoveParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?
 
@@ -65,6 +62,15 @@ public class RemoveParticipantAction: EntityAction {
         userID = user.objectID
         conversationID = conversation.objectID
     }
+}
+
+public enum ConversationRemoveParticipantError: Error {
+
+    case unknown
+    case invalidOperation
+    case conversationNotFound
+    case failedToRemoveMLSMembers
+
 }
 
 class MLSClientIDsProvider {
@@ -139,7 +145,6 @@ extension ZMConversation {
     }
 
     // MARK: - Participant actions
-
     public func addParticipants(
         _ participants: [UserType],
         completion: @escaping AddParticipantAction.ResultHandler
@@ -150,6 +155,45 @@ extension ZMConversation {
         }
 
         let users = participants.materialize(in: context)
+
+        func retry(excludingDomains domains: Set<String>) {
+            let usersToExclude = users.belongingTo(domains: domains)
+            appendFailedToAddUsersSystemMessage(
+                users: usersToExclude,
+                sender: creator,
+                at: lastServerTimeStamp ?? Date()
+            )
+
+            let usersToAdd = Set(users).subtracting(usersToExclude)
+
+            internalAddParticipants(
+                Array(usersToAdd),
+                completion: completion
+            )
+        }
+
+        internalAddParticipants(users) { result in
+            switch result {
+            case .failure(.unreachableDomains(let domains)):
+                retry(excludingDomains: domains)
+
+            case .failure(.nonFederatingDomains(let domains)):
+                retry(excludingDomains: domains)
+
+            default:
+                completion(result)
+            }
+        }
+    }
+
+    private func internalAddParticipants(
+        _ users: [ZMUser],
+        completion: @escaping AddParticipantAction.ResultHandler
+    ) {
+        guard let context = managedObjectContext else {
+            completion(.failure(.unknown))
+            return
+        }
 
         guard
             conversationType == .group,
@@ -168,7 +212,7 @@ extension ZMConversation {
             action.send(in: context.notificationContext)
 
         case .mls:
-            Logging.mls.info("adding \(participants.count) participants to conversation (\(String(describing: qualifiedID)))")
+            Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
             var mlsService: MLSServiceInterface?
 
@@ -521,4 +565,17 @@ extension ZMConversation {
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
         return localParticipants.contains { $0.userId == userId }
     }
+}
+
+extension Collection where Element == ZMUser {
+
+    func belongingTo(domains: Set<String>) -> Set<ZMUser> {
+        let result = filter { user in
+            guard let domain = user.domain else { return false }
+            return domain.isOne(of: domains)
+        }
+
+        return Set(result)
+    }
+
 }
