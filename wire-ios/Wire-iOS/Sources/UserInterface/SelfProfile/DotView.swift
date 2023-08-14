@@ -21,8 +21,8 @@ import WireSyncEngine
 
 final class DotView: UIView {
 
-    fileprivate let circleView = ShapeView()
-    fileprivate let centerView = ShapeView()
+    private let circleView = ShapeView()
+    private let centerView = ShapeView()
     private var userObserver: NSObjectProtocol!
     private var clientsObserverTokens: [NSObjectProtocol] = []
     private let user: ZMUser?
@@ -86,7 +86,7 @@ final class DotView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    fileprivate func createClientObservers() {
+    private func createClientObservers() {
         guard let user = user else { return }
         clientsObserverTokens = user.clients.map { UserClientChangeInfo.add(observer: self, for: $0) }
     }

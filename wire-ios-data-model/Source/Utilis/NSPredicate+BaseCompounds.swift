@@ -28,7 +28,6 @@ public extension NSPredicate {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [self, other])
     }
 
-
     func or(_ other: NSPredicate) -> NSPredicate {
         return NSCompoundPredicate(orPredicateWithSubpredicates: [self, other])
     }

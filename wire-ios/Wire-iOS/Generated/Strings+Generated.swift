@@ -206,6 +206,10 @@ internal enum L10n {
         /// Turn on speaker
         internal static let description = L10n.tr("Accessibility", "calling.speakerOnButton.description", fallback: "Turn on speaker")
       }
+      internal enum Status {
+        /// Connecting
+        internal static let connecting = L10n.tr("Accessibility", "calling.status.connecting", fallback: "Connecting")
+      }
       internal enum SwipeDownParticipants {
         /// Double tap to swipe down and hide participant’s details
         internal static let hint = L10n.tr("Accessibility", "calling.swipeDownParticipants.hint", fallback: "Double tap to swipe down and hide participant’s details")
@@ -1227,6 +1231,8 @@ internal enum L10n {
         }
       }
       internal enum Grid {
+        /// Connecting
+        internal static let connecting = L10n.tr("Localizable", "call.grid.connecting", fallback: "Connecting")
         /// No active video speakers...
         internal static let noActiveSpeakers = L10n.tr("Localizable", "call.grid.no_active_speakers", fallback: "No active video speakers...")
         internal enum Hints {

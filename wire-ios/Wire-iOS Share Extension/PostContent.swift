@@ -27,7 +27,7 @@ final class PostContent {
     /// Conversation to post to
     var target: Conversation?
 
-    fileprivate var sendController: SendController?
+    private var sendController: SendController?
 
     var sentAllSendables: Bool {
         guard let sendController = sendController else { return false }

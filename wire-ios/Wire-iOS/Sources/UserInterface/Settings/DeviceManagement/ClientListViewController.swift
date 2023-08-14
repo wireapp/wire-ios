@@ -142,7 +142,7 @@ final class ClientListViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    fileprivate func initalizeProperties(_ clientsList: [UserClient]) {
+    private func initalizeProperties(_ clientsList: [UserClient]) {
         self.clients = clientsList.filter { !$0.isSelfClient() }
         self.editingList = false
     }
@@ -189,7 +189,7 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    fileprivate func createTableView() {
+    private func createTableView() {
         let tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
@@ -204,7 +204,7 @@ final class ClientListViewController: UIViewController,
         self.clientsTableView = tableView
     }
 
-    fileprivate func createConstraints() {
+    private func createConstraints() {
         guard let clientsTableView = clientsTableView else {
             return
         }
@@ -219,7 +219,7 @@ final class ClientListViewController: UIViewController,
         ])
     }
 
-    fileprivate func convertSection(_ section: Int) -> Int {
+    private func convertSection(_ section: Int) -> Int {
         if self.selfClient != nil {
             return section
         } else {

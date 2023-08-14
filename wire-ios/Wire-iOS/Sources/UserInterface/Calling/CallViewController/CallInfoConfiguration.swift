@@ -39,8 +39,7 @@ extension VoiceChannel {
              .incoming(_, shouldRing: false, _):
             return .participantsList(sortedParticipants().map {
                 .callParticipant(user: HashBox(value: $0.user),
-                                 videoState: $0.state.videoState,
-                                 microphoneState: $0.state.microphoneState,
+                                 callParticipantState: $0.state,
                                  activeSpeakerState: $0.activeSpeakerState)
             })
         }

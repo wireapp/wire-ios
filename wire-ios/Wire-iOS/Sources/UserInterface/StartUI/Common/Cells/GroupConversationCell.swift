@@ -49,7 +49,7 @@ final class GroupConversationCell: UICollectionViewCell {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    fileprivate func setup() {
+    private func setup() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = FontSpec.init(.normal, .light).font!
         titleLabel.accessibilityIdentifier = "user_cell.name"
