@@ -17,17 +17,15 @@
 //
 
 import XCTest
-import WireCommonComponents
 @testable import Wire
 
-final class TopPeopleCellSnapshotTests: XCTestCase {
+final class TopPeopleCellSnapshotTests: BaseSnapshotTestCase {
 
     var sut: TopPeopleCell!
 
     override func setUp() {
         super.setUp()
         sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
-        FontScheme.configure(with: .large)
         sut.user = MockUserType.createDefaultOtherUser()
         sut.overrideUserInterfaceStyle = .light
         sut.backgroundColor = SemanticColors.View.backgroundDefault
