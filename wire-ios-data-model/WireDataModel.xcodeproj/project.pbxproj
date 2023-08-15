@@ -522,7 +522,7 @@
 		EE6A57E025BB1C6800F848DD /* AppLockController.State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6A57DF25BB1C6800F848DD /* AppLockController.State.swift */; };
 		EE6CB3DC24E2A4E500B0EADD /* store2-83-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE6CB3DB24E2A38500B0EADD /* store2-83-0.wiredatabase */; };
 		EE6CB3DE24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6CB3DD24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift */; };
-		EE715B7D256D153E00087A22 /* FeatureServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE715B7C256D153E00087A22 /* FeatureServiceTests.swift */; };
+		EE715B7D256D153E00087A22 /* FeatureRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE715B7C256D153E00087A22 /* FeatureRepositoryTests.swift */; };
 		EE74E4DE2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */; };
 		EE74E4E02A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */; };
 		EE770DAF25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE770DAE25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift */; };
@@ -1408,7 +1408,7 @@
 		EE6A57DF25BB1C6800F848DD /* AppLockController.State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.State.swift; sourceTree = "<group>"; };
 		EE6CB3DB24E2A38500B0EADD /* store2-83-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-83-0.wiredatabase"; sourceTree = "<group>"; };
 		EE6CB3DD24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMGenericMessageDataTests.swift; sourceTree = "<group>"; };
-		EE715B7C256D153E00087A22 /* FeatureServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureServiceTests.swift; sourceTree = "<group>"; };
+		EE715B7C256D153E00087A22 /* FeatureRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureRepositoryTests.swift; sourceTree = "<group>"; };
 		EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubconversationGroupIDRepository.swift; sourceTree = "<group>"; };
 		EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubconversationGroupIDRepositoryTests.swift; sourceTree = "<group>"; };
 		EE770DAE25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationDispatcher.OperationMode.swift; sourceTree = "<group>"; };
@@ -1842,7 +1842,7 @@
 			children = (
 				068664A0256FB814001C8747 /* AppLock */,
 				069D07B72562671D00DBA592 /* FeatureTests.swift */,
-				EE715B7C256D153E00087A22 /* FeatureServiceTests.swift */,
+				EE715B7C256D153E00087A22 /* FeatureRepositoryTests.swift */,
 			);
 			path = FeatureConfiguration;
 			sourceTree = "<group>";
@@ -4105,7 +4105,7 @@
 				F9331C5A1CB3BECB00139ECC /* ZMClientMessageTests+OTR_Legacy.swift in Sources */,
 				16127CF522005AAB0020E65C /* InvalidConversationRemovalTests.swift in Sources */,
 				EEFC3EE922083B0900D3091A /* ZMConversationTests+HasMessages.swift in Sources */,
-				EE715B7D256D153E00087A22 /* FeatureServiceTests.swift in Sources */,
+				EE715B7D256D153E00087A22 /* FeatureRepositoryTests.swift in Sources */,
 				F1B025621E53500400900C65 /* ZMConversationTests+PrepareToSend.swift in Sources */,
 				54F84D041F995B0700ABD7D5 /* DiskDatabaseTests.swift in Sources */,
 				EEC8064E28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift in Sources */,

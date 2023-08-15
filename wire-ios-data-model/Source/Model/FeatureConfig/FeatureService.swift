@@ -28,7 +28,7 @@ import Foundation
 /// **Note:** fetching features can occur on any context, but updates should only
 /// take place on the sync context.
 
-public class FeatureService {
+public class FeatureRepository {
 
     // MARK: - Properties
 
@@ -286,7 +286,7 @@ public class FeatureService {
 
 }
 
-extension FeatureService {
+extension FeatureRepository {
 
     /// A type that represents the possible changes to feature configs.
     ///
