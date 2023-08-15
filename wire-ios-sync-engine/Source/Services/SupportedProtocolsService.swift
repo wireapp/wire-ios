@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 protocol SupportedProtocolsServiceInterface {
@@ -33,6 +32,13 @@ final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
     private let userRepository: UserRepositoryInterface
 
     // MARK: - Life cycle
+
+    public convenience init(context: NSManagedObjectContext) {
+        self.init(
+            featureRepository: FeatureRepository(context: context),
+            userRepository: UserRepository(context: context)
+        )
+    }
 
     init(
         featureRepository: FeatureRepositoryInterface,

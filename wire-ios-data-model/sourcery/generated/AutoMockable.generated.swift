@@ -1518,19 +1518,20 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
     }
 
 }
-class MockUserRepositoryInterface: UserRepositoryInterface {
+public class MockUserRepositoryInterface: UserRepositoryInterface {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - selfUser
 
-    var selfUser_Invocations: [Void] = []
-    var selfUser_MockMethod: (() -> ZMUser)?
-    var selfUser_MockValue: ZMUser?
+    public var selfUser_Invocations: [Void] = []
+    public var selfUser_MockMethod: (() -> ZMUser)?
+    public var selfUser_MockValue: ZMUser?
 
-    func selfUser() -> ZMUser {
+    public func selfUser() -> ZMUser {
         selfUser_Invocations.append(())
 
         if let mock = selfUser_MockMethod {
