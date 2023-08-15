@@ -281,7 +281,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             guard let userSession = ZMUserSession.shared() else { return }
             let service = ConversationService(context: userSession.viewContext)
 
-            var users = values.participants
+            let users = values.participants
                 .union([selfUser])
                 .materialize(in: userSession.viewContext)
 
