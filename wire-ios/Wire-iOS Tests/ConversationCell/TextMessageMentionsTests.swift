@@ -18,12 +18,11 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
 @testable import Wire
 
 // MARK: - Mentions
 
-final class TextMessageMentionsTests: XCTestCase {
+final class TextMessageMentionsTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -39,7 +38,6 @@ final class TextMessageMentionsTests: XCTestCase {
         super.setUp()
         otherUser = MockUserType.createUser(name: "Bruno")
         selfUser = MockUserType.createDefaultSelfUser()
-        FontScheme.configure(with: .large)
         UIColor.setAccentOverride(.vividRed)
     }
 

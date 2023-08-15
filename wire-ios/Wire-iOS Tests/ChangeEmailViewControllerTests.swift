@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import SnapshotTesting
 @testable import Wire
 
-final class ChangeEmailViewControllerTests: ZMSnapshotTestCase {
+final class ChangeEmailViewControllerTests: BaseSnapshotTestCase {
 
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")

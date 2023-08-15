@@ -18,10 +18,9 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
 @testable import Wire
 
-final class ConversationListTopBarViewControllerSnapshotTests: XCTestCase {
+final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     var sut: ConversationListTopBarViewController!
     var mockAccount: Account!
@@ -29,7 +28,6 @@ final class ConversationListTopBarViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
     }
