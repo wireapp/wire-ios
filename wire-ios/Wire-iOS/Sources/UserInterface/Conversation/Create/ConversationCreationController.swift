@@ -21,61 +21,6 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-protocol ConversationCreationValuesConfigurable: AnyObject {
-    func configure(with values: ConversationCreationValues)
-}
-
-final class ConversationCreationValues {
-
-    private var unfilteredParticipants: UserSet
-    private let selfUser: UserType
-
-    var name: String
-    var allowGuests: Bool
-    var allowServices: Bool
-    var enableReceipts: Bool
-    var encryptionProtocol: EncryptionProtocol
-
-    var participants: UserSet {
-        get {
-            var result = unfilteredParticipants
-
-            if !allowGuests {
-                let noGuests = result.filter { $0.isOnSameTeam(otherUser: selfUser) }
-                result = UserSet(noGuests)
-            }
-
-            if !allowServices {
-                let noServices = result.filter { !$0.isServiceUser }
-                result = UserSet(noServices)
-            }
-
-            return result
-        }
-        set {
-            unfilteredParticipants = newValue
-        }
-    }
-
-    init(
-        name: String = "",
-        participants: UserSet = UserSet(),
-        allowGuests: Bool = true,
-        allowServices: Bool = true,
-        enableReceipts: Bool = true,
-        encryptionProtocol: EncryptionProtocol = .proteus,
-        selfUser: UserType
-    ) {
-        self.name = name
-        self.unfilteredParticipants = participants
-        self.allowGuests = allowGuests
-        self.allowServices = allowServices
-        self.enableReceipts = enableReceipts
-        self.encryptionProtocol = encryptionProtocol
-        self.selfUser = selfUser
-    }
-}
-
 protocol ConversationCreationControllerDelegate: AnyObject {
 
     func conversationCreationController(
