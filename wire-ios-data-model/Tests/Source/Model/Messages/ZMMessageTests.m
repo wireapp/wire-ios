@@ -1327,7 +1327,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
     // when
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:@"❤️" toMessage:message];
+    [ZMMessage addReaction:@"❤️" to:message];
     [self.uiMOC saveOrRollback];
 
     //then
@@ -1350,7 +1350,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     //when
     NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:reactionUnicode toMessage:textMessage];
+    [ZMMessage addReaction:reactionUnicode to:textMessage];
     [self.uiMOC saveOrRollback];
     
     
@@ -1378,7 +1378,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:reactionUnicode toMessage:textMessage];
+    [ZMMessage addReaction:reactionUnicode to:textMessage];
     [self.uiMOC saveOrRollback];
 
     //sanity check
@@ -1392,7 +1392,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
 
     //when
-    [ZMMessage addReaction:@"" toMessage:textMessage];
+    [ZMMessage addReaction:@"" to:textMessage];
     [self.uiMOC saveOrRollback];
     
     //then
