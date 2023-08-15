@@ -104,7 +104,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
 
         let message = insertMessage()
-        ZMMessage.addReaction("❤️", toMessage: message)
+        ZMMessage.addReaction("❤️", to: message)
         uiMOC.saveOrRollback()
 
         let event = updateEventForRemovingReaction(to: message)
@@ -126,7 +126,7 @@ extension ZMClientMessageTests_Reaction {
         let message = insertMessage()
         message.markAsSent()
 
-        ZMMessage.addReaction("❤️", toMessage: message)
+        ZMMessage.addReaction("❤️", to: message)
         uiMOC.saveOrRollback()
         XCTAssertTrue(message.cachedCategory.contains(.text))
         XCTAssertTrue(message.cachedCategory.contains(.reacted))

@@ -33,7 +33,7 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
 
         // when
         // this is the UI facing call to add reaction
-        ZMMessage.addReaction("❤️", toMessage: message)
+        ZMMessage.addReaction("❤️", to: message)
         self.uiMOC.saveOrRollback()
 
         // then
