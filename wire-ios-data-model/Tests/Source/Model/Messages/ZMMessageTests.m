@@ -1364,7 +1364,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
 }
 
-- (void)testThatAddingAReactionWithoutUnicodeRemoveUserOnReaction;
+- (void)testThatAddingAReactionWithoutUnicodeDoesNotAddNewReactionToTheMessage;
 {
     //given
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
@@ -1397,9 +1397,9 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     //then
     reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 0lu);
+    XCTAssertEqual(reactions.count, 1lu);
     usersThatReacted = reactions[reactionUnicode];
-    XCTAssertEqual(usersThatReacted.count, 0lu);
+    XCTAssertEqual(usersThatReacted.count, 1lu);
 
 }
 
