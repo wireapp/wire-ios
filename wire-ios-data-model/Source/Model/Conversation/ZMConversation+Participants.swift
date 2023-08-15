@@ -165,11 +165,12 @@ extension ZMConversation {
             )
 
             let usersToAdd = Set(users).subtracting(usersToExclude)
-
-            internalAddParticipants(
-                Array(usersToAdd),
-                completion: completion
-            )
+            if !usersToAdd.isEmpty {
+                internalAddParticipants(
+                    Array(usersToAdd),
+                    completion: completion
+                )
+            }
         }
 
         internalAddParticipants(users) { result in

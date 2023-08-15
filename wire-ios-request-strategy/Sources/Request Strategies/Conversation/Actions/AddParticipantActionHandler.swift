@@ -173,7 +173,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
             }
 
-        case 503:
+        case 533:
             guard
                 let payload = ErrorResponse(response),
                 let unreachableDomains = payload.unreachable_backends
