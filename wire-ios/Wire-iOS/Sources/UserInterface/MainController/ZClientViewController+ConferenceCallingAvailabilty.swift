@@ -71,7 +71,7 @@ extension ZClientViewController {
 
     private func confirmChanges() {
         guard let session = ZMUserSession.shared() else { return }
-        session.featureService.setNeedsToNotifyUser(false, for: .conferenceCalling)
+        session.featureRepository.setNeedsToNotifyUser(false, for: .conferenceCalling)
     }
 
 }
