@@ -237,7 +237,9 @@ public final class ConversationService: ConversationServiceInterface {
                 case .success(let objectID):
                     if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
                         if let failedToAddUsers = failedToAddUsers {
-                            conversation.appendFailedToAddUsersSystemMessage(users: failedToAddUsers, sender: selfUser, at: Date())
+                            conversation.appendFailedToAddUsersSystemMessage(users: failedToAddUsers,
+                                                                             sender: selfUser,
+                                                                             at: Date())
                         }
                         completion(.success(conversation))
                     } else {

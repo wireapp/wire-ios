@@ -105,8 +105,7 @@ extension MessagingTestBase {
             qualifiedFrom: senderID,
             timestamp: timestamp,
             type: ZMUpdateEvent.eventTypeString(for: Event.eventType),
-            data: data,
-            failedToAddUsers: nil
+            data: data
         )
 
     }
