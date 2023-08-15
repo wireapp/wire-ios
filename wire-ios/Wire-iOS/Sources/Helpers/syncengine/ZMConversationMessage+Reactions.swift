@@ -92,19 +92,3 @@ extension ZMConversationMessage {
         }
     }
 }
-
-extension Message {
-
-    static func setLikedMessage(_ message: ZMConversationMessage, liked: Bool) {
-        return message.liked = liked
-    }
-
-    static func isLikedMessage(_ message: ZMConversationMessage) -> Bool {
-        return message.liked
-    }
-
-    static func hasReactions(_ message: ZMConversationMessage) -> Bool {
-        return message.hasReactions()
-    }
-
-}
