@@ -29,16 +29,6 @@ protocol ConversationCreationControllerDelegate: AnyObject {
         didCreateConversation conversation: ZMConversation
     )
 
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    )
-
 }
 
 final class ConversationCreationController: UIViewController {

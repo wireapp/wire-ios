@@ -29,7 +29,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet)
 }
 
 protocol BackButtonTitleDelegate: AnyObject {
@@ -464,10 +463,6 @@ extension ProfileViewController: ProfileViewControllerDelegate {
         delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
-        // no-op
-    }
-
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
@@ -486,23 +481,6 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         }
     }
 
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        controller.dismiss(animated: true) { [weak self] in
-            self?.delegate?.profileViewController(
-                self,
-                wantsToCreateConversationWithName: name,
-                users: participants
-            )
-        }
-    }
 }
 
 extension ProfileViewController: TabBarControllerDelegate {
