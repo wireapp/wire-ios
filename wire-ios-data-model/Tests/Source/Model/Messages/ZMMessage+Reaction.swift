@@ -48,4 +48,27 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         }
         XCTAssertEqual(reactionMessage.underlyingMessage!.reaction.emoji, "❤️")
     }
+
+    func testThatSelfUserIsAbleToAddNewReactionToAMessageTheyAlreadyReactedTo() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+
+        // WHEN
+        ZMMessage.addReaction("😎", to: message)
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertEqual(message.reactions.count, 3)
+        XCTAssertTrue(message.usersReaction.contains { _, users in users.contains(where: \.isSelfUser) })
+    }
+
 }
