@@ -20,7 +20,7 @@ import Foundation
 
 protocol SupportedProtocolsServiceInterface {
 
-    func calculateSupportedProtocols() -> Set<MessageProtocol>
+    func updateSupportedProtocols()
 
 }
 
