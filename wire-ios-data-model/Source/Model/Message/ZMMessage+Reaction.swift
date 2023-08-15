@@ -38,4 +38,13 @@ extension ZMMessage {
         localMessage.updateCategoryCache()
     }
 
+    func selfUserReactions() -> Set<String> {
+        let result = usersReaction
+            .filter { _, users in users.contains(where: \.isSelfUser) }
+            .map { $0.key }
+        
+
+        return Set(result)
+    }
+
 }

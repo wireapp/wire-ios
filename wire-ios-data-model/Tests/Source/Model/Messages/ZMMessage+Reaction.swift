@@ -61,14 +61,43 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
 
         message.setReactions(["😋", "😍"], forUser: selfUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+        XCTAssertEqual(message.usersReaction.count, 2)
 
         // WHEN
         ZMMessage.addReaction("😎", to: message)
         self.uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(message.reactions.count, 3)
-        XCTAssertTrue(message.usersReaction.contains { _, users in users.contains(where: \.isSelfUser) })
+        XCTAssertEqual(message.usersReaction.count, 3)
+        print("AGIS:\(message.selfUserReactions())")
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍", "😎"])
+    }
+
+    func testThatSelfUserIsAbleToRemoveReactionFromMessageAndStillHaveAnotherReactionThere() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+        print("BEFORE REMOVING: \(message.reactions)")
+
+        // WHEN
+        ZMMessage.removeReaction("😋", from: message)
+        self.uiMOC.saveOrRollback()
+
+        print("AFTER REMOVING: \(message.reactions)")
+
+        // THEN
+        XCTAssertEqual(message.usersReaction.count, 1)
+        XCTAssertEqual(message.selfUserReactions(), ["😍"])
     }
 
 }
