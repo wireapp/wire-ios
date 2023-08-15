@@ -58,6 +58,8 @@ public enum SemanticColors {
         static let textSecurityEnabled = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
 
         static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
+        static let textInactive = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
+        static let textParticipantDisconnected = UIColor(light: Asset.Colors.red300Light, dark: Asset.Colors.red300Dark)
     }
 
     public enum SearchBar {
@@ -156,6 +158,7 @@ public enum SemanticColors {
         // AudioView
         static let backgroundAudioViewOverlay = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundAudioViewOverlayActive = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
+
     }
 
     public enum TabBar {

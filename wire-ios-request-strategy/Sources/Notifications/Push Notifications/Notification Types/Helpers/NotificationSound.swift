@@ -29,7 +29,7 @@ public enum NotificationSound {
 
     /// The name of the song.
     public var name: String {
-        return customFileName ?? defaultFileName
+        return defaultFileName
     }
 
     // MARK: - Utilities
@@ -38,10 +38,11 @@ public enum NotificationSound {
         switch self {
         case .call: return "ringing_from_them_long.caf"
         case .ping: return "ping_from_them.caf"
-        case .newMessage: return "new_message_apns.caf"
+        case .newMessage: return "default"
         }
     }
 
+    // Unused - leaving this here in case we need to support custom sounds again in the future.
     private var preferenceKey: String {
         switch self {
         case .call: return "ZMCallSoundName"
@@ -49,10 +50,4 @@ public enum NotificationSound {
         case .newMessage: return "ZMMessageSoundName"
         }
     }
-
-    private var customFileName: String? {
-        guard let soundName = Self.storage.object(forKey: preferenceKey) as? String else { return nil }
-        return ZMSound(rawValue: soundName)?.filename()
-    }
-
 }
