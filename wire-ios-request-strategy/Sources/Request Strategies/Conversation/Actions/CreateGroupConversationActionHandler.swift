@@ -33,7 +33,8 @@ public final class CreateGroupConversationAction: EntityAction {
         case notConnected
         case mlsMissingSenderClient
         case accessDenied
-        case rejected(nonFederatingBackendDomains: [String])
+        case unreachableDomains(Set<String>)
+        case nonFederatingDomains(Set<String>)
         case proccessingError
         case unknown(code: Int, label: String, message: String)
 
@@ -139,6 +140,44 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
         case (403, "access-denied"):
             action.fail(with: .accessDenied)
+
+        case (409, _):
+            let errorInfo = response.errorInfo
+            guard
+                let payload = Payload.ErrorResponse(response),
+                let nonFederatingDomains = payload.non_federating_backends
+            else {
+                return action.fail(with: .unknown(
+                    code: errorInfo.status,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
+            }
+
+            if nonFederatingDomains.isEmpty {
+                handleSuccessResponse(response, action: action)
+            } else {
+                action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
+            }
+
+        case (533, _):
+            let errorInfo = response.errorInfo
+            guard
+                let payload = Payload.ErrorResponse(response),
+                let unreachableDomains = payload.unreachable_backends
+            else {
+                return action.fail(with: .unknown(
+                    code: errorInfo.status,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
+            }
+
+            if unreachableDomains.isEmpty {
+                handleSuccessResponse(response, action: action)
+            } else {
+                action.fail(with: .unreachableDomains(Set(unreachableDomains)))
+            }
 
         default:
             let errorInfo = response.errorInfo

@@ -103,6 +103,24 @@ public final class ConversationService: ConversationServiceInterface {
             return
         }
 
+        func retry(excludingDomains domains: Set<String>) {
+            let usersToExclude = users.belongingTo(domains: domains)
+            let usersToAdd = Set(users).subtracting(usersToExclude)
+            internalCreateGroupConversation(
+                teamID: teamID,
+                name: name,
+                users: usersToAdd,
+                failedToAddUsers: usersToExclude,
+                accessMode: ConversationAccessMode.value(forAllowGuests: allowGuests),
+                accessRoles: ConversationAccessRoleV2.from(
+                    allowGuests: allowGuests,
+                    allowServices: allowServices
+                ),
+                enableReceipts: enableReceipts,
+                messageProtocol: messageProtocol,
+                completion: completion)
+        }
+
         internalCreateGroupConversation(
             teamID: teamID,
             name: name,
@@ -113,9 +131,15 @@ public final class ConversationService: ConversationServiceInterface {
                 allowServices: allowServices
             ),
             enableReceipts: enableReceipts,
-            messageProtocol: messageProtocol,
-            completion: completion
-        )
+            messageProtocol: messageProtocol) { result in
+                switch result {
+                case .failure(.networkError(.unreachableDomains(let domains))):
+                    retry(excludingDomains: domains)
+
+                default:
+                    completion(result)
+                }
+            }
     }
 
     private func internalCreateGroupConversation(
@@ -123,6 +147,21 @@ public final class ConversationService: ConversationServiceInterface {
         users: Set<ZMUser>,
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
+        func retry(excludingDomains domains: Set<String>) {
+            let usersToExclude = users.belongingTo(domains: domains)
+            let usersToAdd = Set(users).subtracting(usersToExclude)
+            internalCreateGroupConversation(
+                teamID: nil,
+                name: name,
+                users: usersToAdd,
+                failedToAddUsers: usersToExclude,
+                accessMode: ConversationAccessMode(),
+                accessRoles: [],
+                enableReceipts: false,
+                messageProtocol: .proteus,
+                completion: completion)
+        }
+
         internalCreateGroupConversation(
             teamID: nil,
             name: name,
@@ -130,15 +169,22 @@ public final class ConversationService: ConversationServiceInterface {
             accessMode: ConversationAccessMode(),
             accessRoles: [],
             enableReceipts: false,
-            messageProtocol: .proteus,
-            completion: completion
-        )
+            messageProtocol: .proteus) { result in
+                switch result {
+                case .failure(.networkError(.unreachableDomains(let domains))):
+                    retry(excludingDomains: domains)
+
+                default:
+                    completion(result)
+                }
+            }
     }
 
     private func internalCreateGroupConversation(
         teamID: UUID?,
         name: String?,
         users: Set<ZMUser>,
+        failedToAddUsers: Set<ZMUser>? = nil,
         accessMode: ConversationAccessMode,
         accessRoles: Set<ConversationAccessRoleV2>,
         enableReceipts: Bool,
@@ -182,6 +228,9 @@ public final class ConversationService: ConversationServiceInterface {
                 switch result {
                 case .success(let objectID):
                     if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
+                        if let failedToAddUsers = failedToAddUsers {
+                            conversation.appendFailedToAddUsersSystemMessage(users: failedToAddUsers, sender: selfUser, at: Date())
+                        }
                         completion(.success(conversation))
                     } else {
                         completion(.failure(.conversationNotFound))

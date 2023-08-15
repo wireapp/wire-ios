@@ -20,7 +20,7 @@ import XCTest
 
 class AddParticipantActionHandlerTests: MessagingTestBase {
 
-    typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
+    typealias ErrorResponse = Payload.ErrorResponse
 
     var sut: AddParticipantActionHandler!
     var user: ZMUser!
