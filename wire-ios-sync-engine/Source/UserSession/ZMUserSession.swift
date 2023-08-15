@@ -325,6 +325,13 @@ public class ZMUserSession: NSObject {
         notifyUserAboutChangesInAvailabilityBehaviourIfNeeded()
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
+        updateSupportedProtocolsIfNeeded()
+    }
+
+    private func updateSupportedProtocolsIfNeeded() {
+        // TODO: check every 24hours
+        let service = SupportedProtocolsService(context: viewContext)
+        service.updateSupportedProtocols()
     }
 
     private func configureTransportSession() {
