@@ -474,6 +474,20 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
+        didCreateConversation conversation: ZMConversation
+    ) {
+        controller.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+
+            delegate?.profileViewController(
+                self,
+                wantsToNavigateTo: conversation
+            )
+        }
+    }
+
+    func conversationCreationController(
+        _ controller: ConversationCreationController,
         didSelectName name: String,
         participants: UserSet,
         allowGuests: Bool,

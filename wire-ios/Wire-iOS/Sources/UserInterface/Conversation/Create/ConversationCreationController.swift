@@ -20,8 +20,14 @@ import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
+
+    func conversationCreationController(
+        _ controller: ConversationCreationController,
+        didCreateConversation conversation: ZMConversation
+    )
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
@@ -282,18 +288,34 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             values.participants = users
 
         case .create:
-            var allParticipants = values.participants
-            allParticipants.insert(selfUser)
+            guard let userSession = ZMUserSession.shared() else { return }
+            let service = ConversationService(context: userSession.viewContext)
 
-            delegate?.conversationCreationController(
-                self,
-                didSelectName: values.name,
-                participants: values.participants,
+            var users = values.participants
+                .union([selfUser])
+                .materialize(in: userSession.viewContext)
+
+            service.createGroupConversation(
+                name: values.name,
+                users: Set(users),
                 allowGuests: values.allowGuests,
                 allowServices: values.allowServices,
                 enableReceipts: values.enableReceipts,
-                encryptionProtocol: values.encryptionProtocol
-            )
+                messageProtocol: values.encryptionProtocol == .proteus ? .proteus : .mls
+            ) { [weak self] in
+                guard let self = self else { return }
+
+                switch $0 {
+                case .success(let conversation):
+                    delegate?.conversationCreationController(
+                        self,
+                        didCreateConversation: conversation
+                    )
+
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
+                }
+            }
         }
     }
 }
