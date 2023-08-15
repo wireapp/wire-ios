@@ -98,41 +98,6 @@ public class DiskDatabaseTest: ZMTBaseTest {
 
 extension DiskDatabaseTest {
 
-    @discardableResult
-    func createSelfUser() -> ZMUser {
-        let selfUser = ZMUser.selfUser(in: moc)
-        selfUser.remoteIdentifier = UUID()
-        moc.saveOrRollback()
-        return selfUser
-    }
-
-    @discardableResult
-    func createSelfClient() -> UserClient {
-        let selfUser = ZMUser.selfUser(in: moc)
-        let selfClient = UserClient.insertNewObject(in: moc)
-        selfClient.remoteIdentifier = NSString.createAlphanumerical()
-        selfClient.user = selfUser
-
-        moc.setPersistentStoreMetadata(
-            selfClient.remoteIdentifier,
-            key: ZMPersistedClientIdKey
-        )
-
-        let payload = [
-            "id": selfClient.remoteIdentifier!,
-            "type": "permanent",
-            "time": Date().transportString()
-        ] as [String: AnyObject]
-
-        _ = UserClient.createOrUpdateSelfUserClient(
-            payload,
-            context: moc
-        )
-
-        moc.saveOrRollback()
-        return selfClient
-    }
-
     func createClient(user: ZMUser) -> UserClient {
         let client = UserClient.insertNewObject(in: self.moc)
         client.user = user
