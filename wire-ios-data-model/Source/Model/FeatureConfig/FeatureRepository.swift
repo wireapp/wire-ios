@@ -18,6 +18,28 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+public protocol FeatureRepositoryInterface {
+
+     func fetchAppLock() -> Feature.AppLock
+     func storeAppLock(_ appLock: Feature.AppLock)
+     func fetchConferenceCalling() -> Feature.ConferenceCalling
+     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
+     func fetchFileSharing() -> Feature.FileSharing
+     func storeFileSharing(_ fileSharing: Feature.FileSharing)
+     func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
+     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
+     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
+     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
+     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
+     func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains)
+     func fetchDigitalSignature() -> Feature.DigitalSignature
+     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
+     func fetchMLS() -> Feature.MLS
+     func storeMLS(_ mls: Feature.MLS)
+
+ }
+
 /// This class facilitates storage and retrieval of feature configs to and from
 /// the database.
 ///
@@ -28,7 +50,7 @@ import Foundation
 /// **Note:** fetching features can occur on any context, but updates should only
 /// take place on the sync context.
 
-public class FeatureRepository {
+public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - Properties
 
