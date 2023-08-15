@@ -369,13 +369,11 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             action.onResult {
                 switch $0 {
                 case .failure(.unreachableDomains([unreachableDomain])):
-                    break
+                    isDone.fulfill()
 
                 default:
                     XCTFail("unexpected result: \($0)")
                 }
-
-                isDone.fulfill()
             }
 
             let payload = ErrorResponse(unreachable_backends: [unreachableDomain])
@@ -417,13 +415,11 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             action.onResult {
                 switch $0 {
                 case .failure(.nonFederatingDomains([applesDomain, bananasDomain])):
-                    break
+                    isDone.fulfill()
 
                 default:
                     XCTFail("unexpected result: \($0)")
                 }
-
-                isDone.fulfill()
             }
 
             let payload = ErrorResponse(non_federating_backends: [applesDomain, bananasDomain])
