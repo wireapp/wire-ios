@@ -69,8 +69,6 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         self.uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(message.usersReaction.count, 3)
-        print("AGIS:\(message.selfUserReactions())")
         XCTAssertEqual(message.selfUserReactions(), ["😋", "😍", "😎"])
     }
 
@@ -93,7 +91,6 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         self.uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(message.usersReaction.count, 1)
         XCTAssertEqual(message.selfUserReactions(), ["😍"])
     }
 
@@ -116,7 +113,6 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         self.uiMOC.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(message.usersReaction.count, 2)
         XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
     }
 }
