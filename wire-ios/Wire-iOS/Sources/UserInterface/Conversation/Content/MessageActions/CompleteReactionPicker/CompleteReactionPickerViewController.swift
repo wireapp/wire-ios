@@ -87,12 +87,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(collectionView)
 
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        collectionView.addGestureRecognizer(tapGestureRecognizer)
-    }
-
-    @objc private func hideKeyboard() {
-        endEditing()
+        collectionView.keyboardDismissMode = .onDrag
     }
 
     private func createConstraints() {
