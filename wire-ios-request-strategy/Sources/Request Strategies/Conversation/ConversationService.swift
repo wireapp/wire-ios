@@ -146,39 +146,44 @@ public final class ConversationService: ConversationServiceInterface {
         messageProtocol: WireDataModel.MessageProtocol,
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
 
-            func retry(excludingDomains domains: Set<String>) {
-                let usersToExclude = users.belongingTo(domains: domains)
-                let reachableUsers = Set(users).subtracting(usersToExclude)
-
-                if !reachableUsers.isEmpty {
-                    internalCreateGroupConversation(
-                        teamID: teamID,
-                        name: name,
-                        users: reachableUsers,
-                        failedToAddUsers: usersToExclude,
-                        accessMode: accessMode,
-                        accessRoles: accessRoles,
-                        enableReceipts: enableReceipts,
-                        messageProtocol: messageProtocol,
-                        completion: completion)
-                }
+            func createGroup(
+                withUsers users: Set<ZMUser>,
+                completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+            ) {
+                internalCreateGroupConversation(
+                    teamID: teamID,
+                    name: name,
+                    users: users,
+                    accessMode: accessMode,
+                    accessRoles: accessRoles,
+                    enableReceipts: enableReceipts,
+                    messageProtocol: messageProtocol,
+                    completion: completion
+                )
             }
 
-            internalCreateGroupConversation(
-                teamID: teamID,
-                name: name,
-                users: users,
-                accessMode: accessMode,
-                accessRoles: accessRoles,
-                enableReceipts: enableReceipts,
-                messageProtocol: messageProtocol) { result in
-                    switch result {
-                    case .failure(.networkError(.unreachableDomains(let domains))):
-                        retry(excludingDomains: domains)
-                    default:
-                        completion(result)
+            createGroup(withUsers: users) { result in
+                switch result {
+                case .failure(.networkError(.unreachableDomains(let domains))):
+                    let unreachableUsers = users.belongingTo(domains: domains)
+                    let reachableUsers = Set(users).subtracting(unreachableUsers)
+
+                    createGroup(withUsers: reachableUsers) { retryResult in
+                        if case .success(let conversation) = retryResult {
+                            conversation.appendFailedToAddUsersSystemMessage(
+                                users: unreachableUsers,
+                                sender: .selfUser(in: self.context),
+                                at: Date()
+                            )
+                        }
+
+                        completion(retryResult)
                     }
+
+                default:
+                    completion(result)
                 }
+            }
         }
 
     private func internalCreateGroupConversation(
