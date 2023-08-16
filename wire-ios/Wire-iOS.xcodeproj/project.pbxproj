@@ -1286,6 +1286,7 @@
 		EE6C2127284118D80031EFB9 /* ConversationCreateEncryptionProtocolCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6C2126284118D80031EFB9 /* ConversationCreateEncryptionProtocolCell.swift */; };
 		EE6C212928438B3A0031EFB9 /* SettingsCellDescriptorFactory+Developer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6C212828438B3A0031EFB9 /* SettingsCellDescriptorFactory+Developer.swift */; };
 		EE6CA1832A8BBDDB006725CE /* ConversationCreationValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6CA1822A8BBDDB006725CE /* ConversationCreationValues.swift */; };
+		EE6CA1852A8C97C2006725CE /* Array+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6CA1842A8C97C2006725CE /* Array+Localization.swift */; };
 		EE742AB6284DE57900A6B5F3 /* DeveloperToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */; };
 		EE742AB8284DE66400A6B5F3 /* DeveloperToolsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */; };
 		EE75B774203C6F5300855099 /* MarkdownTextStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE75B773203C6F5300855099 /* MarkdownTextStorageTests.swift */; };
@@ -3267,6 +3268,7 @@
 		EE6C2126284118D80031EFB9 /* ConversationCreateEncryptionProtocolCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateEncryptionProtocolCell.swift; sourceTree = "<group>"; };
 		EE6C212828438B3A0031EFB9 /* SettingsCellDescriptorFactory+Developer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+Developer.swift"; sourceTree = "<group>"; };
 		EE6CA1822A8BBDDB006725CE /* ConversationCreationValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreationValues.swift; sourceTree = "<group>"; };
+		EE6CA1842A8C97C2006725CE /* Array+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Localization.swift"; sourceTree = "<group>"; };
 		EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsView.swift; sourceTree = "<group>"; };
 		EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsViewModel.swift; sourceTree = "<group>"; };
 		EE75B773203C6F5300855099 /* MarkdownTextStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextStorageTests.swift; sourceTree = "<group>"; };
@@ -5988,6 +5990,7 @@
 				5E0F75BF2268A0D7006C991E /* UIBarButtonItem+StyleKit.swift */,
 				550C63B322C36985005CE9FC /* FormattedText.swift */,
 				161ACB3723F6AFB100ABFF33 /* Error+Localization.swift */,
+				EE6CA1842A8C97C2006725CE /* Array+Localization.swift */,
 				EEA4F47B2410054100DBEA3D /* HashBox.swift */,
 				EEB8CD042410FFCC006FDE0B /* UserSet.swift */,
 				870534001DD6265100A7F822 /* AttributedStringOperators.swift */,
@@ -8872,6 +8875,7 @@
 				A93B528924FE98200061255E /* DebugActions.swift in Sources */,
 				EF71BFD620EBCC5F00894A7C /* UIView+IPadPopover.swift in Sources */,
 				EFBCC917215548EE006AAB70 /* AVAudioSessionType.swift in Sources */,
+				EE6CA1852A8C97C2006725CE /* Array+Localization.swift in Sources */,
 				87BEB03C1D3E44BA00DE9575 /* CameraKeyboardViewController.swift in Sources */,
 				16DD6EB8228431030090A74C /* LegalHoldHeaderView.swift in Sources */,
 				5EDD25442141555600C0E254 /* LicensesLoader.swift in Sources */,

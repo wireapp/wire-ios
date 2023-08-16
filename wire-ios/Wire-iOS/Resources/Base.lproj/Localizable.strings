@@ -41,6 +41,15 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+// "A, B" in the string "A, B, and C".
+"general.noun_separator.comma" = "%@, %@";
+
+// "B, and C" in the string "A, B, and C".
+"general.noun_separator.comma_and" = "%@, and %@";
+
+// "A and B".
+"general.noun_separator.and" = "%@ and %@";
+
 "general.guest-room-name" = "Guest room";
 
 // User Cell
@@ -323,6 +332,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Cancel";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "Learn More";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";

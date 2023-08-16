@@ -2164,6 +2164,21 @@ internal enum L10n {
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
+        internal enum NonFederatingDomainsError {
+          /// Discard Group Creation
+          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Group Creation")
+          /// Edit Participants List
+          internal static let editParticipantList = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.edit_participant_list", fallback: "Edit Participants List")
+          /// Learn More
+          internal static let learnMore = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.learn_more", fallback: "Learn More")
+          /// People from backends %@ can't join the same group conversation.
+          /// To create the group, remove affected participants.
+          internal static func message(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.")
+          }
+          /// Group can't be created
+          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Group can't be created")
+        }
         internal enum Options {
           /// Guests: %@, Services: %@, Read receipts: %@
           internal static func subtitle(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
@@ -3052,6 +3067,20 @@ internal enum L10n {
       internal enum Failure {
         /// Please try again.
         internal static let tryAgain = L10n.tr("Localizable", "general.failure.try_again", fallback: "Please try again.")
+      }
+      internal enum NounSeparator {
+        /// %@ and %@
+        internal static func and(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "general.noun_separator.and", String(describing: p1), String(describing: p2), fallback: "%@ and %@")
+        }
+        /// %@, %@
+        internal static func comma(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "general.noun_separator.comma", String(describing: p1), String(describing: p2), fallback: "%@, %@")
+        }
+        /// %@, and %@
+        internal static func commaAnd(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "general.noun_separator.comma_and", String(describing: p1), String(describing: p2), fallback: "%@, and %@")
+        }
       }
     }
     internal enum Giphy {

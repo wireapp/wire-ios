@@ -308,6 +308,43 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             }
         }
     }
+
+    private func showNonFederatingDomainsAlert(domains: Set<String>) {
+        typealias Strings = L10n.Localizable.Conversation.Create.NonFederatingDomainsError
+
+        let alert = UIAlertController(
+            title: Strings.title,
+            message: Strings.message(domains.sorted().localizedString()),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(
+            title: Strings.editParticipantList,
+            style: .default
+        ))
+
+        alert.addAction(UIAlertAction(
+            title: Strings.abort,
+            style: .default,
+            handler: abort
+        ))
+
+        alert.addAction(.link(
+            title: Strings.learnMore,
+            url: .wr_FederationLearnMore,
+            presenter: self
+        ))
+
+        present(
+            alert,
+            animated: true
+        )
+    }
+
+    private func abort(_ action: UIAlertAction) {
+        dismiss(animated: true)
+    }
+
 }
 
 // MARK: - SimpleTextFieldDelegate
