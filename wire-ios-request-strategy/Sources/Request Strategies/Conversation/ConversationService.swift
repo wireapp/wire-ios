@@ -103,7 +103,7 @@ public final class ConversationService: ConversationServiceInterface {
             return
         }
 
-        createGroupWithRetryIfNeeded(
+        internalCreateGroupWithRetryIfNeeded(
             teamID: teamID,
             name: name,
             users: users,
@@ -114,7 +114,8 @@ public final class ConversationService: ConversationServiceInterface {
             ),
             enableReceipts: enableReceipts,
             messageProtocol: messageProtocol,
-            completion: completion)
+            completion: completion
+        )
 
     }
 
@@ -124,7 +125,7 @@ public final class ConversationService: ConversationServiceInterface {
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
 
-        createGroupWithRetryIfNeeded(
+        internalCreateGroupWithRetryIfNeeded(
             teamID: nil,
             name: name,
             users: users,
@@ -132,11 +133,12 @@ public final class ConversationService: ConversationServiceInterface {
             accessRoles: [],
             enableReceipts: false,
             messageProtocol: .proteus,
-            completion: completion)
+            completion: completion
+        )
 
     }
 
-    private func createGroupWithRetryIfNeeded(
+    private func internalCreateGroupWithRetryIfNeeded(
         teamID: UUID?,
         name: String?,
         users: Set<ZMUser>,
