@@ -20,7 +20,7 @@ import XCTest
 
 class AddParticipantActionHandlerTests: MessagingTestBase {
 
-    typealias ErrorResponse = Payload.ErrorResponse
+    typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
 
     var sut: AddParticipantActionHandler!
     var user: ZMUser!
@@ -314,11 +314,13 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             action.onResult {
                 switch $0 {
                 case .failure(.nonFederatingDomains([applesDomain, bananasDomain])):
-                    isDone.fulfill()
+                    break
 
                 default:
                     XCTFail("unexpected result: \($0)")
                 }
+
+                isDone.fulfill()
             }
 
             let payload = ErrorResponse(non_federating_backends: [applesDomain, bananasDomain])
@@ -356,11 +358,13 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             action.onResult {
                 switch $0 {
                 case .failure(.unreachableDomains([unreachableDomain])):
-                    isDone.fulfill()
+                    break
 
                 default:
                     XCTFail("unexpected result: \($0)")
                 }
+
+                isDone.fulfill()
             }
 
             let payload = ErrorResponse(unreachable_backends: [unreachableDomain])

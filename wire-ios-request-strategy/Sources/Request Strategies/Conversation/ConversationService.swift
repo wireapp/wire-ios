@@ -103,7 +103,7 @@ public final class ConversationService: ConversationServiceInterface {
             return
         }
 
-        internalCreateGroupConversation(
+        createGroupWithRetryIfNeeded(
             teamID: teamID,
             name: name,
             users: users,
@@ -113,26 +113,9 @@ public final class ConversationService: ConversationServiceInterface {
                 allowServices: allowServices
             ),
             enableReceipts: enableReceipts,
-            messageProtocol: messageProtocol) { [self] result in
-                switch result {
-                case .failure(.networkError(.unreachableDomains(let domains))):
-                    retry(excludingDomains: domains,
-                          teamID: teamID,
-                          name: name,
-                          users: users,
-                          accessMode: ConversationAccessMode.value(forAllowGuests: allowGuests),
-                          accessRoles: ConversationAccessRoleV2.from(
-                            allowGuests: allowGuests,
-                            allowServices: allowServices
-                          ),
-                          enableReceipts: enableReceipts,
-                          messageProtocol: messageProtocol,
-                          completion: completion)
+            messageProtocol: messageProtocol,
+            completion: completion)
 
-                default:
-                    completion(result)
-                }
-            }
     }
 
     private func internalCreateGroupConversation(
@@ -141,52 +124,62 @@ public final class ConversationService: ConversationServiceInterface {
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
 
-        internalCreateGroupConversation(
+        createGroupWithRetryIfNeeded(
             teamID: nil,
             name: name,
             users: users,
             accessMode: ConversationAccessMode(),
             accessRoles: [],
             enableReceipts: false,
-            messageProtocol: .proteus) { [self] result in
-                switch result {
-                case .failure(.networkError(.unreachableDomains(let domains))):
-                    retry(excludingDomains: domains,
-                          name: name,
-                          users: users,
-                          accessMode: ConversationAccessMode(),
-                          accessRoles: [],
-                          completion: completion)
+            messageProtocol: .proteus,
+            completion: completion)
 
-                default:
-                    completion(result)
+    }
+
+    private func createGroupWithRetryIfNeeded(
+        teamID: UUID?,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        enableReceipts: Bool,
+        messageProtocol: WireDataModel.MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+
+            func retry(excludingDomains domains: Set<String>) {
+                let usersToExclude = users.belongingTo(domains: domains)
+                let reachableUsers = Set(users).subtracting(usersToExclude)
+
+                if !reachableUsers.isEmpty {
+                    internalCreateGroupConversation(
+                        teamID: teamID,
+                        name: name,
+                        users: reachableUsers,
+                        failedToAddUsers: usersToExclude,
+                        accessMode: accessMode,
+                        accessRoles: accessRoles,
+                        enableReceipts: enableReceipts,
+                        messageProtocol: messageProtocol,
+                        completion: completion)
                 }
             }
-    }
 
-    private func retry(excludingDomains domains: Set<String>,
-                       teamID: UUID? = nil,
-                       name: String?,
-                       users: Set<ZMUser>,
-                       accessMode: ConversationAccessMode,
-                       accessRoles: Set<ConversationAccessRoleV2>,
-                       enableReceipts: Bool = false,
-                       messageProtocol: WireDataModel.MessageProtocol = .proteus,
-                       completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        let usersToExclude = users.belongingTo(domains: domains)
-        let usersToAdd = Set(users).subtracting(usersToExclude)
-
-        internalCreateGroupConversation(
-            teamID: teamID,
-            name: name,
-            users: usersToAdd,
-            failedToAddUsers: usersToExclude,
-            accessMode: accessMode,
-            accessRoles: accessRoles,
-            enableReceipts: enableReceipts,
-            messageProtocol: messageProtocol,
-            completion: completion)
-    }
+            internalCreateGroupConversation(
+                teamID: teamID,
+                name: name,
+                users: users,
+                accessMode: accessMode,
+                accessRoles: accessRoles,
+                enableReceipts: enableReceipts,
+                messageProtocol: messageProtocol) { result in
+                    switch result {
+                    case .failure(.networkError(.unreachableDomains(let domains))):
+                        retry(excludingDomains: domains)
+                    default:
+                        completion(result)
+                    }
+                }
+        }
 
     private func internalCreateGroupConversation(
         teamID: UUID?,

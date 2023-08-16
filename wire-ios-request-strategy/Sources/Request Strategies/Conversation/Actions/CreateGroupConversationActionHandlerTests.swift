@@ -23,7 +23,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     typealias RequestPayload = Payload.NewConversation
     typealias ResponsePayload = Payload.Conversation
-    typealias ErrorResponse = Payload.ErrorResponse
+    typealias ErrorResponse = CreateGroupConversationActionHandler.ErrorResponse
 
     var sut: CreateGroupConversationActionHandler!
 
@@ -358,28 +358,39 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             // Given
             BackendInfo.apiVersion = .v4
             let unreachableDomain = "foma.wire.link"
-            let unreachableUser = ZMUser.insertNewObject(in: self.syncMOC)
-            unreachableUser.remoteIdentifier = UUID()
-            unreachableUser.domain = unreachableDomain
+            let unreachableUserID = QualifiedID(uuid: UUID(), domain: unreachableDomain)
 
-            action = createAction()
+            action = CreateGroupConversationAction(
+                messageProtocol: .proteus,
+                creatorClientID: "creatorClientID",
+                qualifiedUserIDs: [user1ID, unreachableUserID],
+                unqualifiedUserIDs: [],
+                name: "foo bar",
+                accessMode: .allowGuests,
+                accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
+                legacyAccessRole: nil,
+                teamID: teamID,
+                isReadReceiptsEnabled: true
+            )
 
             let isDone = self.expectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
                 case .failure(.unreachableDomains([unreachableDomain])):
-                    isDone.fulfill()
+                    break
 
                 default:
                     XCTFail("unexpected result: \($0)")
                 }
+
+                isDone.fulfill()
             }
 
             let payload = ErrorResponse(unreachable_backends: [unreachableDomain])
-            let payloadString = payload.payloadString()!
+            let payloadString = payload.payloadString()
             let response = ZMTransportResponse(
-                payload: payloadString as ZMTransportData,
+                payload: payloadString as? ZMTransportData,
                 httpStatus: 533,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v4.rawValue
@@ -400,32 +411,40 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             let applesDomain = "apples@domain.com"
             let bananasDomain = "bananas@domain.com"
 
-            let applesUser = ZMUser.insertNewObject(in: self.syncMOC)
-            applesUser.remoteIdentifier = UUID()
-            applesUser.domain = applesDomain
+            let applesQualifiedID = QualifiedID(uuid: UUID(), domain: applesDomain)
+            let bananasQualifiedID = QualifiedID(uuid: UUID(), domain: bananasDomain)
 
-            let bananasUser = ZMUser.insertNewObject(in: self.syncMOC)
-            bananasUser.remoteIdentifier = UUID()
-            bananasUser.domain = bananasDomain
-
-            action = createAction()
+            action = CreateGroupConversationAction(
+                messageProtocol: .proteus,
+                creatorClientID: "creatorClientID",
+                qualifiedUserIDs: [applesQualifiedID, bananasQualifiedID],
+                unqualifiedUserIDs: [],
+                name: "foo bar",
+                accessMode: .allowGuests,
+                accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
+                legacyAccessRole: nil,
+                teamID: teamID,
+                isReadReceiptsEnabled: true
+            )
 
             let isDone = self.expectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
                 case .failure(.nonFederatingDomains([applesDomain, bananasDomain])):
-                    isDone.fulfill()
+                    break
 
                 default:
                     XCTFail("unexpected result: \($0)")
                 }
+
+                isDone.fulfill()
             }
 
             let payload = ErrorResponse(non_federating_backends: [applesDomain, bananasDomain])
-            let payloadString = payload.payloadString()!
+            let payloadString = payload.payloadString()
             let response = ZMTransportResponse(
-                payload: payloadString as ZMTransportData,
+                payload: payloadString as? ZMTransportData,
                 httpStatus: 409,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v4.rawValue

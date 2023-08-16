@@ -161,7 +161,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
         case 409:
             guard
-                let payload = Payload.ErrorResponse(response),
+                let payload = ErrorResponse(response),
                 let nonFederatingDomains = payload.non_federating_backends
             else {
                 return action.fail(with: .unknown)
@@ -175,7 +175,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
         case 533:
             guard
-                let payload = Payload.ErrorResponse(response),
+                let payload = ErrorResponse(response),
                 let unreachableDomains = payload.unreachable_backends
             else {
                 return action.fail(with: .unknown)
@@ -193,7 +193,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
     }
 }
 
-extension Payload {
+extension AddParticipantActionHandler {
 
     // MARK: - Error response
 

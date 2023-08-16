@@ -144,7 +144,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         case (409, _):
             let errorInfo = response.errorInfo
             guard
-                let payload = Payload.ErrorResponse(response),
+                let payload = ErrorResponse(response),
                 let nonFederatingDomains = payload.non_federating_backends
             else {
                 return action.fail(with: .unknown(
@@ -163,7 +163,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
         case (533, _):
             let errorInfo = response.errorInfo
             guard
-                let payload = Payload.ErrorResponse(response),
+                let payload = ErrorResponse(response),
                 let unreachableDomains = payload.unreachable_backends
             else {
                 return action.fail(with: .unknown(
@@ -274,6 +274,19 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 }
             }
         }
+    }
+
+}
+
+extension CreateGroupConversationActionHandler {
+
+    // MARK: - Error response
+
+    struct ErrorResponse: Codable {
+
+        var unreachable_backends: [String]?
+        var non_federating_backends: [String]?
+
     }
 
 }
