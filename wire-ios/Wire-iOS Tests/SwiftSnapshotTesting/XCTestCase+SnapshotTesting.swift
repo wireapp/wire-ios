@@ -287,7 +287,7 @@ extension XCTestCase {
                    line: line)
 
             matching.overrideUserInterfaceStyle = .dark
-            
+
             verify(matching: matching,
                    named: "DarkTheme",
                    file: file,
@@ -399,7 +399,7 @@ extension XCTestCase {
             "accessibility-large": .accessibilityLarge,
             "accessibility-extra-large": .accessibilityExtraLarge,
             "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
-            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge,
+            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
         ].forEach { name, contentSize in
             let failure = verifySnapshot(matching: value,
                                          as: .image(precision: precision, perceptualPrecision: perceptualPrecision, traits: .init(preferredContentSizeCategory: contentSize)),

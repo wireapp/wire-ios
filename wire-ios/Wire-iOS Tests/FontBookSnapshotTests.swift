@@ -32,7 +32,7 @@ final class FontBookSnapshotTests: XCTestCase {
 
     }
 
-    func testBodyFontStyle(){
+    func testBodyFontStyle() {
         let sutLabel = DynamicFontLabel(text: "Welcome to Dub Dub",
                                      style: .body,
                                      color: SemanticColors.Label.textDefault)
