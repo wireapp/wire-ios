@@ -78,7 +78,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
         let reactionEmoji = "❤️"
         self.userSession?.perform({
-            ZMMessage.addReaction(reactionEmoji, toMessage: message!)
+            ZMMessage.addReaction(reactionEmoji, to: message!)
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let observer = MessageChangeObserver.init(message: message)
@@ -291,7 +291,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
         // when
         self.userSession?.perform {
-            ZMMessage.addReaction("🥰", toMessage: editedMessage!)
+            ZMMessage.addReaction("🥰", to: editedMessage!)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

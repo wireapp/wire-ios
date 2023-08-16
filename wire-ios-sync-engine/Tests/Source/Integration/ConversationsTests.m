@@ -864,7 +864,7 @@
     // when
     NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:reactionEmoji toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -899,7 +899,7 @@
     // when
     NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:reactionEmoji toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -928,7 +928,7 @@
 
     NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:reactionEmoji toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -936,7 +936,7 @@
     
     [self.userSession performChanges:^{
         // removes reaction for self user
-        [ZMMessage removeReaction:reactionEmoji onMessage:message];
+        [ZMMessage removeReaction:reactionEmoji from:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -965,7 +965,7 @@
 
     NSString *reactionEmoji = @"❤️";
     [self.userSession performChanges:^{
-        [ZMMessage addReaction:reactionEmoji toMessage:message];
+        [ZMMessage addReaction:reactionEmoji to:message];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
