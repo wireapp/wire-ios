@@ -297,10 +297,16 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
                 switch $0 {
                 case .success(let conversation):
-                    delegate?.conversationCreationController(
-                        self,
-                        didCreateConversation: conversation
-                    )
+                    showNonFederatingDomainsAlert(domains: [
+                        "foo.com",
+                        "bar.com",
+                        "goo.com"
+                    ])
+                    return
+//                    delegate?.conversationCreationController(
+//                        self,
+//                        didCreateConversation: conversation
+//                    )
 
                 case .failure(let error):
                     WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
@@ -319,14 +325,14 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         )
 
         alert.addAction(UIAlertAction(
-            title: Strings.editParticipantList,
-            style: .default
+            title: Strings.abort,
+            style: .destructive,
+            handler: abort
         ))
 
         alert.addAction(UIAlertAction(
-            title: Strings.abort,
-            style: .default,
-            handler: abort
+            title: Strings.editParticipantList,
+            style: .default
         ))
 
         alert.addAction(.link(
