@@ -20,29 +20,22 @@ import WireSyncEngine
 
 protocol SectionListCellType: AnyObject {
     var sectionName: String? { get set }
+    var obfuscatedSectionName: String? { get set }
     var cellIdentifier: String? { get set }
 }
 
 extension SectionListCellType {
+
     var identifier: String {
-        let prefix: String
-
-        if let sectionName = sectionName {
-            prefix = "\(sectionName) - "
-        } else {
-            prefix = ""
-        }
-
-        if let cellIdentifier = cellIdentifier {
-            return prefix + cellIdentifier
-        } else {
-            return prefix
-        }
+        return [obfuscatedSectionName ?? sectionName, cellIdentifier]
+            .compactMap(\.self)
+            .joined(separator: " - ")
     }
 }
 
 final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     let itemView = ConversationListItemView()
