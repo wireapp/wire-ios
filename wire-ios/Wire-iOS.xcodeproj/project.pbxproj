@@ -1207,6 +1207,7 @@
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
 		E9D9B5A52A8A11590025FE8B /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9B5A42A8A11590025FE8B /* FontBookSnapshotTests.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
+		E9E335932A8A27EC00B304F3 /* BaseSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */; };
 		E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */; };
 		E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D128194F2D0058C793 /* FontScheme.swift */; };
 		E9EBE0D428194F890058C793 /* FontScheme+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */; };
@@ -3192,6 +3193,7 @@
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
 		E9D9B5A42A8A11590025FE8B /* FontBookSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontBookSnapshotTests.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
+		E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTypeCapable.swift; sourceTree = "<group>"; };
 		E9EBE0D128194F2D0058C793 /* FontScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontScheme.swift; sourceTree = "<group>"; };
 		E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FontScheme+DynamicType.swift"; sourceTree = "<group>"; };
@@ -6806,6 +6808,7 @@
 				EEEB8B56260B685300554C39 /* UserRightTests.swift */,
 				E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */,
 				E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */,
+				E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */,
 			);
 			path = "Wire-iOS Tests";
 			sourceTree = "<group>";
@@ -9555,6 +9558,7 @@
 				EF24477D2343656A00C747F5 /* ConnectRequestsCellTests.swift in Sources */,
 				A98ECDF3232A9564006A57FD /* MockConversationListContainer.swift in Sources */,
 				6357B41626121D55008F1761 /* MockPanGestureRecognizer.swift in Sources */,
+				E9E335932A8A27EC00B304F3 /* BaseSnapshotTestCase.swift in Sources */,
 				D50892FD2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift in Sources */,
 				D524BE5F207B99B800542A4E /* UIViewController+LoadingTests.swift in Sources */,
 				EF29F1BB21271A9A00BE94E6 /* GroupDetailsViewControllerTests.swift in Sources */,
