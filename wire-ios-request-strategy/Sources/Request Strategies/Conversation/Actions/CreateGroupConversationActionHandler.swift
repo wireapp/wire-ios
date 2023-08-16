@@ -142,16 +142,11 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             action.fail(with: .accessDenied)
 
         case (409, _):
-            let errorInfo = response.errorInfo
             guard
                 let payload = ErrorResponse(response),
                 let nonFederatingDomains = payload.non_federating_backends
             else {
-                return action.fail(with: .unknown(
-                    code: errorInfo.status,
-                    label: errorInfo.label,
-                    message: errorInfo.message
-                ))
+                return action.fail(with: .proccessingError)
             }
 
             if nonFederatingDomains.isEmpty {
@@ -161,16 +156,11 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
         case (533, _):
-            let errorInfo = response.errorInfo
             guard
                 let payload = ErrorResponse(response),
                 let unreachableDomains = payload.unreachable_backends
             else {
-                return action.fail(with: .unknown(
-                    code: errorInfo.status,
-                    label: errorInfo.label,
-                    message: errorInfo.message
-                ))
+                return action.fail(with: .proccessingError)
             }
 
             if unreachableDomains.isEmpty {
