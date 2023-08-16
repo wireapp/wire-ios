@@ -22,11 +22,11 @@ import WireSyncEngine
 
 final class UserClientListViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
-    fileprivate let headerView: ParticipantDeviceHeaderView
-    fileprivate let collectionView = UICollectionView(forGroupedSections: ())
-    fileprivate var clients: [UserClientType]
-    fileprivate var tokens: [Any?] = []
-    fileprivate var user: UserType
+    private let headerView: ParticipantDeviceHeaderView
+    private let collectionView = UICollectionView(forGroupedSections: ())
+    private var clients: [UserClientType]
+    private var tokens: [Any?] = []
+    private var user: UserType
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
@@ -89,7 +89,7 @@ final class UserClientListViewController: UIViewController, UICollectionViewDele
         ])
     }
 
-    fileprivate static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
+    private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
         return user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
     }
 

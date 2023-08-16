@@ -160,10 +160,11 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesNotFindUsersContainingButNotBeginningWithSearchString() {
+    func testThatItDoesFindUsersContainingButNotBeginningWithSearchString() {
         // given
         let resultArrived = expectation(description: "received result")
-        _ = createConnectedUser(withName: "userA")
+        let user = createConnectedUser(withName: "userA")
+        let normaliedName = user.normalizedName
 
         let request = SearchRequest(query: "serA", searchOptions: [.contacts])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -171,7 +172,7 @@ class SearchTaskTests: DatabaseTest {
         // expect
         task.onResult { (result, _) in
             resultArrived.fulfill()
-            XCTAssertEqual(result.contacts.count, 0)
+            XCTAssertEqual(result.contacts.count, 1)
         }
 
         // when
@@ -555,10 +556,10 @@ class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesNotFindConversationsUsingPartialNames() {
+    func testThatItDoesFindConversationsUsingPartialNames() {
         // given
         let resultArrived = expectation(description: "received result")
-        _ = createGroupConversation(withName: "Somebody")
+        let conversation = createGroupConversation(withName: "Somebody")
 
         let request = SearchRequest(query: "mebo", searchOptions: [.conversations])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
@@ -566,7 +567,7 @@ class SearchTaskTests: DatabaseTest {
         // expect
         task.onResult { (result, _) in
             resultArrived.fulfill()
-            XCTAssertEqual(result.conversations, [])
+            XCTAssertEqual(result.conversations, [conversation])
         }
 
         // when
