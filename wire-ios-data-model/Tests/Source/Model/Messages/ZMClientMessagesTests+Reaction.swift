@@ -84,7 +84,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(message.cachedCategory.contains(.reacted))
     }
 
-    func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
+    func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithInvalidReaction() {
 
         let message = insertMessage()
         let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["TROP BIEN"], messageID: message.nonce!))
