@@ -80,12 +80,12 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         cleanUpPendingTimer()
     }
 
-    fileprivate func cleanUpPendingTask() {
+    private func cleanUpPendingTask() {
         pendingSearchtask?.cancel()
         pendingSearchtask = nil
     }
 
-    fileprivate func cleanUpPendingTimer() {
+    private func cleanUpPendingTimer() {
         pendingTimer?.invalidate()
         pendingTimer = nil
     }
@@ -158,26 +158,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     // MARK: - Presentation
 
     func wrapInsideNavigationController() -> UINavigationController {
-        let navigationController = GiphyNavigationController(rootViewController: self)
-        let navigationTextColor = SemanticColors.Label.textDefault
-        let navigationBackgroundColor = SemanticColors.View.backgroundDefault
-
-        let backButtonImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultBlack)
-            .with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)?
-            .withAlignmentRectInsets(UIEdgeInsets(top: 0, left: 0, bottom: -4, right: 0))
-        navigationController.navigationBar.backIndicatorImage = backButtonImage
-        navigationController.navigationBar.backIndicatorTransitionMaskImage = backButtonImage
-
-        navigationController.navigationBar.backItem?.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
-
-        navigationController.navigationBar.tintColor = navigationTextColor
-        navigationController.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: navigationTextColor)
-        navigationController.navigationBar.barTintColor = navigationBackgroundColor
-        navigationController.navigationBar.isTranslucent = false
-
-        if #available(iOS 15, *) {
-            navigationController.view.backgroundColor = navigationBackgroundColor
-        }
+        let navigationController = self.wrapInNavigationController(setBackgroundColor: true)
 
         return navigationController
     }

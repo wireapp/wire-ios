@@ -1,0 +1,8 @@
+{
+    "wipeOnCookieInvalid": false,
+    "blacklistDownloadInterval": 21600,
+    "blockOnJailbreakOrRoot": false,
+    "wipeOnJailbreakOrRoot": false,
+    "authenticateAfterReboot": false,
+    "encryptionAtRestEnabledByDefault": false
+}

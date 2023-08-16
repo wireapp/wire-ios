@@ -35,25 +35,37 @@ extension ConversationViewController: ProfileViewControllerDelegate {
         }
     }
 
-    func profileViewController(_ controller: ProfileViewController?,
-                               wantsToCreateConversationWithName name: String?,
-                               users: UserSet) {
+    func profileViewController(
+        _ controller: ProfileViewController?,
+        wantsToCreateConversationWithName name: String?,
+        users: UserSet
+    ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let conversationCreation = { [weak self] in
-            var newConversation: ZMConversation! = nil
+        let conversationCreation: () -> Void = { [weak self] in
+            let service = ConversationService(context: userSession.viewContext)
+            let users = Set(users.materialize(in: userSession.viewContext))
 
-            userSession.enqueue({
-                newConversation = ZMConversation.insertGroupConversation(session: userSession,
-                                                                         participants: Array(users),
-                                                                         name: name,
-                                                                         team: ZMUser.selfUser().team)
+            service.createGroupConversation(
+                name: name,
+                users: users,
+                allowGuests: true,
+                allowServices: true,
+                enableReceipts: false,
+                messageProtocol: .proteus
+            ) {
+                switch $0 {
+                case .success(let conversation):
+                    self?.zClientViewController.select(
+                        conversation: conversation,
+                        focusOnView: true,
+                        animated: true
+                    )
 
-            }, completionHandler: {
-                self?.zClientViewController.select(conversation: newConversation,
-                                                   focusOnView: true,
-                                                   animated: true)
-            })
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create conversation from profile: \(String(describing: error))")
+                }
+            }
         }
 
         if nil != presentedViewController {

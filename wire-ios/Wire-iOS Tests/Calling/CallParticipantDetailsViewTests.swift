@@ -56,4 +56,11 @@ class CallParticipantDetailsViewTests: XCTestCase {
 
         verify(matching: sut)
     }
+
+    func testConnectionIssue() {
+        sut.callState = .unconnectedButMayConnect
+        sut.name = "John Doe The Second"
+        sut.frame = CGRect(x: 0, y: 0, width: 195, height: 24)
+        verify(matching: sut)
+    }
 }

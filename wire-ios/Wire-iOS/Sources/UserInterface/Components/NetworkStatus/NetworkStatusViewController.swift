@@ -41,14 +41,14 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     let networkStatusView = NetworkStatusView()
-    fileprivate var observersTokens: [Any] = []
-    fileprivate var networkStatusObserverToken: Any?
-    fileprivate var pendingState: NetworkStatusViewState?
-    fileprivate var state: NetworkStatusViewState = .online
-    fileprivate var finishedViewWillAppear: Bool = false
+    private var observersTokens: [Any] = []
+    private var networkStatusObserverToken: Any?
+    private var pendingState: NetworkStatusViewState?
+    private var state: NetworkStatusViewState = .online
+    private var finishedViewWillAppear: Bool = false
 
-    fileprivate var device: DeviceProtocol = UIDevice.current
-    fileprivate var application: ApplicationProtocol = UIApplication.shared
+    private var device: DeviceProtocol = UIDevice.current
+    private var application: ApplicationProtocol = UIApplication.shared
 
     /// default init method with a parameter for injecting mock device and mock application
     ///
@@ -126,7 +126,7 @@ final class NetworkStatusViewController: UIViewController {
         offlineAlert.presentTopmost()
     }
 
-    fileprivate func viewState(from networkState: ZMNetworkState) -> NetworkStatusViewState {
+    private func viewState(from networkState: ZMNetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
             return .offlineExpanded
@@ -149,7 +149,7 @@ final class NetworkStatusViewController: UIViewController {
         }
     }
 
-    fileprivate func enqueue(state: NetworkStatusViewState) {
+    private func enqueue(state: NetworkStatusViewState) {
         pendingState = state
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(applyPendingState), object: nil)
 

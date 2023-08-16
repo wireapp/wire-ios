@@ -399,17 +399,41 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     @objc private func onShowDebugActions(_ sender: AnyObject) {
-        let actionSheet = UIAlertController(title: "Debug actions",
-                                            message: "⚠️ will cause decryption errors ⚠️",
-                                            preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: "Debug actions",
+            message: "⚠️ will cause decryption errors ⚠️",
+            preferredStyle: .actionSheet
+        )
 
-        actionSheet.addAction(UIAlertAction(title: "Delete Session", style: .default, handler: { [weak self] (_) in
-            self?.onDeleteDeviceTapped()
-        }))
+        actionSheet.addAction(
+            UIAlertAction(
+                title: "Delete Session",
+                style: .default,
+                handler: { [weak self] (_) in
+                    self?.onDeleteDeviceTapped()
+                }
+            )
+        )
 
-        actionSheet.addAction(UIAlertAction(title: "Corrupt Session", style: .default, handler: { [weak self] (_) in
-            self?.onCorruptSessionTapped()
-        }))
+        actionSheet.addAction(
+            UIAlertAction(
+                title: "Corrupt Session",
+                style: .default,
+                handler: { [weak self] (_) in
+                    self?.onCorruptSessionTapped()
+                }
+            )
+        )
+
+        actionSheet.addAction(
+            UIAlertAction(
+                title: "Duplicate client",
+                style: .default,
+                handler: {[weak self] _ in
+                    self?.onDuplicateClientTapped()
+                }
+            )
+        )
 
         actionSheet.addAction(.cancel())
 
@@ -443,6 +467,31 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
             sync.saveOrRollback()
         }
         presentingViewController?.dismiss(animated: true, completion: .none)
+    }
+
+    private func onDuplicateClientTapped() {
+        let context = userClient.managedObjectContext!.zm_sync!
+
+        context.performAndWait {
+            guard
+                let userID = userClient.user?.remoteIdentifier,
+                let domain = userClient.user?.domain ?? BackendInfo.domain
+            else {
+                return
+            }
+
+            let user = ZMUser.fetch(
+                with: userID,
+                domain: domain,
+                in: context
+            )
+
+            let duplicate = UserClient.insertNewObject(in: context)
+            duplicate.remoteIdentifier = userClient.remoteIdentifier
+            duplicate.user = user
+
+            context.saveOrRollback()
+        }
     }
 
 }

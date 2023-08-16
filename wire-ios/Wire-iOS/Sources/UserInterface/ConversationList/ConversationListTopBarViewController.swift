@@ -134,7 +134,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     func createPendingLegalHoldRequestView() -> UIView {
         let button = IconButton(style: .circular)
-        button.setBackgroundImageColor(SemanticColors.LegacyColors.vividRed.withAlphaComponent(0.5), for: .normal)
+        button.setBackgroundImageColor(SemanticColors.Icon.backgroundLegalHold.withAlphaComponent(0.8), for: .normal)
 
         button.setIcon(.clock, size: 12, for: .normal)
         button.setIconColor(.white, for: .normal)
@@ -173,7 +173,7 @@ final class ConversationListTopBarViewController: UIViewController {
         accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
 
         if let selfUser = ZMUser.selfUser(),
-            selfUser.clientsRequiringUserAttention.count > 0 {
+           selfUser.clientsRequiringUserAttention.count > 0 {
             accountView.accessibilityLabel = "self.new-device.voiceover.label".localized
         }
 
@@ -276,6 +276,7 @@ extension UIView {
 }
 
 final class TopBar: UIView {
+
     var leftView: UIView? = .none {
         didSet {
             oldValue?.removeFromSuperview()
@@ -322,6 +323,7 @@ final class TopBar: UIView {
 
             NSLayoutConstraint.activate(constraints)
         }
+
     }
 
     private let middleViewContainer = UIView()

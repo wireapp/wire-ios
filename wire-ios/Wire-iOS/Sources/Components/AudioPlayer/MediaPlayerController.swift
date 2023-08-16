@@ -27,7 +27,7 @@ final class MediaPlayerController: NSObject {
     let message: ZMConversationMessage
     private let player: AVPlayer
     weak var delegate: MediaPlayerDelegate?
-    fileprivate var playerRateObserver: NSKeyValueObservation!
+    private var playerRateObserver: NSKeyValueObservation!
 
     init(player: AVPlayer,
          message: ZMConversationMessage,

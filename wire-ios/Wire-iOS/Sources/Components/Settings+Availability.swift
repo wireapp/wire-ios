@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-fileprivate extension AvailabilityKind {
+private extension AvailabilityKind {
 
     var dontRemindMeUserDefaultsKey: String {
         return "dont_remind_me_\(canonicalName)"

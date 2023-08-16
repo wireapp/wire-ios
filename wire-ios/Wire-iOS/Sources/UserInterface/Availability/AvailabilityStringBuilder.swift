@@ -49,15 +49,6 @@ final class AvailabilityStringBuilder: NSObject {
                 color = SemanticColors.Label.textDefault
                 iconColor = self.color(for: availability)
             }
-        case .placeholder:
-            do {
-                guard availability != .none else {
-                    // Should use the default placeholder string
-                    return nil
-                }
-
-                title = "availability.\(availability.canonicalName)".localized
-            }
         }
 
         guard let textColor = color,

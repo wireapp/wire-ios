@@ -1,0 +1,11 @@
+{
+    "endpoints" : {
+        "backendURL" : "https://nginz-https.anta.wire.link",
+        "backendWSURL" : "https://nginz-ssl.anta.wire.link",
+        "blackListURL" : "https://clientblacklist.wire.com/staging",
+        "teamsURL" : "https://teams.anta.wire.link",
+        "accountsURL" : "https://account.anta.wire.link",
+        "websiteURL" : "https://wire.com"
+    },
+    "title" : "Anta Federation Environment"
+}

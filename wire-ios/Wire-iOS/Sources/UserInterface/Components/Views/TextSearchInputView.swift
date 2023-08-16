@@ -60,7 +60,7 @@ final class TextSearchInputView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        backgroundColor = .clear
+        backgroundColor = SemanticColors.View.backgroundDefault
 
         iconView.setIcon(.search,
                          size: .tiny,

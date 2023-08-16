@@ -180,8 +180,8 @@ final class SettingsBlockProperty: SettingsProperty {
         Analytics.shared.tagSettingsChanged(for: self.propertyName, to: self.value())
     }
 
-    fileprivate let getAction: GetAction
-    fileprivate let setAction: SetAction
+    private let getAction: GetAction
+    private let setAction: SetAction
 
     init(propertyName: SettingsPropertyName, getAction: @escaping GetAction, setAction: @escaping SetAction) {
         self.propertyName = propertyName

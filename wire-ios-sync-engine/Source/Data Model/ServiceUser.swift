@@ -194,11 +194,12 @@ public extension ServiceUser {
                            completionHandler: completionHandler)
     }
 
-    internal func createConversation(transportSession: TransportSessionType,
-                                     eventProcessor: UpdateEventProcessor,
-                                     contextProvider: ContextProvider,
-                                     completionHandler: @escaping (Result<ZMConversation>) -> Void) {
-
+    internal func createConversation(
+        transportSession: TransportSessionType,
+        eventProcessor: UpdateEventProcessor,
+        contextProvider: ContextProvider,
+        completionHandler: @escaping (Result<ZMConversation>) -> Void
+    ) {
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
             return
@@ -209,41 +210,38 @@ public extension ServiceUser {
             return
         }
 
-        let selfUser = ZMUser.selfUser(in: contextProvider.viewContext)
-        let conversation = ZMConversation.insertNewObject(in: contextProvider.viewContext)
+        let context = contextProvider.viewContext
+        let conversationService = ConversationService(context: context)
+        conversationService.createGroupConversation(
+            name: nil,
+            users: [],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: false,
+            messageProtocol: .proteus
+        ) {
+            switch $0 {
+            case .success(let conversation):
+                conversation.add(
+                    serviceUser: serviceUserData,
+                    transportSession: transportSession,
+                    eventProcessor: eventProcessor,
+                    contextProvider: contextProvider
+                ) { addServiceResult in
+                    switch addServiceResult {
+                    case .success:
+                        context.saveOrRollback()
+                        completionHandler(.success(conversation))
 
-        conversation.lastModifiedDate = Date()
-        conversation.conversationType = .group
-        conversation.creator = selfUser
-        conversation.team = selfUser.team
-        conversation.allowServices = true
-
-        var onCreatedRemotelyToken: NSObjectProtocol?
-        _ = onCreatedRemotelyToken // remove warning
-
-        onCreatedRemotelyToken = conversation.onCreatedRemotely { [weak contextProvider] in
-            guard let contextProvider = contextProvider else {
-                completionHandler(.failure(AddBotError.general))
-                return
-            }
-
-            conversation.add(serviceUser: serviceUserData,
-                             transportSession: transportSession,
-                             eventProcessor: eventProcessor,
-                             contextProvider: contextProvider,
-                             completionHandler: { (result) in
-                switch result {
-                case .success:
-                    completionHandler(.success(conversation))
-                case .failure(let error):
-                    completionHandler(.failure(error))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
                 }
 
-                onCreatedRemotelyToken = nil
-            })
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
         }
-
-        contextProvider.viewContext.saveOrRollback()
     }
 }
 

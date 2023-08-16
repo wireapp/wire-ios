@@ -79,33 +79,4 @@ class AvailabilityLabelTests: ZMSnapshotTestCase {
         label.sizeToFit()
         return label
     }
-
-    // MARK: - Placeholder labels
-
-    func testThatItRendersCorrectly_Placeholder_NoneAvailability() {
-        XCTAssertTrue(createLabelForPlaceholder(.none).frame.size.width == 0.0)
-    }
-
-    func testThatItRendersCorrectly_Placeholder_AvailableAvailability() {
-        verify(view: createLabelForPlaceholder(.available))
-    }
-
-    func testThatItRendersCorrectly_Placeholder_AwayAvailability() {
-        verify(view: createLabelForPlaceholder(.away))
-    }
-
-    func testThatItRendersCorrectly_Placeholder_BusyAvailability() {
-        verify(view: createLabelForPlaceholder(.busy))
-	}
-
-    func createLabelForPlaceholder(_ availability: AvailabilityKind) -> UILabel {
-        guard let user = ZMUser.selfUser() else { return UILabel() }
-        user.availability = availability
-        let attributedString = AvailabilityStringBuilder.string(for: user, with: .placeholder, color: .lightGray)
-        let label = UILabel()
-        label.attributedText = attributedString
-        label.font = FontSpec(.small, .semibold).font
-        label.sizeToFit()
-        return label
-    }
 }

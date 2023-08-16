@@ -27,22 +27,22 @@ final class PinnableThumbnailViewController: UIViewController {
 
     // MARK: - Dynamics
 
-    fileprivate let edgeInsets = CGPoint(x: 16, y: 16)
-    fileprivate var originalCenter: CGPoint = .zero
-    fileprivate var hasDoneInitialLayout = false
-    fileprivate var hasEnabledPinningBehavior = false
+    private let edgeInsets = CGPoint(x: 16, y: 16)
+    private var originalCenter: CGPoint = .zero
+    private var hasDoneInitialLayout = false
+    private var hasEnabledPinningBehavior = false
 
-    fileprivate lazy var pinningBehavior: ThumbnailCornerPinningBehavior = {
+    private lazy var pinningBehavior: ThumbnailCornerPinningBehavior = {
         return ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
     }()
 
-    fileprivate lazy var animator: UIDynamicAnimator = {
+    private lazy var animator: UIDynamicAnimator = {
         return UIDynamicAnimator(referenceView: self.thumbnailContainerView)
     }()
 
     // MARK: - Changing the Previewed Content
 
-    fileprivate(set) var thumbnailContentSize = CGSize(width: 100, height: 100)
+    private(set) var thumbnailContentSize = CGSize(width: 100, height: 100)
 
     func removeCurrentThumbnailContentView() {
         contentView?.removeFromSuperview()

@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+import XCTest
+import SnapshotTesting
 import Ziphy
+@testable import Wire
 
-final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class GiphySearchViewControllerSnapshotTests: BaseSnapshotTestCase {
     var sut: GiphySearchViewController!
 
     var mockConversation: MockConversation!
@@ -43,7 +44,7 @@ final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
         sut.searchBar.placeholderLabel.isHidden = true
         mockNavigationController = sut.wrapInsideNavigationController()
 
-        sut.collectionView?.backgroundColor = .white
+        sut.collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func tearDown() {
@@ -58,6 +59,6 @@ final class GiphySearchViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testEmptySearchScreenWithKeyword() {
-        verify(view: mockNavigationController.view)
+        verify(matching: mockNavigationController.view)
     }
 }

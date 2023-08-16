@@ -35,9 +35,9 @@ extension MockShareViewControllerConversation: StableRandomParticipantsProvider 
 }
 
 final class ShareViewControllerTests: ZMSnapshotTestCase {
-    fileprivate var groupConversation: MockShareViewControllerConversation!
-    fileprivate var oneToOneConversation: MockShareViewControllerConversation!
-    fileprivate var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
+    private var groupConversation: MockShareViewControllerConversation!
+    private var oneToOneConversation: MockShareViewControllerConversation!
+    private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
 
     override func setUp() {
         super.setUp()
@@ -63,14 +63,12 @@ final class ShareViewControllerTests: ZMSnapshotTestCase {
     }
 
     private func activateDarkColorScheme() {
-        ColorScheme.default.variant = .dark
         sut.overrideUserInterfaceStyle = .dark
         NSAttributedString.invalidateMarkdownStyle()
         NSAttributedString.invalidateParagraphStyle()
     }
 
     private func disableDarkColorScheme() {
-        ColorScheme.default.variant = .light
         sut.overrideUserInterfaceStyle = .light
         NSAttributedString.invalidateMarkdownStyle()
         NSAttributedString.invalidateParagraphStyle()

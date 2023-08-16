@@ -99,23 +99,23 @@ final class AddParticipantsViewController: UIViewController {
         case create(ConversationCreationValues)
     }
 
-    fileprivate let searchResultsViewController: SearchResultsViewController
-    fileprivate let searchGroupSelector: SearchGroupSelector
-    fileprivate let searchHeaderViewController: SearchHeaderViewController
+    private let searchResultsViewController: SearchResultsViewController
+    private let searchGroupSelector: SearchGroupSelector
+    private let searchHeaderViewController: SearchHeaderViewController
     let userSelection: UserSelection = UserSelection()
-    fileprivate let collectionView: UICollectionView
-    fileprivate let collectionViewLayout: UICollectionViewFlowLayout
-    fileprivate let confirmButtonHeight: CGFloat = 56.0
-    fileprivate let confirmButton: IconButton
-    fileprivate let emptyResultView: EmptySearchResultsView
-    fileprivate lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
+    private let collectionView: UICollectionView
+    private let collectionViewLayout: UICollectionViewFlowLayout
+    private let confirmButtonHeight: CGFloat = 56.0
+    private let confirmButton: IconButton
+    private let emptyResultView: EmptySearchResultsView
+    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
                                                                                                       constant: -bottomMargin)
-    fileprivate let backButtonDescriptor = BackButtonDescription()
-    fileprivate let bottomMargin: CGFloat = 24
+    private let backButtonDescriptor = BackButtonDescription()
+    private let bottomMargin: CGFloat = 24
 
     weak var conversationCreationDelegate: AddParticipantsConversationCreationDelegate?
 
-    fileprivate var viewModel: AddParticipantsViewModel {
+    private var viewModel: AddParticipantsViewModel {
         didSet {
             updateValues()
         }
@@ -304,7 +304,7 @@ final class AddParticipantsViewController: UIViewController {
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings.CloseButton.description
     }
 
-    fileprivate func updateSelectionValues() {
+    private func updateSelectionValues() {
         // Update view model after selection changed
         if case .create(let values) = viewModel.context {
             let updated = ConversationCreationValues(name: values.name,
@@ -368,7 +368,7 @@ final class AddParticipantsViewController: UIViewController {
         })
     }
 
-    fileprivate func performSearch() {
+    private func performSearch() {
         let searchingForServices = searchResultsViewController.searchGroup == .services
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
@@ -387,7 +387,7 @@ final class AddParticipantsViewController: UIViewController {
         }
     }
 
-    fileprivate func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
+    private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
         let selectedUsers = self.userSelection.users
 
         (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))

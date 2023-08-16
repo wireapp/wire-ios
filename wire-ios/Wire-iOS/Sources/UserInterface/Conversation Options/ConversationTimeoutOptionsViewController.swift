@@ -46,10 +46,10 @@ extension ZMConversation {
 final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
-    fileprivate let conversation: ZMConversation
-    fileprivate var items: [Item] = []
-    fileprivate let userSession: ZMUserSession
-    fileprivate var observerToken: Any! = nil
+    private let conversation: ZMConversation
+    private var items: [Item] = []
+    private let userSession: ZMUserSession
+    private var observerToken: Any! = nil
 
     weak var dismisser: ViewControllerDismisser?
 

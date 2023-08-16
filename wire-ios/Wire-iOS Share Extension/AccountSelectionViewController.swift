@@ -25,8 +25,8 @@ private let cellReuseIdentifier = "AccountCell"
 
 class AccountSelectionViewController: UITableViewController {
 
-    fileprivate var accounts: [Account]
-    fileprivate var current: Account?
+    private var accounts: [Account]
+    private var current: Account?
 
     var selectionHandler: ((_ account: Account) -> Void)?
 

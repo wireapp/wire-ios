@@ -43,13 +43,13 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     var dismissSpinner: SpinnerCompletion?
 
-    fileprivate var permissions: PhotoPermissionsController!
-    fileprivate var lastLayoutSize = CGSize.zero
-    fileprivate let collectionViewLayout = UICollectionViewFlowLayout()
-    fileprivate let sideMargin: CGFloat = 14
-    fileprivate var viewWasHidden: Bool = false
-    fileprivate var callStateObserverToken: Any?
-    fileprivate var goBackButtonRevealed: Bool = false {
+    private var permissions: PhotoPermissionsController!
+    private var lastLayoutSize = CGSize.zero
+    private let collectionViewLayout = UICollectionViewFlowLayout()
+    private let sideMargin: CGFloat = 14
+    private var viewWasHidden: Bool = false
+    private var callStateObserverToken: Any?
+    private var goBackButtonRevealed: Bool = false {
         didSet {
             if goBackButtonRevealed {
                 UIView.animate(withDuration: 0.35, animations: {
@@ -61,7 +61,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    fileprivate enum CameraKeyboardSection: UInt {
+    private enum CameraKeyboardSection: UInt {
         case camera = 0, photos = 1
     }
 
@@ -217,7 +217,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
             cameraRollButton.centerYAnchor.constraint(equalTo: goBackButton.centerYAnchor)])
     }
 
-    fileprivate func createCollectionView() {
+    private func createCollectionView() {
         self.collectionViewLayout.scrollDirection = .horizontal
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.setupPhotoKeyboardAppearance()
@@ -233,7 +233,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         self.collectionView.bounces = false
     }
 
-    fileprivate func setupPhotoKeyboardAppearance() {
+    private func setupPhotoKeyboardAppearance() {
         self.view.backgroundColor = SemanticColors.View.backgroundConversationView
 
         if permissions.areCameraAndPhotoLibraryAuthorized {
@@ -281,7 +281,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Methods
 
-    fileprivate func forwardSelectedPhotoAsset(_ asset: PHAsset) {
+    private func forwardSelectedPhotoAsset(_ asset: PHAsset) {
         let completeBlock = { (data: Data?, uti: String?) in
             guard let data = data else { return }
 
@@ -372,7 +372,7 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
         }
     }
 
-    fileprivate func forwardSelectedVideoAsset(_ asset: PHAsset) {
+    private func forwardSelectedVideoAsset(_ asset: PHAsset) {
         isLoadingViewVisible = true
         guard let fileLengthLimit: UInt64 = ZMUserSession.shared()?.maxUploadFileSize else { return }
 

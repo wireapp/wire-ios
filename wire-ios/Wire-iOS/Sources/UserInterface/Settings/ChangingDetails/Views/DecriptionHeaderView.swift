@@ -28,7 +28,7 @@ class DescriptionHeaderView: UIView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.lineBreakMode = .byWordWrapping
         descriptionLabel.backgroundColor = .clear
-        descriptionLabel.textColor = .from(scheme: .textForeground, variant: .dark)
+        descriptionLabel.textColor = SemanticColors.Label.textDefault
 
         addSubview(descriptionLabel)
 

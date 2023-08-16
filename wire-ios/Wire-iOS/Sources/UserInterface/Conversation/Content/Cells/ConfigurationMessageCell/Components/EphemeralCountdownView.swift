@@ -23,7 +23,6 @@ import WireDataModel
 class EphemeralCountdownView: UIView {
 
     fileprivate let destructionCountdownView: DestructionCountdownView = DestructionCountdownView()
-    fileprivate let containerView =  UIView()
     fileprivate var timer: Timer?
     fileprivate var wasEverAnimated = false
 

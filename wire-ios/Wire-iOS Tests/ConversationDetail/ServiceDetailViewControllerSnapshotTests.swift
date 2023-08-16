@@ -55,7 +55,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             mockSelfUser.canRemoveService = true
             createSut()
             let navigationController = sut.wrapInNavigationController()
-            verify(view: navigationController.view)
+            verify(matching: navigationController)
         }
     }
 
@@ -64,7 +64,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             mockSelfUser.canRemoveService = false
             createSut()
-            verify(view: sut.view)
+            verify(matching: sut)
         }
     }
 }

@@ -29,15 +29,15 @@ final class TextSearchViewController: NSObject {
         return searchBar.query
     }
 
-    fileprivate var textSearchQuery: TextSearchQuery?
+    private var textSearchQuery: TextSearchQuery?
 
-    fileprivate var results: [ZMConversationMessage] = [] {
+    private var results: [ZMConversationMessage] = [] {
         didSet {
             reloadResults()
         }
     }
 
-    fileprivate var searchStartedDate: Date?
+    private var searchStartedDate: Date?
 
     init(conversation: ConversationLike) {
         self.conversation = conversation
@@ -62,14 +62,14 @@ final class TextSearchViewController: NSObject {
         textSearchQuery?.cancel()
     }
 
-    fileprivate func scheduleSearch() {
+    private func scheduleSearch() {
         let searchSelector = #selector(TextSearchViewController.search)
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: searchSelector, object: .none)
         perform(searchSelector, with: .none, afterDelay: 0.2)
     }
 
     @objc
-    fileprivate func search() {
+    private func search() {
         let searchSelector = #selector(TextSearchViewController.search)
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: searchSelector, object: .none)
         textSearchQuery?.cancel()
@@ -88,7 +88,7 @@ final class TextSearchViewController: NSObject {
         }
     }
 
-    fileprivate func reloadResults() {
+    private func reloadResults() {
         let query = searchQuery ?? ""
         let noResults = results.isEmpty
         let validQuery = TextSearchQuery.isValid(query: query)
@@ -105,16 +105,16 @@ final class TextSearchViewController: NSObject {
     }
 
     @objc
-    fileprivate func showLoadingSpinner() {
+    private func showLoadingSpinner() {
         searchBar.isLoading = true
     }
 
-    fileprivate func hideLoadingSpinner() {
+    private func hideLoadingSpinner() {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(showLoadingSpinner), object: nil)
         searchBar.isLoading = false
     }
 
-    fileprivate func setupAccessibility() {
+    private func setupAccessibility() {
         /// If noResultsView is not hidden, we should hide elements in the collectionView that are not currently visible.
         if let superview = resultsView.superview as? CollectionsView {
             superview.collectionView.accessibilityElementsHidden = !resultsView.noResultsView.isHidden

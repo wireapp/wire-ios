@@ -72,8 +72,8 @@ extension ConversationListViewController {
         var selectedConversation: ZMConversation?
 
         var userProfileObserverToken: Any?
-        fileprivate var initialSyncObserverToken: Any?
-        fileprivate var userObserverToken: Any?
+        private var initialSyncObserverToken: Any?
+        private var userObserverToken: Any?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: Any?
         var connectionRequestsObserverToken: Any?
@@ -126,7 +126,7 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    fileprivate var userProfile: UserProfile? {
+    private var userProfile: UserProfile? {
         return ZMUserSession.shared()?.userProfile
     }
 

@@ -241,12 +241,7 @@ final class ColorScheme: NSObject {
     var variant: ColorSchemeVariant = .light
     private(set) var defaultColorScheme: ColorScheme?
     var accentColor: UIColor = .red
-    var keyboardAppearance: UIKeyboardAppearance {
-        return ColorScheme.keyboardAppearance(for: variant)
-    }
-    class func keyboardAppearance(for variant: ColorSchemeVariant) -> UIKeyboardAppearance {
-        return variant == .light ? .light : .dark
-    }
+
     static let `default`: ColorScheme = ColorScheme()
     func color(named: ColorSchemeColor, variant: ColorSchemeVariant? = nil) -> UIColor {
         let colorSchemeVariant = variant ?? self.variant
@@ -274,17 +269,5 @@ private extension ColorPair {
 extension UIColor {
     static func from(scheme: ColorSchemeColor, variant: ColorSchemeVariant? = nil) -> UIColor {
         return ColorScheme.default.color(named: scheme, variant: variant)
-    }
-    /// Creates UIColor instance with color corresponding to @p accentColor that can be used to display the name.
-    /// NB: the order of coefficients must match ZMAccentColor enum ordering
-    private static let accentColorNameColorBlendingCoefficientsDark: [CGFloat] = [0.8, 0.8, 0.72, 1.0, 0.8, 0.8, 0.8, 0.64]
-    private static let accentColorNameColorBlendingCoefficientsLight: [CGFloat] = [0.8, 0.8, 0.72, 1.0, 0.8, 0.8, 0.64, 1.0]
-    /// Creates UIColor instance with color corresponding to @p accentColor that can be used to display the name.
-    class func nameColor(for accentColor: ZMAccentColor, variant: ColorSchemeVariant) -> UIColor {
-        let accentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
-        let coefficientsArray = variant == .dark ? accentColorNameColorBlendingCoefficientsDark : accentColorNameColorBlendingCoefficientsLight
-        let coefficient = coefficientsArray[Int(accentColor.rawValue)]
-        let background: UIColor = variant == .dark ? .black : .white
-        return background.mix(UIColor(for: accentColor), amount: coefficient)
     }
 }

@@ -29,17 +29,17 @@ protocol CallViewControllerDelegate: AnyObject {
 final class CallViewController: UIViewController {
 
     weak var delegate: CallViewControllerDelegate?
-    fileprivate var tapRecognizer: UITapGestureRecognizer!
-    fileprivate let mediaManager: AVSMediaManagerInterface
-    fileprivate let voiceChannel: VoiceChannel
-    fileprivate var callInfoConfiguration: CallInfoConfiguration
-    fileprivate var preferedVideoPlaceholderState: CallVideoPlaceholderState = .statusTextHidden
-    fileprivate let callInfoRootViewController: CallInfoRootViewController
-    fileprivate weak var overlayTimer: Timer?
-    fileprivate let hapticsController = CallHapticsController()
+    private var tapRecognizer: UITapGestureRecognizer!
+    private let mediaManager: AVSMediaManagerInterface
+    private let voiceChannel: VoiceChannel
+    private var callInfoConfiguration: CallInfoConfiguration
+    private var preferedVideoPlaceholderState: CallVideoPlaceholderState = .statusTextHidden
+    private let callInfoRootViewController: CallInfoRootViewController
+    private weak var overlayTimer: Timer?
+    private let hapticsController = CallHapticsController()
     private let isOverlayEnabled: Bool
 
-    fileprivate var classification: SecurityClassification = .none {
+    private var classification: SecurityClassification = .none {
         didSet {
             updateConfiguration()
         }
@@ -61,7 +61,7 @@ final class CallViewController: UIViewController {
 
     private var proximityMonitorManager: ProximityMonitorManager?
 
-    fileprivate var permissions: CallPermissionsConfiguration {
+    private var permissions: CallPermissionsConfiguration {
         return callInfoConfiguration.permissions
     }
 
@@ -251,12 +251,12 @@ final class CallViewController: UIViewController {
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
-    fileprivate func minimizeOverlay() {
+    private func minimizeOverlay() {
         delegate?.callViewControllerDidDisappear(self, for: conversation)
     }
     private lazy var establishingCallStatusView = EstablishingCallStatusView()
 
-    fileprivate func acceptDegradedCall() {
+    private func acceptDegradedCall() {
         guard let userSession = ZMUserSession.shared() else { return }
 
         userSession.enqueue({
@@ -271,7 +271,7 @@ final class CallViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    fileprivate func updateConfiguration() {
+    private func updateConfiguration() {
         callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
                                                       preferedVideoPlaceholderState: preferedVideoPlaceholderState,
                                                       permissions: permissions,
@@ -326,7 +326,7 @@ final class CallViewController: UIViewController {
     private func updateAppearance() {
     }
 
-    fileprivate func alertVideoUnavailable() {
+    private func alertVideoUnavailable() {
         guard voiceChannel.videoState == .stopped else { return }
 
         if !callInfoConfiguration.permissions.canAcceptVideoCalls {
@@ -367,7 +367,7 @@ final class CallViewController: UIViewController {
         AnalyticsCallingTracker.userToggledVideo(in: voiceChannel)
     }
 
-    fileprivate func toggleCameraAnimated() {
+    private func toggleCameraAnimated() {
         toggleCameraType()
     }
 
@@ -449,7 +449,7 @@ extension CallViewController: MuteStateObserver {
 
 extension CallViewController {
 
-    fileprivate func acceptCallIfPossible() {
+    private func acceptCallIfPossible() {
         guard let conversation = self.conversation else {
             fatalError("Trying to accept a call for a voice channel without conversation.")
         }
@@ -485,12 +485,12 @@ extension CallViewController {
         }
     }
 
-    fileprivate func updateVideoStatusPlaceholder() {
+    private func updateVideoStatusPlaceholder() {
         preferedVideoPlaceholderState = permissions.preferredVideoPlaceholderState
         updateConfiguration()
     }
 
-    fileprivate func disableVideoIfNeeded() {
+    private func disableVideoIfNeeded() {
         if permissions.isVideoDisabledForever {
             voiceChannel.videoState = .stopped
         }
@@ -568,13 +568,13 @@ extension CallViewController {
         return AutomationHelper.sharedHelper.keepCallingOverlayVisible
     }
 
-    fileprivate var canHideOverlay: Bool {
+    private var canHideOverlay: Bool {
         guard case .established = callInfoConfiguration.state else { return false }
 
         return !shouldOverlayStayVisibleForAutomation
     }
 
-    fileprivate func toggleOverlayVisibility() {
+    private func toggleOverlayVisibility() {
         animateOverlay(show: !isOverlayVisible)
     }
 
@@ -603,7 +603,7 @@ extension CallViewController {
         )
     }
 
-    fileprivate func hideOverlayAfterCallEstablishedIfNeeded() {
+    private func hideOverlayAfterCallEstablishedIfNeeded() {
         let isNotAnimating = callInfoRootViewController.view.layer.animationKeys()?.isEmpty ?? true
         guard nil == overlayTimer, canHideOverlay, isOverlayVisible, isNotAnimating else { return }
         animateOverlay(show: false)
@@ -618,7 +618,7 @@ extension CallViewController {
         }
     }
 
-    fileprivate func updateOverlayAfterStateChanged() {
+    private func updateOverlayAfterStateChanged() {
         if canHideOverlay {
             if overlayTimer == nil {
                 startOverlayTimer()
@@ -631,12 +631,12 @@ extension CallViewController {
         }
     }
 
-    fileprivate func restartOverlayTimerIfNeeded() {
+    private func restartOverlayTimerIfNeeded() {
         guard nil != overlayTimer, canHideOverlay else { return }
         startOverlayTimer()
     }
 
-    fileprivate func stopOverlayTimer() {
+    private func stopOverlayTimer() {
         overlayTimer?.invalidate()
         overlayTimer = nil
     }

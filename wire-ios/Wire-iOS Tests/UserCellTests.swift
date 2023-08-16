@@ -123,7 +123,8 @@ final class UserCellTests: ZMSnapshotTestCase {
     }
 
     func testUserInsideOngoingVideoCall() {
-        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), videoState: .started, microphoneState: .unmuted, activeSpeakerState: .inactive)
+        var callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
+        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: SelfUser.current)
@@ -132,7 +133,8 @@ final class UserCellTests: ZMSnapshotTestCase {
     }
 
     func testUserScreenSharingInsideOngoingVideoCall() {
-        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), videoState: .screenSharing, microphoneState: .unmuted, activeSpeakerState: .inactive)
+        var callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
+        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState , activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: SelfUser.current)
         sut.overrideUserInterfaceStyle = .dark

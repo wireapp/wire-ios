@@ -126,7 +126,7 @@ final class ServiceDetailViewController: UIViewController {
     private func setupViews() {
         actionButton.addCallback(for: .touchUpInside, callback: callback(for: actionType, completion: self.completion))
 
-            view.backgroundColor = .clear
+        view.backgroundColor = SemanticColors.View.backgroundDefault
 
         [detailView, actionButton].forEach(view.addSubview)
 

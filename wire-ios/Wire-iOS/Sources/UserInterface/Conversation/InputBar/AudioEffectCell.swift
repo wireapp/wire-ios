@@ -28,9 +28,9 @@ struct AudioEffectCellBorders: OptionSet {
 }
 
 final class AudioEffectCell: UICollectionViewCell {
-    fileprivate let iconView = IconButton()
-    fileprivate let borderRightView = UIView()
-    fileprivate let borderBottomView = UIView()
+    private let iconView = IconButton()
+    private let borderRightView = UIView()
+    private let borderBottomView = UIView()
 
     var borders: AudioEffectCellBorders = [.None] {
         didSet {
@@ -85,17 +85,17 @@ final class AudioEffectCell: UICollectionViewCell {
         }
     }
 
-    fileprivate func updateBorders() {
+    private func updateBorders() {
         borderRightView.isHidden = !borders.contains(.Right)
         borderBottomView.isHidden = !borders.contains(.Bottom)
     }
 
-    fileprivate func updateForSelectedState() {
+    private func updateForSelectedState() {
         let color: UIColor = isSelected ? UIColor.accent() : SemanticColors.Icon.foregroundDefaultBlack
         iconView.setIconColor(color, for: .normal)
     }
 
-    fileprivate func setupAccessibility() {
+    private func setupAccessibility() {
         isAccessibilityElement = true
         accessibilityTraits = .button
     }
