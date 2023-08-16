@@ -258,8 +258,8 @@ final class ConversationServiceTests: MessagingTestBase {
     func test_CreateGroupConversation_UnreachableDomainsFailure() throws {
         // GIVEN
         let didFinish = expectation(description: "didFinish")
-        let domain = "foma.wire.link"
-        user2.domain = domain
+        let unreachableDomain = "foma.wire.link"
+        user2.domain = unreachableDomain
 
         let groupConversation = createGroupConversation(
             with: user1,
@@ -267,13 +267,14 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            results: [.failure(.unreachableDomains([domain])), .success(groupConversation.objectID)],
+            results: [.failure(.unreachableDomains([unreachableDomain])),
+                      .success(groupConversation.objectID)],
             context: uiMOC.notificationContext
         )
 
         // WHEN
         sut.createGroupConversation(
-            name: nil,
+            name: "Test",
             users: [user1, user2],
             allowGuests: true,
             allowServices: true,
@@ -318,8 +319,8 @@ final class ConversationServiceTests: MessagingTestBase {
 
         // WHEN
         sut.createGroupConversation(
-            name: nil,
-            users: [user1],
+            name: "New",
+            users: [user1, user2],
             allowGuests: true,
             allowServices: true,
             enableReceipts: true,
