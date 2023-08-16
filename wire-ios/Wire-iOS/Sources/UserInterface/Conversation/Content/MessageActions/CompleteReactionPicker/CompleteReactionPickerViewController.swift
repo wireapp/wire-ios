@@ -88,6 +88,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         view.addSubview(collectionView)
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tapGestureRecognizer.cancelsTouchesInView = false
         collectionView.addGestureRecognizer(tapGestureRecognizer)
     }
 
